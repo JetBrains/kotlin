@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class SimplifiableCallChainInspection : AbstractCallChainChecker() {
@@ -19,11 +21,12 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
         qualifiedExpressionVisitor(fun(expression) {
             val conversion = findQualifiedConversion(expression, conversionGroups) check@{ conversion, firstResolvedCall, _, context ->
                 // Do not apply on maps due to lack of relevant stdlib functions
+                val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return@check false
                 val firstReceiverType = firstResolvedCall.extensionReceiver?.type
                 if (firstReceiverType != null) {
                     if (conversion.replacement == "mapNotNull" && KotlinBuiltIns.isPrimitiveArray(firstReceiverType)) return@check false
                     val firstReceiverRawType = firstReceiverType.constructor.declarationDescriptor?.defaultType
-                    if (firstReceiverRawType.isMapOrSubType()) return@check false
+                    if (firstReceiverRawType.isMap(builtIns)) return@check false
                 }
                 if (conversion.replacement.startsWith("joinTo")) {
                     // Function parameter in map must have String result type
@@ -79,10 +82,14 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
     }
 }
 
-private fun KotlinType?.isMapOrSubType(): Boolean {
-    return this != null && (isMap() || constructor.supertypes.any { it.isMap() })
-}
-
-private fun KotlinType.isMap(): Boolean {
-    return constructor.declarationDescriptor?.name?.asString()?.endsWith("Map") == true
+private fun KotlinType?.isMap(builtIns: KotlinBuiltIns): Boolean {
+    if (this == null) return false
+    val map = builtIns.map.defaultType
+    fun isMap(type: KotlinType?): Boolean {
+        if (type == null) return false
+        val constructor = type.constructor
+        if (constructor.declarationDescriptor?.name?.asString()?.endsWith("Map") != true) return false
+        return type.isSubtypeOf(map) || constructor.supertypes.any { isMap(it.constructor.declarationDescriptor?.defaultType) }
+    }
+    return isMap(this)
 }

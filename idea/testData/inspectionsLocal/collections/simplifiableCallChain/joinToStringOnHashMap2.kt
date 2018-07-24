@@ -2,8 +2,8 @@
 // WITH_RUNTIME
 import java.util.*
 
-class MyMapClass: HashMap<String, String>()
+class MyMap: HashMap<String, String>()
 
-fun test(data: MyMapClass) {
+fun test(data: MyMap) {
     val result = data.<caret>map { "${it.key}: ${it.value}" }.joinToString("\n")
 }
