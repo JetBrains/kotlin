@@ -181,7 +181,7 @@ private fun createKotlinVersion(languageVersion: LanguageVersion): KotlinVersion
 
 private fun createKotlinVersion(versionStr: String): KotlinVersion? {
     if (versionStr == "@snapshot@") {
-        return KotlinVersion(Int.MAX_VALUE, Int.MAX_VALUE, 0)
+        return KotlinVersion(KotlinVersion.MAX_COMPONENT_VALUE, KotlinVersion.MAX_COMPONENT_VALUE, 0)
     }
 
     val regex = """(\d+)\.(\d+).*""".toRegex()
