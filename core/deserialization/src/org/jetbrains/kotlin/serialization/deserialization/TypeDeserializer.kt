@@ -13,9 +13,11 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
@@ -163,23 +165,49 @@ class TypeDeserializer(
         nullable: Boolean
     ): SimpleType? {
         val functionType = KotlinTypeFactory.simpleType(annotations, functionTypeConstructor, arguments, nullable)
-        if (!functionType.isFunctionType) return null
+        return if (!functionType.isFunctionType) null
+        else transformRuntimeFunctionTypeToSuspendFunction(functionType)
+    }
 
-        // kotlin.suspend is still built with LV=1.2, thus it references old Continuation
-        // And otherwise, once stdlib is compiled with 1.3 one may want to stay at LV=1.2
-        if (c.containingDeclaration.safeAs<CallableDescriptor>()?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
-            val (suspendFun, experimental) = transformRuntimeFunctionTypeToSuspendFunction(functionType, true)
-            if (experimental)
-                transformRuntimeFunctionTypeToSuspendFunction(functionType, false).first?.let { return it }
-            else
-                return suspendFun
+    private fun transformRuntimeFunctionTypeToSuspendFunction(funType: KotlinType): SimpleType? {
+        val isReleaseCoroutines = c.components.configuration.releaseCoroutines
+
+        val continuationArgumentType = funType.getValueParameterTypesFromFunctionType().lastOrNull()?.type ?: return null
+        val continuationArgumentFqName = continuationArgumentType.constructor.declarationDescriptor?.fqNameSafe
+        if (continuationArgumentType.arguments.size != 1 || !(isContinuation(continuationArgumentFqName, true) ||
+                    isContinuation(continuationArgumentFqName, false))
+        ) {
+            return funType as SimpleType?
         }
 
-        val (type, experimental) = transformRuntimeFunctionTypeToSuspendFunction(functionType, c.components.configuration.releaseCoroutines)
+        val suspendReturnType = continuationArgumentType.arguments.single().type
 
-        experimentalSuspendFunctionTypeEncountered = experimental || experimentalSuspendFunctionTypeEncountered
+        // Load kotlin.suspend as accepting and returning suspend function type independent of its version requirement
+        if (c.containingDeclaration.safeAs<CallableDescriptor>()?.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) {
+            return createSimpleSuspendFunctionType(funType, suspendReturnType)
+        }
 
-        return type
+        // Load experimental suspend function type as suspend function type
+        experimentalSuspendFunctionTypeEncountered = experimentalSuspendFunctionTypeEncountered ||
+                (isReleaseCoroutines && isContinuation(continuationArgumentFqName, !isReleaseCoroutines))
+
+        return createSimpleSuspendFunctionType(funType, suspendReturnType)
+    }
+
+    private fun createSimpleSuspendFunctionType(
+        funType: KotlinType,
+        suspendReturnType: KotlinType
+    ): SimpleType {
+        return createFunctionType(
+            funType.builtIns,
+            funType.annotations,
+            funType.getReceiverTypeFromFunctionType(),
+            funType.getValueParameterTypesFromFunctionType().dropLast(1).map(TypeProjection::getType),
+            // TODO: names
+            null,
+            suspendReturnType,
+            suspendFunction = true
+        ).makeNullableAsSpecified(funType.isMarkedNullable)
     }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =

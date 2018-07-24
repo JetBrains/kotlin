@@ -79,37 +79,6 @@ fun transformSuspendFunctionToRuntimeFunctionType(suspendFunType: KotlinType, is
     ).makeNullableAsSpecified(suspendFunType.isMarkedNullable)
 }
 
-fun transformRuntimeFunctionTypeToSuspendFunction(funType: KotlinType, isReleaseCoroutines: Boolean): Pair<SimpleType?, Boolean> {
-    assert(funType.isFunctionType) {
-        "This type should be function type: $funType"
-    }
-
-    val continuationArgumentType = funType.getValueParameterTypesFromFunctionType().lastOrNull()?.type ?: return null to false
-    val continuationArgumentFqName = continuationArgumentType.constructor.declarationDescriptor?.fqNameSafe
-    if (continuationArgumentType.arguments.size != 1 ||
-        (!isContinuation(continuationArgumentFqName, isReleaseCoroutines) &&
-                (!isReleaseCoroutines || !isContinuation(continuationArgumentFqName, !isReleaseCoroutines)))
-    ) {
-        return funType as? SimpleType to false
-    }
-
-    val suspendReturnType = continuationArgumentType.arguments.single().type
-
-    // Load experimental suspend function type as suspend function type
-
-    return createFunctionType(
-        funType.builtIns,
-        funType.annotations,
-        funType.getReceiverTypeFromFunctionType(),
-        funType.getValueParameterTypesFromFunctionType().dropLast(1).map(TypeProjection::getType),
-        // TODO: names
-        null,
-        suspendReturnType,
-        suspendFunction = true
-    ).makeNullableAsSpecified(funType.isMarkedNullable) to
-            (isReleaseCoroutines && isContinuation(continuationArgumentFqName, !isReleaseCoroutines))
-}
-
 fun isContinuation(name: FqName?, isReleaseCoroutines: Boolean): Boolean {
     return if (isReleaseCoroutines) name == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
     else name == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
