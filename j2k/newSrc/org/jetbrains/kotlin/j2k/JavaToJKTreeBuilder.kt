@@ -120,7 +120,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun PsiLambdaExpression.toJK(): JKExpression {
             return JKLambdaExpressionImpl(
                 with(declarationMapper) { parameterList.parameters.map { it.toJK() } },
-                JKTypeElementImpl(JKJavaVoidType),
                 body.let {
                     when (it) {
                         is PsiExpression -> JKExpressionStatementImpl(it.toJK())

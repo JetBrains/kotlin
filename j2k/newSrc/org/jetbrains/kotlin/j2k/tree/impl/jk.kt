@@ -330,8 +330,9 @@ class JKMutabilityModifierImpl(override val mutability: Mutability) : JKMutabili
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitMutabilityModifier(this, data)
 }
 
-class JKLambdaExpressionImpl(parameters: List<JKParameter>, returnType: JKTypeElement, statement: JKStatement) :
-    JKLambdaExpression, JKBranchElementBase() {
+class JKLambdaExpressionImpl(
+    parameters: List<JKParameter>, statement: JKStatement, returnType: JKTypeElement = JKTypeElementImpl(JKContextType)
+) : JKLambdaExpression, JKBranchElementBase() {
     override var statement by child(statement)
     override val returnType by child(returnType)
     override var parameters by children(parameters)
