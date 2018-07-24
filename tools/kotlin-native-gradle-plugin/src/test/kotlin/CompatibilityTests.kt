@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin.test
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import java.net.URI
 import kotlin.test.*
 
 open class CompatibilityTests {
@@ -33,7 +34,9 @@ open class CompatibilityTests {
         val project = KonanProject.createEmpty(projectDirectory)
         val result = project
                 .createRunner()
-                .withGradleVersion("4.5")
+                .withGradleDistribution(URI.create(
+                    "https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-4.5-bin.zip"
+                ))
                 .withArguments("tasks")
                 .buildAndFail()
         println(result.output)

@@ -468,7 +468,7 @@ class ExperimentalPluginTests {
     }
 
     @Test
-    fun `Framework name should not contain "-" symbols`() = withProject("test-framework-project") {
+    fun `Framework name should not contain minus symbols`() = withProject("test-framework-project") {
         assumeTrue(HostManager.hostIsMac)
         components.withType(KotlinNativeMainComponent::class.java)
             .getByName("main")
