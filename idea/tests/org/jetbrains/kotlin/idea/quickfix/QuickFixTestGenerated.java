@@ -8963,6 +8963,34 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/removeDefaultParameterValue")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveDefaultParameterValue extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("actualFunctionWithDefaultArguments.kt")
+        public void testActualFunctionWithDefaultArguments() throws Exception {
+            runTest("idea/testData/quickfix/removeDefaultParameterValue/actualFunctionWithDefaultArguments.kt");
+        }
+
+        public void testAllFilesPresentInRemoveDefaultParameterValue() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeDefaultParameterValue"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("defaultValueNotAllowedInOverride.kt")
+        public void testDefaultValueNotAllowedInOverride() throws Exception {
+            runTest("idea/testData/quickfix/removeDefaultParameterValue/defaultValueNotAllowedInOverride.kt");
+        }
+
+        @TestMetadata("hasComment.kt")
+        public void testHasComment() throws Exception {
+            runTest("idea/testData/quickfix/removeDefaultParameterValue/hasComment.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/removeFinalUpperBound")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
