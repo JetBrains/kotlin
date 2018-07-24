@@ -381,6 +381,7 @@ fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): 
 
 fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): CallBuilder {
     val originalDescriptor = resolvedCall.resultingDescriptor
+    val candidateDescriptor = resolvedCall.candidateDescriptor
 
     val unwrappedDescriptor = when (originalDescriptor) {
         is ImportedFromObjectCallableDescriptor<*> -> originalDescriptor.callableFromObject
@@ -404,7 +405,7 @@ fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): Cal
                 null
             else
                 unsubstitutedUnwrappedTypeParameters.associate {
-                    val originalTypeParameter = originalDescriptor.original.typeParameters[it.index]
+                    val originalTypeParameter = candidateDescriptor.typeParameters[it.index]
                     val originalTypeArgument = originalTypeArguments[originalTypeParameter]
                         ?: throw AssertionError("No type argument for $originalTypeParameter")
                     it to originalTypeArgument
