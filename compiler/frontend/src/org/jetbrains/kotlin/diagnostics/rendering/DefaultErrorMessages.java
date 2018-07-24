@@ -602,6 +602,8 @@ public class DefaultErrorMessages {
         MAP.put(NOT_A_FUNCTION_LABEL, "Target label does not denote a function");
         MAP.put(NOT_A_FUNCTION_LABEL_WARNING, "Target label does not denote a function");
 
+        MAP.put(REDUNDANT_LABEL_WARNING, "Label is redundant, because it can not be referenced in either ''break'', ''continue'', or ''return'' expression");
+
         MAP.put(ANONYMOUS_INITIALIZER_IN_INTERFACE, "Anonymous initializers are not allowed in interfaces");
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
         MAP.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic");

@@ -822,6 +822,8 @@ public interface Errors {
     DiagnosticFactory0<KtExpressionWithLabel> NOT_A_FUNCTION_LABEL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpressionWithLabel> NOT_A_FUNCTION_LABEL_WARNING = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<KtElement> REDUNDANT_LABEL_WARNING = DiagnosticFactory0.create(WARNING);
+
     // Control flow / Data flow
 
     DiagnosticFactory1<KtElement, List<TextRange>> UNREACHABLE_CODE = DiagnosticFactory1.create(

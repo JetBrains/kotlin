@@ -298,6 +298,17 @@ class ControlFlowProcessor(
                 generateInstructions(baseExpression)
                 copyValue(baseExpression, expression)
             }
+
+            val labelNameExpression = expression.getTargetLabel()
+            if (labelNameExpression != null) {
+                val deparenthesizedBaseExpression = KtPsiUtil.deparenthesize(expression)
+                if (deparenthesizedBaseExpression !is KtLambdaExpression &&
+                    deparenthesizedBaseExpression !is KtLoopExpression &&
+                    deparenthesizedBaseExpression !is KtNamedFunction
+                ) {
+                    trace.report(Errors.REDUNDANT_LABEL_WARNING.on(labelNameExpression))
+                }
+            }
         }
 
         override fun visitBinaryExpression(expression: KtBinaryExpression) {

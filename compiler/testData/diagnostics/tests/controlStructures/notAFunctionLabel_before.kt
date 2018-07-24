@@ -51,12 +51,12 @@ fun testLoopLabelInReturn(xs: List<Int>) {
 }
 
 fun testValLabelInReturn() {
-    L@ val fn = { <!NOT_A_FUNCTION_LABEL_WARNING!>return@L<!> }
+    <!REDUNDANT_LABEL_WARNING!>L@<!> val fn = { <!NOT_A_FUNCTION_LABEL_WARNING!>return@L<!> }
     fn()
 }
 
 fun testHighOrderFunctionCallLabelInReturn() {
-    L@ run {
+    <!REDUNDANT_LABEL_WARNING!>L@<!> run {
         <!NOT_A_FUNCTION_LABEL_WARNING!>return@L<!>
     }
 }

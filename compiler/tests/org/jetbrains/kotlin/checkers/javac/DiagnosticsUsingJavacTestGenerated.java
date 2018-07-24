@@ -4140,6 +4140,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_before.kt");
             }
 
+            @TestMetadata("redundantLabel.kt")
+            public void testRedundantLabel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/redundantLabel.kt");
+            }
+
             @TestMetadata("specialConstructsAndPlatformTypes.kt")
             public void testSpecialConstructsAndPlatformTypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/specialConstructsAndPlatformTypes.kt");
