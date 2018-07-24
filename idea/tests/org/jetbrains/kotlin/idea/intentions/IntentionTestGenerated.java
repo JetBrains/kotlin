@@ -5793,9 +5793,39 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPropertyGetterToInitializer/block.kt");
         }
 
+        @TestMetadata("expectedProperty.kt")
+        public void testExpectedProperty() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyGetterToInitializer/expectedProperty.kt");
+        }
+
+        @TestMetadata("extentionProperty.kt")
+        public void testExtentionProperty() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyGetterToInitializer/extentionProperty.kt");
+        }
+
+        @TestMetadata("hasComment.kt")
+        public void testHasComment() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyGetterToInitializer/hasComment.kt");
+        }
+
+        @TestMetadata("hasComment2.kt")
+        public void testHasComment2() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyGetterToInitializer/hasComment2.kt");
+        }
+
+        @TestMetadata("hasComment3.kt")
+        public void testHasComment3() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyGetterToInitializer/hasComment3.kt");
+        }
+
         @TestMetadata("hasInitializer.kt")
         public void testHasInitializer() throws Exception {
             runTest("idea/testData/intentions/convertPropertyGetterToInitializer/hasInitializer.kt");
+        }
+
+        @TestMetadata("inInterface.kt")
+        public void testInInterface() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyGetterToInitializer/inInterface.kt");
         }
 
         @TestMetadata("multiStatementBlock.kt")
