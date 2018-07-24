@@ -8941,6 +8941,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testDefaultValueNotAllowedInOverride() throws Exception {
             runTest("idea/testData/quickfix/removeDefaultParameterValue/defaultValueNotAllowedInOverride.kt");
         }
+
+        @TestMetadata("hasComment.kt")
+        public void testHasComment() throws Exception {
+            runTest("idea/testData/quickfix/removeDefaultParameterValue/hasComment.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/removeFinalUpperBound")
