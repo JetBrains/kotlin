@@ -4130,6 +4130,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/localReturnInsidePropertyAccessor.kt");
             }
 
+            @TestMetadata("notAFunctionLabel_after.kt")
+            public void testNotAFunctionLabel_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_after.kt");
+            }
+
+            @TestMetadata("notAFunctionLabel_before.kt")
+            public void testNotAFunctionLabel_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_before.kt");
+            }
+
             @TestMetadata("specialConstructsAndPlatformTypes.kt")
             public void testSpecialConstructsAndPlatformTypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/specialConstructsAndPlatformTypes.kt");

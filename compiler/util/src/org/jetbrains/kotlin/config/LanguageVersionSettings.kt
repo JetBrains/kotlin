@@ -83,6 +83,8 @@ enum class LanguageFeature(
     RestrictRetentionForExpressionAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     NoConstantValueAttributeForNonConstVals(KOTLIN_1_3, kind = BUG_FIX),
 
+    RestrictReturnStatementTarget(KOTLIN_1_4, kind = BUG_FIX),
+
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
     ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED, kind = BUG_FIX),
 
@@ -185,7 +187,8 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
     KOTLIN_1_0(1, 0),
     KOTLIN_1_1(1, 1),
     KOTLIN_1_2(1, 2),
-    KOTLIN_1_3(1, 3);
+    KOTLIN_1_3(1, 3),
+    KOTLIN_1_4(1, 4);
 
     val isStable: Boolean
         get() = this <= LATEST_STABLE
