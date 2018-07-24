@@ -417,7 +417,7 @@ interface LanguageSettingsProvider {
         isReleaseCoroutines: Boolean? = null
     ): LanguageVersionSettings
 
-    @Deprecated("Use `getLanguageVersionSettings` method with default parameter instead")
+    @Deprecated("Use `getLanguageVersionSettings` method with default parameter instead", level = DeprecationLevel.HIDDEN)
     fun getLanguageVersionSettings(
         moduleInfo: ModuleInfo,
         project: Project
