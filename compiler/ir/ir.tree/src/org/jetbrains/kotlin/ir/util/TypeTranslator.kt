@@ -27,6 +27,7 @@ class TypeTranslator(
 ) {
 
     private val typeParametersResolver = ScopedTypeParametersResolver()
+    private val typeApproximatorForNI = TypeApproximator()
     lateinit var constantValueGenerator: ConstantValueGenerator
 
     fun enterScope(irElement: IrTypeParametersContainer) {
@@ -54,11 +55,7 @@ class TypeTranslator(
     private fun translateType(ktType0: KotlinType, variance: Variance): IrTypeProjection {
         // TODO "old" JVM BE does this for reified type arguments. Is it ok for arbitrary subexpressions?
 
-        val ktTypeUpper =
-            if (ktType0.constructor.isDenotable)
-                ktType0
-            else
-                approximateCapturedTypes(ktType0).upper
+        val ktTypeUpper = ktType0.approximate(languageVersionSettings)
 
         when {
             ktTypeUpper.isError -> return IrErrorTypeImpl(ktTypeUpper, translateTypeAnnotations(ktTypeUpper.annotations), variance)
@@ -93,6 +90,15 @@ class TypeTranslator(
             else ->
                 throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
         }
+    }
+
+    private fun KotlinType.approximate(languageVersionSettings: LanguageVersionSettings): KotlinType {
+        if (this.constructor.isDenotable) return this
+
+        return if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
+            typeApproximatorForNI.approximateDeclarationType(this, local = false, languageVersionSettings = languageVersionSettings)
+        else
+            approximateCapturedTypes(this).upper
     }
 
     private fun translateTypeAnnotations(annotations: Annotations): List<IrCall> =
