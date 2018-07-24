@@ -1114,6 +1114,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("continuationInLvt.kt")
+            public void testContinuationInLvt() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/continuationInLvt.kt");
+            }
+
             @TestMetadata("probeCoroutineSuspended.kt")
             public void testProbeCoroutineSuspended() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/probeCoroutineSuspended.kt");
