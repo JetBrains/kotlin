@@ -122,6 +122,7 @@ task unsignedJar(type: Jar) {
 
 sourcesJar {
     from "${rootDir}/core/builtins/native"
+    from sourceSets.coroutines.kotlin
 }
 
 task distSourcesJar(type: Jar) {
