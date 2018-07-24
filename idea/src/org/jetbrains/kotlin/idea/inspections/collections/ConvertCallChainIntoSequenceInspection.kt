@@ -11,7 +11,8 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -133,8 +135,13 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
     return transformationCalls
 }
 
-private fun KotlinType.isCollection(): Boolean =
-    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.collection || constructor.supertypes.any { it.isCollection() }
+private fun KotlinType.isCollection(): Boolean {
+    val classDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return false
+    val className = classDescriptor.name.asString()
+    val builtIns = DefaultBuiltIns.Instance
+    return className.endsWith("List") && classDescriptor.isSubclassOf(builtIns.list)
+            || className.endsWith("Set") && classDescriptor.isSubclassOf(builtIns.set)
+}
 
 private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
     arg.anyDescendantOfType<KtReturnExpression> { it.labelQualifier == null }
