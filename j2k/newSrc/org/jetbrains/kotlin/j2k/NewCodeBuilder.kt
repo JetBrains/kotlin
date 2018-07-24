@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class NewCodeBuilder {
 
@@ -96,10 +97,6 @@ class NewCodeBuilder {
             )
         }
 
-        override fun visitInheritanceInfo(inheritanceInfo: JKInheritanceInfo) {
-            renderList(inheritanceInfo.inherit) { it.accept(this) }
-        }
-
 
         private inline fun <T> renderList(list: List<T>, separator: String = ", ", renderElement: (T) -> Unit) {
             val (head, tail) = list.headTail()
@@ -116,9 +113,24 @@ class NewCodeBuilder {
             printer.print(classKindString(klass.classKind))
             builder.append(" ")
             printer.printWithNoIndent(klass.name.value)
+
+            val primaryConstructor = klass.primaryConstructor()
+            if (primaryConstructor != null) {
+                renderParameterList(primaryConstructor.parameters)
+            }
+
             if (klass.inheritance.inherit.isNotEmpty()) {
                 printer.printWithNoIndent(" : ")
-                klass.inheritance.accept(this)
+
+                val delegationCall = primaryConstructor?.delegationCall as? JKDelegationConstructorCall
+                renderList(klass.inheritance.inherit) {
+                    it.accept(this)
+                    if (delegationCall != null && delegationCall.isCallOfConstructorOf(it.type)) {
+                        printer.par {
+                            delegationCall.arguments.accept(this)
+                        }
+                    }
+                }
             }
 
             if (klass.declarationList.isNotEmpty()) {
@@ -365,13 +377,17 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtConstructor(ktConstructor: JKKtConstructor) {
-            printer.print("constructor")
+        private fun renderParameterList(parameters: List<JKParameter>) {
             printer.par(ROUND) {
-                renderList(ktConstructor.parameters) {
+                renderList(parameters) {
                     it.accept(this)
                 }
             }
+        }
+
+        override fun visitKtConstructor(ktConstructor: JKKtConstructor) {
+            printer.print("constructor")
+            renderParameterList(ktConstructor.parameters)
             if (ktConstructor.delegationCall !is JKStubExpression) {
                 builder.append(" : ")
                 ktConstructor.delegationCall.accept(this)
@@ -382,6 +398,8 @@ class NewCodeBuilder {
                 }
             }
         }
+
+        override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {}
 
         private inline fun Printer.indented(block: () -> Unit) {
             this.pushIndent()
@@ -443,4 +461,21 @@ private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
     val head = this.firstOrNull()
     val tail = if (size <= 1) null else subList(1, size)
     return head to tail
+}
+
+private inline fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? {
+    return this.declarationList.firstIsInstanceOrNull()
+}
+
+private inline fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKType): Boolean {
+    return when (type) {
+        is JKClassType -> {
+            val symbol = type.classReference as? JKClassSymbol ?: return false
+            this.identifier.name == symbol.name && this.identifier.declaredIn == symbol
+        }
+        is JKUnresolvedClassType -> {
+            this.identifier.name == type.name
+        }
+        else -> false
+    }
 }
