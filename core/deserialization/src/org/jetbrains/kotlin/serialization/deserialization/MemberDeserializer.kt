@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
@@ -59,12 +60,6 @@ class MemberDeserializer(private val c: DeserializationContext) {
             getDispatchReceiverParameter(),
             proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }
         )
-
-        // Calculate isExperimentalCoroutineInReleaseEnvironment for type parameters
-        property.typeParameters.forEach { it.upperBounds }
-
-        property.isExperimentalCoroutineInReleaseEnvironment = local.typeDeserializer.experimentalSuspendFunctionTypeEncountered &&
-                c.components.configuration.releaseCoroutines && property.versionRequirement?.version != VersionRequirement.Version(1, 3)
 
         val getter = if (hasGetter) {
             val getterFlags = proto.getterFlags
@@ -131,10 +126,19 @@ class MemberDeserializer(private val c: DeserializationContext) {
             )
         }
 
-        property.initialize(getter, setter)
+        property.initialize(getter, setter, property.checkExperimentalCoroutine(local.typeDeserializer))
 
         return property
     }
+
+    private fun DeserializedMemberDescriptor.checkExperimentalCoroutine(typeDeserializer: TypeDeserializer): Boolean {
+        // Calculate checkExperimentalCoroutine for type parameters
+        typeDeserializer.ownTypeParameters.forEach { it.upperBounds }
+        return typeDeserializer.experimentalSuspendFunctionTypeEncountered && versionAndReleaseCoroutinesMismatch()
+    }
+
+    private fun DeserializedMemberDescriptor.versionAndReleaseCoroutinesMismatch(): Boolean =
+        c.components.configuration.releaseCoroutines && versionRequirement?.version != VersionRequirement.Version(1, 3)
 
     private fun loadOldFlags(oldFlags: Int): Int {
         val lowSixBits = oldFlags and 0x3f
@@ -155,16 +159,17 @@ class MemberDeserializer(private val c: DeserializationContext) {
         )
         val local = c.childContext(function, proto.typeParameterList)
 
-        val receiverType = proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }
         function.initialize(
-            receiverType,
+            proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) },
             getDispatchReceiverParameter(),
             local.typeDeserializer.ownTypeParameters,
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-            emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>()
+            emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>(),
+            (Flags.IS_SUSPEND.get(flags) && function.versionAndReleaseCoroutinesMismatch()) ||
+                    function.checkExperimentalCoroutine(local.typeDeserializer)
         )
         function.isOperator = Flags.IS_OPERATOR.get(flags)
         function.isInfix = Flags.IS_INFIX.get(flags)
@@ -173,13 +178,6 @@ class MemberDeserializer(private val c: DeserializationContext) {
         function.isTailrec = Flags.IS_TAILREC.get(flags)
         function.isSuspend = Flags.IS_SUSPEND.get(flags)
         function.isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
-
-        // Calculate isExperimentalCoroutineInReleaseEnvironment for type parameters
-        function.typeParameters.forEach { it.upperBounds }
-
-        function.isExperimentalCoroutineInReleaseEnvironment = local.typeDeserializer.experimentalSuspendFunctionTypeEncountered ||
-                (c.components.configuration.releaseCoroutines && Flags.IS_SUSPEND.get(flags) &&
-                        function.versionRequirement?.version != VersionRequirement.Version(1, 3))
 
         val mapValueForContract =
             c.components.contractDeserializer.deserializeContractFromFunction(proto, function, c.typeTable, c.typeDeserializer)
@@ -203,13 +201,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
         typeAlias.initialize(
             local.typeDeserializer.ownTypeParameters,
             local.typeDeserializer.simpleType(proto.underlyingType(c.typeTable)),
-            local.typeDeserializer.simpleType(proto.expandedType(c.typeTable))
+            local.typeDeserializer.simpleType(proto.expandedType(c.typeTable)),
+            typeAlias.checkExperimentalCoroutine(local.typeDeserializer)
         )
-
-        // Calculate isExperimentalCoroutineInReleaseEnvironment for type parameters
-        local.typeDeserializer.ownTypeParameters.forEach { it.upperBounds }
-
-        typeAlias.isExperimentalCoroutineInReleaseEnvironment = local.typeDeserializer.experimentalSuspendFunctionTypeEncountered
 
         return typeAlias
     }

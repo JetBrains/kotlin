@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
@@ -34,7 +23,7 @@ interface DeserializedMemberDescriptor : MemberDescriptor {
 
     val typeTable: TypeTable
 
-    var isExperimentalCoroutineInReleaseEnvironment: Boolean
+    val isExperimentalCoroutineInReleaseEnvironment: Boolean
 
     val versionRequirementTable: VersionRequirementTable
 
@@ -70,13 +59,40 @@ class DeserializedSimpleFunctionDescriptor(
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
     override val containerSource: DeserializedContainerSource?,
-    source: SourceElement? = null,
-    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
+    source: SourceElement? = null
 ) : DeserializedCallableMemberDescriptor,
     SimpleFunctionDescriptorImpl(
         containingDeclaration, original, annotations, name, kind,
         source ?: SourceElement.NO_SOURCE
     ) {
+
+    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
+        private set
+
+    fun initialize(
+        receiverParameterType: KotlinType?,
+        dispatchReceiverParameter: ReceiverParameterDescriptor?,
+        typeParameters: List<TypeParameterDescriptor>,
+        unsubstitutedValueParameters: List<ValueParameterDescriptor>,
+        unsubstitutedReturnType: KotlinType?,
+        modality: Modality?,
+        visibility: Visibility,
+        userDataMap: Map<out FunctionDescriptor.UserDataKey<*>, *>,
+        isExperimentalCoroutineInReleaseEnvironment: Boolean
+    ): SimpleFunctionDescriptorImpl {
+        return super.initialize(
+            receiverParameterType,
+            dispatchReceiverParameter,
+            typeParameters,
+            unsubstitutedValueParameters,
+            unsubstitutedReturnType,
+            modality,
+            visibility,
+            userDataMap
+        ).also {
+            this.isExperimentalCoroutineInReleaseEnvironment = isExperimentalCoroutineInReleaseEnvironment
+        }
+    }
 
     override fun createSubstitutedCopy(
         newOwner: DeclarationDescriptor,
@@ -88,7 +104,7 @@ class DeserializedSimpleFunctionDescriptor(
     ): FunctionDescriptorImpl {
         return DeserializedSimpleFunctionDescriptor(
             newOwner, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind,
-            proto, nameResolver, typeTable, versionRequirementTable, containerSource, source, isExperimentalCoroutineInReleaseEnvironment
+            proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
         )
     }
 }
@@ -111,12 +127,23 @@ class DeserializedPropertyDescriptor(
     override val nameResolver: NameResolver,
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
-    override val containerSource: DeserializedContainerSource?,
-    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
+    override val containerSource: DeserializedContainerSource?
 ) : DeserializedCallableMemberDescriptor, PropertyDescriptorImpl(
     containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
     isLateInit, isConst, isExpect, false, isExternal, isDelegated
 ) {
+    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
+        private set
+
+    fun initialize(
+        getter: PropertyGetterDescriptorImpl?,
+        setter: PropertySetterDescriptor?,
+        isExperimentalCoroutineInReleaseEnvironment: Boolean
+    ) {
+        super.initialize(getter, setter)
+            .also { this.isExperimentalCoroutineInReleaseEnvironment = isExperimentalCoroutineInReleaseEnvironment }
+    }
+
     override fun createSubstitutedCopy(
         newOwner: DeclarationDescriptor,
         newModality: Modality,
@@ -127,8 +154,7 @@ class DeserializedPropertyDescriptor(
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
-            @Suppress("DEPRECATION") isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource,
-            isExperimentalCoroutineInReleaseEnvironment
+            @Suppress("DEPRECATION") isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource
         )
     }
 
@@ -146,10 +172,12 @@ class DeserializedClassConstructorDescriptor(
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
     override val containerSource: DeserializedContainerSource?,
-    source: SourceElement? = null,
-    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
+    source: SourceElement? = null
 ) : DeserializedCallableMemberDescriptor,
     ClassConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, source ?: SourceElement.NO_SOURCE) {
+
+    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
+        internal set
 
     override fun createSubstitutedCopy(
         newOwner: DeclarationDescriptor,
@@ -162,7 +190,7 @@ class DeserializedClassConstructorDescriptor(
         return DeserializedClassConstructorDescriptor(
             newOwner as ClassDescriptor, original as ConstructorDescriptor?, annotations, isPrimary, kind,
             proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
-        )
+        ).also { it.isExperimentalCoroutineInReleaseEnvironment = isExperimentalCoroutineInReleaseEnvironment }
     }
 
     override fun isExternal(): Boolean = false
@@ -184,8 +212,7 @@ class DeserializedTypeAliasDescriptor(
     override val nameResolver: NameResolver,
     override val typeTable: TypeTable,
     override val versionRequirementTable: VersionRequirementTable,
-    override val containerSource: DeserializedContainerSource?,
-    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
+    override val containerSource: DeserializedContainerSource?
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
     DeserializedMemberDescriptor {
     override lateinit var constructors: Collection<TypeAliasConstructorDescriptor> private set
@@ -195,10 +222,14 @@ class DeserializedTypeAliasDescriptor(
     private lateinit var typeConstructorParameters: List<TypeParameterDescriptor>
     private lateinit var defaultTypeImpl: SimpleType
 
+    override var isExperimentalCoroutineInReleaseEnvironment: Boolean = false
+        private set
+
     fun initialize(
         declaredTypeParameters: List<TypeParameterDescriptor>,
         underlyingType: SimpleType,
-        expandedType: SimpleType
+        expandedType: SimpleType,
+        isExperimentalCoroutineInReleaseEnvironment: Boolean
     ) {
         initialize(declaredTypeParameters)
         this.underlyingType = underlyingType
@@ -206,6 +237,7 @@ class DeserializedTypeAliasDescriptor(
         typeConstructorParameters = computeConstructorTypeParameters()
         defaultTypeImpl = computeDefaultType()
         constructors = getTypeAliasConstructors()
+        this.isExperimentalCoroutineInReleaseEnvironment = isExperimentalCoroutineInReleaseEnvironment
     }
 
     override val classDescriptor: ClassDescriptor?
@@ -217,13 +249,13 @@ class DeserializedTypeAliasDescriptor(
         if (substitutor.isEmpty) return this
         val substituted = DeserializedTypeAliasDescriptor(
             storageManager, containingDeclaration, annotations, name, visibility,
-            proto, nameResolver, typeTable, versionRequirementTable, containerSource,
-            isExperimentalCoroutineInReleaseEnvironment
+            proto, nameResolver, typeTable, versionRequirementTable, containerSource
         )
         substituted.initialize(
             declaredTypeParameters,
             substitutor.safeSubstitute(underlyingType, Variance.INVARIANT).asSimpleType(),
-            substitutor.safeSubstitute(expandedType, Variance.INVARIANT).asSimpleType()
+            substitutor.safeSubstitute(expandedType, Variance.INVARIANT).asSimpleType(),
+            isExperimentalCoroutineInReleaseEnvironment
         )
 
         return substituted
