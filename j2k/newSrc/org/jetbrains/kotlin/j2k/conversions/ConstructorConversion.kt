@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
-class ConstructorConversion : RecursiveApplicableConversionBase() {
+class ConstructorConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaMethod) return recurse(element)
         val outerClass = element.parentOfType<JKClass>() ?: return recurse(element)
@@ -18,6 +19,9 @@ class ConstructorConversion : RecursiveApplicableConversionBase() {
         val delegationCall = lookupDelegationCall(element.block) ?: JKStubExpressionImpl()
 
         return JKKtConstructorImpl(element.name, element.parameters, element.block, element.modifierList, delegationCall)
+            .also {
+                context.symbolProvider.transferSymbol(it, element)
+            }
     }
 
     private fun lookupDelegationCall(block: JKBlock): JKDelegationConstructorCall? {

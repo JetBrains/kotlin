@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKDeclaration
-import org.jetbrains.kotlin.j2k.tree.JKField
-import org.jetbrains.kotlin.j2k.tree.JKMethod
+import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -29,7 +26,7 @@ class JKSymbolProvider {
             when (psi) {
                 is PsiClass -> JKMultiverseClassSymbol(psi)
                 is KtClassOrObject -> JKMultiverseKtClassSymbol(psi)
-                is PsiMethod -> JKMultiverseMethodSymbol(psi)
+                is PsiMethod -> JKMultiverseMethodSymbol(psi, this)
                 is PsiField -> JKMultiverseFieldSymbol(psi)
                 is KtNamedFunction -> JKMultiverseFunctionSymbol(psi)
                 else -> TODO(psi::class.toString())
@@ -55,10 +52,16 @@ class JKSymbolProvider {
     fun provideUniverseSymbol(psi: PsiElement): JKSymbol = symbolsByPsi.getOrPut(psi) {
         when (psi) {
             is PsiField, is PsiParameter, is PsiLocalVariable -> JKUniverseFieldSymbol()
-            is PsiMethod -> JKUniverseMethodSymbol()
+            is PsiMethod -> JKUniverseMethodSymbol(this)
             is PsiClass -> JKUniverseClassSymbol()
             else -> TODO()
         }
+    }
+
+    fun transferSymbol(to: JKDeclaration, from: JKDeclaration) = symbolsByJK[from]!!.let {
+        it as JKUniverseSymbol<*>
+        it.target = to
+        symbolsByJK[to] = it
     }
 
     fun provideUniverseSymbol(jk: JKClass): JKClassSymbol = symbolsByJK.getOrPut(jk) {
@@ -70,7 +73,7 @@ class JKSymbolProvider {
     } as JKFieldSymbol
 
     fun provideUniverseSymbol(jk: JKMethod): JKMethodSymbol = symbolsByJK.getOrPut(jk) {
-        JKUniverseMethodSymbol().also { it.target = jk }
+        JKUniverseMethodSymbol(this).also { it.target = jk }
     } as JKMethodSymbol
 
     private inner class ElementVisitor : JavaElementVisitor() {

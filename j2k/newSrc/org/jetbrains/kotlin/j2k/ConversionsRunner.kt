@@ -21,22 +21,27 @@ import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 
 object ConversionsRunner {
 
-    fun doApply(trees: List<JKTreeElement>, context: ConversionContext) {
+    private fun createConversions(context: ConversionContext) = listOf(
+        ModalityConversion(context),
+        FieldToPropertyConversion(),
+        TypeMappingConversion(context),
+        AssignmentAsExpressionToAlsoConversion(context),
+        AssignmentStatementValCreationConversion(context),
+        AssignmentStatementOperatorConversion(),
+        ConstructorConversion(context),
+        PrimaryConstructorDetectConversion(context),
+        JavaMethodToKotlinFunctionConversion(),
+        LiteralConversion(),
+        InnerClassConversion(),
+        ModifiersConversion(),
+        PolyadicExpressionConversion(),
+        BinaryExpressionConversion()
+    )
 
-        trees.forEach {
-            ModalityConversion(context).runConversion(it, context)
-            FieldToPropertyConversion().runConversion(it, context)
-            TypeMappingConversion(context).runConversion(it, context)
-            AssignmentAsExpressionToAlsoConversion(context).runConversion(it, context)
-            AssignmentStatementValCreationConversion(context).runConversion(it, context)
-            AssignmentStatementOperatorConversion().runConversion(it, context)
-            ConstructorConversion().runConversion(it, context)
-            JavaMethodToKotlinFunctionConversion().runConversion(it, context)
-            LiteralConversion().runConversion(it, context)
-            InnerClassConversion().runConversion(it, context)
-            ModifiersConversion().runConversion(it, context)
-            PolyadicExpressionConversion().runConversion(it, context)
-            BinaryExpressionConversion().runConversion(it, context)
+    fun doApply(trees: List<JKTreeElement>, context: ConversionContext) {
+        val conversions = createConversions(context)
+        trees.forEach { tree ->
+            conversions.forEach { it.runConversion(tree, context) }
         }
     }
 
