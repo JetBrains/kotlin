@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.MigrationNotificationDialog
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
 import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
+import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.versions.LibInfo
@@ -43,11 +44,19 @@ class KotlinMigrationProjectComponent(val project: Project) {
 
     @Synchronized
     fun onImportAboutToStart() {
+        if (!CodeMigrationToggleAction.isEnabled(project)) {
+            return
+        }
+
         old = MigrationState.build(project)
     }
 
     @Synchronized
     fun onImportFinished() {
+        if (!CodeMigrationToggleAction.isEnabled(project)) {
+            return
+        }
+
         new = MigrationState.build(project)
 
         val migrationInfo = prepareMigrationInfo(old, new) ?: return

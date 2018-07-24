@@ -116,6 +116,11 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction"
             text="Run Code Migrations">
+      <!-- TODO: Not assigned to any group because there should be a panel for filling migration options -->
+    </action>
+
+    <action id="KotlinCodeMigrationToggle" class="org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction"
+            text="Enable migrations detection (experimental)">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 

@@ -3,9 +3,10 @@ package org.jetbrains.kotlin.idea.configuration.ui
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
+import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
 import javax.swing.JComponent
 
-internal class MigrationNotificationDialog(project: Project?, migrationInfo: MigrationInfo) : DialogWrapper(project, false) {
+internal class MigrationNotificationDialog(val project: Project, migrationInfo: MigrationInfo) : DialogWrapper(project, false) {
     private val form = MigrationNotificationForm()
 
     init {
@@ -21,12 +22,20 @@ internal class MigrationNotificationDialog(project: Project?, migrationInfo: Mig
         form.apiVersionInfo.isVisible = migrationInfo.oldApiVersion != migrationInfo.newApiVersion
         form.apiVersionInfo.text = "API version: ${migrationInfo.oldApiVersion} to ${migrationInfo.newApiVersion}"
 
+        form.disableMigrationDetectionCheckBox.isSelected = !CodeMigrationToggleAction.isEnabled(project)
+
         init()
     }
 
     override fun createCenterPanel(): JComponent = form.mainPanel
 
     private fun saveSettings() {
+        CodeMigrationToggleAction.setEnabled(project, !form.disableMigrationDetectionCheckBox.isSelected)
+    }
+
+    override fun doCancelAction() {
+        saveSettings()
+        super.doCancelAction()
     }
 
     override fun doOKAction() {
