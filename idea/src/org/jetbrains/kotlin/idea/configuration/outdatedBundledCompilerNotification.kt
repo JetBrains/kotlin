@@ -75,14 +75,14 @@ fun notifyOutdatedBundledCompilerIfNecessary(project: Project) {
 private var alreadyNotified = ConcurrentHashMap<String, String>()
 
 fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersion: String = KotlinCompilerVersion.VERSION): String? {
-    val bundledCompilerMajorVersion = MajorVersion.create(bundledCompilerVersion) ?: return null
+    val bundledCompilerMajorVersion = createKotlinVersion(bundledCompilerVersion) ?: return null
 
     var maxCompilerInfo: ModuleCompilerInfo? = null
     val newerModuleCompilerInfos = ArrayList<ModuleCompilerInfo>()
     for (module in ModuleManager.getInstance(project).modules) {
         val externalCompilerVersion = module.externalCompilerVersion ?: continue
-        val externalCompilerMajorVersion = MajorVersion.create(externalCompilerVersion) ?: continue
-        val languageMajorVersion = MajorVersion.create(module.languageVersionSettings.languageVersion)
+        val externalCompilerMajorVersion = createKotlinVersion(externalCompilerVersion) ?: continue
+        val languageMajorVersion = createKotlinVersion(module.languageVersionSettings.languageVersion)
 
         if (externalCompilerMajorVersion > bundledCompilerMajorVersion && languageMajorVersion > bundledCompilerMajorVersion) {
             val moduleCompilerInfo = ModuleCompilerInfo(module, externalCompilerVersion, externalCompilerMajorVersion, languageMajorVersion)
@@ -171,43 +171,27 @@ private fun selectedModulesForPopup(
 private class ModuleCompilerInfo(
     val module: Module,
     val externalCompilerVersion: String,
-    val externalCompilerMajorVersion: MajorVersion,
-    val languageMajorVersion: MajorVersion
+    val externalCompilerMajorVersion: KotlinVersion,
+    val languageMajorVersion: KotlinVersion
 )
 
-private data class MajorVersion(val major: Int, val minor: Int) : Comparable<MajorVersion> {
-    override fun compareTo(other: MajorVersion): Int {
-        if (major > other.major) return 1
-        if (major < other.major) return -1
+private fun createKotlinVersion(languageVersion: LanguageVersion): KotlinVersion {
+    return KotlinVersion(languageVersion.major, languageVersion.minor, 0)
+}
 
-        if (minor > other.minor) return 1
-        if (minor < other.minor) return -1
-
-        return 0
+private fun createKotlinVersion(versionStr: String): KotlinVersion? {
+    if (versionStr == "@snapshot@") {
+        return KotlinVersion(Int.MAX_VALUE, Int.MAX_VALUE, 0)
     }
 
-    override fun toString(): String = "$major.$minor"
+    val regex = """(\d+)\.(\d+).*""".toRegex()
 
-    companion object {
-        fun create(languageVersion: LanguageVersion): MajorVersion {
-            return MajorVersion(languageVersion.major, languageVersion.minor)
-        }
+    val matchResult = regex.matchEntire(versionStr) ?: return null
 
-        fun create(versionStr: String): MajorVersion? {
-            if (versionStr == "@snapshot@") {
-                return MajorVersion(Int.MAX_VALUE, Int.MAX_VALUE)
-            }
+    val major: Int = matchResult.groupValues[1].toInt()
+    val minor: Int = matchResult.groupValues[2].toInt()
 
-            val regex = "(\\d+)\\.(\\d+).*".toRegex()
-
-            val matchResult = regex.matchEntire(versionStr) ?: return null
-
-            val major: Int = matchResult.groupValues[1].toInt()
-            val minor: Int = matchResult.groupValues[2].toInt()
-
-            return MajorVersion(major, minor)
-        }
-    }
+    return KotlinVersion(major, minor, 0)
 }
 
 private const val NUMBER_OF_MODULES_TO_SHOW = 2
