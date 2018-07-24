@@ -115,8 +115,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitJavaMethod(javaMethod: JKJavaMethod, data: Nothing?) = visitJavaMethod(javaMethod)
     fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression) = visitMethodCallExpression(javaMethodCallExpression, null)
     override fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression, data: Nothing?) = visitJavaMethodCallExpression(javaMethodCallExpression)
-    fun visitJavaFieldAccessExpression(javaFieldAccessExpression: JKJavaFieldAccessExpression) = visitFieldAccessExpression(javaFieldAccessExpression, null)
-    override fun visitJavaFieldAccessExpression(javaFieldAccessExpression: JKJavaFieldAccessExpression, data: Nothing?) = visitJavaFieldAccessExpression(javaFieldAccessExpression)
     fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) = visitExpression(javaNewExpression, null)
     override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression, data: Nothing?) = visitJavaNewExpression(javaNewExpression)
     fun visitJavaDefaultNewExpression(javaDefaultNewExpression: JKJavaDefaultNewExpression) = visitExpression(javaDefaultNewExpression, null)
@@ -159,8 +157,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitKtMethodCallExpression(ktMethodCallExpression: JKKtMethodCallExpression, data: Nothing?) = visitKtMethodCallExpression(ktMethodCallExpression)
     fun visitKtAlsoCallExpression(ktAlsoCallExpression: JKKtAlsoCallExpression) = visitKtMethodCallExpression(ktAlsoCallExpression, null)
     override fun visitKtAlsoCallExpression(ktAlsoCallExpression: JKKtAlsoCallExpression, data: Nothing?) = visitKtAlsoCallExpression(ktAlsoCallExpression)
-    fun visitKtFieldAccessExpression(ktFieldAccessExpression: JKKtFieldAccessExpression) = visitFieldAccessExpression(ktFieldAccessExpression, null)
-    override fun visitKtFieldAccessExpression(ktFieldAccessExpression: JKKtFieldAccessExpression, data: Nothing?) = visitKtFieldAccessExpression(ktFieldAccessExpression)
     fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression) = visitLiteralExpression(ktLiteralExpression, null)
     override fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression, data: Nothing?) = visitKtLiteralExpression(ktLiteralExpression)
 }

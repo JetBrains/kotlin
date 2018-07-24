@@ -101,10 +101,6 @@ class JKJavaMethodCallExpressionImpl(
     override val arguments: JKExpressionList by child(arguments)
 }
 
-class JKJavaFieldAccessExpressionImpl(override var identifier: JKFieldSymbol) : JKJavaFieldAccessExpression, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaFieldAccessExpression(this, data)
-}
-
 class JKJavaNewExpressionImpl(
     override val constructorSymbol: JKMethodSymbol,
     arguments: JKExpressionList

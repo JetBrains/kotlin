@@ -26,8 +26,6 @@ interface JKJavaMethod : JKMethod, JKBranchElement {
 
 interface JKJavaMethodCallExpression : JKMethodCallExpression
 
-interface JKJavaFieldAccessExpression : JKFieldAccessExpression
-
 interface JKJavaNewExpression : JKExpression {
     val constructorSymbol: JKMethodSymbol
     val arguments: JKExpressionList

@@ -72,10 +72,6 @@ class JKKtCallExpressionImpl(
     override var arguments: JKExpressionList by child(arguments)
 }
 
-class JKKtFieldAccessExpressionImpl(override val identifier: JKFieldSymbol) : JKKtFieldAccessExpression, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtFieldAccessExpression(this, data)
-}
-
 class JKKtLiteralExpressionImpl(
     override val literal: String,
     override val type: JKLiteralExpression.LiteralType
@@ -114,6 +110,9 @@ class JKKtOperatorImpl private constructor(val token: KtSingleValueToken) : JKOp
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.EQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.EQ]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PLUSEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PLUSEQ]!!
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.MINUSEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MINUSEQ]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ASTERISKEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MULTEQ]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.DIVEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.DIVEQ]!!
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PERCEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PERCEQ]!!
 
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.AND]!!] = JKKtWordOperatorImpl("and")
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OR]!!] = JKKtWordOperatorImpl("or")
@@ -124,6 +123,10 @@ class JKKtOperatorImpl private constructor(val token: KtSingleValueToken) : JKOp
 
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OREQ]!!] = JKKtWordOperatorImpl("or")
                 this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ANDEQ]!!] = JKKtWordOperatorImpl("and")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.XOREQ]!!] = JKKtWordOperatorImpl("xor")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGTGTEQ]!!] = JKKtWordOperatorImpl("ushr")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGTEQ]!!] = JKKtWordOperatorImpl("shr")
+                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LTLTEQ]!!] = JKKtWordOperatorImpl("shl")
             }
         }
     }
@@ -139,9 +142,14 @@ class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtMod
 }
 
 class JKKtAlsoCallExpressionImpl(
-    override val statement: JKStatement, override val identifier: JKMethodSymbol, override val parameterName: String = "it"
+    statement: JKStatement, override val identifier: JKMethodSymbol, override val parameterName: String = "it"
 ) : JKKtAlsoCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAlsoCallExpression(this, data)
+    override var statement
+        get() = arguments.expressions.first().cast<JKLambdaExpressionImpl>().statement
+        set(it) {
+            arguments.expressions.first().cast<JKLambdaExpressionImpl>().statement = it
+        }
     val parameter
         get() = arguments.expressions.first().cast<JKLambdaExpression>().parameters.first()
     override var arguments: JKExpressionList by child(

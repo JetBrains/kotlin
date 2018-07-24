@@ -154,7 +154,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             val symbol = symbolProvider.provideSymbol(this)
             val access = when (symbol) {
                 is JKClassSymbol -> JKClassAccessExpressionImpl(symbol)
-                is JKFieldSymbol -> JKJavaFieldAccessExpressionImpl(symbol)
+                is JKFieldSymbol -> JKFieldAccessExpressionImpl(symbol)
                 else -> TODO()
             }
             return qualifierExpression?.let { JKQualifiedExpressionImpl(it.toJK(), JKJavaQualifierImpl.DOT, access) } ?: access

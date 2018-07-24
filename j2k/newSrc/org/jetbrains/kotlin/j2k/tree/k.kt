@@ -52,10 +52,8 @@ interface JKKtModifier : JKModifier {
 interface JKKtMethodCallExpression : JKMethodCallExpression
 
 interface JKKtAlsoCallExpression : JKKtMethodCallExpression {
-    val statement: JKStatement
+    var statement: JKStatement
     val parameterName: String
 }
-
-interface JKKtFieldAccessExpression : JKFieldAccessExpression
 
 interface JKKtLiteralExpression : JKLiteralExpression

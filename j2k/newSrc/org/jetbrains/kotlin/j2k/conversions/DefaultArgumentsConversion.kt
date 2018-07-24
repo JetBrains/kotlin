@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKKtFieldAccessExpressionImpl
+import org.jetbrains.kotlin.j2k.tree.impl.JKFieldAccessExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -58,7 +58,7 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
                         if (target is JKParameter) {
                             val newSymbol =
                                 context.symbolProvider.provideUniverseSymbol(calledMethod.parameters[method.parameters.indexOf(target)])
-                            return JKKtFieldAccessExpressionImpl(newSymbol)
+                            return JKFieldAccessExpressionImpl(newSymbol)
                         }
                     }
 

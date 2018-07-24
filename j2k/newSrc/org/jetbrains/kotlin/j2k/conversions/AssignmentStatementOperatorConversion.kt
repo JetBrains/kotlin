@@ -22,7 +22,7 @@ class AssignmentStatementOperatorConversion : RecursiveApplicableConversionBase(
             element.operator = JKKtOperatorImpl.tokenToOperator[KtTokens.EQ] ?: return recurse(element)
             val expr = element.expression
             element.expression = JKStubExpressionImpl()
-            element.expression = JKBinaryExpressionImpl(expr, element.field.copyTree(), newOperator)
+            element.expression = JKBinaryExpressionImpl(element.field.copyTree(), expr, newOperator)
         } else {
             element.operator = newOperator
         }

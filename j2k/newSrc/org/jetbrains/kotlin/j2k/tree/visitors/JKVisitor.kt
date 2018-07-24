@@ -59,7 +59,6 @@ interface JKVisitor<out R, in D> {
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitField(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitMethod(javaMethod, data)
     fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression, data: D): R = visitMethodCallExpression(javaMethodCallExpression, data)
-    fun visitJavaFieldAccessExpression(javaFieldAccessExpression: JKJavaFieldAccessExpression, data: D): R = visitFieldAccessExpression(javaFieldAccessExpression, data)
     fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression, data: D): R = visitExpression(javaNewExpression, data)
     fun visitJavaDefaultNewExpression(javaDefaultNewExpression: JKJavaDefaultNewExpression, data: D): R = visitExpression(javaDefaultNewExpression, data)
     fun visitJavaModifier(javaModifier: JKJavaModifier, data: D): R = visitModifier(javaModifier, data)
@@ -81,6 +80,5 @@ interface JKVisitor<out R, in D> {
     fun visitKtModifier(ktModifier: JKKtModifier, data: D): R = visitModifier(ktModifier, data)
     fun visitKtMethodCallExpression(ktMethodCallExpression: JKKtMethodCallExpression, data: D): R = visitMethodCallExpression(ktMethodCallExpression, data)
     fun visitKtAlsoCallExpression(ktAlsoCallExpression: JKKtAlsoCallExpression, data: D): R = visitKtMethodCallExpression(ktAlsoCallExpression, data)
-    fun visitKtFieldAccessExpression(ktFieldAccessExpression: JKKtFieldAccessExpression, data: D): R = visitFieldAccessExpression(ktFieldAccessExpression, data)
     fun visitKtLiteralExpression(ktLiteralExpression: JKKtLiteralExpression, data: D): R = visitLiteralExpression(ktLiteralExpression, data)
 }

@@ -29,7 +29,7 @@ class AssignmentStatementValCreationConversion(val context: ConversionContext) :
                                 JKNameIdentifierImpl("arr"),
                                 ex1
                             ).also {
-                                assignableExpr.expression = JKKtFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
+                                assignableExpr.expression = JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
                             }, JKLocalVariableImpl(
                                 JKModifierListImpl(JKModalityModifierImpl(JKModalityModifier.Modality.FINAL)),
                                 JKTypeElementImpl(JKJavaVoidType/*TODO*/),
@@ -37,7 +37,7 @@ class AssignmentStatementValCreationConversion(val context: ConversionContext) :
                                 ex2
                             ).also {
                                 assignableExpr.indexExpression =
-                                        JKKtFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
+                                        JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
                             }
                         )
                     )
@@ -55,7 +55,7 @@ class AssignmentStatementValCreationConversion(val context: ConversionContext) :
                                 JKNameIdentifierImpl("arg"),
                                 ex
                             ).also {
-                                assignableExpr.receiver = JKKtFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
+                                assignableExpr.receiver = JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it))
                             }
                         )
                     )

@@ -33,6 +33,8 @@ object ConversionsRunner {
             +AssignmentAsExpressionToAlsoConversion(context)
             +AssignmentStatementValCreationConversion(context)
             +AssignmentStatementOperatorConversion()
+            +AssignmentStatementSimplifyValConversion()
+            +AssignmentStatementSimplifyAlsoConversion()
             +ConstructorConversion(context)
             +PrimaryConstructorDetectConversion(context)
             +InsertDefaultPrimaryConstructorConversion(context)

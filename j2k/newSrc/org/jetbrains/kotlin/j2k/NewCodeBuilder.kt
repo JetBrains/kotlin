@@ -326,8 +326,7 @@ class NewCodeBuilder {
 
         private fun renderType(type: JKType) {
             when (type) {
-                is JKClassType ->
-                    (type.classReference as JKClassSymbol).fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
+                is JKClassType -> type.classReference.fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
                 is JKUnresolvedClassType -> printer.printWithNoIndent(type.name)
                 is JKContextType -> return
                 else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
