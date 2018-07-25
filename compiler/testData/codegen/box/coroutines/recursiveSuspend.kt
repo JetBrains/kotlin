@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -25,7 +26,7 @@ fun box(): String {
 
 suspend fun factorial(a: Int): Int = if (a > 0) suspendHere(factorial(a - 1) * a) else suspendHere(1)
 
-suspend fun suspendHere(value: Int): Int = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(value: Int): Int = suspendCoroutineUninterceptedOrReturn { x ->
     postponed = {
         log += "$value;"
         x.resume(value)

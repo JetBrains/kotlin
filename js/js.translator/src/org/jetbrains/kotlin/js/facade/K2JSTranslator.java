@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.facade;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -42,12 +43,14 @@ import org.jetbrains.kotlin.js.translate.general.AstGenerationResult;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.ExpandIsCallsKt;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer;
+import org.jetbrains.kotlin.utils.JsMetadataVersion;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -176,8 +179,12 @@ public final class K2JSTranslator {
 
                 List<DeclarationDescriptor> scope = translationResult.getFileMemberScopes().get(file);
                 assert scope != null : "Could not find descriptors for file: " + file;
+                BinaryVersion metadataVersion = config.getConfiguration().get(CommonConfigurationKeys.METADATA_VERSION);
                 ProtoBuf.PackageFragment packagePart = serializationUtil.serializeDescriptors(
-                        bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName());
+                        bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName(),
+                        CommonConfigurationKeysKt.getLanguageVersionSettings(config.getConfiguration()),
+                        metadataVersion != null ? metadataVersion : JsMetadataVersion.INSTANCE
+                );
 
                 File ioFile = VfsUtilCore.virtualToIoFile(file.getVirtualFile());
                 incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst);

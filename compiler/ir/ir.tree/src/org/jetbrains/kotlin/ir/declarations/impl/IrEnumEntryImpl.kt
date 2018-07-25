@@ -36,15 +36,29 @@ class IrEnumEntryImpl(
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrEnumEntry {
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrEnumEntrySymbol) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrEnumEntrySymbol
+    ) :
             this(startOffset, endOffset, origin, symbol, symbol.descriptor.name)
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ClassDescriptor
+    ) :
             this(startOffset, endOffset, origin, IrEnumEntrySymbolImpl(descriptor))
 
     constructor(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
-        correspondingClass: IrClass?, initializerExpression: IrExpression?
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ClassDescriptor,
+        correspondingClass: IrClass?,
+        initializerExpression: IrExpression?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.correspondingClass = correspondingClass
         this.initializerExpression = initializerExpression

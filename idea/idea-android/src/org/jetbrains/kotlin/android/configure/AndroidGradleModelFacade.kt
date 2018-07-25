@@ -32,6 +32,7 @@
 
 package org.jetbrains.kotlin.android.configure
 
+import com.android.builder.model.Library
 import com.android.tools.idea.gradle.project.sync.idea.data.service.AndroidProjectKeys
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ModuleData
@@ -41,20 +42,19 @@ import org.gradle.tooling.model.UnsupportedMethodException
 import org.gradle.tooling.model.idea.IdeaProject
 import org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade
 import org.jetbrains.kotlin.idea.inspections.gradle.findModulesByNames
-import com.android.builder.model.Library
 
 class AndroidGradleModelFacade : KotlinGradleModelFacade {
-    override fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String? {
+    override fun getResolvedVersionByModuleData(moduleData: DataNode<*>, groupId: String, libraryIds: List<String>): String? {
         ExternalSystemApiUtil
-                .findAllRecursively(moduleData, AndroidProjectKeys.JAVA_MODULE_MODEL).asSequence()
-                .flatMap { it.data.jarLibraryDependencies.asSequence() }
-                .forEach {
-                    val libraryName = it.name
-                    for (libraryId in libraryIds) {
-                        val prefix = "$libraryId-"
-                        if (libraryName.startsWith(prefix)) return libraryName.substringAfter(prefix)
-                    }
+            .findAllRecursively(moduleData, AndroidProjectKeys.JAVA_MODULE_MODEL).asSequence()
+            .flatMap { it.data.jarLibraryDependencies.asSequence() }
+            .forEach {
+                val libraryName = it.name
+                for (libraryId in libraryIds) {
+                    val prefix = "$libraryId-"
+                    if (libraryName.startsWith(prefix)) return libraryName.substringAfter(prefix)
                 }
+            }
         return null
     }
 

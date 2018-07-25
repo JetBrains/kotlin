@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
 import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImpl
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -82,14 +83,8 @@ open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver
             Kotlin2JsPlugin(Kotlin2JsTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
 }
 
-fun Project.getKotlinPluginVersion(): String? {
-    val kotlinPluginWrapper = plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
-        project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
-        return null
-    }
-
-    return kotlinPluginWrapper.kotlinPluginVersion
-}
+fun Project.getKotlinPluginVersion(): String? =
+    plugins.asSequence().mapNotNull { (it as? KotlinBasePluginWrapper)?.kotlinPluginVersion }.firstOrNull()
 
 private fun Any.loadKotlinVersionFromResource(log: Logger): String {
     log.kotlinDebug("Loading version information")

@@ -1,4 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject +ProperIeee754Comparisons
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR
 
 val az: Any = -0.0

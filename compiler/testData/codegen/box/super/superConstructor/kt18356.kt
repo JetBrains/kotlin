@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 open class Base(val addr: Long, val name: String)
 
 fun box(): String {

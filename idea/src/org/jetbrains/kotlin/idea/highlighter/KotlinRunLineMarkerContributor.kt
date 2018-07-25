@@ -16,14 +16,19 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.KtNamedFunction
-
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
     override fun getInfo(element: PsiElement): Info? {
@@ -36,6 +41,22 @@ class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
         }
 
         if (detector.isMain(function)) {
+            val platform = TargetPlatformDetector.getPlatform(function.containingKtFile)
+            val isAvailable = when (platform) {
+                is JvmPlatform -> true
+                is JsPlatform, is TargetPlatform.Common -> {
+                    RunConfigurationProducer
+                        .getProducers(function.project)
+                        .asSequence()
+                        .filterIsInstance<KotlinJSRunConfigurationDataProvider<*>>()
+                        .filter { !it.isForTests }
+                        .mapNotNull { it.getConfigurationData(function) }
+                        .firstOrNull() != null
+                }
+                else -> false
+            }
+            if (!isAvailable) return null
+
             return RunLineMarkerContributor.Info(AllIcons.RunConfigurations.TestState.Run, null, ExecutorAction.getActions(0))
         }
 

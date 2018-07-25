@@ -126,6 +126,8 @@ class AnnotationLoaderForClassFileStubBuilder(
 
     override fun loadConstant(desc: String, initializer: Any) = null
 
+    override fun transformToUnsignedConstant(constant: Unit) = null
+
     override fun loadAnnotation(
             annotationClassId: ClassId, source: SourceElement, result: MutableList<ClassId>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {

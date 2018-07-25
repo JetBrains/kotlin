@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.kapt3.test
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
@@ -140,7 +142,8 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         try {
             loadMultiFiles(files)
 
-            GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, Kapt3BuilderFactory()).factory
+            val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
+            GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory).factory
 
             val actualRaw = kapt3Extension.savedStubs ?: error("Stubs were not saved")
             val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))

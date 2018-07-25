@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
@@ -45,20 +47,20 @@ class LateinitLowering(
 
             private fun transformGetter(backingField: IrField, getter: IrFunction) {
                 val type = backingField.type
-                assert(!KotlinBuiltIns.isPrimitiveType(type)) { "'lateinit' modifier is not allowed on primitive types" }
+                assert(!type.isPrimitiveType()) { "'lateinit' modifier is not allowed on primitive types" }
                 val startOffset = getter.startOffset
                 val endOffset = getter.endOffset
                 val irBuilder = context.createIrBuilder(getter.symbol, startOffset, endOffset)
                 irBuilder.run {
                     val block = irBlock(type)
                     val resultVar = scope.createTemporaryVariable(
-                        irGetField(getter.dispatchReceiverParameter?.let { irGet(it.symbol) }, backingField.symbol)
+                        irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField)
                     )
                     block.statements.add(resultVar)
                     val throwIfNull = irIfThenElse(
-                        context.builtIns.nothingType,
-                        irNotEquals(irGet(resultVar.symbol), irNull()),
-                        irReturn(irGet(resultVar.symbol)),
+                        context.irBuiltIns.nothingType,
+                        irNotEquals(irGet(resultVar), irNull()),
+                        irReturn(irGet(resultVar)),
                         throwUninitializedPropertyAccessException(backingField)
                     )
                     block.statements.add(throwIfNull)
@@ -76,15 +78,15 @@ class LateinitLowering(
                     IrConstImpl.string(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
-                        context.builtIns.stringType,
+                        context.irBuiltIns.stringType,
                         backingField.name.asString()
                     )
                 )
             }
         }
 
-    private val throwErrorFunction = context.ir.symbols.ThrowUninitializedPropertyAccessException
+    private val throwErrorFunction = context.ir.symbols.ThrowUninitializedPropertyAccessException.owner
 
-    private fun IrBuilderWithScope.irBlock(type: KotlinType): IrBlock = IrBlockImpl(startOffset, endOffset, type)
+    private fun IrBuilderWithScope.irBlock(type: IrType): IrBlock = IrBlockImpl(startOffset, endOffset, type)
 
 }

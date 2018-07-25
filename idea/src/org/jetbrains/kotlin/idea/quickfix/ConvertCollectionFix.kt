@@ -42,19 +42,22 @@ class ConvertCollectionFix(element: KtExpression, val type: CollectionType) : Ko
     }
 
     enum class CollectionType(
-            val functionCall: String,
-            val fqName: FqName,
-            private val nameOverride: String? = null
+        val functionCall: String,
+        val fqName: FqName,
+        val literalFunctionName: String? = null,
+        val emptyCollectionFunction: String? = null,
+        private val nameOverride: String? = null
     ) {
-        List("toList()", FqName("kotlin.collections.List")),
-        Collection("toList()", FqName("kotlin.collections.Collection")),
-        Iterable("toList()", FqName("kotlin.collections.Iterable")),
+        List("toList()", FqName("kotlin.collections.List"), "listOf", "emptyList"),
+        Collection("toList()", FqName("kotlin.collections.Collection"), "listOf", "emptyList"),
+        Iterable("toList()", FqName("kotlin.collections.Iterable"), "listOf", "emptyList"),
         MutableList("toMutableList()", FqName("kotlin.collections.MutableList")),
-        Array("toTypedArray()", FqName("kotlin.Array")),
-        Sequence("asSequence()", FqName("kotlin.sequences.Sequence")),
+        Array("toTypedArray()", FqName("kotlin.Array"), "arrayOf", "emptyArray"),
+        Sequence("asSequence()", FqName("kotlin.sequences.Sequence"), "sequenceOf", "emptySequence"),
+        Set("toSet()", FqName("kotlin.collections.Set"), "setOf", "emptySet"),
 
         //specialized types must be last because iteration order is relevant for getCollectionType
-        ArrayViaList("toList().toTypedArray()", FqName("kotlin.Array"), "Array"),
+        ArrayViaList("toList().toTypedArray()", FqName("kotlin.Array"), nameOverride = "Array"),
         ;
 
         val displayName get() = nameOverride ?: name
@@ -80,8 +83,8 @@ class ConvertCollectionFix(element: KtExpression, val type: CollectionType) : Ko
             return expectedCollectionType.specializeFor(expressionCollectionType)
         }
 
-        private fun KotlinType.getCollectionType(): CollectionType? {
-            if (isMarkedNullable) return null
+        fun KotlinType.getCollectionType(acceptNullableTypes: Boolean = false): CollectionType? {
+            if (isMarkedNullable && !acceptNullableTypes) return null
             return TYPES.firstOrNull { KotlinBuiltIns.isConstructedFromGivenClass(this, it.fqName) }
         }
     }

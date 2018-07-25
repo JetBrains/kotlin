@@ -47,6 +47,29 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/builtins")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Builtins extends AbstractBoxJsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInBuiltins() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/builtins"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("hashCode.kt")
+        public void testHashCode() throws Exception {
+            runTest("js/js.translator/testData/box/builtins/hashCode.kt");
+        }
+
+        @TestMetadata("toString.kt")
+        public void testToString() throws Exception {
+            runTest("js/js.translator/testData/box/builtins/toString.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/callableReference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3593,6 +3616,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inheritance/overrideAnyMethods.kt");
         }
 
+        @TestMetadata("prototypeOrder.kt")
+        public void testPrototypeOrder() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/prototypeOrder.kt");
+        }
+
         @TestMetadata("valOverride.kt")
         public void testValOverride() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/valOverride.kt");
@@ -3905,6 +3933,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("innerOuterThis.kt")
         public void testInnerOuterThis() throws Exception {
             runTest("js/js.translator/testData/box/inline/innerOuterThis.kt");
+        }
+
+        @TestMetadata("invokeOnField.kt")
+        public void testInvokeOnField() throws Exception {
+            runTest("js/js.translator/testData/box/inline/invokeOnField.kt");
         }
 
         @TestMetadata("iteratorOnInlineFunctionResult.kt")

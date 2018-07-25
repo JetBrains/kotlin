@@ -25,6 +25,10 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+        KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
@@ -86,14 +90,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
 
     @TestMetadata("coroutinesBinary.kt")
     public void testCoroutinesBinary_1_2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");
-        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        runTestWithPackageReplacement("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt", "kotlin.coroutines.experimental");
     }
 
     @TestMetadata("coroutinesBinary.kt")
     public void testCoroutinesBinary_1_3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");
-        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        runTestWithPackageReplacement("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt", "kotlin.coroutines");
     }
 
     @TestMetadata("defaultConstructor.kt")
@@ -141,9 +143,19 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmField.kt");
     }
 
+    @TestMetadata("jvmFieldInAnnotationCompanion.kt")
+    public void testJvmFieldInAnnotationCompanion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInAnnotationCompanion.kt");
+    }
+
     @TestMetadata("jvmFieldInConstructor.kt")
     public void testJvmFieldInConstructor() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInConstructor.kt");
+    }
+
+    @TestMetadata("jvmFieldInInterfaceCompanion.kt")
+    public void testJvmFieldInInterfaceCompanion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInInterfaceCompanion.kt");
     }
 
     @TestMetadata("jvmNames.kt")
@@ -231,6 +243,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/recursiveGeneric.kt");
     }
 
+    @TestMetadata("reflectTopLevelFunctionOtherFile.kt")
+    public void testReflectTopLevelFunctionOtherFile() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/reflectTopLevelFunctionOtherFile.kt");
+    }
+
     @TestMetadata("sealedClass.kt")
     public void testSealedClass() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/sealedClass.kt");
@@ -264,5 +281,43 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("typeAliasesKt13181.kt")
     public void testTypeAliasesKt13181() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/typeAliasesKt13181.kt");
+    }
+
+    @TestMetadata("unsignedTypesInAnnotations.kt")
+    public void testUnsignedTypesInAnnotations() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
+    }
+
+    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutines")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Coroutines extends AbstractCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCoroutines() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("builder.kt")
+        public void testBuilder() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/builder.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/lambda.kt");
+        }
+
+        @TestMetadata("receiver.kt")
+        public void testReceiver() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/receiver.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/simple.kt");
+        }
     }
 }

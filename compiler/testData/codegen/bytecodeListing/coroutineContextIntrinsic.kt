@@ -3,7 +3,7 @@
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
-suspend fun suspendHere(ctx: CoroutineContext) = suspendCoroutineOrReturn<String> { x ->
+suspend fun suspendHere(ctx: CoroutineContext) = suspendCoroutineUninterceptedOrReturn<String> { x ->
     if (x.context == ctx) x.resume("OK") else x.resume("FAIL")
 }
 
@@ -12,7 +12,7 @@ suspend fun mustBeTailCall(): String {
 }
 
 suspend fun retrieveCoroutineContext(): CoroutineContext =
-    suspendCoroutineOrReturn { cont -> cont.context }
+    suspendCoroutineUninterceptedOrReturn { cont -> cont.context }
 
 suspend fun notTailCall(): String {
     return suspendHere(retrieveCoroutineContext())

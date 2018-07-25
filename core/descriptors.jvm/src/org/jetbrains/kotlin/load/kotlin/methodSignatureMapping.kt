@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.isFromJavaOrBuiltins
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -18,26 +18,27 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.KotlinType
 
-fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true)
-        = StringBuilder().apply {
-            append(if (this@computeJvmDescriptor is ConstructorDescriptor) "<init>" else name.asString())
-            append("(")
+fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, withName: Boolean = true): String = buildString {
+    if (withName) {
+        append(if (this@computeJvmDescriptor is ConstructorDescriptor) "<init>" else name.asString())
+    }
 
-            valueParameters.forEach {
-                appendErasedType(it.type)
-            }
+    append("(")
 
-            append(")")
+    for (parameter in valueParameters) {
+        appendErasedType(parameter.type)
+    }
 
-            if (withReturnType) {
-                if (hasVoidReturnType(this@computeJvmDescriptor)) {
-                    append("V")
-                }
-                else {
-                    appendErasedType(returnType!!)
-                }
-            }
-        }.toString()
+    append(")")
+
+    if (withReturnType) {
+        if (hasVoidReturnType(this@computeJvmDescriptor)) {
+            append("V")
+        } else {
+            appendErasedType(returnType!!)
+        }
+    }
+}
 
 // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation
 // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt')

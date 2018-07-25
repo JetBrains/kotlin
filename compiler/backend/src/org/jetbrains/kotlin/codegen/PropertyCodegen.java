@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.context.MultifileClassFacadeContext;
 import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
@@ -481,6 +482,9 @@ public class PropertyCodegen {
     }
 
     private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {
+        if (!descriptor.isConst() && state.getLanguageVersionSettings().supportsFeature(LanguageFeature.NoConstantValueAttributeForNonConstVals))
+            return false;
+
         //final field of primitive or String type
         if (!descriptor.isVar()) {
             Type type = typeMapper.mapType(descriptor);
@@ -603,7 +607,7 @@ public class PropertyCodegen {
         StackValue.Field array = StackValue.field(
                 Type.getType("[" + K_PROPERTY_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true, StackValue.none()
         );
-        return StackValue.arrayElement(K_PROPERTY_TYPE, null, array, StackValue.constant(index, Type.INT_TYPE));
+        return StackValue.arrayElement(K_PROPERTY_TYPE, null, array, StackValue.constant(index));
     }
 
     private static class DelegatedPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {

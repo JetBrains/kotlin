@@ -30,15 +30,20 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
+import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -237,6 +242,45 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         )
 
         module("usage").addLibrary(lib, kind = JSLibraryKind)
+        checkHighlightingInProject()
+    }
+
+    fun testCoroutineMixedReleaseStatus() {
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update { skipMetadataVersionCheck = true }
+        KotlinCompilerSettings.getInstance(project).update { additionalArguments = "-Xskip-metadata-version-check" }
+
+        val libOld = MockLibraryUtil.compileJvmLibraryToJar(
+            testDataPath + "${getTestName(true)}/libOld", "libOld",
+            extraOptions = listOf("-language-version", "1.2", "-api-version", "1.2")
+        )
+
+        val libNew = MockLibraryUtil.compileJvmLibraryToJar(
+            testDataPath + "${getTestName(true)}/libNew", "libNew",
+            extraOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
+        )
+
+        val moduleNew = module("moduleNew").setupKotlinFacet {
+            settings.coroutineSupport = LanguageFeature.State.ENABLED
+            settings.languageLevel = LanguageVersion.KOTLIN_1_3
+            settings.apiLevel = LanguageVersion.KOTLIN_1_3
+        }
+
+        val moduleOld = module("moduleOld").setupKotlinFacet {
+            settings.coroutineSupport = LanguageFeature.State.ENABLED
+            settings.languageLevel = LanguageVersion.KOTLIN_1_2
+            settings.apiLevel = LanguageVersion.KOTLIN_1_2
+        }
+
+        moduleNew.addLibrary(libOld)
+        moduleNew.addLibrary(libNew)
+        moduleNew.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+
+        moduleOld.addLibrary(libNew)
+        moduleOld.addLibrary(libOld)
+        moduleOld.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+
+        moduleNew.addDependency(moduleOld)
+
         checkHighlightingInProject()
     }
 

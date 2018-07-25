@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // KT-12044 Assertion "Rewrite at slice LEXICAL_SCOPE" for 'if' with property references
 
 fun box(): String {

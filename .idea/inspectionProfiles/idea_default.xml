@@ -116,6 +116,7 @@
           <Problem reference="com.intellij.util.xmlb.XmlSerializer#serializeInto(java.lang.Object, org.jdom.Element)" reason="Absent in 172." />
           <Problem reference="org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler#addSpace" reason="Method was replaced with outher methods in 182. Use addSpaceEx instead." />
           <Problem reference="com.intellij.psi.util.PsiUtil#canBeOverridden" reason="Absent in 172. Use org.jetbrains.kotlin.idea.core.util.compat.psi.canBeOverridden() instead." />
+          <Problem reference="com.intellij.psi.util.PsiTreeUtilKt#parentOfType(com.intellij.psi.PsiElement)" reason="Absent in 172. Use org.jetbrains.kotlin.psi.psiUtil.getParentOfType instead." />
         </list>
       </option>
     </inspection_tool>
@@ -312,7 +313,9 @@
       <option name="fromVersion" value="2.4" />
       <option name="toVersion" value="3.1" />
     </inspection_tool>
-    <inspection_tool class="Reformat" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="Reformat" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="processChangedFilesOnly" value="true" />
+    </inspection_tool>
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignment" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreLazyOperators" value="true" />
       <option name="ignoreObscureOperators" value="true" />

@@ -168,18 +168,6 @@ internal object IDELightClassContexts {
         return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
     }
 
-    fun lightContextForScript(script: KtScript): LightClassConstructionContext {
-        val resolveSession = setupAdHocResolve(
-            script.project,
-            script.getResolutionFacade().moduleDescriptor,
-            listOf(script.containingKtFile)
-        )
-
-        ForceResolveUtil.forceResolveAllContents(resolveSession.resolveToDescriptor(script))
-
-        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
-    }
-
     private fun isDummyResolveApplicable(classOrObject: KtClassOrObject): Boolean {
         if (classOrObject.hasLightClassMatchingErrors) return false
 
@@ -281,7 +269,8 @@ internal object IDELightClassContexts {
     private fun setupAdHocResolve(project: Project, realWorldModule: ModuleDescriptor, files: List<KtFile>): ResolveSession {
         val trace = BindingTraceContext()
         val sm = LockBasedStorageManager.NO_LOCKS
-        val moduleDescriptor = ModuleDescriptorImpl(realWorldModule.name, sm, realWorldModule.builtIns)
+        val moduleDescriptor =
+            ModuleDescriptorImpl(realWorldModule.name, sm, realWorldModule.builtIns, stableName = realWorldModule.stableName)
 
         moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.builtIns.builtInsModule)
 

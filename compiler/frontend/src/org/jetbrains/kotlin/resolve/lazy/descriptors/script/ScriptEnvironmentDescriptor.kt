@@ -43,7 +43,7 @@ class ScriptEnvironmentDescriptor(script: LazyScriptDescriptor) :
     override fun getUnsubstitutedMemberScope(): MemberScope = memberScope()
 
     val properties: () -> List<ScriptEnvironmentPropertyDescriptor> = script.resolveSession.storageManager.createLazyValue {
-        script.scriptDefinition.environmentVariables.mapNotNull { (name, type) ->
+        script.scriptDefinition().environmentVariables.mapNotNull { (name, type) ->
             script.findTypeDescriptor(type, Errors.MISSING_SCRIPT_ENVIRONMENT_PROPERTY_CLASS)?.let {
                 name to it
             }

@@ -129,6 +129,8 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
 
             xml("orderEntry", "type" to "inheritedJdk")
 
+            xml("orderEntry", "type" to "sourceFolder", "forTests" to "false")
+
             for (orderRoot in module.orderRoots) {
                 val dependency = orderRoot.dependency
 

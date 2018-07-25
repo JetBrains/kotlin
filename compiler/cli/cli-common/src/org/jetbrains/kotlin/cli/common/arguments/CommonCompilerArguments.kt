@@ -144,7 +144,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xuse-experimental",
         valueDescription = "<fq.name>",
-        description = "Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name"
+        description = "Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name"
     )
     var useExperimental: Array<String>? by FreezableVar(null)
 
@@ -173,6 +173,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 "non-progressive mode may cause compilation errors in progressive mode."
     )
     var progressiveMode by FreezableVar(false)
+
+    @Argument(
+        value = "-Xmetadata-version",
+        description = "Change metadata version of the generated binary files"
+    )
+    var metadataVersion: String? by FreezableVar(null)
 
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -239,11 +245,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
-        val languageSettingsParser = LanguageSettingsParser()
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
 
-        for (argument in internalArguments) {
-            val (feature, state) = languageSettingsParser.parseInternalArgument(argument, collector) ?: continue
+        for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature

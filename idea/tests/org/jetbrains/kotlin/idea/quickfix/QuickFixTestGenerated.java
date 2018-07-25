@@ -1537,6 +1537,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartCast.kt");
         }
 
+        @TestMetadata("addFunctionParameterWithSmartcastedArgument.kt")
+        public void testAddFunctionParameterWithSmartcastedArgument() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addFunctionParameterWithSmartcastedArgument.kt");
+        }
+
         @TestMetadata("addNothingReturnType.kt")
         public void testAddNothingReturnType() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addNothingReturnType.kt");
@@ -7694,6 +7699,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/modifiers/removeInnerForClassInTrait.kt");
         }
 
+        @TestMetadata("removeModifierFromForbiddenOperatorMod.kt")
+        public void testRemoveModifierFromForbiddenOperatorMod() throws Exception {
+            runTest("idea/testData/quickfix/modifiers/removeModifierFromForbiddenOperatorMod.kt");
+        }
+
         @TestMetadata("removeModifierFromOperatorMod.kt")
         public void testRemoveModifierFromOperatorMod() throws Exception {
             runTest("idea/testData/quickfix/modifiers/removeModifierFromOperatorMod.kt");
@@ -8133,6 +8143,44 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testUnsafeSet() throws Exception {
                 runTest("idea/testData/quickfix/nullables/unsafeInfixCall/unsafeSet.kt");
             }
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/obsoleteCoroutines")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ObsoleteCoroutines extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInObsoleteCoroutines() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/obsoleteCoroutines"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("buildSequence.kt")
+        public void testBuildSequence() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/buildSequence.kt");
+        }
+
+        @TestMetadata("resume.kt")
+        public void testResume() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/resume.kt");
+        }
+
+        @TestMetadata("resumeWithException.kt")
+        public void testResumeWithException() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/resumeWithException.kt");
+        }
+
+        @TestMetadata("starImport.kt")
+        public void testStarImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/starImport.kt");
+        }
+
+        @TestMetadata("unresolvedKotlinxImport.kt")
+        public void testUnresolvedKotlinxImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/unresolvedKotlinxImport.kt");
         }
     }
 
@@ -9282,6 +9330,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameToRem"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("forbiddenModAsMember.kt")
+        public void testForbiddenModAsMember() throws Exception {
+            runTest("idea/testData/quickfix/renameToRem/forbiddenModAsMember.kt");
+        }
+
         @TestMetadata("modAsExtension.kt")
         public void testModAsExtension() throws Exception {
             runTest("idea/testData/quickfix/renameToRem/modAsExtension.kt");
@@ -9530,6 +9583,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("literalWithValues.kt")
         public void testLiteralWithValues() throws Exception {
             runTest("idea/testData/quickfix/replaceWithArrayCallInAnnotation/literalWithValues.kt");
+        }
+
+        @TestMetadata("replaceForbiddenAssignmentWithArrayLiteral.kt")
+        public void testReplaceForbiddenAssignmentWithArrayLiteral() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithArrayCallInAnnotation/replaceForbiddenAssignmentWithArrayLiteral.kt");
         }
 
         @TestMetadata("replaceSingleElementInNamedForm.kt")
@@ -10281,6 +10339,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/suppress/external")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class External extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExternal() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/external"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("suppressActive.kt")
+            public void testSuppressActive() throws Exception {
+                runTest("idea/testData/quickfix/suppress/external/suppressActive.kt");
+            }
+
+            @TestMetadata("suppressAvailable.kt")
+            public void testSuppressAvailable() throws Exception {
+                runTest("idea/testData/quickfix/suppress/external/suppressAvailable.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/suppress/forStatement")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -10591,6 +10672,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("replaceForVarargOfAny.kt")
         public void testReplaceForVarargOfAny() throws Exception {
             runTest("idea/testData/quickfix/surroundWithArrayOfForNamedArgumentsToVarargs/replaceForVarargOfAny.kt");
+        }
+
+        @TestMetadata("replaceForbiddenAssigningIntoArrayCall.kt")
+        public void testReplaceForbiddenAssigningIntoArrayCall() throws Exception {
+            runTest("idea/testData/quickfix/surroundWithArrayOfForNamedArgumentsToVarargs/replaceForbiddenAssigningIntoArrayCall.kt");
         }
 
         @TestMetadata("replaceToArrayOfPrimitiveTypes.kt")
@@ -11695,6 +11781,84 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("typeMismatchInReturnStatement.kt")
             public void testTypeMismatchInReturnStatement() throws Exception {
                 runTest("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression/typeMismatchInReturnStatement.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WrapWithCollectionLiteral extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWrapWithCollectionLiteral() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("noMutableList.kt")
+            public void testNoMutableList() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/noMutableList.kt");
+            }
+
+            @TestMetadata("nullToListOfNullable.kt")
+            public void testNullToListOfNullable() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/nullToListOfNullable.kt");
+            }
+
+            @TestMetadata("returnEmptyArray.kt")
+            public void testReturnEmptyArray() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptyArray.kt");
+            }
+
+            @TestMetadata("returnEmptyCollection.kt")
+            public void testReturnEmptyCollection() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptyCollection.kt");
+            }
+
+            @TestMetadata("returnEmptyList.kt")
+            public void testReturnEmptyList() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptyList.kt");
+            }
+
+            @TestMetadata("returnEmptySequence.kt")
+            public void testReturnEmptySequence() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptySequence.kt");
+            }
+
+            @TestMetadata("returnEmptySet.kt")
+            public void testReturnEmptySet() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/returnEmptySet.kt");
+            }
+
+            @TestMetadata("toArray.kt")
+            public void testToArray() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toArray.kt");
+            }
+
+            @TestMetadata("toCollection.kt")
+            public void testToCollection() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toCollection.kt");
+            }
+
+            @TestMetadata("toList.kt")
+            public void testToList() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toList.kt");
+            }
+
+            @TestMetadata("toListInapplicableType.kt")
+            public void testToListInapplicableType() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toListInapplicableType.kt");
+            }
+
+            @TestMetadata("toSequence.kt")
+            public void testToSequence() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toSequence.kt");
+            }
+
+            @TestMetadata("toSet.kt")
+            public void testToSet() throws Exception {
+                runTest("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral/toSet.kt");
             }
         }
 

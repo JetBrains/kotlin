@@ -10,6 +10,7 @@ dependencies {
     compile(project(":compiler:backend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":idea:ide-common"))
+    compile(project(":idea:idea-core"))
     compile(project(":plugins:uast-kotlin"))
     compileOnly(intellijDep())
 }

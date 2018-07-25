@@ -15,7 +15,7 @@ enum class LanguageFeature(
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val hintUrl: String? = null,
     val defaultState: State = State.ENABLED,
-    val kind: Kind = OTHER // NB: default value OTHER doesn't forces pre-releaseness (see KDoc)
+    val kind: Kind = OTHER // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
@@ -67,6 +67,7 @@ enum class LanguageFeature(
     ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3, kind = BUG_FIX),
     NestedClassesInAnnotations(KOTLIN_1_3),
     JvmStaticInInterface(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
+    JvmFieldInInterface(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
     ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     ReleaseCoroutines(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
@@ -74,12 +75,16 @@ enum class LanguageFeature(
     UseReturnsEffect(KOTLIN_1_3),
     UseCallsInPlaceEffect(KOTLIN_1_3),
     VariableDeclarationInWhenSubject(KOTLIN_1_3),
-    AllowContractsForCustomFunctions(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
     ProhibitLocalAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitSmartcastsOnLocalDelegatedProperty(KOTLIN_1_3, kind = BUG_FIX),
+    ProhibitOperatorMod(KOTLIN_1_3, kind = BUG_FIX),
+    ProhibitAssigningSingleElementsToVarargsInNamedForm(KOTLIN_1_3, kind = BUG_FIX),
+    FunctionTypesWithBigArity(KOTLIN_1_3, sinceApiVersion = ApiVersion.KOTLIN_1_3),
+    RestrictRetentionForExpressionAnnotations(KOTLIN_1_3, kind = BUG_FIX),
+    NoConstantValueAttributeForNonConstVals(KOTLIN_1_3, kind = BUG_FIX),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
-    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
+    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED, kind = BUG_FIX),
 
     // Experimental features
 
@@ -88,6 +93,8 @@ enum class LanguageFeature(
         "https://kotlinlang.org/docs/diagnostics/experimental-coroutines",
         State.ENABLED_WITH_WARNING
     ),
+
+    AllowContractsForCustomFunctions(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
 
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
@@ -113,7 +120,7 @@ enum class LanguageFeature(
     }
 
     /**
-     * # [enabledInProgressiveMode]
+     * # [forcesPreReleaseBinaries]
      * If 'true', then enabling this feature (e.g. by '-XXLanguage:', or dedicated '-X'-flag)
      * will force generation of pre-release binaries (given that [sinceVersion] > [LanguageVersion.LATEST_STABLE]).
      * Use it for features that involve generation of non-trivial low-level code with non-finalized design.
@@ -124,7 +131,7 @@ enum class LanguageFeature(
      * generate 'kotlin-compiler' as pre-release.
      *
      *
-     * # [forcesPreReleaseBinaries]
+     * # [enabledInProgressiveMode]
      * If 'true', then this feature will be automatically enabled under '-Xprogressive' mode.
      *
      * Restrictions for using this flag for particular feature follow from restrictions of the progressive mode:

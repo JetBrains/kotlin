@@ -2514,6 +2514,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/ifElseSwallowTail.kt");
                 }
 
+                @TestMetadata("ifThenReturn.kt")
+                public void testIfThenReturn() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/ifThenReturn.kt");
+                }
+
                 @TestMetadata("ifWithEqualityTests.kt")
                 public void testIfWithEqualityTests() throws Exception {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/ifWithEqualityTests.kt");
@@ -5088,6 +5093,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("companion.kt")
         public void testCompanion() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/companion.kt");
+        }
+
+        @TestMetadata("companion2.kt")
+        public void testCompanion2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/companion2.kt");
+        }
+
+        @TestMetadata("companion3.kt")
+        public void testCompanion3() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/companion3.kt");
         }
 
         @TestMetadata("constructor.kt")

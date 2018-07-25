@@ -10,7 +10,7 @@ enum class Enum {
 
     interface Trait
 
-    val c: Int = 1
+    val c: Int = { 1 }()
 
     fun f(): Int = 2
 }

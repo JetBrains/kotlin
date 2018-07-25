@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.uast.*
@@ -97,6 +98,11 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
             assertEquals("java.lang.Runnable",
                          file.findElementByText<ULambdaExpression>("{/* Return */}").functionalInterfaceType?.canonicalText)
+
+            assertEquals(
+                "java.lang.Runnable",
+                file.findElementByText<ULambdaExpression>("{ /* SAM */ }").functionalInterfaceType?.canonicalText
+            )
         }
     }
 
@@ -360,6 +366,95 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         barMethod.assertResolveCall("contains(2 as Int)", "longRangeContains")
         barMethod.assertResolveCall("IntRange(1, 2)")
     }
+
+    @Test
+    fun testUtilsStreamLambda() {
+        doTest("Lambdas") { _, file ->
+            val lambda = file.findElementByTextFromPsi<ULambdaExpression>("{ it.isEmpty() }")
+            assertEquals(
+                "java.util.function.Predicate<? super java.lang.String>",
+                lambda.functionalInterfaceType?.canonicalText
+            )
+            assertEquals(
+                "kotlin.jvm.functions.Function1<? super java.lang.String,? extends java.lang.Boolean>",
+                lambda.getExpressionType()?.canonicalText
+            )
+            val uCallExpression = lambda.uastParent.assertedCast<UCallExpression> { "UCallExpression expected" }
+            assertTrue(uCallExpression.valueArguments.contains(lambda))
+        }
+    }
+
+    @Test
+    fun testLambdaParamCall() {
+        doTest("Lambdas") { _, file ->
+            val lambdaCall = file.findElementByTextFromPsi<UCallExpression>("selectItemFunction()")
+            assertEquals(
+                "UIdentifier (Identifier (selectItemFunction))",
+                lambdaCall.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "selectItemFunction",
+                lambdaCall.methodIdentifier?.name
+            )
+            assertEquals(
+                "invoke",
+                lambdaCall.methodName
+            )
+            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("UParameter (name = selectItemFunction)", uParameter.asLogString())
+        }
+    }
+
+    @Test
+    fun testLocalLambdaCall() {
+        doTest("Lambdas") { _, file ->
+            val lambdaCall = file.findElementByTextFromPsi<UCallExpression>("baz()")
+            assertEquals(
+                "UIdentifier (Identifier (baz))",
+                lambdaCall.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "baz",
+                lambdaCall.methodIdentifier?.name
+            )
+            assertEquals(
+                "invoke",
+                lambdaCall.methodName
+            )
+            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("ULocalVariable (name = baz)", uParameter.asLogString())
+        }
+    }
+
+    @Test
+    fun testLocalDeclarationCall() {
+        doTest("LocalDeclarations") { _, file ->
+            val localFunction = file.findElementByTextFromPsi<UElement>("bar() == Local()").
+                findElementByText<UCallExpression>("bar()")
+            assertEquals(
+                "UIdentifier (Identifier (bar))",
+                localFunction.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "bar",
+                localFunction.methodIdentifier?.name
+            )
+            assertEquals(
+                "bar",
+                localFunction.methodName
+            )
+            assertNull(localFunction.resolve())
+            val receiver = localFunction.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("ULambdaExpression", uParameter.asLogString())
+        }
+    }
+
 }
 
 fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =

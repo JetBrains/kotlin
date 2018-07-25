@@ -1,12 +1,10 @@
+// LANGUAGE_VERSION: 1.3
 // WITH_RUNTIME
-// COMMON_COROUTINES_TEST
-// WITH_COROUTINES
-import helpers.*
 // TREAT_AS_ONE_FILE
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
-suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
-    x.resume("OK")
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
+suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
+    x.resumeWith(SuccessOrFailure.success("OK"))
 }
 
 suspend fun suspendThere(param: Int, param2: String, param3: Long): String {
@@ -15,4 +13,4 @@ suspend fun suspendThere(param: Int, param2: String, param3: Long): String {
     return a + b
 }
 
-// 0 ASTORE 4
+// 1 ASTORE 4

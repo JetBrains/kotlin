@@ -1,94 +1,92 @@
 FILE fqName:<root> fileName:/membersImportedFromObject.kt
-  CLASS OBJECT name:A modality:FINAL visibility:public flags:
+  CLASS OBJECT name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
-    superClasses:
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:A flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN name:foo visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
+    FUN name:foo visibility:public modality:FINAL <> ($this:A) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='foo(): Int'
           CONST Int type=kotlin.Int value=1
-    FUN name:fooExt visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.Int) returnType:Int flags:
+    FUN name:fooExt visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.Int) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='fooExt() on Int: Int'
           CONST Int type=kotlin.Int value=2
-    PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
+    PROPERTY name:bar visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
-        correspondingProperty: PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:A) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
-    PROPERTY name:barExt type:kotlin.Int visibility:public modality:FINAL flags:val
-      FUN name:<get-barExt> visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.Int) returnType:Int flags:
-        correspondingProperty: PROPERTY name:barExt type:kotlin.Int visibility:public modality:FINAL flags:val
+    PROPERTY name:barExt visibility:public modality:FINAL flags:val
+      FUN name:<get-barExt> visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.Int) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:barExt visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-barExt>() on Int: Int'
             CONST Int type=kotlin.Int value=43
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
+  PROPERTY name:test1 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CALL 'foo(): Int' type=kotlin.Int origin=null
           $this: GET_OBJECT 'A' type=A
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
-  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
+  PROPERTY name:test2 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CALL '<get-bar>(): Int' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_OBJECT 'A' type=A
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           GET_FIELD 'test2: Int' type=kotlin.Int origin=null
-  PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:val
+  PROPERTY name:test3 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CALL 'fooExt() on Int: Int' type=kotlin.Int origin=null
           $this: GET_OBJECT 'A' type=A
           $receiver: CONST Int type=kotlin.Int value=1
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): Int'
           GET_FIELD 'test3: Int' type=kotlin.Int origin=null
-  PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:val
+  PROPERTY name:test4 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CALL '<get-barExt>() on Int: Int' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_OBJECT 'A' type=A
           $receiver: CONST Int type=kotlin.Int value=1
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): Int'
           GET_FIELD 'test4: Int' type=kotlin.Int origin=null

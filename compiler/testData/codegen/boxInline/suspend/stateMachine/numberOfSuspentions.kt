@@ -1,6 +1,7 @@
 // FILE: inlined.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
+// WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 
 suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
@@ -17,6 +18,7 @@ suspend inline fun crossinlineMe2(crossinline c: suspend () -> Unit) {
 
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
+import helpers.*
 
 var result = "FAIL"
 var i = 0
@@ -30,7 +32,7 @@ suspend fun suspendHere() = suspendCoroutine<Unit> { c ->
 }
 
 fun builder(c: suspend () -> Unit) {
-    val continuation = object: Continuation<Unit> {
+    val continuation = object: ContinuationAdapter<Unit>() {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 

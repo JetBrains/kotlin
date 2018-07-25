@@ -88,7 +88,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private TextFieldWithBrowseButton outputDirectory;
     private ThreeStateCheckBox copyRuntimeFilesCheckBox;
     private ThreeStateCheckBox keepAliveCheckBox;
-    private JCheckBox enablePreciseIncrementalCheckBox;
+    private JCheckBox enableIncrementalCompilationForJvmCheckBox;
+    private JCheckBox enableIncrementalCompilationForJsCheckBox;
     private JComboBox moduleKindComboBox;
     private JCheckBox scriptDependenciesAutoReload;
     private JTextField scriptTemplatesField;
@@ -438,7 +439,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                isModified(outputDirectory, compilerSettings.getOutputDirectoryForJsLibraryFiles()) ||
 
                (compilerWorkspaceSettings != null &&
-                (isModified(enablePreciseIncrementalCheckBox, compilerWorkspaceSettings.getPreciseIncrementalEnabled()) ||
+                (isModified(enableIncrementalCompilationForJvmCheckBox, compilerWorkspaceSettings.getPreciseIncrementalEnabled()) ||
+                 isModified(enableIncrementalCompilationForJsCheckBox, compilerWorkspaceSettings.getIncrementalCompilationForJsEnabled()) ||
                  isModified(keepAliveCheckBox, compilerWorkspaceSettings.getEnableDaemon()))) ||
 
                isModified(generateSourceMapsCheckBox, k2jsCompilerArguments.getSourceMap()) ||
@@ -528,7 +530,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         getScriptingSettings().setAutoReloadEnabled(scriptDependenciesAutoReload.isSelected());
 
         if (compilerWorkspaceSettings != null) {
-            compilerWorkspaceSettings.setPreciseIncrementalEnabled(enablePreciseIncrementalCheckBox.isSelected());
+            compilerWorkspaceSettings.setPreciseIncrementalEnabled(enableIncrementalCompilationForJvmCheckBox.isSelected());
+            compilerWorkspaceSettings.setIncrementalCompilationForJsEnabled(enableIncrementalCompilationForJsCheckBox.isSelected());
 
             boolean oldEnableDaemon = compilerWorkspaceSettings.getEnableDaemon();
             compilerWorkspaceSettings.setEnableDaemon(keepAliveCheckBox.isSelected());
@@ -579,7 +582,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         outputDirectory.setText(compilerSettings.getOutputDirectoryForJsLibraryFiles());
 
         if (compilerWorkspaceSettings != null) {
-            enablePreciseIncrementalCheckBox.setSelected(compilerWorkspaceSettings.getPreciseIncrementalEnabled());
+            enableIncrementalCompilationForJvmCheckBox.setSelected(compilerWorkspaceSettings.getPreciseIncrementalEnabled());
+            enableIncrementalCompilationForJsCheckBox.setSelected(compilerWorkspaceSettings.getIncrementalCompilationForJsEnabled());
             keepAliveCheckBox.setSelected(compilerWorkspaceSettings.getEnableDaemon());
         }
 

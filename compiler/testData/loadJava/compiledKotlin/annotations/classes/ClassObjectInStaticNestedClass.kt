@@ -4,7 +4,7 @@ package test
 class A {
     class B {
         companion object {
-            val TEST = 1
+            val TEST = { 1 }()
         }
     }
 }

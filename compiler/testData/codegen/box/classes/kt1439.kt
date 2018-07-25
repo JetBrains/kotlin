@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class MyClass(var fnc : () -> String) {
 
     fun test(): String {

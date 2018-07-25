@@ -2,5 +2,5 @@
 package test
 
 class ClassVal() {
-    val aa = 1
+    val aa = { 1 }()
 }

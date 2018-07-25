@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -9,7 +10,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 
 class A {
     var result = mutableListOf("O", "K", null)
-    suspend fun foo(): String? = suspendCoroutineOrReturn { x ->
+    suspend fun foo(): String? = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(result.removeAt(0))
         COROUTINE_SUSPENDED
     }

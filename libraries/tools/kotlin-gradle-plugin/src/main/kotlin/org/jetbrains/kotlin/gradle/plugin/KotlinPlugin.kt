@@ -479,12 +479,12 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     protected val logger = Logging.getLogger(this.javaClass)
 
     abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
-    abstract fun getVariantName(variant: V): String
     abstract fun getTestedVariantData(variantData: V): V?
     abstract fun getResDirectories(variantData: V): List<File>
 
     protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
     protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
+    protected abstract fun getVariantName(variant: V): String
     protected abstract fun getJavaTask(variantData: V): AbstractCompile?
     protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: V, javaSourceDirectory: File): Unit
 
@@ -518,7 +518,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         project.afterEvaluate { project ->
             if (project != null) {
                 val androidPluginIds = listOf("android", "com.android.application", "android-library", "com.android.library",
-                        "com.android.test", "com.android.feature", "com.android.dynamic-feature")
+                        "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp")
                 val plugin = androidPluginIds.asSequence()
                                      .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
                                      .firstOrNull()

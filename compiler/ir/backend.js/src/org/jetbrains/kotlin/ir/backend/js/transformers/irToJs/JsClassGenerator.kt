@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.isAny
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
@@ -26,8 +28,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private val className = context.getNameForSymbol(irClass.symbol)
     private val classNameRef = className.makeRef()
-    private val baseClass = irClass.superClasses.firstOrNull { !it.owner.isInterface }
-    private val baseClassName = baseClass?.let { context.getNameForSymbol(it) }
+    private val baseClass = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
+    private val baseClassName = baseClass?.let { context.getNameForSymbol(it.classifierOrFail) }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsGlobalBlock()
     private val classModel = JsClassModel(className, baseClassName)
@@ -41,7 +43,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             when (declaration) {
                 is IrConstructor -> {
                     classBlock.statements += declaration.accept(transformer, context)
-                    classBlock.statements += generateInheritanceCode()
+                    classModel.preDeclarationBlock.statements += generateInheritanceCode()
                 }
                 is IrSimpleFunction -> {
                     generateMemberFunction(declaration)?.let { classBlock.statements += it }
@@ -113,6 +115,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         functionBody.statements += JsIf(
             JsBinaryOperation(JsBinaryOperator.REF_EQ, instanceVar.makeRef(), JsNullLiteral()),
+            // TODO: Fix initialization order
             jsAssignment(instanceVar.makeRef(), JsNew(classNameRef)).makeStmt()
         )
         functionBody.statements += JsReturn(instanceVar.makeRef())
@@ -125,12 +128,12 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             val func = JsFunction(JsFunctionScope(context.currentScope, "Ctor for ${irClass.name}"), JsBlock(), "Ctor for ${irClass.name}")
             func.name = className
             classBlock.statements += func.makeStmt()
-            classBlock.statements += generateInheritanceCode()
+            classModel.preDeclarationBlock.statements += generateInheritanceCode()
         }
     }
 
     private fun generateInheritanceCode(): List<JsStatement> {
-        if (baseClass == null || baseClass.isAny) {
+        if (baseClass == null || baseClass.isAny()) {
             return emptyList()
         }
 
@@ -158,7 +161,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateSuperClasses(): JsPropertyInitializer = JsPropertyInitializer(
         JsNameRef(Namer.METADATA_INTERFACES),
-        JsArrayLiteral(irClass.superClasses.filter { it.owner.isInterface }.map { JsNameRef(context.getNameForSymbol(it.owner.symbol)) })
+        JsArrayLiteral(
+            irClass.superTypes.mapNotNull {
+                val symbol = it.classifierOrFail
+                if (symbol.isInterface) JsNameRef(context.getNameForSymbol(symbol)) else null
+            }
+        )
     )
-
 }
+
+private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true

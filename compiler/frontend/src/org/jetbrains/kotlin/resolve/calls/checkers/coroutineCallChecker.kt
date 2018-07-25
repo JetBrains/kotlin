@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isBuiltInCoroutineContext
-import org.jetbrains.kotlin.config.restrictsSuspensionFqName
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -19,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.isCallableReference
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -28,12 +26,19 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val COROUTINE_CONTEXT_1_2_20_FQ_NAME =
     DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("coroutineContext"))
+
+val COROUTINE_CONTEXT_1_2_30_FQ_NAME =
+    DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("coroutineContext"))
+
+val COROUTINE_CONTEXT_1_3_FQ_NAME =
+    DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("coroutineContext"))
 
 fun FunctionDescriptor.isBuiltInCoroutineContext(languageVersionSettings: LanguageVersionSettings) =
     (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe?.isBuiltInCoroutineContext(languageVersionSettings) == true
@@ -48,8 +53,11 @@ object CoroutineSuspendCallChecker : CallChecker {
         val descriptor = resolvedCall.candidateDescriptor
         when (descriptor) {
             is FunctionDescriptor -> if (!descriptor.isSuspend) return
-            is PropertyDescriptor ->
-                if (descriptor.fqNameSafe != COROUTINE_CONTEXT_1_2_20_FQ_NAME && !descriptor.isBuiltInCoroutineContext(context.languageVersionSettings)) return
+            is PropertyDescriptor -> when (descriptor.fqNameSafe) {
+                COROUTINE_CONTEXT_1_2_20_FQ_NAME, COROUTINE_CONTEXT_1_2_30_FQ_NAME, COROUTINE_CONTEXT_1_3_FQ_NAME -> {
+                }
+                else -> return
+            }
             else -> return
         }
 
@@ -69,6 +77,17 @@ object CoroutineSuspendCallChecker : CallChecker {
                     context.trace.report(Errors.UNSUPPORTED.on(reportOn, "suspend function calls in a context of default parameter value"))
                 }
 
+                if ((descriptor.fqNameSafe == COROUTINE_CONTEXT_1_2_20_FQ_NAME || descriptor.fqNameSafe == COROUTINE_CONTEXT_1_2_30_FQ_NAME) &&
+                    context.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+                ) {
+                    context.trace.report(
+                        Errors.UNSUPPORTED.on(
+                            reportOn,
+                            "experimental coroutineContext of release coroutine: use kotlin.coroutines.coroutineContext instead"
+                        )
+                    )
+                }
+
                 context.trace.record(
                     BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL,
                     resolvedCall.call,
@@ -76,6 +95,9 @@ object CoroutineSuspendCallChecker : CallChecker {
                 )
 
                 checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
+            }
+            resolvedCall.call.isCallableReference() -> {
+                // do nothing: we can get callable reference to suspend function outside suspend context
             }
             else -> {
                 when (descriptor) {
@@ -110,6 +132,12 @@ object BuilderFunctionsCallChecker : CallChecker {
 }
 
 fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
+        if (languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3) {
+            diagnosticHolder.report(Errors.UNSUPPORTED.on(reportOn, "cannot use release coroutines with api version less than 1.3"))
+        }
+        return
+    }
     val diagnosticData = LanguageFeature.Coroutines to languageVersionSettings
     when (languageVersionSettings.getFeatureSupport(LanguageFeature.Coroutines)) {
         LanguageFeature.State.ENABLED -> {
@@ -126,15 +154,17 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
     }
 }
 
+fun KotlinType.isRestrictsSuspensionReceiver(languageVersionSettings: LanguageVersionSettings) = (listOf(this) + this.supertypes()).any {
+    it.constructor.declarationDescriptor?.annotations?.hasAnnotation(languageVersionSettings.restrictsSuspensionFqName()) == true
+}
+
 private fun checkRestrictsSuspension(
     enclosingSuspendCallableDescriptor: CallableDescriptor,
     resolvedCall: ResolvedCall<*>,
     reportOn: PsiElement,
     context: CallCheckerContext
 ) {
-    fun ReceiverValue.isRestrictsSuspensionReceiver() = (listOf(type) + type.supertypes()).any {
-        it.constructor.declarationDescriptor?.annotations?.hasAnnotation(context.languageVersionSettings.restrictsSuspensionFqName()) == true
-    }
+    fun ReceiverValue.isRestrictsSuspensionReceiver() = type.isRestrictsSuspensionReceiver(context.languageVersionSettings)
 
     infix fun ReceiverValue.sameInstance(other: ReceiverValue?): Boolean {
         if (other == null) return false

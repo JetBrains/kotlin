@@ -34,53 +34,14 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
         return false
     }
 
-    override fun visit(x: JsWhile, ctx: JsContext<JsNode>): Boolean {
+    override fun visit(x: JsLoop, ctx: JsContext<JsNode>): Boolean {
         if (loopLabelName == null) return false
 
         loopNestingLevel++
         return super.visit(x, ctx)
     }
 
-    override fun endVisit(x: JsWhile, ctx: JsContext<JsNode>) {
-        super.endVisit(x, ctx)
-        if (loopLabelName == null) return
-        loopNestingLevel--
-    }
-
-    override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean {
-        if (loopLabelName == null) return false
-
-        loopNestingLevel++
-        return super.visit(x, ctx)
-    }
-
-    override fun endVisit(x: JsDoWhile, ctx: JsContext<JsNode>) {
-        super.endVisit(x, ctx)
-        if (loopLabelName == null) return
-        loopNestingLevel--
-    }
-
-    override fun visit(x: JsFor, ctx: JsContext<JsNode>): Boolean {
-        if (loopLabelName == null) return false
-
-        loopNestingLevel++
-        return super.visit(x, ctx)
-    }
-
-    override fun endVisit(x: JsFor, ctx: JsContext<JsNode>) {
-        super.endVisit(x, ctx)
-        if (loopLabelName == null) return
-        loopNestingLevel--
-    }
-
-    override fun visit(x: JsForIn, ctx: JsContext<JsNode>): Boolean {
-        if (loopLabelName == null) return false
-
-        loopNestingLevel++
-        return super.visit(x, ctx)
-    }
-
-    override fun endVisit(x: JsForIn, ctx: JsContext<JsNode>) {
+    override fun endVisit(x: JsLoop, ctx: JsContext<JsNode>) {
         super.endVisit(x, ctx)
         if (loopLabelName == null) return
         loopNestingLevel--

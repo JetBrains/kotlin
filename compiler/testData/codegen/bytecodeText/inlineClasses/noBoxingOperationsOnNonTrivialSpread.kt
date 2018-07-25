@@ -1,6 +1,4 @@
-// !LANGUAGE: +InlineClasses
-// !WITH_UNSIGNED
-// !SKIP_METADATA_VERSION_CHECK
+// WITH_UNSIGNED
 
 fun uint(vararg us: UInt): UIntArray = us
 

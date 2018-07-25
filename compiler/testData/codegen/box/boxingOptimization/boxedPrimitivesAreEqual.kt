@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 inline fun eq(a: Any, b: Any) = a == b
 inline fun ne(a: Any, b: Any) = a != b
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo(): Int {
    val a = "test"
    val b = "test"

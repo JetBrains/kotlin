@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun box() : String {
     return if (int_invoker( { 7 } ) == 7) "OK" else "fail"
 }

@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -22,18 +24,23 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
+data class Result(val moduleDescriptor: ModuleDescriptor, val generatedCode: String)
+
 fun compile(
     project: Project,
     files: List<KtFile>,
     configuration: CompilerConfiguration,
-    export: FqName
-): String {
-    val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, emptyList(), emptyList())
+    export: FqName? = null,
+    dependencies: List<ModuleDescriptor> = listOf()
+): Result {
+    val analysisResult =
+        TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, dependencies.filterIsInstance(), emptyList())
+
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
     TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext)
 
-    val psi2IrTranslator = Psi2IrTranslator()
+    val psi2IrTranslator = Psi2IrTranslator(configuration.languageVersionSettings)
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext)
 
     val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files).removeDuplicates()
@@ -45,7 +52,8 @@ fun compile(
         moduleFragment
     )
 
-    ExternalDependenciesGenerator(psi2IrContext.symbolTable, psi2IrContext.irBuiltIns).generateUnboundSymbolsAsDependencies(moduleFragment)
+    ExternalDependenciesGenerator(psi2IrContext.moduleDescriptor, psi2IrContext.symbolTable, psi2IrContext.irBuiltIns)
+        .generateUnboundSymbolsAsDependencies(moduleFragment)
 
     context.performInlining(moduleFragment)
 
@@ -55,10 +63,10 @@ fun compile(
 
     val program = moduleFragment.accept(IrModuleToJsTransformer(context), null)
 
-    return program.toString()
+    return Result(analysisResult.moduleDescriptor, program.toString())
 }
 
-fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
+private fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
     FunctionInlining(this).inline(moduleFragment)
 
     moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
@@ -76,11 +84,13 @@ fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
     }
 }
 
-fun JsIrBackendContext.lower(file: IrFile) {
+private fun JsIrBackendContext.lower(file: IrFile) {
     LateinitLowering(this, true).lower(file)
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     DefaultParameterInjector(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
+    EnumClassLowering(this).runOnFilePostfix(file)
+    EnumUsageLowering(this).lower(file)
     ReturnableBlockLowering(this).lower(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
     InnerClassesLowering(this).runOnFilePostfix(file)
@@ -88,6 +98,7 @@ fun JsIrBackendContext.lower(file: IrFile) {
     PropertiesLowering().lower(file)
     InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilePostfix(file)
     MultipleCatchesLowering(this).lower(file)
+    BridgesConstruction(this).runOnFilePostfix(file)
     TypeOperatorLowering(this).lower(file)
     BlockDecomposerLowering(this).runOnFilePostfix(file)
     SecondaryCtorLowering(this).runOnFilePostfix(file)

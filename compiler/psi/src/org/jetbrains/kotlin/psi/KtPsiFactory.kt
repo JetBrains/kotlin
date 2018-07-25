@@ -437,6 +437,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         }
     }
 
+    @Deprecated("function is not used in the kotlin plugin/compiler and will be removed soon")
     fun createImportDirectives(paths: Collection<ImportPath>): List<KtImportDirective> {
         val fileContent = buildString {
             for (path in paths) {

@@ -12,6 +12,7 @@ Exit code: OK
 ================ Step #2 =================
 
 Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
   out/production/module/TheClass.class
 End of files
 Compiling files:

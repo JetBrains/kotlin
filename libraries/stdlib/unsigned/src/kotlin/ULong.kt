@@ -10,18 +10,20 @@ package kotlin
 import kotlin.experimental.*
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public inline class ULong internal constructor(private val data: Long) : Comparable<ULong> {
 
     companion object {
         /**
          * A constant holding the minimum value an instance of ULong can have.
          */
-        public /*const*/ val MIN_VALUE: ULong = ULong(0)
+        public const val MIN_VALUE: ULong = ULong(0)
 
         /**
          * A constant holding the maximum value an instance of ULong can have.
          */
-        public /*const*/ val MAX_VALUE: ULong = ULong(-1)
+        public const val MAX_VALUE: ULong = ULong(-1)
     }
 
     /**
@@ -132,7 +134,15 @@ public inline class ULong internal constructor(private val data: Long) : Compara
 
 }
 
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Byte.toULong(): ULong = ULong(this.toLong() and 0xFF)
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Short.toULong(): ULong = ULong(this.toLong() and 0xFFFF)
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Int.toULong(): ULong = ULong(this.toLong() and 0xFFFF_FFFF)
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Long.toULong(): ULong = ULong(this)

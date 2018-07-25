@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -349,7 +350,7 @@ data class ExtractableCodeDescriptor(
         val extractionData: ExtractionData,
         val originalContext: BindingContext,
         val suggestedNames: List<String>,
-        val visibility: String,
+        val visibility: KtModifierKeywordToken?,
         val parameters: List<Parameter>,
         val receiverParameter: Parameter?,
         val typeParameters: List<TypeParameter>,
@@ -364,7 +365,7 @@ data class ExtractableCodeDescriptor(
 
 fun ExtractableCodeDescriptor.copy(
         newName: String,
-        newVisibility: String,
+        newVisibility: KtModifierKeywordToken?,
         oldToNewParameters: Map<Parameter, Parameter>,
         newReceiver: Parameter?,
         returnType: KotlinType?

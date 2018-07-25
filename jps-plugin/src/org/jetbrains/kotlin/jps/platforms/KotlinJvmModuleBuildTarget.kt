@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.IncrementalCompilationComponentsImpl
@@ -52,6 +53,9 @@ private const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
 
 class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuildTarget<JvmBuildMetaInfo>(compileContext, jpsModuleBuildTarget) {
+
+    override val isIncrementalCompilationEnabled: Boolean
+        get() = IncrementalCompilation.isEnabledForJvm()
 
     override fun createCacheStorage(paths: BuildDataPaths) = JpsIncrementalJvmCache(jpsModuleBuildTarget, paths)
 

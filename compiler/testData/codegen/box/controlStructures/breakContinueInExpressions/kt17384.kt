@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 fun returnNullable(): String? = null
 

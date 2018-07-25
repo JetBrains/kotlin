@@ -20,6 +20,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
+import com.sun.jdi.Location
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
@@ -45,13 +46,16 @@ object DebuggerUtils {
             project: Project,
             scope: GlobalSearchScope,
             className: JvmClassName,
-            fileName: String): KtFile? {
+            fileName: String,
+            location: Location? = null
+    ): KtFile? {
         return runReadAction {
             findSourceFileForClass(
                     project,
                     listOf(scope, KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)),
                     className,
-                    fileName)
+                    fileName,
+                    location)
         }
     }
 
@@ -59,7 +63,9 @@ object DebuggerUtils {
             project: Project,
             scopes: List<GlobalSearchScope>,
             className: JvmClassName,
-            fileName: String): KtFile? {
+            fileName: String,
+            location: Location?
+    ): KtFile? {
         if (!isKotlinSourceFile(fileName)) return null
         if (DumbService.getInstance(project).isDumb) return null
 
@@ -83,6 +89,8 @@ object DebuggerUtils {
             // Do not fall back to decompiled files (which have different name).
             return null
         }
+
+        location?.let { return FileRankingCalculatorForIde.findMostAppropriateSource(filesWithExactName, it) }
 
         return filesWithExactName.first()
     }

@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/coercionInLoop.kt
-  FUN name:box visibility:public modality:FINAL <> () returnType:String flags:
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
       VAR name:a type:kotlin.DoubleArray flags:val
         CALL 'constructor DoubleArray(Int)' type=kotlin.DoubleArray origin=null
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
                   CONST String type=kotlin.String value=Fail 
                   GET_VAR 'i: Int' type=kotlin.Int origin=null
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
               VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
                 GET_VAR 'i: Int' type=kotlin.Int origin=POSTFIX_INCR

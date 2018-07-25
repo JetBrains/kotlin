@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 class MySet : HashSet<Int>() {
     override fun remove(element: Int): Boolean {

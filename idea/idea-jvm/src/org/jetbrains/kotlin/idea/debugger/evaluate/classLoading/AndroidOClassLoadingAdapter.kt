@@ -24,8 +24,8 @@ import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.isDexDebug
 
 class AndroidOClassLoadingAdapter : AbstractAndroidClassLoadingAdapter() {
-    override fun isApplicable(context: EvaluationContextImpl, hasAdditionalClasses: Boolean, hasLoops: Boolean): Boolean {
-        return (hasAdditionalClasses || hasLoops) && context.debugProcess.isDexDebug()
+    override fun isApplicable(context: EvaluationContextImpl, info: ClassLoadingAdapter.Companion.ClassInfoForEvaluator) = with(info) {
+        isCompilingEvaluatorPreferred && context.debugProcess.isDexDebug()
     }
 
     private fun resolveClassLoaderClass(context: EvaluationContextImpl): ClassType? {

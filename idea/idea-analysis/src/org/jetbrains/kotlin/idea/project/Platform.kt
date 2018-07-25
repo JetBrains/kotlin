@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -36,11 +37,13 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgume
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.getLibraryLanguageLevel
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.Jsr305State
+import java.io.File
 
 val KtElement.platform: TargetPlatform
     get() = TargetPlatformDetector.getPlatform(containingKtFile)
@@ -78,16 +81,43 @@ fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     return languageLevel
 }
 
+/**
+ * Returns stable binary name of module from the *Kotlin* point of view.
+ * Having correct module name is critical for compiler, e.g. for 'internal'-visibility
+ * mangling (see KT-23668).
+ *
+ * Note that build systems and IDEA have their own module systems and, potentially, their
+ * names can be different from Kotlin module name (though this is the rare case).
+ */
+fun Module.getStableName(): Name {
+    // Here we check ideal situation: we have a facet, and it has 'moduleName' argument.
+    // This should be the case for the most environments
+    val arguments = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this).mergedCompilerArguments
+    val explicitNameFromArguments = when (arguments) {
+        is K2JVMCompilerArguments -> arguments.moduleName
+        is K2JSCompilerArguments -> arguments.outputFile?.let { FileUtil.getNameWithoutExtension(File(it)) }
+        is K2MetadataCompilerArguments -> arguments.moduleName
+        else -> null // Actually, only 'null' possible here
+    }
+
+    // Here we handle pessimistic case: no facet is found or it declares no 'moduleName'
+    // We heuristically assume that name of Module in IDEA is the same as Kotlin module (which may be not the case)
+    val stableNameApproximation = explicitNameFromArguments ?: name
+
+    return Name.special("<$stableNameApproximation>")
+}
+
 @JvmOverloads
 fun Project.getLanguageVersionSettings(
     contextModule: Module? = null,
-    jsr305State: Jsr305State? = null // this is a temporary hack until we'll have a sane way to configure libraries analysis
+    jsr305State: Jsr305State? = null,
+    isReleaseCoroutines: Boolean? = null
 ): LanguageVersionSettings {
     val arguments = KotlinCommonCompilerArgumentsHolder.getInstance(this).settings
     val languageVersion =
         LanguageVersion.fromVersionString(arguments.languageVersion)
-                ?: contextModule?.getAndCacheLanguageLevelByDependencies()
-                ?: LanguageVersion.LATEST_STABLE
+            ?: contextModule?.getAndCacheLanguageLevelByDependencies()
+            ?: LanguageVersion.LATEST_STABLE
     val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
 
@@ -98,6 +128,12 @@ fun Project.getLanguageVersionSettings(
 
     val extraLanguageFeatures = additionalArguments.configureLanguageFeatures(MessageCollector.NONE).apply {
         configureCoroutinesSupport(CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this@getLanguageVersionSettings).settings))
+        if (isReleaseCoroutines != null) {
+            put(
+                LanguageFeature.ReleaseCoroutines,
+                if (isReleaseCoroutines) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
+            )
+        }
     }
 
     val extraAnalysisFlags = additionalArguments.configureAnalysisFlags(MessageCollector.NONE).apply {
@@ -117,7 +153,7 @@ val Module.languageVersionSettings: LanguageVersionSettings
     get() {
         val cachedValue =
             getUserData(LANGUAGE_VERSION_SETTINGS)
-                    ?: createCachedValueForLanguageVersionSettings().also { putUserData(LANGUAGE_VERSION_SETTINGS, it) }
+                ?: createCachedValueForLanguageVersionSettings().also { putUserData(LANGUAGE_VERSION_SETTINGS, it) }
 
         return cachedValue.value
     }

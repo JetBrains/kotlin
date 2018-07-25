@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt3.util
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -15,28 +16,29 @@ import java.io.StringWriter
 
 class MessageCollectorBackedKaptLogger(
     override val isVerbose: Boolean,
+    infoAsWarnings: Boolean = true,
     val messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
 ) : KaptLogger {
     private companion object {
         val PREFIX = "[kapt] "
     }
 
-    override val errorWriter = makeWriter(CompilerMessageSeverity.ERROR)
-    override val warnWriter = makeWriter(CompilerMessageSeverity.STRONG_WARNING)
-    override val infoWriter = makeWriter(CompilerMessageSeverity.WARNING)
+    override val errorWriter = makeWriter(ERROR)
+    override val warnWriter = makeWriter(STRONG_WARNING)
+    override val infoWriter = makeWriter(if (infoAsWarnings) WARNING else INFO)
 
     override fun info(message: String) {
         if (isVerbose) {
-            messageCollector.report(CompilerMessageSeverity.INFO, PREFIX + message)
+            messageCollector.report(INFO, PREFIX + message)
         }
     }
     
     override fun warn(message: String) {
-        messageCollector.report(CompilerMessageSeverity.WARNING, PREFIX + message)
+        messageCollector.report(WARNING, PREFIX + message)
     }
 
     override fun error(message: String) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, PREFIX + message)
+        messageCollector.report(ERROR, PREFIX + message)
     }
 
     override fun exception(e: Throwable) {
@@ -45,7 +47,7 @@ class MessageCollectorBackedKaptLogger(
             e.printStackTrace(PrintWriter(writer))
             writer.toString()
         }
-        messageCollector.report(CompilerMessageSeverity.ERROR, PREFIX + "An exception occurred: " + stacktrace)
+        messageCollector.report(ERROR, PREFIX + "An exception occurred: " + stacktrace)
     }
 
     private fun makeWriter(severity: CompilerMessageSeverity): PrintWriter {

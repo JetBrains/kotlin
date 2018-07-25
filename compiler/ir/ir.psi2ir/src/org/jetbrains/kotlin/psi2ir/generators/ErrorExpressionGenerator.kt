@@ -35,15 +35,20 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
 
     fun generateErrorExpression(ktElement: KtElement, e: Exception): IrExpression =
         generateErrorExpression(ktElement, e) {
+            val errorExpressionType =
+                if (ktElement is KtExpression)
+                    getErrorExpressionType(ktElement)
+                else
+                    ErrorUtils.createErrorType("")
             IrErrorExpressionImpl(
                 ktElement.startOffset, ktElement.endOffset,
-                if (ktElement is KtExpression) getErrorExpressionType(ktElement) else ErrorUtils.createErrorType(""),
+                errorExpressionType.toIrType(),
                 e.message ?: ""
             )
         }
 
     fun generateErrorCall(ktCall: KtCallExpression): IrExpression = generateErrorExpression(ktCall) {
-        val type = getErrorExpressionType(ktCall)
+        val type = getErrorExpressionType(ktCall).toIrType()
 
         val irErrorCall = IrErrorCallExpressionImpl(ktCall.startOffset, ktCall.endOffset, type, "") // TODO problem description?
         irErrorCall.explicitReceiver = (ktCall.parent as? KtDotQualifiedExpression)?.run {
@@ -64,7 +69,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
         getInferredTypeWithImplicitCasts(ktExpression) ?: ErrorUtils.createErrorType("")
 
     fun generateErrorSimpleName(ktName: KtSimpleNameExpression): IrExpression = generateErrorExpression(ktName) {
-        val type = getErrorExpressionType(ktName)
+        val type = getErrorExpressionType(ktName).toIrType()
 
         val irErrorCall = IrErrorCallExpressionImpl(ktName.startOffset, ktName.endOffset, type, "") // TODO problem description?
         irErrorCall.explicitReceiver = (ktName.parent as? KtDotQualifiedExpression)?.let { ktParent ->

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Foo {
     fun bar(): String {
         fun <T> foo(t:() -> T) : T = t()

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -14,7 +15,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.js.resolve.JsPlatform.builtIns
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.Variance
@@ -22,10 +25,12 @@ import org.jetbrains.kotlin.types.Variance
 class JsIntrinsics(
     private val module: ModuleDescriptor,
     private val irBuiltIns: IrBuiltIns,
-    context: JsIrBackendContext
+    val context: JsIrBackendContext
 ) {
 
-    private val stubBuilder = DeclarationStubGenerator(context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
+    private val stubBuilder = DeclarationStubGenerator(
+        module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB, irBuiltIns.languageVersionSettings
+    )
 
     // Equality operations:
 
@@ -89,14 +94,58 @@ class JsIntrinsics(
     val jsTypeOf = unOp("jsTypeOf", irBuiltIns.string)
 
 
+    // Number conversions:
+
+    val jsNumberToByte = getInternalFunction("numberToByte")
+    val jsNumberToDouble = getInternalFunction("numberToDouble")
+    val jsNumberToInt = getInternalFunction("numberToInt")
+    val jsNumberToShort = getInternalFunction("numberToShort")
+    val jsNumberToLong = getInternalFunction("numberToLong")
+    val jsToByte = getInternalFunction("toByte")
+    val jsToShort = getInternalFunction("toShort")
+    val jsToLong = getInternalFunction("toLong")
+
+
+    // RTTI:
+
+    val isInterfaceSymbol = getInternalFunction("isInterface")
+    val isArraySymbol = getInternalFunction("isArray")
+    //    val isCharSymbol = getInternalFunction("isChar")
+    val isObjectSymbol = getInternalFunction("isObject")
+
     // Other:
 
     val jsObjectCreate = defineObjectCreateIntrinsic() // Object.create
     val jsSetJSField = defineSetJSPropertyIntrinsic() // till we don't have dynamic type we use intrinsic which sets a field with any name
     val jsToJsType = defineToJsType() // creates name reference to KotlinType
-    val jsCode = context.getInternalFunctions("js").singleOrNull()?.let { context.symbolTable.referenceFunction(it) } // js("<code>")
+    val jsCode = getInternalFunction("js") // js("<code>")
+    val jsHashCode = getInternalFunction("hashCode")
+    val jsToString = getInternalFunction("toString")
+    val jsCompareTo = getInternalFunction("compareTo")
+    val jsEquals = getInternalFunction("equals")
+
+    val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
+    val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
+
+    val longConstructor =
+        context.symbolTable.referenceConstructor(context.getClass(FqName("kotlin.Long")).constructors.single())
+    val longToDouble = context.symbolTable.referenceSimpleFunction(
+        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
+            Name.identifier("toDouble")
+        )
+    )
+    val longToFloat = context.symbolTable.referenceSimpleFunction(
+        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
+            Name.identifier("toFloat")
+        )
+    )
+
+    val charConstructor = context.symbolTable.referenceConstructor(context.getClass(KotlinBuiltIns.FQ_NAMES._char.toSafe()).constructors.single())
 
     // Helpers:
+
+    private fun getInternalFunction(name: String) =
+        context.symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
 
     private fun defineToJsType(): IrSimpleFunction {
         val desc = SimpleFunctionDescriptorImpl.create(

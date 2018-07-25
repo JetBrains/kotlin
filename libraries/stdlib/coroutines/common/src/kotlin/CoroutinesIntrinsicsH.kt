@@ -33,12 +33,15 @@ public expect inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
 ): Any?
 
 @SinceKotlin("1.3")
-public expect fun <T> (suspend () -> T).createCoroutineUnchecked(
+public expect fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit>
 
 @SinceKotlin("1.3")
-public expect fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+public expect fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
 ): Continuation<Unit>
+
+@SinceKotlin("1.3")
+public expect fun <T> Continuation<T>.intercepted(): Continuation<T>

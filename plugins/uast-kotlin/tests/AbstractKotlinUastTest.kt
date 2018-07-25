@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
-import org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService
+import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.kotlin.evaluation.KotlinEvaluatorExtension
-import org.jetbrains.uast.kotlin.internal.CliKotlinUastBindingContextProviderService
+import org.jetbrains.uast.kotlin.internal.CliKotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.internal.UastAnalysisHandlerExtension
 import org.jetbrains.uast.test.env.AbstractCoreEnvironment
 import org.jetbrains.uast.test.env.AbstractUastTest
@@ -72,8 +72,8 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
                 .registerExtension(KotlinEvaluatorExtension())
 
         project.registerService(
-                KotlinUastBindingContextProviderService::class.java,
-                CliKotlinUastBindingContextProviderService::class.java)
+            KotlinUastResolveProviderService::class.java,
+            CliKotlinUastResolveProviderService::class.java)
     }
 
     override fun createEnvironment(source: File): AbstractCoreEnvironment {

@@ -87,8 +87,9 @@ class DeserializerForClassfileDecompiler(
         }
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(header.packageName?.let(::FqName) ?: facadeFqName.parent()), packageProto, nameResolver,
-                JvmPackagePartSource(binaryClassForPackageClass, packageProto, nameResolver), deserializationComponents
+            createDummyPackageFragment(header.packageName?.let(::FqName) ?: facadeFqName.parent()),
+            packageProto, nameResolver, header.metadataVersion,
+            JvmPackagePartSource(binaryClassForPackageClass, packageProto, nameResolver), deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors().toList()
     }
@@ -145,6 +146,6 @@ class DirectoryBasedDataFinder(
         }
 
         val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
-        return ClassData(nameResolver, classProto, KotlinJvmBinarySourceElement(binaryClass))
+        return ClassData(nameResolver, classProto, classHeader.metadataVersion, KotlinJvmBinarySourceElement(binaryClass))
     }
 }

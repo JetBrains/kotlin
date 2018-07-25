@@ -25,32 +25,32 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
+        KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInBox() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("asyncException.kt")
     public void testAsyncException_1_2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/asyncException.kt");
-        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        runTestWithPackageReplacement("compiler/testData/codegen/java8/box/asyncException.kt", "kotlin.coroutines.experimental");
     }
 
     @TestMetadata("asyncException.kt")
     public void testAsyncException_1_3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/asyncException.kt");
-        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        runTestWithPackageReplacement("compiler/testData/codegen/java8/box/asyncException.kt", "kotlin.coroutines");
     }
 
     @TestMetadata("async.kt")
     public void testAsync_1_2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/async.kt");
-        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+        runTestWithPackageReplacement("compiler/testData/codegen/java8/box/async.kt", "kotlin.coroutines.experimental");
     }
 
     @TestMetadata("async.kt")
     public void testAsync_1_3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/async.kt");
-        doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+        runTestWithPackageReplacement("compiler/testData/codegen/java8/box/async.kt", "kotlin.coroutines");
     }
 
     @TestMetadata("capturedSuperCall.kt")
@@ -711,6 +711,11 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             runTest("compiler/testData/codegen/java8/box/parametersMetadata/defaultImpls.kt");
         }
 
+        @TestMetadata("delegation.kt")
+        public void testDelegation() throws Exception {
+            runTest("compiler/testData/codegen/java8/box/parametersMetadata/delegation.kt");
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             runTest("compiler/testData/codegen/java8/box/parametersMetadata/enum.kt");
@@ -749,16 +754,6 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/reflection"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("realParameterNames.kt")
-        public void testRealParameterNames() throws Exception {
-            runTest("compiler/testData/codegen/java8/box/reflection/realParameterNames.kt");
-        }
-
-        @TestMetadata("synthesizedParameterNames.kt")
-        public void testSynthesizedParameterNames() throws Exception {
-            runTest("compiler/testData/codegen/java8/box/reflection/synthesizedParameterNames.kt");
-        }
-
         @TestMetadata("compiler/testData/codegen/java8/box/reflection/parameters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -771,9 +766,14 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("javaParametersHaveDefaultNames.kt")
-            public void testJavaParametersHaveDefaultNames() throws Exception {
-                runTest("compiler/testData/codegen/java8/box/reflection/parameters/javaParametersHaveDefaultNames.kt");
+            @TestMetadata("realParameterNames.kt")
+            public void testRealParameterNames() throws Exception {
+                runTest("compiler/testData/codegen/java8/box/reflection/parameters/realParameterNames.kt");
+            }
+
+            @TestMetadata("synthesizedParameterNames.kt")
+            public void testSynthesizedParameterNames() throws Exception {
+                runTest("compiler/testData/codegen/java8/box/reflection/parameters/synthesizedParameterNames.kt");
             }
         }
     }

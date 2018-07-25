@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 var sayResult = ""
 
 class NoiseMaker {

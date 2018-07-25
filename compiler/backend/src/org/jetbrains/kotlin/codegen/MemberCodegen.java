@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper;
 import org.jetbrains.kotlin.codegen.inline.NameGenerator;
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages;
 import org.jetbrains.kotlin.codegen.inline.SourceMapper;
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -29,9 +27,6 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
-import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
@@ -45,7 +40,6 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -62,7 +56,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
+import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getInlineName;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
@@ -583,10 +578,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
                     return true;
                 }
-                if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
+                if (type == Type.DOUBLE_TYPE && value.equals(0.0)) {
                     return true;
                 }
-                if (type == Type.FLOAT_TYPE && ((Number) value).floatValue() == 0f) {
+                if (type == Type.FLOAT_TYPE && value.equals(0.0f)) {
                     return true;
                 }
             }
@@ -828,7 +823,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                         property.put(signature.getReturnType(), iv);
                     }
                     else {
-                        property.store(StackValue.onStack(property.type), iv, true);
+                        property.store(StackValue.onStack(property.type, property.kotlinType), iv, true);
                     }
 
                     iv.areturn(signature.getReturnType());
@@ -911,21 +906,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         callableMethod.genInvokeInstruction(iv);
 
-        return StackValue.onStack(callableMethod.getReturnType());
-    }
-
-    protected void generateKotlinClassMetadataAnnotation(@NotNull ClassDescriptor descriptor, boolean isScript) {
-        DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
-
-        ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
-
-        int flags = isScript ? JvmAnnotationNames.METADATA_SCRIPT_FLAG : 0;
-
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, flags, av -> {
-            writeAnnotationData(av, serializer, classProto);
-            return Unit.INSTANCE;
-        });
+        return StackValue.onStack(callableMethod.getReturnType(), functionDescriptor.getReturnType());
     }
 
     public void generateAssertField() {

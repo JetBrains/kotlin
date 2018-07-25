@@ -72,7 +72,7 @@ class ReplOutputHandler(
             factory.newDocumentBuilder().parse(strToSource(text))
         }
         catch (e: Exception) {
-            logError(ReplOutputHandler::class.java, "Couldn't parse REPL output: $text")
+            logError(ReplOutputHandler::class.java, "Couldn't parse REPL output: $text", e)
             return
         }
 

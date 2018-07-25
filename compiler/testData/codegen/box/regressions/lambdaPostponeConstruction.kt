@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class MyList<T>
 
 operator fun <T> MyList<T>.plusAssign(element: T) {}

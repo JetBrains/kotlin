@@ -44,8 +44,7 @@ class CharSequenceWithIndexForLoopGenerator(
         indexVar = indexLoopComponent?.parameterVar ?: createLoopTempVariable(Type.INT_TYPE)
         indexType = indexLoopComponent?.parameterType ?: Type.INT_TYPE
 
-        StackValue.local(indexVar, indexType)
-            .store(StackValue.constant(0, Type.INT_TYPE), v)
+        StackValue.local(indexVar, indexType).store(StackValue.constant(0), v)
     }
 
     private fun evalCharSeqLengthOnStack() {

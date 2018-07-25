@@ -1,7 +1,6 @@
 package test
 
 expect class Foo {
-    fun foo(n: Int)
 }
 
 fun test(f: Foo) {

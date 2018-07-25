@@ -23,14 +23,16 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.getDefault
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
@@ -149,8 +151,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, startOffset, endOffset)
             irBuilder.run {
                 val constructorDescriptor = delegatingConstructorCall.descriptor.original
-                val constructorCall = irCall(delegatingConstructorCall.symbol,
-                                             constructorDescriptor.typeParameters.associate { it to delegatingConstructorCall.getTypeArgument(it)!! }).apply {
+                val constructorCall = irCall(delegatingConstructorCall.symbol).apply {
+                    constructorDescriptor.typeParameters.forEach() { putTypeArgument(it.index, delegatingConstructorCall.getTypeArgument(it)!!) }
                     constructorDescriptor.valueParameters.forEach { putValueArgument(it, delegatingConstructorCall.getValueArgument(it)) }
                 }
                 val oldThis = delegatingConstructorCall.descriptor.constructedClass.thisAsReceiverParameter
@@ -159,12 +161,12 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                     nameHint     = delegatingConstructorCall.descriptor.fqNameSafe.toString() + ".this"
                 )
                 statements[0] = newThis
-                substituteMap[oldThis] = irGet(newThis.symbol)
-                statements.add(irReturn(irGet(newThis.symbol)))
+                substituteMap[oldThis] = irGet(newThis)
+                statements.add(irReturn(irGet(newThis)))
             }
         }
 
-        val returnType = copyFunctionDeclaration.descriptor.returnType!!                    // Substituted return type.
+        val returnType = copyFunctionDeclaration.returnType                    // Substituted return type.
         val sourceFileName = context.originalModuleIndex.declarationToFile[caller.descriptor.original] ?: ""
         val inlineFunctionBody = IrReturnableBlockImpl(                                     // Create new IR element to replace "call".
             startOffset = startOffset,
@@ -248,7 +250,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         val substitutionContext = mutableMapOf<TypeConstructor, TypeProjection>()
         for (index in 0 until irCall.typeArgumentsCount) {
             val typeArgument = irCall.getTypeArgument(index) ?: continue
-            substitutionContext[typeParameters[index].typeConstructor] = TypeProjectionImpl(typeArgument)
+            substitutionContext[typeParameters[index].typeConstructor] = TypeProjectionImpl(typeArgument.toKotlinType())
         }
         return TypeSubstitutor.create(substitutionContext)
     }
@@ -309,7 +311,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         }
 
         val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
-        functionDescriptor.valueParameters.forEach { parameterDescriptor ->                 // Iterate value parameter descriptors.
+        irFunction.valueParameters.forEach { parameter ->                 // Iterate value parameter descriptors.
+            val parameterDescriptor = parameter.descriptor as ValueParameterDescriptor
             val argument = valueArguments[parameterDescriptor.index]                        // Get appropriate argument from call site.
             when {
                 argument != null -> {                                                       // Argument is good enough.
@@ -331,8 +334,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                     val emptyArray = IrVarargImpl(
                         startOffset       = irCall.startOffset,
                         endOffset         = irCall.endOffset,
-                        type              = parameterDescriptor.type,
-                        varargElementType = parameterDescriptor.varargElementType!!
+                        type              = parameter.type,
+                        varargElementType = parameter.varargElementType!!
                     )
                     parameterToArgument += ParameterToArgument(
                         parameterDescriptor = parameterDescriptor,
@@ -377,7 +380,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             val getVal = IrGetValueImpl(                                                    // Create new expression, representing access the new variable.
                 startOffset = currentScope.irElement.startOffset,
                 endOffset   = currentScope.irElement.endOffset,
-                symbol      = createValueSymbol(newVariable.descriptor)
+                type        = newVariable.type,
+                symbol      = newVariable.symbol
             )
             substituteMap[parameterDescriptor] = getVal                                     // Parameter will be replaced with the new variable.
         }

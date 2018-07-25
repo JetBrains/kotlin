@@ -76,10 +76,7 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCo
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopyPasteTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.kotlin.idea.debugger.AbstractBeforeExtractFunctionInsertionTest
-import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
-import org.jetbrains.kotlin.idea.debugger.AbstractPositionManagerTest
-import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
@@ -393,7 +390,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractQuickDocProviderTest> {
-            model("editor/quickDoc", pattern = """^([^_]+)\.[^\.]*$""")
+            model("editor/quickDoc", pattern = """^([^_]+)\.(kt|java)$""")
         }
 
         testClass<AbstractSafeDeleteTest> {
@@ -640,6 +637,10 @@ fun main(args: Array<String>) {
             model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
         }
 
+        testClass<AbstractFileRankingTest> {
+            model("debugger/fileRanking")
+        }
+
         testClass<AbstractStubBuilderTest> {
             model("stubs", extension = "kt")
         }
@@ -677,8 +678,8 @@ fun main(args: Array<String>) {
             model("refactoring/introduceJavaParameter", extension = "java", testMethod = "doIntroduceJavaParameterTest")
             model("refactoring/introduceTypeParameter", pattern = KT_OR_KTS, testMethod = "doIntroduceTypeParameterTest")
             model("refactoring/introduceTypeAlias", pattern = KT_OR_KTS, testMethod = "doIntroduceTypeAliasTest")
-            model("refactoring/extractSuperclass", pattern = KT_OR_KTS, testMethod = "doExtractSuperclassTest")
-            model("refactoring/extractInterface", pattern = KT_OR_KTS, testMethod = "doExtractInterfaceTest")
+            model("refactoring/extractSuperclass", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME, testMethod = "doExtractSuperclassTest")
+            model("refactoring/extractInterface", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME, testMethod = "doExtractInterfaceTest")
         }
 
         testClass<AbstractPullUpTest> {
@@ -927,7 +928,8 @@ fun main(args: Array<String>) {
 
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest> {
-            model("incremental/multiModule", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
@@ -935,6 +937,10 @@ fun main(args: Array<String>) {
         }
 
         actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiplatform/multiModule")
+
+        testClass<AbstractIncrementalJsJpsTest> {
+            model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+        }
 
         testClass<AbstractMultiplatformJpsTest> {
             model(

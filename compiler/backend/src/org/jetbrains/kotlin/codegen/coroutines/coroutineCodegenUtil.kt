@@ -8,24 +8,21 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
-import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.codegen.topLevelClassAsmType
-import org.jetbrains.kotlin.codegen.topLevelClassInternalName
-import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -37,13 +34,16 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -53,8 +53,17 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 const val COROUTINE_LABEL_FIELD_NAME = "label"
 const val SUSPEND_FUNCTION_CREATE_METHOD_NAME = "create"
 const val DO_RESUME_METHOD_NAME = "doResume"
+const val INVOKE_SUSPEND_METHOD_NAME = "invokeSuspend"
 const val DATA_FIELD_NAME = "data"
 const val EXCEPTION_FIELD_NAME = "exception"
+
+fun LanguageVersionSettings.isResumeImplMethodName(name: String) =
+    if (isReleaseCoroutines())
+        name == INVOKE_SUSPEND_METHOD_NAME
+    else
+        name == DO_RESUME_METHOD_NAME
+
+fun isResumeImplMethodNameFromAnyLanguageSettings(name: String) = name == INVOKE_SUSPEND_METHOD_NAME || name == DO_RESUME_METHOD_NAME
 
 fun LanguageVersionSettings.coroutinesJvmInternalPackageFqName() =
     coroutinesPackageFqName().child(Name.identifier("jvm")).child(Name.identifier("internal"))
@@ -70,14 +79,31 @@ fun continuationAsmTypes() = listOf(
 fun LanguageVersionSettings.coroutineContextAsmType() =
     coroutinesPackageFqName().child(Name.identifier("CoroutineContext")).topLevelClassAsmType()
 
-fun LanguageVersionSettings.coroutineImplAsmType() =
-    coroutinesJvmInternalPackageFqName().child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
+fun LanguageVersionSettings.isCoroutineSuperClass(internalName: String): Boolean {
+    val coroutinesJvmInternalPackage = coroutinesJvmInternalPackageFqName()
+
+    return if (isReleaseCoroutines())
+        coroutinesJvmInternalPackage.identifiedChild("ContinuationImpl") == internalName ||
+                coroutinesJvmInternalPackage.identifiedChild("RestrictedContinuationImpl") == internalName ||
+                coroutinesJvmInternalPackage.identifiedChild("SuspendLambda") == internalName ||
+                coroutinesJvmInternalPackage.identifiedChild("RestrictedSuspendLambda") == internalName
+    else
+        coroutinesJvmInternalPackage.identifiedChild("CoroutineImpl") == internalName
+}
+
+private fun FqName.identifiedChild(name: String) = child(Name.identifier(name)).topLevelClassInternalName()
 
 private fun LanguageVersionSettings.coroutinesIntrinsicsFileFacadeInternalName() =
     coroutinesIntrinsicsPackageFqName().child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()
 
 private fun LanguageVersionSettings.internalCoroutineIntrinsicsOwnerInternalName() =
     coroutinesJvmInternalPackageFqName().child(Name.identifier("CoroutineIntrinsics")).topLevelClassInternalName()
+
+fun computeLabelOwner(languageVersionSettings: LanguageVersionSettings, thisName: String): Type =
+    if (languageVersionSettings.isReleaseCoroutines())
+        Type.getObjectType(thisName)
+    else
+        languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
 
 private val NORMALIZE_CONTINUATION_METHOD_NAME = "normalizeContinuation"
 private val GET_CONTEXT_METHOD_NAME = "getContext"
@@ -190,9 +216,7 @@ fun ResolvedCall<*>.isSuspendNoInlineCall(codegen: ExpressionCodegen, languageVe
 
     val functionDescriptor = resultingDescriptor as? FunctionDescriptor ?: return false
     if (!functionDescriptor.unwrapInitialDescriptorForSuspendFunction().isSuspend) return false
-    if (functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm(languageVersionSettings) ||
-        functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings)
-    ) return true
+    if (functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings)) return true
     return !(functionDescriptor.isInline || isInlineLambda)
 }
 
@@ -201,6 +225,12 @@ fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
     return this.isSuspend && this.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) == null
 }
 
+fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, state: GenerationState): D = getOrCreateJvmSuspendFunctionView(
+    function,
+    state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+    state.bindingContext
+)
+
 // Suspend functions have irregular signatures on JVM, containing an additional last parameter with type `Continuation<return-type>`,
 // and return type Any?
 // This function returns a function descriptor reflecting how the suspend function looks from point of view of JVM
@@ -208,8 +238,7 @@ fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
 fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
     function: D,
     isReleaseCoroutines: Boolean,
-    bindingContext: BindingContext? = null,
-    dropSuspend: Boolean = false
+    bindingContext: BindingContext? = null
 ): D {
     assert(function.isSuspend) {
         "Suspended function is expected, but $function was found"
@@ -239,9 +268,6 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
         setPreserveSourceElement()
         setReturnType(function.builtIns.nullableAnyType)
         setValueParameters(it.valueParameters + continuationParameter)
-        if (dropSuspend) {
-            setDropSuspend()
-        }
         putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, it)
     }
 }
@@ -271,54 +297,16 @@ fun <D : FunctionDescriptor> D.createCustomCopy(
 private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction(isReleaseCoroutines: Boolean) =
     module.getContinuationOfTypeOrAny(returnType!!, isReleaseCoroutines)
 
-fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType, isReleaseCoroutines: Boolean) =
-    module.findContinuationClassDescriptorOrNull(
-        NoLookupLocation.FROM_BACKEND,
-        isReleaseCoroutines
+fun ModuleDescriptor.getSuccessOrFailure(kotlinType: KotlinType) =
+    module.resolveTopLevelClass(
+        DescriptorUtils.SUCCESS_OR_FAILURE_FQ_NAME,
+        NoLookupLocation.FROM_BACKEND
     )?.defaultType?.let {
         KotlinTypeFactory.simpleType(
             it,
             arguments = listOf(kotlinType.asTypeProjection())
         )
-    } ?: module.builtIns.nullableAnyType
-
-fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm(languageVersionSettings: LanguageVersionSettings) =
-    getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineOrReturn(languageVersionSettings) == true
-
-fun createMethodNodeForSuspendCoroutineOrReturn(
-    functionDescriptor: FunctionDescriptor,
-    typeMapper: KotlinTypeMapper,
-    languageVersionSettings: LanguageVersionSettings
-): MethodNode {
-    assert(functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm(languageVersionSettings)) {
-        "functionDescriptor must be kotlin.coroutines.intrinsics.suspendOrReturn"
-    }
-
-    val node =
-        MethodNode(
-            Opcodes.ASM5,
-            Opcodes.ACC_STATIC,
-            "fake",
-            typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
-        )
-
-    node.visitVarInsn(Opcodes.ALOAD, 0)
-    node.visitVarInsn(Opcodes.ALOAD, 1)
-
-    node.invokeNormalizeContinuation(languageVersionSettings)
-
-    node.visitMethodInsn(
-        Opcodes.INVOKEINTERFACE,
-        typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
-        OperatorNameConventions.INVOKE.identifier,
-        "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
-        true
-    )
-    node.visitInsn(Opcodes.ARETURN)
-    node.visitMaxs(2, 2)
-
-    return node
-}
+    } ?: ErrorUtils.createErrorType("For SuccessOrFailure")
 
 private fun MethodNode.invokeNormalizeContinuation(languageVersionSettings: LanguageVersionSettings) {
     visitMethodInsn(
@@ -405,18 +393,39 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
             typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
         )
 
-    node.visitVarInsn(Opcodes.ALOAD, 0)
-    node.visitVarInsn(Opcodes.ALOAD, 1)
+    with(InstructionAdapter(node)) {
+        load(0, AsmTypes.OBJECT_TYPE) // block
+        load(1, AsmTypes.OBJECT_TYPE) // continuation
 
-    node.visitMethodInsn(
-        Opcodes.INVOKEINTERFACE,
-        typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
-        OperatorNameConventions.INVOKE.identifier,
-        "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
-        true
-    )
+        // block.invoke(continuation)
+        invokeinterface(
+            typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
+            OperatorNameConventions.INVOKE.identifier,
+            "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}"
+        )
+
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
+            val elseLabel = Label()
+            // if (result === COROUTINE_SUSPENDED) {
+            dup()
+            loadCoroutineSuspendedMarker(languageVersionSettings)
+            ifacmpne(elseLabel)
+            //   DebugProbesKt.probeCoroutineSuspended(continuation)
+            load(1, AsmTypes.OBJECT_TYPE) // continuation
+            checkcast(languageVersionSettings.continuationAsmType())
+            invokestatic(
+                languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("DebugProbesKt")).topLevelClassAsmType().internalName,
+                "probeCoroutineSuspended",
+                "(${languageVersionSettings.continuationAsmType()})V",
+                false
+            )
+            // }
+            mark(elseLabel)
+        }
+    }
+
     node.visitInsn(Opcodes.ARETURN)
-    node.visitMaxs(2, 2)
+    node.visitMaxs(3, 2)
 
     return node
 }
@@ -464,6 +473,17 @@ fun InstructionAdapter.invokeDoResumeWithUnit(thisName: String) {
         thisName,
         DO_RESUME_METHOD_NAME,
         Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.JAVA_THROWABLE_TYPE),
+        false
+    )
+}
+
+fun InstructionAdapter.invokeInvokeSuspendWithUnit(thisName: String) {
+    StackValue.putUnitInstance(this)
+
+    invokevirtual(
+        thisName,
+        INVOKE_SUSPEND_METHOD_NAME,
+        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE),
         false
     )
 }

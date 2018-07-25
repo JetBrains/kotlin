@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.components.SamConversionTransformer
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -20,39 +18,72 @@ import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import java.util.*
 
 abstract class TargetPlatform(val platformName: String) {
+    private data class DefaultImportsKey(val includeKotlinComparisons: Boolean, val includeLowPriorityImports: Boolean)
+
+    private val defaultImports = LockBasedStorageManager().let { storageManager ->
+        storageManager.createMemoizedFunction<DefaultImportsKey, List<ImportPath>> { (includeKotlinComparisons, includeLowPriorityImports) ->
+            ArrayList<ImportPath>().apply {
+                listOf(
+                    "kotlin.*",
+                    "kotlin.annotation.*",
+                    "kotlin.collections.*",
+                    "kotlin.ranges.*",
+                    "kotlin.sequences.*",
+                    "kotlin.text.*",
+                    "kotlin.io.*"
+                ).forEach { add(ImportPath.fromString(it)) }
+
+                if (includeKotlinComparisons) {
+                    add(ImportPath.fromString("kotlin.comparisons.*"))
+                }
+
+                computePlatformSpecificDefaultImports(storageManager, this)
+
+                if (includeLowPriorityImports) {
+                    addAll(defaultLowPriorityImports)
+                }
+            }
+        }
+    }
+
     override fun toString() = platformName
 
     abstract val platformConfigurator: PlatformConfigurator
-    abstract fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath>
+
+    open val defaultLowPriorityImports: List<ImportPath> get() = emptyList()
+
+    fun getDefaultImports(languageVersionSettings: LanguageVersionSettings, includeLowPriorityImports: Boolean): List<ImportPath> =
+        defaultImports(
+            DefaultImportsKey(
+                languageVersionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons),
+                includeLowPriorityImports
+            )
+        )
+
+    protected abstract fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>)
+
     open val excludedImports: List<FqName> get() = emptyList()
 
     abstract val multiTargetPlatform: MultiTargetPlatform
 
+    // This function is used in "cat.helm.clean:0.1.1-SNAPSHOT": https://plugins.jetbrains.com/plugin/index?xmlId=cat.helm.clean
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Use getDefaultImports(LanguageVersionSettings, Boolean) instead.", level = DeprecationLevel.ERROR)
+    fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> {
+        return getDefaultImports(
+            if (includeKotlinComparisons) LanguageVersionSettingsImpl.DEFAULT
+            else LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_0, ApiVersion.KOTLIN_1_0),
+            true
+        )
+    }
+
     object Common : TargetPlatform("Default") {
-        private val defaultImports =
-            LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
-                ArrayList<ImportPath>().apply {
-                    listOf(
-                        "kotlin.*",
-                        "kotlin.annotation.*",
-                        "kotlin.collections.*",
-                        "kotlin.ranges.*",
-                        "kotlin.sequences.*",
-                        "kotlin.text.*",
-                        "kotlin.io.*"
-                    ).forEach { add(ImportPath.fromString(it)) }
-
-                    if (includeKotlinComparisons) {
-                        add(ImportPath.fromString("kotlin.comparisons.*"))
-                    }
-                }
-            }
-
-        override fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> = defaultImports(includeKotlinComparisons)
+        override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {}
 
         override val platformConfigurator =
             object : PlatformConfigurator(
@@ -87,7 +118,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     KClassWithIncorrectTypeArgumentChecker,
     SuspendOperatorsCheckers,
     InlineClassDeclarationChecker,
-    PropertiesWithBackingFieldsInsideInlineClass()
+    PropertiesWithBackingFieldsInsideInlineClass(),
+    AnnotationClassTargetAndRetentionChecker()
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

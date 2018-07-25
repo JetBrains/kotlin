@@ -22,16 +22,26 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTry
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
-class IrTryImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
-    IrExpressionBase(startOffset, endOffset, type), IrTry {
+class IrTryImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType
+) :
+    IrExpressionBase(startOffset, endOffset, type),
+    IrTry {
+
     constructor(
-        startOffset: Int, endOffset: Int, type: KotlinType,
-        tryResult: IrExpression, catches: List<IrCatch>, finallyExpression: IrExpression?
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        tryResult: IrExpression,
+        catches: List<IrCatch>,
+        finallyExpression: IrExpression?
     ) : this(startOffset, endOffset, type) {
         this.tryResult = tryResult
         this.catches.addAll(catches)
@@ -63,14 +73,27 @@ class IrTryImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
     }
 }
 
-class IrCatchImpl(startOffset: Int, endOffset: Int) : IrCatch, IrElementBase(startOffset, endOffset) {
-    constructor(startOffset: Int, endOffset: Int, catchParameter: IrVariable)
-            : this(startOffset, endOffset) {
+class IrCatchImpl(
+    startOffset: Int,
+    endOffset: Int
+) :
+    IrElementBase(startOffset, endOffset),
+    IrCatch {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        catchParameter: IrVariable
+    ) : this(startOffset, endOffset) {
         this.catchParameter = catchParameter
     }
 
-    constructor(startOffset: Int, endOffset: Int, catchParameter: IrVariable, result: IrExpression)
-            : this(startOffset, endOffset, catchParameter) {
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        catchParameter: IrVariable,
+        result: IrExpression
+    ) : this(startOffset, endOffset, catchParameter) {
         this.result = result
     }
 

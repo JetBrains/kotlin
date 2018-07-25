@@ -1794,6 +1794,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines/redundantAsync"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("experimental.kt")
+            public void testExperimental() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/experimental.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/simple.kt");
@@ -3099,6 +3104,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("inapplicableAlreadyHasFunctionLiteral.kt")
         public void testInapplicableAlreadyHasFunctionLiteral() throws Exception {
             runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicableAlreadyHasFunctionLiteral.kt");
+        }
+
+        @TestMetadata("inapplicableMultiFunctionTypeParameters.kt")
+        public void testInapplicableMultiFunctionTypeParameters() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicableMultiFunctionTypeParameters.kt");
+        }
+
+        @TestMetadata("inapplicableMultiFunctionTypeParameters2.kt")
+        public void testInapplicableMultiFunctionTypeParameters2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicableMultiFunctionTypeParameters2.kt");
         }
 
         @TestMetadata("inapplicableOptionalParametersAfter.kt")

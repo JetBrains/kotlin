@@ -953,9 +953,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/annotations/kt1860-positive.kt");
             }
 
-            @TestMetadata("kt1886annotationBody.kt")
-            public void testKt1886annotationBody() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/annotations/kt1886annotationBody.kt");
+            @TestMetadata("kt1886annotationBody_after.kt")
+            public void testKt1886annotationBody_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/kt1886annotationBody_after.kt");
+            }
+
+            @TestMetadata("kt1886annotationBody_before.kt")
+            public void testKt1886annotationBody_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/kt1886annotationBody_before.kt");
             }
 
             @TestMetadata("missingValOnParameter.kt")
@@ -1063,6 +1068,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/annotations/RecursivelyIncorrectlyAnnotatedParameter.kt");
             }
 
+            @TestMetadata("RetentionsOfAnnotationWithExpressionTarget_after.kt")
+            public void testRetentionsOfAnnotationWithExpressionTarget_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget_after.kt");
+            }
+
+            @TestMetadata("RetentionsOfAnnotationWithExpressionTarget_before.kt")
+            public void testRetentionsOfAnnotationWithExpressionTarget_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget_before.kt");
+            }
+
             @TestMetadata("typeAnnotations.kt")
             public void testTypeAnnotations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/typeAnnotations.kt");
@@ -1115,9 +1130,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/compareAndEquals.kt");
                 }
 
-                @TestMetadata("enumConst.kt")
-                public void testEnumConst() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/enumConst.kt");
+                @TestMetadata("enumConst_after.kt")
+                public void testEnumConst_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/enumConst_after.kt");
+                }
+
+                @TestMetadata("enumConst_before.kt")
+                public void testEnumConst_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/enumConst_before.kt");
                 }
 
                 @TestMetadata("javaProperties.kt")
@@ -1404,9 +1424,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/FieldAnnotations.kt");
                 }
 
-                @TestMetadata("fileAnnotationWithoutColon.kt")
-                public void testFileAnnotationWithoutColon() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/fileAnnotationWithoutColon.kt");
+                @TestMetadata("fileAnnotationWithoutColon_after.kt")
+                public void testFileAnnotationWithoutColon_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/fileAnnotationWithoutColon_after.kt");
+                }
+
+                @TestMetadata("fileAnnotationWithoutColon_before.kt")
+                public void testFileAnnotationWithoutColon_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/fileAnnotationWithoutColon_before.kt");
                 }
 
                 @TestMetadata("FileAnnotations.kt")
@@ -1434,9 +1459,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/ReceiverAnnotations.kt");
                 }
 
-                @TestMetadata("receiverUseSiteTargetOnExtensionFunction.kt")
-                public void testReceiverUseSiteTargetOnExtensionFunction() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/receiverUseSiteTargetOnExtensionFunction.kt");
+                @TestMetadata("receiverUseSiteTargetOnExtensionFunction_after.kt")
+                public void testReceiverUseSiteTargetOnExtensionFunction_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/receiverUseSiteTargetOnExtensionFunction_after.kt");
+                }
+
+                @TestMetadata("receiverUseSiteTargetOnExtensionFunction_before.kt")
+                public void testReceiverUseSiteTargetOnExtensionFunction_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/receiverUseSiteTargetOnExtensionFunction_before.kt");
                 }
 
                 @TestMetadata("repeatable.kt")
@@ -1454,14 +1484,19 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/SparamAnnotations.kt");
                 }
 
-                @TestMetadata("wrongParamAnnotationsOnTypes.kt")
-                public void testWrongParamAnnotationsOnTypes() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypes.kt");
-                }
-
                 @TestMetadata("wrongParamAnnotationsOnTypesError.kt")
                 public void testWrongParamAnnotationsOnTypesError() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypesError.kt");
+                }
+
+                @TestMetadata("wrongParamAnnotationsOnTypes_after.kt")
+                public void testWrongParamAnnotationsOnTypes_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypes_after.kt");
+                }
+
+                @TestMetadata("wrongParamAnnotationsOnTypes_before.kt")
+                public void testWrongParamAnnotationsOnTypes_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/wrongParamAnnotationsOnTypes_before.kt");
                 }
             }
         }
@@ -1543,14 +1578,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/backingField/FieldOnVar.kt");
             }
 
-            @TestMetadata("FieldReassignment.kt")
-            public void testFieldReassignment() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment.kt");
+            @TestMetadata("FieldReassignment_after.kt")
+            public void testFieldReassignment_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment_after.kt");
             }
 
-            @TestMetadata("FieldReassignmentError.kt")
-            public void testFieldReassignmentError() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignmentError.kt");
+            @TestMetadata("FieldReassignment_before.kt")
+            public void testFieldReassignment_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/FieldReassignment_before.kt");
             }
 
             @TestMetadata("FieldShadow.kt")
@@ -3019,9 +3054,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/classObjects/InnerClassAccessThroughClassObject.kt");
             }
 
-            @TestMetadata("InnerClassAccessThroughEnum.kt")
-            public void testInnerClassAccessThroughEnum() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/classObjects/InnerClassAccessThroughEnum.kt");
+            @TestMetadata("InnerClassAccessThroughEnum_after.kt")
+            public void testInnerClassAccessThroughEnum_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/InnerClassAccessThroughEnum_after.kt");
+            }
+
+            @TestMetadata("InnerClassAccessThroughEnum_before.kt")
+            public void testInnerClassAccessThroughEnum_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/InnerClassAccessThroughEnum_before.kt");
             }
 
             @TestMetadata("InnerClassClassObject.kt")
@@ -3288,9 +3328,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignmentInLocalsInConstructor.kt");
             }
 
-            @TestMetadata("backingFieldInsideGetter.kt")
-            public void testBackingFieldInsideGetter() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter.kt");
+            @TestMetadata("backingFieldInsideGetter_after.kt")
+            public void testBackingFieldInsideGetter_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter_after.kt");
+            }
+
+            @TestMetadata("backingFieldInsideGetter_before.kt")
+            public void testBackingFieldInsideGetter_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter_before.kt");
             }
 
             @TestMetadata("breakContinueInTryFinally.kt")
@@ -3383,9 +3428,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalFun.kt");
             }
 
-            @TestMetadata("initializationInLocalViaExplicitThis.kt")
-            public void testInitializationInLocalViaExplicitThis() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalViaExplicitThis.kt");
+            @TestMetadata("initializationInLocalViaExplicitThis_after.kt")
+            public void testInitializationInLocalViaExplicitThis_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalViaExplicitThis_after.kt");
+            }
+
+            @TestMetadata("initializationInLocalViaExplicitThis_before.kt")
+            public void testInitializationInLocalViaExplicitThis_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLocalViaExplicitThis_before.kt");
             }
 
             @TestMetadata("kt1001.kt")
@@ -4126,6 +4176,42 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/coroutines")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Coroutines extends AbstractDiagnosticsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCoroutines() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/coroutines/callableReference")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CallableReference extends AbstractDiagnosticsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInCallableReference() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("invokeOutideSuspend.kt")
+                public void testInvokeOutideSuspend() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/coroutines/callableReference/invokeOutideSuspend.kt");
+                }
+
+                @TestMetadata("outsideSuspend.kt")
+                public void testOutsideSuspend() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/coroutines/callableReference/outsideSuspend.kt");
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -4225,19 +4311,34 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
-                @TestMetadata("everythingInOneScope.kt")
-                public void testEverythingInOneScope() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/everythingInOneScope.kt");
+                @TestMetadata("everythingInOneScope_after.kt")
+                public void testEverythingInOneScope_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/everythingInOneScope_after.kt");
                 }
 
-                @TestMetadata("noMembers.kt")
-                public void testNoMembers() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/noMembers.kt");
+                @TestMetadata("everythingInOneScope_before.kt")
+                public void testEverythingInOneScope_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/everythingInOneScope_before.kt");
                 }
 
-                @TestMetadata("onlyInterfaces.kt")
-                public void testOnlyInterfaces() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/onlyInterfaces.kt");
+                @TestMetadata("noMembers_after.kt")
+                public void testNoMembers_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/noMembers_after.kt");
+                }
+
+                @TestMetadata("noMembers_before.kt")
+                public void testNoMembers_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/noMembers_before.kt");
+                }
+
+                @TestMetadata("onlyInterfaces_after.kt")
+                public void testOnlyInterfaces_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/onlyInterfaces_after.kt");
+                }
+
+                @TestMetadata("onlyInterfaces_before.kt")
+                public void testOnlyInterfaces_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/onlyInterfaces_before.kt");
                 }
 
                 @TestMetadata("typeIsLowEnough.kt")
@@ -4245,14 +4346,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/typeIsLowEnough.kt");
                 }
 
-                @TestMetadata("withIrrelevantInterface.kt")
-                public void testWithIrrelevantInterface() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withIrrelevantInterface.kt");
+                @TestMetadata("withIrrelevantInterface_after.kt")
+                public void testWithIrrelevantInterface_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withIrrelevantInterface_after.kt");
                 }
 
-                @TestMetadata("withMembers.kt")
-                public void testWithMembers() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withMembers.kt");
+                @TestMetadata("withIrrelevantInterface_before.kt")
+                public void testWithIrrelevantInterface_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withIrrelevantInterface_before.kt");
+                }
+
+                @TestMetadata("withMembers_after.kt")
+                public void testWithMembers_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withMembers_after.kt");
+                }
+
+                @TestMetadata("withMembers_before.kt")
+                public void testWithMembers_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cyclicHierarchy/withCompanion/withMembers_before.kt");
                 }
 
                 @TestMetadata("withoutTypeReference.kt")
@@ -6622,9 +6733,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/enum/constructorWithDefaultParametersOnly.kt");
             }
 
-            @TestMetadata("dontCreatePackageTypeForEnumEntry.kt")
-            public void testDontCreatePackageTypeForEnumEntry() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry.kt");
+            @TestMetadata("dontCreatePackageTypeForEnumEntry_after.kt")
+            public void testDontCreatePackageTypeForEnumEntry_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry_after.kt");
+            }
+
+            @TestMetadata("dontCreatePackageTypeForEnumEntry_before.kt")
+            public void testDontCreatePackageTypeForEnumEntry_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry_before.kt");
             }
 
             @TestMetadata("emptyConstructor.kt")
@@ -6879,9 +6995,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/enum/inner/insideEnum.kt");
                 }
 
-                @TestMetadata("insideEnumEntry.kt")
-                public void testInsideEnumEntry() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/enum/inner/insideEnumEntry.kt");
+                @TestMetadata("insideEnumEntry_after.kt")
+                public void testInsideEnumEntry_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/inner/insideEnumEntry_after.kt");
+                }
+
+                @TestMetadata("insideEnumEntry_before.kt")
+                public void testInsideEnumEntry_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/inner/insideEnumEntry_before.kt");
                 }
 
                 @TestMetadata("insideInnerClassNotAllowed.kt")
@@ -8102,9 +8223,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
-                    @TestMetadata("fromCompanionObject.kt")
-                    public void testFromCompanionObject() throws Exception {
-                        runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/fromCompanionObject.kt");
+                    @TestMetadata("fromCompanionObject_after.kt")
+                    public void testFromCompanionObject_after() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/fromCompanionObject_after.kt");
+                    }
+
+                    @TestMetadata("fromCompanionObject_before.kt")
+                    public void testFromCompanionObject_before() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/generics/innerClasses/implicitArguments/fromCompanionObject_before.kt");
                     }
 
                     @TestMetadata("fromOuterClassInObjectLiteral.kt")
@@ -9267,6 +9393,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("listConstructor.kt")
             public void testListConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/listConstructor.kt");
+            }
+
+            @TestMetadata("localFunctionInsideIfBlock.kt")
+            public void testLocalFunctionInsideIfBlock() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/localFunctionInsideIfBlock.kt");
             }
 
             @TestMetadata("mapFunction.kt")
@@ -10731,6 +10862,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassesInsideAnnotations.kt");
             }
 
+            @TestMetadata("lateinitInlineClasses.kt")
+            public void testLateinitInlineClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClasses.kt");
+            }
+
             @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")
             public void testPresenceOfInitializerBlockInsideInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfInitializerBlockInsideInlineClass.kt");
@@ -10939,9 +11075,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inner/nestedClassInObject.kt");
             }
 
-            @TestMetadata("nestedClassNotAllowed.kt")
-            public void testNestedClassNotAllowed() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/inner/nestedClassNotAllowed.kt");
+            @TestMetadata("nestedClassNotAllowed_after.kt")
+            public void testNestedClassNotAllowed_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/nestedClassNotAllowed_after.kt");
+            }
+
+            @TestMetadata("nestedClassNotAllowed_before.kt")
+            public void testNestedClassNotAllowed_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inner/nestedClassNotAllowed_before.kt");
             }
 
             @TestMetadata("nestedObject.kt")
@@ -13734,6 +13875,26 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/objects/kt21515/inheritedFromDeprecatedWithQualificationOld.kt");
                 }
 
+                @TestMetadata("staticsFromJavaNew.kt")
+                public void testStaticsFromJavaNew() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/objects/kt21515/staticsFromJavaNew.kt");
+                }
+
+                @TestMetadata("staticsFromJavaOld.kt")
+                public void testStaticsFromJavaOld() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/objects/kt21515/staticsFromJavaOld.kt");
+                }
+
+                @TestMetadata("staticsFromJavaWithQualificationNew.kt")
+                public void testStaticsFromJavaWithQualificationNew() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/objects/kt21515/staticsFromJavaWithQualificationNew.kt");
+                }
+
+                @TestMetadata("staticsFromJavaWithQualificationOld.kt")
+                public void testStaticsFromJavaWithQualificationOld() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/objects/kt21515/staticsFromJavaWithQualificationOld.kt");
+                }
+
                 @TestMetadata("useDeprecatedConstructorNew.kt")
                 public void testUseDeprecatedConstructorNew() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/objects/kt21515/useDeprecatedConstructorNew.kt");
@@ -13788,6 +13949,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/operatorRem/doNotResolveToInapplicableRem.kt");
             }
 
+            @TestMetadata("forbiddenModOperatorConvention.kt")
+            public void testForbiddenModOperatorConvention() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorRem/forbiddenModOperatorConvention.kt");
+            }
+
             @TestMetadata("modWithRemAssign.kt")
             public void testModWithRemAssign() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorRem/modWithRemAssign.kt");
@@ -13803,9 +13969,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/operatorRem/noOperatorRemFeature.kt");
             }
 
-            @TestMetadata("noWarningForModFromBuiltinsWhenApi1_0.kt")
-            public void testNoWarningForModFromBuiltinsWhenApi1_0() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/operatorRem/noWarningForModFromBuiltinsWhenApi1_0.kt");
+            @TestMetadata("noWarningForModFromBuiltinsWhenApi1_0_after.kt")
+            public void testNoWarningForModFromBuiltinsWhenApi1_0_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorRem/noWarningForModFromBuiltinsWhenApi1_0_after.kt");
+            }
+
+            @TestMetadata("noWarningForModFromBuiltinsWhenApi1_0_before.kt")
+            public void testNoWarningForModFromBuiltinsWhenApi1_0_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorRem/noWarningForModFromBuiltinsWhenApi1_0_before.kt");
             }
 
             @TestMetadata("numberRemConversions.kt")
@@ -17757,33 +17928,58 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
                         }
 
-                        @TestMetadata("accessToStaticMembersOfParentClass.kt")
-                        public void testAccessToStaticMembersOfParentClass() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClass.kt");
+                        @TestMetadata("accessToStaticMembersOfParentClassJKJ_after.kt")
+                        public void testAccessToStaticMembersOfParentClassJKJ_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClassJKJ_after.kt");
                         }
 
-                        @TestMetadata("accessToStaticMembersOfParentClassJKJ.kt")
-                        public void testAccessToStaticMembersOfParentClassJKJ() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClassJKJ.kt");
+                        @TestMetadata("accessToStaticMembersOfParentClassJKJ_before.kt")
+                        public void testAccessToStaticMembersOfParentClassJKJ_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClassJKJ_before.kt");
+                        }
+
+                        @TestMetadata("accessToStaticMembersOfParentClass_after.kt")
+                        public void testAccessToStaticMembersOfParentClass_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClass_after.kt");
+                        }
+
+                        @TestMetadata("accessToStaticMembersOfParentClass_before.kt")
+                        public void testAccessToStaticMembersOfParentClass_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClass_before.kt");
                         }
 
                         public void testAllFilesPresentInCompanionObject() throws Exception {
                             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                         }
 
-                        @TestMetadata("inheritFromContainingClass.kt")
-                        public void testInheritFromContainingClass() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromContainingClass.kt");
+                        @TestMetadata("inheritFromContainingClass_after.kt")
+                        public void testInheritFromContainingClass_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromContainingClass_after.kt");
                         }
 
-                        @TestMetadata("inheritFromJava.kt")
-                        public void testInheritFromJava() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJava.kt");
+                        @TestMetadata("inheritFromContainingClass_before.kt")
+                        public void testInheritFromContainingClass_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromContainingClass_before.kt");
                         }
 
-                        @TestMetadata("inheritFromJavaAfterKotlin.kt")
-                        public void testInheritFromJavaAfterKotlin() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJavaAfterKotlin.kt");
+                        @TestMetadata("inheritFromJavaAfterKotlin_after.kt")
+                        public void testInheritFromJavaAfterKotlin_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJavaAfterKotlin_after.kt");
+                        }
+
+                        @TestMetadata("inheritFromJavaAfterKotlin_before.kt")
+                        public void testInheritFromJavaAfterKotlin_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJavaAfterKotlin_before.kt");
+                        }
+
+                        @TestMetadata("inheritFromJava_after.kt")
+                        public void testInheritFromJava_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJava_after.kt");
+                        }
+
+                        @TestMetadata("inheritFromJava_before.kt")
+                        public void testInheritFromJava_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJava_before.kt");
                         }
                     }
                 }
@@ -20291,6 +20487,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/sourceCompatibility/inlineFunctionAlways.kt");
             }
 
+            @TestMetadata("noBigFunctionTypes.kt")
+            public void testNoBigFunctionTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noBigFunctionTypes.kt");
+            }
+
             @TestMetadata("noCallableReferencesWithEmptyLHS.kt")
             public void testNoCallableReferencesWithEmptyLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noCallableReferencesWithEmptyLHS.kt");
@@ -21934,14 +22135,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/varargs/assigningArraysToVarargsInAnnotations.kt");
             }
 
-            @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation.kt")
-            public void testAssigningSingleElementsInNamedFormAnnDeprecation() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation.kt");
+            @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation_after.kt")
+            public void testAssigningSingleElementsInNamedFormAnnDeprecation_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation_after.kt");
             }
 
-            @TestMetadata("assigningSingleElementsInNamedFormFunDeprecation.kt")
-            public void testAssigningSingleElementsInNamedFormFunDeprecation() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation.kt");
+            @TestMetadata("assigningSingleElementsInNamedFormAnnDeprecation_before.kt")
+            public void testAssigningSingleElementsInNamedFormAnnDeprecation_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormAnnDeprecation_before.kt");
+            }
+
+            @TestMetadata("assigningSingleElementsInNamedFormFunDeprecation_after.kt")
+            public void testAssigningSingleElementsInNamedFormFunDeprecation_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation_after.kt");
+            }
+
+            @TestMetadata("assigningSingleElementsInNamedFormFunDeprecation_before.kt")
+            public void testAssigningSingleElementsInNamedFormFunDeprecation_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation_before.kt");
             }
 
             @TestMetadata("kt1781.kt")
@@ -21997,6 +22208,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("NullableTypeForVarargArgument.kt")
             public void testNullableTypeForVarargArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/NullableTypeForVarargArgument.kt");
+            }
+
+            @TestMetadata("prohibitAssigningSingleElementsInNamedForm.kt")
+            public void testProhibitAssigningSingleElementsInNamedForm() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/prohibitAssigningSingleElementsInNamedForm.kt");
             }
 
             @TestMetadata("UnaryVsVararg.kt")

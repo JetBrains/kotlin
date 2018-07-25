@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 abstract class Base(val fn: () -> Test)
 
 enum class Test(val ok: String) {

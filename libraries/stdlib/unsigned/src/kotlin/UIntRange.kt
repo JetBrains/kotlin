@@ -14,6 +14,8 @@ import kotlin.internal.*
 /**
  * A range of values of type `UInt`.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start, endInclusive, 1), ClosedRange<UInt> {
     override val start: UInt get() = first
     override val endInclusive: UInt get() = last
@@ -40,6 +42,8 @@ public class UIntRange(start: UInt, endInclusive: UInt) : UIntProgression(start,
 /**
  * A progression of values of type `UInt`.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public open class UIntProgression
 internal constructor(
     start: UInt,
@@ -95,6 +99,8 @@ internal constructor(
  * An iterator over a progression of values of type `UInt`.
  * @property step the number by which the value is incremented on each step.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 private class UIntProgressionIterator(first: UInt, last: UInt, step: Int) : UIntIterator() {
     private val finalElement = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last

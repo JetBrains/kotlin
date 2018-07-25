@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.idea.configuration.ui;
 
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ui.AsyncProcessIcon;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 
 import javax.swing.*;
 
@@ -17,6 +19,8 @@ public class ConfigurePluginUpdatesForm {
     public JLabel updateStatusLabel;
     public JButton installButton;
     public JLabel installStatusLabel;
+    private JLabel verifierDisabledText;
+    private JTextPane currentVersion;
 
     public ConfigurePluginUpdatesForm() {
         int size = channelCombo.getModel().getSize();
@@ -28,6 +32,8 @@ public class ConfigurePluginUpdatesForm {
             }
         }
         channelCombo.setPrototypeDisplayValue(maxLengthItem + " ");
+        showVerifierDisabledStatus();
+        currentVersion.setText(KotlinPluginUtil.getPluginVersion());
     }
 
     private void createUIComponents() {
@@ -58,5 +64,15 @@ public class ConfigurePluginUpdatesForm {
     public void hideInstallButton() {
         installButton.setEnabled(false);
         installButton.setVisible(false);
+    }
+
+    private void showVerifierDisabledStatus() {
+        //noinspection UnresolvedPropertyKey
+        if (!Registry.is("kotlin.plugin.update.verifier.enabled", true)) {
+            verifierDisabledText.setText("(verifier disabled)");
+        }
+        else {
+            verifierDisabledText.setText("");
+        }
     }
 }

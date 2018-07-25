@@ -1,8 +1,6 @@
 FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
-  CLASS ENUM_CLASS name:X modality:FINAL visibility:public flags:
+  CLASS ENUM_CLASS name:X modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<X>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X flags:
-    superClasses:
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
     CONSTRUCTOR visibility:private <> () returnType:X flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -10,138 +8,138 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='X'
     ENUM_ENTRY name:B
       init: ENUM_CONSTRUCTOR_CALL 'constructor B()'
-      class: CLASS ENUM_ENTRY name:B modality:FINAL visibility:public flags:
+      class: CLASS ENUM_ENTRY name:B modality:FINAL visibility:public flags: superTypes:[X]
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X.B flags:
-        superClasses:
-          CLASS ENUM_CLASS name:X modality:FINAL visibility:public flags:
         CONSTRUCTOR visibility:private <> () returnType:X.B flags:primary
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'constructor X()'
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+              ENUM_CONSTRUCTOR_CALL 'constructor X()'
             INSTANCE_INITIALIZER_CALL classDescriptor='B'
-        PROPERTY name:value2 type:kotlin.String visibility:public modality:FINAL flags:val
+        PROPERTY name:value2 visibility:public modality:FINAL flags:val
           FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:public flags:final
             EXPRESSION_BODY
               CONST String type=kotlin.String value=OK
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> ($this:X.B) returnType:String flags:
-            correspondingProperty: PROPERTY name:value2 type:kotlin.String visibility:public modality:FINAL flags:val
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> ($this:X.B) returnType:kotlin.String flags:
+            correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL flags:val
             $this: VALUE_PARAMETER name:<this> type:X.B flags:
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-value2>(): String'
                 GET_FIELD 'value2: String' type=kotlin.String origin=null
                   receiver: GET_VAR 'this@B: B' type=X.B origin=null
-        PROPERTY name:value type:() -> kotlin.String visibility:public modality:OPEN flags:val
+        PROPERTY name:value visibility:public modality:OPEN flags:val
           FIELD PROPERTY_BACKING_FIELD name:value type:() -> kotlin.String visibility:public flags:final
             EXPRESSION_BODY
               BLOCK type=() -> kotlin.String origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:String flags:
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String flags:
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='<anonymous>(): String'
                       CALL '<get-value2>(): String' type=kotlin.String origin=GET_PROPERTY
                         $this: GET_ENUM 'B' type=X.B
                 FUNCTION_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN <> ($this:X.B) returnType:Function0<String> flags:
-            correspondingProperty: PROPERTY name:value type:() -> kotlin.String visibility:public modality:OPEN flags:val
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN <> ($this:X.B) returnType:() -> kotlin.String flags:
+            correspondingProperty: PROPERTY name:value visibility:public modality:OPEN flags:val
             overridden:
-              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:X) returnType:Function0<String> flags:
+              FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:X) returnType:() -> kotlin.String flags:
             $this: VALUE_PARAMETER name:<this> type:X.B flags:
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
                 GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
                   receiver: GET_VAR 'this@B: B' type=X.B origin=null
-        FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Any flags:
+        FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Any flags:
           overridden:
-            FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Any flags:
+            FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Any flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-        FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Unit flags:
+        FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Unit flags:
           overridden:
-            FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Unit flags:
+            FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Unit flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:(java.lang.Class<(X..X?)>..java.lang.Class<(X..X?)>?) flags:
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X!>? flags:
           overridden:
-            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:(java.lang.Class<(X..X?)>..java.lang.Class<(X..X?)>?) flags:
+            FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X!>? flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-        FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:X) returnType:Int flags:
+        FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:X) returnType:kotlin.Int flags:
           overridden:
-            FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:X) returnType:Int flags:
+            FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:X) returnType:kotlin.Int flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
           VALUE_PARAMETER name:other index:0 type:X flags:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:kotlin.Any?) returnType:Boolean flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:kotlin.Any?) returnType:kotlin.Boolean flags:
           overridden:
-            FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:kotlin.Any?) returnType:Boolean flags:
+            FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:kotlin.Any?) returnType:kotlin.Boolean flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
           VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Int flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Int flags:
           overridden:
-            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Int flags:
+            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Int flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-        PROPERTY FAKE_OVERRIDE name:name type:kotlin.String visibility:public modality:FINAL flags:val
-          FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:String flags:
-            correspondingProperty: PROPERTY FAKE_OVERRIDE name:name type:kotlin.String visibility:public modality:FINAL flags:val
+        PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL flags:val
+          FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.String flags:
+            correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL flags:val
             overridden:
-              FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:String flags:
+              FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.String flags:
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-        PROPERTY FAKE_OVERRIDE name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
-          FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Int flags:
-            correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
+        PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL flags:val
+          FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Int flags:
+            correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL flags:val
             overridden:
-              FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Int flags:
+              FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Int flags:
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<X>) returnType:String flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<X>) returnType:kotlin.String flags:
           overridden:
-            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<X>) returnType:String flags:
+            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<X>) returnType:kotlin.String flags:
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    PROPERTY name:value type:() -> kotlin.String visibility:public modality:ABSTRACT flags:val
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:X) returnType:Function0<String> flags:
-        correspondingProperty: PROPERTY name:value type:() -> kotlin.String visibility:public modality:ABSTRACT flags:val
+    PROPERTY name:value visibility:public modality:ABSTRACT flags:val
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:X) returnType:() -> kotlin.String flags:
+        correspondingProperty: PROPERTY name:value visibility:public modality:ABSTRACT flags:val
         $this: VALUE_PARAMETER name:<this> type:X flags:
-    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Any flags:
+    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Any flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E>) returnType:Any flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Any flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Unit flags:
+    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Unit flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:Unit flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:(java.lang.Class<(X..X?)>..java.lang.Class<(X..X?)>?) flags:
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:java.lang.Class<X!>? flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:(java.lang.Class<(E..E?)>..java.lang.Class<(E..E?)>?) flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:java.lang.Class<E!>? flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:X) returnType:Int flags:
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:X) returnType:kotlin.Int flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<E>, other:E) returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<E>, other:E) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
       VALUE_PARAMETER name:other index:0 type:X flags:
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:kotlin.Any?) returnType:Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<X>, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<E>, other:kotlin.Any?) returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<E>, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Int flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Int flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    PROPERTY FAKE_OVERRIDE name:name type:kotlin.String visibility:public modality:FINAL flags:val
-      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:String flags:
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:name type:kotlin.String visibility:public modality:FINAL flags:val
+    PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.String flags:
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL flags:val
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:String flags:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.String flags:
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    PROPERTY FAKE_OVERRIDE name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
-      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:Int flags:
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal type:kotlin.Int visibility:public modality:FINAL flags:val
+    PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL flags:val
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<X>) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL flags:val
         overridden:
-          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:Int flags:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<E>) returnType:kotlin.Int flags:
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<X>) returnType:String flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<X>) returnType:kotlin.String flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<E>) returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<E>) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<X> flags:
-    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:Array<X> flags:
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<X> flags:
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:X flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-  FUN name:box visibility:public modality:FINAL <> () returnType:String flags:
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='box(): String'
         CALL 'invoke(): String' type=kotlin.String origin=INVOKE

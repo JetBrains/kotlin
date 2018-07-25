@@ -1,5 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 // MODULE: library

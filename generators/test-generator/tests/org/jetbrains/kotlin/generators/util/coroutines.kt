@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.generators.util
 
 import org.jetbrains.kotlin.generators.tests.generator.MethodModel
+import org.jetbrains.kotlin.generators.tests.generator.RunTestMethodWithPackageReplacementModel
 import org.jetbrains.kotlin.generators.tests.generator.SimpleTestMethodModel
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.Printer
@@ -17,7 +18,6 @@ import java.util.regex.Pattern
 class CoroutinesTestModel(
     rootDir: File,
     file: File,
-    private val doTestMethodName: String,
     filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
     targetBackend: TargetBackend,
@@ -36,48 +36,29 @@ class CoroutinesTestModel(
 
     override fun generateBody(p: Printer) {
         val filePath = KotlinTestUtils.getFilePath(file) + if (file.isDirectory) "/" else ""
-        p.println("String fileName = KotlinTestUtils.navigationMetadata(\"", filePath, "\");")
-
-        if (isIgnoredTarget(targetBackend, file)) {
-            p.println("try {")
-            p.pushIndent()
-        }
-
         val packageName = if (isLanguageVersion1_3) "kotlin.coroutines" else "kotlin.coroutines.experimental"
-        p.println(doTestMethodName + "WithCoroutinesPackageReplacement", "(fileName, \"$packageName\");")
 
-        if (isIgnoredTarget(targetBackend, file)) {
-            p.popIndent()
-            p.println("}")
-            p.println("catch (Throwable ignore) {")
-            p.pushIndent()
-            p.println("return;")
-            p.popIndent()
-            p.println("}")
-            p.println("throw new AssertionError(\"Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.\");")
-        }
+        p.println(RunTestMethodWithPackageReplacementModel.METHOD_NAME, "(\"$filePath\", \"$packageName\");")
     }
 }
 
 fun isCommonCoroutineTest(file: File): Boolean {
-    return file.readLines().any { it.startsWith("// COMMON_COROUTINES_TEST") }
+    return InTextDirectivesUtils.isDirectiveDefined(file.readText(), "COMMON_COROUTINES_TEST")
 }
 
 fun createCommonCoroutinesTestMethodModels(
     rootDir: File,
     file: File,
-    doTestMethodName: String,
     filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
     targetBackend: TargetBackend,
     skipIgnored: Boolean
 ): Collection<MethodModel> {
-    return if (targetBackend == TargetBackend.JS || targetBackend == TargetBackend.JS_IR)
+    return if (targetBackend == TargetBackend.JS_IR)
         listOf(
             CoroutinesTestModel(
                 rootDir,
                 file,
-                doTestMethodName,
                 filenamePattern,
                 checkFilenameStartsLowerCase,
                 targetBackend,
@@ -90,7 +71,6 @@ fun createCommonCoroutinesTestMethodModels(
             CoroutinesTestModel(
                 rootDir,
                 file,
-                doTestMethodName,
                 filenamePattern,
                 checkFilenameStartsLowerCase,
                 targetBackend,
@@ -100,7 +80,6 @@ fun createCommonCoroutinesTestMethodModels(
             CoroutinesTestModel(
                 rootDir,
                 file,
-                doTestMethodName,
                 filenamePattern,
                 checkFilenameStartsLowerCase,
                 targetBackend,

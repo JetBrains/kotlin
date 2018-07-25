@@ -72,6 +72,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
+    @Argument(value = "-Xuse-ir", description = "Use the IR backend")
+    var useIR: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by FreezableVar(null)
 
@@ -231,7 +234,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "-Xjvm-default=enable          Allow usages of @JvmDefault; only generate the default method\n" +
                 "                              in the interface (annotating an existing method can break binary compatibility)\n" +
                 "-Xjvm-default=compatibility   Allow usages of @JvmDefault; generate a compatibility accessor\n" +
-                "                              in the 'DefaultImpls' class in addition to the interface method\n"
+                "                              in the 'DefaultImpls' class in addition to the interface method"
     )
     var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
 

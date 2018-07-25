@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isObject
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
-import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
@@ -85,31 +83,23 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     private fun doTestKotlinLibraryWithWrongMetadataVersion(
-            libraryName: String,
-            additionalTransformation: ((fieldName: String, value: Any?) -> Any?)?,
-            vararg additionalOptions: String
+        libraryName: String,
+        additionalTransformation: ((fieldName: String, value: Any?) -> Any?)?,
+        vararg additionalOptions: String
     ) {
-        val version = JvmMetadataVersion(42, 0, 0).toArray()
         val library = transformJar(
-                compileLibrary(libraryName),
-                { _, bytes ->
-                    WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { fieldName, value ->
-                        additionalTransformation?.invoke(fieldName, value) ?:
-                        version.takeIf { JvmAnnotationNames.METADATA_VERSION_FIELD_NAME == fieldName }
-                    }
+            compileLibrary(libraryName, additionalOptions = listOf("-Xmetadata-version=42.0.0")),
+            { _, bytes ->
+                WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { fieldName, value ->
+                    additionalTransformation?.invoke(fieldName, value)
                 }
+            }
         )
         compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler(), additionalOptions.toList())
     }
 
     private fun doTestKotlinLibraryWithWrongMetadataVersionJs(libraryName: String, vararg additionalOptions: String) {
-        val library = compileJsLibrary(libraryName)
-
-        library.writeText(library.readText(Charsets.UTF_8).replace(
-                "(" + JsMetadataVersion.INSTANCE.toInteger() + ", ",
-                "(" + JsMetadataVersion(42, 0, 0).toInteger() + ", "
-        ), Charsets.UTF_8)
-
+        val library = compileJsLibrary(libraryName, additionalOptions = listOf("-Xmetadata-version=42.0.0"))
         compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(), additionalOptions.toList())
     }
 
@@ -305,6 +295,27 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestKotlinLibraryWithWrongMetadataVersionJs("library", "-Xskip-metadata-version-check")
     }
 
+    fun testRequireKotlinInNestedClasses() {
+        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
+    }
+
+    fun testRequireKotlinInNestedClassesJs() {
+        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
+    }
+
+    fun testRequireKotlinInNestedClassesAgainst14() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xskip-metadata-version-check"))
+    }
+
+    fun testRequireKotlinInNestedClassesAgainst14Js() {
+        val library = compileJsLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
+        compileKotlin(
+            "source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(),
+            additionalOptions = listOf("-Xskip-metadata-version-check")
+        )
+    }
+
     /*test source mapping generation when source info is absent*/
     fun testInlineFunWithoutDebugInfo() {
         compileKotlin("sourceInline.kt", tmpdir)
@@ -430,6 +441,34 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     fun testClassFromJdkInLibrary() {
         val library = compileLibrary("library")
         compileKotlin("source.kt", tmpdir, listOf(library))
+    }
+
+    fun testReleaseCoroutineCallFromExperimental() {
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", "1.3", "-api-version", "1.3"),
+            checkKotlinOutput = {}
+        )
+        compileKotlin(
+            "experimental.kt",
+            tmpdir,
+            listOf(library),
+            additionalOptions = listOf("-language-version", "1.2", "-Xskip-metadata-version-check")
+        )
+    }
+
+    fun testExperimentalCoroutineCallFromRelease() {
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", "1.2"),
+            checkKotlinOutput = {}
+        )
+        compileKotlin(
+            "release.kt",
+            tmpdir,
+            listOf(library),
+            additionalOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
+        )
     }
 
     companion object {

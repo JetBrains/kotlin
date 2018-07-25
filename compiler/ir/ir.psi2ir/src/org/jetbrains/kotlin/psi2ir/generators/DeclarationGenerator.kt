@@ -31,8 +31,14 @@ import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.types.KotlinType
 
 class DeclarationGenerator(override val context: GeneratorContext) : Generator {
+
+    private val typeTranslator = context.typeTranslator
+
+    fun KotlinType.toIrType() = typeTranslator.translateType(this)
+
     fun generateMemberDeclaration(ktDeclaration: KtDeclaration): IrDeclaration =
         when (ktDeclaration) {
             is KtNamedFunction ->
@@ -108,7 +114,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         from: List<TypeParameterDescriptor>,
         declareTypeParameter: (Int, Int, TypeParameterDescriptor) -> IrTypeParameter
     ) {
-        val irTypeParameters = from.map { typeParameterDescriptor ->
+        from.mapTo(irTypeParametersOwner.typeParameters) { typeParameterDescriptor ->
             val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
             val startOffset = ktTypeParameterDeclaration.startOffsetOrUndefined
             val endOffset = ktTypeParameterDeclaration.endOffsetOrUndefined
@@ -119,20 +125,9 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             )
         }
 
-        irTypeParameters.forEach {
-            mapSuperClassifiers(it.descriptor, it)
-        }
-
-        irTypeParametersOwner.typeParameters.addAll(irTypeParameters)
-    }
-
-    private fun mapSuperClassifiers(
-        descriptor: TypeParameterDescriptor,
-        irTypeParameter: IrTypeParameter
-    ) {
-        descriptor.typeConstructor.supertypes.mapNotNullTo(irTypeParameter.superClassifiers) {
-            it.constructor.declarationDescriptor?.let {
-                context.symbolTable.referenceClassifier(it)
+        for (irTypeParameter in irTypeParametersOwner.typeParameters) {
+            irTypeParameter.descriptor.upperBounds.mapTo(irTypeParameter.superTypes) {
+                it.toIrType()
             }
         }
     }
@@ -154,21 +149,29 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         }
     }
 
-    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement): IrProperty =
-        IrPropertyImpl(
-            ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
+    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement): IrProperty {
+        val startOffset = ktElement.startOffset
+        val endOffset = ktElement.endOffset
+
+        val backingField =
+            if (propertyDescriptor.getter == null)
+                context.symbolTable.declareField(
+                    startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE,
+                    propertyDescriptor, propertyDescriptor.type.toIrType()
+                )
+            else
+                null
+
+        return IrPropertyImpl(
+            startOffset, endOffset,
             IrDeclarationOrigin.FAKE_OVERRIDE,
             false,
             propertyDescriptor,
-            if (propertyDescriptor.getter == null)
-                context.symbolTable.declareField(
-                    ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined, IrDeclarationOrigin.FAKE_OVERRIDE,
-                    propertyDescriptor
-                )
-            else null,
+            backingField,
             propertyDescriptor.getter?.let { generateFakeOverrideFunction(it, ktElement) },
             propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }
         )
+    }
 
     private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrSimpleFunction =
         FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)
@@ -183,6 +186,8 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
                 builder(irDeclaration)
             }
         }
+
+    fun KotlinType.toIrType() = with(declarationGenerator) { toIrType() }
 }
 
 fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol) =

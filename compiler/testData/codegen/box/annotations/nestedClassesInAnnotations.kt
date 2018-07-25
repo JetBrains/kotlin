@@ -1,5 +1,5 @@
 // !LANGUAGE: +NestedClassesInAnnotations
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 annotation class Foo(val kind: Kind) {
     enum class Kind { FAIL, OK }

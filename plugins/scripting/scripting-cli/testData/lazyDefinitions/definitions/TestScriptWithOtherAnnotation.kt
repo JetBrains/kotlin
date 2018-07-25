@@ -1,5 +1,5 @@
 
 import kotlin.script.templates.*
 
-@ScriptTemplateDefinition
+@ScriptTemplateAdditionalCompilerArguments(["-version"])
 abstract class TestScriptWithOtherAnnotation

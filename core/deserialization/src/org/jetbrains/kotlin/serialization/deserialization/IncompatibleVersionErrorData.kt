@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 
 data class IncompatibleVersionErrorData<out T : BinaryVersion>(
-        val actualVersion: T,
-        val expectedVersion: T,
-        val filePath: String,
-        val classId: ClassId
+    val actualVersion: T,
+    val expectedVersion: T,
+    val filePath: String,
+    val classId: ClassId
 )

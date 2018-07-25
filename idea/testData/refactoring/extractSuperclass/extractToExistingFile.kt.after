@@ -1,0 +1,4 @@
+// NAME: SomethingBase
+// TARGET_FILE_NAME: extractToExistingFile.1.kt
+class Something : SomethingBase() {
+}

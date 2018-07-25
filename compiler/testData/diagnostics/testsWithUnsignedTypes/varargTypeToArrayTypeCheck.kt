@@ -1,5 +1,3 @@
-// !LANGUAGE: +InlineClasses
-// !SKIP_METADATA_VERSION_CHECK
 
 fun ubyte(vararg a: UByte): UByteArray = a
 fun ushort(vararg a: UShort): UShortArray = a

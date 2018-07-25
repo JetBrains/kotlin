@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 // !CHECK_TYPE
+// JAVAC_SKIP
 
 // FILE: f.kt
 

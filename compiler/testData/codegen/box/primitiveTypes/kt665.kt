@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun f(x: Long, zzz: Long = 1): Long
 {
     return if (x <= 1) zzz

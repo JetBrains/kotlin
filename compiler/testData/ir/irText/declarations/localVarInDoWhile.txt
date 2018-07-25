@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/localVarInDoWhile.kt
-  FUN name:foo visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=null
         DO_WHILE label=null origin=DO_WHILE_LOOP

@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
-  FUN name:foo visibility:public modality:FINAL <> () returnType:Any flags:
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo(): Any'
         CONST Int type=kotlin.Int value=1
-  FUN name:test visibility:public modality:FINAL <> () returnType:Int flags:
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(): Int'
         BLOCK type=kotlin.Int origin=WHEN
@@ -17,15 +17,15 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
               then: CONST Int type=kotlin.Int value=1
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
                 GET_VAR 'y: Any' type=kotlin.Any origin=null
               then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
                 $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
                   GET_VAR 'y: Any' type=kotlin.Any origin=null
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                 GET_VAR 'y: Any' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=2
             BRANCH
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
                   $this: CONST Int type=kotlin.Int value=0
                   other: CONST Int type=kotlin.Int value=10
                 value: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                   GET_VAR 'y: Any' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=3
             BRANCH
@@ -44,9 +44,10 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
                     $this: CONST Int type=kotlin.Int value=10
                     other: CONST Int type=kotlin.Int value=20
                   value: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
                     GET_VAR 'y: Any' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=4
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Int type=kotlin.Int value=-1
+

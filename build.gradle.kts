@@ -5,6 +5,7 @@ import java.util.*
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import proguard.gradle.ProGuardTask
@@ -12,7 +13,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.60-dev-980", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.70-dev-491", onlySuccessBootstrap = false))
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
@@ -205,6 +206,7 @@ extra["compilerModules"] = arrayOf(
         ":compiler:daemon",
         ":compiler:ir.tree",
         ":compiler:ir.psi2ir",
+        ":compiler:ir.backend.common",
         ":compiler:backend.js",
         ":compiler:backend-common",
         ":compiler:backend",
@@ -305,7 +307,7 @@ allprojects {
 
     configureJvmProject(javaHome!!, jvmTarget!!)
 
-    val commonCompilerArgs = listOf("-Xallow-kotlin-package", "-Xread-deserialized-contracts")
+    val commonCompilerArgs = listOfNotNull("-Xallow-kotlin-package", "-Xread-deserialized-contracts", "-Xprogressive".takeIf { hasProperty("test.progressive.mode") })
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
@@ -367,6 +369,22 @@ allprojects {
                 dependencies.add(it.name, files(bootstrapCompilerClasspath))
             }
         }
+    }
+}
+
+if (!isTeamcityBuild) {
+    gradle.taskGraph.whenReady {
+        for (project in allprojects) {
+            for (task in project.tasks) {
+                 when (task) {
+                     is AbstractKotlinCompile<*> -> task.incremental = true
+                     is JavaCompile -> task.options.isIncremental = true
+                     is org.gradle.jvm.tasks.Jar -> task.entryCompression = ZipEntryCompression.STORED
+                 }
+            }
+        }
+
+        logger.warn("Local build profile is active (IC is on, proguard is off). Use -Pteamcity=true to reproduce TC build")
     }
 }
 

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
@@ -196,7 +197,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Override
     public void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor) {
         resultingDescriptor = (D) candidateDescriptor.substitute(substitutor);
-        assert resultingDescriptor != null : candidateDescriptor;
+        //noinspection ConstantConditions
+        if (resultingDescriptor == null) {
+            throw new AssertionError(
+                    "resultingDescriptor shouldn't be null:\n" +
+                    "candidateDescriptor: " + DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(candidateDescriptor) + "\n" +
+                    "substitution: " + substitutor.getSubstitution()
+            );
+        }
 
         for (TypeParameterDescriptor typeParameter : candidateDescriptor.getTypeParameters()) {
             TypeProjection typeArgumentProjection = substitutor.getSubstitution().get(typeParameter.getDefaultType());

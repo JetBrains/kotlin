@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -20,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -32,9 +22,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isObject
 
 class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
@@ -72,38 +63,42 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
                 false
             ) as PropertyDescriptor
             privateInstance.name
-            val field = createInstanceFieldWithInitializer(IrFieldSymbolImpl(privateInstance), constructor, irClass)
+            val field = createInstanceFieldWithInitializer(IrFieldSymbolImpl(privateInstance), constructor, irClass, irClass.defaultType)
             createFieldWithCustomInitializer(
                 publicInstance,
-                IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol),
-                publicInstanceOwner
+                IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol, irClass.defaultType),
+                publicInstanceOwner,
+                irClass.defaultType
             )
         } else {
-            createInstanceFieldWithInitializer(publicInstance, constructor, publicInstanceOwner)
+            createInstanceFieldWithInitializer(publicInstance, constructor, publicInstanceOwner, irClass.defaultType)
         }
     }
 
     private fun createInstanceFieldWithInitializer(
         fieldSymbol: IrFieldSymbol,
         constructor: ClassConstructorDescriptor,
-        instanceOwner: IrDeclarationContainer
+        instanceOwner: IrDeclarationContainer,
+        objectType: IrType
     ): IrField =
         createFieldWithCustomInitializer(
             fieldSymbol,
-            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, constructor),
-            instanceOwner
+            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectType, constructor, 0),
+            instanceOwner,
+            objectType
         )
 
     private fun createFieldWithCustomInitializer(
         fieldSymbol: IrFieldSymbol,
         instanceInitializer: IrExpression,
-        instanceOwner: IrDeclarationContainer
+        instanceOwner: IrDeclarationContainer,
+        objectType: IrType
     ): IrField =
         IrFieldImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
-            fieldSymbol,
-            IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, instanceInitializer)
+            fieldSymbol, objectType
         ).also {
+            it.initializer = IrExpressionBodyImpl(instanceInitializer)
             pendingTransformations.add { instanceOwner.declarations.add(it) }
         }
 }

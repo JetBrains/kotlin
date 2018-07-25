@@ -10,18 +10,20 @@ package kotlin
 import kotlin.experimental.*
 
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public inline class UByte internal constructor(private val data: Byte) : Comparable<UByte> {
 
     companion object {
         /**
          * A constant holding the minimum value an instance of UByte can have.
          */
-        public /*const*/ val MIN_VALUE: UByte = UByte(0)
+        public const val MIN_VALUE: UByte = UByte(0)
 
         /**
          * A constant holding the maximum value an instance of UByte can have.
          */
-        public /*const*/ val MAX_VALUE: UByte = UByte(-1)
+        public const val MAX_VALUE: UByte = UByte(-1)
     }
 
     /**
@@ -128,7 +130,15 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
 
 }
 
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Byte.toUByte(): UByte = UByte(this)
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Short.toUByte(): UByte = UByte(this.toByte())
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Int.toUByte(): UByte = UByte(this.toByte())
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Long.toUByte(): UByte = UByte(this.toByte())

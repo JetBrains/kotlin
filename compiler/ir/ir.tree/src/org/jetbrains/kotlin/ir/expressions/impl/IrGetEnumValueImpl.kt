@@ -20,21 +20,23 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrGetEnumValueImpl(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     symbol: IrEnumEntrySymbol
-) : IrGetEnumValue,
-    IrTerminalDeclarationReferenceBase<IrEnumEntrySymbol, ClassDescriptor>(startOffset, endOffset, type, symbol, symbol.descriptor) {
+) :
+    IrTerminalDeclarationReferenceBase<IrEnumEntrySymbol, ClassDescriptor>(startOffset, endOffset, type, symbol, symbol.descriptor),
+    IrGetEnumValue {
+
     @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
         endOffset: Int,
-        type: KotlinType,
+        type: IrType,
         descriptor: ClassDescriptor
     ) : this(startOffset, endOffset, type, IrEnumEntrySymbolImpl(descriptor))
 

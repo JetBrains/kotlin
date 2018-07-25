@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/in.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any, x:kotlin.collections.Collection<kotlin.Any>) returnType:Boolean flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any, x:kotlin.collections.Collection<kotlin.Any>) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<kotlin.Any> flags:
     BLOCK_BODY
@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/in.kt
         CALL 'contains(Any): Boolean' type=kotlin.Boolean origin=IN
           $this: GET_VAR 'value-parameter x: Collection<Any>' type=kotlin.collections.Collection<kotlin.Any> origin=null
           element: GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any, x:kotlin.collections.Collection<kotlin.Any>) returnType:Boolean flags:
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any, x:kotlin.collections.Collection<kotlin.Any>) returnType:kotlin.Boolean flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<kotlin.Any> flags:
     BLOCK_BODY
@@ -16,10 +16,8 @@ FILE fqName:<root> fileName:/in.kt
           arg0: CALL 'contains(Any): Boolean' type=kotlin.Boolean origin=NOT_IN
             $this: GET_VAR 'value-parameter x: Collection<Any>' type=kotlin.collections.Collection<kotlin.Any> origin=null
             element: GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-  FUN name:test3 visibility:public modality:FINAL <T> (a:T, x:kotlin.collections.Collection<T>) returnType:Boolean flags:
-    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
-      superClassifiers:
-        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+  FUN name:test3 visibility:public modality:FINAL <T> (a:T, x:kotlin.collections.Collection<T>) returnType:kotlin.Boolean flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:T flags:
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<T> flags:
     BLOCK_BODY
@@ -27,10 +25,8 @@ FILE fqName:<root> fileName:/in.kt
         CALL 'contains(T): Boolean' type=kotlin.Boolean origin=IN
           $this: GET_VAR 'value-parameter x: Collection<T>' type=kotlin.collections.Collection<T> origin=null
           element: GET_VAR 'value-parameter a: T' type=T origin=null
-  FUN name:test4 visibility:public modality:FINAL <T> (a:T, x:kotlin.collections.Collection<T>) returnType:Boolean flags:
-    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
-      superClassifiers:
-        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+  FUN name:test4 visibility:public modality:FINAL <T> (a:T, x:kotlin.collections.Collection<T>) returnType:kotlin.Boolean flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:T flags:
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<T> flags:
     BLOCK_BODY

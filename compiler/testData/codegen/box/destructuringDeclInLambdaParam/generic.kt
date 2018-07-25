@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 data class A<T, F>(val x: T, val y: F)
 
 fun <X, Y> foo(a: A<X, Y>, block: (A<X, Y>) -> String) = block(a)

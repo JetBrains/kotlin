@@ -63,3 +63,11 @@ val CallableMemberDescriptor.propertyIfAccessor
 
 val IrTypeParameter.isReified
     get() = descriptor.isReified
+
+// Return is method has no real implementation except fake overrides from Any
+fun CallableMemberDescriptor.isFakeOverriddenFromAny(): Boolean {
+    if (kind.isReal) {
+        return (containingDeclaration is ClassDescriptor) && KotlinBuiltIns.isAny(containingDeclaration as ClassDescriptor)
+    }
+    return overriddenDescriptors.all { it.isFakeOverriddenFromAny() }
+}

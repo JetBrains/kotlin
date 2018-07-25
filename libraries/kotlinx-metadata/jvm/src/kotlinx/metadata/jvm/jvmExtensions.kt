@@ -122,6 +122,13 @@ open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
         delegate?.visitLambdaClassOriginName(internalName)
     }
 
+    /**
+     * Visits the end of JVM extensions for the function.
+     */
+    open fun visitEnd() {
+        delegate?.visitEnd()
+    }
+
     companion object {
         /**
          * The type of this extension visitor.

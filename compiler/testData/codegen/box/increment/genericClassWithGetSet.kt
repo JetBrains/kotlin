@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class A<T>(var value: T) {
     operator fun get(i: Int) = value
 

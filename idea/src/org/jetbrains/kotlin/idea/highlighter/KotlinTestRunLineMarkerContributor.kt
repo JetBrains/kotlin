@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.TestFrameworks
 import com.intellij.execution.TestStateStorage
+import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.execution.testframework.TestIconMapper
@@ -33,10 +34,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
-import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
+import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.idea.util.string.joinWithEscape
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
@@ -110,12 +109,17 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
     private fun getJavaScriptTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
         if (!descriptor.isTest()) return null
 
-        val module = declaration.module?.jsOrJsImpl() ?: return null
-        val testFilePath = module.jsTestOutputFilePath ?: return null
+        val runConfigData = RunConfigurationProducer
+            .getProducers(declaration.project)
+            .asSequence()
+            .filterIsInstance<KotlinJSRunConfigurationDataProvider<*>>()
+            .filter { it.isForTests }
+            .mapNotNull { it.getConfigurationData(declaration) }
+            .firstOrNull() ?: return null
 
         val locations = ArrayList<String>()
 
-        locations += FileUtil.toSystemDependentName(testFilePath)
+        locations += FileUtil.toSystemDependentName(runConfigData.jsOutputFilePath)
 
         val klass = when (declaration) {
             is KtClassOrObject -> declaration

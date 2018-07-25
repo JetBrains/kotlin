@@ -31,22 +31,20 @@ import java.nio.file.Path
 
 // There's JrtFileSystem in idea-full which we can't use in the compiler because it depends on NewVirtualFileSystem, absent in intellij-core
 class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
-    private val handlers = object : ConcurrentFactoryMap<String, CoreJrtHandler?>() {
-        override fun create(jdkHomePath: String): CoreJrtHandler? {
+    private val handlers =
+        ConcurrentFactoryMap.createMap<String, CoreJrtHandler?> { jdkHomePath ->
             val jdkHome = File(jdkHomePath)
             val rootUri = URI.create(StandardFileSystems.JRT_PROTOCOL + ":/")
-            val jrtFsJar = loadJrtFsJar(jdkHome) ?: return null
+            val jrtFsJar = loadJrtFsJar(jdkHome) ?: return@createMap null
             val fileSystem =
-                    if (SystemInfo.isJavaVersionAtLeast("9")) {
-                        FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
-                    }
-                    else {
-                        val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
-                        FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
-                    }
-            return CoreJrtHandler(this@CoreJrtFileSystem, jdkHomePath, fileSystem.getPath(""))
+                if (isAtLeastJava9()) {
+                    FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
+                } else {
+                    val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
+                    FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
+                }
+            CoreJrtHandler(this, jdkHomePath, fileSystem.getPath(""))
         }
-    }
 
     internal class CoreJrtHandler(
             val virtualFileSystem: CoreJrtFileSystem,

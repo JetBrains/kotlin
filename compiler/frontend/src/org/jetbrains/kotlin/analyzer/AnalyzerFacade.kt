@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
@@ -89,14 +88,14 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
-    private val platformParameters: PlatformAnalysisParameters,
+    private val platformParameters: (TargetPlatform) -> PlatformAnalysisParameters,
     private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val packagePartProviderFactory: (ModuleContent<M>) -> PackagePartProvider = { _ -> PackagePartProvider.Empty },
     private val firstDependency: M? = null,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val invalidateOnOOCB: Boolean = true
+    private val invalidateOnOOCB: Boolean = true,
+    private val isReleaseCoroutines: Boolean? = null
 ) : ResolverForProject<M>() {
 
     private class ModuleData(
@@ -176,22 +175,21 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
                 val moduleContent = modulesContent(module)
-                val packagePartProvider = packagePartProviderFactory(moduleContent)
                 val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
 
-                val languageVersionSettings = moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project)
+                val languageVersionSettings =
+                    moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
                 val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module)
 
                 resolverForModuleFactory.createResolverForModule(
                     descriptor as ModuleDescriptorImpl,
                     projectContext.withModule(descriptor),
                     moduleContent,
-                    platformParameters,
+                    platformParameters(resolverForModuleFactory.targetPlatform),
                     targetEnvironment,
                     this@ResolverForProjectImpl,
                     languageVersionSettings,
-                    targetPlatformVersion,
-                    packagePartProvider
+                    targetPlatformVersion
                 )
             }
         }
@@ -247,7 +245,11 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private fun createModuleDescriptor(module: M): ModuleData {
         val moduleDescriptor = ModuleDescriptorImpl(
             module.name,
-            projectContext.storageManager, builtIns, modulePlatforms(module), module.capabilities
+            projectContext.storageManager,
+            builtIns,
+            modulePlatforms(module),
+            module.capabilities,
+            module.stableName
         )
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)
@@ -263,7 +265,9 @@ data class ModuleContent<out M : ModuleInfo>(
     val moduleContentScope: GlobalSearchScope
 )
 
-interface PlatformAnalysisParameters
+interface PlatformAnalysisParameters {
+    object Empty : PlatformAnalysisParameters
+}
 
 interface ModuleInfo {
     val name: Name
@@ -274,6 +278,8 @@ interface ModuleInfo {
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = mapOf(Capability to this)
+    val stableName: Name?
+        get() = null
 
     // For common modules, we add built-ins at the beginning of the dependencies list, after the SDK.
     // This is needed because if a JVM module depends on the common module, we should use JVM built-ins for resolution of both modules.
@@ -316,8 +322,7 @@ abstract class ResolverForModuleFactory {
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion,
-        packagePartProvider: PackagePartProvider
+        targetPlatformVersion: TargetPlatformVersion
     ): ResolverForModule
 
     abstract val targetPlatform: TargetPlatform
@@ -406,12 +411,26 @@ interface PackageOracleFactory {
 }
 
 interface LanguageSettingsProvider {
-    fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings
+    fun getLanguageVersionSettings(
+        moduleInfo: ModuleInfo,
+        project: Project,
+        isReleaseCoroutines: Boolean? = null
+    ): LanguageVersionSettings
+
+    @Deprecated("Use `getLanguageVersionSettings` method with default parameter instead", level = DeprecationLevel.HIDDEN)
+    fun getLanguageVersionSettings(
+        moduleInfo: ModuleInfo,
+        project: Project
+    ) = getLanguageVersionSettings(moduleInfo, project, null)
 
     fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion
 
     object Default : LanguageSettingsProvider {
-        override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = LanguageVersionSettingsImpl.DEFAULT
+        override fun getLanguageVersionSettings(
+            moduleInfo: ModuleInfo,
+            project: Project,
+            isReleaseCoroutines: Boolean?
+        ) = LanguageVersionSettingsImpl.DEFAULT
 
         override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion = TargetPlatformVersion.NoVersion
     }

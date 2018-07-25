@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -85,7 +86,7 @@ class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPas
 
             irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
                 +irReturn(
-                    irCall(IrSimpleFunctionSymbolImpl(toArrayUtilDescriptor)).apply {
+                    irCall(IrSimpleFunctionSymbolImpl(toArrayUtilDescriptor), toArrayUtilDescriptor.returnType!!.toIrType()!!).apply {
                         putValueArgument(
                             0,
                             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.dispatchReceiverParameter!!.symbol)
@@ -143,7 +144,7 @@ class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPas
 
             irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
                 +irReturn(
-                    irCall(IrSimpleFunctionSymbolImpl(toArrayUtilDescriptor)).apply {
+                    irCall(IrSimpleFunctionSymbolImpl(toArrayUtilDescriptor), toArrayUtilDescriptor.returnType!!.toIrType()!!).apply {
                         putValueArgument(
                             0,
                             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.dispatchReceiverParameter!!.symbol)

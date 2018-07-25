@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -45,15 +46,16 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
     override fun getEnvironmentConfigFiles(): EnvironmentConfigFiles = EnvironmentConfigFiles.JS_CONFIG_FILES
 
     override fun analyzeModuleContents(
-            moduleContext: ModuleContext,
-            files: List<KtFile>,
-            moduleTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings,
-            separateModules: Boolean,
-            jvmTarget: JvmTarget
+        moduleContext: ModuleContext,
+        files: List<KtFile>,
+        moduleTrace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings,
+        separateModules: Boolean,
+        jvmTarget: JvmTarget
     ): JsAnalysisResult {
         // TODO: support LANGUAGE directive in JS diagnostic tests
         moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))
+        config.configuration.languageVersionSettings = languageVersionSettings
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(files, moduleTrace, moduleContext, config.configuration)
     }
 
@@ -77,12 +79,12 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
     }
 
     override fun getAdditionalDependencies(module: ModuleDescriptorImpl): List<ModuleDescriptorImpl> =
-            config.moduleDescriptors.map { it.data }
+        config.moduleDescriptors
 
     override fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean = true
 
     override fun createModule(moduleName: String, storageManager: StorageManager): ModuleDescriptorImpl =
-            ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JsPlatform.builtIns)
+        ModuleDescriptorImpl(Name.special("<$moduleName>"), storageManager, JsPlatform.builtIns)
 
     override fun createSealedModule(storageManager: StorageManager): ModuleDescriptorImpl {
         val module = createModule("kotlin-js-test-module", storageManager)

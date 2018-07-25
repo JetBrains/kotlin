@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.uast.*
 
 class KotlinUNamedExpression private constructor(
-        override val name: String?,
-        givenParent: UElement?,
-        expressionProducer: (UElement) -> UExpression
+    override val name: String?,
+    givenParent: UElement?,
+    expressionProducer: (UElement) -> UExpression
 ) : KotlinAbstractUElement(givenParent), UNamedExpression {
+
     override val expression: UExpression by lz { expressionProducer(this) }
 
     override val annotations: List<UAnnotation> = emptyList()
@@ -36,22 +37,27 @@ class KotlinUNamedExpression private constructor(
         internal fun create(name: String?, valueArgument: ValueArgument, uastParent: UElement?): UNamedExpression {
             val expression = valueArgument.getArgumentExpression()
             return KotlinUNamedExpression(name, uastParent) { expressionParent ->
-                expression?.let { expressionParent.getLanguagePlugin().convert<UExpression>(it, expressionParent) } ?: UastEmptyExpression
+                expression?.let { expressionParent.getLanguagePlugin().convertOpt<UExpression>(it, expressionParent) }
+                    ?: UastEmptyExpression
             }
         }
 
         internal fun create(
-                name: String?,
-                valueArguments: List<ValueArgument>,
-                uastParent: UElement?): UNamedExpression {
+            name: String?,
+            valueArguments: List<ValueArgument>,
+            uastParent: UElement?
+        ): UNamedExpression {
             return KotlinUNamedExpression(name, uastParent) { expressionParent ->
                 KotlinUVarargExpression(valueArguments, expressionParent)
             }
         }
     }
 }
-class KotlinUVarargExpression(private val valueArgs: List<ValueArgument>,
-                              uastParent: UElement?) : KotlinAbstractUExpression(uastParent), UCallExpression {
+
+class KotlinUVarargExpression(
+    private val valueArgs: List<ValueArgument>,
+    uastParent: UElement?
+) : KotlinAbstractUExpression(uastParent), UCallExpression {
     override val kind: UastCallKind = UastCallKind.NESTED_ARRAY_INITIALIZER
 
     override val valueArguments: List<UExpression> by lz {

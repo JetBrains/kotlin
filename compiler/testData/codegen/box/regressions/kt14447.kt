@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class ImpulsMigration
 {
     fun migrate(oldVersion: Long)

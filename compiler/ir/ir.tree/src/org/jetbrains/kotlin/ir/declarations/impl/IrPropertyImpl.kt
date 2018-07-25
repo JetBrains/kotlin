@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrPropertyImpl(
@@ -34,7 +33,6 @@ class IrPropertyImpl(
     origin: IrDeclarationOrigin,
     override val descriptor: PropertyDescriptor,
     override val name: Name,
-    override val type: KotlinType,
     override val visibility: Visibility,
     override val modality: Modality,
     override val isVar: Boolean,
@@ -53,7 +51,7 @@ class IrPropertyImpl(
         descriptor: PropertyDescriptor
     ) : this(
         startOffset, endOffset, origin, descriptor,
-        descriptor.name, descriptor.type, descriptor.visibility, descriptor.modality,
+        descriptor.name, descriptor.visibility, descriptor.modality,
         isVar = descriptor.isVar,
         isConst = descriptor.isConst,
         isLateinit = descriptor.isLateInit,

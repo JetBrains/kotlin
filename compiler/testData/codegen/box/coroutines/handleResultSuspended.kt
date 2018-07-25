@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -9,7 +10,7 @@ import COROUTINES_PACKAGE.intrinsics.*
 class Controller {
     var log = ""
 
-    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineOrReturn { x ->
+    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineUninterceptedOrReturn { x ->
         log += "suspend($value);"
         x.resume(value)
         COROUTINE_SUSPENDED

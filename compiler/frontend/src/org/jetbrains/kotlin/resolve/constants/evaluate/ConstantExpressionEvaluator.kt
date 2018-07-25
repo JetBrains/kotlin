@@ -387,15 +387,19 @@ private class ConstantExpressionEvaluatorVisitor(
             }
         }
 
-        val isUnsigned = hasUnsignedSuffix(text)
-        val typedConstant = nodeElementType == KtNodeTypes.INTEGER_CONSTANT && (hasLongSuffix(text) || isUnsigned)
+        val isIntegerConstant = nodeElementType == KtNodeTypes.INTEGER_CONSTANT
+        val isUnsignedLong = isIntegerConstant && hasUnsignedLongSuffix(text)
+        val isUnsigned = isUnsignedLong || hasUnsignedSuffix(text)
+        val isTyped = isUnsigned || hasLongSuffix(text)
+
         return createConstant(
             result,
             expectedType,
             CompileTimeConstant.Parameters(
                 canBeUsedInAnnotation = true,
-                isPure = !typedConstant,
+                isPure = !isTyped,
                 isUnsignedNumberLiteral = isUnsigned,
+                isUnsignedLongNumberLiteral = isUnsignedLong,
                 usesVariableAsConstant = false,
                 usesNonConstValAsConstant = false
             )
@@ -443,6 +447,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 CompileTimeConstant.Parameters(
                     isPure = false,
                     isUnsignedNumberLiteral = false,
+                    isUnsignedLongNumberLiteral = false,
                     canBeUsedInAnnotation = canBeUsedInAnnotation,
                     usesVariableAsConstant = usesVariableAsConstant,
                     usesNonConstValAsConstant = usesNonConstantVariableAsConstant
@@ -506,6 +511,7 @@ private class ConstantExpressionEvaluatorVisitor(
                     canBeUsedInAnnotation = true,
                     isPure = false,
                     isUnsignedNumberLiteral = false,
+                    isUnsignedLongNumberLiteral = false,
                     usesVariableAsConstant = leftConstant.usesVariableAsConstant || rightConstant.usesVariableAsConstant,
                     usesNonConstValAsConstant = leftConstant.usesNonConstValAsConstant || rightConstant.usesNonConstValAsConstant
                 )
@@ -553,7 +559,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 CompileTimeConstant.Parameters(
                     canBeUsedInAnnotation,
                     !isNumberConversionMethod && isArgumentPure,
-                    false,
+                    false, false,
                     usesVariableAsConstant, usesNonConstValAsConstant
                 )
             )
@@ -586,7 +592,7 @@ private class ConstantExpressionEvaluatorVisitor(
             val usesNonConstValAsConstant =
                 usesNonConstValAsConstant(argumentForReceiver.expression) || usesNonConstValAsConstant(argumentForParameter.expression)
             val parameters = CompileTimeConstant.Parameters(
-                canBeUsedInAnnotation, areArgumentsPure, false, usesVariableAsConstant, usesNonConstValAsConstant
+                canBeUsedInAnnotation, areArgumentsPure, false, false, usesVariableAsConstant, usesNonConstValAsConstant
             )
             return when (resultingDescriptorName) {
                 OperatorNameConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression)?.wrap(parameters)
@@ -699,15 +705,12 @@ private class ConstantExpressionEvaluatorVisitor(
                 // TODO: FIXME: see KT-10425
                 if (callableDescriptor is PropertyDescriptor && callableDescriptor.modality != Modality.FINAL) return null
 
-                val variableInitializer = callableDescriptor.compileTimeInitializer ?: return null
-
-                return createConstant(
-                    variableInitializer.value,
-                    expectedType,
+                return callableDescriptor.compileTimeInitializer?.wrap(
                     CompileTimeConstant.Parameters(
                         canBeUsedInAnnotation = isPropertyCompileTimeConstant(callableDescriptor),
                         isPure = false,
                         isUnsignedNumberLiteral = false,
+                        isUnsignedLongNumberLiteral = false,
                         usesVariableAsConstant = true,
                         usesNonConstValAsConstant = !callableDescriptor.isConst
                     )
@@ -807,7 +810,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
         val underlyingType = classDescriptor.underlyingRepresentation()?.type ?: return null
 
-        val argument = valueArguments.values.single().arguments.single()
+        val argument = valueArguments.values.singleOrNull()?.arguments?.singleOrNull() ?: return null
         val argumentExpression = argument.getArgumentExpression() ?: return null
 
         val compileTimeConstant = evaluate(argumentExpression, underlyingType)
@@ -934,10 +937,16 @@ private class ConstantExpressionEvaluatorVisitor(
         parameters: CompileTimeConstant.Parameters,
         expectedType: KotlinType
     ): CompileTimeConstant<*>? {
+        if (parameters.isUnsignedLongNumberLiteral) {
+            return ULongValue(value).wrap(parameters)
+        }
+
         if (TypeUtils.noExpectedType(expectedType) || expectedType.isError) {
             return createIntegerValueTypeConstant(value, constantExpressionEvaluator.module, parameters)
         }
-        val integerValue = ConstantValueFactory.createIntegerConstantValue(value, expectedType, parameters.isUnsignedNumberLiteral)
+        val integerValue = ConstantValueFactory.createIntegerConstantValue(
+            value, expectedType, parameters.isUnsignedNumberLiteral
+        )
         if (integerValue != null) {
             return integerValue.wrap(parameters)
         }
@@ -962,14 +971,22 @@ private class ConstantExpressionEvaluatorVisitor(
         canBeUsedInAnnotation: Boolean = this !is NullValue,
         isPure: Boolean = false,
         isUnsigned: Boolean = false,
+        isUnsignedLong: Boolean = false,
         usesVariableAsConstant: Boolean = false,
         usesNonConstValAsConstant: Boolean = false
     ): TypedCompileTimeConstant<T> =
-        wrap(CompileTimeConstant.Parameters(canBeUsedInAnnotation, isPure, isUnsigned, usesVariableAsConstant, usesNonConstValAsConstant))
+        wrap(
+            CompileTimeConstant.Parameters(
+                canBeUsedInAnnotation, isPure, isUnsigned, isUnsignedLong, usesVariableAsConstant, usesNonConstValAsConstant
+            )
+        )
 }
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
-private fun hasUnsignedSuffix(text: String) = text.endsWith('u')
+private fun hasUnsignedSuffix(text: String) = text.endsWith('u') || text.endsWith('U')
+private fun hasUnsignedLongSuffix(text: String) =
+    text.endsWith("ul") || text.endsWith("uL") ||
+            text.endsWith("Ul") || text.endsWith("UL")
 
 private fun parseNumericLiteral(text: String, type: IElementType): Any? {
     val canonicalText = LiteralFormatUtil.removeUnderscores(text)
@@ -981,13 +998,33 @@ private fun parseNumericLiteral(text: String, type: IElementType): Any? {
 }
 
 private fun parseLong(text: String): Long? {
-    return try {
-        val hasUnsignedSuffix = hasUnsignedSuffix(text)
-        val hasLongSuffix = hasLongSuffix(text)
-        val textWithoutSuffix = if (hasUnsignedSuffix || hasLongSuffix) text.substring(0, text.length - 1) else text
-        val (number, radix) = extractRadix(textWithoutSuffix)
+    fun String.removeSuffix(i: Int): String = this.substring(0, this.length - i)
 
-        if (hasUnsignedSuffix) {
+    return try {
+        val isUnsigned: Boolean
+        val numberWithoutSuffix: String
+        when {
+            hasUnsignedLongSuffix(text) -> {
+                isUnsigned = true
+                numberWithoutSuffix = text.removeSuffix(2)
+            }
+            hasUnsignedSuffix(text) -> {
+                isUnsigned = true
+                numberWithoutSuffix = text.removeSuffix(1)
+            }
+            hasLongSuffix(text) -> {
+                isUnsigned = false
+                numberWithoutSuffix = text.removeSuffix(1)
+            }
+            else -> {
+                isUnsigned = false
+                numberWithoutSuffix = text
+            }
+        }
+
+        val (number, radix) = extractRadix(numberWithoutSuffix)
+
+        if (isUnsigned) {
             java.lang.Long.parseUnsignedLong(number, radix)
         } else {
             java.lang.Long.parseLong(number, radix)

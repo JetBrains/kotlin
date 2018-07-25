@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
@@ -89,7 +91,9 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         }
 
         try {
-            MetadataSerializer(true).serialize(environment)
+            val metadataVersion =
+                configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
+            MetadataSerializer(metadataVersion, true).serialize(environment)
         }
         catch (e: CompilationException) {
             collector.report(EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
@@ -101,6 +105,8 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
     // TODO: update this once a launcher script for K2MetadataCompiler is available
     override fun executableScriptFileName(): String = "kotlinc"
+
+    override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = BuiltInsBinaryVersion(*versionArray)
 
     override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
 

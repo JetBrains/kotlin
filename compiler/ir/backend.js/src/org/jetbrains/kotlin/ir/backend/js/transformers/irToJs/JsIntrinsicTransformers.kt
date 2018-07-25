@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.js.backend.ast.*
 
 typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
@@ -69,7 +68,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.jsObjectCreate) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!
-                val className = context.getNameForSymbol(IrClassSymbolImpl(classToCreate.constructor.declarationDescriptor as ClassDescriptor))
+                val className = context.getNameForSymbol(classToCreate.classifierOrFail)
                 val prototype = prototypeOf(className.makeRef())
                 JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
             }
@@ -86,8 +85,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsToJsType) { call, context ->
-                val typeParameter = call.getTypeArgument(0)!!
-                val typeName = context.getNameForSymbol(IrClassSymbolImpl(typeParameter.constructor.declarationDescriptor as ClassDescriptor))
+                val typeName = context.getNameForSymbol(call.getTypeArgument(0)!!.classifierOrFail)
                 typeName.makeRef()
             }
 

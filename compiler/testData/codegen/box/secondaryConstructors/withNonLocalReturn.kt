@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun run(block: () -> Unit) = block()
 
 class A {

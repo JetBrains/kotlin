@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -41,7 +42,7 @@ class GeneratedSequence<out T>(private val block: suspend Generator<T>.() -> Uni
 }
 
 class GeneratedIterator<T>(block: suspend Generator<T>.() -> Unit) : AbstractIterator<T>(), Generator<T> {
-    private var nextStep: Continuation<Unit> = block.createCoroutine(this, object : Continuation<Unit> {
+    private var nextStep: Continuation<Unit> = block.createCoroutine(this, object : ContinuationAdapter<Unit>() {
         override val context = EmptyCoroutineContext
 
         override fun resume(data: Unit) {
@@ -56,7 +57,7 @@ class GeneratedIterator<T>(block: suspend Generator<T>.() -> Unit) : AbstractIte
     override fun computeNext() {
         nextStep.resume(Unit)
     }
-    suspend override fun yield(value: T) = suspendCoroutineOrReturn<Unit> { c ->
+    suspend override fun yield(value: T) = suspendCoroutineUninterceptedOrReturn<Unit> { c ->
         setNext(value)
         nextStep = c
 

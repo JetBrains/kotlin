@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 inline class Foo(val c: Char) {
     companion object {

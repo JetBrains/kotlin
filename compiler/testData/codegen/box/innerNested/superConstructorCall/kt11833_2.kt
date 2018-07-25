@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 abstract class Father {
     abstract inner class InClass {
         abstract fun work(): String

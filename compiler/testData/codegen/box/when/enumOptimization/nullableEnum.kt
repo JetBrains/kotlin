@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // CHECK_CASES_COUNT: function=test count=0
 // CHECK_IF_COUNT: function=test count=3
 

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // KT-5869
 
 operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
