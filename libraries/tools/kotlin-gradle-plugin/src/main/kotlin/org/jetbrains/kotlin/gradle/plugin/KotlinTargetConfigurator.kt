@@ -295,7 +295,8 @@ open class KotlinTargetConfigurator(
                 usesPlatformOf(target)
                 isVisible = false
                 isCanBeConsumed = false
-                isCanBeResolved = false
+                isCanBeResolved = true // Needed for IDE import
+                attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(Usage.JAVA_API)) // API usage for IDE import
                 description = "Dependencies for $compilation (deprecated, use '${compilation.implementationConfigurationName} ' instead)."
             }
 
@@ -321,7 +322,8 @@ open class KotlinTargetConfigurator(
                 usesPlatformOf(target)
                 isVisible = false
                 isCanBeConsumed = false
-                isCanBeResolved = false
+                isCanBeResolved = true // Needed for IDE import
+                attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(Usage.JAVA_API)) // API usage for IDE import
                 description = "Compile only dependencies for $compilation."
             }
 
