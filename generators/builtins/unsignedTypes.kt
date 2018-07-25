@@ -157,17 +157,33 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         fun generateShiftOperator(name: String, implementation: String = name) {
             val doc = GeneratePrimitives.shiftOperators[implementation]!!
             out.println("    /** $doc */")
-            out.println("    public infix fun $name(bitCount: Int): $className = $className(data $implementation bitCount)")
+            if (implementation in GeneratePrimitives.deprecatedOperatorMap) {
+                val replacement = GeneratePrimitives.deprecatedOperatorMap[implementation]
+                out.println("    @Deprecated(\"Use $replacement instead\", ReplaceWith(\"$replacement(bitCount)\"), DeprecationLevel.WARNING)")
+                out.println("    public infix fun $name(bitCount: Int): $className = $className(data $implementation bitCount)")
+            } else {
+                out.println("    public operator fun $name(bitCount: Int): $className = $className(data.$implementation(bitCount))")
+            }
         }
+
 
         generateShiftOperator("shl")
         generateShiftOperator("shr", "ushr")
+
+        generateShiftOperator("shiftLeft")
+        generateShiftOperator("shiftRight", "ushiftRight")
     }
 
     private fun generateBitwiseOperators() {
         for ((name, doc) in GeneratePrimitives.bitwiseOperators) {
             out.println("    /** $doc */")
-            out.println("    public infix fun $name(other: $className): $className = $className(this.data $name other.data)")
+            if(name in GeneratePrimitives.deprecatedOperatorMap.keys) {
+                val replacement = GeneratePrimitives.deprecatedOperatorMap[name]
+                out.println("    @Deprecated(\"Use $replacement instead\", ReplaceWith(\"$replacement(other)\"), DeprecationLevel.WARNING)")
+                out.println("    public infix fun $name(other: $className): $className = $className(this.data $name other.data)")
+            } else {
+                out.println("    public operator fun $name(other: $className): $className = $className(this.data.$name(other.data))")
+            }
         }
         out.println("    /** Inverts the bits in this value. */")
         out.println("    public fun inv(): $className = $className(data.inv())")
