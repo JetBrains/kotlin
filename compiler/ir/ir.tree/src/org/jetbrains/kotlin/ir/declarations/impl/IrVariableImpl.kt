@@ -59,10 +59,29 @@ class IrVariableImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
+        symbol: IrVariableSymbol,
+        type: IrType,
+        initializer: IrExpression?
+    ) : this(
+        startOffset, endOffset, origin, symbol,
+        symbol.descriptor.name, type,
+        isVar = symbol.descriptor.isVar,
+        isConst = symbol.descriptor.isConst,
+        isLateinit = symbol.descriptor.isLateInit
+    ) {
+        this.initializer = initializer
+    }
+
+    @Deprecated("Use constructor which takes symbol instead of descriptor")
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
         descriptor: VariableDescriptor,
         type: IrType
     ) : this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), type)
 
+    @Deprecated("Use constructor which takes symbol instead of descriptor")
     constructor(
         startOffset: Int,
         endOffset: Int,

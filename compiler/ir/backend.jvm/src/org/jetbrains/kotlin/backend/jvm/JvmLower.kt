@@ -53,7 +53,8 @@ class JvmLower(val context: JvmBackendContext) {
                 override fun localName(descriptor: DeclarationDescriptor): String =
                     NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
             },
-            Visibilities.PUBLIC //TODO properly figure out visibility
+            Visibilities.PUBLIC, //TODO properly figure out visibility
+            true
         ).runOnFilePostfix(irFile)
         CallableReferenceLowering(context).lower(irFile)
 

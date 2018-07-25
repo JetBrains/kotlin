@@ -532,7 +532,11 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
         //---------------------------------------------------------------------//
 
+        fun foo() {}
         override fun visitTypeOperator(expression: IrTypeOperatorCall): IrTypeOperatorCall {
+            if (expression.operator == IrTypeOperator.CAST) {
+                foo()
+            }
             val typeOperand = substituteType(expression.typeOperand)!!
             val returnType = getTypeOperatorReturnType(expression.operator, typeOperand)
             return IrTypeOperatorCallImpl(
@@ -611,7 +615,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
     //-------------------------------------------------------------------------//
 
-    private fun substituteType(oldType: IrType?): IrType? = substituteType(oldType?.toKotlinType())?.toIrType()
+    private fun substituteType(oldType: IrType?): IrType? = substituteType(oldType?.toKotlinType())?.toIrType(context.symbolTable)
 
     private fun substituteType(oldType: KotlinType?): KotlinType? {
         if (typeSubstitutor == null) return oldType

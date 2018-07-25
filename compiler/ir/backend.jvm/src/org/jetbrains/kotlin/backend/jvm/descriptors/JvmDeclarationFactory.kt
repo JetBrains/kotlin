@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
-import org.jetbrains.kotlin.backend.common.descriptors.DescriptorsFactory
+import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
@@ -15,11 +16,15 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
@@ -30,17 +35,24 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
-class JvmDescriptorsFactory(
+class JvmDeclarationFactory(
     private val psiSourceManager: PsiSourceManager,
     private val builtIns: KotlinBuiltIns
-) : DescriptorsFactory {
-    private val singletonFieldDescriptors = HashMap<IrBindableSymbol<*, *>, IrFieldSymbol>()
-    private val outerThisDescriptors = HashMap<IrClass, IrFieldSymbol>()
-    private val innerClassConstructors = HashMap<IrConstructorSymbol, IrConstructorSymbol>()
+) : DeclarationFactory {
+    private val singletonFieldDescriptors = HashMap<IrSymbolOwner, IrField>()
+    private val outerThisDescriptors = HashMap<IrClass, IrField>()
+    private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
 
-    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol =
+    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDescriptors.getOrPut(enumEntry) {
-            IrFieldSymbolImpl(createEnumEntryFieldDescriptor(enumEntry.descriptor))
+            val symbol = IrFieldSymbolImpl(createEnumEntryFieldDescriptor(enumEntry.descriptor))
+            IrFieldImpl(
+                enumEntry.startOffset,
+                enumEntry.endOffset,
+                JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
+                symbol,
+                enumEntry.initializerExpression!!.type
+            )
         }
 
     fun createFileClassDescriptor(fileEntry: SourceManager.FileEntry, packageFragment: PackageFragmentDescriptor): FileClassDescriptor {
@@ -56,29 +68,34 @@ class JvmDescriptorsFactory(
         )
     }
 
-    override fun getOuterThisFieldSymbol(innerClass: IrClass): IrFieldSymbol =
+    override fun getOuterThisFieldSymbol(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
         else outerThisDescriptors.getOrPut(innerClass) {
             val outerClass = innerClass.parent as? IrClass
                     ?: throw AssertionError("No containing class for inner class ${innerClass.dump()}")
 
-            IrFieldSymbolImpl(
+            val symbol = IrFieldSymbolImpl(
                 JvmPropertyDescriptorImpl.createFinalField(
                     Name.identifier("this$0"), outerClass.defaultType.toKotlinType(), innerClass.descriptor,
                     Annotations.EMPTY, JavaVisibilities.PACKAGE_VISIBILITY, Opcodes.ACC_SYNTHETIC, SourceElement.NO_SOURCE
                 )
             )
+
+
+                IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DeclarationFactory.FIELD_FOR_OUTER_THIS, symbol, outerClass.defaultType).also {
+                    it.parent = innerClass
+                }
         }
 
-    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructorSymbol {
+    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor {
         assert((innerClassConstructor.parent as IrClass).isInner) { "Class is not inner: ${(innerClassConstructor.parent as IrClass).dump()}" }
 
-        return innerClassConstructors.getOrPut(innerClassConstructor.symbol) {
+        return innerClassConstructors.getOrPut(innerClassConstructor) {
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
         }
     }
 
-    private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructorSymbol {
+    private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor {
         val oldDescriptor = oldConstructor.descriptor
         val classDescriptor = oldDescriptor.containingDeclaration
         val outerThisType = (classDescriptor.containingDeclaration as ClassDescriptor).defaultType
@@ -102,7 +119,26 @@ class JvmDescriptorsFactory(
             oldDescriptor.returnType,
             oldDescriptor.modality,
             oldDescriptor.visibility)
-        return IrConstructorSymbolImpl(newDescriptor)
+        val symbol = IrConstructorSymbolImpl(newDescriptor)
+        return IrConstructorImpl(oldConstructor.startOffset, oldConstructor.endOffset, oldConstructor.origin, symbol).also { constructor ->
+            newValueParameters.mapIndexedTo(constructor.valueParameters) { i, v ->
+                constructor.parent = oldConstructor.parent
+                constructor.returnType = oldConstructor.returnType
+                if (i == 0) {
+                    IrValueParameterImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS, IrValueParameterSymbolImpl(v), outerThisType.toIrType()!!, null)
+                } else {
+                    val oldParameter = oldConstructor.valueParameters[i - 1]
+                    IrValueParameterImpl(
+                        oldParameter.startOffset, oldParameter.endOffset, oldParameter.origin,
+                        IrValueParameterSymbolImpl(v), oldParameter.type, oldParameter.varargElementType
+                    ).also {
+                        it.defaultValue = oldParameter.defaultValue
+                    }
+                }
+            }
+        }
     }
 
 
@@ -124,9 +160,16 @@ class JvmDescriptorsFactory(
         )
     }
 
-    override fun getSymbolForObjectInstance(singleton: IrClassSymbol): IrFieldSymbol =
+    override fun getSymbolForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDescriptors.getOrPut(singleton) {
-            IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
+            val symbol = IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
+            return IrFieldImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
+                symbol,
+                singleton.defaultType
+            )
         }
 
     private fun createObjectInstanceFieldDescriptor(objectDescriptor: ClassDescriptor): PropertyDescriptor {

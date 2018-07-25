@@ -93,6 +93,7 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment) {
     moduleFragment.files.forEach(LateinitLowering(this, true)::lower)
     moduleFragment.files.forEach(DefaultArgumentStubGenerator(this)::runOnFilePostfix)
     moduleFragment.files.forEach(DefaultParameterInjector(this)::runOnFilePostfix)
+    moduleFragment.files.forEach(DefaultParameterCleaner(this)::runOnFilePostfix)
     moduleFragment.files.forEach(SharedVariablesLowering(this)::runOnFilePostfix)
     moduleFragment.files.forEach(EnumClassLowering(this)::runOnFilePostfix)
     moduleFragment.files.forEach(EnumUsageLowering(this)::lower)

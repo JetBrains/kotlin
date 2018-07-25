@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
@@ -94,8 +93,8 @@ class InitializersLowering(
         fun transformInstanceInitializerCallsInConstructors(irClass: IrClass) {
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression {
-                    return IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null,
-                                       instanceInitializerStatements.map { it.copy(irClass) })
+                    val copiedBlock = IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, null, instanceInitializerStatements).copy(irClass) as IrBlock
+                    return IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, copiedBlock.statements)
                 }
             })
         }
@@ -125,7 +124,7 @@ class InitializersLowering(
     companion object {
         val clinitName = Name.special("<clinit>")
 
-        fun IrStatement.copy(containingDeclaration: IrClass) = deepCopyWithSymbols(containingDeclaration)
-        fun IrExpression.copy(containingDeclaration: IrClass) = deepCopyWithSymbols(containingDeclaration)
+        fun IrStatement.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithSymbols(containingDeclaration)
+        fun IrExpression.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithSymbols(containingDeclaration)
     }
 }

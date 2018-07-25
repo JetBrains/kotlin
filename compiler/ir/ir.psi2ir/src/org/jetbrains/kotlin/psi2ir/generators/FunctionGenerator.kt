@@ -242,6 +242,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             ktConstructorElement.pureStartOffset, ktConstructorElement.pureEndOffset, IrDeclarationOrigin.DEFINED,
             constructorDescriptor
         ).buildWithScope { irConstructor ->
+            declarationGenerator.generateScopedTypeParameterDeclarations(irConstructor, constructorDescriptor.typeParameters)
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null)
             irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody()
             irConstructor.returnType = constructorDescriptor.returnType.toIrType()
