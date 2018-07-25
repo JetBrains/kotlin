@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 
 open class AddModifierFix(
-        element: KtModifierListOwner,
-        protected val modifier: KtModifierKeywordToken
+    element: KtModifierListOwner,
+    protected val modifier: KtModifierKeywordToken
 ) : KotlinQuickFixAction<KtModifierListOwner>(element), KotlinUniversalQuickFix {
     override fun getText(): String {
         val element = element ?: return ""
@@ -82,8 +82,7 @@ open class AddModifierFix(
                 if (nameIdentifier != null) {
                     name = nameIdentifier.text
                 }
-            }
-            else if (modifierListOwner is KtPropertyAccessor) {
+            } else if (modifierListOwner is KtPropertyAccessor) {
                 name = modifierListOwner.namePlaceholder.text
             }
             if (name == null) {
@@ -96,7 +95,10 @@ open class AddModifierFix(
             return createFactory(modifier, KtModifierListOwner::class.java)
         }
 
-        fun <T : KtModifierListOwner> createFactory(modifier: KtModifierKeywordToken, modifierOwnerClass: Class<T>): KotlinSingleIntentionActionFactory {
+        fun <T : KtModifierListOwner> createFactory(
+            modifier: KtModifierKeywordToken,
+            modifierOwnerClass: Class<T>
+        ): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
                 public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                     val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass) ?: return null
@@ -123,7 +125,8 @@ open class AddModifierFix(
                             modifierListOwner.isSealed() ||
                             modifierListOwner.isEnum() ||
                             modifierListOwner.isData() ||
-                            modifierListOwner.isAnnotation()) return null
+                            modifierListOwner.isAnnotation()
+                        ) return null
                     }
                 }
             }
