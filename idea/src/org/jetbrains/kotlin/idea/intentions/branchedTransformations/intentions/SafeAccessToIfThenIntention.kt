@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ReplaceSingleLineLetIntention
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
@@ -33,6 +32,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedExpression>(
     KtSafeQualifiedExpression::class.java,
@@ -64,27 +65,33 @@ class SafeAccessToIfThenIntention : SelfTargetingRangeIntention<KtSafeQualifiedE
             isAssignment = true
         }
 
-        val replacedReference = (ifExpression.then as? KtQualifiedExpression)?.callExpression?.let {
-            val replaceSingleLineLetIntention = ReplaceSingleLineLetIntention()
-            if (replaceSingleLineLetIntention.isApplicableTo(it)) {
-                replaceSingleLineLetIntention.applyTo(it, editor)
-                val descriptor = (ifExpression.condition as? KtBinaryExpression)?.left?.resolveToCall()?.resultingDescriptor
-                ifExpression.then?.collectDescendantsOfType<KtNameReferenceExpression>()?.firstOrNull {
-                    it.resolveToCall()?.resultingDescriptor == descriptor
-                }
-            } else {
-                null
-            }
-        }
+        val isRemovedRedundantLetCall = ifExpression.removeRedundantLetCall(editor)
 
         if (!receiverIsStable) {
-            val valueToExtract = if (isAssignment)
-                ((ifExpression.then as? KtBinaryExpression)?.left as? KtDotQualifiedExpression)?.receiverExpression
-            else
-                replacedReference ?: (ifExpression.then as? KtDotQualifiedExpression)?.receiverExpression
-
+            val valueToExtract = when {
+                isAssignment ->
+                    ((ifExpression.then as? KtBinaryExpression)?.left as? KtDotQualifiedExpression)?.receiverExpression
+                isRemovedRedundantLetCall -> {
+                    val context = ifExpression.analyze(BodyResolveMode.PARTIAL)
+                    val descriptor = (ifExpression.condition as? KtBinaryExpression)?.left?.getResolvedCall(context)?.resultingDescriptor
+                    ifExpression.then?.collectDescendantsOfType<KtNameReferenceExpression> {
+                        it.text == descriptor?.name?.asString() && it.getResolvedCall(context)?.resultingDescriptor == descriptor
+                    }?.firstOrNull()
+                }
+                else ->
+                    (ifExpression.then as? KtDotQualifiedExpression)?.receiverExpression
+            }
             if (valueToExtract != null) ifExpression.introduceValueForCondition(valueToExtract, editor)
         }
-
     }
+
+    private fun KtIfExpression.removeRedundantLetCall(editor: Editor?): Boolean {
+        val callExpression = (then as? KtQualifiedExpression)?.callExpression ?: return false
+        if (callExpression.calleeExpression?.text != "let") return false
+        val replaceSingleLineLetIntention = ReplaceSingleLineLetIntention()
+        if (!replaceSingleLineLetIntention.isApplicableTo(callExpression)) return false
+        replaceSingleLineLetIntention.applyTo(callExpression, editor)
+        return true
+    }
+
 }
