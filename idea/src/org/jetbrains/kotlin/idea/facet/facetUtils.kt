@@ -166,7 +166,7 @@ fun KotlinFacet.configureFacet(
         if (languageLevel != null && apiLevel != null && apiLevel > languageLevel) {
             this.apiLevel = languageLevel
         }
-        this.coroutineSupport = coroutineSupport
+        this.coroutineSupport = if (languageLevel != null && languageLevel < LanguageVersion.KOTLIN_1_3) coroutineSupport else null
     }
 
     module.externalCompilerVersion = compilerVersion
