@@ -108,11 +108,20 @@ public inline class UShort internal constructor(private val data: Short) : Compa
     public operator fun rangeTo(other: UShort): UIntRange = UIntRange(this.toUInt(), other.toUInt())
 
     /** Performs a bitwise AND operation between the two values. */
+    @Deprecated("Use bitAnd instead", ReplaceWith("bitAnd(other)"), DeprecationLevel.WARNING)
     public infix fun and(other: UShort): UShort = UShort(this.data and other.data)
     /** Performs a bitwise OR operation between the two values. */
+    @Deprecated("Use bitOr instead", ReplaceWith("bitOr(other)"), DeprecationLevel.WARNING)
     public infix fun or(other: UShort): UShort = UShort(this.data or other.data)
     /** Performs a bitwise XOR operation between the two values. */
+    @Deprecated("Use bitXor instead", ReplaceWith("bitXor(other)"), DeprecationLevel.WARNING)
     public infix fun xor(other: UShort): UShort = UShort(this.data xor other.data)
+    /** Performs a bitwise AND operation between the two values. */
+    public operator fun bitAnd(other: UShort): UShort = UShort(this.data.bitAnd(other.data))
+    /** Performs a bitwise OR operation between the two values. */
+    public operator fun bitOr(other: UShort): UShort = UShort(this.data.bitOr(other.data))
+    /** Performs a bitwise XOR operation between the two values. */
+    public operator fun bitXor(other: UShort): UShort = UShort(this.data.bitXor(other.data))
     /** Inverts the bits in this value. */
     public fun inv(): UShort = UShort(data.inv())
 
