@@ -244,7 +244,11 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xdisable-standard-script", description = "Disable standard kotlin script support")
     var disableStandardScript: Boolean by FreezableVar(false)
 
-    // Paths to output directories for friend modules.
+    @Argument(
+        value = "-Xfriend-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for friend modules (whose internals should be visible)"
+    )
     var friendPaths: Array<String>? by FreezableVar(null)
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
