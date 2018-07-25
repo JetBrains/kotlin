@@ -45,6 +45,12 @@ class DefaultGradleModelFacade : KotlinGradleModelFacade {
     }
 }
 
+fun DataNode<*>.getResolvedVersionByModuleData(groupId: String, libraryIds: List<String>): String? {
+    return KotlinGradleModelFacade.EP_NAME.extensions.asSequence()
+        .mapNotNull { it.getResolvedVersionByModuleData(this, groupId, libraryIds) }
+        .firstOrNull()
+}
+
 fun getDependencyModules(moduleData: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>> {
     for (modelFacade in Extensions.getExtensions(KotlinGradleModelFacade.EP_NAME)) {
         val dependencies = modelFacade.getDependencyModules(moduleData, gradleIdeaProject)
