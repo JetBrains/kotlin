@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -30,11 +29,12 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isStatic
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -112,17 +112,17 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
         val bridgeDescriptorForIrFunction = SimpleFunctionDescriptorImpl.create(
             containingClass,
-            Annotations.EMPTY,
+            Annotations.EMPTY, // TODO: Should we copy annotations?
             bridge.name,
             CallableMemberDescriptor.Kind.SYNTHESIZED,
-            function.descriptor.source)
+            function.descriptor.source
+        )
 
-        // TODO: should copy modality
         bridgeDescriptorForIrFunction.initialize(
             bridge.descriptor.extensionReceiverParameter?.returnType, containingClass.thisAsReceiverParameter,
             bridge.descriptor.typeParameters,
             bridge.descriptor.valueParameters.map { it.copy(bridgeDescriptorForIrFunction, it.name, it.index) },
-            bridge.descriptor.returnType, Modality.OPEN, function.visibility
+            bridge.descriptor.returnType, bridge.descriptor.modality, function.visibility
         )
 
         // TODO: Support offsets for debug info
@@ -130,15 +130,14 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         irFunction.createParameterDeclarations()
         irFunction.returnType = bridge.returnType
 
-        // TODO: Add type casts
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
             val call = irCall(delegateTo.symbol)
             call.dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
             irFunction.extensionReceiverParameter?.let {
-                call.extensionReceiver = irGet(it)
+                call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
             }
             irFunction.valueParameters.mapIndexed { i, valueParameter ->
-                call.putValueArgument(i, irGet(valueParameter))
+                call.putValueArgument(i, irCastIfNeeded(irGet(valueParameter), delegateTo.valueParameters[i].type))
             }
             +irReturn(call)
         }.apply {
@@ -147,6 +146,9 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
         return irFunction
     }
+
+    private fun IrBlockBodyBuilder.irCastIfNeeded(argument: IrExpression, type: IrType): IrExpression =
+        if (argument.type.classifierOrNull == type.classifierOrNull) argument else irAs(argument, type)
 }
 
 // Handle for common.bridges
@@ -157,10 +159,10 @@ data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandl
     override val isAbstract: Boolean =
         function.modality == Modality.ABSTRACT
 
-    override val isInterfaceDeclaration=
+    override val isInterfaceDeclaration =
         function.parentAsClass.isInterface
 
-    override fun getOverridden()=
+    override fun getOverridden() =
         function.overriddenSymbols.map { IrBasedFunctionHandle(it.owner) }
 }
 
@@ -180,7 +182,7 @@ class FunctionAndSignature(val function: IrSimpleFunction) {
     private val signature = Signature(
         function.name,
         function.extensionReceiverParameter?.type?.toKotlinType()?.toString(),
-        function.valueParameters.map { it.type.toKotlinType()?.toString() }
+        function.valueParameters.map { it.type.toKotlinType().toString() }
     )
 
     override fun equals(other: Any?) =
