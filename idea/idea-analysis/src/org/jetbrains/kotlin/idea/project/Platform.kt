@@ -128,7 +128,10 @@ fun Project.getLanguageVersionSettings(
     )
 
     val extraLanguageFeatures = additionalArguments.configureLanguageFeatures(MessageCollector.NONE).apply {
-        configureCoroutinesSupport(CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this@getLanguageVersionSettings).settings))
+        configureCoroutinesSupport(
+            CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this@getLanguageVersionSettings).settings),
+            languageVersion
+        )
         if (isReleaseCoroutines != null) {
             put(
                 LanguageFeature.ReleaseCoroutines,
@@ -183,7 +186,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
     val apiVersion = facetSettings.apiLevel ?: languageVersion
 
     val languageFeatures = facetSettings.mergedCompilerArguments?.configureLanguageFeatures(MessageCollector.NONE)?.apply {
-        configureCoroutinesSupport(facetSettings.coroutineSupport)
+        configureCoroutinesSupport(facetSettings.coroutineSupport, languageVersion)
         configureMultiplatformSupport(facetSettings.targetPlatformKind, this@computeLanguageVersionSettings)
     }.orEmpty()
 
@@ -226,8 +229,16 @@ private fun parseArguments(
     return arguments
 }
 
-fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCoroutinesSupport(coroutineSupport: LanguageFeature.State) {
-    put(LanguageFeature.Coroutines, coroutineSupport)
+fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCoroutinesSupport(
+    coroutineSupport: LanguageFeature.State?,
+    languageVersion: LanguageVersion
+) {
+    val state = if (languageVersion >= LanguageVersion.KOTLIN_1_3) {
+        LanguageFeature.State.ENABLED
+    } else {
+        coroutineSupport ?: LanguageFeature.Coroutines.defaultState
+    }
+    put(LanguageFeature.Coroutines, state)
 }
 
 fun MutableMap<LanguageFeature, LanguageFeature.State>.configureMultiplatformSupport(

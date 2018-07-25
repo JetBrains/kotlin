@@ -222,7 +222,7 @@ class KotlinFacetEditorGeneralTab(
             copyRuntimeFilesCheckBox.validateOnChange()
             moduleKindComboBox.validateOnChange()
             languageVersionComboBox.addActionListener {
-                restrictAPIVersions()
+                onLanguageLevelChanged()
                 doValidate()
             }
             apiVersionComboBox.validateOnChange()
@@ -233,9 +233,9 @@ class KotlinFacetEditorGeneralTab(
         editor.updateCompilerConfigurable()
     }
 
-    private fun restrictAPIVersions() {
+    private fun onLanguageLevelChanged() {
         with(editor.compilerConfigurable) {
-            restrictAPIVersions(selectedLanguageVersionView)
+            onLanguageLevelChanged(selectedLanguageVersionView)
         }
     }
 
