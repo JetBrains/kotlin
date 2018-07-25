@@ -187,14 +187,15 @@ class KotlinFacetSettings {
             }
         }
 
-    var coroutineSupport: LanguageFeature.State
+    var coroutineSupport: LanguageFeature.State?
         get() {
             val languageVersion = languageLevel ?: return LanguageFeature.Coroutines.defaultState
             if (languageVersion < LanguageFeature.Coroutines.sinceVersion!!) return LanguageFeature.State.DISABLED
-            return CoroutineSupport.byCompilerArguments(compilerArguments)
+            return CoroutineSupport.byCompilerArgumentsOrNull(compilerArguments)
         }
         set(value) {
             compilerArguments!!.coroutinesState = when (value) {
+                null -> CommonCompilerArguments.DEFAULT
                 LanguageFeature.State.ENABLED -> CommonCompilerArguments.ENABLE
                 LanguageFeature.State.ENABLED_WITH_WARNING -> CommonCompilerArguments.WARN
                 LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR

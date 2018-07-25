@@ -153,6 +153,7 @@ private fun readV2Config(element: Element): KotlinFacetSettings {
                     compilerArguments!!.coroutinesState = CommonCompilerArguments.WARN
                 args.any { arg -> arg.attributes[0].value == "coroutinesError" && arg.attributes[1].booleanValue } ->
                     compilerArguments!!.coroutinesState = CommonCompilerArguments.ERROR
+                else -> compilerArguments!!.coroutinesState = CommonCompilerArguments.DEFAULT
             }
         }
     }
