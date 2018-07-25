@@ -44,7 +44,8 @@ import org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade
 import org.jetbrains.kotlin.idea.inspections.gradle.findModulesByNames
 
 class AndroidGradleModelFacade : KotlinGradleModelFacade {
-    override fun getResolvedVersionByModuleData(moduleData: DataNode<*>, groupId: String, libraryIds: List<String>): String? {
+    @Suppress("OverridingDeprecatedMember")
+    override fun getResolvedKotlinStdlibVersionByModuleData(moduleData: DataNode<*>, libraryIds: List<String>): String? {
         ExternalSystemApiUtil
             .findAllRecursively(moduleData, AndroidProjectKeys.JAVA_MODULE_MODEL).asSequence()
             .flatMap { it.data.jarLibraryDependencies.asSequence() }
