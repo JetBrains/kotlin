@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -126,3 +127,17 @@ fun KtDeclaration.isEffectivelyActual(): Boolean {
 
 private fun MemberDescriptor.isEnumEntryInActual() =
     (DescriptorUtils.isEnumEntry(this) && (containingDeclaration as? MemberDescriptor)?.isActual == true)
+
+fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, f: (KtDeclaration) -> Unit) {
+    if (hasActualModifier()) {
+        val expectElement = liftToExpected()
+        expectElement?.actualsForExpected()?.forEach {
+            if (it !== this) {
+                f(it)
+            }
+        }
+        expectElement?.let { f(it) }
+    } else if (!checkExpect || isExpectDeclaration()) {
+        actualsForExpected().forEach { f(it) }
+    }
+}

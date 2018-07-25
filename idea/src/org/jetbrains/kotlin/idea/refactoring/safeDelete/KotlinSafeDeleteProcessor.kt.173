@@ -53,9 +53,9 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
-import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.idea.util.liftToExpected
+import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -402,19 +402,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
     override fun prepareForDeletion(element: PsiElement) {
         if (element is KtDeclaration) {
-            if (element.hasActualModifier()) {
-                val expectElement = element.liftToExpected()
-                expectElement?.actualsForExpected()?.forEach {
-                    if (it !== element) {
-                        it.removeOrClean()
-                    }
-                }
-                expectElement?.removeOrClean()
-            } else {
-                element.actualsForExpected().forEach {
-                    it.removeOrClean()
-                }
-            }
+            element.runOnExpectAndAllActuals(checkExpect = false) { it.removeOrClean() }
         }
 
         when (element) {
