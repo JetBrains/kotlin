@@ -22,7 +22,7 @@ import java.io.DataInput
 import java.io.DataOutput
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-var VirtualFile.scriptDependencies: ScriptDependencies? by fileAttribute(
+var VirtualFile.scriptDependencies: ScriptDependencies? by cachedFileAttribute(
     name = "kotlin-script-dependencies",
     version = 3,
     read = {

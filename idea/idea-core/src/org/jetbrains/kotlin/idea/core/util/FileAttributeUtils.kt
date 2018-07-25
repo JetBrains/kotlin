@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.util
 
+import com.intellij.openapi.util.NullableLazyKey
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.openapi.vfs.newvfs.FileAttribute
@@ -15,11 +16,11 @@ import com.intellij.util.io.IOUtil.writeUTF
 import java.io.*
 import kotlin.reflect.KProperty
 
-fun <T : Any> fileAttribute(
+inline fun <T : Any> cachedFileAttribute(
     name: String,
     version: Int,
-    read: DataInputStream.() -> T,
-    write: DataOutputStream.(T) -> Unit
+    crossinline read: DataInputStream.() -> T,
+    crossinline write: DataOutputStream.(T) -> Unit
 ): FileAttributeProperty<T> {
     return object : FileAttributeProperty<T>(name, version) {
         override fun readValue(input: DataInputStream): T = read(input)
@@ -33,17 +34,13 @@ abstract class FileAttributeProperty<T : Any>(name: String, version: Int, privat
 
     private val attribute = FileAttribute(name, version, false)
 
-    operator fun setValue(file: VirtualFile, property: KProperty<*>, newValue: T?) {
-        if (file !is VirtualFileWithId) return
+    @Suppress("LeakingThis")
+    private val cache = NullableLazyKey.create(
+        "FileAttributeProperty.$name",
+        this::computeValue
+    )
 
-        attribute.writeAttribute(file).use { output ->
-            output.writeNullable(newValue) { value ->
-                writeValue(output, value)
-            }
-        }
-    }
-
-    operator fun getValue(file: VirtualFile, property: KProperty<*>): T? {
+    private fun computeValue(file: VirtualFile): T? {
         if (file !is VirtualFileWithId) return null
 
         return attribute.readAttribute(file)?.use { input ->
@@ -52,12 +49,28 @@ abstract class FileAttributeProperty<T : Any>(name: String, version: Int, privat
             }
         } ?: default
     }
+
+    operator fun setValue(file: VirtualFile, property: KProperty<*>, newValue: T?) {
+        if (file !is VirtualFileWithId) return
+
+        attribute.writeAttribute(file).use { output ->
+            output.writeNullable(newValue) { value ->
+                writeValue(output, value)
+            }
+        }
+
+        // clear cache
+        file.putUserData(cache, null)
+    }
+
+    operator fun getValue(file: VirtualFile, property: KProperty<*>): T? =
+        cache.getValue(file)
 }
 
 fun DataInput.readStringList(): List<String> = readSeq(this) { readString() }
 fun DataInput.readFileList(): List<File> = readSeq(this) { readFile() }
 fun DataInput.readString(): String = readUTF(this)
-fun DataInput.readFile() = readUTF(this).let { File(it) }
+fun DataInput.readFile() = File(readUTF(this))
 
 fun DataOutput.writeFileList(iterable: Iterable<File>) = writeSeq(this, iterable.toList()) { writeFile(it) }
 fun DataOutput.writeFile(it: File) = writeString(it.canonicalPath)
