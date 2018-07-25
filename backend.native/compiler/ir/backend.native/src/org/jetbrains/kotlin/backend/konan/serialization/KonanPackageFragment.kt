@@ -61,8 +61,9 @@ class KonanPackageFragment(
     }
 
     private val memberScope_ by lazy {
+        /* TODO: we fake proto binary versioning for now. */
         DeserializedPackageMemberScope(this, proto.getPackage(),
-                nameResolver, /* containerSource = */ null,
+                nameResolver, KonanMetadataVersion.INSTANCE,/* containerSource = */ null,
                 components, { loadClassNames() })
     }
 

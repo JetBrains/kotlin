@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.serialization.KonanMetadataVersion
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
@@ -33,11 +34,13 @@ import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.profile
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
 private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
+    override fun createMetadataVersion(p0: IntArray): BinaryVersion = KonanMetadataVersion(*p0)
 
     private val performanceManager by lazy {
         K2NativeCompilerPerformanceManager()
@@ -62,6 +65,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
         if (!enoughArguments) {
             configuration.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
+        }
+
+        /* Set default version of metadata version */
+        val metadataVersionString = arguments.metadataVersion
+        if (metadataVersionString == null) {
+            configuration.put(CommonConfigurationKeys.METADATA_VERSION, KonanMetadataVersion.INSTANCE)
         }
 
         if (konanConfig.linkOnly) {

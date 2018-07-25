@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
-import org.jetbrains.kotlin.backend.common.INTERCEPTED_NAME
-import org.jetbrains.kotlin.backend.common.SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
@@ -343,14 +341,6 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
 
     private val coroutinesPackage = context.builtIns.builtInsModule.getPackage(
             context.config.configuration.languageVersionSettings.coroutinesPackageFqName()).memberScope
-
-    val intercepted = coroutinesIntrinsicsPackage
-            .getContributedFunctions(INTERCEPTED_NAME, NoLookupLocation.FROM_BACKEND)
-            .single()
-
-    val suspendCoroutineUninterceptedOrReturn = coroutinesIntrinsicsPackage
-            .getContributedFunctions(SUSPEND_COROUTINE_UNINTERCEPTED_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
-            .single()
 
     val coroutineContextGetter = coroutinesPackage
             .getContributedVariables(Name.identifier("coroutineContext"), NoLookupLocation.FROM_BACKEND)

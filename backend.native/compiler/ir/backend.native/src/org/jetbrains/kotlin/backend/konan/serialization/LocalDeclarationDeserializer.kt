@@ -22,13 +22,10 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.descriptors.allContainingDeclarations
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.KonanIr
 import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
@@ -74,8 +71,9 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeclarationDescriptor) {
     fun newContext(descriptor: DeclarationDescriptor): DeserializationContext {
         if (descriptor is KonanPackageFragment) {
             val packageTypeTable = TypeTable(pkg.proto.getPackage().typeTable)
+            /* TODO: Check metadata version usege here. */
             return components.createContext(
-                pkg, nameResolver, packageTypeTable, VersionRequirementTable.EMPTY, null)
+                pkg, nameResolver, packageTypeTable, VersionRequirementTable.EMPTY, KonanMetadataVersion.INSTANCE, null)
         }
 
         // Only packages and classes have their type tables.
@@ -105,7 +103,8 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeclarationDescriptor) {
     fun deserializeInlineType(type: ProtoBuf.Type) = typeDeserializer.type(type)
 
     fun deserializeClass(irProto: KonanIr.KotlinDescriptor): ClassDescriptor {
-        return DeserializedClassDescriptor(parentContext, irProto.irLocalDeclaration.descriptor.clazz, nameResolver, SourceElement.NO_SOURCE)
+        /* TODO: metadata version should be fixed. */
+        return DeserializedClassDescriptor(parentContext, irProto.irLocalDeclaration.descriptor.clazz, nameResolver, KonanMetadataVersion.INSTANCE, SourceElement.NO_SOURCE)
 
 
     }

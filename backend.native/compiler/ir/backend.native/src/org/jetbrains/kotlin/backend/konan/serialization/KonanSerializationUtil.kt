@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.metadata.KonanLinkData.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
@@ -140,9 +141,9 @@ internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
 
 /* ------------ Serializer part ------------------------------------------*/
 
-internal class KonanSerializationUtil(val context: Context) {
+internal class KonanSerializationUtil(val context: Context, metadataVersion: BinaryVersion) {
 
-    val serializerExtension = KonanSerializerExtension(context)
+    val serializerExtension = KonanSerializerExtension(context, metadataVersion)
     val topSerializer = KonanDescriptorSerializer.createTopLevel(serializerExtension)
     var classSerializer: KonanDescriptorSerializer = topSerializer
 

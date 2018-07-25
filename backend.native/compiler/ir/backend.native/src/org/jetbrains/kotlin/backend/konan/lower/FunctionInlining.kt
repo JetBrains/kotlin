@@ -99,14 +99,14 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
     private fun getFunctionDeclaration(descriptor: FunctionDescriptor): IrFunction? =
             descriptor.resolveFakeOverride().original.let {
-                when (it) {
-                    context.ir.symbols.intercepted ->
+                when  {
+                    it.isBuiltInIntercepted(context.config.configuration.languageVersionSettings) ->
                         getFunctionDeclaration(context.ir.symbols.konanIntercepted.descriptor)
 
-                    context.ir.symbols.suspendCoroutineUninterceptedOrReturn ->
+                    it.isBuiltInSuspendCoroutineUninterceptedOrReturn(context.config.configuration.languageVersionSettings) ->
                         getFunctionDeclaration(context.ir.symbols.konanSuspendCoroutineUninterceptedOrReturn.descriptor)
 
-                    context.ir.symbols.coroutineContextGetter ->
+                    it == context.ir.symbols.coroutineContextGetter ->
                         getFunctionDeclaration(context.ir.symbols.konanCoroutineContextGetter.descriptor)
 
                     else -> {

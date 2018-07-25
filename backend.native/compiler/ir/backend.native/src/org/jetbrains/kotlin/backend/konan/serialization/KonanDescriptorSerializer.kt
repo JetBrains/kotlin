@@ -164,7 +164,7 @@ class KonanDescriptorSerializer private constructor(
             builder.versionRequirementTable = versionRequirementTableProto
         }
 
-        extension.serializeClass(classDescriptor, builder)
+        extension.serializeClass(classDescriptor, builder, versionRequirementTable)
         return builder
     }
 
@@ -256,7 +256,7 @@ class KonanDescriptorSerializer private constructor(
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
 
-        extension.serializeProperty(descriptor, builder)
+        extension.serializeProperty(descriptor, builder, versionRequirementTable)
 
         /* Konan specific chunk */
         if (extension is IrAwareExtension) {

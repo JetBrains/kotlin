@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.metadata.*
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.kotlin.types.KotlinType
 
-internal class KonanSerializerExtension(val context: Context) :
+internal class KonanSerializerExtension(val context: Context, override val metadataVersion: BinaryVersion) :
         KotlinSerializerExtensionBase(KonanSerializerProtocol), IrAwareExtension {
 
     val inlineDescriptorTable = DescriptorTable(context.irBuiltIns)
@@ -59,9 +61,9 @@ internal class KonanSerializerExtension(val context: Context) :
         super.serializeConstructor(descriptor, proto)
     }
 
-    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
+    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, versionRequirementTable: MutableVersionRequirementTable) {
 
-        super.serializeClass(descriptor, proto)
+        super.serializeClass(descriptor, proto, versionRequirementTable)
     }
 
     override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
@@ -69,7 +71,7 @@ internal class KonanSerializerExtension(val context: Context) :
         super.serializeFunction(descriptor, proto)
     }
 
-    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder, versionRequirementTable: MutableVersionRequirementTable) {
         val variable = originalVariables[descriptor]
         if (variable != null) {
             proto.setExtension(KonanLinkData.usedAsVariable, true)
@@ -78,7 +80,7 @@ internal class KonanSerializerExtension(val context: Context) :
         proto.setExtension(KonanLinkData.hasBackingField, 
             context.ir.propertiesWithBackingFields.contains(descriptor))
 
-        super.serializeProperty(descriptor, proto)
+        super.serializeProperty(descriptor, proto, versionRequirementTable)
     }
 
     override fun addFunctionIR(proto: ProtoBuf.Function.Builder, serializedIR: String) 

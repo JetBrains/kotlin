@@ -32,16 +32,14 @@ class KonanClassDataFinder(
         val proto = fragment.classes
         val nameList = proto.getClassNameList()
 
-        val index = nameList.indexOfFirst({ 
-            nameResolver.getClassId(it) == classId })
-        if (index == -1) 
-            error("Could not find serialized class ${classId}")
+        val index = nameList.indexOfFirst {
+            nameResolver.getClassId(it) == classId }
+        if (index == -1)
+            error("Could not find serialized class $classId")
 
-        val foundClass = proto.getClasses(index)
-        if (foundClass == null) 
-            error("Could not find data for serialized class ${classId}")
-
-        return ClassData(nameResolver, foundClass, SourceElement.NO_SOURCE)
+        val foundClass = proto.getClasses(index) ?: error("Could not find data for serialized class $classId")
+        /* TODO: binary version supposed to be read from protobuf. */
+        return ClassData(nameResolver, foundClass, KonanMetadataVersion.INSTANCE,  SourceElement.NO_SOURCE)
     }
 }
 
