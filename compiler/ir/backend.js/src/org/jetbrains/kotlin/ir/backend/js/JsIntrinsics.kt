@@ -65,6 +65,12 @@ class JsIntrinsics(
     val jsDiv = binOp("jsDiv")
     val jsMod = binOp("jsMod")
 
+    val jsPlusAssign = binOp("jsPlusAssign")
+    val jsMinusAssign = binOp("jsMinusAssign")
+    val jsMultAssign = binOp("jsMultAssign")
+    val jsDivAssign = binOp("jsDivAssign")
+    val jsModAssign = binOp("jsModAssign")
+
     val jsAnd = binOp("jsAnd")
     val jsOr = binOp("jsOr")
 

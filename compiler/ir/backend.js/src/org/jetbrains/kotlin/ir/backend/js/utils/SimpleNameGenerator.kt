@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -30,6 +31,10 @@ class SimpleNameGenerator : NameGenerator {
     private fun getNameForDescriptor(descriptor: DeclarationDescriptor, context: JsGenerationContext): JsName =
         nameCache.getOrPut(descriptor) {
             var nameDeclarator: (String) -> JsName = context.currentScope::declareName
+
+            if (descriptor.isDynamic()) {
+                return@getOrPut nameDeclarator(descriptor.name.asString())
+            }
 
             if (descriptor is MemberDescriptor && descriptor.isEffectivelyExternal()) {
                 val descriptorForName = when (descriptor) {

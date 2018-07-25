@@ -20,8 +20,17 @@ import java.io.File
 
 private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/core.kt",
+    "libraries/stdlib/js/src/kotlin/js.core.kt",
+    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
+    "libraries/stdlib/js/src/kotlin/dynamic.kt",
+    "libraries/stdlib/js/src/kotlin/annotations.kt",
+
+    "libraries/stdlib/src/kotlin/internal/Annotations.kt",
+
+    "core/builtins/native/kotlin/Annotation.kt",
     "core/builtins/native/kotlin/Number.kt",
     "core/builtins/native/kotlin/Comparable.kt",
+    "core/builtins/src/kotlin/Annotations.kt",
     "core/builtins/src/kotlin/internal/InternalAnnotations.kt",
     "core/builtins/src/kotlin/internal/progressionUtil.kt",
     "core/builtins/src/kotlin/Iterators.kt",
@@ -32,6 +41,7 @@ private val runtimeSources = listOfKtFilesFrom(
     "core/builtins/src/kotlin/Unit.kt",
     "core/builtins/native/kotlin/Collections.kt",
     "core/builtins/native/kotlin/Iterator.kt",
+
     "libraries/stdlib/js/irRuntime",
     BasicBoxTest.COMMON_FILES_DIR_PATH
 )

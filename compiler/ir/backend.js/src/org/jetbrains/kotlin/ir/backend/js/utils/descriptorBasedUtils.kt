@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -53,3 +54,5 @@ fun CallableMemberDescriptor.isFakeOverriddenFromAny(): Boolean {
 fun IrDeclaration.isEffectivelyExternal() = descriptor.isEffectivelyExternal()
 
 fun IrSymbol.isEffectivelyExternal() = descriptor.isEffectivelyExternal()
+
+fun IrSymbol.isDynamic() = descriptor.isDynamic()
