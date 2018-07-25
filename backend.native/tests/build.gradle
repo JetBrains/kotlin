@@ -123,7 +123,7 @@ task update_external_tests() {
 //                from(zipTree(it)) {
             from(zipTree(file('/Users/ppunegov/ws/kotlin/dist/kotlin-test-data.zip'))) {
 
-                include 'compiler/**'
+                include('compiler/**', 'stdlib/**')
                 }
             into(temporaryDir)
         }
@@ -139,6 +139,16 @@ task update_external_tests() {
             include 'codegen/box/**'
             include 'codegen/boxInline/**'
             include 'compileKotlinAgainstKotlin/**'
+        }
+
+        externalStdlibTestsDir.mkdirs()
+        delete("${externalStdlibTestsDir.canonicalPath}/common")
+        delete("${externalStdlibTestsDir.canonicalPath}/test")
+        copy {
+            from temporaryDir.absolutePath + "/stdlib"
+            into(externalStdlibTestsDir)
+            include 'common/**'
+            include 'test/**'
         }
 
         //clean tmp dir.
@@ -2930,7 +2940,9 @@ task runKonanRegexTests(type: RunKonanTest) {
 
 task buildKonanStdlibTests(type: BuildKonanTest) {
     outputSourceSetName = "testOutputStdlib"
-    compileList = [ "stdlib_external", "testUtils.kt" ]
+    flags = [ "-Xmulti-platform" ]
+    compileList = [ "stdlib_external/test", "stdlib_external/common",
+                    "stdlib_external/utils.kt", "stdlib_external/jsCollectionFactoriesActuals.kt" ]
 }
 
 task runStdlibTests(type: RunStdlibTest) {
