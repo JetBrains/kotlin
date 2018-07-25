@@ -106,7 +106,8 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
     }
 
     private fun createProxyBody(target: IrFunction, proxy: IrFunction, companion: IrClass): IrBody {
-        val companionInstanceFieldSymbol = context.descriptorsFactory.getSymbolForObjectInstance(companion.symbol)
+        val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
+        val companionInstanceFieldSymbol = companionInstanceField.symbol
         val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
 
         call.dispatchReceiver = IrGetFieldImpl(
@@ -147,9 +148,9 @@ private class SingletonObjectJvmStaticLowering(
 
         irClass.declarations.filter(::isJvmStaticFunction).forEach {
             val jvmStaticFunction = it as IrSimpleFunction
-            val oldDispatchReceiverParemeter = jvmStaticFunction.dispatchReceiverParameter!!
+            val oldDispatchReceiverParameter = jvmStaticFunction.dispatchReceiverParameter!!
             jvmStaticFunction.dispatchReceiverParameter = null
-            modifyBody(jvmStaticFunction, irClass, oldDispatchReceiverParemeter)
+            modifyBody(jvmStaticFunction, irClass, oldDispatchReceiverParameter)
             functionsMadeStatic.add(jvmStaticFunction.symbol)
         }
     }
@@ -165,17 +166,16 @@ private class ReplaceThisByStaticReference(
     val oldThisReceiverParameter: IrValueParameter
 ) : IrElementTransformer<Nothing?> {
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression {
-        val irGetValue = expression
-        if (irGetValue.symbol == oldThisReceiverParameter.symbol) {
-            val instanceSymbol = context.descriptorsFactory.getSymbolForObjectInstance(irClass.symbol)
+        if (expression.symbol == oldThisReceiverParameter.symbol) {
+            val instanceField = context.declarationFactory.getFieldForObjectInstance(irClass)
             return IrGetFieldImpl(
                 expression.startOffset,
                 expression.endOffset,
-                instanceSymbol,
+                instanceField.symbol,
                 irClass.defaultType
             )
         }
-        return super.visitGetValue(irGetValue, data)
+        return super.visitGetValue(expression, data)
     }
 }
 

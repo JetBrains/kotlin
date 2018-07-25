@@ -10,19 +10,23 @@ import org.jetbrains.kotlin.backend.common.ReflectionTypes
 import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.js.JsDescriptorsFactory
+import org.jetbrains.kotlin.backend.js.JsDeclarationFactory
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.SourceRangeInfo
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ModuleIndex
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
@@ -46,9 +50,23 @@ class JsIrBackendContext(
 
     override val builtIns = module.builtIns
 
+    val internalPackageFragmentDescriptor = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
+    val implicitDeclarationFile = IrFileImpl(object : SourceManager.FileEntry {
+        override val name = "<implicitDeclarations>"
+        override val maxOffset = UNDEFINED_OFFSET
+
+        override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int) =
+            SourceRangeInfo("", UNDEFINED_OFFSET, UNDEFINED_OFFSET, UNDEFINED_OFFSET, UNDEFINED_OFFSET, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+
+        override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
+        override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
+    }, internalPackageFragmentDescriptor).also {
+        irModuleFragment.files += it
+    }
+
     override val sharedVariablesManager =
-        JsSharedVariablesManager(builtIns, KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal")))
-    override val descriptorsFactory = JsDescriptorsFactory()
+        JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
+    override val declarationFactory = JsDeclarationFactory()
     override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // TODO
         ReflectionTypes(module, FqName("kotlin.reflect"))
@@ -98,7 +116,7 @@ class JsIrBackendContext(
             return vars.single()
         }
 
-    val intrinsics = JsIntrinsics(module, irBuiltIns, this)
+    val intrinsics = JsIntrinsics(irBuiltIns, this)
 
     private val operatorMap = referenceOperators()
 

@@ -158,6 +158,7 @@ fun IrFunction.createParameterDeclarations() {
 
     assert(valueParameters.isEmpty())
     descriptor.valueParameters.mapTo(valueParameters) { it.irValueParameter() }
+//    valueParameters.mapTo(valueParameters) { it.descriptor.irValueParameter() }
 
     assert(typeParameters.isEmpty())
     descriptor.typeParameters.mapTo(typeParameters) {
@@ -315,6 +316,30 @@ fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
         it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
     }
+
+val IrConstructor.constructedClassType get() = (parent as IrClass).thisReceiver?.type!!
+
+fun IrFunction.isFakeOverriddenFromAny(): Boolean {
+    if (origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+        return (parent as? IrClass)?.thisReceiver?.type?.isAny() ?: false
+    }
+
+    return (this as IrSimpleFunction).overriddenSymbols.all { it.owner.isFakeOverriddenFromAny() }
+}
+
+fun IrCall.isSuperToAny() = superQualifier?.let { this.symbol.owner.isFakeOverriddenFromAny() } ?: false
+
+fun IrDeclaration.isEffectivelyExternal(): Boolean {
+    return when (this) {
+        is IrConstructor -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        is IrFunction -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        is IrField -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        is IrClass -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        else -> false
+    }
+}
+
+val IrDeclaration.isDynamic get() = this is IrFunction && dispatchReceiverParameter?.type is IrDynamicType
 
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
     assert(this.descriptor.type == newDescriptor.type)

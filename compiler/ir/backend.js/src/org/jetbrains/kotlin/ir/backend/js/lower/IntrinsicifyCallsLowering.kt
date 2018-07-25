@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.backend.common.utils.isSubtypeOfClass
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -21,10 +23,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.util.isNullConst
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
@@ -226,7 +227,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             }
 
             put(Name.identifier("hashCode")) { call ->
-                if (call.symbol.owner.descriptor.isFakeOverriddenFromAny()) {
+                if (call.symbol.owner.isFakeOverriddenFromAny()) {
                     if (call.isSuperToAny()) {
                         irCall(call, intrinsics.jsGetObjectHashCode, dispatchReceiverAsFirstArgument = true)
                     } else {
@@ -315,25 +316,32 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
                 if (call is IrCall) {
                     val symbol = call.symbol
+                    val declaration = symbol.owner
 
-                    if (symbol.isDynamic() || symbol.isEffectivelyExternal()) {
+                    if (declaration.isDynamic || declaration.isEffectivelyExternal()) {
                         when (call.origin) {
                             IrStatementOrigin.GET_PROPERTY -> {
-                                val fieldSymbol = IrFieldSymbolImpl((symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty)
+                                val fieldSymbol = context.symbolTable.lazyWrapper.referenceField(
+                                    (symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty
+                                )
                                 return JsIrBuilder.buildGetField(fieldSymbol, call.dispatchReceiver, type = call.type)
                             }
 
                             // assignment to a property
                             IrStatementOrigin.EQ -> {
                                 if (symbol.descriptor is PropertyAccessorDescriptor) {
-                                    val fieldSymbol = IrFieldSymbolImpl((symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty)
-                                    return JsIrBuilder.buildSetField(fieldSymbol, call.dispatchReceiver, call.getValueArgument(0)!!, call.type)
+                                    val fieldSymbol = context.symbolTable.lazyWrapper.referenceField(
+                                        (symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty
+                                    )
+                                    return call.run {
+                                        JsIrBuilder.buildSetField(fieldSymbol, dispatchReceiver, getValueArgument(0)!!, type)
+                                    }
                                 }
                             }
                         }
                     }
 
-                    if (symbol.isDynamic()) {
+                    if (declaration.isDynamic) {
                         dynamicCallOriginToIrFunction[call.origin]?.let {
                             return irCall(call, it.symbol, dispatchReceiverAsFirstArgument = true)
                         }
@@ -343,19 +351,15 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                         return it(call)
                     }
 
-                    // TODO: get rid of unbound symbols
-                    if (symbol.isBound) {
-
-                        (symbol.owner as? IrFunction)?.dispatchReceiverParameter?.let {
-                            val key = SimpleMemberKey(it.type, symbol.owner.name)
-                            memberToTransformer[key]?.let {
-                                return it(call)
-                            }
-                        }
-
-                        nameToTransformer[symbol.owner.name]?.let {
+                    (symbol.owner as? IrFunction)?.dispatchReceiverParameter?.let {
+                        val key = SimpleMemberKey(it.type, symbol.owner.name)
+                        memberToTransformer[key]?.let {
                             return it(call)
                         }
+                    }
+
+                    nameToTransformer[symbol.owner.name]?.let {
+                        return it(call)
                     }
                 }
 
@@ -407,14 +411,13 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
     private fun IrType.findEqualsMethod(rhs: IrType): IrSimpleFunction? {
         val classifier = classifierOrNull ?: return null
-        if (!classifier.isBound) return null
         return ((classifier.owner as? IrClass) ?: return null).declarations
             .filterIsInstance<IrSimpleFunction>()
             .filter {
                 it.name == Name.identifier("equals")
                         && it.valueParameters.size == 1
                         && rhs.isSubtypeOf(it.valueParameters[0].type)
-                        && !it.descriptor.isFakeOverriddenFromAny()
+                        && !it./*descriptor.*/isFakeOverriddenFromAny()
             }
             .maxWith(  // Find the most specific function
                 Comparator { f1, f2 ->
@@ -481,7 +484,6 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
     private fun transformEqualsMethodCall(call: IrCall): IrExpression {
         val symbol = call.symbol
-        if (!symbol.isBound) return call
         val function = (symbol.owner as? IrFunction) ?: return call
         val lhs = function.dispatchReceiverParameter ?: function.extensionReceiverParameter ?: return call
         val rhs = call.getValueArgument(0) ?: return call
@@ -489,7 +491,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             is IdentityOperator -> irCall(call, intrinsics.jsEqeqeq.symbol)
             is EqualityOperator -> irCall(call, intrinsics.jsEqeq.symbol)
             is RuntimeFunctionCall -> irCall(call, intrinsics.jsEquals, true)
-            is RuntimeOrMethodCall -> if (symbol.owner.descriptor.isFakeOverriddenFromAny()) {
+            is RuntimeOrMethodCall -> if (symbol.owner.isFakeOverriddenFromAny()) {
                 if (call.isSuperToAny()) {
                     irCall(call, intrinsics.jsEqeqeq.symbol, dispatchReceiverAsFirstArgument = true)
                 } else {

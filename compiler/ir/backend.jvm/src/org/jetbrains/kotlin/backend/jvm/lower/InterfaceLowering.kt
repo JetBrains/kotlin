@@ -142,12 +142,11 @@ internal fun FunctionDescriptor.createFunctionAndMapVariables(
         visibility = visibility
     ).apply {
         body = oldFunction.body
+        returnType = oldFunction.returnType
         createParameterDeclarations()
-        val mapping: Map<ValueDescriptor, IrValueParameter> =
-            (
-                    listOfNotNull(oldFunction.descriptor.dispatchReceiverParameter!!, oldFunction.descriptor.extensionReceiverParameter) +
-                            oldFunction.descriptor.valueParameters
-                    ).zip(valueParameters).toMap()
+        val mapping: Map<IrValueParameter, IrValueParameter> =
+            (listOfNotNull(oldFunction.dispatchReceiverParameter!!, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
+        .zip(valueParameters).toMap()
 
         body?.transform(VariableRemapper(mapping), null)
     }

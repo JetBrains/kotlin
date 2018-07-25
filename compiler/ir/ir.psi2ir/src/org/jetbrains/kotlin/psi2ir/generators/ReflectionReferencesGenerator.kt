@@ -118,8 +118,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             variableDescriptor.getter ?: throw AssertionError("Local delegated property should have a getter: $variableDescriptor")
         val setterDescriptor = variableDescriptor.setter
 
-        val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor)
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it) }
+        val getterSymbol = context.symbolTable.referenceSimpleFunction(getterDescriptor)
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it) }
 
         return IrLocalDelegatedPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
@@ -141,8 +141,8 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val setterDescriptor = propertyDescriptor.setter
 
         val fieldSymbol = if (getterDescriptor == null) context.symbolTable.referenceField(propertyDescriptor) else null
-        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it.original) }
+        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
 
         return IrPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
