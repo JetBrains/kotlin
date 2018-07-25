@@ -99,11 +99,6 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
         configureKotlinSettings(modulesToConfigure)
 
-        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
-            languageVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
-            apiVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
-        }
-
         collector.showNotification()
     }
 
