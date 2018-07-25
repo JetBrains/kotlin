@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun convert(x: String, y: Int) = ""
+
+fun foo(a: String?, it: Int) {
+    a?.let { it1 -> convert(it1, it) }
+}

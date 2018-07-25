@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
@@ -33,7 +34,10 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -43,6 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverVa
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -227,18 +232,26 @@ data class IfThenToSelectData(
     internal fun hasImplicitReceiver(): Boolean = getImplicitReceiver() != null
 
     private fun replacedBaseClause(baseClause: KtCallExpression, receiver: KtExpression, factory: KtPsiFactory): KtExpression {
+        val needExplicitParameter = baseClause.valueArguments.any { it.getArgumentExpression()?.text == "it" }
+        val parameterName = if (needExplicitParameter) {
+            val scope = baseClause.getResolutionScope()
+            KotlinNameSuggester.suggestNameByName("it") { scope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
+        } else {
+            "it"
+        }
         return factory.buildExpression {
             appendExpression(receiver)
             appendFixedText("?.let {")
+            if (needExplicitParameter) appendFixedText(" $parameterName ->")
             appendExpression(baseClause.calleeExpression)
             appendFixedText("(")
             baseClause.valueArguments.forEachIndexed { index, arg ->
                 if (index != 0) appendFixedText(", ")
                 val argExpression = arg.getArgumentExpression()
                 if (argExpression?.evaluatesTo(receiverExpression) == true)
-                    appendFixedText("it")
+                    appendFixedText(parameterName)
                 else
-                    appendExpression(arg.getArgumentExpression())
+                    appendExpression(argExpression)
             }
             appendFixedText(") }")
         }
