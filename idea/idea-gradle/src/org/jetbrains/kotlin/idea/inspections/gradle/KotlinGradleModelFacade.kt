@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.inspections.gradle
 
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -24,15 +23,6 @@ import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import org.gradle.tooling.model.idea.IdeaProject
-
-interface KotlinGradleModelFacade {
-    companion object {
-        val EP_NAME: ExtensionPointName<KotlinGradleModelFacade> = ExtensionPointName.create("org.jetbrains.kotlin.gradleModelFacade")
-    }
-
-    fun getResolvedVersionByModuleData(moduleData: DataNode<*>, groupId: String, libraryIds: List<String>): String?
-    fun getDependencyModules(ideModule: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>>
-}
 
 class DefaultGradleModelFacade : KotlinGradleModelFacade {
     override fun getResolvedVersionByModuleData(moduleData: DataNode<*>, groupId: String, libraryIds: List<String>): String? {
