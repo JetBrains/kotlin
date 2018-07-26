@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -52,7 +53,8 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
                 getPlatform(),
                 { completionType, count -> complete(completionType, count) },
                 defaultCompletionType(),
-                defaultInvocationCount()
+                defaultInvocationCount(),
+                additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
             )
         } finally {
             tearDownFixture()
