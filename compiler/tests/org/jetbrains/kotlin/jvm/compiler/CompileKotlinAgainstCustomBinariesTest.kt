@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.codegen.inline.remove
@@ -478,6 +479,29 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     fun testInternalFromFriendModule() {
         val library = compileLibrary("library")
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xfriend-paths=${library.path}"))
+    }
+
+    fun testInternalFromForeignModuleJs() {
+        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
+    }
+
+    fun testInternalFromFriendModuleJs() {
+        val library = compileJsLibrary("library")
+        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(), listOf("-Xfriend-modules=${library.path}"))
+    }
+
+    /*
+    // TODO: see KT-15661 and KT-23483
+    fun testInternalFromForeignModuleCommon() {
+        compileKotlin("source.kt", tmpdir, listOf(compileCommonLibrary("library")), K2MetadataCompiler())
+    }
+    */
+
+    fun testInternalFromFriendModuleCommon() {
+        val library = compileCommonLibrary("library")
+        compileKotlin("source.kt", tmpdir, listOf(library), K2MetadataCompiler(), listOf(
+            // TODO: "-Xfriend-paths=${library.path}"
+        ))
     }
 
     companion object {
