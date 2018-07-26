@@ -73,7 +73,9 @@ public class CompileEnvironmentUtil {
     }
 
     // TODO: includeRuntime should be not a flag but a path to runtime
-    private static void doWriteToJar(OutputFileCollection outputFiles, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
+    private static void doWriteToJar(
+            OutputFileCollection outputFiles, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime
+    ) {
         try {
             Manifest manifest = new Manifest();
             Attributes mainAttributes = manifest.getMainAttributes();

@@ -150,7 +150,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleChunk.modules, buildFile)
 
                 val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
-                        ?: return COMPILATION_ERROR
+                    ?: return COMPILATION_ERROR
 
                 registerJavacIfNeeded(environment, arguments).let {
                     if (!it) return COMPILATION_ERROR
@@ -164,7 +164,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
-                        ?: return COMPILATION_ERROR
+                    ?: return COMPILATION_ERROR
 
                 val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(environment.project)
                 val scriptFile = File(sourcePath)
@@ -188,7 +188,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
 
                 val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
-                        ?: return COMPILATION_ERROR
+                    ?: return COMPILATION_ERROR
 
                 registerJavacIfNeeded(environment, arguments).let {
                     if (!it) return COMPILATION_ERROR
@@ -208,7 +208,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     if (!it) return COMPILATION_ERROR
                 }
             }
-            
+
             return OK
         } catch (e: CompilationException) {
             messageCollector.report(
@@ -243,7 +243,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     val jars = arrayOf(
                         KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
                         KOTLIN_SCRIPTING_JVM_JAR, KOTLIN_SCRIPTING_MISC_JAR
-                    ).mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
+                    ).mapNotNull { File(libPath, it).takeIf(File::exists)?.canonicalPath }
                     if (jars.size == 4) {
                         pluginClasspaths = jars + pluginClasspaths
                     }
@@ -308,19 +308,19 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
         if (IncrementalCompilation.isEnabledForJvm()) {
-            services.get(LookupTracker::class.java)?.let {
+            services[LookupTracker::class.java]?.let {
                 configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it)
             }
 
-            services.get(ExpectActualTracker::class.java)?.let {
+            services[ExpectActualTracker::class.java]?.let {
                 configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, it)
             }
 
-            services.get(IncrementalCompilationComponents::class.java)?.let {
+            services[IncrementalCompilationComponents::class.java]?.let {
                 configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, it)
             }
 
-            services.get(JavaClassesTracker::class.java)?.let {
+            services[JavaClassesTracker::class.java]?.let {
                 configuration.put(JVMConfigurationKeys.JAVA_CLASSES_TRACKER, it)
             }
         }

@@ -43,16 +43,16 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     override fun createArguments() = K2MetadataCompilerArguments()
 
     override fun setupPlatformSpecificArgumentsAndServices(
-            configuration: CompilerConfiguration, arguments: K2MetadataCompilerArguments, services: Services
+        configuration: CompilerConfiguration, arguments: K2MetadataCompilerArguments, services: Services
     ) {
         // No specific arguments yet
     }
 
     override fun doExecute(
-            arguments: K2MetadataCompilerArguments,
-            configuration: CompilerConfiguration,
-            rootDisposable: Disposable,
-            paths: KotlinPaths?
+        arguments: K2MetadataCompilerArguments,
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable,
+        paths: KotlinPaths?
     ): ExitCode {
         val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -74,12 +74,16 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         if (destination != null) {
             if (destination.endsWith(".jar")) {
                 // TODO: support .jar destination
-                collector.report(STRONG_WARNING, ".jar destination is not yet supported, results will be written to the directory with the given name")
+                collector.report(
+                    STRONG_WARNING,
+                    ".jar destination is not yet supported, results will be written to the directory with the given name"
+                )
             }
             configuration.put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, File(destination))
         }
 
-        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.METADATA_CONFIG_FILES)
+        val environment =
+            KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.METADATA_CONFIG_FILES)
 
         if (environment.getSourceFiles().isEmpty()) {
             if (arguments.version) {
@@ -95,8 +99,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             val metadataVersion =
                 configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
             MetadataSerializer(metadataVersion, true).serialize(environment)
-        }
-        catch (e: CompilationException) {
+        } catch (e: CompilationException) {
             collector.report(EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
             return ExitCode.INTERNAL_ERROR
         }

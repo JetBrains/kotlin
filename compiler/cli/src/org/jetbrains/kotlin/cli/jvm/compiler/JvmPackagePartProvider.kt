@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import java.io.EOFException
 
 class JvmPackagePartProvider(
-        languageVersionSettings: LanguageVersionSettings,
-        private val scope: GlobalSearchScope
+    languageVersionSettings: LanguageVersionSettings,
+    private val scope: GlobalSearchScope
 ) : PackagePartProvider, MetadataPartProvider {
     private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping, val name: String)
 
@@ -59,7 +59,7 @@ class JvmPackagePartProvider(
     }
 
     override fun findMetadataPackageParts(packageFqName: String): List<String> =
-            getPackageParts(packageFqName).values.flatMap(PackageParts::metadataParts).distinct()
+        getPackageParts(packageFqName).values.flatMap(PackageParts::metadataParts).distinct()
 
     @Synchronized
     private fun getPackageParts(packageFqName: String): Map<VirtualFile, PackageParts> {

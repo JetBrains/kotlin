@@ -17,15 +17,17 @@
 package org.jetbrains.kotlin.cli.common
 
 import org.fusesource.jansi.AnsiConsole
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageFeature.Kind.*
-import org.jetbrains.kotlin.config.LanguageFeature.State.*
+import org.jetbrains.kotlin.config.LanguageFeature.Kind.BUG_FIX
+import org.jetbrains.kotlin.config.LanguageFeature.State.ENABLED
 import org.jetbrains.kotlin.config.Services
 import java.io.PrintStream
 import java.net.URL
@@ -196,13 +198,11 @@ abstract class CLITool<A : CommonToolArguments> {
         }
 
         @JvmStatic
-        fun doMainNoExit(compiler: CLITool<*>, args: Array<String>): ExitCode {
-            try {
-                return compiler.exec(System.err, *args)
-            } catch (e: CompileEnvironmentException) {
-                System.err.println(e.message)
-                return ExitCode.INTERNAL_ERROR
-            }
+        fun doMainNoExit(compiler: CLITool<*>, args: Array<String>): ExitCode = try {
+            compiler.exec(System.err, *args)
+        } catch (e: CompileEnvironmentException) {
+            System.err.println(e.message)
+            ExitCode.INTERNAL_ERROR
         }
     }
 }

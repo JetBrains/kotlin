@@ -26,12 +26,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 class DefaultDiagnosticReporter(override val messageCollector: MessageCollector) : MessageCollectorBasedReporter
 
 interface MessageCollectorBasedReporter : DiagnosticMessageReporter {
-
     val messageCollector: MessageCollector
 
     override fun report(diagnostic: Diagnostic, file: PsiFile, render: String) = messageCollector.report(
-            AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity),
-            render,
-            MessageUtil.psiFileToMessageLocation(file, file.name, DiagnosticUtils.getLineAndColumn(diagnostic))
+        AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity),
+        render,
+        MessageUtil.psiFileToMessageLocation(file, file.name, DiagnosticUtils.getLineAndColumn(diagnostic))
     )
 }

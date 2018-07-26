@@ -58,10 +58,10 @@ fun CompilerConfiguration.addJavaSourceRoots(files: List<File>, packagePrefix: S
 }
 
 val CompilerConfiguration.javaSourceRoots: Set<String>
-    get() = getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNullTo(linkedSetOf<String>()) { root ->
-                when (root) {
-                    is KotlinSourceRoot -> root.path
-                    is JavaSourceRoot -> root.file.path
-                    else -> null
-                }
-            }
+    get() = getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNullTo(linkedSetOf()) { root ->
+        when (root) {
+            is KotlinSourceRoot -> root.path
+            is JavaSourceRoot -> root.file.path
+            else -> null
+        }
+    }

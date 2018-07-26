@@ -53,10 +53,10 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private var useFastClassFilesReading = false
 
     fun initialize(
-            index: JvmDependenciesIndex,
-            packagePartProviders: List<JvmPackagePartProvider>,
-            singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
-            useFastClassFilesReading: Boolean
+        index: JvmDependenciesIndex,
+        packagePartProviders: List<JvmPackagePartProvider>,
+        singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
+        useFastClassFilesReading: Boolean
     ) {
         this.index = index
         this.packagePartProviders = packagePartProviders
@@ -73,14 +73,12 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
             index.findClass(classId) { dir, type ->
                 findVirtualFileGivenPackage(dir, relativeClassName, type)
-            }
-            ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
+            } ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
         }?.takeIf { it in searchScope }
     }
 
     private val binaryCache: MutableMap<ClassId, JavaClass?> = THashMap()
-    private val signatureParsingComponent =
-            BinaryClassSignatureParser()
+    private val signatureParsingComponent = BinaryClassSignatureParser()
 
     override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): JavaClass? {
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
@@ -103,12 +101,8 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 val resolver = ClassifierResolutionContext { findClass(it, allScope) }
 
                 BinaryJavaClass(
-                        virtualFile,
-                        classId.asSingleFqName(),
-                        resolver,
-                        signatureParsingComponent,
-                        outerClass = null,
-                        classContent = classContent
+                    virtualFile, classId.asSingleFqName(), resolver, signatureParsingComponent,
+                    outerClass = null, classContent = classContent
                 )
             }
         }
@@ -142,9 +136,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             if (packageFqName.isRoot) break
 
             classId = ClassId(
-                    packageFqName.parent(),
-                    FqName(packageFqName.shortName().asString() + "." + classId.relativeClassName.asString()),
-                    false
+                packageFqName.parent(),
+                FqName(packageFqName.shortName().asString() + "." + classId.relativeClassName.asString()),
+                false
             )
         }
     }
@@ -155,9 +149,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             val relativeClassName = classId.relativeClassName.asString()
             index.traverseDirectoriesInPackage(classId.packageFqName) { dir, rootType ->
                 val psiClass =
-                        findVirtualFileGivenPackage(dir, relativeClassName, rootType)
-                            ?.takeIf { it in scope }
-                            ?.findPsiClassInVirtualFile(relativeClassName)
+                    findVirtualFileGivenPackage(dir, relativeClassName, rootType)
+                        ?.takeIf { it in scope }
+                        ?.findPsiClassInVirtualFile(relativeClassName)
                 if (psiClass != null) {
                     result.add(psiClass)
                 }
@@ -166,9 +160,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             }
 
             result.addIfNotNull(
-                    singleJavaFileRootsIndex.findJavaSourceClass(classId)
-                            ?.takeIf { it in scope }
-                            ?.findPsiClassInVirtualFile(relativeClassName)
+                singleJavaFileRootsIndex.findJavaSourceClass(classId)
+                    ?.takeIf { it in scope }
+                    ?.findPsiClassInVirtualFile(relativeClassName)
             )
 
             if (result.isNotEmpty()) {
@@ -197,9 +191,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     }
 
     private fun findVirtualFileGivenPackage(
-            packageDir: VirtualFile,
-            classNameWithInnerClasses: String,
-            rootType: JavaRoot.RootType
+        packageDir: VirtualFile,
+        classNameWithInnerClasses: String,
+        rootType: JavaRoot.RootType
     ): VirtualFile? {
         val topLevelClassName = classNameWithInnerClasses.substringBefore('.')
 
@@ -216,18 +210,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return vFile
     }
 
-    private fun VirtualFile.findPsiClassInVirtualFile(
-            classNameWithInnerClasses: String
-    ): PsiClass? {
+    private fun VirtualFile.findPsiClassInVirtualFile(classNameWithInnerClasses: String): PsiClass? {
         val file = myPsiManager.findFile(this) as? PsiClassOwner ?: return null
         return findClassInPsiFile(classNameWithInnerClasses, file)
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
         val result = hashSetOf<String>()
-        index.traverseDirectoriesInPackage(packageFqName, continueSearch = {
-            dir, _ ->
-
+        index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
             for (child in dir.children) {
                 if (child.extension == "class" || child.extension == "java") {
                     result.add(child.nameWithoutExtension)
@@ -286,15 +276,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 }
 
 // a sad workaround to avoid throwing exception when called from inside IDEA code
-private fun <T : Any> safely(compute: () -> T): T? = try {
-    compute()
-}
-catch (e: IllegalArgumentException) {
-    null
-}
-catch (e: AssertionError) {
-    null
-}
+private fun <T : Any> safely(compute: () -> T): T? =
+    try {
+        compute()
+    } catch (e: IllegalArgumentException) {
+        null
+    } catch (e: AssertionError) {
+        null
+    }
 
 private fun String.toSafeFqName(): FqName? = safely { FqName(this) }
 private fun String.toSafeTopLevelClassId(): ClassId? = safely { ClassId.topLevel(FqName(this)) }

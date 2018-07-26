@@ -246,7 +246,7 @@ class KotlinCoreEnvironment private constructor(
 
         val outputDirectory =
             configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
-                    ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
+                ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
 
         classpathRootsResolver = ClasspathRootsResolver(
             PsiManager.getInstance(project),
@@ -554,14 +554,14 @@ class KotlinCoreEnvironment private constructor(
 
             val pluginRoot =
                 configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
-                        ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
-                        ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
-                        // hack for load extensions when compiler run directly from project directory (e.g. in tests)
-                        ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
-                        ?: throw IllegalStateException(
-                            "Unable to find extension point configuration $configFilePath " +
-                                    "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
-                        )
+                    ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
+                    ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
+                    // hack for load extensions when compiler run directly from project directory (e.g. in tests)
+                    ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
+                    ?: throw IllegalStateException(
+                        "Unable to find extension point configuration $configFilePath " +
+                                "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
+                    )
 
             CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
         }

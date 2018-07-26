@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
@@ -51,12 +53,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
-import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
-import java.util.concurrent.TimeUnit
 
 object KotlinToJVMBytecodeCompiler {
 
@@ -159,12 +159,11 @@ object KotlinToJVMBytecodeCompiler {
                         it.compile(File(singleModule.getOutputDirectory()))
                     }
                 } else {
-                    projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).let {
-                        it.report(
-                            WARNING,
-                            "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). -Xuse-javac option couldn't be used to compile java files"
-                        )
-                    }
+                    projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                        WARNING,
+                        "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
+                                "-Xuse-javac option couldn't be used to compile java files"
+                    )
                     JavacWrapper.getInstance(environment.project).close()
                 }
             }
@@ -257,7 +256,7 @@ object KotlinToJVMBytecodeCompiler {
         try {
             try {
                 tryConstructClassFromStringArgs(scriptClass, scriptArgs)
-                        ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
+                    ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
             } finally {
                 // NB: these lines are required (see KT-9546) but aren't covered by tests
                 System.out.flush()
@@ -335,11 +334,11 @@ object KotlinToJVMBytecodeCompiler {
             val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
             return classLoader.loadClass(script.fqName.asString())
         } catch (e: Exception) {
-            throw RuntimeException("Failed to evaluate script: " + e, e)
+            throw RuntimeException("Failed to evaluate script: $e", e)
         }
     }
 
-    fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
+    private fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
         val result = repeatAnalysisIfNeeded(analyze(environment, null), environment, null) ?: return null
 
         if (!result.shouldGenerateCode) return null
