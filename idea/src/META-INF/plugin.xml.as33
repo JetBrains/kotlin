@@ -63,6 +63,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <interface-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</interface-class>
       <implementation-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</implementation-class>
     </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent</implementation-class>
+    </component>
   </project-components>
 
   <application-components>
