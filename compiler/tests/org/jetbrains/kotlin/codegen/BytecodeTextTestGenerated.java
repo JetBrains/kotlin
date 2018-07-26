@@ -1119,6 +1119,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/continuationInLvt.kt");
             }
 
+            @TestMetadata("localVariableCorrectLabel.kt")
+            public void testLocalVariableCorrectLabel() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/localVariableCorrectLabel.kt");
+            }
+
             @TestMetadata("probeCoroutineSuspended.kt")
             public void testProbeCoroutineSuspended() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/probeCoroutineSuspended.kt");
