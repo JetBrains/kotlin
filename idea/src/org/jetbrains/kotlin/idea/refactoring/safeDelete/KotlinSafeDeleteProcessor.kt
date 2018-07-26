@@ -457,7 +457,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     ): Collection<PsiElement>? {
         when (element) {
             is KtParameter -> {
-                val expectParameter = element.liftToExpected() as? KtParameter
+                val expectParameter = element.liftToExpected()
                 if (expectParameter != null && expectParameter != element) {
                     return if (shouldAllowPropagationToExpected(element)) {
                         listOf(expectParameter)

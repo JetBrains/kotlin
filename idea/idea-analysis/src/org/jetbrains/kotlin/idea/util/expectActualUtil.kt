@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.core.setVisibility
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -60,13 +61,19 @@ fun KtDeclaration.liftToExpected(): KtDeclaration? {
     return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
 }
 
+fun KtParameter.liftToExpected(): KtParameter? {
+    val parameterDescriptor = resolveToParameterDescriptorIfAny()
+    val expectedDescriptor = parameterDescriptor?.liftToExpected() ?: return null
+    return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtParameter
+}
+
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
 private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
     with(ExpectedActualResolver) {
         val expectedCompatibilityMap = findExpectedForActual(descriptor, this@declarationOf)
         expectedCompatibilityMap?.get(ExpectedActualResolver.Compatibility.Compatible)?.firstOrNull()
-                ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
+            ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
     }
 
 fun ModuleDescriptor.hasActualsFor(descriptor: MemberDescriptor) =

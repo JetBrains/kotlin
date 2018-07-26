@@ -54,6 +54,11 @@ public class MultiModuleSafeDeleteTestGenerated extends AbstractMultiModuleSafeD
         runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassPrimaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorParameter.test");
     }
 
+    @TestMetadata("byActualClassPrimaryConstructorPropertyLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorProperty.test")
+    public void testByActualClassPrimaryConstructorPropertyLiftingToExpect_ExpectsAndActualsByActualClassPrimaryConstructorProperty() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassPrimaryConstructorPropertyLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorProperty.test");
+    }
+
     @TestMetadata("byActualClassSecondaryConstructor/byActualClassSecondaryConstructor.test")
     public void testByActualClassSecondaryConstructor_ByActualClassSecondaryConstructor() throws Exception {
         runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassSecondaryConstructor/byActualClassSecondaryConstructor.test");
