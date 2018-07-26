@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.iosKotlinNativeTests</string>
+    <key>Name</key>
+    <string>Tests</string>
+    <key>Ancestors</key>
+    <array>
+      <string>com.jetbrains.konan.KotlinNativeTestsBase</string>
+      <string>com.jetbrains.konan.iosKotlinNativeAppBase</string>
+    </array>
+    <key>Description</key>
+    <string>This template creates a test target based on kotlin.test framework.</string>
+    <key>SortOrder</key>
+    <integer>1</integer>
+    <key>Concrete</key>
+    <true/>
+    <key>Targets</key>
+    <array>
+      <dict>
+        <key>TargetIdentifier</key>
+        <string>com.apple.dt.cocoaTouchApplicationTarget</string>
+        <key>SharedSettings</key>
+        <dict>
+          <key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+          <string>AppIcon</string>
+          <key>LD_RUNPATH_SEARCH_PATHS</key>
+          <string>$(inherited) @executable_path/Frameworks</string>
+          <key>TARGETED_DEVICE_FAMILY</key>
+          <string>1,2</string>
+        </dict>
+        <key>BuildPhases</key>
+        <array>
+          <dict>
+            <key>Class</key>
+            <string>ShellScript</string>
+            <key>Name</key>
+            <string>Compile Kotlin/Native</string>
+            <key>ShellPath</key>
+            <string>/bin/sh</string>
+            <key>ShellScript</key>
+            <string>rm -f "$TARGET_BUILD_DIR/$EXECUTABLE_PATH"
+cd "$SRCROOT/$KONAN_PACKAGE_NAME"; sh -c ". ./gradlew $KONAN_TASK -Pkonan.configuration.build.dir=\"$CONFIGURATION_BUILD_DIR\" \
+-Pkonan.debugging.symbols=$DEBUGGING_SYMBOLS -Pkonan.optimizations.enable=$KONAN_ENABLE_OPTIMIZATIONS"
+  cp "$TARGET_BUILD_DIR/$KONAN_PACKAGE_NAME.kexe" "$TARGET_BUILD_DIR/$EXECUTABLE_PATH"</string>
+          </dict>
+        </array>
+      </dict>
+    </array>
+  </dict>
+</plist>

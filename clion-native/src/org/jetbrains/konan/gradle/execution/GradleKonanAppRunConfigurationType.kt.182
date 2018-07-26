@@ -1,0 +1,64 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.konan.gradle.execution
+
+import com.intellij.execution.configuration.ConfigurationFactoryEx
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.ConfigurationTypeBase
+import com.intellij.execution.configurations.ConfigurationTypeUtil
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.options.SettingsEditor
+import com.intellij.openapi.project.Project
+import org.jetbrains.annotations.NonNls
+
+/**
+ * @author Vladislav.Soroka
+ */
+class GradleKonanAppRunConfigurationType protected constructor() : ConfigurationTypeBase("GradleKonanAppRunConfiguration",
+                                                                                         "Gradle Konan Application",
+                                                                                         "Gradle Kotlin/Native application configuration",
+                                                                                         AllIcons.RunConfigurations.Application) {
+  private val myDefaultFactoryId: String = "Application"
+
+  val factory: ConfigurationFactory
+    get() = object : ConfigurationFactoryEx<GradleKonanAppRunConfiguration>(this) {
+      override fun createTemplateConfiguration(project: Project): RunConfiguration {
+        return createRunConfiguration(project, this)
+      }
+
+      @NonNls
+      override fun getId(): String {
+        return myDefaultFactoryId
+      }
+
+      override fun onNewConfigurationCreated(configuration: GradleKonanAppRunConfiguration) {
+        super.onNewConfigurationCreated(configuration)
+        configuration.setupDefaultTargetAndExecutable()
+      }
+    }
+
+  init {
+    addFactory(factory)
+  }
+
+  protected fun createRunConfiguration(project: Project, factory: ConfigurationFactory): GradleKonanAppRunConfiguration {
+    return GradleKonanAppRunConfiguration(project, factory, "")
+  }
+
+  fun createEditor(project: Project): SettingsEditor<out GradleKonanAppRunConfiguration> {
+    return GradleKonanAppRunConfigurationSettingsEditor(project, getHelper(project))
+  }
+
+  companion object {
+    fun getHelper(project: Project): GradleKonanBuildConfigurationHelper {
+      return GradleKonanBuildConfigurationHelper(project)
+    }
+
+    val instance: GradleKonanAppRunConfigurationType
+      get() = ConfigurationTypeUtil.findConfigurationType(GradleKonanAppRunConfigurationType::class.java)
+  }
+}

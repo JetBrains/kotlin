@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.iosKotlinNativeBase</string>
+    <key>Targets</key>
+    <array>
+      <dict>
+        <key>SharedSettings</key>
+        <dict>
+          <key>VALID_ARCHS</key>
+          <string>arm64</string>
+          <key>KONAN_TASK[sdk=iphoneos*]</key>
+          <string>compileKonan$(TARGET_NAME:c99extidentifier)Ios_arm64</string>
+          <key>KONAN_TASK[sdk=iphonesimulator*]</key>
+          <string>compileKonan$(TARGET_NAME:c99extidentifier)Ios_x64</string>
+        </dict>
+      </dict>
+    </array>
+    <key>Definitions</key>
+    <dict>
+      <key>build.gradle:targets:content</key>
+      <string>'ios_arm64', 'ios_x64'</string>
+    </dict>
+  </dict>
+</plist>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Name</key>
+    <string>Single View App with a Kotlin/Native Framework</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.singleViewWithKotlinNativeApplication</string>
+    <key>Ancestors</key>
+    <array>
+      <string>com.apple.dt.unit.singleViewApplication</string>
+    </array>
+    <key>Concrete</key>
+    <true/>
+    <key>Description</key>
+    <string>A standard single-view application in selected language with a separate Kotlin/Native framework</string>
+    <key>Options</key>
+    <array>
+      <dict>
+        <key>Identifier</key>
+        <string>languageChoice</string>
+        <key>Units</key>
+        <dict>
+          <key>Objective-C</key>
+          <dict>
+            <key>Nodes</key>
+            <array>
+              <string>AppDelegate.m:imports:importFramework:KotlinNativeFramework</string>
+            </array>
+            <key>Definitions</key>
+            <dict>
+              <key>AppDelegate.m:implementation:methods:applicationdidFinishLaunchingWithOptions:body</key>
+              <string>// KNFKotlinNativeFramework class is located in the framework that is generated during build.
+// If it is not resolved, try building for the device (not simulator) and reopening the project
+NSLog(@"%@", [[[KNFKotlinNativeFramework alloc] init] helloFromKotlin]);
+              </string>
+            </dict>
+          </dict>
+          <key>Swift</key>
+          <dict>
+            <key>Nodes</key>
+            <array>
+              <string>AppDelegate.swift:imports:importFramework:KotlinNativeFramework</string>
+            </array>
+            <key>Definitions</key>
+            <dict>
+              <key>AppDelegate.swift:implementation:methods:applicationdidFinishLaunchingWithOptions:body</key>
+              <string>// KNFKotlinNativeFramework class is located in the framework that is generated during build.
+// If it is not resolved, try building for the device (not simulator) and reopening the project
+NSLog("%@", KNFKotlinNativeFramework().helloFromKotlin())
+              </string>
+            </dict>
+          </dict>
+        </dict>
+      </dict>
+    </array>
+    <key>Components</key>
+    <array>
+      <dict>
+        <key>Identifier</key>
+        <string>com.jetbrains.konan.iosKotlinNativeFramework</string>
+        <key>Name</key>
+        <string>KotlinNativeFramework</string>
+        <key>ProductBuildPhaseInjections</key>
+        <array>
+          <dict>
+            <key>TargetIdentifier</key>
+            <string>com.apple.dt.cocoaTouchApplicationTarget</string>
+          </dict>
+        </array>
+      </dict>
+    </array>
+    <key>Targets</key>
+    <array>
+      <dict>
+        <key>Frameworks</key>
+        <array>
+          <string>KotlinNativeFramework</string>
+        </array>
+        <key>SharedSettings</key>
+        <dict>
+          <key>FRAMEWORK_SEARCH_PATHS</key>
+          <string>$BUILT_PRODUCTS_DIR</string>
+          <key>ENABLE_BITCODE</key>
+          <string>NO</string>
+        </dict>
+      </dict>
+    </array>
+  </dict>
+</plist>

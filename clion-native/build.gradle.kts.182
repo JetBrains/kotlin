@@ -1,0 +1,30 @@
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
+
+plugins {
+    kotlin("jvm")
+    id("com.github.jk1.tcdeps") version "0.17"
+}
+
+repositories {
+    teamcityServer {
+        setUrl("http://buildserver.labs.intellij.net")
+        credentials {
+            username = "guest"
+            password = "guest"
+        }
+    }
+}
+
+val clionVersion = rootProject.extra["versions.clion"] as String
+
+dependencies {
+    compile(project(":idea:idea-ultimate:cidr-native"))
+    compile(project(":idea:idea-gradle:native"))
+    compileOnly(tc("ijplatform_master_CIDR_CLion_Installers:$clionVersion:unscrambled/clion.jar"))
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" { none() }
+}

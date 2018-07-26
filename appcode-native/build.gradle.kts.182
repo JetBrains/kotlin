@@ -1,0 +1,29 @@
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
+
+plugins {
+    kotlin("jvm")
+    id("com.github.jk1.tcdeps") version "0.17"
+}
+
+repositories {
+    teamcityServer {
+        setUrl("http://buildserver.labs.intellij.net")
+        credentials {
+            username = "guest"
+            password = "guest"
+        }
+    }
+}
+
+val appcodeVersion = rootProject.extra["versions.appcode"] as String
+
+dependencies {
+    compile(project(":idea:idea-ultimate:cidr-native"))
+    compileOnly(tc("ijplatform_master_CIDR_AppCode_Installers:$appcodeVersion:unscrambled/appcode.jar"))
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" { none() }
+}

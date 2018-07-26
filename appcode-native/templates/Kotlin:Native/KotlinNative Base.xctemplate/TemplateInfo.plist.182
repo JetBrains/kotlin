@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.KotlinNativeBase</string>
+    <key>Targets</key>
+    <array>
+      <dict>
+        <key>SharedSettings</key>
+        <dict>
+          <key>KONAN_PACKAGE_NAME</key>
+          <string>___PACKAGENAME___</string>
+        </dict>
+        <key>Configurations</key>
+        <dict>
+          <key>Release</key>
+          <dict>
+            <key>KONAN_ENABLE_OPTIMIZATIONS</key>
+            <string>YES</string>
+          </dict>
+          <key>Debug</key>
+          <dict>
+            <key>KONAN_ENABLE_OPTIMIZATIONS</key>
+            <string>NO</string>
+          </dict>
+        </dict>
+        <key>BuildPhases</key>
+        <array>
+          <dict>
+            <key>Class</key>
+            <string>ShellScript</string>
+            <key>Name</key>
+            <string>Compile Kotlin/Native</string>
+            <key>ShellPath</key>
+            <string>/bin/sh</string>
+            <key>ShellScript</key>
+            <string>cd "$SRCROOT/$KONAN_PACKAGE_NAME"; sh -c ". ./gradlew $KONAN_TASK -Pkonan.configuration.build.dir=\"$CONFIGURATION_BUILD_DIR\" \
+-Pkonan.debugging.symbols=$DEBUGGING_SYMBOLS -Pkonan.optimizations.enable=$KONAN_ENABLE_OPTIMIZATIONS"</string>
+          </dict>
+        </array>
+      </dict>
+    </array>
+    <key>Nodes</key>
+    <array>
+      <string>build.gradle:targets:content</string>
+      <string>build.gradle:artifacts:content</string>
+      <string>gradlew</string>
+      <string>gradle/wrapper/gradle-wrapper.properties</string>
+      <string>gradle/wrapper/gradle-wrapper.jar</string>
+    </array>
+    <key>Definitions</key>
+    <dict>
+      <key>build.gradle</key>
+      <dict>
+        <key>Beginning</key>
+        <string>buildscript {
+    ext.kotlin_version = '1.2.0'
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.8"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+}
+
+apply plugin: 'konan'
+</string>
+        <key>Group</key>
+        <string>Supporting Files</string>
+        <key>TargetIdentifiers</key>
+        <array/>
+      </dict>
+      <key>build.gradle:targets</key>
+      <dict>
+        <key>Beginning</key>
+        <string>konan.targets = [</string>
+        <key>End</key>
+        <string>]
+        </string>
+        <key>Indent</key>
+        <integer>1</integer>
+      </dict>
+      <key>build.gradle:artifacts</key>
+      <dict>
+        <key>Beginning</key>
+        <string>konanArtifacts {</string>
+        <key>End</key>
+        <string>}
+        </string>
+        <key>Indent</key>
+        <integer>1</integer>
+      </dict>
+      <key>gradlew</key>
+      <dict>
+        <key>Path</key>
+        <string>gradlew</string>
+        <key>Group</key>
+        <string>Supporting Files</string>
+        <key>TargetIdentifiers</key>
+        <array/>
+      </dict>
+      <key>gradle/wrapper/gradle-wrapper.properties</key>
+      <dict>
+        <key>Path</key>
+        <string>gradle/wrapper/gradle-wrapper.properties</string>
+        <key>Group</key>
+        <array>
+          <string>Supporting Files</string>
+          <string>gradle</string>
+          <string>wrapper</string>
+        </array>
+        <key>TargetIdentifiers</key>
+        <array/>
+      </dict>
+      <key>gradle/wrapper/gradle-wrapper.jar</key>
+      <dict>
+        <key>Path</key>
+        <string>gradle/wrapper/gradle-wrapper.jar</string>
+        <key>Group</key>
+        <array>
+          <string>Supporting Files</string>
+          <string>gradle</string>
+          <string>wrapper</string>
+        </array>
+        <key>TargetIdentifiers</key>
+        <array/>
+      </dict>
+    </dict>
+  </dict>
+</plist>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Kind</key>
+	<string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+	<key>Name</key>
+	<string>Application</string>
+	<key>Identifier</key>
+	<string>com.jetbrains.konan.kotlinNativeApplication</string>
+	<key>Ancestors</key>
+	<array>
+		<string>com.jetbrains.konan.iosKotlinNativeAppBase</string>
+		<string>com.jetbrains.konan.KotlinNativeBase</string>
+	</array>
+	<key>Concrete</key>
+	<true/>
+	<key>Description</key>
+	<string>An iOS application written in Kotlin/Native</string>
+	<key>Targets</key>
+	<array>
+		<dict>
+			<key>TargetIdentifier</key>
+			<string>com.apple.dt.cocoaTouchApplicationTarget</string>
+			<key>SharedSettings</key>
+			<dict>
+				<key>ASSETCATALOG_COMPILER_APPICON_NAME</key>
+				<string>AppIcon</string>
+				<key>LD_RUNPATH_SEARCH_PATHS</key>
+				<string>$(inherited) @executable_path/Frameworks</string>
+				<key>TARGETED_DEVICE_FAMILY</key>
+				<string>1,2</string>
+			</dict>
+			<key>BuildPhases</key>
+			<array>
+				<dict>
+					<key>Class</key>
+					<string>ShellScript</string>
+					<key>Name</key>
+					<string>Compile Kotlin/Native</string>
+					<key>ShellPath</key>
+					<string>/bin/sh</string>
+					<key>ShellScript</key>
+					<string>rm -f "$TARGET_BUILD_DIR/$EXECUTABLE_PATH"
+cd "$SRCROOT/$KONAN_PACKAGE_NAME"; sh -c ". ./gradlew $KONAN_TASK -Pkonan.configuration.build.dir=\"$CONFIGURATION_BUILD_DIR\" \
+-Pkonan.debugging.symbols=$DEBUGGING_SYMBOLS -Pkonan.optimizations.enable=$KONAN_ENABLE_OPTIMIZATIONS"
+cp "$TARGET_BUILD_DIR/$KONAN_PACKAGE_NAME.kexe" "$TARGET_BUILD_DIR/$EXECUTABLE_PATH"</string>
+				</dict>
+			</array>
+		</dict>
+	</array>
+	<key>Nodes</key>
+	<array>
+		<string>Info.plist:LaunchScreen</string>
+		<string>Info.plist:UISupportedInterfaceOrientations~iPhone</string>
+		<string>Info.plist:UISupportedInterfaceOrientations~iPad</string>
+		<string>Assets.xcassets</string>
+		<string>Base.lproj/LaunchScreen.storyboard</string>
+		<string>Info.plist:UIMainStoryboardFile</string>
+		<string>Base.lproj/Main.storyboard</string>
+		<string>src/main/kotlin/AppDelegate.kt:comments</string>
+		<string>src/main/kotlin/AppDelegate.kt:body</string>
+		<string>src/main/kotlin/ViewController.kt:comments</string>
+		<string>src/main/kotlin/ViewController.kt:body</string>
+		<string>src/main/kotlin/main.kt:comments</string>
+		<string>src/main/kotlin/main.kt:body</string>
+	</array>
+	<key>Definitions</key>
+	<dict>
+		<key>Info.plist:statusBarTintForNavBar</key>
+		<string>&lt;key&gt;UIStatusBarTintParameters&lt;/key&gt;
+			&lt;dict&gt;
+			&lt;key&gt;UINavigationBar&lt;/key&gt;
+			&lt;dict&gt;
+			&lt;key&gt;Style&lt;/key&gt;
+			&lt;string&gt;UIBarStyleDefault&lt;/string&gt;
+			&lt;key&gt;Translucent&lt;/key&gt;
+			&lt;false/&gt;
+			&lt;/dict&gt;
+			&lt;/dict&gt;
+		</string>
+		<key>Info.plist:LaunchScreen</key>
+		<string>&lt;key&gt;UILaunchStoryboardName&lt;/key&gt;
+			&lt;string&gt;LaunchScreen&lt;/string&gt;
+		</string>
+		<key>Assets.xcassets</key>
+		<dict>
+			<key>Path</key>
+			<string>Images.xcassets</string>
+			<key>SortOrder</key>
+			<integer>100</integer>
+		</dict>
+		<key>Base.lproj/LaunchScreen.storyboard</key>
+		<dict>
+			<key>Path</key>
+			<string>LaunchScreen.storyboard</string>
+			<key>SortOrder</key>
+			<integer>101</integer>
+		</dict>
+		<key>Info.plist:UIMainStoryboardFile</key>
+		<string>&lt;key&gt;UIMainStoryboardFile&lt;/key&gt;
+			&lt;string&gt;Main&lt;/string&gt;
+		</string>
+		<key>Base.lproj/Main.storyboard</key>
+		<dict>
+			<key>Path</key>
+			<string>Main.storyboard</string>
+			<key>SortOrder</key>
+			<integer>99</integer>
+		</dict>
+		<key>src/main/kotlin/AppDelegate.kt</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>src</string>
+				<string>main</string>
+				<string>kotlin</string>
+			</array>
+			<key>TargetIdentifiers</key>
+			<array/>
+		</dict>
+		<key>src/main/kotlin/AppDelegate.kt:body</key>
+		<string>import kotlinx.cinterop.*
+import platform.UIKit.*
+
+class AppDelegate : UIResponder(), UIApplicationDelegateProtocol {
+    companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta {}
+
+    override fun init() = initBy(AppDelegate())
+
+    private var _window: UIWindow? = null
+    override fun window() = _window
+    override fun setWindow(window: UIWindow?) { _window = window }
+}
+</string>
+		<key>src/main/kotlin/ViewController.kt</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>src</string>
+				<string>main</string>
+				<string>kotlin</string>
+			</array>
+			<key>TargetIdentifiers</key>
+			<array/>
+		</dict>
+		<key>src/main/kotlin/ViewController.kt:body</key>
+		<string>import kotlinx.cinterop.*
+import platform.Foundation.*
+import platform.UIKit.*
+
+@ExportObjCClass
+class ViewController : UIViewController {
+
+    constructor(aDecoder: NSCoder) : super(aDecoder)
+    override fun initWithCoder(aDecoder: NSCoder) = initBy(ViewController(aDecoder))
+
+    @ObjCOutlet
+    lateinit var label: UILabel
+
+    @ObjCOutlet
+    lateinit var textField: UITextField
+
+    @ObjCOutlet
+    lateinit var button: UIButton
+
+    @ObjCAction
+    fun buttonPressed() {
+        label.text = "Konan says: 'Hello, ${textField.text}!'"
+    }
+}
+</string>
+		<key>src/main/kotlin/main.kt</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>src</string>
+				<string>main</string>
+				<string>kotlin</string>
+			</array>
+			<key>TargetIdentifiers</key>
+			<array/>
+		</dict>
+		<key>src/main/kotlin/main.kt:body</key>
+		<string>import kotlinx.cinterop.*
+import platform.Foundation.*
+import platform.UIKit.*
+
+fun main(args: Array&lt;String&gt;) {
+    memScoped {
+        val argc = args.size + 1
+        val argv = (arrayOf("konan") + args).map { it.cstr.ptr }.toCValues()
+
+        autoreleasepool {
+            UIApplicationMain(argc, argv, null, NSStringFromClass(AppDelegate))
+        }
+    }
+}
+</string>
+		<key>build.gradle:artifacts:content</key>
+		<string>program('___PACKAGENAMEASIDENTIFIER___')</string>
+	</dict>
+</dict>
+</plist>

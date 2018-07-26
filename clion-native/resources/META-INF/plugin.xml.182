@@ -1,0 +1,30 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <id>org.jetbrains.kotlin.native.clion</id>
+  <name>Kotlin/Native for CLion</name>
+  <vendor>JetBrains</vendor>
+
+  <idea-version since-build="183.3" until-build="183.*"/> <!--TODO restrict compatibility -->
+
+  <description>Kotlin/Native support</description>
+
+  <change-notes/>
+
+  <depends>com.intellij.modules.clion</depends>
+  <depends>org.jetbrains.plugins.gradle</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.jetbrains.konan.gradle.GradleKonanWorkspace"/>
+
+    <configurationType implementation="org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType"/>
+    <runConfigurationProducer implementation="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer"/>
+    <executionTargetProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanExecutionTargetProvider"/>
+    <runLineMarkerContributor language="ObjectiveC"
+                              implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
+
+    <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
+
+  </extensions>
+
+</idea-plugin>

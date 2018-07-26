@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.iosKotlinNativeAppBase</string>
+    <key>Name</key>
+    <string>Tests</string>
+    <key>Ancestors</key>
+    <array>
+      <string>com.apple.dt.unit.applicationBase</string>
+      <string>com.apple.dt.unit.iosBase</string>
+      <string>com.jetbrains.konan.iosKotlinNativeBase</string>
+    </array>
+    <key>Nodes</key>
+    <array>
+      <string>Info.plist:iPhone</string>
+      <string>Info.plist:UIRequiredDeviceCapabilities:base</string>
+    </array>
+    <key>Definitions</key>
+    <dict>
+      <key>Info.plist:iPhone</key>
+      <string>&lt;key&gt;LSRequiresIPhoneOS&lt;/key&gt;
+        &lt;true/&gt;
+      </string>
+      <key>Info.plist:UIRequiredDeviceCapabilities</key>
+      <dict>
+        <key>Beginning</key>
+        <string>&lt;key&gt;UIRequiredDeviceCapabilities&lt;/key&gt;
+          &lt;array&gt;</string>
+        <key>End</key>
+        <string>&lt;/array&gt;</string>
+        <key>Indent</key>
+        <integer>1</integer>
+      </dict>
+      <key>Info.plist:UIRequiredDeviceCapabilities:base</key>
+      <string>&lt;string&gt;armv7&lt;/string&gt;</string>
+    </dict>
+  </dict>
+</plist>

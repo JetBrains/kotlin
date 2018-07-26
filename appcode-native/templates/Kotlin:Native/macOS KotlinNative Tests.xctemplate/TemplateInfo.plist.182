@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.macosKotlinNativeTests</string>
+    <key>Name</key>
+    <string>Tests</string>
+    <key>Ancestors</key>
+    <array>
+      <string>com.jetbrains.konan.KotlinNativeTestsBase</string>
+      <string>com.apple.dt.unit.osxBase</string>
+      <string>com.jetbrains.konan.macosKotlinNativeBase</string>
+    </array>
+    <key>Description</key>
+    <string>This template creates a test target based on kotlin.test framework.</string>
+    <key>SortOrder</key>
+    <integer>1</integer>
+    <key>Concrete</key>
+    <true/>
+  </dict>
+</plist>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.macosKotlinNativeFramework</string>
+    <key>Name</key>
+    <string>Framework</string>
+    <key>Ancestors</key>
+    <array>
+      <string>com.jetbrains.konan.KotlinNativeFrameworkBase</string>
+      <string>com.apple.dt.unit.osxBase</string>
+      <string>com.jetbrains.konan.macosKotlinNativeBase</string>
+    </array>
+    <key>Description</key>
+    <string>This template creates a Kotlin/Native framework.</string>
+    <key>SortOrder</key>
+    <integer>1</integer>
+    <key>Concrete</key>
+    <true/>
+    <key>AssociatedTargetSpecification</key>
+    <dict>
+      <key>PopUpTitle</key>
+      <string>Embed in Application:</string>
+      <key>PopUpDescription</key>
+      <string>The application target that will host this new framework. The application will be set up to link to and embed the new framework.</string>
+      <key>AllowableProductTypes</key>
+      <array>
+        <string>com.apple.product-type.application</string>
+      </array>
+      <key>AllowablePlatforms</key>
+      <array>
+        <string>com.apple.platform.macosx</string>
+      </array>
+      <key>AssociatedTargetIsDependent</key>
+      <true/>
+      <key>AssociatedTargetNeedsProductBuildPhaseInjection</key>
+      <true/>
+    </dict>
+  </dict>
+</plist>

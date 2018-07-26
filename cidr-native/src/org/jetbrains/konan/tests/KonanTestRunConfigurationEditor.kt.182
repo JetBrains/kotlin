@@ -1,0 +1,71 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.konan.tests
+
+import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Condition
+import com.jetbrains.cidr.CidrBundle
+import com.jetbrains.cidr.execution.CidrBuildConfiguration
+import com.jetbrains.cidr.execution.CidrBuildConfigurationHelper
+import com.jetbrains.cidr.execution.CidrBuildTarget
+import com.jetbrains.cidr.execution.CidrRunConfiguration
+import com.jetbrains.cidr.execution.testing.CidrTestRunConfigurationEditor
+import com.jetbrains.cidr.lang.ui.OCFieldAdapter
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import javax.swing.Icon
+
+class KonanTestRunConfigurationEditor<BC : CidrBuildConfiguration,
+  TARGET : CidrBuildTarget<BC>,
+  CONFIGURATION : CidrRunConfiguration<BC, TARGET>,
+  BCH : CidrBuildConfigurationHelper<BC, TARGET>>(project: Project, configHelper: BCH) :
+  CidrTestRunConfigurationEditor<DeclarationDescriptor, BC, TARGET, CONFIGURATION, BCH>(project, configHelper) {
+
+  override fun isValidSuiteName(): Boolean = true
+
+  override fun createSuiteCompletionCondition(): Condition<DeclarationDescriptor>? = Condition {
+    false
+  }
+
+  override fun collectSuiteTests(): Set<String> = emptySet()
+
+  override fun createSuiteAdapter(): OCFieldAdapter<DeclarationDescriptor> = object : OCFieldAdapter<DeclarationDescriptor> {
+    override fun getReadableName(p0: DeclarationDescriptor?): String = ""
+
+    override fun createPrefixMatcher(p0: String): PrefixMatcher = PrefixMatcher.ALWAYS_TRUE
+
+    override fun getName(p0: DeclarationDescriptor?): String = ""
+
+    override fun getTypeText(p0: DeclarationDescriptor?): String? = null
+
+    override fun getIcon(p0: DeclarationDescriptor?): Icon? = null
+
+    override fun getPrefix(p0: String, p1: Int): String = ""
+
+    override fun collectValuesFromProject(p0: Project, p1: Condition<DeclarationDescriptor>?): Collection<DeclarationDescriptor> =
+      emptyList()
+  }
+
+  override fun getSuitePlaceholder(): String {
+    return CidrBundle.message("test.allTestSuites")
+  }
+
+  override fun getSuitesTipMessage(): String {
+    return CidrBundle.message("gtest.testSuitesTip")
+  }
+
+  override fun getTestFieldLabelName(): String {
+    return CidrBundle.message("test.configuration.test")
+  }
+
+  override fun getSuiteFieldLabelName(): String {
+    return CidrBundle.message("test.configuration.suite")
+  }
+
+  override fun getAllTestsMessage(): String {
+    return CidrBundle.message("test.allTestsInSuite")
+  }
+}

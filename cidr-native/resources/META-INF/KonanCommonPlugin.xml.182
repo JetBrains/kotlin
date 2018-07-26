@@ -1,0 +1,19 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <depends>com.intellij.modules.lang</depends>
+    <depends optional="true">com.intellij.modules.externalSystem</depends>
+
+    <xi:include href="/META-INF/JavaAnalysisPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+    <xi:include href="/META-INF/JavaIndexingPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+    <xi:include href="/META-INF/JavaPsiPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+    <xi:include href="/META-INF/JavaPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+    <xi:include href="/META-INF/KotlinPlugin.xml" xpointer="xpointer(/idea-plugin/*)">
+        <xi:fallback/>
+    </xi:include>
+
+    <extensions defaultExtensionNs="cidr.debugger">
+        <languageSupport language="kotlin" implementationClass="org.jetbrains.konan.debugger.KonanDebuggerLanguageSupport"/>
+        <lineBreakpointFileTypesProvider implementation="org.jetbrains.konan.debugger.KonanLineBreakpointFileTypesProvider"/>
+        <valueRendererFactory implementation="org.jetbrains.konan.debugger.KonanValueRendererFactory"/>
+    </extensions>
+</idea-plugin>

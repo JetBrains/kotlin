@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.KotlinNativeTestsBase</string>
+    <key>Ancestors</key>
+    <array>
+      <string>com.apple.dt.unit.base</string>
+      <string>com.jetbrains.konan.KotlinNativeBase</string>
+    </array>
+    <key>Description</key>
+    <string>This template creates a test target based on kotlin.test framework.</string>
+    <key>SortOrder</key>
+    <integer>1</integer>
+    <key>TargetOnly</key>
+    <true/>
+    <key>Targets</key>
+    <array>
+      <dict>
+        <key>ProductType</key>
+        <string>com.apple.product-type.tool</string>
+        <key>SharedSettings</key>
+        <dict>
+          <key>PRODUCT_NAME</key>
+          <string>$(TARGET_NAME).kexe</string>
+          <key>KONAN_TEST</key>
+          <string>YES</string>
+        </dict>
+      </dict>
+    </array>
+    <key>Nodes</key>
+    <array>
+      <string>src/main/kotlin/TestSuite.kt:comments</string>
+      <string>src/main/kotlin/TestSuite.kt:body</string>
+    </array>
+    <key>Definitions</key>
+    <dict>
+      <key>src/main/kotlin/TestSuite.kt</key>
+      <dict>
+        <key>Group</key>
+        <array>
+          <string>src</string>
+          <string>main</string>
+          <string>kotlin</string>
+        </array>
+        <key>TargetIdentifiers</key>
+        <array/>
+      </dict>
+      <key>src/main/kotlin/TestSuite.kt:body</key>
+      <string>import kotlin.test.Test
+import kotlin.test.assertTrue
+
+class TestSuite {
+    @Test
+    fun testSuccess() {
+        assertTrue(true, "This will succeed")
+    }
+
+    @Test
+    fun testFailure() {
+        assertTrue(false, "This will fail")
+    }
+}
+</string>
+      <key>build.gradle:artifacts:content</key>
+      <string>program('___PACKAGENAMEASIDENTIFIER___') {
+    extraOpts '-tr'
+    srcDir 'src/main/kotlin'
+    // Add path to the sources to be tested here, e.g. srcDir '../app/src/main/kotlin'
+}</string>
+    </dict>
+  </dict>
+</plist>

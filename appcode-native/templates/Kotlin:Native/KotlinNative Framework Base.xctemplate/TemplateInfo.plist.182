@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.KotlinNativeFrameworkBase</string>
+    <key>Ancestors</key>
+    <array>
+        <string>com.apple.dt.unit.base</string>
+        <string>com.jetbrains.konan.KotlinNativeBase</string>
+    </array>
+    <key>Targets</key>
+    <array>
+        <dict>
+            <key>ProductType</key>
+            <string>com.apple.product-type.framework</string>
+            <key>SharedSettings</key>
+            <dict>
+                <key>CODE_SIGN_IDENTITY</key>
+                <string/>
+                <key>INSTALL_PATH</key>
+                <string>$(LOCAL_LIBRARY_DIR)/Frameworks</string>
+                <key>SKIP_INSTALL</key>
+                <string>YES</string>
+                <key>DYLIB_INSTALL_NAME_BASE</key>
+                <string>@rpath</string>
+                <key>PRODUCT_NAME</key>
+                <string>$(TARGET_NAME:c99extidentifier)</string>
+                <key>PRODUCT_MODULE_NAME</key>
+                <string>_$(PRODUCT_NAME:c99extidentifier)</string>
+                <key>PRODUCT_BUNDLE_IDENTIFIER</key>
+                <string>___VARIABLE_bundleIdentifierPrefix:bundleIdentifier___.___PACKAGENAMEASRFC1034IDENTIFIER___</string>
+            </dict>
+        </dict>
+    </array>
+    <key>Nodes</key>
+    <array>
+        <string>src/main/kotlin/KotlinNativeFramework.kt:comments</string>
+        <string>src/main/kotlin/KotlinNativeFramework.kt:body</string>
+    </array>
+    <key>Definitions</key>
+    <dict>
+        <key>src/main/kotlin/KotlinNativeFramework.kt</key>
+        <dict>
+            <key>Group</key>
+            <array>
+                <string>src</string>
+                <string>main</string>
+                <string>kotlin</string>
+            </array>
+            <key>TargetIdentifiers</key>
+            <array/>
+        </dict>
+        <key>build.gradle:artifacts:content</key>
+        <string>framework('___PACKAGENAMEASIDENTIFIER___')</string>
+        <key>src/main/kotlin/KotlinNativeFramework.kt:body</key>
+        <string>class KotlinNativeFramework {
+    fun helloFromKotlin() = "Hello from Kotlin!"
+}</string>
+    </dict>
+</dict>
+</plist>

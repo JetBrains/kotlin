@@ -1,0 +1,37 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <id>org.jetbrains.kotlin.native.appcode</id>
+  <name>Kotlin/Native for AppCode</name>
+  <vendor>JetBrains</vendor>
+
+  <idea-version since-build="183.3" until-build="183.*"/> <!--TODO restrict compatibility -->
+
+  <description>Kotlin/Native support</description>
+
+  <change-notes/>
+
+  <depends>com.intellij.modules.appcode</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>
+
+    <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="appcode">
+    <xcodeTemplatePathsProvider implementation="org.jetbrains.konan.AppCodeKonanTemplatesProvider"/>
+  </extensions>
+
+  <project-components>
+    <component>
+      <interface-class>org.jetbrains.konan.settings.KonanProjectComponent</interface-class>
+      <implementation-class>org.jetbrains.konan.settings.AppCodeKonanProjectComponent</implementation-class>
+    </component>
+    <!--<component>-->
+      <!--<interface-class>org.jetbrains.konan.settings.KonanPaths</interface-class>-->
+      <!--<implementation-class>org.jetbrains.konan.settings.AppCodeKonanPaths</implementation-class>-->
+    <!--</component>-->
+  </project-components>
+
+</idea-plugin>

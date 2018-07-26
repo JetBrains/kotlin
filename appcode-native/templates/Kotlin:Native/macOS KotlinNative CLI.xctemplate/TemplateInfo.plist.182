@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Kind</key>
+    <string>Xcode.Xcode3.ProjectTemplateUnitKind</string>
+    <key>Identifier</key>
+    <string>com.jetbrains.konan.macosKotlinNativeCLI</string>
+    <key>Name</key>
+    <string>Command Line Tool</string>
+    <key>Ancestors</key>
+    <array>
+      <string>com.apple.dt.unit.base</string>
+      <string>com.jetbrains.konan.KotlinNativeBase</string>
+      <string>com.apple.dt.unit.osxBase</string>
+      <string>com.jetbrains.konan.macosKotlinNativeBase</string>
+    </array>
+    <key>Description</key>
+    <string>This template creates a simple command-line tool written in Kotlin/Native.</string>
+    <key>SortOrder</key>
+    <integer>1</integer>
+    <key>Concrete</key>
+    <true/>
+    <key>Targets</key>
+    <array>
+      <dict>
+        <key>ProductType</key>
+        <string>com.apple.product-type.tool</string>
+        <key>SharedSettings</key>
+        <dict>
+          <key>PRODUCT_NAME</key>
+          <string>$(TARGET_NAME).kexe</string>
+        </dict>
+      </dict>
+    </array>
+    <key>Nodes</key>
+    <array>
+      <string>src/main/kotlin/main.kt:comments</string>
+      <string>src/main/kotlin/main.kt:body</string>
+    </array>
+    <key>Definitions</key>
+    <dict>
+      <key>src/main/kotlin/main.kt</key>
+      <dict>
+        <key>Group</key>
+        <array>
+          <string>src</string>
+          <string>main</string>
+          <string>kotlin</string>
+        </array>
+        <key>TargetIdentifiers</key>
+        <array/>
+      </dict>
+      <key>src/main/kotlin/main.kt:body</key>
+      <string>import kotlinx.cinterop.*
+import platform.Foundation.*
+
+fun main(args: Array&lt;String&gt;) {
+    autoreleasepool {
+        NSLog("Hello, World!")
+    }
+}
+</string>
+      <key>build.gradle:artifacts:content</key>
+      <string>program('___PACKAGENAMEASIDENTIFIER___')</string>
+    </dict>
+  </dict>
+</plist>
