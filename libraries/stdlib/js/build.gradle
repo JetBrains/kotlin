@@ -149,6 +149,7 @@ compileKotlin2Js {
         freeCompilerArgs += [
             "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir, commonSrcDir2].collect { file(it).absoluteFile }.join(File.pathSeparator),
             "-Xuse-experimental=kotlin.Experimental",
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
             "-XXLanguage:+InlineClasses",
             "-XXLanguage:-ReleaseCoroutines"
         ]
@@ -174,6 +175,9 @@ compileCoroutinesKotlin2Js {
         outputFile = "${buildDir}/classes/coroutines/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
+        freeCompilerArgs += [
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+        ]
     }
 }
 

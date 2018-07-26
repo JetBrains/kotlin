@@ -33,8 +33,8 @@ val copySources by task<Sync> {
     from(stdlibProjectDir.resolve("../src"))
         .include("kotlin/util/Standard.kt",
                  "kotlin/internal/Annotations.kt",
-                 "kotlin/internal/contracts/ContractBuilder.kt",
-                 "kotlin/internal/contracts/Effect.kt")
+                 "kotlin/contracts/ContractBuilder.kt",
+                 "kotlin/contracts/Effect.kt")
     into(File(buildDir, "src"))
 }
 
@@ -46,7 +46,13 @@ tasks.withType<JavaCompile> {
 tasks.withType<KotlinCompile> {
     dependsOn(copySources)
     kotlinOptions {
-        freeCompilerArgs += listOf("-module-name", "kotlin-stdlib", "-Xmulti-platform")
+        freeCompilerArgs += listOf(
+            "-module-name",
+            "kotlin-stdlib",
+            "-Xmulti-platform",
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-Xuse-experimental=kotlin.Experimental"
+        )
     }
 }
 

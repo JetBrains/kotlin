@@ -16,8 +16,8 @@
 
 package kotlin
 
+import kotlin.contracts.*
 import kotlin.internal.InlineOnly
-import kotlin.internal.contracts.*
 import kotlin.jvm.JvmField
 
 /**

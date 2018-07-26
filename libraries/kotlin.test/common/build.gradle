@@ -36,7 +36,8 @@ compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
                 "-module-name", project.name,
-                "-Xallow-kotlin-package"
+                "-Xallow-kotlin-package",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
         ]
     }
 }
