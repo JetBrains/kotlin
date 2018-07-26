@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.idea.configuration.ui.MigrationNotificationDialog
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -51,7 +52,8 @@ class KotlinMigrationProjectComponent(val project: Project) {
         }
 
         ApplicationManager.getApplication().invokeLater {
-            // Notify
+            val migrationNotificationDialog = MigrationNotificationDialog(project, migrationInfo)
+            migrationNotificationDialog.show()
         }
     }
 
