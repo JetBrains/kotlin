@@ -108,15 +108,30 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
     public operator fun rangeTo(other: UInt): UIntRange = UIntRange(this, other)
 
     /** Shifts this value left by the [bitCount] number of bits. */
+    @Deprecated("Use shiftLeft instead", ReplaceWith("shiftLeft(bitCount)"), DeprecationLevel.WARNING)
     public infix fun shl(bitCount: Int): UInt = UInt(data shl bitCount)
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+    @Deprecated("Use ushiftRight instead", ReplaceWith("ushiftRight(bitCount)"), DeprecationLevel.WARNING)
     public infix fun shr(bitCount: Int): UInt = UInt(data ushr bitCount)
+    /** Shifts this value left by the [bitCount] number of bits. */
+    public operator fun shiftLeft(bitCount: Int): UInt = UInt(data.shiftLeft(bitCount))
+    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+    public operator fun shiftRight(bitCount: Int): UInt = UInt(data.ushiftRight(bitCount))
     /** Performs a bitwise AND operation between the two values. */
+    @Deprecated("Use bitAnd instead", ReplaceWith("bitAnd(other)"), DeprecationLevel.WARNING)
     public infix fun and(other: UInt): UInt = UInt(this.data and other.data)
     /** Performs a bitwise OR operation between the two values. */
+    @Deprecated("Use bitOr instead", ReplaceWith("bitOr(other)"), DeprecationLevel.WARNING)
     public infix fun or(other: UInt): UInt = UInt(this.data or other.data)
     /** Performs a bitwise XOR operation between the two values. */
+    @Deprecated("Use bitXor instead", ReplaceWith("bitXor(other)"), DeprecationLevel.WARNING)
     public infix fun xor(other: UInt): UInt = UInt(this.data xor other.data)
+    /** Performs a bitwise AND operation between the two values. */
+    public operator fun bitAnd(other: UInt): UInt = UInt(this.data.bitAnd(other.data))
+    /** Performs a bitwise OR operation between the two values. */
+    public operator fun bitOr(other: UInt): UInt = UInt(this.data.bitOr(other.data))
+    /** Performs a bitwise XOR operation between the two values. */
+    public operator fun bitXor(other: UInt): UInt = UInt(this.data.bitXor(other.data))
     /** Inverts the bits in this value. */
     public fun inv(): UInt = UInt(data.inv())
 

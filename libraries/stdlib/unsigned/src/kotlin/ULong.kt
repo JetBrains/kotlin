@@ -108,15 +108,30 @@ public inline class ULong internal constructor(private val data: Long) : Compara
     public operator fun rangeTo(other: ULong): ULongRange = ULongRange(this, other)
 
     /** Shifts this value left by the [bitCount] number of bits. */
+    @Deprecated("Use shiftLeft instead", ReplaceWith("shiftLeft(bitCount)"), DeprecationLevel.WARNING)
     public infix fun shl(bitCount: Int): ULong = ULong(data shl bitCount)
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+    @Deprecated("Use ushiftRight instead", ReplaceWith("ushiftRight(bitCount)"), DeprecationLevel.WARNING)
     public infix fun shr(bitCount: Int): ULong = ULong(data ushr bitCount)
+    /** Shifts this value left by the [bitCount] number of bits. */
+    public operator fun shiftLeft(bitCount: Int): ULong = ULong(data.shiftLeft(bitCount))
+    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+    public operator fun shiftRight(bitCount: Int): ULong = ULong(data.ushiftRight(bitCount))
     /** Performs a bitwise AND operation between the two values. */
+    @Deprecated("Use bitAnd instead", ReplaceWith("bitAnd(other)"), DeprecationLevel.WARNING)
     public infix fun and(other: ULong): ULong = ULong(this.data and other.data)
     /** Performs a bitwise OR operation between the two values. */
+    @Deprecated("Use bitOr instead", ReplaceWith("bitOr(other)"), DeprecationLevel.WARNING)
     public infix fun or(other: ULong): ULong = ULong(this.data or other.data)
     /** Performs a bitwise XOR operation between the two values. */
+    @Deprecated("Use bitXor instead", ReplaceWith("bitXor(other)"), DeprecationLevel.WARNING)
     public infix fun xor(other: ULong): ULong = ULong(this.data xor other.data)
+    /** Performs a bitwise AND operation between the two values. */
+    public operator fun bitAnd(other: ULong): ULong = ULong(this.data.bitAnd(other.data))
+    /** Performs a bitwise OR operation between the two values. */
+    public operator fun bitOr(other: ULong): ULong = ULong(this.data.bitOr(other.data))
+    /** Performs a bitwise XOR operation between the two values. */
+    public operator fun bitXor(other: ULong): ULong = ULong(this.data.bitXor(other.data))
     /** Inverts the bits in this value. */
     public fun inv(): ULong = ULong(data.inv())
 

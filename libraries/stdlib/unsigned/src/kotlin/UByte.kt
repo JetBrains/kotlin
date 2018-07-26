@@ -108,11 +108,20 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
     public operator fun rangeTo(other: UByte): UIntRange = UIntRange(this.toUInt(), other.toUInt())
 
     /** Performs a bitwise AND operation between the two values. */
+    @Deprecated("Use bitAnd instead", ReplaceWith("bitAnd(other)"), DeprecationLevel.WARNING)
     public infix fun and(other: UByte): UByte = UByte(this.data and other.data)
     /** Performs a bitwise OR operation between the two values. */
+    @Deprecated("Use bitOr instead", ReplaceWith("bitOr(other)"), DeprecationLevel.WARNING)
     public infix fun or(other: UByte): UByte = UByte(this.data or other.data)
     /** Performs a bitwise XOR operation between the two values. */
+    @Deprecated("Use bitXor instead", ReplaceWith("bitXor(other)"), DeprecationLevel.WARNING)
     public infix fun xor(other: UByte): UByte = UByte(this.data xor other.data)
+    /** Performs a bitwise AND operation between the two values. */
+    public operator fun bitAnd(other: UByte): UByte = UByte(this.data.bitAnd(other.data))
+    /** Performs a bitwise OR operation between the two values. */
+    public operator fun bitOr(other: UByte): UByte = UByte(this.data.bitOr(other.data))
+    /** Performs a bitwise XOR operation between the two values. */
+    public operator fun bitXor(other: UByte): UByte = UByte(this.data.bitXor(other.data))
     /** Inverts the bits in this value. */
     public fun inv(): UByte = UByte(data.inv())
 

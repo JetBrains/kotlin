@@ -61,7 +61,13 @@ public class OperatorConventions {
             .put(KtTokens.MINUS, MINUS)
             .put(KtTokens.DIV, DIV)
             .put(KtTokens.PERC, REM)
+            .put(KtTokens.AMP, BIT_AND)
+            .put(KtTokens.PIPE, BIT_OR)
+            .put(KtTokens.CARET, BIT_XOR)
             .put(KtTokens.RANGE, RANGE_TO)
+            .put(KtTokens.LTLT, SHIFT_LEFT)
+            .put(KtTokens.GTGT, SHIFT_RIGHT)
+            .put(KtTokens.GTGTGT, USHIFT_RIGHT)
             .build();
 
     public static final ImmutableBiMap<Name, Name> REM_TO_MOD_OPERATION_NAMES = ImmutableBiMap.<Name, Name>builder()
@@ -93,6 +99,12 @@ public class OperatorConventions {
             .put(KtTokens.PERCEQ, REM_ASSIGN)
             .put(KtTokens.PLUSEQ, PLUS_ASSIGN)
             .put(KtTokens.MINUSEQ, MINUS_ASSIGN)
+            .put(KtTokens.AMPEQ, AND_ASSIGN)
+            .put(KtTokens.PIPEEQ, OR_ASSIGN)
+            .put(KtTokens.CARETEQ, XOR_ASSIGN)
+            .put(KtTokens.LTLTEQ, SHL_ASSIGN)
+            .put(KtTokens.GTGTEQ, SHR_ASSIGN)
+            .put(KtTokens.GTGTGTEQ, USHR_ASSIGN)
             .build();
 
     public static final ImmutableBiMap<KtSingleValueToken, KtSingleValueToken> ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableBiMap.<KtSingleValueToken, KtSingleValueToken>builder()
@@ -101,6 +113,12 @@ public class OperatorConventions {
             .put(KtTokens.PERCEQ, KtTokens.PERC)
             .put(KtTokens.PLUSEQ, KtTokens.PLUS)
             .put(KtTokens.MINUSEQ, KtTokens.MINUS)
+            .put(KtTokens.AMPEQ, KtTokens.AMP)
+            .put(KtTokens.PIPEEQ, KtTokens.PIPE)
+            .put(KtTokens.CARETEQ, KtTokens.CARET)
+            .put(KtTokens.LTLTEQ, KtTokens.LTLT)
+            .put(KtTokens.GTGTEQ, KtTokens.GTGT)
+            .put(KtTokens.GTGTGTEQ, KtTokens.GTGTGT)
             .build();
 
     public static final ImmutableBiMap<KtSingleValueToken, Name> BOOLEAN_OPERATIONS = ImmutableBiMap.<KtSingleValueToken, Name>builder()

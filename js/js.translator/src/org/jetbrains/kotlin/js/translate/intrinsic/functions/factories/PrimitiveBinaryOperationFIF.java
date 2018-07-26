@@ -116,7 +116,9 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             pattern(NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS, "compareTo");
 
     private static final Predicate<FunctionDescriptor> INT_WITH_BIT_OPERATIONS = pattern("Int.or|and|xor|shl|shr|ushr")
-            .or(pattern("Short|Byte.or|and|xor"));
+            .or(pattern("Short|Byte.or|and|xor"))
+            .or(pattern("Short|Byte.bitAnd|bitOr|bitXor"))
+            .or(pattern("Int.bitOr|bitAnd|bitXor|shiftLeft|shiftRight|ushiftRight"));
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
     private static final DescriptorPredicate STRING_PLUS = pattern("String.plus");
     private static final DescriptorPredicate INT_MULTIPLICATION = pattern("Int.times(Int)");
@@ -131,6 +133,12 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             .put("shl", JsBinaryOperator.SHL)
             .put("shr", JsBinaryOperator.SHR)
             .put("ushr", JsBinaryOperator.SHRU)
+            .put("bitOr", JsBinaryOperator.BIT_OR)
+            .put("bitAnd", JsBinaryOperator.BIT_AND)
+            .put("bitXor", JsBinaryOperator.BIT_XOR)
+            .put("shiftLeft", JsBinaryOperator.SHL)
+            .put("shiftRight", JsBinaryOperator.SHR)
+            .put("ushiftRight", JsBinaryOperator.SHRU)
             .build();
 
     private static final Predicate<FunctionDescriptor> PREDICATE = PRIMITIVE_NUMBERS_BINARY_OPERATIONS

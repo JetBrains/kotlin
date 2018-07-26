@@ -27,11 +27,24 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         internal val shiftOperators: Map<String, String> = mapOf(
             "shl" to "Shifts this value left by the [bitCount] number of bits.",
             "shr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.",
-            "ushr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.")
+            "ushr" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.",
+            "shiftLeft" to "Shifts this value left by the [bitCount] number of bits.",
+            "shiftRight" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.",
+            "ushiftRight" to "Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.")
         internal val bitwiseOperators: Map<String, String> = mapOf(
             "and" to "Performs a bitwise AND operation between the two values.",
             "or" to "Performs a bitwise OR operation between the two values.",
-            "xor" to "Performs a bitwise XOR operation between the two values.")
+            "xor" to "Performs a bitwise XOR operation between the two values.",
+            "bitAnd" to "Performs a bitwise AND operation between the two values.",
+            "bitOr" to "Performs a bitwise OR operation between the two values.",
+            "bitXor" to "Performs a bitwise XOR operation between the two values.")
+        internal val deprecatedOperatorMap: Map<String, String> = mapOf(
+            "shl" to "shiftLeft",
+            "shr" to "shiftRight",
+            "ushr" to "ushiftRight",
+            "and" to "bitAnd",
+            "or" to "bitOr",
+            "xor" to "bitXor")
     }
     private val typeDescriptions: Map<PrimitiveType, String> = mapOf(
             PrimitiveType.DOUBLE to "double-precision 64-bit IEEE 754 floating point number",
@@ -195,14 +208,27 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateBitShiftOperators(className: String) {
         for ((name, doc) in shiftOperators) {
             out.println("    /** $doc */")
-            out.println("    public infix fun $name(bitCount: Int): $className")
+            if (name in deprecatedOperatorMap.keys) {
+                val replacement = deprecatedOperatorMap[name]
+                out.println("    @Deprecated(\"Use $replacement(bitCount) instead\", ReplaceWith(\"$replacement(bitCount)\"), DeprecationLevel.WARNING)")
+                out.println("    public infix fun $name(bitCount: Int): $className")
+            } else {
+                out.println("    public operator fun $name(bitCount: Int): $className")
+            }
         }
     }
     private fun generateBitwiseOperators(className: String, since: String?) {
         for ((name, doc) in bitwiseOperators) {
             out.println("    /** $doc */")
             since?.let { out.println("    @SinceKotlin(\"$it\")") }
-            out.println("    public infix fun $name(other: $className): $className")
+
+            if (name in deprecatedOperatorMap.keys) {
+                val replacement = deprecatedOperatorMap[name]
+                out.println("    @Deprecated(\"Use $replacement(other) instead\". ReplaceWith(\"$replacement(other)\"), DeprecationLevel.WARNING)")
+                out.println("    public infix fun $name(other: $className): $className")
+            } else {
+                out.println("    public operator fun $name(other: $className): $className")
+            }
         }
         out.println("    /** Inverts the bits in this value. */")
         since?.let { out.println("    @SinceKotlin(\"$it\")") }
