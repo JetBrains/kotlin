@@ -1192,6 +1192,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             public void testRequire() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/require.kt");
             }
+
+            @TestMetadata("synchronize.kt")
+            public void testSynchronize() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/synchronize.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts")
