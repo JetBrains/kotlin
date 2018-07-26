@@ -10,7 +10,7 @@ package kotlin.collections
 
 import kotlin.*
 import kotlin.comparisons.compareValues
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false

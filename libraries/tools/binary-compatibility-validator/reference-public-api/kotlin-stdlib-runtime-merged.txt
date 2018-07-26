@@ -2539,6 +2539,48 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
+public abstract interface class kotlin/contracts/CallsInPlace : kotlin/contracts/SimpleEffect {
+}
+
+public abstract interface class kotlin/contracts/ConditionalEffect : kotlin/contracts/Effect {
+}
+
+public abstract interface class kotlin/contracts/ContractBuilder {
+	public abstract fun callsInPlace (Lkotlin/Function;Lkotlin/contracts/InvocationKind;)Lkotlin/contracts/CallsInPlace;
+	public abstract fun returns ()Lkotlin/contracts/Returns;
+	public abstract fun returns (Ljava/lang/Object;)Lkotlin/contracts/Returns;
+	public abstract fun returnsNotNull ()Lkotlin/contracts/ReturnsNotNull;
+}
+
+public final class kotlin/contracts/ContractBuilder$DefaultImpls {
+	public static synthetic fun callsInPlace$default (Lkotlin/contracts/ContractBuilder;Lkotlin/Function;Lkotlin/contracts/InvocationKind;ILjava/lang/Object;)Lkotlin/contracts/CallsInPlace;
+}
+
+public abstract interface class kotlin/contracts/Effect {
+}
+
+public abstract interface annotation class kotlin/contracts/ExperimentalContracts : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/contracts/InvocationKind : java/lang/Enum {
+	public static final field AT_LEAST_ONCE Lkotlin/contracts/InvocationKind;
+	public static final field AT_MOST_ONCE Lkotlin/contracts/InvocationKind;
+	public static final field EXACTLY_ONCE Lkotlin/contracts/InvocationKind;
+	public static final field UNKNOWN Lkotlin/contracts/InvocationKind;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/contracts/InvocationKind;
+	public static fun values ()[Lkotlin/contracts/InvocationKind;
+}
+
+public abstract interface class kotlin/contracts/Returns : kotlin/contracts/SimpleEffect {
+}
+
+public abstract interface class kotlin/contracts/ReturnsNotNull : kotlin/contracts/SimpleEffect {
+}
+
+public abstract interface class kotlin/contracts/SimpleEffect {
+	public abstract fun implies (Z)Lkotlin/contracts/ConditionalEffect;
+}
+
 public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin/coroutines/CoroutineContext$Element {
 	public fun <init> (Lkotlin/coroutines/CoroutineContext$Key;)V
 	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;

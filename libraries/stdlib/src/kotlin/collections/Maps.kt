@@ -8,7 +8,7 @@
 
 package kotlin.collections
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 private object EmptyMap : Map<Any?, Nothing>, Serializable {
     private const val serialVersionUID: Long = 8246714829545688274

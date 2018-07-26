@@ -5,7 +5,7 @@
 
 package kotlin
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 
 @Deprecated("Use Synchronized annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Synchronized"), level = DeprecationLevel.WARNING)

@@ -11,7 +11,7 @@ package kotlin.text
 
 import kotlin.*
 import kotlin.comparisons.*
-import kotlin.internal.contracts.*
+import kotlin.contracts.contract
 
 
 /**

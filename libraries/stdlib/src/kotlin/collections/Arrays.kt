@@ -9,7 +9,7 @@
 
 package kotlin.collections
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 
 /**

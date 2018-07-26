@@ -181,6 +181,7 @@ compileKotlin {
                 "-Xnormalize-constructor-calls=enable",
                 "-module-name", "kotlin-stdlib",
                 "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-XXLanguage:-ReleaseCoroutines",
                 "-XXLanguage:+InlineClasses"
         ]
@@ -211,6 +212,7 @@ compileCoroutinesKotlin {
                 "-version",
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-module-name", "kotlin-stdlib-coroutines"
         ]
     }
