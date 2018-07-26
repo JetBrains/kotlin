@@ -14,8 +14,6 @@ import org.jetbrains.konan.settings.KonanModelProvider.RELOAD_TOPIC
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.nio.file.Path
 
-private const val LINK_DATA: String = "linkdata"
-
 abstract class KonanProjectComponent(val project: Project) : ProjectComponent {
   companion object {
     fun getInstance(project: Project): KonanProjectComponent = project.getComponent(KonanProjectComponent::class.java)
@@ -80,12 +78,8 @@ abstract class KonanProjectComponent(val project: Project) : ProjectComponent {
       val libraryRootPath = path.toString()
       val libraryRoot: VirtualFile = localFileSystem.refreshAndFindFileByPath(libraryRootPath) ?: continue
 
-      if (libraryRoot.isDirectory) {
-        createLibrary(localFileSystem, "$libraryRootPath/$LINK_DATA")
-      }
-      else { //zip
-        createLibrary(jarFileSystem, "$libraryRootPath!/$LINK_DATA")
-      }
+      // use JAR FS if this is file (*.klib), otherwise - local FS
+      createLibrary(if (libraryRoot.isDirectory) localFileSystem else jarFileSystem, libraryRootPath)
     }
 
     runWriteAction {

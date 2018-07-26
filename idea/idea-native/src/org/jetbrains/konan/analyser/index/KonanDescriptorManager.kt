@@ -41,21 +41,21 @@ class KonanDescriptorManager : ApplicationComponent {
   private val stubCache = ContainerUtil.createConcurrentSoftValueMap<VirtualFile, StubTree>()
 
   fun getDescriptor(file: VirtualFile, specifics: LanguageVersionSettings): ModuleDescriptorImpl {
-    val cache = descriptorCache.computeIfAbsent(specifics, {
+    val cache = descriptorCache.computeIfAbsent(specifics) {
       ContainerUtil.createConcurrentSoftValueMap()
-    })
+    }
 
-    return cache.computeIfAbsent(file, {
+    return cache.computeIfAbsent(file) {
       val reader = LibraryReaderImpl(File(file.path), currentAbiVersion)
       reader.moduleDescriptor(specifics)
-    })
+    }
   }
 
   fun parsePackageFragment(file: VirtualFile): KonanLinkData.LinkDataPackageFragment {
-    return protoCache.computeIfAbsent(file, {
+    return protoCache.computeIfAbsent(file) {
       val bytes = file.contentsToByteArray(false)
       org.jetbrains.kotlin.backend.konan.serialization.parsePackageFragment(bytes)
-    })
+    }
   }
 
   fun getStub(file: VirtualFile): StubTree? {

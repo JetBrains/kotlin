@@ -98,12 +98,8 @@ class KonanProjectResolver : AbstractProjectResolverExtension() {
       val moduleData = ideModule.data
       for (path in libraryPaths) {
         val library = LibraryData(moduleData.owner, path.fileName.toString())
-        if (isDirectory(path)) {
-          library.addPath(LibraryPathType.BINARY, path.resolve("linkdata").toAbsolutePath().toString())
-        }
-        else {
-          library.addPath(LibraryPathType.BINARY, path.toString() + "!/linkdata")
-        }
+        library.addPath(LibraryPathType.BINARY, if(isDirectory(path)) path.toAbsolutePath().toString() else path.toString())
+
         val data = LibraryDependencyData(moduleData, library, LibraryLevel.MODULE)
         ideModule.createChild(ProjectKeys.LIBRARY_DEPENDENCY, data)
       }
