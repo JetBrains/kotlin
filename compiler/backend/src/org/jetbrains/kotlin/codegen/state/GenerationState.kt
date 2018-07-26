@@ -229,10 +229,13 @@ class GenerationState private constructor(
 
     val shouldInlineConstVals = languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
-    val constructorCallNormalizationMode = configuration.get(
-        JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
-        JVMConstructorCallNormalizationMode.DEFAULT
-    )
+    val constructorCallNormalizationMode =
+        configuration.get(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE) ?: run {
+            if (languageVersionSettings.supportsFeature(LanguageFeature.NormalizeConstructorCalls))
+                JVMConstructorCallNormalizationMode.ENABLE
+            else
+                JVMConstructorCallNormalizationMode.DISABLE
+        }
 
     val jvmDefaultMode = languageVersionSettings.getFlag(AnalysisFlag.jvmDefaultMode)
 

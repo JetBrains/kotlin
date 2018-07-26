@@ -82,6 +82,7 @@ enum class LanguageFeature(
     FunctionTypesWithBigArity(KOTLIN_1_3, sinceApiVersion = ApiVersion.KOTLIN_1_3),
     RestrictRetentionForExpressionAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     NoConstantValueAttributeForNonConstVals(KOTLIN_1_3, kind = BUG_FIX),
+    NormalizeConstructorCalls(KOTLIN_1_3),
 
     RestrictReturnStatementTarget(KOTLIN_1_4, kind = BUG_FIX),
 

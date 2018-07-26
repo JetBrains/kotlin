@@ -112,7 +112,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         valueDescription = "{disable|enable}",
         description = "Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable"
     )
-    var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
+    var constructorCallNormalizationMode: String? by FreezableVar(null)
 
     @Argument(
         value = "-Xassertions", valueDescription = "{always-enable|always-disable|jvm|legacy}",

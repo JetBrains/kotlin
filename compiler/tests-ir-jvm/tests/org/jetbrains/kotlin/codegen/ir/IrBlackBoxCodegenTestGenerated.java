@@ -4215,6 +4215,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFunInSuperConstructorCallWithEnabledNormalization.kt");
         }
 
+        @TestMetadata("loopInInlineFunInSuperConstructorCallWithEnabledNormalizationSince13.kt")
+        public void testLoopInInlineFunInSuperConstructorCallWithEnabledNormalizationSince13() throws Exception {
+            runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFunInSuperConstructorCallWithEnabledNormalizationSince13.kt");
+        }
+
         @TestMetadata("loopInInlineFunWithEnabledNormalization.kt")
         public void testLoopInInlineFunWithEnabledNormalization() throws Exception {
             runTest("compiler/testData/codegen/box/constructorCall/loopInInlineFunWithEnabledNormalization.kt");
