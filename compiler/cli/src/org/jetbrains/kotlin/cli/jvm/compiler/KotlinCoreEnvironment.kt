@@ -66,6 +66,8 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
+import org.jetbrains.kotlin.cli.common.config.ContentRoot
+import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
@@ -84,7 +86,10 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
@@ -259,7 +264,7 @@ class KotlinCoreEnvironment private constructor(
         )
 
         val (initialRoots, javaModules) =
-                classpathRootsResolver.convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
+                classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
         this.initialRoots = initialRoots
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {

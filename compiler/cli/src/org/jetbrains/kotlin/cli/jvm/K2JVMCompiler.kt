@@ -21,6 +21,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -411,21 +412,21 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         private fun configureContentRoots(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration) {
             val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             for (path in arguments.classpath?.split(File.pathSeparatorChar).orEmpty()) {
-                configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(path)))
+                configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(path)))
             }
 
             for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
-                configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
+                configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
             }
 
             val isModularJava = configuration.get(JVMConfigurationKeys.JDK_HOME).let { it != null && CoreJrtFileSystem.isModularJdk(it) }
             fun addRoot(moduleName: String, libraryName: String, getLibrary: (KotlinPaths) -> File, noLibraryArgument: String) {
                 val file = getLibraryFromHome(paths, getLibrary, libraryName, messageCollector, noLibraryArgument) ?: return
                 if (isModularJava) {
-                    configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                    configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
                     configuration.add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, moduleName)
                 } else {
-                    configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+                    configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
                 }
             }
 

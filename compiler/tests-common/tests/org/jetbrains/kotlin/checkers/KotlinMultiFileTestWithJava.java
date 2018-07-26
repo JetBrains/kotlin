@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.checkers;
 
 import com.intellij.openapi.util.io.FileUtil;
-import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;

@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
+import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
-import org.jetbrains.kotlin.config.ContentRoot
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule

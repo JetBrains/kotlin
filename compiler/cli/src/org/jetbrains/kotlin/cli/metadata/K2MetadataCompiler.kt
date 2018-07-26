@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.metadata
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion

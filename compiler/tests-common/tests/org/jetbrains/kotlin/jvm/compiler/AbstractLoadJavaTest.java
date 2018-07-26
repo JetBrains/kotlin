@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
+import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;

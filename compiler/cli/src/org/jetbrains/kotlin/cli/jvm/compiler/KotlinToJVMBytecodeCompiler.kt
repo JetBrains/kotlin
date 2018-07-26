@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
@@ -42,7 +43,10 @@ import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -197,7 +201,7 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             for (classpathRoot in module.getClasspathRoots()) {
                 configuration.add(
-                    JVMConfigurationKeys.CONTENT_ROOTS,
+                    CLIConfigurationKeys.CONTENT_ROOTS,
                     if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))
                 )
             }
@@ -321,7 +325,7 @@ object KotlinToJVMBytecodeCompiler {
         val state = analyzeAndGenerate(environment) ?: return null
 
         try {
-            val urls = environment.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
+            val urls = environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
                 when (root) {
                     is JvmModulePathRoot -> root.file // TODO: only add required modules
                     is JvmClasspathRoot -> root.file

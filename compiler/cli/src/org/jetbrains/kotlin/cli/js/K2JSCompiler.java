@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
+import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;

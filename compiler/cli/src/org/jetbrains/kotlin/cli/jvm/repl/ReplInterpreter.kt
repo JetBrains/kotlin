@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.PrintWriter
 import java.net.URLClassLoader
@@ -41,7 +41,7 @@ class ReplInterpreter(
 
     private val previousIncompleteLines = arrayListOf<String>()
 
-    private val classpathRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
+    private val classpathRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
         when (root) {
             is JvmModulePathRoot -> root.file // TODO: only add required modules
             is JvmClasspathRoot -> root.file
