@@ -422,13 +422,16 @@ class IncrementalJvmCompilerRunner(
         val compiler = K2JVMCompiler()
         val outputDir = args.destinationAsFile
         val classpath = args.classpathAsList
-        val moduleFile = makeModuleFile(args.moduleName!!,
-                isTest = false,
-                outputDir = outputDir,
-                sourcesToCompile = sourcesToCompile,
-                javaSourceRoots = javaSourceRoots,
-                classpath = classpath,
-                friendDirs = listOf())
+        val moduleFile = makeModuleFile(
+            args.moduleName!!,
+            isTest = false,
+            outputDir = outputDir,
+            sourcesToCompile = sourcesToCompile,
+            commonSources = args.commonSources?.map(::File).orEmpty(),
+            javaSourceRoots = javaSourceRoots,
+            classpath = classpath,
+            friendDirs = listOf()
+        )
         val destination = args.destination
         args.destination = null
         args.buildFile = moduleFile.absolutePath

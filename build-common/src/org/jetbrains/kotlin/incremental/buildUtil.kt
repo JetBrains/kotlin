@@ -39,6 +39,7 @@ fun makeModuleFile(
         isTest: Boolean,
         outputDir: File,
         sourcesToCompile: Iterable<File>,
+        commonSources: Iterable<File>,
         javaSourceRoots: Iterable<JvmSourceRoot>,
         classpath: Iterable<File>,
         friendDirs: Iterable<File>
@@ -53,6 +54,7 @@ fun makeModuleFile(
             sourcesToCompile.map { it.absoluteFile },
             javaSourceRoots,
             classpath,
+            commonSources.map { it.absoluteFile },
             null,
             "java-production",
             isTest,

@@ -77,13 +77,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         val pluginLoadResult = loadPlugins(arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
+        val commonSources = arguments.commonSources?.toSet().orEmpty()
         if (!arguments.script && arguments.buildFile == null) {
             for (arg in arguments.freeArgs) {
                 val file = File(arg)
                 if (file.extension == JavaFileType.DEFAULT_EXTENSION) {
                     configuration.addJavaSourceRoot(file)
                 } else {
-                    configuration.addKotlinSourceRoot(arg)
+                    configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources)
                     if (file.isDirectory) {
                         configuration.addJavaSourceRoot(file)
                     }
