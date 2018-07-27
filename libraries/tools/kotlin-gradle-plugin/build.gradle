@@ -78,7 +78,6 @@ dependencies {
     testCompile project(':kotlin-compiler-runner')
     testCompile project(':kotlin-test::kotlin-test-junit')
     testCompile "junit:junit:4.12"
-    testCompile "nl.jqno.equalsverifier:equalsverifier:2.1.5"
     testCompileOnly project(':kotlin-reflect-api')
     testCompileOnly project(':kotlin-annotation-processing')
     testCompileOnly project(':kotlin-annotation-processing-gradle')
