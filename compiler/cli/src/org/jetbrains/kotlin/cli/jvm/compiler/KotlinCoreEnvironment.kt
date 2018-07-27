@@ -32,6 +32,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
@@ -90,10 +91,7 @@ import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
-import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -218,9 +216,7 @@ class KotlinCoreEnvironment private constructor(
             extension.updateConfiguration(configuration)
         }
 
-        sourceFiles += CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration) { message ->
-            report(ERROR, message)
-        }
+        sourceFiles += createKtFiles(project)
         sourceFiles.sortBy { it.virtualFile.path }
 
         // If not disabled explicitly, we should always support at least the standard script definition
@@ -416,6 +412,52 @@ class KotlinCoreEnvironment private constructor(
 
     fun getSourceFiles(): List<KtFile> = sourceFiles
 
+    private fun createKtFiles(project: Project): List<KtFile> {
+        val sourceRoots = getSourceRootsCheckingForDuplicates()
+
+        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+        val psiManager = PsiManager.getInstance(project)
+
+        val processedFiles = hashSetOf<VirtualFile>()
+        val result = mutableListOf<KtFile>()
+
+        val virtualFileCreator = PreprocessedFileCreator(project)
+
+        for (sourceRootPath in sourceRoots) {
+            val vFile = localFileSystem.findFileByPath(sourceRootPath)
+            if (vFile == null) {
+                val message = "Source file or directory not found: $sourceRootPath"
+
+                val buildFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE)
+                if (buildFilePath != null && Logger.isInitialized()) {
+                    LOG.warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
+                }
+
+                report(ERROR, message)
+                continue
+            }
+
+            if (!vFile.isDirectory && vFile.fileType != KotlinFileType.INSTANCE) {
+                report(ERROR, "Source entry is not a Kotlin file: $sourceRootPath")
+                continue
+            }
+
+            for (file in File(sourceRootPath).walkTopDown()) {
+                if (!file.isFile) continue
+
+                val virtualFile = localFileSystem.findFileByPath(file.absolutePath)?.let(virtualFileCreator::create)
+                if (virtualFile != null && processedFiles.add(virtualFile)) {
+                    val psiFile = psiManager.findFile(virtualFile)
+                    if (psiFile is KtFile) {
+                        result.add(psiFile)
+                    }
+                }
+            }
+        }
+
+        return result
+    }
+
     private fun report(severity: CompilerMessageSeverity, message: String) {
         configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(severity, message)
     }
@@ -424,6 +466,8 @@ class KotlinCoreEnvironment private constructor(
         init {
             setCompatibleBuild()
         }
+
+        private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
 
         private val APPLICATION_LOCK = Object()
         private var ourApplicationEnvironment: JavaCoreApplicationEnvironment? = null

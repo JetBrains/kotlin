@@ -138,9 +138,9 @@ object KotlinToJVMBytecodeCompiler {
 
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            val ktFiles = CompileEnvironmentUtil.getKtFiles(
-                environment.project, getAbsolutePaths(buildFile, module), projectConfiguration
-            ) { path -> throw IllegalStateException("Should have been checked before: $path") }
+            val moduleSourcePaths = getAbsolutePaths(buildFile, module)
+            val ktFiles = environment.getSourceFiles().filter { file -> file.virtualFilePath in moduleSourcePaths }
+
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
             val moduleConfiguration = projectConfiguration.copy().apply {
