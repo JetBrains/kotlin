@@ -25,14 +25,14 @@ class KaptModelIT : BaseGradleIT() {
         val testSourceSet = kaptModel.kaptSourceSets.find { it.name == "test" }!!
 
         assertEquals(KaptSourceSet.KaptSourceSetType.PRODUCTION, mainSourceSet.type)
-        assertTrue(mainSourceSet.generatedSourcesDirectory.absolutePath.contains("build/generated/source/kapt/main"))
-        assertTrue(mainSourceSet.generatedKotlinSourcesDirectory.absolutePath.contains("build/generated/source/kaptKotlin/main"))
-        assertTrue(mainSourceSet.generatedClassesDirectory.absolutePath.contains("tmp/kapt3/classes/main"))
+        assertEquals(project.projectDir.resolve("build/generated/source/kapt/main"), mainSourceSet.generatedSourcesDirectory)
+        assertEquals(project.projectDir.resolve("build/generated/source/kaptKotlin/main"), mainSourceSet.generatedKotlinSourcesDirectory)
+        assertEquals(project.projectDir.resolve("build/tmp/kapt3/classes/main"), mainSourceSet.generatedClassesDirectory)
 
         assertEquals(KaptSourceSet.KaptSourceSetType.TEST, testSourceSet.type)
-        assertTrue(testSourceSet.generatedSourcesDirectory.absolutePath.contains("build/generated/source/kapt/test"))
-        assertTrue(testSourceSet.generatedKotlinSourcesDirectory.absolutePath.contains("build/generated/source/kaptKotlin/test"))
-        assertTrue(testSourceSet.generatedClassesDirectory.absolutePath.contains("tmp/kapt3/classes/test"))
+        assertEquals(project.projectDir.resolve("build/generated/source/kapt/test"), testSourceSet.generatedSourcesDirectory)
+        assertEquals(project.projectDir.resolve("build/generated/source/kaptKotlin/test"), testSourceSet.generatedKotlinSourcesDirectory)
+        assertEquals(project.projectDir.resolve("build/tmp/kapt3/classes/test"), testSourceSet.generatedClassesDirectory)
     }
 
     @Test
