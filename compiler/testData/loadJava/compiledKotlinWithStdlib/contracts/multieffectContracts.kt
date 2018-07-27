@@ -1,9 +1,10 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +ReadDeserializedContracts
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
 package test
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 fun twoReturnsValue(b: Boolean) {
     contract {
