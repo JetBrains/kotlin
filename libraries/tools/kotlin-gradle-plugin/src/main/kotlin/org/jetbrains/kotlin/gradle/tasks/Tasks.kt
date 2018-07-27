@@ -27,14 +27,16 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
+import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.classpathAsList
+import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
@@ -188,6 +190,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Internal
     internal var sourceSetName: String by Delegates.notNull()
+
+    @get:InputFiles
+    internal var commonSourceSet: Iterable<File> = emptyList()
 
     @get:Input
     internal val moduleName: String
@@ -385,11 +390,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         try {
             val exitCode = compilerRunner.runJvmCompiler(
-                    sourceRoots.kotlinSourceFiles,
-                    sourceRoots.javaSourceRoots,
-                    javaPackagePrefix,
-                    args,
-                    environment)
+                sourceRoots.kotlinSourceFiles,
+                commonSourceSet.toList(),
+                sourceRoots.javaSourceRoots,
+                javaPackagePrefix,
+                args,
+                environment
+            )
 
             disableMultiModuleICIfNeeded()
             processCompilerExitCode(exitCode)
@@ -536,7 +543,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
             }
         }
 
-        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, environment)
+        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
         throwGradleExceptionIfError(exitCode)
     }
 }

@@ -179,7 +179,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
                 }
             }
 
-            configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath()));
+            configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath(), false));
             configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
 
             ScriptingCompilerConfigurationExtensionKt.configureScriptDefinitions(

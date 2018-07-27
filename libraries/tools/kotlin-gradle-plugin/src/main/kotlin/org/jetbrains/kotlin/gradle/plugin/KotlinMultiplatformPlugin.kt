@@ -154,7 +154,9 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 .filterIsInstance<AbstractKotlinCompile<*>>()
                 .single { it.sourceSetName == commonSourceSet.name }
 
-            platformTask.source(getKotlinSourceDirectorySetSafe(commonSourceSet))
+            val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)!!
+            platformTask.source(commonSources)
+            platformTask.commonSourceSet = commonSources
         }
     }
 

@@ -180,6 +180,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var metadataVersion: String? by FreezableVar(null)
 
+    @Argument(
+        value = "-Xcommon-sources",
+        valueDescription = "<path>",
+        description = "Sources of the common module that need to be compiled together with this module in the multi-platform mode.\n" +
+                "Should be a subset of sources passed as free arguments"
+    )
+    var commonSources: Array<String>? by FreezableVar(null)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
