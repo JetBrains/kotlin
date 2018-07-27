@@ -82,6 +82,10 @@ class IrLazyClass(
                 generateMemberStubs(descriptor.defaultType.memberScope, it)
                 generateMemberStubs(descriptor.staticScope, it)
             }
+        }.also {
+            it.forEach {
+                it.parent = this //initialize parent for non lazy cases
+            }
         }
     }
 
