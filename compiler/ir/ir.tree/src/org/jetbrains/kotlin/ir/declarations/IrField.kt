@@ -20,6 +20,7 @@ interface IrField : IrSymbolDeclaration<IrFieldSymbol> {
     val visibility: Visibility
     val isFinal: Boolean
     val isExternal: Boolean
+    val isStatic: Boolean
 
     var initializer: IrExpressionBody?
 }

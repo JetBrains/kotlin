@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<T> flags:
     BLOCK_BODY
   PROPERTY name:test1 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:(kotlin.Int) -> kotlin.Unit visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:(kotlin.Int) -> kotlin.Unit visibility:public flags:final,static
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'topLevel1(Int): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.Int, kotlin.Unit> origin=null
           <reified T>: kotlin.Int
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): (Int) -> Unit'
           GET_FIELD 'test1: (Int) -> Unit' type=(kotlin.Int) -> kotlin.Unit origin=null
   PROPERTY name:test2 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:(kotlin.collections.List<kotlin.String>) -> kotlin.Unit visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:(kotlin.collections.List<kotlin.String>) -> kotlin.Unit visibility:public flags:final,static
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'topLevel2(List<String>): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null
           <reified T>: kotlin.String
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
         RETURN type=kotlin.Nothing from='<get-test2>(): (List<String>) -> Unit'
           GET_FIELD 'test2: (List<String>) -> Unit' type=(kotlin.collections.List<kotlin.String>) -> kotlin.Unit origin=null
   PROPERTY name:test3 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:(kotlin.Int) -> kotlin.Unit visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:(kotlin.Int) -> kotlin.Unit visibility:public flags:final,static
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'objectMember(Int): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.Int, kotlin.Unit> origin=null
           <reified T>: kotlin.Int
