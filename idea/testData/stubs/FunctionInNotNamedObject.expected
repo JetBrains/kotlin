@@ -3,5 +3,5 @@ PsiJetFileStubImpl[package=]
   IMPORT_LIST
   OBJECT_DECLARATION[fqName=<no name>, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
     CLASS_BODY
-      FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=testing]
+      FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testing]
         VALUE_PARAMETER_LIST

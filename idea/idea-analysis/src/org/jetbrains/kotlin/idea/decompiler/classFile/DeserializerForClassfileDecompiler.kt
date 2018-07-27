@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
@@ -63,11 +64,16 @@ class DeserializerForClassfileDecompiler(
         val annotationAndConstantLoader =
                 BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, storageManager, classFinder)
 
+        val configuration = object : DeserializationConfiguration {
+            override val readDeserializedContracts: Boolean
+                get() = true
+        }
+
         deserializationComponents = DeserializationComponents(
-                storageManager, moduleDescriptor, DeserializationConfiguration.Default, classDataFinder, annotationAndConstantLoader,
+                storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader,
                 packageFragmentProvider, ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, JavaFlexibleTypeDeserializer, emptyList(), notFoundClasses,
-                ContractDeserializer.DEFAULT,
+                ContractDeserializerImpl(configuration),
                 extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY
         )
     }

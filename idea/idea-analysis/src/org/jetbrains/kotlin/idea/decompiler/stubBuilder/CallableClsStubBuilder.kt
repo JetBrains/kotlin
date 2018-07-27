@@ -180,7 +180,8 @@ private class FunctionClsStubBuilder(
                 isExtension = functionProto.hasReceiver(),
                 hasBlockBody = true,
                 hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
-                hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty()
+                hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
+                hasContract = functionProto.hasContract()
         )
     }
 }
