@@ -26,7 +26,6 @@ dependencies {
 
     testCompile gradleApi()
     testCompile "junit:junit:4.12"
-    testCompile "nl.jqno.equalsverifier:equalsverifier:2.1.5"
 }
 
 evaluationDependsOn(":kotlin-sam-with-receiver-compiler-plugin")
