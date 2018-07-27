@@ -181,7 +181,7 @@ private class FunctionClsStubBuilder(
                 hasBlockBody = true,
                 hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
                 hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
-                hasContract = functionProto.hasContract()
+                mayHaveContract = functionProto.hasContract()
         )
     }
 }
