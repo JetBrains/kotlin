@@ -286,7 +286,8 @@ abstract class BaseGradleIT {
         val options = defaultBuildOptions()
         val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}")
         options.androidGradlePluginVersion?.let { arguments.add("-Pandroid_tools_version=$it") }
-        val model = connection.action(ModelFetcherBuildAction(modelType)).withArguments(arguments).run()
+        val env = createEnvironmentVariablesMap(options)
+        val model = connection.action(ModelFetcherBuildAction(modelType)).withArguments(arguments).setEnvironmentVariables(env).run()
         connection.close()
         return model
     }
