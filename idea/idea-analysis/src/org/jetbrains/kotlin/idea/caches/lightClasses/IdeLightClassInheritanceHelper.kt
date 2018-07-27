@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
 import org.jetbrains.kotlin.asJava.classes.defaultJavaAncestorQualifiedName
+import org.jetbrains.kotlin.idea.caches.resolve.util.isInDumbMode
 import org.jetbrains.kotlin.idea.search.PsiBasedClassResolver
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
@@ -34,6 +35,8 @@ class IdeLightClassInheritanceHelper : LightClassInheritanceHelper {
         baseClass: PsiClass,
         checkDeep: Boolean
     ): ImpreciseResolveResult {
+        if (baseClass.project.isInDumbMode()) return NO_MATCH
+
         val classOrObject = lightClass.kotlinOrigin ?: return UNSURE
         val entries = classOrObject.superTypeListEntries
         val hasSuperClass = entries.any { it is KtSuperTypeCallEntry }
