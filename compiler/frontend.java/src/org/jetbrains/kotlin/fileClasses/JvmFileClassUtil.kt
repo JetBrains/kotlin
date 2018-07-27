@@ -122,7 +122,7 @@ val KtFile.javaFileFacadeFqName: FqName
         }
     }
 
-val LOG = Logger.getInstance("JvmFileClassUtil")
+private val LOG = Logger.getInstance("JvmFileClassUtil")
 
 fun KtDeclaration.isInsideJvmMultifileClassFile() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
         containingKtFile,
