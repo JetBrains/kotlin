@@ -223,7 +223,7 @@ class KotlinJsCompilation(
     target: KotlinTarget,
     name: String,
     override val output: SourceSetOutput
-) : AbstractKotlinCompilation(target, name)
+) : AbstractKotlinCompilationToRunnableFiles(target, name)
 
 class KotlinCommonCompilation(
     target: KotlinTarget,

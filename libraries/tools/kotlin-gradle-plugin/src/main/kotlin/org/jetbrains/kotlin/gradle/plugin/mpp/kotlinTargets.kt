@@ -11,6 +11,7 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -36,10 +37,20 @@ abstract class AbstractKotlinTarget (
 
     override fun toString(): String = "target $name ($platformType)"
 
-    override fun createUsageContexts(): Set<UsageContext> = setOf(
-        KotlinPlatformUsageContext(project, this, KotlinSoftwareComponent.kotlinApiUsage(project), apiElementsConfigurationName),
-        KotlinPlatformUsageContext(project, this, KotlinSoftwareComponent.kotlinRuntimeUsage(project), runtimeElementsConfigurationName)
-    )
+    override fun createUsageContexts(): Set<UsageContext> =
+        setOf(
+            KotlinPlatformUsageContext(
+                project, this, KotlinSoftwareComponent.kotlinApiUsage(project), apiElementsConfigurationName
+            )
+        ) + if (compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME) is KotlinCompilationToRunnableFiles)
+            setOf(
+                KotlinPlatformUsageContext(
+                    project,
+                    this,
+                    KotlinSoftwareComponent.kotlinRuntimeUsage(project),
+                    runtimeElementsConfigurationName
+                )
+            ) else emptyList()
 }
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
