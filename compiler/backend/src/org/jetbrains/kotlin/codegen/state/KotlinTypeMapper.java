@@ -780,8 +780,9 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
-        if (descriptor instanceof ConstructorDescriptor) {
+    public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall, @Nullable OwnerKind kind) {
+        // we generate constructors of inline classes as usual functions
+        if (descriptor instanceof ConstructorDescriptor && kind != OwnerKind.ERASED_INLINE_CLASS) {
             JvmMethodSignature method = mapSignatureSkipGeneric(descriptor.getOriginal());
             Type owner = mapOwner(descriptor);
             FunctionDescriptor originalDescriptor = descriptor.getOriginal();
@@ -948,6 +949,11 @@ public class KotlinTypeMapper {
         );
     }
 
+    @NotNull
+    public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
+        return mapToCallableMethod(descriptor, superCall, null);
+    }
+
     public static boolean isAccessor(@Nullable CallableMemberDescriptor descriptor) {
         return descriptor instanceof AccessorForCallableDescriptor<?> ||
                 descriptor instanceof AccessorForCompanionObjectInstanceFieldDescriptor;
@@ -978,7 +984,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    public String mapFunctionName(@NotNull FunctionDescriptor descriptor) {
+    public String mapFunctionName(@NotNull FunctionDescriptor descriptor, @Nullable OwnerKind kind) {
         if (!(descriptor instanceof JavaCallableMemberDescriptor)) {
             String platformName = getJvmName(descriptor);
             if (platformName != null) return platformName;
@@ -1020,6 +1026,9 @@ public class KotlinTypeMapper {
         }
         else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
             return OperatorNameConventions.INVOKE.asString();
+        }
+        else if (OwnerKind.ERASED_INLINE_CLASS == kind && descriptor instanceof ConstructorDescriptor) {
+            return JvmAbi.ERASED_INLINE_CONSTRUCTOR_NAME;
         }
         else {
             return mangleMemberNameIfRequired(descriptor.getName().asString(), descriptor);
@@ -1222,7 +1231,14 @@ public class KotlinTypeMapper {
                 writeParameter(sw, JvmMethodParameterKind.CONSTRUCTOR_MARKER, DEFAULT_CONSTRUCTOR_MARKER);
             }
 
-            writeVoidReturn(sw);
+            if (OwnerKind.ERASED_INLINE_CLASS == kind) {
+                sw.writeReturnType();
+                sw.writeAsmType(mapType(((ClassConstructorDescriptor) f).getContainingDeclaration()));
+                sw.writeReturnTypeEnd();
+            }
+            else {
+                writeVoidReturn(sw);
+            }
         }
         else {
             CallableMemberDescriptor directMember = DescriptorUtils.getDirectMember(f);
@@ -1263,7 +1279,7 @@ public class KotlinTypeMapper {
             sw.writeReturnTypeEnd();
         }
 
-        JvmMethodGenericSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
+        JvmMethodGenericSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f, kind));
 
         if (kind != OwnerKind.DEFAULT_IMPLS && kind != OwnerKind.ERASED_INLINE_CLASS && !hasSpecialBridge) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);

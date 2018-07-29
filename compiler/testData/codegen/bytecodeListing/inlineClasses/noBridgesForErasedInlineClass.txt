@@ -6,6 +6,7 @@ public interface A {
 @kotlin.Metadata
 public final static class Foo$Erased {
     public final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
+    public static method constructor(p0: long): long
     public static method foo(p0: long, p1: long): void
 }
 

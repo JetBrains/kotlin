@@ -25,7 +25,8 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
-    public static final String ERASED_INLINE_CLASS_NAME = "Erased";
+    public static final String ERASED_INLINE_CONSTRUCTOR_NAME = "constructor";
+    private static final String ERASED_INLINE_CLASS_NAME = "Erased";
     public static final FqName JVM_FIELD_ANNOTATION_FQ_NAME = new FqName("kotlin.jvm.JvmField");
 
     /**

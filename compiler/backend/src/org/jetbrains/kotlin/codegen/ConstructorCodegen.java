@@ -174,6 +174,13 @@ public class ConstructorCodegen {
 
         markLineNumberForConstructor(constructorDescriptor, primaryConstructor, codegen);
 
+        if (OwnerKind.ERASED_INLINE_CLASS == kind) {
+            Type t = typeMapper.mapType(constructorDescriptor.getContainingDeclaration());
+            iv.load(0, t);
+            iv.areturn(t);
+            return;
+        }
+
         generateClosureInitialization(iv);
 
         generateDelegatorToConstructorCall(
@@ -237,7 +244,12 @@ public class ConstructorCodegen {
             codegen.gen(constructor.getBodyExpression(), Type.VOID_TYPE);
         }
 
-        iv.visitInsn(RETURN);
+        if (OwnerKind.ERASED_INLINE_CLASS == kind) {
+            iv.areturn(typeMapper.mapType(constructorDescriptor.getContainingDeclaration()));
+        }
+        else {
+            iv.visitInsn(RETURN);
+        }
     }
 
     private void genCallToDelegatorByExpressionSpecifier(
@@ -278,13 +290,16 @@ public class ConstructorCodegen {
             @NotNull ClassConstructorDescriptor constructorDescriptor,
             @NotNull ResolvedCall<ConstructorDescriptor> delegationConstructorCall
     ) {
-        iv.load(0, OBJECT_TYPE);
+        if (OwnerKind.ERASED_INLINE_CLASS != kind) {
+            iv.load(0, OBJECT_TYPE);
+        }
+
         ConstructorDescriptor delegateConstructor = SamCodegenUtil.resolveSamAdapter(codegen.getConstructorDescriptor(delegationConstructorCall));
 
         KotlinTypeMapper typeMapper = state.getTypeMapper();
 
-        CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor, false);
-        CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor, false);
+        CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor, false, kind);
+        CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor, false, kind);
 
         List<JvmMethodParameterSignature> delegatingParameters = delegateConstructorCallable.getValueParameters();
         List<JvmMethodParameterSignature> parameters = callable.getValueParameters();
