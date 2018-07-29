@@ -82,9 +82,6 @@ class JvmAnnotationsTargetNonExistentAccessorChecker : DeclarationChecker {
     }
 
     private fun isSpecialStaticProperty(descriptor: MemberDescriptor): Boolean {
-        return descriptor.hasJvmStaticAnnotation() ||
-                descriptor.hasJvmFieldAnnotation() ||
-                (descriptor is VariableDescriptor && descriptor.isConst)
-
+        return descriptor.hasJvmFieldAnnotation() || (descriptor is VariableDescriptor && descriptor.isConst)
     }
 }

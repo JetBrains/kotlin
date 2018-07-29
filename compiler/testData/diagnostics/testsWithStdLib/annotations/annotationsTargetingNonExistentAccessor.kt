@@ -77,12 +77,16 @@ class Statics {
         const val x1 = ""
 
         @JvmStatic
-        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
+        @get:Ann
         val x2 = ""
 
         @JvmStatic
         <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
         private val x3 = ""
+
+        @JvmStatic
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
+        private val x4 = ""
     }
 }
 
