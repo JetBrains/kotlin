@@ -35,6 +35,13 @@ public inline fun Char.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(th
 @kotlin.internal.InlineOnly
 public inline fun Char.isDigit(): Boolean = Character.isDigit(this)
 
+/**
+ * Returns the numeric value of the letter.
+ *
+ * @sample samples.text.Char.numericValue
+ */
+@kotlin.internal.InlineOnly
+public inline fun Char.numericValue(): Int = Character.getNumericValue(this)
 
 /**
  * Returns `true` if this character (Unicode code point) should be regarded as an ignorable

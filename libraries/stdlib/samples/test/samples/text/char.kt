@@ -124,4 +124,12 @@ class Chars {
         assertTrue('a'.equals('A', true))
     }
 
+    @Sample
+    fun numericValue() {
+        val numberOne = '1'
+        assertEquals(1, numberOne.numericValue())
+
+        val letterA = 'A'
+        assertEquals(10, letterA.numericValue())
+    }
 }
