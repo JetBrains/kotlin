@@ -28,7 +28,7 @@ class ForEachParameterNotUsed : AbstractKotlinInspection() {
 
                 if (lambda.bodyExpression?.usesDescriptor(iterableParameter) != true) {
                     holder.registerProblem(
-                        lambda,
+                        it.calleeExpression!!,
                         "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                     )
