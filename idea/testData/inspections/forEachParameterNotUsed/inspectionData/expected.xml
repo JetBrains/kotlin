@@ -23,4 +23,12 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Iterated elements are not used in forEach</problem_class>
     <description>Loop parameter 'it' is unused</description>
   </problem>
+  <problem>
+    <file>correctReference.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/correctReference.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Iterated elements are not used in forEach</problem_class>
+    <description>Loop parameter 'it' is unused</description>
+  </problem>
 </problems>

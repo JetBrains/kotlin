@@ -10,28 +10,38 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
 class ForEachParameterNotUsed : AbstractKotlinInspection() {
+    companion object {
+        private val COLLECTIONS_FOREACH_FQNAME = FqName("kotlin.collections.forEach")
+        private val SEQUENCES_FOREACH_FQNAME = FqName("kotlin.sequences.forEach")
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor {
-            if (it.calleeExpression?.text == "forEach") {
-                val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression() ?: return@callExpressionVisitor
-                val descriptor = lambda.analyze()[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
-                val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
+            when(it.getCallableDescriptor()?.fqNameOrNull()) {
+                COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
+                    val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression() ?: return@callExpressionVisitor
+                    val descriptor = lambda.analyze()[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
+                    val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
 
-                if (lambda.bodyExpression?.usesDescriptor(iterableParameter) != true) {
-                    holder.registerProblem(
-                        it.calleeExpression!!,
-                        "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                    )
+                    if (lambda.bodyExpression?.usesDescriptor(iterableParameter) != true && it.calleeExpression != null) {
+                        holder.registerProblem(
+                            it.calleeExpression!!,
+                            "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
+                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                        )
+                    }
                 }
             }
         }
