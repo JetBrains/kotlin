@@ -20,6 +20,7 @@ import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
 import com.intellij.util.CommonProcessors
 import com.intellij.util.text.VersionComparatorUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -37,6 +38,8 @@ class KotlinMigrationProjectComponent(val project: Project) {
     private var old: MigrationState? = null
     private var new: MigrationState? = null
 
+    private var lastMigrationInfo: MigrationInfo? = null
+
     init {
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
@@ -45,11 +48,21 @@ class KotlinMigrationProjectComponent(val project: Project) {
     }
 
     @Synchronized
+    @TestOnly
+    fun requestLastMigrationInfo(): MigrationInfo? {
+        val temp = lastMigrationInfo
+        lastMigrationInfo = null
+        return temp
+    }
+
+    @Synchronized
     fun onImportAboutToStart() {
         if (!CodeMigrationToggleAction.isEnabled(project) || !hasChangesInProjectFiles(project)) {
             old = null
             return
         }
+
+        lastMigrationInfo = null
 
         old = MigrationState.build(project)
     }
@@ -70,6 +83,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
         new = null
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
+            lastMigrationInfo = migrationInfo
             return
         }
 
@@ -165,7 +179,24 @@ data class MigrationInfo(
     val newApiVersion: ApiVersion,
     val oldLanguageVersion: LanguageVersion,
     val newLanguageVersion: LanguageVersion
-)
+) {
+    companion object {
+        fun create(
+            oldStdlibVersion: String,
+            oldApiVersion: ApiVersion,
+            oldLanguageVersion: LanguageVersion,
+            newStdlibVersion: String = oldStdlibVersion,
+            newApiVersion: ApiVersion = oldApiVersion,
+            newLanguageVersion: LanguageVersion = oldLanguageVersion
+        ): MigrationInfo {
+            return MigrationInfo(
+                oldStdlibVersion, newStdlibVersion,
+                oldApiVersion, newApiVersion,
+                oldLanguageVersion, newLanguageVersion
+            )
+        }
+    }
+}
 
 fun MigrationInfo.isLanguageVersionUpdate(old: LanguageVersion, new: LanguageVersion): Boolean {
     return oldLanguageVersion <= old && newLanguageVersion >= new
