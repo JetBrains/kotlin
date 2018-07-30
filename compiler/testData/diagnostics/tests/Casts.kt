@@ -17,7 +17,7 @@ fun test() : Unit {
 
   val <!UNUSED_VARIABLE!>s<!> = "" as Any
   ("" as String?)?.length
-  (data@("" as String?))?.length
+  (<!REDUNDANT_LABEL_WARNING!>data@<!>("" as String?))?.length
   (<!WRONG_ANNOTATION_TARGET!>@MustBeDocumented()<!>( "" as String?))?.length
   Unit
 }

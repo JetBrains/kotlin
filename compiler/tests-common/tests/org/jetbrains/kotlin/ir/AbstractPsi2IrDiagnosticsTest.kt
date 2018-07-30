@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -29,14 +30,18 @@ abstract class AbstractPsi2IrDiagnosticsTest : AbstractDiagnosticsTest() {
         testFiles: List<TestFile>,
         moduleFiles: Map<TestModule?, List<TestFile>>,
         moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
-        moduleBindings: Map<TestModule?, BindingContext>
+        moduleBindings: Map<TestModule?, BindingContext>,
+        languageVersionSettingsByModule: Map<TestModule?, LanguageVersionSettings>
     ) {
         val actualIrDump = StringBuilder()
         for (module in moduleFiles.keys) {
             val ktFiles = moduleFiles[module]?.mapNotNull { it.ktFile } ?: continue
             val moduleDescriptor = moduleDescriptors[module] ?: continue
             val moduleBindingContext = moduleBindings[module] ?: continue
-            val irModule = AbstractIrGeneratorTestCase.generateIrModule(ktFiles, moduleDescriptor, moduleBindingContext, true)
+            val languageVersionSettings = languageVersionSettingsByModule[module] ?: continue
+            val irModule = AbstractIrGeneratorTestCase.generateIrModule(
+                ktFiles, moduleDescriptor, moduleBindingContext, languageVersionSettings, true
+            )
             actualIrDump.append(irModule.dump())
         }
 

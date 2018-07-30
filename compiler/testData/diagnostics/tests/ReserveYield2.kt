@@ -5,8 +5,8 @@
 annotation class yield
 
 fun bar(p: Int) {
-    <!YIELD_IS_RESERVED!>yield<!>@ p
-    `yield`@ p
+    <!REDUNDANT_LABEL_WARNING!><!YIELD_IS_RESERVED!>yield<!>@<!> p
+    <!REDUNDANT_LABEL_WARNING!>`yield`@<!> p
 
     @<!YIELD_IS_RESERVED!>yield<!>() p
     @`yield`() p

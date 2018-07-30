@@ -23,10 +23,11 @@ class DeferredResultUnusedInspection(@JvmField var standardOnly: Boolean = true)
     callChecker = fun(resolvedCall, inspection): Boolean {
         if (inspection !is DeferredResultUnusedInspection) return false
         return if (inspection.standardOnly) {
-            resolvedCall.resultingDescriptor.fqNameOrNull() in fqNames
+            resolvedCall.resultingDescriptor.fqNameOrNull() in fqNamesAll
         } else {
             val returnTypeClassifier = resolvedCall.resultingDescriptor.returnType?.constructor?.declarationDescriptor
-            returnTypeClassifier?.importableFqName == deferred
+            val importableFqName = returnTypeClassifier?.importableFqName
+            importableFqName == deferred || importableFqName == deferredExperimental
         }
     }
 ) {
@@ -47,6 +48,12 @@ class DeferredResultUnusedInspection(@JvmField var standardOnly: Boolean = true)
 
         private val fqNames: Set<FqName> = shortNames.mapTo(mutableSetOf()) { FqName("$COROUTINE_PACKAGE.$it") }
 
+        private val fqNamesExperimental: Set<FqName> = shortNames.mapTo(mutableSetOf()) { FqName("$COROUTINE_EXPERIMENTAL_PACKAGE.$it") }
+
+        private val fqNamesAll = fqNames + fqNamesExperimental
+
         private val deferred = FqName("$COROUTINE_PACKAGE.Deferred")
+
+        private val deferredExperimental = FqName("$COROUTINE_EXPERIMENTAL_PACKAGE.Deferred")
     }
 }

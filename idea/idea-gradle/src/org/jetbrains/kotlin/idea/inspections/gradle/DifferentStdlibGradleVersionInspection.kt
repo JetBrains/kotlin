@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.inspections.gradle
 
-import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiFile
@@ -87,10 +86,4 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
             return null
         }
     }
-}
-
-internal fun DataNode<*>.getResolvedVersionByModuleData(groupId: String, libraryIds: List<String>): String? {
-    return KotlinGradleModelFacade.EP_NAME.extensions.asSequence()
-        .mapNotNull { it.getResolvedVersionByModuleData(this, groupId, libraryIds) }
-        .firstOrNull()
 }

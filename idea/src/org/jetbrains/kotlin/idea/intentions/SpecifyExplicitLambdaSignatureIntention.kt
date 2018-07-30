@@ -40,7 +40,7 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingOffsetIndependentIn
     }
 
     private fun ValueParameterDescriptor.render(psiName: String?): String = IdeDescriptorRenderers.SOURCE_CODE.let {
-        "${psiName ?: it.renderName(name)}: ${it.renderType(type)}"
+        "${psiName ?: it.renderName(name, true)}: ${it.renderType(type)}"
     }
 
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {

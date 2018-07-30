@@ -96,6 +96,8 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var renderAccessors by property(false)
     override var renderDefaultAnnotationArguments by property(false)
 
+    override var eachAnnotationOnNewLine: Boolean by property(false)
+
     override var excludedAnnotationClasses by property(emptySet<FqName>())
 
     override var excludedTypeAnnotationClasses by property(ExcludedTypeAnnotations.internalAnnotationsForResolve)
@@ -117,4 +119,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var renderFunctionContracts: Boolean by property(false)
 
     override var presentableUnresolvedTypes: Boolean by property(false)
+
+    override var boldOnlyForNamesInHtml: Boolean by property(false)
 }

@@ -812,6 +812,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/enumEntryAsReceiver.kt");
         }
 
+        @TestMetadata("enumEntryReferenceFromEnumEntryClass.kt")
+        public void testEnumEntryReferenceFromEnumEntryClass() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/enumEntryReferenceFromEnumEntryClass.kt");
+        }
+
         @TestMetadata("equality.kt")
         public void testEquality() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/equality.kt");
@@ -967,6 +972,21 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/objectClassReference.kt");
         }
 
+        @TestMetadata("objectReference.kt")
+        public void testObjectReference() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReference.kt");
+        }
+
+        @TestMetadata("objectReferenceInClosureInSuperConstructorCall.kt")
+        public void testObjectReferenceInClosureInSuperConstructorCall() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReferenceInClosureInSuperConstructorCall.kt");
+        }
+
+        @TestMetadata("objectReferenceInFieldInitializer.kt")
+        public void testObjectReferenceInFieldInitializer() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReferenceInFieldInitializer.kt");
+        }
+
         @TestMetadata("outerClassInstanceReference.kt")
         public void testOuterClassInstanceReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/outerClassInstanceReference.kt");
@@ -1010,6 +1030,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("setFieldWithImplicitCast.kt")
         public void testSetFieldWithImplicitCast() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/setFieldWithImplicitCast.kt");
+        }
+
+        @TestMetadata("signedToUnsignedConversions.kt")
+        public void testSignedToUnsignedConversions() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/signedToUnsignedConversions.kt");
         }
 
         @TestMetadata("simpleOperators.kt")

@@ -34,8 +34,6 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.CommandProcessor
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -43,6 +41,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
 abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -67,6 +66,7 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
 
     private fun dump(testPath: String, resolveMode: BodyResolveMode): String {
         myFixture.configureByText(KotlinFileType.INSTANCE, File(testPath).readText())
+        configureCompilerOptions(myFixture.file.text, project, module)
 
         val file = myFixture.file as KtFile
         val editor = myFixture.editor

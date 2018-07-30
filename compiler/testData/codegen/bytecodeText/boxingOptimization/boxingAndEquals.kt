@@ -20,8 +20,8 @@ fun getAndCheckInlinedInt(a: InlinedInt, b: InlinedInt) =
 // @TestInlinedKt.class:
 // 0 valueOf
 // 0 Value
-// 0 areEqual
-// 0 INVOKESTATIC InlinedInt\$Erased.box
+// 1 areEqual
+// 2 INVOKESTATIC InlinedInt\$Erased.box
 // 0 INVOKEVIRTUAL InlinedInt.unbox
 
 // FILE: Inline.kt

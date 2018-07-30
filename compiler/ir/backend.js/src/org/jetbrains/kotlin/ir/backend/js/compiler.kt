@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
@@ -39,7 +40,7 @@ fun compile(
 
     TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext)
 
-    val psi2IrTranslator = Psi2IrTranslator()
+    val psi2IrTranslator = Psi2IrTranslator(configuration.languageVersionSettings)
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext)
 
     val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files).removeDuplicates()
@@ -88,6 +89,8 @@ private fun JsIrBackendContext.lower(file: IrFile) {
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     DefaultParameterInjector(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
+    EnumClassLowering(this).runOnFilePostfix(file)
+    EnumUsageLowering(this).lower(file)
     ReturnableBlockLowering(this).lower(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
     InnerClassesLowering(this).runOnFilePostfix(file)

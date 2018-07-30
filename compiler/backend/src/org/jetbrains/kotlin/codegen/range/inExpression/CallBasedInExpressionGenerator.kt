@@ -42,7 +42,7 @@ class CallBasedInExpressionGenerator(
 
             private fun invokeFunction(v: InstructionAdapter) {
                 val result = codegen.invokeFunction(resolvedCall.call, resolvedCall, none())
-                result.put(result.type, v)
+                result.put(result.type, result.kotlinType, v)
             }
         }
 }

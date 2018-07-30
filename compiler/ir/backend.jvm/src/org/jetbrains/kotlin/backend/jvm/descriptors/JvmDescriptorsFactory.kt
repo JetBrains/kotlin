@@ -92,8 +92,16 @@ class JvmDescriptorsFactory(
         val newValueParameters =
             listOf(outerThisValueParameter) +
                     oldDescriptor.valueParameters.map { it.copy(newDescriptor, it.name, it.index + 1) }
-        newDescriptor.initialize(newValueParameters, oldDescriptor.visibility)
-        newDescriptor.returnType = oldDescriptor.returnType
+        // Call the long version of `initialize()`, because otherwise default implementation inserts
+        // an unwanted `dispatchReceiverParameter`
+        newDescriptor.initialize(
+            oldDescriptor.extensionReceiverParameter?.type,
+            null,
+            oldDescriptor.typeParameters,
+            newValueParameters,
+            oldDescriptor.returnType,
+            oldDescriptor.modality,
+            oldDescriptor.visibility)
         return IrConstructorSymbolImpl(newDescriptor)
     }
 

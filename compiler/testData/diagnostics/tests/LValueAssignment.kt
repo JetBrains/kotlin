@@ -78,17 +78,17 @@ class Test() {
         (f@ <!VARIABLE_EXPECTED!>getInt()<!>) += 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        (r@ <!VARIABLE_EXPECTED!>1<!>)++
+        (<!REDUNDANT_LABEL_WARNING!>r@<!> <!VARIABLE_EXPECTED!>1<!>)++
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        (m@ <!VARIABLE_EXPECTED!>getInt()<!>)++
+        (<!REDUNDANT_LABEL_WARNING!>m@<!> <!VARIABLE_EXPECTED!>getInt()<!>)++
 
         this<!UNRESOLVED_REFERENCE!>++<!>
 
         var s : String = "r"
         s += "ss"
         s += this
-        s += (a@ 2)
+        s += (<!REDUNDANT_LABEL_WARNING!>a@<!> 2)
     }
 
     fun testIncompleteSyntax() {
@@ -106,7 +106,7 @@ class Test() {
         <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        (l@ a)++
+        (<!REDUNDANT_LABEL_WARNING!>l@<!> a)++
         <!UNUSED_CHANGED_VALUE!>(a)++<!>
     }
 
@@ -126,7 +126,7 @@ class Test() {
         ab.getArray()[54] = 23
         ab.getArray()[54]++
 
-        (f@ a)[3] = 4
+        (<!REDUNDANT_LABEL_WARNING!>f@<!> a)[3] = 4
 
         this<!NO_SET_METHOD!><!UNRESOLVED_REFERENCE!>[<!>54<!UNRESOLVED_REFERENCE!>]<!><!> = 34
     }

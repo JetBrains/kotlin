@@ -4130,6 +4130,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/localReturnInsidePropertyAccessor.kt");
             }
 
+            @TestMetadata("notAFunctionLabel_after.kt")
+            public void testNotAFunctionLabel_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_after.kt");
+            }
+
+            @TestMetadata("notAFunctionLabel_before.kt")
+            public void testNotAFunctionLabel_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_before.kt");
+            }
+
+            @TestMetadata("redundantLabel.kt")
+            public void testRedundantLabel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/redundantLabel.kt");
+            }
+
             @TestMetadata("specialConstructsAndPlatformTypes.kt")
             public void testSpecialConstructsAndPlatformTypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/specialConstructsAndPlatformTypes.kt");
@@ -10860,6 +10875,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("inlineClassesInsideAnnotations.kt")
             public void testInlineClassesInsideAnnotations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassesInsideAnnotations.kt");
+            }
+
+            @TestMetadata("lateinitInlineClasses.kt")
+            public void testLateinitInlineClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClasses.kt");
             }
 
             @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")

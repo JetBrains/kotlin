@@ -12,54 +12,6 @@ import kotlin.coroutines.experimental.EmptyCoroutineContext as ExperimentalEmpty
 import kotlin.coroutines.experimental.ContinuationInterceptor as ExperimentalContinuationInterceptor
 import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED as EXPERIMENTAL_COROUTINE_SUSPENDED
 import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
-
-
-/**
- * Adapter to invoke experimental suspending function.
- *
- * To invoke experimental suspending function `foo(args)` that returns value of some type `Result`
- * from Kotlin 1.3 use the following code:
- *
- * ```
- * invokeExperimentalSuspend<Result> { foo(args, it) }
- * ```
- */
-@SinceKotlin("1.3")
-public suspend inline fun <T> invokeExperimentalSuspend(crossinline invocation: (ExperimentalContinuation<T>) -> Any?): T =
-    suspendCoroutineUninterceptedOrReturn { continuation ->
-        val result = invocation(continuation.toExperimentalContinuation())
-        @Suppress("UNCHECKED_CAST")
-        if (result === EXPERIMENTAL_COROUTINE_SUSPENDED) COROUTINE_SUSPENDED else result as T
-    }
-
-/**
- * Coverts reference to suspending function to experimental suspending function.
- */
-@SinceKotlin("1.3")
-public fun <T> (suspend () -> T).toExperimentalSuspendFunction(): (ExperimentalContinuation<T>) -> Any? =
-    ExperimentalSuspendFunction0Migration(this)
-
-/**
- * Coverts reference to experimental suspending function to suspending function.
- */
-@SinceKotlin("1.3")
-public fun <T> ((ExperimentalContinuation<T>) -> Any?).toSuspendFunction(): suspend () -> T =
-    (this as? ExperimentalSuspendFunction0Migration)?.function ?: SuspendFunction0Migration(this)::invoke
-
-/**
- * Coverts reference to suspending function with receiver to experimental suspending function.
- */
-@SinceKotlin("1.3")
-public fun <R, T> (suspend (R) -> T).toExperimentalSuspendFunction(): (R, ExperimentalContinuation<T>) -> Any? =
-    ExperimentalSuspendFunction1Migration(this)
-
-/**
- * Coverts reference to experimental suspending function with receiver to suspending function.
- */
-@SinceKotlin("1.3")
-public fun <R, T> ((R, ExperimentalContinuation<T>) -> Any?).toSuspendFunction(): suspend (R) -> T =
-    (this as? ExperimentalSuspendFunction1Migration)?.function ?: SuspendFunction1Migration(this)::invoke
 
 /**
  * Converts [Continuation] to [ExperimentalContinuation].
@@ -117,34 +69,6 @@ public fun ExperimentalContinuationInterceptor.toContinuationInterceptor(): Cont
 
 // ------------------ converter classes ------------------
 // Their name starts with "Experimental" if they implement the corresponding Experimental interfaces
-
-private class ExperimentalSuspendFunction0Migration<T>(val function: suspend () -> T) : (ExperimentalContinuation<T>) -> Any? {
-    override fun invoke(continuation: ExperimentalContinuation<T>): Any? {
-        val result = function.startCoroutineUninterceptedOrReturn(continuation.toContinuation())
-        return if (result === COROUTINE_SUSPENDED) EXPERIMENTAL_COROUTINE_SUSPENDED else result
-    }
-}
-
-private class SuspendFunction0Migration<T>(val function: (ExperimentalContinuation<T>) -> Any?) {
-    suspend fun invoke(): T = suspendCoroutineUninterceptedOrReturn { continuation ->
-        val result = function(continuation.toExperimentalContinuation())
-        if (result === EXPERIMENTAL_COROUTINE_SUSPENDED) COROUTINE_SUSPENDED else result
-    }
-}
-
-private class ExperimentalSuspendFunction1Migration<R, T>(val function: suspend (R) -> T) : (R, ExperimentalContinuation<T>) -> Any? {
-    override fun invoke(receiver: R, continuation: ExperimentalContinuation<T>): Any? {
-        val result = function.startCoroutineUninterceptedOrReturn(receiver, continuation.toContinuation())
-        return if (result === COROUTINE_SUSPENDED) EXPERIMENTAL_COROUTINE_SUSPENDED else result
-    }
-}
-
-private class SuspendFunction1Migration<R, T>(val function: (R, ExperimentalContinuation<T>) -> Any?) {
-    suspend fun invoke(receiver: R): T = suspendCoroutineUninterceptedOrReturn { continuation ->
-        val result = function(receiver, continuation.toExperimentalContinuation())
-        if (result === EXPERIMENTAL_COROUTINE_SUSPENDED) COROUTINE_SUSPENDED else result
-    }
-}
 
 private class ExperimentalContinuationMigration<T>(val continuation: Continuation<T>): ExperimentalContinuation<T> {
     override val context = continuation.context.toExperimentalCoroutineContext()

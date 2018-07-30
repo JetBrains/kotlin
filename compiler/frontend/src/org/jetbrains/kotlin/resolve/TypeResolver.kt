@@ -698,7 +698,7 @@ class TypeResolver(
     private fun collectArgumentsForClassifierTypeConstructor(
         c: TypeResolutionContext,
         classifierDescriptor: ClassifierDescriptorWithTypeParameters,
-        qualifierParts: List<QualifiedExpressionResolver.QualifierPart>
+        qualifierParts: List<QualifiedExpressionResolver.ExpressionQualifierPart>
     ): Pair<List<KtTypeProjection>, List<TypeProjection>?>? {
         val classifierDescriptorChain = classifierDescriptor.classifierDescriptorsFromInnerToOuter()
         val reversedQualifierParts = qualifierParts.asReversed()

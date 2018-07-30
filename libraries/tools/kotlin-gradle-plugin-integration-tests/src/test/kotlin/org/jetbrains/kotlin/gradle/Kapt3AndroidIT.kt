@@ -3,10 +3,8 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.Ignore
 import org.junit.Test
 
-@Ignore
 class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
     override fun kaptOptions(): KaptOptions =
         super.kaptOptions().copy(useWorkers = true)

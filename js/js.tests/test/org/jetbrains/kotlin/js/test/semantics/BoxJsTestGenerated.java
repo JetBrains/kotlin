@@ -3616,6 +3616,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inheritance/overrideAnyMethods.kt");
         }
 
+        @TestMetadata("prototypeOrder.kt")
+        public void testPrototypeOrder() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/prototypeOrder.kt");
+        }
+
         @TestMetadata("valOverride.kt")
         public void testValOverride() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/valOverride.kt");
@@ -4592,6 +4597,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("importObjectInstance.kt")
         public void testImportObjectInstance() throws Exception {
             runTest("js/js.translator/testData/box/inlineMultiModule/importObjectInstance.kt");
+        }
+
+        @TestMetadata("importStdLib.kt")
+        public void testImportStdLib() throws Exception {
+            runTest("js/js.translator/testData/box/inlineMultiModule/importStdLib.kt");
         }
 
         @TestMetadata("inlineInInlineWithLambdaMultiModule.kt")

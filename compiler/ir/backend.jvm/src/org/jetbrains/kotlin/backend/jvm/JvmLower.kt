@@ -62,6 +62,7 @@ class JvmLower(val context: JvmBackendContext) {
         SingletonReferencesLowering(context).runOnFilePostfix(irFile)
         SyntheticAccessorLowering(context).lower(irFile)
         BridgeLowering(context).runOnFilePostfix(irFile)
+        JvmOverloadsAnnotationLowering(context).runOnFilePostfix(irFile)
         JvmStaticAnnotationLowering(context).lower(irFile)
         StaticDefaultFunctionLowering(context.state).runOnFilePostfix(irFile)
 

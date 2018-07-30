@@ -2,12 +2,12 @@ package test
 
 public open class BaseClass {
     /*primary*/ public constructor BaseClass()
-    public open val shape: kotlin.String = "square"
+    public open val shape: kotlin.String
         public open fun <get-shape>(): kotlin.String
 }
 
 public open class Subclass : test.BaseClass {
     /*primary*/ public constructor Subclass()
-    public open override /*1*/ val shape: kotlin.String = "circle"
+    public open override /*1*/ val shape: kotlin.String
         public open override /*1*/ fun <get-shape>(): kotlin.String
 }

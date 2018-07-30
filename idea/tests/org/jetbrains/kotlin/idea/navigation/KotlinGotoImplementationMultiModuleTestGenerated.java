@@ -59,6 +59,16 @@ public class KotlinGotoImplementationMultiModuleTestGenerated extends AbstractKo
         runTest("idea/testData/navigation/implementations/multiModule/expectClassSuperclassProperty/");
     }
 
+    @TestMetadata("expectCompanion")
+    public void testExpectCompanion() throws Exception {
+        runTest("idea/testData/navigation/implementations/multiModule/expectCompanion/");
+    }
+
+    @TestMetadata("expectObject")
+    public void testExpectObject() throws Exception {
+        runTest("idea/testData/navigation/implementations/multiModule/expectObject/");
+    }
+
     @TestMetadata("suspendFunImpl")
     public void testSuspendFunImpl() throws Exception {
         runTest("idea/testData/navigation/implementations/multiModule/suspendFunImpl/");

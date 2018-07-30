@@ -7,4 +7,4 @@ FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
         RETURN type=kotlin.Nothing from='<get-test>() on Class<*>: Array<(out) Field!>!'
           CALL 'getDeclaredFields(): Array<(out) Field!>!' type=kotlin.Array<out java.lang.reflect.Field!>? origin=GET_PROPERTY
             <`0>: kotlin.Any?
-            $receiver: GET_VAR 'this@test: Class<*>' type=java.lang.Class<*> origin=null
+            $this: GET_VAR 'this@test: Class<*>' type=java.lang.Class<*> origin=null

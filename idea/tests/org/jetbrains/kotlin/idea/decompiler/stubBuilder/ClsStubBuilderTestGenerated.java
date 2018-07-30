@@ -74,6 +74,11 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         runTest("idea/testData/decompiler/stubBuilder/Const/");
     }
 
+    @TestMetadata("Contracts")
+    public void testContracts() throws Exception {
+        runTest("idea/testData/decompiler/stubBuilder/Contracts/");
+    }
+
     @TestMetadata("DataClass")
     public void testDataClass() throws Exception {
         runTest("idea/testData/decompiler/stubBuilder/DataClass/");

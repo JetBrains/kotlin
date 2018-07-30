@@ -25,6 +25,8 @@ class JsStaticContext(
     // TODO: use IrSymbol instead of JsName
     val classModels = mutableMapOf<JsName, JsClassModel>()
 
+    val initializerBlock = JsGlobalBlock()
+
     fun getNameForSymbol(irSymbol: IrSymbol, context: JsGenerationContext) = nameGenerator.getNameForSymbol(irSymbol, context)
     fun getNameForLoop(loop: IrLoop, context: JsGenerationContext) = nameGenerator.getNameForLoop(loop, context)
 }

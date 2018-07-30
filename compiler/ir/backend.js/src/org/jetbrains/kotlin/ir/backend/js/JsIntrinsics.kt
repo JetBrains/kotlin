@@ -28,7 +28,9 @@ class JsIntrinsics(
     val context: JsIrBackendContext
 ) {
 
-    private val stubBuilder = DeclarationStubGenerator(module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
+    private val stubBuilder = DeclarationStubGenerator(
+        module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB, irBuiltIns.languageVersionSettings
+    )
 
     // Equality operations:
 

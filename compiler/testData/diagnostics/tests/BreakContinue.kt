@@ -2,7 +2,7 @@ class C {
 
     fun f (<!UNUSED_PARAMETER!>a<!> : Boolean, <!UNUSED_PARAMETER!>b<!> : Boolean) {
         b@ while (true)
-          a@ {
+          <!REDUNDANT_LABEL_WARNING!>a@<!> {
             <!NOT_A_LOOP_LABEL!>break@f<!>
             break
             <!UNREACHABLE_CODE!>break@b<!>
@@ -12,7 +12,7 @@ class C {
         <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>
 
         b@ while (true)
-          a@ {
+          <!REDUNDANT_LABEL_WARNING!>a@<!> {
             <!NOT_A_LOOP_LABEL!>continue@f<!>
             continue
             <!UNREACHABLE_CODE!>continue@b<!>

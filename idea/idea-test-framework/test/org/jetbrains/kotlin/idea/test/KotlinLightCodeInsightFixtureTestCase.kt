@@ -33,9 +33,14 @@ import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.COMPILER_ARGUMENTS_DIRECTIVE
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.JVM_TARGET_DIRECTIVE
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.LANGUAGE_VERSION_DIRECTIVE
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -179,10 +184,19 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 }
 
+
+object CompilerTestDirectives {
+    const val LANGUAGE_VERSION_DIRECTIVE = "LANGUAGE_VERSION:"
+    const val JVM_TARGET_DIRECTIVE = "JVM_TARGET:"
+    const val COMPILER_ARGUMENTS_DIRECTIVE = "COMPILER_ARGUMENTS:"
+
+    val ALL_COMPILER_TEST_DIRECTIVES = listOf(LANGUAGE_VERSION_DIRECTIVE, JVM_TARGET_DIRECTIVE, COMPILER_ARGUMENTS_DIRECTIVE)
+}
+
 fun configureCompilerOptions(fileText: String, project: Project, module: Module) {
-    val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// LANGUAGE_VERSION: ")
-    val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// JVM_TARGET: ")
-    val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// COMPILER_ARGUMENTS: ")
+    val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $LANGUAGE_VERSION_DIRECTIVE ")
+    val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $JVM_TARGET_DIRECTIVE ")
+    val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $COMPILER_ARGUMENTS_DIRECTIVE ")
 
     if (version != null || jvmTarget != null || options != null) {
         configureLanguageAndApiVersion(project, module, version ?: LanguageVersion.LATEST_STABLE.versionString)
@@ -199,6 +213,8 @@ fun configureCompilerOptions(fileText: String, project: Project, module: Module)
             }
             compilerSettings.additionalArguments = options
             facetSettings.updateMergedArguments()
+
+            KotlinCompilerSettings.getInstance(project).update { this.additionalArguments = options }
         }
     }
 }
@@ -217,6 +233,7 @@ fun configureLanguageAndApiVersion(
         if (apiVersion != null) {
             facet.configuration.settings.apiLevel = LanguageVersion.fromVersionString(apiVersion)
         }
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update { this.languageVersion = languageVersion }
         modelsProvider.commit()
     }
     finally {

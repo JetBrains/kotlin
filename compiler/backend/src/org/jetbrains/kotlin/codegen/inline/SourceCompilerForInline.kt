@@ -349,7 +349,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                     frameMap.enterTemp(Type.INT_TYPE)
                 }
 
-                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, extension.finallyIntervalEnd.label)
+                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, null, extension.finallyIntervalEnd.label)
 
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
                 insertNodeBefore(finallyNode, intoNode, curInstr)

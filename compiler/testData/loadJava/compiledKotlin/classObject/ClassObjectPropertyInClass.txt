@@ -2,12 +2,12 @@ package test
 
 public final class A {
     /*primary*/ public constructor A()
-    public final val other: kotlin.Int = 1
+    public final val other: kotlin.Int
         public final fun <get-other>(): kotlin.Int
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
-        public final val some: kotlin.Int = 1
+        public final val some: kotlin.Int
             public final fun <get-some>(): kotlin.Int
     }
 }

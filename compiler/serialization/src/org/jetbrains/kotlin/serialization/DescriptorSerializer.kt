@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -355,8 +356,9 @@ class DescriptorSerializer private constructor(
         return listOfNotNull(
                 extensionReceiverParameter?.type,
                 returnType,
+                *typeParameters.flatMap { it.upperBounds }.toTypedArray(),
                 *valueParameters.map(ValueParameterDescriptor::getType).toTypedArray()
-        ).any { type -> type.contains(UnwrappedType::isSuspendFunctionType) }
+        ).any { type -> type.contains(UnwrappedType::isSuspendFunctionTypeOrSubtype) }
     }
 
     fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder {

@@ -69,6 +69,7 @@ interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
     fun hasBlockBody(): Boolean
     fun hasBody(): Boolean
     fun hasTypeParameterListBeforeFunctionName(): Boolean
+    fun mayHaveContract(): Boolean
 }
 
 interface KotlinImportAliasStub : StubElement<KtImportAlias> {

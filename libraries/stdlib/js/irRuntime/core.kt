@@ -102,3 +102,6 @@ fun hashCode(obj: dynamic): Int {
     """
     ).unsafeCast<Int>()
 }
+
+// TODO: Use getObjectHashCode instead
+fun identityHashCode(obj: dynamic): Int = hashCode(obj)

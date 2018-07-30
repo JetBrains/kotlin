@@ -39,17 +39,38 @@ class IntegerValueTypeConstructor(
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Int' should be returned
         val isUnsigned = parameters.isUnsignedNumberLiteral
+        val isConvertable = parameters.isConvertableConstVal
 
-        if (isUnsigned) {
+        if (isUnsigned || isConvertable) {
             assert(hasUnsignedTypesInModuleDependencies(module)) {
                 "Unsigned types should be on classpath to create an unsigned type constructor"
             }
         }
 
-        checkBoundsAndAddSuperType(value, if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uInt) else builtIns.intType)
-        checkBoundsAndAddSuperType(value, if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uByte) else builtIns.byteType)
-        checkBoundsAndAddSuperType(value, if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uShort) else builtIns.shortType)
-        supertypes.add(if (isUnsigned) unsignedType(KotlinBuiltIns.FQ_NAMES.uLong) else builtIns.longType)
+        when {
+            isConvertable -> {
+                addSignedSuperTypes()
+                addUnsignedSuperTypes()
+            }
+
+            isUnsigned -> addUnsignedSuperTypes()
+
+            else -> addSignedSuperTypes()
+        }
+    }
+
+    private fun addSignedSuperTypes() {
+        checkBoundsAndAddSuperType(value, builtIns.intType)
+        checkBoundsAndAddSuperType(value, builtIns.byteType)
+        checkBoundsAndAddSuperType(value, builtIns.shortType)
+        supertypes.add(builtIns.longType)
+    }
+
+    private fun addUnsignedSuperTypes() {
+        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uInt))
+        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uByte))
+        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uShort))
+        supertypes.add(unsignedType(KotlinBuiltIns.FQ_NAMES.uLong))
     }
 
     private fun checkBoundsAndAddSuperType(value: Long, kotlinType: KotlinType) {

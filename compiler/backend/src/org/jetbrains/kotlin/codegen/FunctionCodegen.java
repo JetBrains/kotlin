@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -218,7 +217,7 @@ public class FunctionCodegen {
                                   flags,
                                   asmMethod.getName(),
                                   asmMethod.getDescriptor(),
-                                  jvmSignature.getGenericsSignature(),
+                                  strategy.skipGenericSignature() ? null : jvmSignature.getGenericsSignature(),
                                   getThrownExceptions(functionDescriptor, typeMapper)
                         ),
                         flags, asmMethod.getName(),
@@ -1546,13 +1545,15 @@ public class FunctionCodegen {
 
     public void genSamDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
         FunctionDescriptor delegatedTo = overriddenDescriptor.getOriginal();
-        JvmDeclarationOrigin declarationOrigin =
-                JvmDeclarationOriginKt.SamDelegation(functionDescriptor);
+        JvmDeclarationOrigin declarationOrigin = JvmDeclarationOriginKt.SamDelegation(functionDescriptor);
+        // Skip writing generic signature for the SAM wrapper class method because it may reference type parameters from the SAM interface
+        // which would make little sense outside of that interface and may break Java reflection.
+        // E.g. functionDescriptor for a SAM wrapper for java.util.function.Predicate is the method `test` with signature "(T) -> Boolean"
         genDelegate(
-                functionDescriptor, delegatedTo,
-                declarationOrigin,
+                functionDescriptor, delegatedTo, declarationOrigin,
                 (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(),
-                field);
+                field, true
+        );
     }
 
     public void genDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
@@ -1568,7 +1569,7 @@ public class FunctionCodegen {
     ) {
         JvmDeclarationOrigin declarationOrigin =
                 JvmDeclarationOriginKt.Delegation(DescriptorToSourceUtils.descriptorToDeclaration(delegatedTo), delegateFunction);
-        genDelegate(delegateFunction, delegatedTo, declarationOrigin, toClass, field);
+        genDelegate(delegateFunction, delegatedTo, declarationOrigin, toClass, field, false);
     }
 
     private void genDelegate(
@@ -1576,7 +1577,8 @@ public class FunctionCodegen {
             FunctionDescriptor delegatedTo,
             @NotNull JvmDeclarationOrigin declarationOrigin,
             ClassDescriptor toClass,
-            StackValue field
+            StackValue field,
+            boolean skipGenericSignature
     ) {
         generateMethod(
                 declarationOrigin, delegateFunction,
@@ -1614,7 +1616,7 @@ public class FunctionCodegen {
 
                         StackValue stackValue = AsmUtil.genNotNullAssertions(
                                 state,
-                                StackValue.onStack(delegateToMethod.getReturnType()),
+                                StackValue.onStack(delegateToMethod.getReturnType(), delegatedTo.getReturnType()),
                                 RuntimeAssertionInfo.create(
                                         delegateFunction.getReturnType(),
                                         delegatedTo.getReturnType(),
@@ -1622,7 +1624,7 @@ public class FunctionCodegen {
                                 )
                         );
 
-                        stackValue.put(delegateMethod.getReturnType(), iv);
+                        stackValue.put(delegateMethod.getReturnType(), delegatedTo.getReturnType(), iv);
 
                         iv.areturn(delegateMethod.getReturnType());
                     }
@@ -1630,6 +1632,11 @@ public class FunctionCodegen {
                     @Override
                     public boolean skipNotNullAssertionsForParameters() {
                         return false;
+                    }
+
+                    @Override
+                    public boolean skipGenericSignature() {
+                        return skipGenericSignature;
                     }
                 }
         );

@@ -1,5 +1,5 @@
 warning: ATTENTION!
-This build uses internal compiler arguments:
+This build uses unsafe internal compiler arguments:
 
 -XXLanguage:+SoundSmartCastsAfterTry
 

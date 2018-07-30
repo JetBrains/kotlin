@@ -307,7 +307,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun setupPlatformSpecificArgumentsAndServices(
         configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments, services: Services
     ) {
-        if (IncrementalCompilation.isEnabled()) {
+        if (IncrementalCompilation.isEnabledForJvm()) {
             services.get(LookupTracker::class.java)?.let {
                 configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it)
             }
@@ -359,19 +359,22 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             )
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
 
-            val constructorCallNormalizationMode =
-                JVMConstructorCallNormalizationMode.fromStringOrNull(arguments.constructorCallNormalizationMode)
-            if (constructorCallNormalizationMode == null) {
+            if (!JVMConstructorCallNormalizationMode.isSupportedValue(arguments.constructorCallNormalizationMode)) {
                 configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
                     ERROR,
                     "Unknown constructor call normalization mode: ${arguments.constructorCallNormalizationMode}, " +
                             "supported modes: ${JVMConstructorCallNormalizationMode.values().map { it.description }}"
                 )
             }
-            configuration.put(
-                JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
-                constructorCallNormalizationMode ?: JVMConstructorCallNormalizationMode.DEFAULT
-            )
+
+            val constructorCallNormalizationMode =
+                JVMConstructorCallNormalizationMode.fromStringOrNull(arguments.constructorCallNormalizationMode)
+            if (constructorCallNormalizationMode != null) {
+                configuration.put(
+                    JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
+                    constructorCallNormalizationMode
+                )
+            }
 
             val assertionsMode =
                 JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)

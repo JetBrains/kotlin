@@ -432,8 +432,10 @@ class CoroutineCodegenForNamedFunction private constructor(
     override fun generateClosureBody() {
         generateResumeImpl()
 
-        generateGetLabelMethod()
-        generateSetLabelMethod()
+        if (!languageVersionSettings.isReleaseCoroutines()) {
+            generateGetLabelMethod()
+            generateSetLabelMethod()
+        }
 
         v.newField(
             JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,

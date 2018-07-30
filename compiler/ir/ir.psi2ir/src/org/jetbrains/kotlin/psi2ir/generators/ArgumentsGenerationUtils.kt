@@ -121,9 +121,10 @@ fun StatementGenerator.generateSingletonReference(
 }
 
 private fun StatementGenerator.shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor: ClassDescriptor): Boolean {
+    val scopeOwner = this.scopeOwner
     return receiverClassDescriptor.kind.isSingleton &&
-            this.scopeOwner != receiverClassDescriptor && //For anonymous initializers
-            this.scopeOwner.containingDeclaration != receiverClassDescriptor
+            scopeOwner != receiverClassDescriptor && // For anonymous initializers
+            !(scopeOwner is CallableMemberDescriptor && scopeOwner.containingDeclaration == receiverClassDescriptor) // Members of object
 }
 
 private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor: ClassDescriptor): IrExpression {
@@ -380,6 +381,7 @@ fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): 
 
 fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): CallBuilder {
     val originalDescriptor = resolvedCall.resultingDescriptor
+    val candidateDescriptor = resolvedCall.candidateDescriptor
 
     val unwrappedDescriptor = when (originalDescriptor) {
         is ImportedFromObjectCallableDescriptor<*> -> originalDescriptor.callableFromObject
@@ -403,7 +405,7 @@ fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): Cal
                 null
             else
                 unsubstitutedUnwrappedTypeParameters.associate {
-                    val originalTypeParameter = originalDescriptor.original.typeParameters[it.index]
+                    val originalTypeParameter = candidateDescriptor.typeParameters[it.index]
                     val originalTypeArgument = originalTypeArguments[originalTypeParameter]
                         ?: throw AssertionError("No type argument for $originalTypeParameter")
                     it to originalTypeArgument
