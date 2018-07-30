@@ -16,6 +16,8 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.vcs.changes.ChangeListManager
+import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
 import com.intellij.util.CommonProcessors
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.ApiVersion
@@ -44,7 +46,8 @@ class KotlinMigrationProjectComponent(val project: Project) {
 
     @Synchronized
     fun onImportAboutToStart() {
-        if (!CodeMigrationToggleAction.isEnabled(project)) {
+        if (!CodeMigrationToggleAction.isEnabled(project) || !hasChangesInProjectFiles(project)) {
+            old = null
             return
         }
 
@@ -57,9 +60,14 @@ class KotlinMigrationProjectComponent(val project: Project) {
             return
         }
 
+        if (old == null) return;
+
         new = MigrationState.build(project)
 
         val migrationInfo = prepareMigrationInfo(old, new) ?: return
+
+        old = null
+        new = null
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
             return
@@ -107,6 +115,31 @@ class KotlinMigrationProjectComponent(val project: Project) {
             }
 
             return null
+        }
+
+        private fun hasChangesInProjectFiles(project: Project): Boolean {
+            if (ProjectLevelVcsManagerEx.getInstance(project).allVcsRoots.isEmpty()) {
+                return true
+            }
+
+            val changedFiles = ChangeListManager.getInstance(project).affectedPaths
+            for (changedFile in changedFiles) {
+                val extension = changedFile.extension
+                when (extension) {
+                    "gradle" -> return true
+                    "properties" -> return true
+                    "iml" -> return true
+                    "xml" -> {
+                        if (changedFile.name == "pom.xml") return true
+                        val parentDir = changedFile.parentFile
+                        if (parentDir.isDirectory && parentDir.name == Project.DIRECTORY_STORE_FOLDER) {
+                            return true
+                        }
+                    }
+                }
+            }
+
+            return false
         }
     }
 }
