@@ -14,19 +14,18 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.util.getReceiverTargetDescriptor
+import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RedundantWithInspection : AbstractKotlinInspection() {
-
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         callExpressionVisitor(fun(callExpression) {
             val callee = callExpression.calleeExpression ?: return
@@ -35,49 +34,58 @@ class RedundantWithInspection : AbstractKotlinInspection() {
             val valueArguments = callExpression.valueArguments
             if (valueArguments.size != 2) return
             val receiver = valueArguments[0].getArgumentExpression() ?: return
-            if (receiver !is KtSimpleNameExpression && receiver !is KtStringTemplateExpression && receiver !is KtConstantExpression) return
             val lambda = valueArguments[1].lambdaExpression() ?: return
             val lambdaBody = lambda.bodyExpression ?: return
 
-            val parent = callExpression.parent
-            if ((parent is KtValueArgument
-                        || parent is KtReturnExpression
-                        || parent is KtOperationExpression
-                        || (parent as? KtDeclarationWithInitializer)?.initializer == callExpression)
-                && lambdaBody.statements.size > 1
-            ) return
-
-            val context = callExpression.analyze(BodyResolveMode.PARTIAL)
+            val context = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
+            if (lambdaBody.statements.size > 1 && context[BindingContext.USED_AS_EXPRESSION, callExpression] == true) return
             if (callExpression.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe != FqName("kotlin.with")) return
+
             val lambdaDescriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return
-            val receiverClassDescriptor =
-                (receiver.getResolvedCall(context)?.resultingDescriptor as? FakeCallableDescriptorForObject)?.classDescriptor
-            val lambdaDispatchReceiver = lambdaDescriptor.dispatchReceiverParameter
             val lambdaExtensionReceiver = lambdaDescriptor.extensionReceiverParameter
-            val needCall = lambda.anyDescendantOfType<KtExpression> {
-                when (it) {
-                    is KtThisExpression -> {
-                        val thisDescriptor = it.getResolvedCall(context)?.resultingDescriptor ?: return@anyDescendantOfType false
-                        thisDescriptor == lambdaDispatchReceiver || thisDescriptor == lambdaExtensionReceiver
+            var used = false
+            lambda.functionLiteral.acceptChildren(object : KtVisitorVoid() {
+                override fun visitKtElement(element: KtElement) {
+                    if (used) return
+                    element.acceptChildren(this)
+
+                    if (element is KtReturnExpression && element.getLabelName() == "with") {
+                        used = true
+                        return
                     }
-                    is KtSimpleNameExpression -> {
-                        if (it is KtOperationReferenceExpression) return@anyDescendantOfType false
-                        val resolvedCall = it.getResolvedCall(context) ?: return@anyDescendantOfType false
-                        val dispatchReceiverTarget = resolvedCall.dispatchReceiver?.getReceiverTargetDescriptor(context)
-                        val extensionReceiverTarget = resolvedCall.extensionReceiver?.getReceiverTargetDescriptor(context)
-                        lambdaDescriptor == dispatchReceiverTarget || lambdaDescriptor == extensionReceiverTarget ||
-                                receiverClassDescriptor != null && receiverClassDescriptor == extensionReceiverTarget?.containingDeclaration
+
+                    val resolvedCall = element.getResolvedCall(context) ?: return
+                    if (isUsageOfReceiver(resolvedCall, context)) {
+                        used = true
+                    } else if (resolvedCall is VariableAsFunctionResolvedCall && isUsageOfReceiver(resolvedCall.variableCall, context)) {
+                        used = true
                     }
-                    is KtReturnExpression -> it.labelQualifier?.text == "@with"
-                    else -> false
                 }
-            }
-            if (!needCall) {
+
+                private fun isUsageOfReceiver(resolvedCall: ResolvedCall<*>, bindingContext: BindingContext): Boolean {
+                    // As receiver of call
+                    if (resolvedCall.dispatchReceiver.getThisReceiverOwner(bindingContext) == lambdaDescriptor ||
+                        resolvedCall.extensionReceiver.getThisReceiverOwner(bindingContext) == lambdaDescriptor
+                    ) {
+                        return true
+                    }
+                    // As explicit "this"
+                    if (resolvedCall.candidateDescriptor == lambdaExtensionReceiver) {
+                        return true
+                    }
+                    return false
+                }
+            })
+            if (!used) {
+                val quickfix = when (receiver) {
+                    is KtSimpleNameExpression, is KtStringTemplateExpression, is KtConstantExpression -> RemoveRedundantWithFix()
+                    else -> null
+                }
                 holder.registerProblem(
                     callee,
                     "Redundant 'with' call",
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                    RemoveRedundantWithFix()
+                    quickfix
                 )
             }
         })

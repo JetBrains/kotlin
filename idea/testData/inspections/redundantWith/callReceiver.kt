@@ -1,7 +1,5 @@
-// PROBLEM: none
-// WITH_RUNTIME
 fun test() {
-    <caret>with(foo()) {
+    with(foo()) {
         println("test")
     }
 }

@@ -3801,11 +3801,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantWith/nested.kt");
         }
 
-        @TestMetadata("notApplicable_callReceiver.kt")
-        public void testNotApplicable_callReceiver() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_callReceiver.kt");
-        }
-
         @TestMetadata("notApplicable_explicitThis.kt")
         public void testNotApplicable_explicitThis() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_explicitThis.kt");
@@ -3814,6 +3809,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("notApplicable_explicitThis2.kt")
         public void testNotApplicable_explicitThis2() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_explicitThis2.kt");
+        }
+
+        @TestMetadata("notApplicable_functionCall.kt")
+        public void testNotApplicable_functionCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_functionCall.kt");
         }
 
         @TestMetadata("notApplicable_implicitThis.kt")
@@ -3869,6 +3869,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("notApplicable_labeledThis2.kt")
         public void testNotApplicable_labeledThis2() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_labeledThis2.kt");
+        }
+
+        @TestMetadata("notApplicable_variableFunctionCall.kt")
+        public void testNotApplicable_variableFunctionCall() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantWith/notApplicable_variableFunctionCall.kt");
         }
 
         @TestMetadata("simple.kt")

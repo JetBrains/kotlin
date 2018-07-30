@@ -1,4 +1,5 @@
 // WITH_RUNTIME
 fun test(s: String) {
-    <caret>println("")
+    <caret>println("1")
+    println("2")
 }
