@@ -39,18 +39,7 @@ package k {
     }
 }
 
-package k2 {
-}
-
 
 // -- Module: <m2> --
 package
 
-package k {
-}
-
-package k2 {
-}
-
-package k3 {
-}

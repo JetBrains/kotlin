@@ -55,12 +55,6 @@ package
 public fun test(/*0*/ a_b: a.b): kotlin.Unit
 public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
 
-package a {
-
-    package a.b {
-    }
-}
-
 
 // -- Module: <m1> --
 package
@@ -109,9 +103,3 @@ package
 
 public fun test(/*0*/ a_b: a.b): kotlin.Unit
 public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
-
-package a {
-
-    package a.b {
-    }
-}

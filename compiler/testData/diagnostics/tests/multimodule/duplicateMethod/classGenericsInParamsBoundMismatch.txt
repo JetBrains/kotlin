@@ -50,6 +50,3 @@ package p {
 package
 
 public fun test(/*0*/ b: p.B<p.Tr>?): kotlin.Unit
-
-package p {
-}
