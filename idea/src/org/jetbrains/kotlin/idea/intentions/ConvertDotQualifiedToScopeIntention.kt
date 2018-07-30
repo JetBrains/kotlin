@@ -17,14 +17,18 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 
 abstract class ConvertDotQualifiedToScopeIntention(
-        text: String
+    text: String
 ) : ConvertToScopeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, text) {
 
     override fun isApplicableTo(element: KtDotQualifiedExpression, caretOffset: Int): Boolean {
-        val receiverExpressionText = element.getReceiverExpressionText() ?: return false
+        val receiverExpression = element.getLeftMostReceiverExpression()
+        if (receiverExpression.mainReference?.resolve() is PsiClass) return false
+        val receiverExpressionText = receiverExpression.text
         if (receiverExpressionText in BLACKLIST_RECEIVER_NAME) return false
         if (!isApplicableWithGivenReceiverText(element, receiverExpressionText)) return false
         val nextSibling = element.getDotQualifiedSiblingIfAny(forward = true)

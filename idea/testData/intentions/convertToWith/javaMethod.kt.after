@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun test(c: JavaClass) {
+    with(c) {
+        bar1()
+        bar2()
+    }
+}
