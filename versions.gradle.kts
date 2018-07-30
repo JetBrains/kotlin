@@ -117,6 +117,22 @@ when (platform) {
         extra["ignore.jar.common"] = true
         extra["ignore.jar.lombok-ast"] = true
     }
+    "AS33" -> {
+        extra["versions.jar.guava"] = "21.0"
+        extra["versions.jar.groovy-all"] = "2.4.12"
+        extra["versions.jar.swingx-core"] = "1.6.2"
+        extra["versions.jar.kxml2"] = "2.3.0"
+        extra["versions.jar.streamex"] = "0.6.5"
+        extra["versions.jar.gson"] = "2.8.2"
+        extra["versions.jar.oro"] = "2.0.8"
+        extra["versions.jar.snappy-in-java"] = "0.5.1"
+        for (jar in gradleJars) {
+            extra["versions.jar.$jar"] = "4.4"
+        }
+
+        extra["ignore.jar.common"] = true
+        extra["ignore.jar.lombok-ast"] = true
+    }
 }
 
 if (!extra.has("versions.androidStudioRelease")) {

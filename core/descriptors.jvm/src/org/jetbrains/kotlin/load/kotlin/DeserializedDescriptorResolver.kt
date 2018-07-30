@@ -53,7 +53,7 @@ class DeserializedDescriptorResolver {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
         val source = KotlinJvmBinarySourceElement(kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible)
-        return ClassData(nameResolver, classProto, source)
+        return ClassData(nameResolver, classProto, kotlinClass.classHeader.metadataVersion, source)
     }
 
     fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
@@ -65,7 +65,9 @@ class DeserializedDescriptorResolver {
         val source = JvmPackagePartSource(
             kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible
         )
-        return DeserializedPackageMemberScope(descriptor, packageProto, nameResolver, source, components) {
+        return DeserializedPackageMemberScope(
+            descriptor, packageProto, nameResolver, kotlinClass.classHeader.metadataVersion, source, components
+        ) {
             // All classes are included into Java scope
             emptyList()
         }

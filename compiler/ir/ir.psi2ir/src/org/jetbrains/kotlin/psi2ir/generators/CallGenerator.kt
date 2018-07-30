@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
@@ -103,7 +104,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder): IrExpression =
         call.callReceiver.call { dispatchReceiver, extensionReceiver ->
             val descriptor = call.descriptor as? ClassConstructorDescriptor
-                    ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
+                ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
             val constructorSymbol = context.symbolTable.referenceConstructor(descriptor.original)
             val irCall = IrDelegatingConstructorCallImpl(
                 startOffset, endOffset,
@@ -139,17 +140,17 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         endOffset: Int,
         call: CallBuilder
     ): IrExpression {
-        return call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-            val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
+        val getMethodDescriptor = descriptor.unwrappedGetMethod
+        val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
 
-            val getterDescriptor = descriptor.getter
-            if (getterDescriptor != null) {
-                val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor.original)
+        return if (getMethodDescriptor != null) {
+            call.callReceiver.adjustForCallee(getMethodDescriptor).call { dispatchReceiverValue, extensionReceiverValue ->
+                val getterSymbol = context.symbolTable.referenceFunction(getMethodDescriptor.original)
                 IrGetterCallImpl(
                     startOffset, endOffset,
                     descriptor.type.toIrType(),
                     getterSymbol,
-                    getterDescriptor,
+                    getMethodDescriptor,
                     descriptor.typeParametersCount,
                     dispatchReceiverValue?.load(),
                     extensionReceiverValue?.load(),
@@ -158,8 +159,9 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 ).apply {
                     putTypeArguments(call.typeArguments) { it.toIrType() }
                 }
-
-            } else {
+            }
+        } else {
+            call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
                 val fieldSymbol = context.symbolTable.referenceField(descriptor.original)
                 IrGetFieldImpl(
                     startOffset, endOffset,

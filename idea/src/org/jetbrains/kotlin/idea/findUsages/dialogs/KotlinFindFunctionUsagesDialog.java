@@ -123,6 +123,8 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
         super.calcFindUsagesOptions(options);
 
         KotlinFunctionFindUsagesOptions kotlinOptions = (KotlinFunctionFindUsagesOptions) options;
-        kotlinOptions.setSearchExpected(isSelected(expectedUsages));
+        if (expectedUsages != null) {
+            kotlinOptions.setSearchExpected(expectedUsages.isSelected());
+        }
     }
 }

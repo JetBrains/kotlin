@@ -371,7 +371,7 @@ class ResolveElementCache(
 
             is KtImportList -> {
                 val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingKtFile())
-                resolver.forceResolveAllImports()
+                resolver.forceResolveNonDefaultImports()
                 resolveSession.trace
             }
 

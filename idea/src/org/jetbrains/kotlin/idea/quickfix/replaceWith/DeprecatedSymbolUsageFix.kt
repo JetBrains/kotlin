@@ -55,7 +55,12 @@ class DeprecatedSymbolUsageFix(
         }
 
         fun isImportToBeRemoved(import: KtImportDirective): Boolean {
-            return !import.isAllUnder && import.targetDescriptors().all {
+            if (import.isAllUnder) return false
+
+            val targetDescriptors = import.targetDescriptors()
+            if (targetDescriptors.isEmpty()) return false
+
+            return targetDescriptors.all {
                 DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, import.project) != null
             }
         }

@@ -128,6 +128,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         // TODO: Support offsets for debug info
         val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptorForIrFunction)
         irFunction.createParameterDeclarations()
+        irFunction.returnType = bridge.returnType
 
         // TODO: Add type casts
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {

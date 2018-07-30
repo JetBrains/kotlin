@@ -1,12 +1,3 @@
-warning: ATTENTION!
-This build uses internal compiler arguments:
-
--XXLanguage:SoundSmartCastAfterTry
-
-This mode is not recommended for production use,
-as no stability/compatibility guarantees are given on
-compiler or generated code. Use it at your own risk!
-
 warning: incorrect internal argument syntax, missing modificator: -XXLanguage:SoundSmartCastAfterTry
 compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:9: error: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type String?
     some.length

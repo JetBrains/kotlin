@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -28,14 +29,15 @@ abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen,
     AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression) {
     protected var incrementVar: Int = -1
     protected val asmLoopRangeType: Type
+    protected val kotlinLoopRangeType: KotlinType
     protected val incrementType: Type
 
     init {
-        val loopRangeType = bindingContext.getType(forExpression.loopRange!!)!!
-        asmLoopRangeType = codegen.asmType(loopRangeType)
+        kotlinLoopRangeType = bindingContext.getType(forExpression.loopRange!!)!!
+        asmLoopRangeType = codegen.asmType(kotlinLoopRangeType)
 
-        val incrementProp = loopRangeType.memberScope.getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND)
-        assert(incrementProp.size == 1) { loopRangeType.toString() + " " + incrementProp.size }
+        val incrementProp = kotlinLoopRangeType.memberScope.getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND)
+        assert(incrementProp.size == 1) { kotlinLoopRangeType.toString() + " " + incrementProp.size }
         incrementType = codegen.asmType(incrementProp.iterator().next().type)
     }
 
@@ -50,7 +52,7 @@ abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen,
     protected abstract fun storeProgressionParametersToLocalVars()
 
     override fun checkEmptyLoop(loopExit: Label) {
-        loopParameter().put(asmElementType, v)
+        loopParameter().put(asmElementType, elementType, v)
         v.load(endVar, asmElementType)
         v.load(incrementVar, incrementType)
 
@@ -92,7 +94,7 @@ abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen,
         checkPostCondition(loopExit)
 
         val loopParameter = loopParameter()
-        loopParameter.put(asmElementType, v)
+        loopParameter.put(asmElementType, elementType, v)
         v.load(incrementVar, asmElementType)
         v.add(asmElementType)
 
@@ -100,6 +102,6 @@ abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen,
             StackValue.coerce(Type.INT_TYPE, asmElementType, v)
         }
 
-        loopParameter.store(StackValue.onStack(asmElementType), v)
+        loopParameter.store(StackValue.onStack(asmElementType, elementType), v)
     }
 }

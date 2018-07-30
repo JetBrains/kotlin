@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.isPreRelease
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import kotlin.reflect.KClass
 
 interface BuildMetaInfo {
@@ -40,7 +41,8 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
         multiplatformEnable: Boolean,
         ownVersion: Int,
         coroutinesVersion: Int,
-        multiplatformVersion: Int
+        multiplatformVersion: Int,
+        metadataVersionArray: IntArray?
     ): T
 
     fun create(args: CommonCompilerArguments): T {
@@ -57,7 +59,8 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
             multiplatformEnable = args.multiPlatform,
             ownVersion = OWN_VERSION,
             coroutinesVersion = COROUTINES_VERSION,
-            multiplatformVersion = MULTIPLATFORM_VERSION
+            multiplatformVersion = MULTIPLATFORM_VERSION,
+            metadataVersionArray = args.metadataVersion?.let((BinaryVersion)::parseVersionArray)
         )
     }
 

@@ -53,6 +53,10 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
                 processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
             }
 
+            is KtObjectDeclaration -> {
+                processActualDeclarations(element, consumer)
+            }
+
             is KtLightClass -> {
                 val useScope = runReadAction { element.useScope }
                 if (useScope is LocalSearchScope)

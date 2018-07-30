@@ -96,7 +96,7 @@ fun JavaClassDescriptor.convertToProto(): SerializedJavaClassWithSource {
 
     val extension = JavaClassesSerializerExtension()
     val classProto = try {
-        DescriptorSerializer.create(this, extension).classProto(this).build()
+        DescriptorSerializer.create(this, extension, null).classProto(this).build()
     } catch (e: Exception) {
         throw IllegalStateException(
             "Error during writing proto for descriptor: ${DescriptorRenderer.DEBUG_TEXT.render(this)}\n" +

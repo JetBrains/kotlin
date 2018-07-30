@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.Kind.*
+import org.jetbrains.kotlin.config.LanguageFeature.State.*
 import org.jetbrains.kotlin.config.Services
 import java.io.PrintStream
 import java.net.URL
@@ -129,19 +132,37 @@ abstract class CLITool<A : CommonToolArguments> {
         for ((deprecatedName, newName) in errors.deprecatedArguments) {
             collector.report(STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
         }
-        if (arguments.internalArguments.isNotEmpty()) {
+
+        for (argfileError in errors.argfileErrors) {
+            collector.report(STRONG_WARNING, argfileError)
+        }
+
+        reportUnsafeInternalArgumentsIfAny(arguments, collector)
+        for (internalArgumentsError in errors.internalArgumentsParsingProblems) {
+            collector.report(STRONG_WARNING, internalArgumentsError)
+        }
+    }
+
+    private fun reportUnsafeInternalArgumentsIfAny(arguments: A, collector: MessageCollector) {
+        val unsafeArguments = arguments.internalArguments.filterNot {
+            // -XXLanguage which turns on BUG_FIX considered safe
+            it is ManualLanguageFeatureSetting && it.languageFeature.kind == BUG_FIX && it.state == ENABLED
+        }
+
+        if (unsafeArguments.isNotEmpty()) {
+            val unsafeArgumentsString = unsafeArguments.joinToString(prefix = "\n", postfix = "\n\n", separator = "\n") {
+                it.stringRepresentation
+            }
+
             collector.report(
                 STRONG_WARNING,
                 "ATTENTION!\n" +
-                        "This build uses internal compiler arguments:\n" +
-                        arguments.internalArguments.joinToString(prefix = "\n", postfix = "\n\n", separator = "\n") +
+                        "This build uses unsafe internal compiler arguments:\n" +
+                        unsafeArgumentsString +
                         "This mode is not recommended for production use,\n" +
                         "as no stability/compatibility guarantees are given on\n" +
                         "compiler or generated code. Use it at your own risk!\n"
             )
-        }
-        for (argfileError in errors.argfileErrors) {
-            collector.report(STRONG_WARNING, argfileError)
         }
     }
 

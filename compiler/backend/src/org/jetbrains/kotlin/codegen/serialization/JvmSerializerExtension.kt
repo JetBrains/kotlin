@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
@@ -36,7 +37,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 class JvmSerializerExtension(private val bindings: JvmSerializationBindings, state: GenerationState) : SerializerExtension() {
-
     private val codegenBinding = state.bindingContext
     private val typeMapper = state.typeMapper
     override val stringTable = JvmCodegenStringTable(typeMapper)
@@ -44,10 +44,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
     private val isReleaseCoroutines = state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+    override val metadataVersion = state.metadataVersion
 
-    override fun shouldUseTypeTable(): Boolean {
-        return useTypeTable
-    }
+    override fun shouldUseTypeTable(): Boolean = useTypeTable
 
     override fun serializeClass(
         descriptor: ClassDescriptor,
@@ -180,16 +179,24 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         )
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature)
-        val fieldMovedFromInterfaceCompanion = bindings.get(FIELD_MOVED_FROM_INTERFACE_COMPANION, descriptor)
-        if (fieldMovedFromInterfaceCompanion != null && fieldMovedFromInterfaceCompanion) {
-            proto.setExtension(JvmProtoBuf.isMovedFromInterfaceCompanion, 1)
-        }
 
-        if (JvmAbi.isInterfaceCompanionWithBackingFieldsInOuter(descriptor.containingDeclaration)) {
+        if (descriptor.isJvmFieldPropertyInInterfaceCompanion()) {
+            proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
+
             assert(!proto.hasVersionRequirement()) { "VersionRequirement should be empty for $descriptor" }
             proto.versionRequirement =
                     writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
         }
+    }
+
+    private fun PropertyDescriptor.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
+        if (!JvmAbi.hasJvmFieldAnnotation(this)) return false
+
+        val container = containingDeclaration
+        if (!DescriptorUtils.isCompanionObject(container)) return false
+
+        val grandParent = (container as ClassDescriptor).containingDeclaration
+        return DescriptorUtils.isInterface(grandParent) || DescriptorUtils.isAnnotationClass(grandParent)
     }
 
     override fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {

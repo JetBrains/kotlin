@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.js.facade.TranslationUnit;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
@@ -537,11 +538,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         return "kotlinc-js";
     }
 
+    @NotNull
+    @Override
+    protected BinaryVersion createMetadataVersion(@NotNull int[] versionArray) {
+        return new JsMetadataVersion(versionArray);
+    }
+
     private static final class K2JSCompilerPerformanceManager extends CommonCompilerPerformanceManager {
         public K2JSCompilerPerformanceManager() {
             super("Kotlin to JS Compiler");
         }
     }
-
-
 }

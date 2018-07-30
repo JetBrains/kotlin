@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.StorageManager
 
 abstract class DeserializedPackageFragment(
-        fqName: FqName,
-        protected val storageManager: StorageManager,
-        module: ModuleDescriptor
+    fqName: FqName,
+    protected val storageManager: StorageManager,
+    module: ModuleDescriptor
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
     abstract fun initialize(components: DeserializationComponents)

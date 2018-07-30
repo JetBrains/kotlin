@@ -119,6 +119,9 @@ interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
     fun incrementalDataProvider_getCompiledPackageParts(): Collection<CompiledPackagePart>
+
+    @Throws(RemoteException::class)
+    fun incrementalDataProvider_getMetadataVersion(): IntArray
 }
 
 class CompiledPackagePart(

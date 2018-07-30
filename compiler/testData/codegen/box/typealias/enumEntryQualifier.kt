@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 enum class MyEnum {
     O;
     companion object {

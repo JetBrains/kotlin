@@ -232,7 +232,13 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 }
                 int(value1.int / divider)
             }
-            IREM -> int(value1.int % value2.int)
+            IREM -> {
+                val divider = value2.int
+                if (divider == 0) {
+                    divisionByZero()
+                }
+                int(value1.int % divider)
+            }
             ISHL -> int(value1.int shl value2.int)
             ISHR -> int(value1.int shr value2.int)
             IUSHR -> int(value1.int ushr value2.int)
@@ -250,7 +256,13 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 }
                 long(value1.long / divider)
             }
-            LREM -> long(value1.long % value2.long)
+            LREM -> {
+                val divider = value2.long
+                if (divider == 0L) {
+                    divisionByZero()
+                }
+                long(value1.long % divider)
+            }
             LSHL -> long(value1.long shl value2.int)
             LSHR -> long(value1.long shr value2.int)
             LUSHR -> long(value1.long ushr value2.int)
@@ -268,7 +280,13 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 }
                 float(value1.float / divider)
             }
-            FREM -> float(value1.float % value2.float)
+            FREM -> {
+                val divider = value2.float
+                if (divider == 0f) {
+                    divisionByZero()
+                }
+                float(value1.float % divider)
+            }
 
             DADD -> double(value1.double + value2.double)
             DSUB -> double(value1.double - value2.double)
@@ -280,7 +298,13 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 }
                 double(value1.double / divider)
             }
-            DREM -> double(value1.double % value2.double)
+            DREM -> {
+                val divider = value2.double
+                if (divider == 0.0) {
+                    divisionByZero()
+                }
+                double(value1.double % divider)
+            }
 
             LCMP -> {
                 val l1 = value1.long

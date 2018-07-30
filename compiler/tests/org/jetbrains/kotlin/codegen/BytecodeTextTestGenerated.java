@@ -910,6 +910,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testNoInlineInCmp() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constProperty/noInlineInCmp.kt");
         }
+
+        @TestMetadata("nonConstValHasNoDefaultValue_after.kt")
+        public void testNonConstValHasNoDefaultValue_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_after.kt");
+        }
+
+        @TestMetadata("nonConstValHasNoDefaultValue_before.kt")
+        public void testNonConstValHasNoDefaultValue_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_before.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/constantConditions")
@@ -1090,6 +1100,29 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("varValueConflictsWithTable_1_2.kt")
         public void testVarValueConflictsWithTable_1_2() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable_1_2.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/debug")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Debug extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDebug() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("continuationInLvt.kt")
+            public void testContinuationInLvt() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/continuationInLvt.kt");
+            }
+
+            @TestMetadata("probeCoroutineSuspended.kt")
+            public void testProbeCoroutineSuspended() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/probeCoroutineSuspended.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda")
@@ -2718,6 +2751,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("primitiveToString.kt")
         public void testPrimitiveToString() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitiveToString.kt");
+        }
+
+        @TestMetadata("primitivesAsStringTemplates.kt")
+        public void testPrimitivesAsStringTemplates() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitivesAsStringTemplates.kt");
         }
     }
 

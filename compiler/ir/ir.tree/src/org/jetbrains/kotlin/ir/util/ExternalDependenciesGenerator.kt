@@ -29,7 +29,9 @@ class ExternalDependenciesGenerator(
     val symbolTable: SymbolTable,
     val irBuiltIns: IrBuiltIns
 ) {
-    private val stubGenerator = DeclarationStubGenerator(moduleDescriptor, symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
+    private val stubGenerator = DeclarationStubGenerator(
+        moduleDescriptor, symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, irBuiltIns.languageVersionSettings
+    )
 
     fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
         DependencyGenerationTask(irModule).run()

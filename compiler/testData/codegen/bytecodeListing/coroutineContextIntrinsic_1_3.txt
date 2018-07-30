@@ -4,9 +4,7 @@ final class CoroutineContextIntrinsicKt$notTailCall$1 {
     field label: int
     inner class CoroutineContextIntrinsicKt$notTailCall$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    synthetic final method getLabel(): int
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
-    synthetic final method setLabel(p0: int): void
 }
 
 @kotlin.Metadata

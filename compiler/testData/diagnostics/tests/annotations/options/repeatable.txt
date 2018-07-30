@@ -60,7 +60,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Repeatable public final annotation class repexpr : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable public final annotation class repexpr : kotlin.Annotation {
     public constructor repexpr()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

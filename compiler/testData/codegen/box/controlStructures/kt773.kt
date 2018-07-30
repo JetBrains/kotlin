@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 package demo2
 
 fun print(o : Any?) {}

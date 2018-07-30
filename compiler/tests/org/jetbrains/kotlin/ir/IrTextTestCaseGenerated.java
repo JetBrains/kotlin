@@ -812,6 +812,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/enumEntryAsReceiver.kt");
         }
 
+        @TestMetadata("enumEntryReferenceFromEnumEntryClass.kt")
+        public void testEnumEntryReferenceFromEnumEntryClass() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/enumEntryReferenceFromEnumEntryClass.kt");
+        }
+
         @TestMetadata("equality.kt")
         public void testEquality() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/equality.kt");
@@ -902,6 +907,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");
         }
 
+        @TestMetadata("javaSyntheticPropertyAccess.kt")
+        public void testJavaSyntheticPropertyAccess() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/javaSyntheticPropertyAccess.kt");
+        }
+
         @TestMetadata("jvmInstanceFieldReference.kt")
         public void testJvmInstanceFieldReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/jvmInstanceFieldReference.kt");
@@ -962,6 +972,21 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/objectClassReference.kt");
         }
 
+        @TestMetadata("objectReference.kt")
+        public void testObjectReference() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReference.kt");
+        }
+
+        @TestMetadata("objectReferenceInClosureInSuperConstructorCall.kt")
+        public void testObjectReferenceInClosureInSuperConstructorCall() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReferenceInClosureInSuperConstructorCall.kt");
+        }
+
+        @TestMetadata("objectReferenceInFieldInitializer.kt")
+        public void testObjectReferenceInFieldInitializer() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectReferenceInFieldInitializer.kt");
+        }
+
         @TestMetadata("outerClassInstanceReference.kt")
         public void testOuterClassInstanceReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/outerClassInstanceReference.kt");
@@ -1005,6 +1030,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("setFieldWithImplicitCast.kt")
         public void testSetFieldWithImplicitCast() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/setFieldWithImplicitCast.kt");
+        }
+
+        @TestMetadata("signedToUnsignedConversions.kt")
+        public void testSignedToUnsignedConversions() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/signedToUnsignedConversions.kt");
         }
 
         @TestMetadata("simpleOperators.kt")
@@ -1383,6 +1413,16 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("javaStaticMethod.kt")
         public void testJavaStaticMethod() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/javaStaticMethod.kt");
+        }
+
+        @TestMetadata("javaSyntheticProperty.kt")
+        public void testJavaSyntheticProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/javaSyntheticProperty.kt");
+        }
+
+        @TestMetadata("jdkClassSyntheticProperty.kt")
+        public void testJdkClassSyntheticProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/jdkClassSyntheticProperty.kt");
         }
 
         @TestMetadata("kotlinInnerClass.kt")

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -42,8 +43,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 
 open class AddModifierFix(
-        element: KtModifierListOwner,
-        protected val modifier: KtModifierKeywordToken
+    element: KtModifierListOwner,
+    protected val modifier: KtModifierKeywordToken
 ) : KotlinQuickFixAction<KtModifierListOwner>(element), KotlinUniversalQuickFix {
     override fun getText(): String {
         val element = element ?: return ""
@@ -55,16 +56,24 @@ open class AddModifierFix(
 
     override fun getFamilyName() = "Add modifier"
 
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+    private fun invokeOnElement(element: KtModifierListOwner?) {
         element?.addModifier(modifier)
 
         if (modifier == KtTokens.ABSTRACT_KEYWORD && (element is KtProperty || element is KtNamedFunction)) {
-            element?.containingClass()?.run {
+            element.containingClass()?.run {
                 if (!hasModifier(KtTokens.ABSTRACT_KEYWORD) && !hasModifier(KtTokens.SEALED_KEYWORD)) {
                     addModifier(KtTokens.ABSTRACT_KEYWORD)
                 }
             }
         }
+    }
+
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val originalElement = element
+        if (originalElement is KtDeclaration && modifier.isMultiplatformPersistent()) {
+            originalElement.runOnExpectAndAllActuals { invokeOnElement(it) }
+        }
+        invokeOnElement(originalElement)
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
@@ -73,6 +82,10 @@ open class AddModifierFix(
     }
 
     companion object {
+
+        private fun KtModifierKeywordToken.isMultiplatformPersistent(): Boolean =
+            this in KtTokens.MODALITY_MODIFIERS || this == KtTokens.INLINE_KEYWORD
+
         private val modalityModifiers = setOf(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD)
 
         fun getElementName(modifierListOwner: KtModifierListOwner): String {
@@ -82,8 +95,7 @@ open class AddModifierFix(
                 if (nameIdentifier != null) {
                     name = nameIdentifier.text
                 }
-            }
-            else if (modifierListOwner is KtPropertyAccessor) {
+            } else if (modifierListOwner is KtPropertyAccessor) {
                 name = modifierListOwner.namePlaceholder.text
             }
             if (name == null) {
@@ -96,7 +108,10 @@ open class AddModifierFix(
             return createFactory(modifier, KtModifierListOwner::class.java)
         }
 
-        fun <T : KtModifierListOwner> createFactory(modifier: KtModifierKeywordToken, modifierOwnerClass: Class<T>): KotlinSingleIntentionActionFactory {
+        fun <T : KtModifierListOwner> createFactory(
+            modifier: KtModifierKeywordToken,
+            modifierOwnerClass: Class<T>
+        ): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
                 public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                     val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass) ?: return null
@@ -123,7 +138,8 @@ open class AddModifierFix(
                             modifierListOwner.isSealed() ||
                             modifierListOwner.isEnum() ||
                             modifierListOwner.isData() ||
-                            modifierListOwner.isAnnotation()) return null
+                            modifierListOwner.isAnnotation()
+                        ) return null
                     }
                 }
             }

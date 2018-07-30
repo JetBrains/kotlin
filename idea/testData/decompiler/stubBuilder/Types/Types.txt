@@ -381,7 +381,7 @@ PsiJetFileStubImpl[package=test]
             REFERENCE_EXPRESSION[referencedName=List]
             TYPE_ARGUMENT_LIST
               TYPE_PROJECTION[projectionKind=STAR]
-      FUN[fqName=test.Types.functionTypeWithNamedArgs, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=functionTypeWithNamedArgs]
+      FUN[fqName=test.Types.functionTypeWithNamedArgs, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=functionTypeWithNamedArgs]
         MODIFIER_LIST[abstract public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=fType]
@@ -411,7 +411,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.Types.extOnFunctionType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=extOnFunctionType]
+      FUN[fqName=test.Types.extOnFunctionType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=extOnFunctionType]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=P1]

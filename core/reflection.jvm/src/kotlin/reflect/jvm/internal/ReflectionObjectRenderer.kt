@@ -57,7 +57,7 @@ internal object ReflectionObjectRenderer {
         return buildString {
             append(if (descriptor.isVar) "var " else "val ")
             appendReceivers(descriptor)
-            append(renderer.renderName(descriptor.name))
+            append(renderer.renderName(descriptor.name, true))
 
             append(": ")
             append(renderType(descriptor.type))
@@ -68,7 +68,7 @@ internal object ReflectionObjectRenderer {
         return buildString {
             append("fun ")
             appendReceivers(descriptor)
-            append(renderer.renderName(descriptor.name))
+            append(renderer.renderName(descriptor.name, true))
 
             descriptor.valueParameters.joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
                 renderType(it.type) // TODO: vararg

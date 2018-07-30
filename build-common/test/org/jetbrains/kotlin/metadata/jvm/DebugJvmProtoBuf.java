@@ -11,7 +11,7 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.methodSignature);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.lambdaClassOriginName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.propertySignature);
-    registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.isMovedFromInterfaceCompanion);
+    registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.flags);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.typeParameterAnnotation);
@@ -4559,14 +4559,19 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.JvmPropertySignature.class,
         org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.JvmPropertySignature.getDefaultInstance());
-  public static final int IS_MOVED_FROM_INTERFACE_COMPANION_FIELD_NUMBER = 101;
+  public static final int FLAGS_FIELD_NUMBER = 101;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   *
+   * <pre>
+   **
+   *isMovedFromInterfaceCompanion   true if this property is declared in an interface companion, and the field is stored in the interface
+   * </pre>
    */
   public static final
     org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.DebugProtoBuf.Property,
-      java.lang.Integer> isMovedFromInterfaceCompanion = org.jetbrains.kotlin.protobuf.GeneratedMessage
+      java.lang.Integer> flags = org.jetbrains.kotlin.protobuf.GeneratedMessage
           .newFileScopedGeneratedExtension(
         java.lang.Integer.class,
         null);
@@ -4738,27 +4743,27 @@ public final class DebugJvmProtoBuf {
       "perty_signature\022\'.org.jetbrains.kotlin.m" +
       "etadata.Property\030d \001(\01327.org.jetbrains.k" +
       "otlin.metadata.jvm.JvmPropertySignature:" +
-      "R\n!is_moved_from_interface_companion\022\'.o" +
-      "rg.jetbrains.kotlin.metadata.Property\030e " +
-      "\001(\005:g\n\017type_annotation\022#.org.jetbrains.k",
-      "otlin.metadata.Type\030d \003(\0132).org.jetbrain" +
-      "s.kotlin.metadata.Annotation:3\n\006is_raw\022#" +
-      ".org.jetbrains.kotlin.metadata.Type\030e \001(" +
-      "\010:z\n\031type_parameter_annotation\022,.org.jet" +
-      "brains.kotlin.metadata.TypeParameter\030d \003" +
-      "(\0132).org.jetbrains.kotlin.metadata.Annot" +
-      "ation:E\n\021class_module_name\022$.org.jetbrai" +
-      "ns.kotlin.metadata.Class\030e \001(\005B\004\230\265\030\001:k\n\024" +
-      "class_local_variable\022$.org.jetbrains.kot" +
-      "lin.metadata.Class\030f \003(\0132\'.org.jetbrains",
-      ".kotlin.metadata.Property:P\n\034anonymous_o" +
-      "bject_origin_name\022$.org.jetbrains.kotlin" +
-      ".metadata.Class\030g \001(\005B\004\230\265\030\001:I\n\023package_m" +
-      "odule_name\022&.org.jetbrains.kotlin.metada" +
-      "ta.Package\030e \001(\005B\004\230\265\030\001:o\n\026package_local_" +
-      "variable\022&.org.jetbrains.kotlin.metadata" +
-      ".Package\030f \003(\0132\'.org.jetbrains.kotlin.me" +
-      "tadata.PropertyB\022B\020DebugJvmProtoBuf"
+      "9\n\005flags\022\'.org.jetbrains.kotlin.metadata" +
+      ".Property\030e \001(\005:\0010:g\n\017type_annotation\022#." +
+      "org.jetbrains.kotlin.metadata.Type\030d \003(\013",
+      "2).org.jetbrains.kotlin.metadata.Annotat" +
+      "ion:3\n\006is_raw\022#.org.jetbrains.kotlin.met" +
+      "adata.Type\030e \001(\010:z\n\031type_parameter_annot" +
+      "ation\022,.org.jetbrains.kotlin.metadata.Ty" +
+      "peParameter\030d \003(\0132).org.jetbrains.kotlin" +
+      ".metadata.Annotation:E\n\021class_module_nam" +
+      "e\022$.org.jetbrains.kotlin.metadata.Class\030" +
+      "e \001(\005B\004\230\265\030\001:k\n\024class_local_variable\022$.or" +
+      "g.jetbrains.kotlin.metadata.Class\030f \003(\0132" +
+      "\'.org.jetbrains.kotlin.metadata.Property",
+      ":P\n\034anonymous_object_origin_name\022$.org.j" +
+      "etbrains.kotlin.metadata.Class\030g \001(\005B\004\230\265" +
+      "\030\001:I\n\023package_module_name\022&.org.jetbrain" +
+      "s.kotlin.metadata.Package\030e \001(\005B\004\230\265\030\001:o\n" +
+      "\026package_local_variable\022&.org.jetbrains." +
+      "kotlin.metadata.Package\030f \003(\0132\'.org.jetb" +
+      "rains.kotlin.metadata.PropertyB\022B\020DebugJ" +
+      "vmProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4808,7 +4813,7 @@ public final class DebugJvmProtoBuf {
     methodSignature.internalInit(descriptor.getExtensions().get(1));
     lambdaClassOriginName.internalInit(descriptor.getExtensions().get(2));
     propertySignature.internalInit(descriptor.getExtensions().get(3));
-    isMovedFromInterfaceCompanion.internalInit(descriptor.getExtensions().get(4));
+    flags.internalInit(descriptor.getExtensions().get(4));
     typeAnnotation.internalInit(descriptor.getExtensions().get(5));
     isRaw.internalInit(descriptor.getExtensions().get(6));
     typeParameterAnnotation.internalInit(descriptor.getExtensions().get(7));

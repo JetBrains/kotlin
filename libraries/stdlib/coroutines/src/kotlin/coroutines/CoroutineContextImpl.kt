@@ -22,7 +22,7 @@ public abstract class AbstractCoroutineContextElement(public override val key: K
 @SinceKotlin("1.3")
 public object EmptyCoroutineContext : CoroutineContext, Serializable {
     private const val serialVersionUID: Long = 0
-    private fun readResolve(): Any = this
+    private fun readResolve(): Any = EmptyCoroutineContext
 
     public override fun <E : Element> get(key: Key<E>): E? = null
     public override fun <R> fold(initial: R, operation: (R, Element) -> R): R = initial
@@ -104,11 +104,13 @@ internal class CombinedContext(
         } + "]"
 
     private fun writeReplace(): Any {
-        val list = ArrayList<CoroutineContext>(size())
-        fold(Unit) { _, element ->
-            if (element is Serializable) list += element
-        }
-        return Serialized(list.toTypedArray())
+        val n = size()
+        val elements = arrayOfNulls<CoroutineContext>(n)
+        var index = 0
+        fold(Unit) { _, element -> elements[index++] = element }
+        check(index == n)
+        @Suppress("UNCHECKED_CAST")
+        return Serialized(elements as Array<CoroutineContext>)
     }
 
     private class Serialized(val elements: Array<CoroutineContext>) : Serializable {

@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 
-package kotlinx.coroutines.experimental
+package kotlinx.coroutines
 
 interface Deferred<T> {
     suspend fun await(): T

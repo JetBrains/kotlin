@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -41,7 +42,7 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
-class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(dependOnOldBuiltIns) {
+class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(BuiltInsBinaryVersion.INSTANCE, dependOnOldBuiltIns) {
     fun serialize(
             destDir: File,
             srcDirs: List<File>,

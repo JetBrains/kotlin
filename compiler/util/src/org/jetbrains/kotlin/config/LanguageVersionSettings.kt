@@ -15,7 +15,7 @@ enum class LanguageFeature(
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val hintUrl: String? = null,
     val defaultState: State = State.ENABLED,
-    val kind: Kind = OTHER // NB: default value OTHER doesn't forces pre-releaseness (see KDoc)
+    val kind: Kind = OTHER // NB: default value OTHER doesn't force pre-releaseness (see KDoc)
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
@@ -80,9 +80,13 @@ enum class LanguageFeature(
     ProhibitOperatorMod(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitAssigningSingleElementsToVarargsInNamedForm(KOTLIN_1_3, kind = BUG_FIX),
     FunctionTypesWithBigArity(KOTLIN_1_3, sinceApiVersion = ApiVersion.KOTLIN_1_3),
+    RestrictRetentionForExpressionAnnotations(KOTLIN_1_3, kind = BUG_FIX),
+    NoConstantValueAttributeForNonConstVals(KOTLIN_1_3, kind = BUG_FIX),
+    NormalizeConstructorCalls(KOTLIN_1_3),
+    StrictJavaNullabilityAssertions(KOTLIN_1_3, kind = BUG_FIX),
 
-    StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
-    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
+    RestrictReturnStatementTarget(KOTLIN_1_4, kind = BUG_FIX),
+    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED, kind = BUG_FIX),
 
     // Experimental features
 
@@ -183,7 +187,8 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
     KOTLIN_1_0(1, 0),
     KOTLIN_1_1(1, 1),
     KOTLIN_1_2(1, 2),
-    KOTLIN_1_3(1, 3);
+    KOTLIN_1_3(1, 3),
+    KOTLIN_1_4(1, 4);
 
     val isStable: Boolean
         get() = this <= LATEST_STABLE

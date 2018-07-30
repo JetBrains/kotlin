@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.tasks.*
-import org.gradle.api.file.FileCollection
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.clearOutputDirectories
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
@@ -47,9 +47,14 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
 
         clearOutputDirectories()
 
+        val compileClasspath = classpath.files.toMutableList()
+        if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
+            compileClasspath.addAll(0, PathUtil.getJdkClassesRootsFromCurrentJre())
+        }
+
         val paths = KaptPathsForWorker(
             project.projectDir,
-            classpath.files.toList(),
+            compileClasspath,
             kaptClasspath.files.toList(),
             javaSourceRoots.toList(),
             destinationDir,
@@ -124,12 +129,9 @@ private class KaptExecution @Inject constructor(
     }
 
     private fun createKaptPaths(classLoader: ClassLoader) = with(paths) {
-        val fullClasspath = ArrayList<File>()
-        fullClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre())
-        fullClasspath.addAll(compileClasspath)
         Class.forName("org.jetbrains.kotlin.kapt3.base.KaptPaths", true, classLoader).constructors.single().newInstance(
             projectBaseDir,
-            fullClasspath,
+            compileClasspath,
             annotationProcessingClasspath,
             javaSourceRoots,
             sourcesOutputDir,

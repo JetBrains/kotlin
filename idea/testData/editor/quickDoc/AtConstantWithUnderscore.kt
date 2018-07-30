@@ -9,4 +9,4 @@ class C {
     }
 }
 
-//INFO: <pre><b>public</b> <b>final</b> <b>fun</b> foo(): Unit <i>defined in</i> C</pre><p>Use <a href="psi_element://SOME_REFERENCED_VAL">SOME_REFERENCED_VAL</a> to do something</p>
+//INFO: <div class='definition'><pre><a href="psi_element://C"><code>C</code></a><br>public final fun <b>foo</b>(): Unit</pre></div><div class='content'><p>Use <a href="psi_element://SOME_REFERENCED_VAL">SOME_REFERENCED_VAL</a> to do something</p></div><table class='sections'></table>

@@ -36,36 +36,36 @@ import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
 class MetadataPackageFragmentProvider(
-        storageManager: StorageManager,
-        finder: KotlinMetadataFinder,
-        moduleDescriptor: ModuleDescriptor,
-        notFoundClasses: NotFoundClasses,
-        private val metadataPartProvider: MetadataPartProvider
+    storageManager: StorageManager,
+    finder: KotlinMetadataFinder,
+    moduleDescriptor: ModuleDescriptor,
+    notFoundClasses: NotFoundClasses,
+    private val metadataPartProvider: MetadataPartProvider
 ) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
-                storageManager,
-                moduleDescriptor,
-                DeserializationConfiguration.Default, // TODO
-                DeserializedClassDataFinder(this),
-                AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol),
-                this,
-                LocalClassifierTypeSettings.Default,
-                ErrorReporter.DO_NOTHING,
-                LookupTracker.DO_NOTHING,
-                FlexibleTypeDeserializer.ThrowException,
-                emptyList(),
-                notFoundClasses,
-                ContractDeserializer.DEFAULT,
-                AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
-                BuiltInSerializerProtocol.extensionRegistry
+            storageManager,
+            moduleDescriptor,
+            DeserializationConfiguration.Default, // TODO
+            DeserializedClassDataFinder(this),
+            AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol),
+            this,
+            LocalClassifierTypeSettings.Default,
+            ErrorReporter.DO_NOTHING,
+            LookupTracker.DO_NOTHING,
+            FlexibleTypeDeserializer.ThrowException,
+            emptyList(),
+            notFoundClasses,
+            ContractDeserializer.DEFAULT,
+            AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
+            BuiltInSerializerProtocol.extensionRegistry
         )
     }
 
     override fun findPackage(fqName: FqName): DeserializedPackageFragment? =
-            if (finder.hasMetadataPackage(fqName))
-                MetadataPackageFragment(fqName, storageManager, moduleDescriptor, metadataPartProvider, finder)
-            else null
+        if (finder.hasMetadataPackage(fqName))
+            MetadataPackageFragment(fqName, storageManager, moduleDescriptor, metadataPartProvider, finder)
+        else null
 }
 
 class MetadataPackageFragment(
@@ -78,11 +78,11 @@ class MetadataPackageFragment(
     override val classDataFinder = ClassDataFinder { classId ->
         val topLevelClassId = generateSequence(classId, ClassId::getOuterClassId).last()
         val stream = finder.findMetadata(topLevelClassId) ?: return@ClassDataFinder null
-        val (message, nameResolver) = readProto(stream)
+        val (message, nameResolver, version) = readProto(stream)
         message.class_List.firstOrNull { classProto ->
             nameResolver.getClassId(classProto.fqName) == classId
         }?.let { classProto ->
-            ClassData(nameResolver, classProto, SourceElement.NO_SOURCE)
+            ClassData(nameResolver, classProto, version, SourceElement.NO_SOURCE)
         }
     }
 
@@ -101,18 +101,20 @@ class MetadataPackageFragment(
         val scopes = arrayListOf<DeserializedPackageMemberScope>()
         for (partName in packageParts) {
             val stream = finder.findMetadata(ClassId(fqName, Name.identifier(partName))) ?: continue
-            val (proto, nameResolver) = readProto(stream)
+            val (proto, nameResolver, version) = readProto(stream)
 
             scopes.add(DeserializedPackageMemberScope(
-                    this, proto.`package`, nameResolver, containerSource = null, components = components, classNames = { emptyList() }
+                this, proto.`package`, nameResolver, version, containerSource = null, components = components,
+                classNames = { emptyList() }
             ))
         }
 
         // Also add the deserialized scope that can load all classes from this package
         scopes.add(object : DeserializedPackageMemberScope(
-                this, ProtoBuf.Package.getDefaultInstance(),
-                NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance()),
-                containerSource = null, components = components, classNames = { emptyList() }
+            this, ProtoBuf.Package.getDefaultInstance(),
+            NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance()),
+            BuiltInsBinaryVersion.INSTANCE, // Exact version does not matter here
+            containerSource = null, components = components, classNames = { emptyList() }
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
             override fun definitelyDoesNotContainName(name: Name) = false
@@ -129,25 +131,25 @@ class MetadataPackageFragment(
         return true
     }
 
-    private fun readProto(stream: InputStream): Pair<ProtoBuf.PackageFragment, NameResolverImpl> {
+    private fun readProto(stream: InputStream): Triple<ProtoBuf.PackageFragment, NameResolverImpl, BuiltInsBinaryVersion> {
         val version = BuiltInsBinaryVersion.readFrom(stream)
 
         if (!version.isCompatible()) {
             // TODO: report a proper diagnostic
             throw UnsupportedOperationException(
-                    "Kotlin metadata definition format version is not supported: " +
-                    "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                    "Please update Kotlin"
+                "Kotlin metadata definition format version is not supported: " +
+                        "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
+                        "Please update Kotlin"
             )
         }
 
         val message = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
         val nameResolver = NameResolverImpl(message.strings, message.qualifiedNames)
-        return Pair(message, nameResolver)
+        return Triple(message, nameResolver, version)
     }
 
     companion object {
-        val DOT_METADATA_FILE_EXTENSION = ".kotlin_metadata"
-        val METADATA_FILE_EXTENSION = "kotlin_metadata"
+        const val METADATA_FILE_EXTENSION = "kotlin_metadata"
+        const val DOT_METADATA_FILE_EXTENSION = ".$METADATA_FILE_EXTENSION"
     }
 }

@@ -2898,7 +2898,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         val resolutionFacade = KotlinCacheService.getInstance(myProject).getResolutionFacadeByModuleInfo(moduleInfo!!, platform)!!
         val moduleDescriptor = resolutionFacade.moduleDescriptor
 
-        Assert.assertEquals("<$expectedName>", moduleDescriptor.name.asString())
+        Assert.assertEquals("<$expectedName>", moduleDescriptor.stableName?.asString())
     }
 
     private fun assertImporterStatePresent() {

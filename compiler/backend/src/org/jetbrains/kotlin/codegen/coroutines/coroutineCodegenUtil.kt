@@ -10,14 +10,11 @@ import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.codegen.topLevelClassAsmType
-import org.jetbrains.kotlin.codegen.topLevelClassInternalName
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -395,18 +393,39 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
             typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
         )
 
-    node.visitVarInsn(Opcodes.ALOAD, 0)
-    node.visitVarInsn(Opcodes.ALOAD, 1)
+    with(InstructionAdapter(node)) {
+        load(0, AsmTypes.OBJECT_TYPE) // block
+        load(1, AsmTypes.OBJECT_TYPE) // continuation
 
-    node.visitMethodInsn(
-        Opcodes.INVOKEINTERFACE,
-        typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
-        OperatorNameConventions.INVOKE.identifier,
-        "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}",
-        true
-    )
+        // block.invoke(continuation)
+        invokeinterface(
+            typeMapper.mapType(functionDescriptor.valueParameters[0]).internalName,
+            OperatorNameConventions.INVOKE.identifier,
+            "(${AsmTypes.OBJECT_TYPE})${AsmTypes.OBJECT_TYPE}"
+        )
+
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
+            val elseLabel = Label()
+            // if (result === COROUTINE_SUSPENDED) {
+            dup()
+            loadCoroutineSuspendedMarker(languageVersionSettings)
+            ifacmpne(elseLabel)
+            //   DebugProbesKt.probeCoroutineSuspended(continuation)
+            load(1, AsmTypes.OBJECT_TYPE) // continuation
+            checkcast(languageVersionSettings.continuationAsmType())
+            invokestatic(
+                languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("DebugProbesKt")).topLevelClassAsmType().internalName,
+                "probeCoroutineSuspended",
+                "(${languageVersionSettings.continuationAsmType()})V",
+                false
+            )
+            // }
+            mark(elseLabel)
+        }
+    }
+
     node.visitInsn(Opcodes.ARETURN)
-    node.visitMaxs(2, 2)
+    node.visitMaxs(3, 2)
 
     return node
 }

@@ -75,7 +75,7 @@ interface CallGenerator {
 
         override fun putCapturedValueOnStack(
                 stackValue: StackValue, valueType: Type, paramIndex: Int) {
-            stackValue.put(stackValue.type, codegen.v)
+            stackValue.put(stackValue.type, stackValue.kotlinType, codegen.v)
         }
 
         override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {

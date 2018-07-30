@@ -1,0 +1,303 @@
+package
+
+@kotlin.internal.ImplicitIntegerCoercion public const val BIGGER_THAN_UBYTE: kotlin.Int = 256
+@kotlin.internal.ImplicitIntegerCoercion public const val EXPLICIT_INT: kotlin.Int = 255
+@kotlin.internal.ImplicitIntegerCoercion public const val IMPLICIT_INT: kotlin.Int = 255
+@kotlin.internal.ImplicitIntegerCoercion public const val LONG_CONST: kotlin.Long = 255.toLong()
+@kotlin.internal.ImplicitIntegerCoercion public val NON_CONST: kotlin.Int = 255
+@kotlin.internal.ImplicitIntegerCoercion public const val UINT_CONST: kotlin.UInt = 42.toUInt()
+public fun takeIntWithoutAnnotation(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun takeLong(/*0*/ @kotlin.internal.ImplicitIntegerCoercion l: kotlin.Long): kotlin.Unit
+public fun takeUByte(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.UByte): kotlin.Unit
+public fun takeUBytes(/*0*/ @kotlin.internal.ImplicitIntegerCoercion vararg u: kotlin.UByte /*kotlin.UByteArray*/): kotlin.Unit
+public fun takeUInt(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.UInt): kotlin.Unit
+public fun takeUIntWithoutAnnotaion(/*0*/ u: kotlin.UInt): kotlin.Unit
+public fun takeULong(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.ULong): kotlin.Unit
+public fun takeUShort(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.UShort): kotlin.Unit
+public fun test(): kotlin.Unit
+
+package kotlin {
+
+    package kotlin.annotation {
+    }
+
+    package kotlin.collections {
+    }
+
+    package kotlin.comparisons {
+    }
+
+    package kotlin.concurrent {
+    }
+
+    package kotlin.coroutines {
+
+        package kotlin.coroutines.experimental {
+
+            package kotlin.coroutines.experimental.intrinsics {
+            }
+
+            package kotlin.coroutines.experimental.jvm {
+
+                package kotlin.coroutines.experimental.jvm.internal {
+                }
+            }
+        }
+    }
+
+    package kotlin.experimental {
+    }
+
+    package kotlin.internal {
+
+        public final annotation class ImplicitIntegerCoercion : kotlin.Annotation {
+            public constructor ImplicitIntegerCoercion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        package kotlin.internal.contracts {
+        }
+    }
+
+    package kotlin.io {
+    }
+
+    package kotlin.jvm {
+
+        package kotlin.jvm.functions {
+        }
+
+        package kotlin.jvm.internal {
+
+            package kotlin.jvm.internal.markers {
+            }
+
+            package kotlin.jvm.internal.unsafe {
+            }
+        }
+    }
+
+    package kotlin.math {
+    }
+
+    package kotlin.properties {
+    }
+
+    package kotlin.ranges {
+    }
+
+    package kotlin.reflect {
+
+        package kotlin.reflect.full {
+        }
+
+        package kotlin.reflect.jvm {
+
+            package kotlin.reflect.jvm.internal {
+
+                package kotlin.reflect.jvm.internal.components {
+                }
+
+                package kotlin.reflect.jvm.internal.impl {
+
+                    package kotlin.reflect.jvm.internal.impl.builtins {
+
+                        package kotlin.reflect.jvm.internal.impl.builtins.functions {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.builtins.jvm {
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.descriptors {
+
+                        package kotlin.reflect.jvm.internal.impl.descriptors.annotations {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.descriptors.deserialization {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.descriptors.impl {
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.incremental {
+
+                        package kotlin.reflect.jvm.internal.impl.incremental.components {
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.load {
+
+                        package kotlin.reflect.jvm.internal.impl.load.java {
+
+                            package kotlin.reflect.jvm.internal.impl.load.java.components {
+                            }
+
+                            package kotlin.reflect.jvm.internal.impl.load.java.descriptors {
+                            }
+
+                            package kotlin.reflect.jvm.internal.impl.load.java.lazy {
+
+                                package kotlin.reflect.jvm.internal.impl.load.java.lazy.descriptors {
+                                }
+
+                                package kotlin.reflect.jvm.internal.impl.load.java.lazy.types {
+                                }
+                            }
+
+                            package kotlin.reflect.jvm.internal.impl.load.java.sources {
+                            }
+
+                            package kotlin.reflect.jvm.internal.impl.load.java.structure {
+                            }
+
+                            package kotlin.reflect.jvm.internal.impl.load.java.typeEnhancement {
+                            }
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.load.kotlin {
+
+                            package kotlin.reflect.jvm.internal.impl.load.kotlin.header {
+                            }
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.metadata {
+
+                        package kotlin.reflect.jvm.internal.impl.metadata.builtins {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.metadata.deserialization {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.metadata.jvm {
+
+                            package kotlin.reflect.jvm.internal.impl.metadata.jvm.deserialization {
+                            }
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.name {
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.protobuf {
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.renderer {
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.resolve {
+
+                        package kotlin.reflect.jvm.internal.impl.resolve.calls {
+
+                            package kotlin.reflect.jvm.internal.impl.resolve.calls.inference {
+                            }
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.resolve.constants {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.resolve.descriptorUtil {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.resolve.jvm {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.resolve.scopes {
+
+                            package kotlin.reflect.jvm.internal.impl.resolve.scopes.receivers {
+                            }
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.serialization {
+
+                        package kotlin.reflect.jvm.internal.impl.serialization.deserialization {
+
+                            package kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins {
+                            }
+
+                            package kotlin.reflect.jvm.internal.impl.serialization.deserialization.descriptors {
+                            }
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.storage {
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.types {
+
+                        package kotlin.reflect.jvm.internal.impl.types.checker {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.types.error {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.types.typeUtil {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.types.typesApproximation {
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.util {
+
+                        package kotlin.reflect.jvm.internal.impl.util.capitalizeDecapitalize {
+                        }
+
+                        package kotlin.reflect.jvm.internal.impl.util.collectionUtils {
+                        }
+                    }
+
+                    package kotlin.reflect.jvm.internal.impl.utils {
+                    }
+                }
+
+                package kotlin.reflect.jvm.internal.pcollections {
+                }
+
+                package kotlin.reflect.jvm.internal.structure {
+                }
+            }
+        }
+    }
+
+    package kotlin.script {
+
+        package kotlin.script.dependencies {
+        }
+
+        package kotlin.script.experimental {
+
+            package kotlin.script.experimental.dependencies {
+            }
+
+            package kotlin.script.experimental.location {
+            }
+        }
+
+        package kotlin.script.extensions {
+        }
+
+        package kotlin.script.templates {
+
+            package kotlin.script.templates.standard {
+            }
+        }
+    }
+
+    package kotlin.sequences {
+    }
+
+    package kotlin.system {
+    }
+
+    package kotlin.test {
+    }
+
+    package kotlin.text {
+    }
+}

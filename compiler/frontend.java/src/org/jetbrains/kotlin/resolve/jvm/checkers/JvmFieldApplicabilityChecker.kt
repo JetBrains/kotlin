@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmFieldApplicabilityChecker.Problem.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JvmFieldApplicabilityChecker : DeclarationChecker {
 
@@ -64,7 +66,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
                 if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JvmFieldInInterface))
                     INSIDE_COMPANION_OF_INTERFACE
                 else {
-                    if (!JvmAbi.isInterfaceCompanionWithBackingFieldsInOuter(descriptor.containingDeclaration)) {
+                    if (!isInterfaceCompanionWithPublicJvmFieldProperties(descriptor.containingDeclaration as ClassDescriptor)) {
                         NOT_PUBLIC_VAL_WITH_JVMFIELD
                     } else return
                 }
@@ -75,6 +77,19 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
 
         val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
         context.trace.report(ErrorsJvm.INAPPLICABLE_JVM_FIELD.on(annotationEntry, problem.errorMessage))
+    }
+
+    private fun isInterfaceCompanionWithPublicJvmFieldProperties(companionObject: ClassDescriptor): Boolean {
+        for (next in companionObject.unsubstitutedMemberScope.getContributedDescriptors(
+            DescriptorKindFilter.VARIABLES, MemberScope.ALL_NAME_FILTER
+        )) {
+            if (next !is PropertyDescriptor) continue
+
+            if (next.visibility != Visibilities.PUBLIC || next.isVar || next.modality != Modality.FINAL) return false
+
+            if (!JvmAbi.hasJvmFieldAnnotation(next)) return false
+        }
+        return true
     }
 
     private fun PropertyDescriptor.hasCustomAccessor() = !(getter?.isDefault ?: true) || !(setter?.isDefault ?: true)
@@ -89,5 +104,4 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         val outerClassKind = (containingClass.containingDeclaration as? ClassDescriptor)?.kind
         return outerClassKind == ClassKind.INTERFACE || outerClassKind == ClassKind.ANNOTATION_CLASS
     }
-
 }

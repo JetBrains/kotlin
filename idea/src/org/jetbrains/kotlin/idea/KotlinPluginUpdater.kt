@@ -212,8 +212,10 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
             return PluginUpdateStatus.fromException("Checking custom plugin repository $host failed", e)
         }
 
-        val kotlinPlugin =
-            plugins.find { it.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID } ?: return PluginUpdateStatus.LatestVersionInstalled
+        val kotlinPlugin = plugins.find { pluginDescriptor ->
+            pluginDescriptor.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID && PluginManagerCore.isCompatible(pluginDescriptor)
+        } ?: return PluginUpdateStatus.LatestVersionInstalled
+
         return updateIfNotLatest(kotlinPlugin, host)
     }
 

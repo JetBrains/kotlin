@@ -229,6 +229,9 @@ public interface Errors {
     DiagnosticFactory0<KtAnnotationEntry> ANNOTATION_USED_AS_ANNOTATION_ARGUMENT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ANNOTATION_ARGUMENT_IS_NON_CONST = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_WARNING = DiagnosticFactory0.create(WARNING);
+
     DiagnosticFactory0<KtClassOrObject> LOCAL_ANNOTATION_CLASS = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtClassOrObject> LOCAL_ANNOTATION_CLASS_ERROR = DiagnosticFactory0.create(ERROR);
 
@@ -815,6 +818,11 @@ public interface Errors {
     DiagnosticFactory0<KtExpressionWithLabel> BREAK_OR_CONTINUE_IN_WHEN = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpressionWithLabel> BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtExpressionWithLabel, String> NOT_A_LOOP_LABEL = DiagnosticFactory1.create(ERROR);
+
+    DiagnosticFactory0<KtExpressionWithLabel> NOT_A_FUNCTION_LABEL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpressionWithLabel> NOT_A_FUNCTION_LABEL_WARNING = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory0<KtElement> REDUNDANT_LABEL_WARNING = DiagnosticFactory0.create(WARNING);
 
     // Control flow / Data flow
 

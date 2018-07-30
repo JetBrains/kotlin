@@ -71,8 +71,8 @@ object KotlinJavascriptMetadataUtils {
     fun hasMetadata(text: String): Boolean =
             KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
 
-    fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
-        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME(${JsMetadataVersion.INSTANCE.toInteger()}, \"$moduleName\", " +
+    fun formatMetadataAsString(moduleName: String, content: ByteArray, metadataVersion: JsMetadataVersion): String =
+        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME(${metadataVersion.toInteger()}, \"$moduleName\", " +
         "\"${Base64.getEncoder().encodeToString(content)}\");\n"
 
     @JvmStatic

@@ -599,6 +599,11 @@ public class DefaultErrorMessages {
         MAP.put(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY, "'break' or 'continue' jumps across a function or a class boundary");
         MAP.put(NOT_A_LOOP_LABEL, "The label ''{0}'' does not denote a loop", STRING);
 
+        MAP.put(NOT_A_FUNCTION_LABEL, "Target label does not denote a function");
+        MAP.put(NOT_A_FUNCTION_LABEL_WARNING, "Target label does not denote a function");
+
+        MAP.put(REDUNDANT_LABEL_WARNING, "Label is redundant, because it can not be referenced in either ''break'', ''continue'', or ''return'' expression");
+
         MAP.put(ANONYMOUS_INITIALIZER_IN_INTERFACE, "Anonymous initializers are not allowed in interfaces");
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
         MAP.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic");
@@ -839,6 +844,11 @@ public class DefaultErrorMessages {
 
         MAP.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as the annotations argument");
         MAP.put(ANNOTATION_ARGUMENT_IS_NON_CONST, "An annotation argument must be a compile-time constant");
+
+        MAP.put(RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION,
+                "Expression annotations with retention other than SOURCE are prohibited");
+        MAP.put(RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_WARNING,
+                "Expression annotations with retention other than SOURCE are deprecated");
 
         MAP.put(LOCAL_ANNOTATION_CLASS, "Local annotation classes are deprecated and will be unsupported in a future release");
         MAP.put(LOCAL_ANNOTATION_CLASS_ERROR, "Annotation class cannot be local");

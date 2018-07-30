@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     var r = ""
     for (i in 1..1)  {

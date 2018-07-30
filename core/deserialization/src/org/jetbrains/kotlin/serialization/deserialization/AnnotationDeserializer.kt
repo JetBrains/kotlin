@@ -55,19 +55,15 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
     }
 
     private fun resolveArgument(
-            proto: Argument,
-            parameterByName: Map<Name, ValueParameterDescriptor>,
-            nameResolver: NameResolver
+        proto: Argument,
+        parameterByName: Map<Name, ValueParameterDescriptor>,
+        nameResolver: NameResolver
     ): Pair<Name, ConstantValue<*>>? {
         val parameter = parameterByName[nameResolver.getName(proto.nameId)] ?: return null
         return Pair(nameResolver.getName(proto.nameId), resolveValue(parameter.type, proto.value, nameResolver))
     }
 
-    fun resolveValue(
-            expectedType: KotlinType,
-            value: Value,
-            nameResolver: NameResolver
-    ): ConstantValue<*> {
+    fun resolveValue(expectedType: KotlinType, value: Value, nameResolver: NameResolver): ConstantValue<*> {
         val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 
         val result: ConstantValue<*> = when (value.type) {
@@ -96,25 +92,24 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
                 val arrayElements = value.arrayElementList
 
                 val actualArrayType =
-                        if (arrayElements.isNotEmpty()) {
-                            val actualElementType = resolveArrayElementType(arrayElements.first(), nameResolver)
-                            builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(actualElementType) ?:
-                            builtIns.getArrayType(Variance.INVARIANT, actualElementType)
-                        }
-                        else {
-                            // In the case of empty array, no element has the element type, so we fall back to the expected type, if any.
-                            // This is not very accurate when annotation class has been changed without recompiling clients,
-                            // but should not in fact matter because the value is empty anyway
-                            if (expectedIsArray) expectedType else builtIns.getArrayType(Variance.INVARIANT, builtIns.anyType)
-                        }
+                    if (arrayElements.isNotEmpty()) {
+                        val actualElementType = resolveArrayElementType(arrayElements.first(), nameResolver)
+                        builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(actualElementType)
+                            ?: builtIns.getArrayType(Variance.INVARIANT, actualElementType)
+                    } else {
+                        // In the case of empty array, no element has the element type, so we fall back to the expected type, if any.
+                        // This is not very accurate when annotation class has been changed without recompiling clients,
+                        // but should not in fact matter because the value is empty anyway
+                        if (expectedIsArray) expectedType else builtIns.getArrayType(Variance.INVARIANT, builtIns.anyType)
+                    }
 
                 val expectedElementType = builtIns.getArrayElementType(if (expectedIsArray) expectedType else actualArrayType)
 
                 ConstantValueFactory.createArrayValue(
-                        arrayElements.map {
-                            resolveValue(expectedElementType, it, nameResolver)
-                        },
-                        actualArrayType
+                    arrayElements.map {
+                        resolveValue(expectedElementType, it, nameResolver)
+                    },
+                    actualArrayType
                 )
             }
             else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
@@ -122,8 +117,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
 
         return if (result.getType(module).isSubtypeOf(expectedType)) {
             result
-        }
-        else {
+        } else {
             // This means that an annotation class has been changed incompatibly without recompiling clients
             ErrorValue.create("Unexpected argument value")
         }
@@ -142,24 +136,24 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
     }
 
     private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): SimpleType =
-            with(builtIns) {
-                when (value.type) {
-                    Type.BYTE -> byteType
-                    Type.CHAR -> charType
-                    Type.SHORT -> shortType
-                    Type.INT -> intType
-                    Type.LONG -> longType
-                    Type.FLOAT -> floatType
-                    Type.DOUBLE -> doubleType
-                    Type.BOOLEAN -> booleanType
-                    Type.STRING -> stringType
-                    Type.CLASS -> error("Arrays of class literals are not supported yet") // TODO: support arrays of class literals
-                    Type.ENUM -> resolveClass(nameResolver.getClassId(value.classId)).defaultType
-                    Type.ANNOTATION -> resolveClass(nameResolver.getClassId(value.annotation.id)).defaultType
-                    Type.ARRAY -> error("Array of arrays is impossible")
-                    else -> error("Unknown type: ${value.type}")
-                }
+        with(builtIns) {
+            when (value.type) {
+                Type.BYTE -> byteType
+                Type.CHAR -> charType
+                Type.SHORT -> shortType
+                Type.INT -> intType
+                Type.LONG -> longType
+                Type.FLOAT -> floatType
+                Type.DOUBLE -> doubleType
+                Type.BOOLEAN -> booleanType
+                Type.STRING -> stringType
+                Type.CLASS -> error("Arrays of class literals are not supported yet") // TODO: support arrays of class literals
+                Type.ENUM -> resolveClass(nameResolver.getClassId(value.classId)).defaultType
+                Type.ANNOTATION -> resolveClass(nameResolver.getClassId(value.annotation.id)).defaultType
+                Type.ARRAY -> error("Array of arrays is impossible")
+                else -> error("Unknown type: ${value.type}")
             }
+        }
 
     private fun resolveClass(classId: ClassId): ClassDescriptor {
         return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)

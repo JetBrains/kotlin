@@ -42,7 +42,7 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test.p1ExprFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=p1ExprFun]
+  FUN[fqName=test.p1ExprFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -50,7 +50,7 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test.p1Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=p1Fun]
+  FUN[fqName=test.p1Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -58,7 +58,7 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=test.p1FunWithParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=p1FunWithParams]
+  FUN[fqName=test.p1FunWithParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1FunWithParams]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -72,7 +72,7 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test.p1ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, name=p1ExtFun]
+  FUN[fqName=test.p1ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p1ExtFun]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -104,7 +104,7 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=test.p2Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=p2Fun]
+  FUN[fqName=test.p2Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -112,7 +112,7 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=test.p2ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, name=p2ExtFun]
+  FUN[fqName=test.p2ExtFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=p2ExtFun]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE

@@ -2218,6 +2218,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/smartCast"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("functionWithContract.kt")
+            public void testFunctionWithContract() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/smartCast/functionWithContract.kt");
+            }
+
             @TestMetadata("MemberExtensionAfterThisSmartCast.kt")
             public void testMemberExtensionAfterThisSmartCast() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/smartCast/MemberExtensionAfterThisSmartCast.kt");

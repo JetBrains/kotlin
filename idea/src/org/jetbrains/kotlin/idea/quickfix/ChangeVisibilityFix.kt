@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
+import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
@@ -42,6 +44,11 @@ open class ChangeVisibilityFix(
     override fun getFamilyName() = "Make $visibilityModifier"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val originalElement = element
+        if (originalElement is KtDeclaration) {
+            originalElement.runOnExpectAndAllActuals { it.setVisibility(visibilityModifier) }
+        }
+
         element?.setVisibility(visibilityModifier)
     }
 

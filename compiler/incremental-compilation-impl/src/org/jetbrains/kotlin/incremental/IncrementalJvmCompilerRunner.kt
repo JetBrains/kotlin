@@ -56,7 +56,8 @@ fun makeIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val versions = commonCacheVersions(cachesDir) + standaloneCacheVersion(cachesDir)
+    val isIncremental = IncrementalCompilation.isEnabledForJvm()
+    val versions = commonCacheVersions(cachesDir, isIncremental) + standaloneCacheVersion(cachesDir, isIncremental)
 
     val kotlinExtensions = listOf("kt", "kts")
     val allExtensions = kotlinExtensions + listOf("java")
@@ -86,14 +87,14 @@ object EmptyICReporter : ICReporter {
 }
 
 inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
-    val isEnabledBackup = IncrementalCompilation.isEnabled()
-    IncrementalCompilation.setIsEnabled(enabled)
+    val isEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+    IncrementalCompilation.setIsEnabledForJvm(enabled)
 
     try {
         return fn()
     }
     finally {
-        IncrementalCompilation.setIsEnabled(isEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isEnabledBackup)
     }
 }
 
@@ -114,7 +115,7 @@ class IncrementalJvmCompilerRunner(
         localStateDirs = localStateDirs
 ) {
     override fun isICEnabled(): Boolean =
-            IncrementalCompilation.isEnabled()
+            IncrementalCompilation.isEnabledForJvm()
 
     override fun createCacheManager(args: K2JVMCompilerArguments): IncrementalJvmCachesManager =
             IncrementalJvmCachesManager(cacheDirectory, File(args.destination), reporter)

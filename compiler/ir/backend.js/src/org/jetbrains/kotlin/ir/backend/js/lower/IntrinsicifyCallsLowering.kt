@@ -115,6 +115,10 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
                 op(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
             }
+
+            for (type in primitiveNumbers) {
+                op(type, Name.identifier("rangeTo"), ::transformRangeTo)
+            }
         }
 
         symbolToTransformer.run {
@@ -285,6 +289,19 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
     private fun useDispatchReceiver(call: IrCall): IrExpression {
         return call.dispatchReceiver!!
+    }
+
+    private fun transformRangeTo(call: IrCall): IrExpression {
+        if (call.valueArgumentsCount != 1) return call
+        return with(call.symbol.owner.valueParameters[0].type) {
+            when {
+                isByte() || isShort() || isInt() ->
+                    irCall(call, intrinsics.jsNumberRangeToNumber, dispatchReceiverAsFirstArgument = true)
+                isLong() ->
+                    irCall(call, intrinsics.jsNumberRangeToLong, dispatchReceiverAsFirstArgument = true)
+                else -> call
+            }
+        }
     }
 
     private fun transformEqeqOperator(call: IrCall): IrExpression {

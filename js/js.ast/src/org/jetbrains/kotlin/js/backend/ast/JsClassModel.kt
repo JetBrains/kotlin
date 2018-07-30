@@ -18,5 +18,6 @@ package org.jetbrains.kotlin.js.backend.ast
 
 class JsClassModel(val name: JsName, val superName: JsName?) {
     val interfaces: MutableSet<JsName> = mutableSetOf()
+    val preDeclarationBlock = JsGlobalBlock()
     val postDeclarationBlock = JsGlobalBlock()
 }

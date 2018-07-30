@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun test1(): Boolean {
     test1@ for(i in 1..2) {
         continue@test1

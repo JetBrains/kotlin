@@ -46,6 +46,8 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
     /**
      * Returns the encapsulated value if this instance represents [success][isSuccess] or throws the encapsulated exception
      * if it is [failure][isFailure].
+     *
+     * This function is shorthand for `getOrElse { throw it }` (see [getOrElse]).
      */
     public fun getOrThrow(): T =
         when (value) {
@@ -56,6 +58,8 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
     /**
      * Returns the encapsulated value if this instance represents [success][isSuccess] or `null`
      * if it is [failure][isFailure].
+     *
+     * This function is shorthand for `getOrElse { null }` (see [getOrElse]).
      */
     public fun getOrNull(): T? =
         when (value) {
@@ -68,6 +72,8 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
     /**
      * Returns the encapsulated exception if this instance represents [failure][isFailure] or `null`
      * if it is [success][isSuccess].
+     *
+     * This function is shorthand for `fold(onSuccess = { null }, onFailure = { it })` (see [fold]).
      */
     public fun exceptionOrNull(): Throwable? =
         when (value) {
@@ -80,11 +86,7 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
     /**
      * Returns `true` if the [other] object is `SuccessOrFailure` that encapsulates an equal value or exception.
      */
-    public override fun equals(other: Any?): Boolean {
-        // todo: this is workaround for is/as bugs, rewrite in direct way when fixed
-        val other = other as? SuccessOrFailure<*> ?: return false
-        return value == other.value
-    }
+    public override fun equals(other: Any?): Boolean = other is SuccessOrFailure<*> && value == other.value
 
     /**
      * Returns hashcode of either the encapsulated value or of the exception.
@@ -162,15 +164,41 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
 
 /**
  * Returns the encapsulated value if this instance represents [success][SuccessOrFailure.isSuccess] or the
- * result of [defaultValue] function if it is [failure][SuccessOrFailure.isFailure].
+ * result of [onFailure] function for encapsulated exception if it is [failure][SuccessOrFailure.isFailure].
  *
- * Note, that an exception thrown by [defaultValue] function is rethrown by this function.
+ * Note, that an exception thrown by [onFailure] function is rethrown by this function.
+ *
+ * This function is shorthand for `fold(onSuccess = { it }, onFailure = onFailure)` (see [fold]).
  */
-@InlineOnly public inline fun <R, T : R> SuccessOrFailure<T>.getOrElse(defaultValue: () -> R): R =
-    when(value) {
-        is SuccessOrFailure.Failure -> defaultValue()
+@InlineOnly public inline fun <R, T : R> SuccessOrFailure<T>.getOrElse(onFailure: (exception: Throwable) -> R): R {
+    contract {
+        callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
+    }
+    return when(value) {
+        is SuccessOrFailure.Failure -> onFailure(value.exception)
         else -> value as T
     }
+}
+
+/**
+ * Returns the the result of [onSuccess] for encapsulated value if this instance represents [success][SuccessOrFailure.isSuccess]
+ * or the result of [onFailure] function for encapsulated exception if it is [failure][SuccessOrFailure.isFailure].
+ *
+ * Note, that an exception thrown by [onSuccess] or by [onFailure] function is rethrown by this function.
+ */
+@InlineOnly public inline fun <R, T> SuccessOrFailure<T>.fold(
+    onSuccess: (value: T) -> R,
+    onFailure: (exception: Throwable) -> R
+): R {
+    contract {
+        callsInPlace(onSuccess, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
+    }
+    return when(value) {
+        is SuccessOrFailure.Failure -> onFailure(value.exception)
+        else -> onSuccess(value as T)
+    }
+}
 
 // transformation
 
@@ -182,12 +210,12 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
  * Note, that an exception thrown by [transform] function is rethrown by this function.
  * See [mapCatching] for an alternative that encapsulates exceptions.
  */
-@InlineOnly public inline fun <R, T> SuccessOrFailure<T>.map(transform: (T) -> R): SuccessOrFailure<R> {
+@InlineOnly public inline fun <R, T> SuccessOrFailure<T>.map(transform: (value: T) -> R): SuccessOrFailure<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     return when(value) {
-        is SuccessOrFailure.Failure -> SuccessOrFailure(value) // cannot cast here -- casts don't work (todo)
+        is SuccessOrFailure.Failure -> SuccessOrFailure(value)
         else -> SuccessOrFailure.success(transform(value as T))
     }
 }
@@ -200,12 +228,12 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
  * Any exception thrown by [transform] function is caught, encapsulated as a failure and returned by this function.
  * See [map] for an alternative that rethrows exceptions.
  */
-@InlineOnly public inline fun <R, T> SuccessOrFailure<T>.mapCatching(transform: (T) -> R): SuccessOrFailure<R> {
+@InlineOnly public inline fun <R, T> SuccessOrFailure<T>.mapCatching(transform: (value: T) -> R): SuccessOrFailure<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     return when(value) {
-        is SuccessOrFailure.Failure -> SuccessOrFailure(value) // cannot cast here -- casts don't work (todo)
+        is SuccessOrFailure.Failure -> SuccessOrFailure(value)
         else -> runCatching { transform(value as T) }
     }
 }
@@ -218,7 +246,7 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
  * Note, that an exception thrown by [transform] function is rethrown by this function.
  * See [recoverCatching] for an alternative that encapsulates exceptions.
  */
-@InlineOnly public inline fun <R, T: R> SuccessOrFailure<T>.recover(transform: (Throwable) -> R): SuccessOrFailure<R> {
+@InlineOnly public inline fun <R, T: R> SuccessOrFailure<T>.recover(transform: (exception: Throwable) -> R): SuccessOrFailure<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -236,7 +264,7 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
  * Any exception thrown by [transform] function is caught, encapsulated as a failure and returned by this function.
  * See [recover] for an alternative that rethrows exceptions.
  */
-@InlineOnly public inline fun <R, T: R> SuccessOrFailure<T>.recoverCatching(transform: (Throwable) -> R): SuccessOrFailure<R> {
+@InlineOnly public inline fun <R, T: R> SuccessOrFailure<T>.recoverCatching(transform: (exception: Throwable) -> R): SuccessOrFailure<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
@@ -253,7 +281,7 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
  * Performs the given [action] on encapsulated value if this instance represents [success][SuccessOrFailure.isSuccess].
  * Returns the original `SuccessOrFailure` unchanged.
  */
-@InlineOnly public inline fun <T> SuccessOrFailure<T>.onFailure(action: (Throwable) -> Unit): SuccessOrFailure<T> {
+@InlineOnly public inline fun <T> SuccessOrFailure<T>.onFailure(action: (exception: Throwable) -> Unit): SuccessOrFailure<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
@@ -265,7 +293,7 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
  * Performs the given [action] on encapsulated exception if this instance represents [failure][SuccessOrFailure.isFailure].
  * Returns the original `SuccessOrFailure` unchanged.
  */
-@InlineOnly public inline fun <T> SuccessOrFailure<T>.onSuccess(action: (T) -> Unit): SuccessOrFailure<T> {
+@InlineOnly public inline fun <T> SuccessOrFailure<T>.onSuccess(action: (value: T) -> Unit): SuccessOrFailure<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }

@@ -69,7 +69,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=a.b.c.test.enum.Enum.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
+      FUN[fqName=a.b.c.test.enum.Enum.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[open public]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

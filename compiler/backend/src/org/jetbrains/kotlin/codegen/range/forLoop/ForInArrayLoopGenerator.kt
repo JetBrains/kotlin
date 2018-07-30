@@ -49,7 +49,7 @@ class ForInArrayLoopGenerator(
             arrayVar = value.index // no need to copy local variable into another variable
         } else {
             arrayVar = createLoopTempVariable(OBJECT_TYPE)
-            value.put(asmLoopRangeType, v)
+            value.put(asmLoopRangeType, loopRangeType, v)
             v.store(arrayVar, OBJECT_TYPE)
         }
 

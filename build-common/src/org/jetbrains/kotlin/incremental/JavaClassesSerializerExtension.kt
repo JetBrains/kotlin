@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -29,6 +31,9 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 // It uses BuiltInSerializerProtocol for annotations serialization
 class JavaClassesSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
+    override val metadataVersion: BinaryVersion
+        get() = JvmMetadataVersion.INVALID_VERSION
+
     override fun serializeClass(
         descriptor: ClassDescriptor,
         proto: ProtoBuf.Class.Builder,

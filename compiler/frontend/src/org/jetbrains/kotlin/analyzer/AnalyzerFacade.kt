@@ -64,6 +64,15 @@ abstract class ResolverForProject<M : ModuleInfo> {
     abstract val builtIns: KotlinBuiltIns
 
     override fun toString() = name
+
+    companion object {
+        const val resolverForSdkName = "sdk"
+        const val resolverForLibrariesName = "project libraries"
+        const val resolverForModulesName = "project source roots and libraries"
+        const val resolverForScriptDependenciesName = "dependencies of scripts"
+
+        const val resolverForSpecialInfoName = "completion/highlighting in "
+    }
 }
 
 class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
@@ -94,7 +103,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val firstDependency: M? = null,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val invalidateOnOOCB: Boolean = true
+    private val invalidateOnOOCB: Boolean = true,
+    private val isReleaseCoroutines: Boolean? = null
 ) : ResolverForProject<M>() {
 
     private class ModuleData(
@@ -176,7 +186,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 val moduleContent = modulesContent(module)
                 val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
 
-                val languageVersionSettings = moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project)
+                val languageVersionSettings =
+                    moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
                 val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module)
 
                 resolverForModuleFactory.createResolverForModule(
@@ -203,8 +214,9 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         return doGetDescriptorForModule(moduleInfo)
     }
 
-    override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) =
-        throw AssertionError("$name does not know how to resolve $infos")
+    override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>): Nothing {
+        DiagnoseUnknownModuleInfoReporter.report(name, infos)
+    }
 
     private fun checkModuleIsCorrect(moduleInfo: M) {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -409,12 +421,26 @@ interface PackageOracleFactory {
 }
 
 interface LanguageSettingsProvider {
-    fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings
+    fun getLanguageVersionSettings(
+        moduleInfo: ModuleInfo,
+        project: Project,
+        isReleaseCoroutines: Boolean? = null
+    ): LanguageVersionSettings
+
+    @Deprecated("Use `getLanguageVersionSettings` method with default parameter instead", level = DeprecationLevel.HIDDEN)
+    fun getLanguageVersionSettings(
+        moduleInfo: ModuleInfo,
+        project: Project
+    ) = getLanguageVersionSettings(moduleInfo, project, null)
 
     fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion
 
     object Default : LanguageSettingsProvider {
-        override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = LanguageVersionSettingsImpl.DEFAULT
+        override fun getLanguageVersionSettings(
+            moduleInfo: ModuleInfo,
+            project: Project,
+            isReleaseCoroutines: Boolean?
+        ) = LanguageVersionSettingsImpl.DEFAULT
 
         override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion = TargetPlatformVersion.NoVersion
     }
@@ -428,4 +454,52 @@ interface ResolverForModuleComputationTracker {
         fun getInstance(project: Project): ResolverForModuleComputationTracker? =
             ServiceManager.getService(project, ResolverForModuleComputationTracker::class.java) ?: null
     }
+}
+
+private object DiagnoseUnknownModuleInfoReporter {
+    fun report(name: String, infos: List<ModuleInfo>): Nothing {
+        val message = "$name does not know how to resolve $infos"
+        when {
+            name.contains(ResolverForProject.resolverForSdkName) -> errorInSdkResolver(message)
+            name.contains(ResolverForProject.resolverForLibrariesName) -> errorInLibrariesResolver(message)
+            name.contains(ResolverForProject.resolverForModulesName) -> {
+                when {
+                    infos.isEmpty() -> errorInModulesResolverWithEmptyInfos(message)
+                    infos.size == 1 -> {
+                        val infoAsString = infos.single().toString()
+                        when {
+                            infoAsString.contains("ScriptDependencies") -> errorInModulesResolverWithScriptDependencies(message)
+                            infoAsString.contains("Library") -> errorInModulesResolverWithLibraryInfo(message)
+                            else -> errorInModulesResolver(message)
+                        }
+                    }
+                    else -> throw errorInModulesResolver(message)
+                }
+            }
+            name.contains(ResolverForProject.resolverForScriptDependenciesName) -> errorInScriptDependenciesInfoResolver(message)
+            name.contains(ResolverForProject.resolverForSpecialInfoName) -> {
+                when {
+                    name.contains("ScriptModuleInfo") -> errorInScriptModuleInfoResolver(message)
+                    else -> errorInSpecialModuleInfoResolver(message)
+                }
+            }
+            else -> otherError(message)
+        }
+    }
+
+    // Do not inline 'error*'-methods, they are needed to avoid Exception Analyzer merging those AssertionErrors
+
+    private fun errorInSdkResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInLibrariesResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInModulesResolver(message: String): Nothing = throw AssertionError(message)
+
+    private fun errorInModulesResolverWithEmptyInfos(message: String): Nothing = throw AssertionError(message)
+    private fun errorInModulesResolverWithScriptDependencies(message: String): Nothing = throw AssertionError(message)
+    private fun errorInModulesResolverWithLibraryInfo(message: String): Nothing = throw AssertionError(message)
+
+    private fun errorInScriptDependenciesInfoResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInScriptModuleInfoResolver(message: String): Nothing = throw AssertionError(message)
+    private fun errorInSpecialModuleInfoResolver(message: String): Nothing = throw AssertionError(message)
+
+    private fun otherError(message: String): Nothing = throw AssertionError(message)
 }

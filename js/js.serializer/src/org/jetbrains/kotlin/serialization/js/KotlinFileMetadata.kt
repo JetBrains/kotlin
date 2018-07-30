@@ -23,6 +23,6 @@ sealed class KotlinFileMetadata
 data class KotlinPsiFileMetadata(val ktFile: KtFile) : KotlinFileMetadata()
 
 data class KotlinDeserializedFileMetadata(
-        val packageFragment: KotlinJavascriptPackageFragment,
-        val fileId: Int
+    val packageFragment: KotlinJavascriptPackageFragment,
+    val fileId: Int
 ) : KotlinFileMetadata()

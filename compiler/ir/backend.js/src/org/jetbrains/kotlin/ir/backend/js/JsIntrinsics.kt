@@ -28,7 +28,9 @@ class JsIntrinsics(
     val context: JsIrBackendContext
 ) {
 
-    private val stubBuilder = DeclarationStubGenerator(module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
+    private val stubBuilder = DeclarationStubGenerator(
+        module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB, irBuiltIns.languageVersionSettings
+    )
 
     // Equality operations:
 
@@ -122,6 +124,8 @@ class JsIntrinsics(
     val jsCompareTo = getInternalFunction("compareTo")
     val jsEquals = getInternalFunction("equals")
 
+    val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
+    val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
 
     val longConstructor =
         context.symbolTable.referenceConstructor(context.getClass(FqName("kotlin.Long")).constructors.single())

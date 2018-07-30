@@ -101,7 +101,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
             is FileWithMetadata.Compatible -> {
                 val packageFqName = file.packageFqName
                 val resolver = KotlinMetadataDeserializerForDecompiler(
-                        packageFqName, file.proto, file.nameResolver,
+                        packageFqName, file.proto, file.nameResolver, file.version,
                         targetPlatform, serializerProtocol, flexibleTypeDeserializer
                 )
                 val declarations = arrayListOf<DeclarationDescriptor>()
@@ -120,8 +120,9 @@ sealed class FileWithMetadata {
     class Incompatible(val version: BinaryVersion) : FileWithMetadata()
 
     open class Compatible(
-            val proto: ProtoBuf.PackageFragment,
-            serializerProtocol: SerializerExtensionProtocol
+        val proto: ProtoBuf.PackageFragment,
+        val version: BinaryVersion,
+        serializerProtocol: SerializerExtensionProtocol
     ) : FileWithMetadata() {
         val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
         val packageFqName = FqName(nameResolver.getPackageFqName(proto.`package`.getExtension(serializerProtocol.packageFqName)))

@@ -199,19 +199,17 @@ public class Long internal constructor(
     /** Returns the negative of this value. */
     public operator fun unaryMinus(): Long = inv() + 1L
 
-/*  TODO
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): LongRange
+    public operator fun rangeTo(other: Byte): LongRange = rangeTo(other.toLong())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): LongRange
+    public operator fun rangeTo(other: Short): LongRange = rangeTo(other.toLong())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Int): LongRange
+    public operator fun rangeTo(other: Int): LongRange = rangeTo(other.toLong())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Long): LongRange
-*/
+    public operator fun rangeTo(other: Long): LongRange = LongRange(this, other)
 
     /** Shifts this value left by the [bitCount] number of bits. */
     public infix fun shl(bitCount: Int): Long = shiftLeft(bitCount)

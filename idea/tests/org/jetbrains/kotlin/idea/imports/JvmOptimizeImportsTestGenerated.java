@@ -131,6 +131,11 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("idea/testData/editor/optimizeImports/jvm/SamConstructor.kt");
         }
 
+        @TestMetadata("staticFromJava.kt")
+        public void testStaticFromJava() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/jvm/staticFromJava.kt");
+        }
+
         @TestMetadata("StaticMethodFromSuper.kt")
         public void testStaticMethodFromSuper() throws Exception {
             runTest("idea/testData/editor/optimizeImports/jvm/StaticMethodFromSuper.kt");

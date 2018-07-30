@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.metadata.DebugProtoBuf
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.*
@@ -394,9 +396,11 @@ abstract class BasicBoxTest(
             val originalMetadata = FileUtil.loadFile(File(outputFile.parentFile, outputFile.nameWithoutExtension + ".meta.js"))
             val recompiledMetadata = removeRecompiledSuffix(
                     FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + ".meta.js")))
-            assertEquals("Metadata file changed after recompilation",
-                                  metadataAsString(originalMetadata, module.name),
-                                  metadataAsString(recompiledMetadata, module.name))
+            assertEquals(
+                "Metadata file changed after recompilation",
+                metadataAsString(originalMetadata),
+                metadataAsString(recompiledMetadata)
+            )
         }
     }
 
@@ -406,10 +410,11 @@ abstract class BasicBoxTest(
         return String(out.toByteArray(), Charset.forName("UTF-8"))
     }
 
-    private fun metadataAsString(metadata: String, moduleName: String): String {
-        val containers = mutableListOf<KotlinJavascriptMetadata>()
-        KotlinJavascriptMetadataUtils.parseMetadata(metadata, containers)
-        val metadataParts = KotlinJavascriptSerializationUtil.readModuleAsProto(containers.single().body, moduleName).data.body
+    private fun metadataAsString(metadataText: String): String {
+        val metadata = mutableListOf<KotlinJavascriptMetadata>().apply {
+            KotlinJavascriptMetadataUtils.parseMetadata(metadataText, this)
+        }.single()
+        val metadataParts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version).body
         return metadataParts.joinToString("-----\n") {
             val binary = it.toByteArray()
             DebugProtoBuf.PackageFragment.parseFrom(binary, JsSerializerProtocol.extensionRegistry).toString()
@@ -573,8 +578,10 @@ abstract class BasicBoxTest(
         if (hasFilesToRecompile) {
             val header = incrementalData?.header
             if (header != null) {
-                configuration.put(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
-                                  IncrementalDataProviderImpl(header, incrementalData.translatedFiles))
+                configuration.put(
+                    JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
+                    IncrementalDataProviderImpl(header, incrementalData.translatedFiles, JsMetadataVersion.INSTANCE.toArray())
+                )
             }
 
             configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, IncrementalResultsConsumerImpl())
@@ -738,13 +745,12 @@ abstract class BasicBoxTest(
             KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
     companion object {
-        val METADATA_CACHE = (JsConfig.JS_STDLIB.asSequence() + JsConfig.JS_KOTLIN_TEST)
-                .flatMap {
-                    KotlinJavascriptMetadataUtils
-                            .loadMetadata(it).asSequence()
-                            .map { KotlinJavascriptSerializationUtil.readModuleAsProto(it.body, it.moduleName) }
-                }
-                .toList()
+        val METADATA_CACHE = (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
+            KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
+                val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
+                JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
+            }
+        }
 
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
         const val DIST_DIR_JS_PATH = "dist/js/"

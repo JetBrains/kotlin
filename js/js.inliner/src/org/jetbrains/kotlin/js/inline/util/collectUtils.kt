@@ -104,6 +104,11 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
             super.visitExpressionStatement(x)
         }
 
+        override fun visitCatch(x: JsCatch) {
+            names += x.parameter.name
+            super.visitCatch(x)
+        }
+
         // Skip function expression, since it does not introduce name in scope of containing function.
         // The only exception is function statement, that is handled with the code above.
         override fun visitFunction(x: JsFunction) { }

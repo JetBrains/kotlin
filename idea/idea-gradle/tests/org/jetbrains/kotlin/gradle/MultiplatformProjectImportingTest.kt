@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.facetSettings
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 
@@ -34,9 +37,25 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
             .filterIsInstance<LibraryOrderEntry>()
             .flatMap { it.getUrls(OrderRootType.CLASSES).map { it.replace(projectPath, "") } }
 
+    private fun assertProductionOnTestDependency(moduleName: String, depModuleName: String, expected: Boolean) {
+        val depOrderEntry = getModule(moduleName)
+            .rootManager
+            .orderEntries
+            .filterIsInstance<ModuleOrderEntryImpl>()
+            .first { it.moduleName == depModuleName }
+        assert(depOrderEntry.isProductionOnTestDependency == expected)
+    }
+
+    private fun assertFileInModuleScope(file: VirtualFile, moduleName: String) {
+        assert(getModule(moduleName).getModuleWithDependenciesAndLibrariesScope(true).contains(file))
+    }
+
     @Test
     fun testPlatformToCommonDependency() {
         createProjectSubFile("settings.gradle", "include ':common', ':jvm', ':js'")
+        val commonTestFile = createProjectSubFile("common/src/test/kotlin/test.kt", "")
+        createProjectSubFile("jvm/src/test/kotlin/test.kt", "")
+        createProjectSubFile("js/src/test/kotlin/test.kt", "")
 
         val kotlinVersion = "1.1.0"
 
@@ -75,10 +94,19 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         )
 
         importProject()
+
         assertModuleModuleDepScope("jvm_main", "common_main", DependencyScope.COMPILE)
         assertModuleModuleDepScope("jvm_test", "common_test", DependencyScope.COMPILE)
         assertModuleModuleDepScope("js_main", "common_main", DependencyScope.COMPILE)
         assertModuleModuleDepScope("js_test", "common_test", DependencyScope.COMPILE)
+
+        assertProductionOnTestDependency("jvm_main", "common_main", false)
+        assertProductionOnTestDependency("jvm_test", "common_test", true)
+        assertProductionOnTestDependency("js_main", "common_main", false)
+        assertProductionOnTestDependency("js_test", "common_test", true)
+
+        assertFileInModuleScope(commonTestFile, "jvm_test")
+        assertFileInModuleScope(commonTestFile, "js_test")
     }
 
     @Test
