@@ -3,21 +3,18 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.model;
-
-import org.jetbrains.annotations.Nullable;
+package org.jetbrains.kotlin.gradle.model
 
 /**
  * Wraps all experimental features information for a given Kotlin project.
  * @see KotlinProject
  */
-public interface ExperimentalFeatures {
+interface ExperimentalFeatures {
 
     /**
      * Return coroutines string.
      *
      * @return coroutines.
      */
-    @Nullable
-    String getCoroutines();
+    val coroutines: String?
 }

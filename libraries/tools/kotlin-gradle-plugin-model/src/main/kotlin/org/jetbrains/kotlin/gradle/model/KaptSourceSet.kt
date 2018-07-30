@@ -3,22 +3,20 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.model;
+package org.jetbrains.kotlin.gradle.model
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
+import java.io.File
 
 /**
  * Represents a source set for a given kapt model.
  * @see Kapt
  */
-public interface KaptSourceSet {
+interface KaptSourceSet {
 
     /**
      * Possible source set types.
      */
-    enum KaptSourceSetType {
+    enum class KaptSourceSetType {
         PRODUCTION,
         TEST
     }
@@ -28,38 +26,33 @@ public interface KaptSourceSet {
      *
      * @return the source set name.
      */
-    @NotNull
-    String getName();
+    val name: String
 
     /**
      * Return the type of the source set.
      *
      * @return the type of the source set.
      */
-    @NotNull
-    KaptSourceSetType getType();
+    val type: KaptSourceSetType
 
     /**
      * Return generated sources directory.
      *
      * @return generated sources directory.
      */
-    @NotNull
-    File getGeneratedSourcesDirectory();
+    val generatedSourcesDirectory: File
 
     /**
      * Return Kotlin generated sources directory.
      *
      * @return Kotlin generated sources directory.
      */
-    @NotNull
-    File getGeneratedKotlinSourcesDirectory();
+    val generatedKotlinSourcesDirectory: File
 
     /**
      * Return Kotlin generated classes directory.
      *
      * @return Kotlin generated classes directory.
      */
-    @NotNull
-    File getGeneratedClassesDirectory();
+    val generatedClassesDirectory: File
 }

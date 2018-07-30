@@ -3,17 +3,13 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.model;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+package org.jetbrains.kotlin.gradle.model
 
 /**
- * Entry point for Kotlin All Open models.
- * Represents the description of annotations interpreted by 'kotlin-allopen' plugin.
+ * Entry point for Kotlin Sam With Receiver models.
+ * Represents the description of annotations interpreted by 'kotlin-sam-with-receiver' plugin.
  */
-public interface AllOpen {
+interface SamWithReceiver {
 
     /**
      * Return a number representing the version of this API.
@@ -21,29 +17,26 @@ public interface AllOpen {
      *
      * @return the version of this model.
      */
-    long getModelVersion();
+    val modelVersion: Long
 
     /**
      * Returns the module (Gradle project) name.
      *
      * @return the module name.
      */
-    @NotNull
-    String getName();
+    val name: String
 
     /**
      * Return the list of annotations.
      *
      * @return the list of annotations.
      */
-    @NotNull
-    List<String> getAnnotations();
+    val annotations: List<String>
 
     /**
      * Return the list of presets.
      *
      * @return the list of presets.
      */
-    @NotNull
-    List<String> getPresets();
+    val presets: List<String>
 }

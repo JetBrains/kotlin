@@ -3,17 +3,13 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.model;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
+package org.jetbrains.kotlin.gradle.model
 
 /**
  * Entry point for annotation processor model.
  * Plugin 'kotlin-kapt' can produce this model.
  */
-public interface Kapt {
+interface Kapt {
 
     /**
      * Return a number representing the version of this API.
@@ -21,21 +17,19 @@ public interface Kapt {
      *
      * @return the version of this model.
      */
-    long getModelVersion();
+    val modelVersion: Long
 
     /**
      * Returns the module (Gradle project) name.
      *
      * @return the module name.
      */
-    @NotNull
-    String getName();
+    val name: String
 
     /**
      * Return all kapt source sets.
      *
      * @return all kapt source sets.
      */
-    @NotNull
-    Collection<KaptSourceSet> getKaptSourceSets();
+    val kaptSourceSets: Collection<KaptSourceSet>
 }

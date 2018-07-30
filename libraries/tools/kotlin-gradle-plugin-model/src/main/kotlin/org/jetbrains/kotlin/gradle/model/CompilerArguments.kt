@@ -3,40 +3,34 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.model;
+package org.jetbrains.kotlin.gradle.model
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.util.List;
+import java.io.File
 
 /**
  * Represents the compiler arguments for a given Kotlin source set.
  * @see SourceSet
  */
-public interface CompilerArguments {
+interface CompilerArguments {
 
     /**
      * Return current arguments for the given source set.
      *
      * @return current arguments for the given source set.
      */
-    @NotNull
-    List<String> getCurrentArguments();
+    val currentArguments: List<String>
 
     /**
      * Return default arguments for the given source set.
      *
      * @return default arguments for the given source set.
      */
-    @NotNull
-    List<String> getDefaultArguments();
+    val defaultArguments: List<String>
 
     /**
      * Return the classpath the given source set is compiled against.
      *
      * @return the classpath the given source set is compiled against.
      */
-    @NotNull
-    List<File> getCompileClasspath();
+    val compileClasspath: List<File>
 }

@@ -12,31 +12,13 @@ import java.io.Serializable
  * Implementation of the [NoArg] interface.
  */
 data class NoArgImpl(
-    private val myName: String,
-    private val myAnnotations: List<String>,
-    private val myPresets: List<String>,
-    private val myInvokeInitializers: Boolean
+    override val name: String,
+    override val annotations: List<String>,
+    override val presets: List<String>,
+    override val isInvokeInitializers: Boolean
 ) : NoArg, Serializable {
 
-    override fun getModelVersion(): Long {
-        return serialVersionUID
-    }
-
-    override fun getName(): String {
-        return myName
-    }
-
-    override fun getAnnotations(): List<String> {
-        return myAnnotations
-    }
-
-    override fun getPresets(): List<String> {
-        return myPresets
-    }
-
-    override fun isInvokeInitializers(): Boolean {
-        return myInvokeInitializers
-    }
+    override val modelVersion = serialVersionUID
 
     companion object {
         private const val serialVersionUID = 1L

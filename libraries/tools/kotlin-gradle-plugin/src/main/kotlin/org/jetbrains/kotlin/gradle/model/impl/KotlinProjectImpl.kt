@@ -14,41 +14,15 @@ import java.io.Serializable
  * Implementation of the [KotlinProject] interface.
  */
 data class KotlinProjectImpl(
-    private val myName: String,
-    private val myKotlinVersion: String,
-    private val myProjectType: KotlinProject.ProjectType,
-    private val mySourceSets: Collection<SourceSet>,
-    private val myExpectedByDependencies: Collection<String>,
-    private val myExperimentalFeatures: ExperimentalFeatures
+    override val name: String,
+    override val kotlinVersion: String,
+    override val projectType: KotlinProject.ProjectType,
+    override val sourceSets: Collection<SourceSet>,
+    override val expectedByDependencies: Collection<String>,
+    override val experimentalFeatures: ExperimentalFeatures
 ) : KotlinProject, Serializable {
 
-    override fun getModelVersion(): Long {
-        return serialVersionUID
-    }
-
-    override fun getName(): String {
-        return myName
-    }
-
-    override fun getKotlinVersion(): String {
-        return myKotlinVersion
-    }
-
-    override fun getProjectType(): KotlinProject.ProjectType {
-        return myProjectType
-    }
-
-    override fun getSourceSets(): Collection<SourceSet> {
-        return mySourceSets
-    }
-
-    override fun getExpectedByDependencies(): Collection<String> {
-        return myExpectedByDependencies
-    }
-
-    override fun getExperimentalFeatures(): ExperimentalFeatures {
-        return myExperimentalFeatures
-    }
+    override val modelVersion = serialVersionUID
 
     companion object {
         private const val serialVersionUID = 1L

@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains:annotations:13.0"
+    compile project(':kotlin-stdlib')
 }
 
 artifacts {

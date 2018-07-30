@@ -3,30 +3,26 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.model;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
+package org.jetbrains.kotlin.gradle.model
 
 /**
  * Entry point for the model of Kotlin Projects.
  * Plugins 'kotlin', 'kotlin-platform-jvm', 'kotlin2js', 'kotlin-platform-js' and 'kotlin-platform-common' can produce this model.
  */
-public interface KotlinProject {
+interface KotlinProject {
 
     /**
      * Possible Kotlin project types.
      */
-    enum ProjectType {
+    enum class ProjectType {
 
-        /** Indicator of platform plugin id 'kotlin-platform-jvm' or 'kotlin'. */
+        /** Indicator of platform plugin id 'kotlin-platform-jvm' or 'kotlin'.  */
         PLATFORM_JVM,
 
-        /** Indicator of platform plugin id 'kotlin-platform-js' or 'kotlin2js'. */
+        /** Indicator of platform plugin id 'kotlin-platform-js' or 'kotlin2js'.  */
         PLATFORM_JS,
 
-        /** Indicator of platform plugin id 'kotlin-platform-common'. */
+        /** Indicator of platform plugin id 'kotlin-platform-common'.  */
         PLATFORM_COMMON
     }
 
@@ -36,53 +32,47 @@ public interface KotlinProject {
      *
      * @return the version of this model.
      */
-    long getModelVersion();
+    val modelVersion: Long
 
     /**
      * Returns the module (Gradle project) name.
      *
      * @return the module name.
      */
-    @NotNull
-    String getName();
+    val name: String
 
     /**
      * Return the Kotlin version.
      *
      * @return the Kotlin version.
      */
-    @NotNull
-    String getKotlinVersion();
+    val kotlinVersion: String
 
     /**
      * Return the type of the platform plugin applied.
      *
      * @return the type of the platform plugin applied. Possible values are defined in the enum.
      */
-    @NotNull
-    ProjectType getProjectType();
+    val projectType: ProjectType
 
     /**
      * Return all source sets used by Kotlin.
      *
      * @return all source sets.
      */
-    @NotNull
-    Collection<SourceSet> getSourceSets();
+    val sourceSets: Collection<SourceSet>
 
     /**
      * Return all modules (Gradle projects) registered as 'expectedBy' dependency.
      *
      * @return expectedBy dependencies.
      */
-    @NotNull
-    Collection<String> getExpectedByDependencies();
+    val expectedByDependencies: Collection<String>
 
     /**
      * Return an object containing a descriptor of the experimental features.
      *
      * @return experimental features.
      */
-    @NotNull
-    ExperimentalFeatures getExperimentalFeatures();
+    val experimentalFeatures: ExperimentalFeatures
 }
