@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class NewCodeBuilder {
 
@@ -274,6 +273,15 @@ class NewCodeBuilder {
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
             printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString())
+            if (methodCallExpression.typeArguments.isNotEmpty()) {
+                printer.printWithNoIndent("<")
+                methodCallExpression.typeArguments.firstOrNull()?.accept(this)
+                for (i in 1..methodCallExpression.typeArguments.lastIndex) {
+                    printer.printWithNoIndent(", ")
+                    methodCallExpression.typeArguments[i].accept(this)
+                }
+                printer.printWithNoIndent(">")
+            }
             printer.par {
                 methodCallExpression.arguments.accept(this)
             }
@@ -312,7 +320,7 @@ class NewCodeBuilder {
             }
 
             printer.printWithNoIndent(" ", localVariable.name.value)
-            if(localVariable.type.type != JKContextType) {
+            if (localVariable.type.type != JKContextType) {
                 printer.printWithNoIndent(": ")
                 localVariable.type.accept(this)
             }
@@ -347,9 +355,7 @@ class NewCodeBuilder {
         }
 
         override fun visitTypeElement(typeElement: JKTypeElement) {
-            val type = typeElement.type
-
-            renderType(type)
+            renderType(typeElement.type)
         }
 
         override fun visitBlock(block: JKBlock) {

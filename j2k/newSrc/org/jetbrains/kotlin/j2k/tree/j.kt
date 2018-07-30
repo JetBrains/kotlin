@@ -44,11 +44,13 @@ interface JKJavaModifier : JKModifier {
 }
 
 interface JKJavaNewEmptyArray : JKExpression {
-    val initializer: List<JKLiteralExpression?>
+    val type: JKTypeElement
+    var initializer: List<JKExpression>
 }
 
 interface JKJavaNewArray : JKExpression {
-    val initializer: List<JKExpression>
+    val type: JKTypeElement
+    var initializer: List<JKExpression>
 }
 
 interface JKJavaLiteralExpression : JKLiteralExpression

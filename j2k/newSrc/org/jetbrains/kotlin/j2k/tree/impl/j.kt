@@ -94,11 +94,13 @@ sealed class JKJavaQualifierImpl : JKQualifier {
 
 class JKJavaMethodCallExpressionImpl(
     override var identifier: JKMethodSymbol,
-    arguments: JKExpressionList
+    arguments: JKExpressionList,
+    typeArguments: List<JKTypeElement> = emptyList()
 ) : JKJavaMethodCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
     override val arguments: JKExpressionList by child(arguments)
+    override var typeArguments: List<JKTypeElement> by children(typeArguments)
 }
 
 class JKJavaNewExpressionImpl(
@@ -114,11 +116,15 @@ class JKJavaDefaultNewExpressionImpl(
     override val classSymbol: JKClassSymbol
 ) : JKJavaDefaultNewExpression, JKElementBase()
 
-class JKJavaNewEmptyArrayImpl(override var initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
+class JKJavaNewEmptyArrayImpl(initializer: List<JKExpression>, type: JKTypeElement) : JKJavaNewEmptyArray, JKBranchElementBase() {
+    override val type by child(type)
+    override var initializer by children(initializer)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewEmptyArray(this, data)
 }
 
-class JKJavaNewArrayImpl(override var initializer: List<JKExpression>) : JKJavaNewArray, JKElementBase() {
+class JKJavaNewArrayImpl(initializer: List<JKExpression>, type: JKTypeElement) : JKJavaNewArray, JKBranchElementBase() {
+    override val type by child(type)
+    override var initializer by children(initializer)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewArray(this, data)
 }
 
