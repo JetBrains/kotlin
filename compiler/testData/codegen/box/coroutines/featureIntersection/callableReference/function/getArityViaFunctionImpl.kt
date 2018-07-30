@@ -1,16 +1,17 @@
+// !LANGUAGE: +ReleaseCoroutines
+// !API_VERSION: 1.3
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS, NATIVE, JS_IR
 // IGNORE_LIGHT_ANALYSIS
 
-// LANGUAGE_VERSION: 1.2
 // WITH_RUNTIME
 // WITH_COROUTINES
 
 import kotlin.test.assertEquals
 import kotlin.jvm.internal.FunctionBase
 import helpers.*
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 suspend fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)

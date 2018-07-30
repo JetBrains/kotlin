@@ -1,11 +1,12 @@
-// IGNORE_BACKEND: JVM_IR
+// !LANGUAGE: +ReleaseCoroutines
+// !API_VERSION: 1.3
 // IGNORE_BACKEND: JS, JS_IR
-// COMMON_COROUTINES_TEST
+// IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
 
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend inline fun Long.longArgs(a: Long, b: Long, c: Long) = suspendCoroutineUninterceptedOrReturn<Long> {
     it.resume(this + a + b + c)

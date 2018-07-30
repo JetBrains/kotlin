@@ -1,15 +1,16 @@
-// IGNORE_BACKEND: JVM_IR
+// !LANGUAGE: +ReleaseCoroutines
+// !API_VERSION: 1.3
 // IGNORE_BACKEND: JS, JS_IR, NATIVE
+// IGNORE_BACKEND: JVM_IR
 
 // WITH_REFLECT
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 
 import kotlin.test.assertEquals
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)

@@ -181,10 +181,6 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
             KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
         }
 
-        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-            KotlinTestUtils.runTest0(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JS, testDataFilePath);
-        }
-
         public void testAllFilesPresentInCallableReference() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
@@ -195,13 +191,8 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
         }
 
         @TestMetadata("simple.kt")
-        public void testSimple_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt", "kotlin.coroutines");
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt");
         }
 
         @TestMetadata("suspendOfOrdinary.kt")
