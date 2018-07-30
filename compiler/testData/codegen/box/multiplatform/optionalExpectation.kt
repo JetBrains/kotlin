@@ -23,6 +23,8 @@ actual annotation class A(actual val x: Int)
 // MODULE: main(library)
 // FILE: main.kt
 
+@file:Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE") // TODO: support common sources in the test infrastructure
+
 package usage
 
 import a.A
