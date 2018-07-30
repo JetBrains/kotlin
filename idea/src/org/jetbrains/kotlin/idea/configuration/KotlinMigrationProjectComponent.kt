@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.ide.DataManager
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
@@ -21,6 +25,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.configuration.ui.MigrationNotificationDialog
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
+import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.versions.LibInfo
@@ -54,6 +59,15 @@ class KotlinMigrationProjectComponent(val project: Project) {
         ApplicationManager.getApplication().invokeLater {
             val migrationNotificationDialog = MigrationNotificationDialog(project, migrationInfo)
             migrationNotificationDialog.show()
+
+            if (migrationNotificationDialog.isOK) {
+                val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
+
+                val dataContext = DataManager.getInstance().dataContextFromFocus.result
+                val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
+
+                action.actionPerformed(actionEvent)
+            }
         }
     }
 
@@ -102,7 +116,7 @@ private class MigrationState(
     }
 }
 
-internal data class MigrationInfo(
+data class MigrationInfo(
     val oldStdlibVersion: String,
     val newStdlibVersion: String,
     val oldApiVersion: ApiVersion,
