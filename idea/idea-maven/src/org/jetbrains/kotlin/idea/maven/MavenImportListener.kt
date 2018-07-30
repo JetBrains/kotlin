@@ -9,15 +9,24 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.idea.maven.project.MavenImportListener
 import org.jetbrains.idea.maven.project.MavenProject
+import org.jetbrains.idea.maven.project.MavenProjectsManager
+import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 
-class MavenImportListener(val project: Project) {
+class MavenImportListener(val project: Project) : MavenProjectsManager.Listener {
     init {
         project.messageBus.connect().subscribe(
             MavenImportListener.TOPIC,
             MavenImportListener { _: Collection<MavenProject>, _: List<Module> ->
                 notifyOutdatedBundledCompilerIfNecessary(project)
+                KotlinMigrationProjectComponent.getInstance(project).onImportFinished()
             }
         )
+
+        MavenProjectsManager.getInstance(project)?.addManagerListener(this)
+    }
+
+    override fun projectsScheduled() {
+        KotlinMigrationProjectComponent.getInstance(project).onImportAboutToStart()
     }
 }
