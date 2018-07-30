@@ -13,22 +13,10 @@ import java.io.Serializable
  * Implementation of the [CompilerArguments] interface.
  */
 data class CompilerArgumentsImpl(
-    private val myCurrentArguments: List<String>,
-    private val myDefaultArguments: List<String>,
-    private val myCompilerClasspath: List<File>
+    override val currentArguments: List<String>,
+    override val defaultArguments: List<String>,
+    override val compileClasspath: List<File>
 ) : CompilerArguments, Serializable {
-
-    override fun getCurrentArguments(): List<String> {
-        return myCurrentArguments
-    }
-
-    override fun getDefaultArguments(): List<String> {
-        return myDefaultArguments
-    }
-
-    override fun getCompileClasspath(): List<File> {
-        return myCompilerClasspath
-    }
 
     companion object {
         private const val serialVersionUID = 1L

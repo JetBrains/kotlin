@@ -3,16 +3,13 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.model;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+package org.jetbrains.kotlin.gradle.model
 
 /**
  * Entry point for Kotlin Android Extensions models.
  * Represents the description of Android only features. Provided by 'kotlin-android-extensions' plugin.
  */
-public interface KotlinAndroidExtension {
+interface KotlinAndroidExtension {
 
     /**
      * Return a number representing the version of this API.
@@ -20,28 +17,26 @@ public interface KotlinAndroidExtension {
      *
      * @return the version of this model.
      */
-    long getModelVersion();
+    val modelVersion: Long
 
     /**
      * Returns the module (Gradle project) name.
      *
      * @return the module name.
      */
-    @NotNull
-    String getName();
+    val name: String
 
     /**
      * Indicate the use of experimental features.
      *
      * @return if experimental features are used.
      */
-    boolean isExperimental();
+    val isExperimental: Boolean
 
     /**
      * Return the default cache implementation.
      *
      * @return the default cache implementation.
      */
-    @Nullable
-    String getDefaultCacheImplementation();
+    val defaultCacheImplementation: String?
 }

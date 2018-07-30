@@ -12,12 +12,8 @@ import java.io.Serializable
  * Implementation of the [ExperimentalFeatures] interface.
  */
 data class ExperimentalFeaturesImpl(
-    private val myCoroutines: String?
+    override val coroutines: String?
 ) : ExperimentalFeatures, Serializable {
-
-    override fun getCoroutines(): String? {
-        return myCoroutines
-    }
 
     companion object {
         private const val serialVersionUID = 1L

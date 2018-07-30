@@ -14,47 +14,15 @@ import java.io.Serializable
  * Implementation of the [SourceSet] interface.
  */
 data class SourceSetImpl(
-    private val myName: String,
-    private val myType: SourceSet.SourceSetType,
-    private val myFriendSourceSets: Collection<String>,
-    private val mySourceDirectories: Collection<File>,
-    private val myResourcesDirectories: Collection<File>,
-    private val myClassesOutputDirectory: File,
-    private val myResourcesOutputDirectory: File,
-    private val myCompilerArguments: CompilerArguments
+    override val name: String,
+    override val type: SourceSet.SourceSetType,
+    override val friendSourceSets: Collection<String>,
+    override val sourceDirectories: Collection<File>,
+    override val resourcesDirectories: Collection<File>,
+    override val classesOutputDirectory: File,
+    override val resourcesOutputDirectory: File,
+    override val compilerArguments: CompilerArguments
 ) : SourceSet, Serializable {
-
-    override fun getName(): String {
-        return myName
-    }
-
-    override fun getType(): SourceSet.SourceSetType {
-        return myType
-    }
-
-    override fun getFriendSourceSets(): Collection<String> {
-        return myFriendSourceSets
-    }
-
-    override fun getSourceDirectories(): Collection<File> {
-        return mySourceDirectories
-    }
-
-    override fun getResourcesDirectories(): Collection<File> {
-        return myResourcesDirectories
-    }
-
-    override fun getClassesOutputDirectory(): File {
-        return myClassesOutputDirectory
-    }
-
-    override fun getResourcesOutputDirectory(): File {
-        return myResourcesOutputDirectory
-    }
-
-    override fun getCompilerArguments(): CompilerArguments {
-        return myCompilerArguments
-    }
 
     companion object {
         private const val serialVersionUID = 1L

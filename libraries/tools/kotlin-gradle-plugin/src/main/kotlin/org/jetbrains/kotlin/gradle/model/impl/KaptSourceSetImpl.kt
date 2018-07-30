@@ -13,30 +13,14 @@ import java.io.Serializable
  * Implementation of the [KaptSourceSet] interface.
  */
 data class KaptSourceSetImpl(
-    private val myName: String,
-    private val myType: KaptSourceSet.KaptSourceSetType,
-    private val myGeneratedSourcesDirectory: File,
-    private val myGeneratedKotlinSourcesDirectory: File,
-    private val myGeneratedClassesDirectory: File
+    override val name: String,
+    override val type: KaptSourceSet.KaptSourceSetType,
+    override val generatedSourcesDirectory: File,
+    override val generatedKotlinSourcesDirectory: File,
+    override val generatedClassesDirectory: File
 ) : KaptSourceSet, Serializable {
 
-    override fun getName(): String {
-        return myName
-    }
-
-    override fun getType(): KaptSourceSet.KaptSourceSetType {
-        return myType
-    }
-
-    override fun getGeneratedSourcesDirectory(): File {
-        return myGeneratedSourcesDirectory
-    }
-
-    override fun getGeneratedKotlinSourcesDirectory(): File {
-        return myGeneratedKotlinSourcesDirectory
-    }
-
-    override fun getGeneratedClassesDirectory(): File {
-        return myGeneratedClassesDirectory
+    companion object {
+        private const val serialVersionUID = 1L
     }
 }

@@ -12,26 +12,12 @@ import java.io.Serializable
  * Implementation of the [AllOpen] interface.
  */
 data class AllOpenImpl(
-    private val myName: String,
-    private val myAnnotations: List<String>,
-    private val myPresets: List<String>
+    override val name: String,
+    override val annotations: List<String>,
+    override val presets: List<String>
 ) : AllOpen, Serializable {
 
-    override fun getModelVersion(): Long {
-        return serialVersionUID
-    }
-
-    override fun getName(): String {
-        return myName
-    }
-
-    override fun getAnnotations(): List<String> {
-        return myAnnotations
-    }
-
-    override fun getPresets(): List<String> {
-        return myPresets
-    }
+    override val modelVersion = serialVersionUID
 
     companion object {
         private const val serialVersionUID = 1L
