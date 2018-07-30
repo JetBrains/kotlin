@@ -244,9 +244,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 with(PathUtil) {
                     val jars = arrayOf(
                         KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
-                        KOTLIN_SCRIPTING_JVM_JAR, KOTLIN_SCRIPTING_MISC_JAR
-                    ).mapNotNull { File(libPath, it).takeIf(File::exists)?.canonicalPath }
-                    if (jars.size == 4) {
+                        KOTLIN_SCRIPTING_JVM_JAR
+                    ).mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
+                    if (jars.size == 3) {
                         pluginClasspaths = jars + pluginClasspaths
                     }
                 }

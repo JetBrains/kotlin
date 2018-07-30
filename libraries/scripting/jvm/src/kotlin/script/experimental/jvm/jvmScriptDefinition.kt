@@ -7,26 +7,33 @@ package kotlin.script.experimental.jvm
 
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
-import kotlin.script.experimental.api.ScriptDefinitionProperties
+import kotlin.script.experimental.api.ScriptDefinition
 import kotlin.script.experimental.api.ScriptDependency
-import kotlin.script.experimental.api.ScriptingProperties
-import kotlin.script.experimental.api.addToListProperty
+import kotlin.script.experimental.api.dependencies
+import kotlin.script.experimental.util.PropertiesCollection
+
+open class JvmScriptDefinition : PropertiesCollection.Builder() {
+
+    companion object : JvmScriptDefinition()
+}
+
+val ScriptDefinition.jvm get() = JvmScriptDefinition()
+
 
 class JvmDependency(val classpath: List<File>) : ScriptDependency {
     constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
 }
 
-fun ScriptingProperties.jvmDependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
-    jvmDependenciesFromClassloader(*libraries, wholeClasspath = wholeClasspath)
+fun JvmScriptDefinition.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
+    dependenciesFromClassloader(*libraries, wholeClasspath = wholeClasspath)
 }
 
-fun ScriptingProperties.jvmDependenciesFromClassloader(
+fun JvmScriptDefinition.dependenciesFromClassloader(
     vararg libraries: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false
 ) {
-    data.addToListProperty(
-        ScriptDefinitionProperties.dependencies,
+    ScriptDefinition.dependencies.append(
         JvmDependency(scriptCompilationClasspathFromContext(*libraries, classLoader = classLoader, wholeClasspath = wholeClasspath))
     )
 }

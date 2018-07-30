@@ -7,13 +7,14 @@
 
 package kotlin.script.experimental.jvm
 
-import java.io.File
-import kotlin.script.experimental.api.PropertiesGroup
-import kotlin.script.experimental.api.ScriptingProperties
-import kotlin.script.experimental.util.typedKey
+import kotlin.script.experimental.api.ScriptCompileConfiguration
+import kotlin.script.experimental.util.PropertiesCollection
 
-object JvmScriptCompileConfigurationProperties : PropertiesGroup {
-    val javaHomeDir by typedKey<File>(File(System.getProperty("java.home")))
+open class JvmScriptCompilationConfiguration : JvmScriptDefinition() {
+
+    companion object : JvmScriptCompilationConfiguration()
 }
 
-val ScriptingProperties.jvmCompileConfiguration get() = JvmScriptCompileConfigurationProperties
+val JvmScriptCompilationConfiguration.javaHome by PropertiesCollection.keyCopy(JvmScriptingEnvironment.javaHome)
+
+val ScriptCompileConfiguration.jvm get() = JvmScriptCompilationConfiguration()

@@ -8,17 +8,23 @@
 package kotlin.script.experimental.jvmhost
 
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.util.typedKey
+import kotlin.script.experimental.util.PropertiesCollection
+import kotlin.script.experimental.util.getOrNull
 
-object JvmScriptEvaluationEnvironmentProperties {
-    val baseClassLoader by typedKey<ClassLoader?>(Thread.currentThread().contextClassLoader)
+open class JvmScriptEvaluationEnvironment : PropertiesCollection.Builder() {
+
+    companion object : JvmScriptEvaluationEnvironment()
 }
+
+val JvmScriptEvaluationEnvironment.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
+
+val ScriptEvaluationEnvironment.jvm get() = JvmScriptEvaluationEnvironment()
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
     override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationEnvironment: ScriptEvaluationEnvironment
+        scriptEvaluationEnvironment: ScriptEvaluationEnvironment?
     ): ResultWithDiagnostics<EvaluationResult> =
         try {
             val obj = compiledScript.instantiate(scriptEvaluationEnvironment)
@@ -32,7 +38,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                     if (scriptObject !is Class<*>)
                         ResultWithDiagnostics.Failure(ScriptDiagnostic("expecting class in this implementation, got ${scriptObject?.javaClass}"))
                     else {
-                        val receivers = scriptEvaluationEnvironment.getOrNull(ScriptEvaluationEnvironmentParams.implicitReceivers)
+                        val receivers = scriptEvaluationEnvironment?.getOrNull(ScriptEvaluationEnvironment.implicitReceivers)
                         val instance = if (receivers == null) {
                             scriptObject.getConstructor().newInstance()
                         } else {

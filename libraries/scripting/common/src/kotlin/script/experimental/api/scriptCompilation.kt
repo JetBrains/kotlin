@@ -17,7 +17,8 @@ interface ScriptCompiler {
 
 interface CompiledScript<out ScriptBase : Any> {
 
-    val configuration: ScriptCompileConfiguration
+    val definition: ScriptDefinition
+    val additionalConfiguration: ScriptCompileConfiguration?
 
-    suspend fun instantiate(scriptEvaluationEnvironment: ScriptEvaluationEnvironment): ResultWithDiagnostics<ScriptBase>
+    suspend fun instantiate(scriptEvaluationEnvironment: ScriptEvaluationEnvironment?): ResultWithDiagnostics<ScriptBase>
 }

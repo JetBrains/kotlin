@@ -7,14 +7,19 @@ package kotlin.script.experimental.repl
 
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.util.ChainedPropertyBag
+import kotlin.script.experimental.util.PropertiesCollection
 
+interface ReplEvaluationEnvironment : PropertiesCollection {
 
-object ReplEvaluationEnvironmentParams {
+    companion object : ReplEvaluationEnvironment {
 
+        class Builder internal constructor() : PropertiesCollection.Builder(), ReplEvaluationEnvironment {
+            override val properties = data
+        }
+
+        fun create(body: Builder.() -> Unit): ReplEvaluationEnvironment = Builder().apply(body)
+    }
 }
-
-typealias ReplEvaluationEnvironment = ChainedPropertyBag
 
 interface ReplSnippetEvaluator {
 

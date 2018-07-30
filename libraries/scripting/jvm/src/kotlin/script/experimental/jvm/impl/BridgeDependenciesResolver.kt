@@ -18,10 +18,12 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportPosition
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
+import kotlin.script.experimental.util.getFirstFromChainOrNull
+import kotlin.script.experimental.util.getOrNull
 
 class BridgeDependenciesResolver(
     val scriptDefinition: ScriptDefinition,
-    val calculatedBaseScriptCompilerConfiguration: ScriptCompileConfiguration,
+    private val additionalConfiguration: ScriptCompileConfiguration?,
     val onClasspathUpdated: (List<File>) -> Unit = {}
 ) : AsyncDependenciesResolver {
 
@@ -34,14 +36,19 @@ class BridgeDependenciesResolver(
         return try {
 
             val diagnostics = arrayListOf<ScriptReport>()
-            val processedScriptData =
-                ProcessedScriptData(ProcessedScriptDataProperties.foundAnnotations to scriptContents.annotations)
+            val processedScriptData = object : ProcessedScriptData {
+                override val properties = properties {
+                    foundAnnotations.append(scriptContents.annotations)
+                }
+            }
 
-            val refineFn = scriptDefinition.getOrNull(ScriptDefinitionProperties.refineConfigurationHandler)
+            val refineFn = scriptDefinition.getOrNull(ScriptDefinition.refineConfigurationHandler)
             val refinedConfiguration =
-                if (refineFn == null) calculatedBaseScriptCompilerConfiguration
+                if (refineFn == null) null
                 else {
-                    val res = refineFn(scriptContents.toScriptSource(), calculatedBaseScriptCompilerConfiguration, processedScriptData)
+                    val res = refineFn(
+                        scriptContents.toScriptSource(), scriptDefinition, additionalConfiguration, processedScriptData
+                    )
                     when (res) {
                         is ResultWithDiagnostics.Failure ->
                             return@resolveAsync DependenciesResolver.ResolveResult.Failure(res.reports.mapScriptReportsToDiagnostics())
@@ -52,11 +59,12 @@ class BridgeDependenciesResolver(
                     }
                 }
 
-            val newClasspath = refinedConfiguration.getOrNull(ScriptDefinitionProperties.dependencies)
+            val newClasspath = refinedConfiguration?.getOrNull(ScriptDefinition.dependencies)
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
-            if (refinedConfiguration != calculatedBaseScriptCompilerConfiguration) {
-                val oldClasspath = calculatedBaseScriptCompilerConfiguration.getOrNull(ScriptDefinitionProperties.dependencies)
-                    ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
+            if (newClasspath.isNotEmpty()) {
+                val oldClasspath =
+                    getFirstFromChainOrNull(ScriptDefinition.dependencies, additionalConfiguration, scriptDefinition)
+                        ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
                 if (newClasspath != oldClasspath) {
                     onClasspathUpdated(newClasspath)
                 }
@@ -64,8 +72,9 @@ class BridgeDependenciesResolver(
             DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
-                    imports = refinedConfiguration.getOrNull(ScriptDefinitionProperties.defaultImports)?.toList()
-                            ?: emptyList()
+                    imports = getFirstFromChainOrNull(
+                        ScriptDefinition.defaultImports, refinedConfiguration, additionalConfiguration, scriptDefinition
+                    )?.toList() ?: emptyList()
                 ),
                 diagnostics
             )

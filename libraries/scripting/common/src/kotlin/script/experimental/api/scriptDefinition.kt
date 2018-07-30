@@ -8,73 +8,73 @@
 package kotlin.script.experimental.api
 
 import kotlin.reflect.KClass
-import kotlin.script.experimental.util.ChainedPropertyBag
-import kotlin.script.experimental.util.typedKey
+import kotlin.script.experimental.util.PropertiesCollection
 
-typealias ScriptDefinition = ChainedPropertyBag
+interface ScriptDefinition : PropertiesCollection {
 
-object ScriptDefinitionProperties : PropertiesGroup {
+    companion object : ScriptDefinition {
 
-    val name by typedKey<String>() // Name of the script type, by default "Kotlin script"
+        class Builder internal constructor() : PropertiesCollection.Builder(), ScriptDefinition {
+            override val properties = data
+        }
 
-    val fileExtension by typedKey<String>() // default: "kts"
-
-    val baseClass by typedKey<KotlinType>() // script base class
-
-    val scriptBodyTarget by typedKey<ScriptBodyTarget>()
-
-    val scriptImplicitReceivers by typedKey<List<KotlinType>>() // in the order from outer to inner scope
-
-    val contextVariables by typedKey<Map<String, KotlinType>>() // external variables
-
-    val defaultImports by typedKey<List<String>>()
-
-    val restrictions by typedKey<List<ResolvingRestrictionRule>>()
-
-    val importedScripts by typedKey<List<ScriptSource>>()
-
-    val dependencies by typedKey<List<ScriptDependency>>()
-
-    val generatedClassAnnotations by typedKey<List<Annotation>>()
-
-    val generatedMethodAnnotations by typedKey<List<Annotation>>()
-
-    val compilerOptions by typedKey<List<String>>() // Q: CommonCompilerOptions instead?
-
-    val refineConfigurationHandler by typedKey<RefineScriptCompilationConfigurationHandler>() // dynamic configurator
-
-    val refineConfigurationBeforeParsing by typedKey<Boolean>() // default: false
-
-    val refineConfigurationOnAnnotations by typedKey<List<KotlinType>>()
-
-    val refineConfigurationOnSections by typedKey<List<String>>()
-
-    // DSL:
-
-    val refineConfiguration by propertiesBuilder<RefineConfigurationBuilder>()
-}
-
-// DSL --------------------
-
-val ScriptingProperties.scriptDefinition get() = ScriptDefinitionProperties
-
-@Suppress("MemberVisibilityCanBePrivate")
-class RefineConfigurationBuilder(props: ScriptingProperties) : PropertiesBuilder(props) {
-
-    inline operator fun invoke(body: RefineConfigurationBuilder.() -> Unit) {
-        body()
+        fun create(body: Builder.() -> Unit): ScriptDefinition = Builder().apply(body)
     }
 
+    object Default : ScriptDefinition
+}
+
+val ScriptDefinition.name by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
+
+val ScriptDefinition.fileExtension by PropertiesCollection.key<String>("kts") // file extension
+
+val ScriptDefinition.baseClass by PropertiesCollection.key<KotlinType>() // script base class
+
+val ScriptDefinition.scriptBodyTarget by PropertiesCollection.key<ScriptBodyTarget>(ScriptBodyTarget.Constructor)
+
+val ScriptDefinition.scriptImplicitReceivers by PropertiesCollection.key<List<KotlinType>>() // in the order from outer to inner scope
+
+val ScriptDefinition.contextVariables by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
+
+val ScriptDefinition.defaultImports by PropertiesCollection.key<List<String>>()
+
+val ScriptDefinition.restrictions by PropertiesCollection.key<List<ResolvingRestrictionRule>>()
+
+val ScriptDefinition.importedScripts by PropertiesCollection.key<List<ScriptSource>>()
+
+val ScriptDefinition.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
+
+val ScriptDefinition.generatedClassAnnotations by PropertiesCollection.key<List<Annotation>>()
+
+val ScriptDefinition.generatedMethodAnnotations by PropertiesCollection.key<List<Annotation>>()
+
+val ScriptDefinition.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
+
+val ScriptDefinition.refineConfigurationHandler by PropertiesCollection.key<RefineScriptCompilationConfigurationHandler>() // dynamic configurator
+
+val ScriptDefinition.refineConfigurationBeforeParsing by PropertiesCollection.key<Boolean>() // default: false
+
+val ScriptDefinition.refineConfigurationOnAnnotations by PropertiesCollection.key<List<KotlinType>>()
+
+val ScriptDefinition.refineConfigurationOnSections by PropertiesCollection.key<List<String>>()
+
+// DSL:
+
+val ScriptDefinition.refineConfiguration get() = RefineConfigurationBuilder()
+
+
+class RefineConfigurationBuilder : PropertiesCollection.Builder() {
+
     fun handler(fn: RefineScriptCompilationConfigurationHandler) {
-        props.data[ScriptDefinitionProperties.refineConfigurationHandler] = fn
+        set(ScriptDefinition.refineConfigurationHandler, fn)
     }
 
     fun triggerBeforeParsing(value: Boolean = true) {
-        props.data[ScriptDefinitionProperties.refineConfigurationBeforeParsing] = value
+        set(ScriptDefinition.refineConfigurationBeforeParsing, value)
     }
 
     fun triggerOnAnnotations(annotations: Iterable<KotlinType>) {
-        props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnAnnotations, annotations)
+        ScriptDefinition.refineConfigurationOnAnnotations.append(annotations)
     }
 
     fun triggerOnAnnotations(vararg annotations: KotlinType) {
@@ -90,11 +90,11 @@ class RefineConfigurationBuilder(props: ScriptingProperties) : PropertiesBuilder
     }
 
     fun triggerOnSections(sections: Iterable<String>) {
-        props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnSections, sections)
+        ScriptDefinition.refineConfigurationOnSections.append(sections)
     }
 
     fun triggerOnSections(vararg sections: String) {
-        props.data.addToListProperty(ScriptDefinitionProperties.refineConfigurationOnSections, *sections)
+        ScriptDefinition.refineConfigurationOnSections.append(*sections)
     }
 }
 

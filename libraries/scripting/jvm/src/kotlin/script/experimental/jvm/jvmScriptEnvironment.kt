@@ -5,18 +5,24 @@
 
 package kotlin.script.experimental.jvm
 
+import java.io.File
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.util.PropertiesCollection
+import kotlin.script.experimental.util.getOrNull
 
-private object DefaultJvmScriptingEnvironmentPropertiesBuilder : ScriptingProperties() {
-    init {
-        ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
-    }
+open class JvmScriptingEnvironment : PropertiesCollection.Builder() {
+    companion object : JvmScriptingEnvironment()
 }
 
-val defaultJvmScriptingEnvironment = DefaultJvmScriptingEnvironmentPropertiesBuilder.build()
+val JvmScriptingEnvironment.javaHome by PropertiesCollection.key<File>(File(System.getProperty("java.home")))
 
+val ScriptingEnvironment.jvm get() = JvmScriptingEnvironment()
+
+val defaultJvmScriptingEnvironment = ScriptingEnvironment.create {
+    getScriptingClass(JvmGetScriptingClass())
+}
 
 class JvmGetScriptingClass : GetScriptingClass {
 
@@ -37,7 +43,7 @@ class JvmGetScriptingClass : GetScriptingClass {
             if (actualClassLoadersChain.any { it == fromClass.java.classLoader }) return fromClass
         }
 
-        val newDeps = environment.getOrNull(ScriptingEnvironmentProperties.configurationDependencies)
+        val newDeps = environment.getOrNull(ScriptingEnvironment.configurationDependencies)
         if (dependencies == null) {
             dependencies = newDeps
         } else {
@@ -55,10 +61,10 @@ class JvmGetScriptingClass : GetScriptingClass {
 //        }
 
         if (classLoader == null) {
-            val classpath = dependencies?.flatMap {
-                when(it) {
-                    is JvmDependency -> it.classpath.map { it.toURI().toURL() }
-                    else -> throw IllegalArgumentException("unknown dependency type $it")
+            val classpath = dependencies?.flatMap { dependency ->
+                when(dependency) {
+                    is JvmDependency -> dependency.classpath.map { it.toURI().toURL() }
+                    else -> throw IllegalArgumentException("unknown dependency type $dependency")
                 }
             }
             classLoader =

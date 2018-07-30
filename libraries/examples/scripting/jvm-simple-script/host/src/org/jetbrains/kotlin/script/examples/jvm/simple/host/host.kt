@@ -9,24 +9,25 @@ import org.jetbrains.kotlin.script.examples.jvm.simple.MyScript
 import java.io.File
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.ScriptCompileConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationEnvironment
-import kotlin.script.experimental.api.buildScriptingProperties
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.jvmDependenciesFromCurrentContext
+import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
+import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.makeBasicHostFromAnnotatedScriptBaseClass
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val additionalCompilationProperties = buildScriptingProperties {
-        jvmDependenciesFromCurrentContext(
-            "scripting-jvm-simple-script" /* script library jar name */
-        )
+    val additionalCompilationProperties = ScriptCompileConfiguration.create {
+        jvm {
+            dependenciesFromCurrentContext(
+                "scripting-jvm-simple-script" /* script library jar name */
+            )
+        }
     }
 
     val host = makeBasicHostFromAnnotatedScriptBaseClass<MyScript>()
 
-    return host.eval(
-        scriptFile.toScriptSource(), additionalCompilationProperties, ScriptEvaluationEnvironment()
-    )
+    return host.eval(scriptFile.toScriptSource(), additionalCompilationProperties, null)
 }
 
 fun main(vararg args: String) {

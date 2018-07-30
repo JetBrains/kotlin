@@ -7,30 +7,54 @@
 
 package kotlin.script.experimental.api
 
-import kotlin.script.experimental.util.ChainedPropertyBag
-import kotlin.script.experimental.util.typedKey
+import kotlin.script.experimental.util.PropertiesCollection
 
-typealias ScriptCompileConfiguration = ChainedPropertyBag
+interface ScriptCompileConfiguration : PropertiesCollection {
+    
+    companion object : ScriptCompileConfiguration {
 
-object ScriptCompileConfigurationProperties : PropertiesGroup {
+        class Builder internal constructor() : PropertiesCollection.Builder(), ScriptCompileConfiguration {
+            override val properties = data
+        }
 
-    val sourceFragments by typedKey<List<ScriptSourceNamedFragment>>()
+        fun create(body: Builder.() -> Unit): ScriptCompileConfiguration = Builder().apply(body)
+    }
 }
 
-val ScriptingProperties.compilationConfiguration get() = ScriptCompileConfigurationProperties
+val ScriptCompileConfiguration.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
 
-typealias ProcessedScriptData = ChainedPropertyBag
+val ScriptCompileConfiguration.scriptBodyTarget by PropertiesCollection.keyCopy(ScriptDefinition.scriptBodyTarget)
 
-object ProcessedScriptDataProperties : PropertiesGroup {
-    val foundAnnotations by typedKey<List<Annotation>>()
+val ScriptCompileConfiguration.scriptImplicitReceivers by PropertiesCollection.keyCopy(ScriptDefinition.scriptImplicitReceivers)
 
-    val foundFragments by typedKey<List<ScriptSourceNamedFragment>>()
+val ScriptCompileConfiguration.contextVariables by PropertiesCollection.keyCopy(ScriptDefinition.contextVariables)
+
+val ScriptCompileConfiguration.defaultImports by PropertiesCollection.keyCopy(ScriptDefinition.defaultImports)
+
+val ScriptCompileConfiguration.restrictions by PropertiesCollection.keyCopy(ScriptDefinition.restrictions)
+
+val ScriptCompileConfiguration.importedScripts by PropertiesCollection.keyCopy(ScriptDefinition.importedScripts)
+
+val ScriptCompileConfiguration.dependencies by PropertiesCollection.keyCopy(ScriptDefinition.dependencies)
+
+val ScriptCompileConfiguration.compilerOptions by PropertiesCollection.keyCopy(ScriptDefinition.compilerOptions)
+
+
+interface ProcessedScriptData : PropertiesCollection {
+
+    companion object : ProcessedScriptData
 }
+
+val ProcessedScriptData.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
+
+val ProcessedScriptData.foundFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
+
 
 interface RefineScriptCompilationConfigurationHandler {
     suspend operator fun invoke(
         scriptSource: ScriptSource,
-        configuration: ScriptCompileConfiguration,
-        processedScriptData: ProcessedScriptData = ProcessedScriptData()
-    ): ResultWithDiagnostics<ScriptCompileConfiguration>
+        scriptDefinition: ScriptDefinition,
+        configuration: ScriptCompileConfiguration?,
+        processedScriptData: ProcessedScriptData? = null
+    ): ResultWithDiagnostics<ScriptCompileConfiguration?>
 }

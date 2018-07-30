@@ -11,8 +11,7 @@ import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompileConfiguration
 import kotlin.script.experimental.api.ScriptDefinition
-import kotlin.script.experimental.util.ChainedPropertyBag
-import kotlin.script.experimental.util.typedKey
+import kotlin.script.experimental.util.PropertiesCollection
 
 interface ReplCommandProcessor {
     suspend operator fun invoke(
@@ -23,12 +22,19 @@ interface ReplCommandProcessor {
 
 data class ReplCommand(val commandName: String, val processor: ReplCommandProcessor)
 
-object ReplHostEnvironmentParams {
+interface ReplHostEnvironment : PropertiesCollection {
 
-    val replCommands by typedKey<List<ReplCommand>>()
+    companion object : ReplHostEnvironment {
+
+        class Builder internal constructor() : PropertiesCollection.Builder(), ReplHostEnvironment {
+            override val properties = data
+        }
+
+        fun create(body: Builder.() -> Unit): ReplHostEnvironment = Builder().apply(body)
+    }
 }
 
-typealias ReplHostEnvironment = ChainedPropertyBag
+val ReplHostEnvironment.replCommands by PropertiesCollection.key<List<ReplCommand>>()
 
 abstract class ReplHost(
     val environment: ReplHostEnvironment,

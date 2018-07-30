@@ -11,9 +11,8 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.annotations.KotlinScriptProperties
-import kotlin.script.experimental.annotations.KotlinScriptPropertiesFromList
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.util.TypedKey
+import kotlin.script.experimental.util.getOrNull
 
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 
@@ -26,7 +25,7 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
     contextClass: KClass<*> = ScriptDefinition::class
 ): ScriptDefinition {
 
-    val getScriptingClass = environment.getOrNull(ScriptingEnvironmentProperties.getScriptingClass)
+    val getScriptingClass = environment.getOrNull(ScriptingEnvironment.getScriptingClass)
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting environment")
 
     val baseClass: KClass<*> =
@@ -39,38 +38,24 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
     val mainAnnotation = baseClass.findAnnotation<KotlinScript>()
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $baseClass")
 
-    val propertiesData = hashMapOf<TypedKey<*>, Any?>(ScriptDefinitionProperties.baseClass to baseClassType)
-
-    propertiesData[ScriptDefinitionProperties.fileExtension] =
-            baseClass.findAnnotation<KotlinScriptFileExtension>()?.let { it.extension }
-            ?: mainAnnotation.extension
-    propertiesData += ScriptDefinitionProperties.name to mainAnnotation.name
-    baseClass.annotations.filterIsInstance(KotlinScriptPropertiesFromList::class.java).forEach { ann ->
-        val params = try {
-            ann.definitionProperties.objectInstance ?: ann.definitionProperties.createInstance()
-        } catch (e: Throwable) {
-            throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
-        }
-        params.forEach { param ->
-            if (param !is Pair<*, *> || param.first !is TypedKey<*>)
-                throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: invalid parameter $param")
-            (param as Pair<TypedKey<*>, Any?>).let { (k, v) ->
-                propertiesData[k] = v
-            }
-        }
-    }
-
-    fun scriptingPropsInstance(kclass: KClass<out ScriptingProperties>): ScriptingProperties = try {
-        kclass.objectInstance ?: kclass.createInstance().also { it.setupOnce() }
+    fun scriptingPropsInstance(kclass: KClass<out ScriptDefinition>): ScriptDefinition = try {
+        kclass.objectInstance ?: kclass.createInstance()
     } catch (e: Throwable) {
         throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
     }
 
-    baseClass.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
-        propertiesData.putAll(scriptingPropsInstance(ann.definitionProperties).data)
+    return object : ScriptDefinition {
+        override val properties = properties {
+            baseClass(baseClassType)
+            fileExtension(baseClass.findAnnotation<KotlinScriptFileExtension>()?.extension ?: mainAnnotation.extension)
+            name(mainAnnotation.name)
+
+            include(scriptingPropsInstance(mainAnnotation.definition))
+
+            baseClass.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
+                include(scriptingPropsInstance(ann.definition))
+            }
+        }
     }
-    // TODO: chaining is lost here and above, fix it
-    propertiesData.putAll(scriptingPropsInstance(mainAnnotation.properties).data)
-    return ScriptingEnvironment.createOptimized(null, propertiesData)
 }
 

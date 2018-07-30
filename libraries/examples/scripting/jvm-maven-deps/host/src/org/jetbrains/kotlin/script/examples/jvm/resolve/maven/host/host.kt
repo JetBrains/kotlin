@@ -9,17 +9,13 @@ import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.MyScriptWithMavenD
 import java.io.File
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptCompileConfiguration
-import kotlin.script.experimental.api.ScriptEvaluationEnvironment
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvmhost.makeBasicHostFromAnnotatedScriptBaseClass
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     val host = makeBasicHostFromAnnotatedScriptBaseClass<MyScriptWithMavenDeps>()
 
-    return host.eval(
-        scriptFile.toScriptSource(), ScriptCompileConfiguration(), ScriptEvaluationEnvironment()
-    )
+    return host.eval(scriptFile.toScriptSource(), null, null)
 }
 
 fun main(vararg args: String) {

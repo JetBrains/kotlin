@@ -17,14 +17,12 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_MISC_JAR
 import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptPropertiesFromList
-import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.api.ScriptDefinitionProperties
-import kotlin.script.experimental.util.TypedKey
+import kotlin.script.experimental.api.ScriptDefinition
+import kotlin.script.experimental.api.contextVariables
+import kotlin.script.experimental.api.scriptImplicitReceivers
 
 abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     private lateinit var scriptDefinitions: List<String>
@@ -59,7 +57,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
                     with(PathUtil.kotlinPathsForDistDirectory) {
                         arrayOf(
                             KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
-                            KOTLIN_SCRIPTING_JVM_JAR, KOTLIN_SCRIPTING_MISC_JAR
+                            KOTLIN_SCRIPTING_JVM_JAR
                         ).mapNotNull { File(libPath, it).takeIf { it.exists() } }
                     }
         }
@@ -123,24 +121,22 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     }
 }
 
-object TestScriptWithReceiversConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
-    listOf(
-        ScriptDefinitionProperties.scriptImplicitReceivers to listOf(KotlinType(String::class))
-    )
-)
+object TestScriptWithReceiversConfiguration : ScriptDefinition {
+    override val properties = properties {
+        scriptImplicitReceivers<String>()
+    }
+}
 
 @Suppress("unused")
-@KotlinScript
-@KotlinScriptPropertiesFromList(TestScriptWithReceiversConfiguration::class)
+@KotlinScript(definition = TestScriptWithReceiversConfiguration::class)
 abstract class TestScriptWithReceivers
 
-object TestScriptWithSimpleEnvVarsConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
-    listOf(
-        ScriptDefinitionProperties.contextVariables to mapOf("stringVar1" to KotlinType(String::class))
-    )
-)
+object TestScriptWithSimpleEnvVarsConfiguration : ScriptDefinition {
+    override val properties = properties {
+        contextVariables("stringVar1" to String::class)
+    }
+}
 
 @Suppress("unused")
-@KotlinScript
-@KotlinScriptPropertiesFromList(TestScriptWithSimpleEnvVarsConfiguration::class)
+@KotlinScript(definition = TestScriptWithSimpleEnvVarsConfiguration::class)
 abstract class TestScriptWithSimpleEnvVars

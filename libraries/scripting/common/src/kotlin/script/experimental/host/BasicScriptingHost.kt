@@ -31,8 +31,8 @@ abstract class BasicScriptingHost(
 
     open fun eval(
         script: ScriptSource,
-        compileConfiguration: ScriptCompileConfiguration,
-        environment: ScriptEvaluationEnvironment
+        compileConfiguration: ScriptCompileConfiguration?,
+        environment: ScriptEvaluationEnvironment?
     ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
             compiler(script, scriptDefinition, compileConfiguration).onSuccess {

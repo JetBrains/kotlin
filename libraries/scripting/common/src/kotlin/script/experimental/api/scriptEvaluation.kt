@@ -7,20 +7,27 @@
 
 package kotlin.script.experimental.api
 
-import kotlin.script.experimental.util.ChainedPropertyBag
-import kotlin.script.experimental.util.typedKey
+import kotlin.script.experimental.util.PropertiesCollection
 
-object ScriptEvaluationEnvironmentParams {
-    val implicitReceivers by typedKey<List<Any>>()
+interface ScriptEvaluationEnvironment : PropertiesCollection {
 
-    val contextVariables by typedKey<Map<String, Any?>>() // external variables
+    companion object : ScriptEvaluationEnvironment {
 
-    val constructorArgs by typedKey<List<Any?>>()
+        class Builder internal constructor() : PropertiesCollection.Builder(), ScriptEvaluationEnvironment {
+            override val properties = data
+        }
 
-    val runArgs by typedKey<List<Any?>>()
+        fun create(body: Builder.() -> Unit): ScriptEvaluationEnvironment = Builder().apply(body)
+    }
 }
 
-typealias ScriptEvaluationEnvironment = ChainedPropertyBag
+val ScriptEvaluationEnvironment.implicitReceivers by PropertiesCollection.key<List<Any>>()
+
+val ScriptEvaluationEnvironment.contextVariables by PropertiesCollection.key<Map<String, Any?>>() // external variables
+
+val ScriptEvaluationEnvironment.constructorArgs by PropertiesCollection.key<List<Any?>>()
+
+val ScriptEvaluationEnvironment.runArgs by PropertiesCollection.key<List<Any?>>()
 
 sealed class ResultValue {
     class Value(val name: String, val value: Any?, val type: String) : ResultValue() {
@@ -30,12 +37,12 @@ sealed class ResultValue {
     object Unit : ResultValue()
 }
 
-data class EvaluationResult(val returnValue: ResultValue, val environment: ScriptEvaluationEnvironment)
+data class EvaluationResult(val returnValue: ResultValue, val environment: ScriptEvaluationEnvironment?)
 
 interface ScriptEvaluator {
 
     suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationEnvironment: ScriptEvaluationEnvironment
+        scriptEvaluationEnvironment: ScriptEvaluationEnvironment?
     ): ResultWithDiagnostics<EvaluationResult>
 }

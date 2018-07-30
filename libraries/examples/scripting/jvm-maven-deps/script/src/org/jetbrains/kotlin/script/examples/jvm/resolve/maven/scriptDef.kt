@@ -16,34 +16,35 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
-import kotlin.script.experimental.jvm.jvmDependenciesFromCurrentContext
-import kotlin.script.experimental.misc.invoke
+import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.util.getOrNull
 
 @KotlinScript(
     extension = "scriptwithdeps.kts",
-    properties = MyScriptProperties::class
+    definition = MyScriptDefinition::class
 )
 abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-class MyScriptProperties : ScriptingProperties() {
-    override fun setup() {
-        scriptDefinition {
-            defaultImports<DependsOn>()
-            defaultImports(Repository::class)
-            jvmDependenciesFromCurrentContext(
+object MyScriptDefinition : ScriptDefinition {
+    override val properties = properties {
+        defaultImports<DependsOn>()
+        defaultImports(Repository::class)
+        jvm {
+            dependenciesFromCurrentContext(
                 "scripting-jvm-maven-deps", // script library jar name
                 "kotlin-script-util" // DependsOn annotation is taken from script-util
             )
-            // variant: dependencies(collectDependenciesFromCurrentContext(...
-            refineConfiguration {
+        }
+        // variant: dependencies(collectDependenciesFromCurrentContext(...
+        refineConfiguration {
             // variant ^: dynamicConfiguration
-                handler(MyConfigurator())
-                triggerOnAnnotations(DependsOn::class, Repository::class)
-                // variants: onAnnotations, refineOnAnnotations (esp. for dynamicConfiguration), updateOnAnnotations
-                // other triggers: beforeParsing, onSections
-            }
+            handler(MyConfigurator())
+            triggerOnAnnotations(DependsOn::class, Repository::class)
+            // variants: onAnnotations, refineOnAnnotations (esp. for dynamicConfiguration), updateOnAnnotations
+            // other triggers: beforeParsing, onSections
         }
     }
 }
@@ -54,10 +55,11 @@ class MyConfigurator : RefineScriptCompilationConfigurationHandler {
 
     override suspend operator fun invoke(
         scriptSource: ScriptSource,
-        configuration: ScriptCompileConfiguration,
-        processedScriptData: ProcessedScriptData
-    ): ResultWithDiagnostics<ScriptCompileConfiguration> {
-        val annotations = processedScriptData.getOrNull(ProcessedScriptDataProperties.foundAnnotations)?.takeIf { it.isNotEmpty() }
+        scriptDefinition: ScriptDefinition,
+        configuration: ScriptCompileConfiguration?,
+        processedScriptData: ProcessedScriptData?
+    ): ResultWithDiagnostics<ScriptCompileConfiguration?> {
+        val annotations = processedScriptData?.getOrNull(ProcessedScriptData.foundAnnotations)?.takeIf { it.isNotEmpty() }
             ?: return configuration.asSuccess()
         val scriptContents = object : ScriptContents {
             override val annotations: Iterable<Annotation> = annotations
@@ -73,10 +75,9 @@ class MyConfigurator : RefineScriptCompilationConfigurationHandler {
                 ?: return configuration.asSuccess(diagnostics)
             val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
                 ?: return configuration.asSuccess(diagnostics)
-            val newDependency = JvmDependency(resolvedClasspath)
-            val updatedDeps =
-                configuration.getOrNull(ScriptDefinitionProperties.dependencies)?.plus(newDependency) ?: listOf(newDependency)
-            ScriptCompileConfiguration(configuration, ScriptDefinitionProperties.dependencies(updatedDeps)).asSuccess(diagnostics)
+            ScriptCompileConfiguration.create {
+                dependencies(JvmDependency(resolvedClasspath))
+            }.asSuccess(diagnostics)
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
         }
