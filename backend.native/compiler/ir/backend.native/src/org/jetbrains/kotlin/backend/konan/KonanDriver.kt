@@ -69,7 +69,8 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
     phaser.phase(KonanPhase.PSI_TO_IR) {
         // Translate AST to high level IR.
-        val translator = Psi2IrTranslator(Psi2IrConfiguration(false))
+        val translator = Psi2IrTranslator(context.config.configuration.languageVersionSettings,
+                Psi2IrConfiguration(false))
         val generatorContext = translator.createGeneratorContext(context.moduleDescriptor, bindingContext)
         @Suppress("DEPRECATION")
         context.psi2IrGeneratorContext = generatorContext
