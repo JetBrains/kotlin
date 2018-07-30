@@ -125,6 +125,10 @@ data class MigrationInfo(
     val newLanguageVersion: LanguageVersion
 )
 
+fun MigrationInfo.isLanguageVersionUpdate(old: LanguageVersion, new: LanguageVersion): Boolean {
+    return oldLanguageVersion <= old && newLanguageVersion >= new
+}
+
 private const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
 private fun maxKotlinLibVersion(project: Project): LibInfo? {
