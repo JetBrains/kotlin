@@ -4,6 +4,7 @@ import kotlin.script.dependencies.*
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.templates.*
 import java.io.File
+import kotlin.script.experimental.location.*
 
 class TestDependenciesResolver : DependenciesResolver {
     override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult {
@@ -41,6 +42,7 @@ class TestDependenciesResolver : DependenciesResolver {
     }
 }
 
+@ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])
 @ScriptTemplateDefinition(TestDependenciesResolver::class, scriptFilePattern = "script.kts")
 class Template : Base()
 
