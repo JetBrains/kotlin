@@ -3020,6 +3020,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funExtraArgs.kt");
                 }
 
+                @TestMetadata("funInInlineInternalFun.kt")
+                public void testFunInInlineInternalFun() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funInInlineInternalFun.kt");
+                }
+
+                @TestMetadata("funInInlinePrivateFun.kt")
+                public void testFunInInlinePrivateFun() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funInInlinePrivateFun.kt");
+                }
+
+                @TestMetadata("funInInlineProtectedFun.kt")
+                public void testFunInInlineProtectedFun() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funInInlineProtectedFun.kt");
+                }
+
+                @TestMetadata("funInInlinePublicFun.kt")
+                public void testFunInInlinePublicFun() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funInInlinePublicFun.kt");
+                }
+
                 @TestMetadata("funMissingArgs.kt")
                 public void testFunMissingArgs() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/funMissingArgs.kt");
