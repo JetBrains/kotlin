@@ -14,6 +14,9 @@ expect annotation class B(val s: String)
 actual annotation class A(actual val x: Int)
 
 // FILE: B.kt
+
+@file:Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE") // TODO: support common sources in the test infrastructure
+
 import a.A
 import a.B
 import java.lang.reflect.Modifier
