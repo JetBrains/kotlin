@@ -7032,6 +7032,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertToRun/itReceiver.kt");
         }
 
+        @TestMetadata("javaMethod.kt")
+        public void testJavaMethod() throws Exception {
+            runTest("idea/testData/intentions/convertToRun/javaMethod.kt");
+        }
+
+        @TestMetadata("javaStaticMethod.kt")
+        public void testJavaStaticMethod() throws Exception {
+            runTest("idea/testData/intentions/convertToRun/javaStaticMethod.kt");
+        }
+
         @TestMetadata("methodChain.kt")
         public void testMethodChain() throws Exception {
             runTest("idea/testData/intentions/convertToRun/methodChain.kt");
@@ -7339,6 +7349,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("itReceiver.kt")
         public void testItReceiver() throws Exception {
             runTest("idea/testData/intentions/convertToWith/itReceiver.kt");
+        }
+
+        @TestMetadata("javaMethod.kt")
+        public void testJavaMethod() throws Exception {
+            runTest("idea/testData/intentions/convertToWith/javaMethod.kt");
+        }
+
+        @TestMetadata("javaStaticMethod.kt")
+        public void testJavaStaticMethod() throws Exception {
+            runTest("idea/testData/intentions/convertToWith/javaStaticMethod.kt");
         }
 
         @TestMetadata("methodChain.kt")
