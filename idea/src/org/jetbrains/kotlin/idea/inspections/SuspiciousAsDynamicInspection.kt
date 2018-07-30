@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.types.DynamicType
 
-class RedundantAsDynamicInspection : AbstractKotlinInspection() {
+class SuspiciousAsDynamicInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         callExpressionVisitor(fun(call) {
             if (call.platform != JsPlatform) return
@@ -26,7 +26,7 @@ class RedundantAsDynamicInspection : AbstractKotlinInspection() {
             if (call.getQualifiedExpressionForSelector()?.receiverExpression?.getCallableDescriptor()?.returnType !is DynamicType) return
             holder.registerProblem(
                 call,
-                "Redundant 'asDynamic' call",
+                "Suspicious 'asDynamic' member invocation",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 RemoveAsDynamicCallFix()
             )
@@ -34,7 +34,7 @@ class RedundantAsDynamicInspection : AbstractKotlinInspection() {
 }
 
 private class RemoveAsDynamicCallFix : LocalQuickFix {
-    override fun getName() = "Remove 'asDynamic' call"
+    override fun getName() = "Remove 'asDynamic' invocation"
 
     override fun getFamilyName() = name
 
