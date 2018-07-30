@@ -20,6 +20,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.util.text.TextRangeUtil
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
+import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
@@ -69,7 +70,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             // Several line comments happened to be generated in one line
             inPosition(parent = null, left = EOL_COMMENT, right = EOL_COMMENT).customRule { _, _, right ->
-                val nodeBeforeRight = right.node.treePrev
+                val nodeBeforeRight = right.requireNode().treePrev
                 if (nodeBeforeRight is PsiWhiteSpace && !nodeBeforeRight.textContains('\n')) {
                     createSpacing(0, minLineFeeds = 1)
                 }
@@ -97,24 +98,24 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     emptyLines = 0, numberOfLineFeedsOtherwise = 0, numSpacesOtherwise = 1)
 
             inPosition(parent = CLASS_BODY, left = SEMICOLON).customRule { parent, _, right ->
-                val klass = parent.node.treeParent.psi as? KtClass ?: return@customRule null
-                if (klass.isEnum() && right.node.elementType in DECLARATIONS) {
+                val klass = parent.requireNode().treeParent.psi as? KtClass ?: return@customRule null
+                if (klass.isEnum() && right.requireNode().elementType in DECLARATIONS) {
                     createSpacing(0, minLineFeeds = 2, keepBlankLines = settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
                 }
                 else null
             }
 
             inPosition(parent = CLASS_BODY, left = LBRACE).customRule { parent, left, right ->
-                if (right.node.elementType == RBRACE) {
+                if (right.requireNode().elementType == RBRACE) {
                     return@customRule createSpacing(0)
                 }
-                val classBody = parent.node.psi as KtClassBody
+                val classBody = parent.requireNode().psi as KtClassBody
                 val parentPsi = classBody.parent as? KtClassOrObject ?: return@customRule null
                 if (kotlinCommonSettings.BLANK_LINES_AFTER_CLASS_HEADER == 0 || parentPsi.isObjectLiteral()) {
                     null
                 }
                 else {
-                    val minLineFeeds = if (right.node.elementType == FUN || right.node.elementType == PROPERTY)
+                    val minLineFeeds = if (right.requireNode().elementType == FUN || right.requireNode().elementType == PROPERTY)
                         1
                     else
                         0
@@ -122,7 +123,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     builderUtil.createLineFeedDependentSpacing(
                             1, 1, minLineFeeds,
                             settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_DECLARATIONS,
-                            TextRange(parentPsi.textRange.startOffset, left.node.psi.textRange.startOffset),
+                            TextRange(parentPsi.textRange.startOffset, left.requireNode().psi.textRange.startOffset),
                             DependentSpacingRule(DependentSpacingRule.Trigger.HAS_LINE_FEEDS)
                                 .registerData(DependentSpacingRule.Anchor.MIN_LINE_FEEDS, kotlinCommonSettings.BLANK_LINES_AFTER_CLASS_HEADER + 1)
                     )
@@ -131,7 +132,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             val parameterWithDocCommentRule = {
                 _: ASTBlock, _: ASTBlock, right: ASTBlock ->
-                if (right.node.firstChildNode.elementType == KtTokens.DOC_COMMENT) {
+                if (right.requireNode().firstChildNode.elementType == KtTokens.DOC_COMMENT) {
                     createSpacing(0, minLineFeeds = 1, keepLineBreaks = true, keepBlankLines = settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
                 }
                 else {
@@ -141,16 +142,16 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(parent = VALUE_PARAMETER_LIST, right = VALUE_PARAMETER).customRule(parameterWithDocCommentRule)
 
             inPosition(parent = PROPERTY, right = PROPERTY_ACCESSOR).customRule { parent, _, _ ->
-                val startNode = parent.node.psi.firstChild
+                val startNode = parent.requireNode().psi.firstChild
                         .siblings()
-                        .dropWhile { it is PsiComment || it is PsiWhiteSpace }.firstOrNull() ?: parent.node.psi
+                        .dropWhile { it is PsiComment || it is PsiWhiteSpace }.firstOrNull() ?: parent.requireNode().psi
                 Spacing.createDependentLFSpacing(1, 1,
                                                  TextRange(startNode.textRange.startOffset, parent.textRange.endOffset),
                                                  false, 0)
             }
 
             inPosition(parent = VALUE_ARGUMENT_LIST, left = LPAR).customRule { parent, _, _ ->
-                if (kotlinCommonSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE && needWrapArgumentList(parent.node.psi)) {
+                if (kotlinCommonSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE && needWrapArgumentList(parent.requireNode().psi)) {
                     Spacing.createDependentLFSpacing(0, 0,
                                                      excludeLambdasAndObjects(parent),
                                                      commonCodeStyleSettings.KEEP_LINE_BREAKS,
@@ -167,7 +168,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                                                      excludeLambdasAndObjects(parent),
                                                      commonCodeStyleSettings.KEEP_LINE_BREAKS,
                                                      commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
-                } else if (left.node.elementType == KtTokens.COMMA) {
+                } else if (left.requireNode().elementType == KtTokens.COMMA) {
                     // incomplete call being edited
                     createSpacing(1)
                 } else {
@@ -285,7 +286,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             // class A private() - one space before modifier
             custom {
                 inPosition(right = PRIMARY_CONSTRUCTOR).customRule { _, _, r ->
-                    val spacesCount = if (r.node.findLeafElementAt(0)?.elementType != LPAR) 1 else 0
+                    val spacesCount = if (r.requireNode().findLeafElementAt(0)?.elementType != LPAR) 1 else 0
                     createSpacing(spacesCount, minLineFeeds = 0, keepLineBreaks = true, keepBlankLines = 0)
                 }
             }
@@ -374,7 +375,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     inPosition(parent = parent, right = keyword).customRule {
                         _, _, right ->
 
-                        val previousLeaf = builderUtil.getPreviousNonWhitespaceLeaf(right.node)
+                        val previousLeaf = builderUtil.getPreviousNonWhitespaceLeaf(right.requireNode())
                         val leftBlock = if (
                                 previousLeaf != null &&
                                 previousLeaf.elementType == RBRACE &&
@@ -419,12 +420,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             val leftBraceRuleIfBlockIsWrapped = {
                 _: ASTBlock, _: ASTBlock, right: ASTBlock ->
-                spacingForLeftBrace(right.node!!.firstChildNode)
+                spacingForLeftBrace(right.requireNode().firstChildNode)
             }
 
             // Add space after a semicolon if there is another child at the same line
             inPosition(left = SEMICOLON).customRule { _, left, _ ->
-                val nodeAfterLeft = left.node.treeNext
+                val nodeAfterLeft = left.requireNode().treeNext
                 if (nodeAfterLeft is PsiWhiteSpace && !nodeAfterLeft.textContains('\n')) {
                     createSpacing(1)
                 }
@@ -452,8 +453,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(right = CLASS_BODY).customRule(leftBraceRule(blockType = CLASS_BODY))
 
             inPosition(left = WHEN_ENTRY, right = WHEN_ENTRY).customRule { _, left, right ->
-                val leftEntry = left.node.psi as KtWhenEntry
-                val rightEntry = right.node.psi as KtWhenEntry
+                val leftEntry = left.requireNode().psi as KtWhenEntry
+                val rightEntry = right.requireNode().psi as KtWhenEntry
                 val blankLines = if (leftEntry.expression is KtBlockExpression || rightEntry.expression is KtBlockExpression)
                     settings.kotlinCustomSettings.BLANK_LINES_AROUND_BLOCK_WHEN_BRANCHES
                 else
@@ -465,7 +466,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(parent = WHEN_ENTRY, right = BLOCK).customRule(leftBraceRule())
             inPosition(parent = WHEN, right = LBRACE).customRule {
                 parent, _, _ ->
-                spacingForLeftBrace(block = parent.node, blockType = WHEN)
+                spacingForLeftBrace(block = parent.requireNode(), blockType = WHEN)
             }
 
             val spacesInSimpleFunction = if (kotlinCustomSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0
@@ -491,7 +492,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(parent = FUNCTION_LITERAL,
                        left = LBRACE)
                     .customRule { _, _, right ->
-                val rightNode = right.node!!
+                val rightNode = right.requireNode()
                 val rightType = rightNode.elementType
                 if (rightType == VALUE_PARAMETER_LIST) {
                     createSpacing(spacesInSimpleFunction, keepLineBreaks = false)
@@ -506,9 +507,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             }
 
             inPosition(parent = BLOCK, right = RBRACE).customRule { block, left, _ ->
-                val psiElement = block.node.treeParent.psi
+                val psiElement = block.requireNode().treeParent.psi
 
-                val empty = left.node.elementType == LBRACE
+                val empty = left.requireNode().elementType == LBRACE
 
                 when (psiElement) {
                     is KtFunction -> {
@@ -525,7 +526,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             }
 
             inPosition(parent = BLOCK, left = LBRACE).customRule { parent, _, _ ->
-                val psiElement = parent.node.treeParent.psi
+                val psiElement = parent.requireNode().treeParent.psi
                 val funNode = psiElement as? KtFunction ?: return@customRule null
 
                 if (funNode.name != null) return@customRule null
@@ -537,7 +538,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             }
 
             inPosition(parentSet = EXTEND_COLON_ELEMENTS, left = PRIMARY_CONSTRUCTOR, right = COLON).customRule { parent, left, _ ->
-                val primaryConstructor = left.node.psi as KtPrimaryConstructor
+                val primaryConstructor = left.requireNode().psi as KtPrimaryConstructor
                 val rightParenthesis = primaryConstructor.valueParameterList?.rightParenthesis
                 val prevSibling = rightParenthesis?.prevSibling
                 val spaces = if (kotlinCustomSettings.SPACE_BEFORE_EXTEND_COLON) 1 else 0
@@ -572,7 +573,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
 private fun excludeLambdasAndObjects(parent: ASTBlock): List<TextRange> {
     val rangesToExclude = mutableListOf<TextRange>()
-    parent.node.psi.accept(object : KtTreeVisitorVoid() {
+    parent.requireNode().psi.accept(object : KtTreeVisitorVoid() {
         override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
             super.visitLambdaExpression(lambdaExpression)
             rangesToExclude.add(lambdaExpression.textRange)
