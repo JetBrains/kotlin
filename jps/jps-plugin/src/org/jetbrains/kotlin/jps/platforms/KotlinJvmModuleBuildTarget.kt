@@ -28,12 +28,9 @@ import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.incremental.ChangesCollector
-import org.jetbrains.kotlin.incremental.IncrementalCompilationComponentsImpl
-import org.jetbrains.kotlin.incremental.IncrementalJvmCache
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.updateIncrementalCache
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
@@ -131,7 +128,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
                 moduleFile
             )
         } finally {
-            if (System.getProperty("kotlin.jps.delete.module.file.after.build") != "false") {
+            if (System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {
                 moduleFile.delete()
             }
         }
