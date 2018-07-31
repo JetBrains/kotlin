@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 object JvmBackendFacade {
 
     fun doGenerateFiles(files: Collection<KtFile>, state: GenerationState, errorHandler: CompilationErrorHandler) {
-        val psi2ir = Psi2IrTranslator()
+        val psi2ir = Psi2IrTranslator(state.languageVersionSettings)
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
 

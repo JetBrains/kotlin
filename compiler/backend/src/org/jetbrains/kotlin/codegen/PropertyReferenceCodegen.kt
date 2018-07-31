@@ -175,7 +175,7 @@ class PropertyReferenceCodegen(
                 assert(receiverValue != null) { "Receiver expected for bound property reference: $classDescriptor" }
                 iv.anew(asmType)
                 iv.dup()
-                receiverValue!!.put(receiverValue.type, iv)
+                receiverValue!!.put(receiverValue.type, receiverValue.kotlinType, iv)
                 iv.invokespecial(asmType.internalName, "<init>", constructor.descriptor, false)
             }
         }
@@ -265,7 +265,9 @@ class PropertyReferenceCodegen(
             val typeMapper = state.typeMapper
             if (target is PropertyImportedFromObject) {
                 val containingObject = target.containingObject
-                StackValue.singleton(containingObject, typeMapper).put(typeMapper.mapClass(containingObject), v)
+                StackValue
+                    .singleton(containingObject, typeMapper)
+                    .put(typeMapper.mapClass(containingObject), containingObject.defaultType, v)
             }
 
             if (receiverType != null) {
@@ -276,7 +278,7 @@ class PropertyReferenceCodegen(
             else {
                 val receivers = originalFunctionDesc.valueParameters.dropLast(if (isGetter) 0 else 1)
                 receivers.forEachIndexed { i, valueParameterDescriptor ->
-                    StackValue.local(i + 1, OBJECT_TYPE).put(typeMapper.mapType(valueParameterDescriptor), v)
+                    StackValue.local(i + 1, OBJECT_TYPE).put(typeMapper.mapType(valueParameterDescriptor), valueParameterDescriptor.type, v)
                 }
             }
 

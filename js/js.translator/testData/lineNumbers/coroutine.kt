@@ -1,7 +1,7 @@
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
-suspend fun foo(value: Int): Int = suspendCoroutineOrReturn { c ->
+suspend fun foo(value: Int): Int = suspendCoroutineUninterceptedOrReturn { c ->
     c.resume(value)
     COROUTINE_SUSPENDED
 }

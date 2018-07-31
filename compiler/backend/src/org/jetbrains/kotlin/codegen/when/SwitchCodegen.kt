@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.`when`
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -40,6 +42,8 @@ abstract class SwitchCodegen(
     protected val subjectType = subjectType ?: codegen.asmType(subjectKotlinType)
 
     protected var subjectLocal = -1
+
+    protected val resultKotlinType: KotlinType? = if (!isStatement) codegen.kotlinType(expression) else null
 
     protected val resultType: Type = if (isStatement) Type.VOID_TYPE else codegen.expressionType(expression)
 
@@ -138,10 +142,10 @@ abstract class SwitchCodegen(
                     ?: throw AssertionError("Unresolved subject variable: $expression")
             subjectLocal = codegen.frameMap.enter(mySubjectVariable, subjectType)
             codegen.visitProperty(subjectVariable, null)
-            StackValue.local(subjectLocal, subjectType).put(subjectType, codegen.v)
+            StackValue.local(subjectLocal, subjectType, subjectKotlinType).put(subjectType, subjectKotlinType, codegen.v)
             subjectVariableDescriptor = mySubjectVariable
         } else {
-            codegen.gen(subjectExpression, subjectType)
+            codegen.gen(subjectExpression, subjectType, subjectKotlinType)
             subjectVariableDescriptor = null
         }
     }
@@ -206,7 +210,7 @@ abstract class SwitchCodegen(
             v.visitLabel(entryLabelsIterator.next())
 
             val mark = codegen.myFrameMap.mark()
-            codegen.gen(entry.expression, resultType)
+            codegen.gen(entry.expression, resultType, resultKotlinType)
             mark.dropTo()
 
             if (!entry.isElse) {

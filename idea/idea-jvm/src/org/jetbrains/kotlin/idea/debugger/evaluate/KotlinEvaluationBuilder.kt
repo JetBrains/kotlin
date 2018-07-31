@@ -162,12 +162,14 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 result
             }
         }
-        catch(e: EvaluateException) {
+        catch (e: EvaluateException) {
             throw e
         }
-        catch(e: ProcessCanceledException) {
-            LOG.debug(e)
+        catch (e: ProcessCanceledException) {
             exception(e)
+        }
+        catch (e: Eval4JInterpretingException) {
+            exception(e.cause)
         }
         catch (e: Exception) {
             val isSpecialException = isSpecialException(e)
@@ -178,7 +180,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val text = runReadAction { codeFragment.context?.text ?: "null" }
             val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
                                       attachmentByPsiFile(codeFragment),
-                                      Attachment("breakpoint.info", "line: ${sourcePosition.line}"),
+                                      Attachment("breakpoint.info", "line: ${runReadAction { sourcePosition.line }}"),
                                       Attachment("context.info", text))
 
             LOG.error(LogMessageEx.createEvent(

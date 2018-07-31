@@ -10,7 +10,7 @@ fun <T> assertArrayEquals(expected: Array<out T>, actual: Array<out T>, message:
 private fun <T> arraysEqual(first: Array<out T>, second: Array<out T>): Boolean {
     if (first === second) return true
     if (first.size != second.size) return false
-    for (index in first.indices) {
+    for (index in 0..first.size - 1) {
         if (!equal(first[index], second[index])) return false
     }
     return true

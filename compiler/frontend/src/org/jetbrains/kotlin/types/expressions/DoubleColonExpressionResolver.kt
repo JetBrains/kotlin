@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -84,7 +87,8 @@ class DoubleColonExpressionResolver(
     val typeResolver: TypeResolver,
     val languageVersionSettings: LanguageVersionSettings,
     val additionalCheckers: Iterable<ClassLiteralChecker>,
-    val dataFlowValueFactory: DataFlowValueFactory
+    val dataFlowValueFactory: DataFlowValueFactory,
+    val bigAritySupport: FunctionWithBigAritySupport
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -592,6 +596,15 @@ class DoubleColonExpressionResolver(
         )
 
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
+
+        if (functionDescriptor.valueParameters.size >= FunctionInvokeDescriptor.BIG_ARITY &&
+            bigAritySupport.shouldCheckLanguageVersionSettings &&
+            !languageVersionSettings.supportsFeature(LanguageFeature.FunctionTypesWithBigArity)
+        ) {
+            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(
+                expression, LanguageFeature.FunctionTypesWithBigArity to languageVersionSettings
+            ))
+        }
     }
 
     internal fun bindPropertyReference(
@@ -794,5 +807,17 @@ class DoubleColonExpressionResolver(
                 else -> throw UnsupportedOperationException("Callable reference resolved to an unsupported descriptor: $descriptor")
             }
         }
+    }
+}
+
+// By default, function types with big arity are supported. On platforms where they are not supported by default (e.g. JVM),
+// LANGUAGE_VERSION_DEPENDENT should be used which makes the code check if the corresponding language feature is enabled.
+@DefaultImplementation(FunctionWithBigAritySupport::class)
+class FunctionWithBigAritySupport private constructor(val shouldCheckLanguageVersionSettings: Boolean) {
+    constructor() : this(false)
+
+    companion object {
+        @JvmField
+        val LANGUAGE_VERSION_DEPENDENT = FunctionWithBigAritySupport(true)
     }
 }

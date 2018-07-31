@@ -85,7 +85,7 @@ internal class KFunctionImpl private constructor(
                 else ->
                     createStaticMethodCaller(member)
             }
-            else -> throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor (member = $member)")
+            else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
         }
     }
 

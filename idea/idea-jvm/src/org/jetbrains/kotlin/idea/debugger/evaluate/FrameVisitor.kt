@@ -110,7 +110,7 @@ class FrameVisitor(val context: EvaluationContextImpl) {
         val declaringTypeName = location?.declaringType()?.name()?.replace('.', '/')?.let { JvmClassName.byInternalName(it) }
 
         val sourceFile = if (sourceName != null && declaringTypeName != null) {
-            DebuggerUtils.findSourceFileForClassIncludeLibrarySources(context.project, scope, declaringTypeName, sourceName)
+            DebuggerUtils.findSourceFileForClassIncludeLibrarySources(context.project, scope, declaringTypeName, sourceName, location)
         } else {
             null
         }

@@ -23,6 +23,7 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.codeStyle.*;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle;
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle;
 import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 
@@ -105,9 +106,16 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
 
     @Override
     public void writeExternal(Element parentElement, @NotNull CustomCodeStyleSettings parentSettings) throws WriteExternalException {
-        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
+        if (CODE_STYLE_DEFAULTS != null) {
             KotlinCodeStyleSettings defaultKotlinCodeStyle = (KotlinCodeStyleSettings) parentSettings.clone();
-            KotlinStyleGuideCodeStyle.Companion.applyToKotlinCustomSettings(defaultKotlinCodeStyle, false);
+
+            if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
+                KotlinStyleGuideCodeStyle.Companion.applyToKotlinCustomSettings(defaultKotlinCodeStyle, false);
+            }
+            else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
+                KotlinObsoleteCodeStyle.Companion.applyToKotlinCustomSettings(defaultKotlinCodeStyle, false);
+            }
+
             parentSettings = defaultKotlinCodeStyle;
         }
 
@@ -124,6 +132,8 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         KotlinCodeStyleSettings tempSettings = readExternalToTemp(parentElement);
         if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(tempSettings.CODE_STYLE_DEFAULTS)) {
             KotlinStyleGuideCodeStyle.Companion.applyToKotlinCustomSettings(this, true);
+        } else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(tempSettings.CODE_STYLE_DEFAULTS)) {
+            KotlinObsoleteCodeStyle.Companion.applyToKotlinCustomSettings(this, true);
         }
 
         // Actual read

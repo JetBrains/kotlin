@@ -19,6 +19,8 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -31,6 +33,7 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 internal abstract class KPropertyImpl<out R> private constructor(
     override val container: KDeclarationContainerImpl,
@@ -59,7 +62,9 @@ internal abstract class KPropertyImpl<out R> private constructor(
             is KotlinProperty -> {
                 val descriptor = jvmSignature.descriptor
                 JvmProtoBufUtil.getJvmFieldSignature(jvmSignature.proto, jvmSignature.nameResolver, jvmSignature.typeTable)?.let {
-                    val owner = if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor.containingDeclaration)) {
+                    val owner = if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor) ||
+                        JvmProtoBufUtil.isMovedFromInterfaceCompanion(jvmSignature.proto)
+                    ) {
                         container.jClass.enclosingClass
                     } else descriptor.containingDeclaration.let { containingDeclaration ->
                         if (containingDeclaration is ClassDescriptor) containingDeclaration.toJavaClass()
@@ -188,6 +193,19 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
                 !DescriptorUtils.isInterface(possibleCompanionObject.containingDeclaration)
     }
 
+    fun isInsideJvmInterfaceCompanionObject(): Boolean {
+        val possibleCompanionObject = property.descriptor.containingDeclaration
+        return DescriptorUtils.isCompanionObject(possibleCompanionObject) &&
+                (DescriptorUtils.isInterface(possibleCompanionObject.containingDeclaration) ||
+                        DescriptorUtils.isAnnotationClass(possibleCompanionObject.containingDeclaration))
+    }
+
+    fun isInsideInterfaceCompanionObjectWithJvmField(): Boolean {
+        val propertyDescriptor = property.descriptor
+        if (propertyDescriptor !is DeserializedPropertyDescriptor || !isInsideJvmInterfaceCompanionObject()) return false
+        return JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyDescriptor.proto)
+    }
+
     fun isJvmStaticProperty() =
         property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
 
@@ -195,7 +213,7 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
         !TypeUtils.isNullableType(property.descriptor.type)
 
     fun computeFieldCaller(field: Field): FunctionCaller<Field> = when {
-        isInsideClassCompanionObject() -> {
+        isInsideClassCompanionObject() || isInsideInterfaceCompanionObjectWithJvmField() -> {
             val klass = (descriptor.containingDeclaration as ClassDescriptor).toJavaClass()!!
             if (isGetter)
                 if (isBound) FunctionCaller.BoundClassCompanionFieldGetter(field, klass)

@@ -27,4 +27,9 @@ class RemoteIncrementalDataProvider(val facade: CompilerCallbackServicesFacade, 
             }
             result
         }
+
+    override val metadataVersion: IntArray
+        get() = rpcProfiler.withMeasure(this) {
+            facade.incrementalDataProvider_getMetadataVersion()
+        }
 }

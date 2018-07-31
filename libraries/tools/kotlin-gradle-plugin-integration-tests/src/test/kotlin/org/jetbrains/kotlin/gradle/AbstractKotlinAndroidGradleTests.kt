@@ -358,14 +358,7 @@ fun getSomething() = 10
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assemble", options = options) {
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                // Library dependencies are not supported in older versions of Android Gradle plugin (< 3.0)
-                assertFailed()
-                assertContains("Unresolved reference: layout_in_library")
-                assertContains("Unresolved reference: text_view")
-            } else {
-                assertSuccessful()
-            }
+            assertSuccessful()
         }
     }
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun String.foo() : String {
     fun Int.bar() : String {
         fun Long.baz() : String {

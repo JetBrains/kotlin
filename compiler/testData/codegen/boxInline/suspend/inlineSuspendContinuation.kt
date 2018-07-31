@@ -3,6 +3,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// TARGET_BACKEND: JVM
 
 suspend inline fun test1(c: () -> Unit) {
     c()

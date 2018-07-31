@@ -335,6 +335,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             runTest("idea/testData/shortenRefs/kt21515/constructor.kt");
         }
 
+        @TestMetadata("staticFromJava.kt")
+        public void testStaticFromJava() throws Exception {
+            runTest("idea/testData/shortenRefs/kt21515/staticFromJava.kt");
+        }
+
         @TestMetadata("typeReference.kt")
         public void testTypeReference() throws Exception {
             runTest("idea/testData/shortenRefs/kt21515/typeReference.kt");

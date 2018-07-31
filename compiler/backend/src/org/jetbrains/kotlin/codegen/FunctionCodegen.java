@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.JvmTarget;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -218,7 +217,7 @@ public class FunctionCodegen {
                                   flags,
                                   asmMethod.getName(),
                                   asmMethod.getDescriptor(),
-                                  jvmSignature.getGenericsSignature(),
+                                  strategy.skipGenericSignature() ? null : jvmSignature.getGenericsSignature(),
                                   getThrownExceptions(functionDescriptor, typeMapper)
                         ),
                         flags, asmMethod.getName(),
@@ -1417,17 +1416,29 @@ public class FunctionCodegen {
         if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
+        InstructionAdapter iv = new InstructionAdapter(mv);
 
         Type[] argTypes = bridge.getArgumentTypes();
         Type[] originalArgTypes = delegateTo.getArgumentTypes();
 
-        List<ParameterDescriptor> allKotlinParameters = new ArrayList<>(argTypes.length);
+        List<ParameterDescriptor> allKotlinParameters = new ArrayList<>(originalArgTypes.length);
         if (descriptor.getExtensionReceiverParameter() != null) allKotlinParameters.add(descriptor.getExtensionReceiverParameter());
         allKotlinParameters.addAll(descriptor.getValueParameters());
 
-        boolean safeToUseKotlinTypes = allKotlinParameters.size() == argTypes.length;
+        boolean safeToUseKotlinTypes = allKotlinParameters.size() == originalArgTypes.length;
 
-        InstructionAdapter iv = new InstructionAdapter(mv);
+        boolean isVarargInvoke = JvmCodegenUtil.isOverrideOfBigArityFunctionInvoke(descriptor);
+        if (isVarargInvoke) {
+            assert argTypes.length == 1 && argTypes[0].equals(AsmUtil.getArrayType(OBJECT_TYPE)) :
+                    "Vararg invoke must have one parameter of type [Ljava/lang/Object;: " + bridge;
+            AsmUtil.generateVarargInvokeArityAssert(iv, originalArgTypes.length);
+        }
+        else {
+            assert argTypes.length == originalArgTypes.length :
+                    "Number of parameters of the bridge and delegate must be the same.\n" +
+                    "Descriptor: " + descriptor + "\nBridge: " + bridge + "\nDelegate: " + delegateTo;
+        }
+
         MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv);
 
         if (delegateTo.getArgumentTypes().length > 0 && isSpecialBridge) {
@@ -1435,11 +1446,18 @@ public class FunctionCodegen {
         }
 
         iv.load(0, OBJECT_TYPE);
-        for (int i = 0, reg = 1; i < argTypes.length; i++) {
+        for (int i = 0, reg = 1; i < originalArgTypes.length; i++) {
             KotlinType kotlinType = safeToUseKotlinTypes ? allKotlinParameters.get(i).getType() : null;
-            StackValue.local(reg, argTypes[i], kotlinType).put(originalArgTypes[i], kotlinType, iv);
-            //noinspection AssignmentToForLoopParameter
-            reg += argTypes[i].getSize();
+            StackValue value;
+            if (isVarargInvoke) {
+                value = StackValue.arrayElement(OBJECT_TYPE, null, StackValue.local(1, argTypes[0]), StackValue.constant(i));
+            }
+            else {
+                value = StackValue.local(reg, argTypes[i], kotlinType);
+                //noinspection AssignmentToForLoopParameter
+                reg += argTypes[i].getSize();
+            }
+            value.put(originalArgTypes[i], kotlinType, iv);
         }
 
         if (isStubDeclarationWithDelegationToSuper) {
@@ -1527,13 +1545,15 @@ public class FunctionCodegen {
 
     public void genSamDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
         FunctionDescriptor delegatedTo = overriddenDescriptor.getOriginal();
-        JvmDeclarationOrigin declarationOrigin =
-                JvmDeclarationOriginKt.SamDelegation(functionDescriptor);
+        JvmDeclarationOrigin declarationOrigin = JvmDeclarationOriginKt.SamDelegation(functionDescriptor);
+        // Skip writing generic signature for the SAM wrapper class method because it may reference type parameters from the SAM interface
+        // which would make little sense outside of that interface and may break Java reflection.
+        // E.g. functionDescriptor for a SAM wrapper for java.util.function.Predicate is the method `test` with signature "(T) -> Boolean"
         genDelegate(
-                functionDescriptor, delegatedTo,
-                declarationOrigin,
+                functionDescriptor, delegatedTo, declarationOrigin,
                 (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(),
-                field);
+                field, true
+        );
     }
 
     public void genDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
@@ -1549,7 +1569,7 @@ public class FunctionCodegen {
     ) {
         JvmDeclarationOrigin declarationOrigin =
                 JvmDeclarationOriginKt.Delegation(DescriptorToSourceUtils.descriptorToDeclaration(delegatedTo), delegateFunction);
-        genDelegate(delegateFunction, delegatedTo, declarationOrigin, toClass, field);
+        genDelegate(delegateFunction, delegatedTo, declarationOrigin, toClass, field, false);
     }
 
     private void genDelegate(
@@ -1557,7 +1577,8 @@ public class FunctionCodegen {
             FunctionDescriptor delegatedTo,
             @NotNull JvmDeclarationOrigin declarationOrigin,
             ClassDescriptor toClass,
-            StackValue field
+            StackValue field,
+            boolean skipGenericSignature
     ) {
         generateMethod(
                 declarationOrigin, delegateFunction,
@@ -1595,7 +1616,7 @@ public class FunctionCodegen {
 
                         StackValue stackValue = AsmUtil.genNotNullAssertions(
                                 state,
-                                StackValue.onStack(delegateToMethod.getReturnType()),
+                                StackValue.onStack(delegateToMethod.getReturnType(), delegatedTo.getReturnType()),
                                 RuntimeAssertionInfo.create(
                                         delegateFunction.getReturnType(),
                                         delegatedTo.getReturnType(),
@@ -1603,7 +1624,7 @@ public class FunctionCodegen {
                                 )
                         );
 
-                        stackValue.put(delegateMethod.getReturnType(), iv);
+                        stackValue.put(delegateMethod.getReturnType(), delegatedTo.getReturnType(), iv);
 
                         iv.areturn(delegateMethod.getReturnType());
                     }
@@ -1611,6 +1632,11 @@ public class FunctionCodegen {
                     @Override
                     public boolean skipNotNullAssertionsForParameters() {
                         return false;
+                    }
+
+                    @Override
+                    public boolean skipGenericSignature() {
+                        return skipGenericSignature;
                     }
                 }
         );

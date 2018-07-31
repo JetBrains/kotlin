@@ -25,47 +25,47 @@ import org.jetbrains.kotlin.types.KotlinType
 // TODO: simplify this interface
 interface AnnotationAndConstantLoader<out A : Any, out C : Any, out T : Any> {
     fun loadClassAnnotations(
-            container: ProtoContainer.Class
+        container: ProtoContainer.Class
     ): List<A>
 
     fun loadCallableAnnotations(
-            container: ProtoContainer,
-            proto: MessageLite,
-            kind: AnnotatedCallableKind
+        container: ProtoContainer,
+        proto: MessageLite,
+        kind: AnnotatedCallableKind
     ): List<T>
 
     fun loadEnumEntryAnnotations(
-            container: ProtoContainer,
-            proto: ProtoBuf.EnumEntry
+        container: ProtoContainer,
+        proto: ProtoBuf.EnumEntry
     ): List<A>
 
     fun loadValueParameterAnnotations(
-            container: ProtoContainer,
-            callableProto: MessageLite,
-            kind: AnnotatedCallableKind,
-            parameterIndex: Int,
-            proto: ProtoBuf.ValueParameter
+        container: ProtoContainer,
+        callableProto: MessageLite,
+        kind: AnnotatedCallableKind,
+        parameterIndex: Int,
+        proto: ProtoBuf.ValueParameter
     ): List<A>
 
     fun loadExtensionReceiverParameterAnnotations(
-            container: ProtoContainer,
-            proto: MessageLite,
-            kind: AnnotatedCallableKind
+        container: ProtoContainer,
+        proto: MessageLite,
+        kind: AnnotatedCallableKind
     ): List<A>
 
     fun loadTypeAnnotations(
-            proto: ProtoBuf.Type,
-            nameResolver: NameResolver
+        proto: ProtoBuf.Type,
+        nameResolver: NameResolver
     ): List<A>
 
     fun loadTypeParameterAnnotations(
-            proto: ProtoBuf.TypeParameter,
-            nameResolver: NameResolver
+        proto: ProtoBuf.TypeParameter,
+        nameResolver: NameResolver
     ): List<A>
 
     fun loadPropertyConstant(
-            container: ProtoContainer,
-            proto: ProtoBuf.Property,
-            expectedType: KotlinType
+        container: ProtoContainer,
+        proto: ProtoBuf.Property,
+        expectedType: KotlinType
     ): C?
 }

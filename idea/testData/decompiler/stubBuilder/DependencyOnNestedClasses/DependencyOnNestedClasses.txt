@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=D]
             REFERENCE_EXPRESSION[referencedName=Nested]
     CLASS_BODY
-      FUN[fqName=test.DependencyOnNestedClasses.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
+      FUN[fqName=test.DependencyOnNestedClasses.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=nc]

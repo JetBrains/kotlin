@@ -153,11 +153,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/privateSuspendFun.kt");
     }
 
-    @TestMetadata("releaseCoroutines.kt")
-    public void testReleaseCoroutines() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/releaseCoroutines.kt");
-    }
-
     @TestMetadata("samAdapterAndInlinedOne.kt")
     public void testSamAdapterAndInlinedOne() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/samAdapterAndInlinedOne.kt");

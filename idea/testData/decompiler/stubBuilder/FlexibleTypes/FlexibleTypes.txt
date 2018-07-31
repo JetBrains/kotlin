@@ -15,7 +15,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.FlexibleTypes.collection, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=collection]
+      FUN[fqName=test.FlexibleTypes.collection, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=collection]
         MODIFIER_LIST[abstract public]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -32,7 +32,7 @@ PsiJetFileStubImpl[package=test]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.FlexibleTypes.withBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=withBody]
+      FUN[fqName=test.FlexibleTypes.withBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withBody]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

@@ -110,13 +110,14 @@ fun Module.getStableName(): Name {
 @JvmOverloads
 fun Project.getLanguageVersionSettings(
     contextModule: Module? = null,
-    jsr305State: Jsr305State? = null // this is a temporary hack until we'll have a sane way to configure libraries analysis
+    jsr305State: Jsr305State? = null,
+    isReleaseCoroutines: Boolean? = null
 ): LanguageVersionSettings {
     val arguments = KotlinCommonCompilerArgumentsHolder.getInstance(this).settings
     val languageVersion =
         LanguageVersion.fromVersionString(arguments.languageVersion)
-                ?: contextModule?.getAndCacheLanguageLevelByDependencies()
-                ?: LanguageVersion.LATEST_STABLE
+            ?: contextModule?.getAndCacheLanguageLevelByDependencies()
+            ?: LanguageVersion.LATEST_STABLE
     val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
 
@@ -127,6 +128,12 @@ fun Project.getLanguageVersionSettings(
 
     val extraLanguageFeatures = additionalArguments.configureLanguageFeatures(MessageCollector.NONE).apply {
         configureCoroutinesSupport(CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this@getLanguageVersionSettings).settings))
+        if (isReleaseCoroutines != null) {
+            put(
+                LanguageFeature.ReleaseCoroutines,
+                if (isReleaseCoroutines) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
+            )
+        }
     }
 
     val extraAnalysisFlags = additionalArguments.configureAnalysisFlags(MessageCollector.NONE).apply {
@@ -146,7 +153,7 @@ val Module.languageVersionSettings: LanguageVersionSettings
     get() {
         val cachedValue =
             getUserData(LANGUAGE_VERSION_SETTINGS)
-                    ?: createCachedValueForLanguageVersionSettings().also { putUserData(LANGUAGE_VERSION_SETTINGS, it) }
+                ?: createCachedValueForLanguageVersionSettings().also { putUserData(LANGUAGE_VERSION_SETTINGS, it) }
 
         return cachedValue.value
     }

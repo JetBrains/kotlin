@@ -32,6 +32,7 @@ class IrBuiltIns(
     private val typeTranslator: TypeTranslator,
     outerSymbolTable: SymbolTable? = null
 ) {
+    val languageVersionSettings = typeTranslator.languageVersionSettings
 
     private val builtInsModule = builtIns.builtInsModule
 
@@ -39,7 +40,8 @@ class IrBuiltIns(
     val irBuiltInsExternalPackageFragment = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragment))
 
     private val symbolTable = outerSymbolTable ?: SymbolTable()
-    private val stubBuilder = DeclarationStubGenerator(builtInsModule, symbolTable, IrDeclarationOrigin.IR_BUILTINS_STUB)
+    private val stubBuilder =
+        DeclarationStubGenerator(builtInsModule, symbolTable, IrDeclarationOrigin.IR_BUILTINS_STUB, languageVersionSettings)
 
     private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
@@ -147,6 +149,7 @@ class IrBuiltIns(
     val eqeqFun = defineOperator("EQEQ", bool, listOf(anyN, anyN))
     val throwNpeFun = defineOperator("THROW_NPE", nothing, listOf())
     val throwCceFun = defineOperator("THROW_CCE", nothing, listOf())
+    val throwIseFun = defineOperator("THROW_ISE", nothing, listOf())
     val booleanNotFun = defineOperator("NOT", bool, listOf(bool))
     val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", nothing, listOf())
 
@@ -161,6 +164,7 @@ class IrBuiltIns(
     val eqeqSymbol = eqeqFun.symbol
     val throwNpeSymbol = throwNpeFun.symbol
     val throwCceSymbol = throwCceFun.symbol
+    val throwIseSymbol = throwIseFun.symbol
     val booleanNotSymbol = booleanNotFun.symbol
     val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol
 

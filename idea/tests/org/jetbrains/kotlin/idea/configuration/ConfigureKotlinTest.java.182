@@ -31,6 +31,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiJavaModule;
 import com.intellij.psi.PsiRequiresStatement;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.*;
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind;
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil;
 import org.jetbrains.kotlin.idea.framework.LibraryEffectiveKindProviderKt;
-import org.jetbrains.kotlin.idea.framework.LibraryKindsKt;
 import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.idea.util.Java9StructureUtilKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
@@ -193,8 +193,12 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals("1.0.6", version);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void testMavenProvidedTestJsKind() {
-        LibraryEx jsTest = (LibraryEx) KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(myProject).keySet().toArray()[1];
+        LibraryEx jsTest = (LibraryEx) ContainerUtil.find(
+                KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(myProject).keySet(),
+                (library) -> library.getName().contains("kotlin-test-js")
+        );
         assertEquals(RepositoryLibraryType.REPOSITORY_LIBRARY_KIND, jsTest.getKind());
         assertEquals(JSLibraryKind.INSTANCE, LibraryEffectiveKindProviderKt.effectiveKind(jsTest, myProject));
     }

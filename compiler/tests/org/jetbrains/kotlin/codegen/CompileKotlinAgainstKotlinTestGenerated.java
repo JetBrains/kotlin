@@ -143,9 +143,19 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmField.kt");
     }
 
+    @TestMetadata("jvmFieldInAnnotationCompanion.kt")
+    public void testJvmFieldInAnnotationCompanion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInAnnotationCompanion.kt");
+    }
+
     @TestMetadata("jvmFieldInConstructor.kt")
     public void testJvmFieldInConstructor() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInConstructor.kt");
+    }
+
+    @TestMetadata("jvmFieldInInterfaceCompanion.kt")
+    public void testJvmFieldInInterfaceCompanion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInInterfaceCompanion.kt");
     }
 
     @TestMetadata("jvmNames.kt")
@@ -276,5 +286,38 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("unsignedTypesInAnnotations.kt")
     public void testUnsignedTypesInAnnotations() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
+    }
+
+    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutines")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Coroutines extends AbstractCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCoroutines() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("builder.kt")
+        public void testBuilder() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/builder.kt");
+        }
+
+        @TestMetadata("lambda.kt")
+        public void testLambda() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/lambda.kt");
+        }
+
+        @TestMetadata("receiver.kt")
+        public void testReceiver() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/receiver.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/simple.kt");
+        }
     }
 }

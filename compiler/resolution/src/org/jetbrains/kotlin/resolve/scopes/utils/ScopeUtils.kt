@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes.utils
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -91,8 +92,20 @@ fun DeclarationDescriptor.canBeResolvedWithoutDeprecation(
     location: LookupLocation
 ): Boolean {
     for (scope in scopeForResolution.parentsWithSelf) {
-        val (descriptorFromCurrentScope, isDeprecated) = scope.getContributedClassifierIncludeDeprecated(name, location) ?: continue
-        if (descriptorFromCurrentScope == this && !isDeprecated) return true
+        val hasNonDeprecatedSuitableCandidate = when (this) {
+            // Looking for classifier: fair check via special method in ResolutionScope
+            is ClassifierDescriptor -> scope.getContributedClassifierIncludeDeprecated(name, location)
+                ?.let { it.descriptor == this && !it.isDeprecated }
+
+            // Looking for member: heuristically check only one case, when another descriptor visible through explicit import
+            is VariableDescriptor -> (scope as? ImportingScope)?.getContributedVariables(name, location)?.any { it == this }
+
+            is FunctionDescriptor -> (scope as? ImportingScope)?.getContributedFunctions(name, location)?.any { it == this }
+
+            else -> null
+        }
+
+        if (hasNonDeprecatedSuitableCandidate == true) return true
     }
 
     return false

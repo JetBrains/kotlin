@@ -19,6 +19,8 @@ import com.intellij.execution.JavaRunConfigurationExtensionManager
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.junit.PatternConfigurationProducer
+import com.intellij.ide.plugins.PluginManager
+import com.intellij.openapi.extensions.PluginId.getId
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.util.Ref
@@ -29,13 +31,16 @@ import org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigu
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationProducer() {
+private val IS_JUNIT_INSTALLED by lazy { PluginManager.isPluginInstalled(getId("JUnit")) }
 
+class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationProducer() {
     override fun doSetupConfigurationFromContext(
         configuration: ExternalSystemRunConfiguration,
         context: ConfigurationContext,
         sourceElement: Ref<PsiElement>
     ): Boolean {
+        if (!IS_JUNIT_INSTALLED) return false
+
         val contextLocation = context.location ?: return false
         val module = context.module ?: return false
 
@@ -63,6 +68,8 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
     }
 
     override fun doIsConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
+        if (!IS_JUNIT_INSTALLED) return false
+
         val leaf = context.location?.psiElement ?: return false
         if (context.module == null) return false
 
@@ -92,14 +99,14 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
     }
 }
 
-class KotlinTestMethodGradleConfigurationProducer
-    : TestMethodGradleConfigurationProducer() {
-
+class KotlinTestMethodGradleConfigurationProducer : TestMethodGradleConfigurationProducer() {
     override fun doSetupConfigurationFromContext(
         configuration: ExternalSystemRunConfiguration,
         context: ConfigurationContext,
         sourceElement: Ref<PsiElement>
     ): Boolean {
+        if (!IS_JUNIT_INSTALLED) return false
+
         val contextLocation = context.location ?: return false
         if (context.module == null) return false
 
@@ -121,6 +128,8 @@ class KotlinTestMethodGradleConfigurationProducer
     }
 
     override fun doIsConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
+        if (!IS_JUNIT_INSTALLED) return false
+
         if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
         }

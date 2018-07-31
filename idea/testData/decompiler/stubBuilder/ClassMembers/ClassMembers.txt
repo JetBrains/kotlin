@@ -80,7 +80,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
-      FUN[fqName=test.ClassMembers.abstractFun, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=abstractFun]
+      FUN[fqName=test.ClassMembers.abstractFun, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=abstractFun]
         MODIFIER_LIST[abstract public]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -88,7 +88,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.ClassMembers.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=bar]
+      FUN[fqName=test.ClassMembers.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -96,7 +96,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.ClassMembers.openFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=openFun]
+      FUN[fqName=test.ClassMembers.openFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=openFun]
         MODIFIER_LIST[open public]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

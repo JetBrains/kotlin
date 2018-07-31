@@ -14,22 +14,40 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFra
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
-class BuiltInsPackageFragmentImpl(
+class BuiltInsPackageFragmentImpl private constructor(
     fqName: FqName,
     storageManager: StorageManager,
     module: ModuleDescriptor,
-    inputStream: InputStream
-) : BuiltInsPackageFragment, DeserializedPackageFragmentImpl(fqName, storageManager, module, inputStream.use { stream ->
-    val version = BuiltInsBinaryVersion.readFrom(stream)
+    proto: ProtoBuf.PackageFragment,
+    metadataVersion: BuiltInsBinaryVersion
+) : BuiltInsPackageFragment, DeserializedPackageFragmentImpl(
+    fqName, storageManager, module, proto, metadataVersion, containerSource = null
+) {
+    companion object {
+        fun create(
+            fqName: FqName,
+            storageManager: StorageManager,
+            module: ModuleDescriptor,
+            inputStream: InputStream
+        ): BuiltInsPackageFragmentImpl {
+            lateinit var version: BuiltInsBinaryVersion
 
-    if (!version.isCompatible()) {
-        // TODO: report a proper diagnostic
-        throw UnsupportedOperationException(
-            "Kotlin built-in definition format version is not supported: " +
-                    "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                    "Please update Kotlin"
-        )
+            val proto = inputStream.use { stream ->
+                version = BuiltInsBinaryVersion.readFrom(stream)
+
+                if (!version.isCompatible()) {
+                    // TODO: report a proper diagnostic
+                    throw UnsupportedOperationException(
+                        "Kotlin built-in definition format version is not supported: " +
+                                "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
+                                "Please update Kotlin"
+                    )
+                }
+
+                ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
+            }
+
+            return BuiltInsPackageFragmentImpl(fqName, storageManager, module, proto, version)
+        }
     }
-
-    ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-}, containerSource = null)
+}

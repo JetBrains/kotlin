@@ -50,7 +50,9 @@ interface CompileTimeConstant<out T> {
         // `isUnsignedLongNumberLiteral` means that this constant represents simple number literal with `{uU}{lL}` suffix (123uL, 0xFEUL)
         val isUnsignedLongNumberLiteral: Boolean,
         val usesVariableAsConstant: Boolean,
-        val usesNonConstValAsConstant: Boolean
+        val usesNonConstValAsConstant: Boolean,
+        // `isConvertableConstVal` means that this is `const val` that has `ImplicitIntegerCoercion` annotation
+        val isConvertableConstVal: Boolean
     )
 
     override fun equals(other: Any?): Boolean

@@ -204,6 +204,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/memberVisibilityCanBePrivate/inspectionData/inspections.test");
         }
 
+        @TestMetadata("migrationFromClosedRange/inspectionData/inspections.test")
+        public void testMigrationFromClosedRange_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/migrationFromClosedRange/inspectionData/inspections.test");
+        }
+
         @TestMetadata("naming/class/inspectionData/inspections.test")
         public void testNaming_class_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/naming/class/inspectionData/inspections.test");

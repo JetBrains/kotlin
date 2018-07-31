@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -46,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -85,6 +85,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val modules = createModules(groupedByModule, context.storageManager)
         val moduleBindings = HashMap<TestModule?, BindingContext>()
 
+        val languageVersionSettingsByModule = HashMap<TestModule?, LanguageVersionSettings>()
+
         for ((testModule, testFilesInModule) in groupedByModule) {
             val ktFiles = getKtFiles(testFilesInModule, true)
 
@@ -98,6 +100,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                         if (coroutinesPackage.contains("experimental")) LanguageVersion.KOTLIN_1_2 else LanguageVersion.KOTLIN_1_3
                     )
                 else loadLanguageVersionSettings(testFilesInModule)
+
+            languageVersionSettingsByModule[testModule] = languageVersionSettings
+
             val moduleContext = context.withProject(project).withModule(oldModule)
 
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
@@ -184,7 +189,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         exceptionFromLazyResolveLogValidation?.let { throw it }
         exceptionFromDynamicCallDescriptorsValidation?.let { throw it }
 
-        performAdditionalChecksAfterDiagnostics(testDataFile, files, groupedByModule, modules, moduleBindings)
+        performAdditionalChecksAfterDiagnostics(
+            testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
+        )
     }
 
     protected open fun getExpectedDiagnosticsFile(testDataFile: File): File {
@@ -212,7 +219,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         testFiles: List<TestFile>,
         moduleFiles: Map<TestModule?, List<TestFile>>,
         moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
-        moduleBindings: Map<TestModule?, BindingContext>
+        moduleBindings: Map<TestModule?, BindingContext>,
+        languageVersionSettingsByModule: Map<TestModule?, LanguageVersionSettings>
     ) {
         // To be overridden by diagnostic-like tests.
     }
@@ -339,7 +347,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 )
             ) { _ ->
                 // TODO
-                PackagePartProvider.Empty
+                MetadataPartProvider.Empty
             }
         } else if (platform != null) {
             // TODO: analyze with the correct platform, not always JVM

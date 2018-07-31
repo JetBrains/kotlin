@@ -22,11 +22,13 @@ class KaptPaths(
     val annotationProcessingClasspath = annotationProcessingClasspath.distinct()
 
     fun collectJavaSourceFiles(): List<File> {
-        return (javaSourceRoots + stubsOutputDir).flatMap { root ->
-            root.walk().filter { it.isFile && it.extension == "java" }.toList()
-        }
+        return (javaSourceRoots + stubsOutputDir)
+            .map { it.canonicalFile }
+            .distinct()
+            .flatMap { root ->
+                root.walk().filter { it.isFile && it.extension == "java" }.toList()
+            }
     }
-
 }
 
 fun KaptPaths.log(logger: KaptLogger) {

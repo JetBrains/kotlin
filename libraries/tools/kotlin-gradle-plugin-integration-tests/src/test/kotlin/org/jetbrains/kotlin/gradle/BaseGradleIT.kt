@@ -1,7 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.model.ModelContainer
+import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.After
 import org.junit.AfterClass
@@ -272,6 +275,21 @@ abstract class BaseGradleIT {
             }
             throw t
         }
+    }
+
+    fun <T> Project.getModels(modelType: Class<T>): ModelContainer<T> {
+        if (!projectDir.exists()) {
+            setupWorkingDir()
+        }
+
+        val connection = GradleConnector.newConnector().forProjectDirectory(projectDir).connect()
+        val options = defaultBuildOptions()
+        val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}")
+        options.androidGradlePluginVersion?.let { arguments.add("-Pandroid_tools_version=$it") }
+        val env = createEnvironmentVariablesMap(options)
+        val model = connection.action(ModelFetcherBuildAction(modelType)).withArguments(arguments).setEnvironmentVariables(env).run()
+        connection.close()
+        return model
     }
 
     fun CompiledProject.assertSuccessful() {

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -71,10 +72,14 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             modulePlatforms = { JvmPlatform.multiTargetPlatform },
             moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
             resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
-            platformParameters = JvmPlatformParameters {
-                javaClass ->
-                val moduleName = javaClass.name.asString().toLowerCase().first().toString()
-                modules.first { it._name == moduleName }
+            platformParameters = { _ ->
+                JvmPlatformParameters(
+                    packagePartProviderFactory = { PackagePartProvider.Empty },
+                    moduleByJavaClass = { javaClass ->
+                        val moduleName = javaClass.name.asString().toLowerCase().first().toString()
+                        modules.first { it._name == moduleName }
+                    }
+                )
             },
             builtIns = builtIns
         )

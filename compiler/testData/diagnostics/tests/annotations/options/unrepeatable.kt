@@ -6,7 +6,9 @@ annotation class ann(val y: Int)
 
 @ann(3) <!REPEATED_ANNOTATION!>@ann(7)<!> <!REPEATED_ANNOTATION!>@ann(42)<!> class TripleAnnotated
 
-@Target(AnnotationTarget.EXPRESSION) annotation class annexpr
+@Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+annotation class annexpr
 
 @ann(0) <!REPEATED_ANNOTATION!>@ann(1)<!> fun foo(@ann(7) <!REPEATED_ANNOTATION!>@ann(2)<!> x: Int): Int {
     @annexpr <!REPEATED_ANNOTATION!>@annexpr<!> return x

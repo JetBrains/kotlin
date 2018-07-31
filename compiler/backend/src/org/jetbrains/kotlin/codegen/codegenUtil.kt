@@ -140,7 +140,7 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(
         return
     }
 
-    if (!JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+    if (!JvmAbi.isClassCompanionObjectWithBackingFieldsInOuter(descriptor)) {
         return
     }
     val properties = companion.declarations.filterIsInstance<KtProperty>()

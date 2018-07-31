@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.isDynamic
@@ -230,10 +231,11 @@ open class ConvertLambdaToReferenceIntention(text: String) :
                     val calleeReferenceExpression = singleStatement.calleeExpression as? KtNameReferenceExpression ?: return null
                     val resolvedCall = calleeReferenceExpression.resolveToCall() ?: return null
                     val receiver = resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
+                    val descriptor by lazy { receiver?.type?.constructor?.declarationDescriptor }
                     val receiverText = when {
-                        receiver == null -> ""
+                        receiver == null || descriptor?.isCompanionObject() == true -> ""
                         lambdaExpression.getResolutionScope().getImplicitReceiversHierarchy().size == 1 -> "this"
-                        else -> receiver.type.constructor.declarationDescriptor?.name?.let { "this@$it" } ?: return null
+                        else -> descriptor?.name?.let { "this@$it" } ?: return null
                     }
                     "$receiverText::${singleStatement.getCallReferencedName()}"
                 }

@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.cli.common.arguments.Jsr305Parser
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
@@ -41,10 +40,16 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.utils.Jsr305State
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
-    override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =
+    override fun getLanguageVersionSettings(
+        moduleInfo: ModuleInfo,
+        project: Project,
+        isReleaseCoroutines: Boolean?
+    ): LanguageVersionSettings =
         when (moduleInfo) {
             is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
-            is LibraryInfo -> project.getLanguageVersionSettings(jsr305State = computeJsr305State(project))
+            is LibraryInfo -> project.getLanguageVersionSettings(
+                jsr305State = computeJsr305State(project), isReleaseCoroutines = isReleaseCoroutines
+            )
             is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
             is ScriptDependenciesInfo.ForFile -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
             is PlatformModuleInfo -> moduleInfo.platformModule.module.languageVersionSettings

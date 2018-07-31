@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/simple.kt
+-d
+$TEMP_DIR$
+-language-version
+1.2
+-XXLanguage:+ProhibitDataClassesOverridingCopy

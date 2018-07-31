@@ -148,7 +148,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected val additionalClasspath = arrayListOf<File>()
 
     @get:Internal // classpath already participates in the checks
-    protected val compileClasspath: Iterable<File>
+    internal val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
 
@@ -201,7 +201,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @Suppress("UNCHECKED_CAST")
     @get:Internal
-    protected val friendTask: AbstractKotlinCompile<T>?
+    internal val friendTask: AbstractKotlinCompile<T>?
             get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
 
     /** Classes directories that are not produced by this task but should be consumed by

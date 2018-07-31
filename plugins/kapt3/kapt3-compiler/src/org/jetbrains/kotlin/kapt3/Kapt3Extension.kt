@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -219,7 +221,7 @@ abstract class AbstractKapt3Extension(
             bindingContext: BindingContext,
             files: List<KtFile>
     ): KaptContextForStubGeneration {
-        val builderFactory = Kapt3BuilderFactory()
+        val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
 
         val targetId = TargetId(
                 name = compilerConfiguration[CommonConfigurationKeys.MODULE_NAME] ?: module.name.asString(),

@@ -23,12 +23,15 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.noarg.gradle.model.builder.NoArgModelBuilder
+import javax.inject.Inject
 
-class NoArgGradleSubplugin : Plugin<Project> {
+class NoArgGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(NoArgGradleSubplugin::class.java) != null
 
@@ -39,6 +42,7 @@ class NoArgGradleSubplugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create("noArg", NoArgExtension::class.java)
+        registry.register(NoArgModelBuilder())
     }
 }
 

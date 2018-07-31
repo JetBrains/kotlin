@@ -48,7 +48,10 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
 
-open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
+open class MetadataSerializer(
+    private val metadataVersion: BuiltInsBinaryVersion,
+    private val dependOnOldBuiltIns: Boolean
+) {
     protected var totalSize = 0
     protected var totalFiles = 0
 
@@ -127,12 +130,13 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
                 table.addTo(this)
             }
         }.build().serializeToByteArray(JvmMetadataVersion.INSTANCE.toArray()) // TODO: use another version here, not JVM
+        // TODO: also, use CommonConfigurationKeys.METADATA_VERSION if needed
 
         kotlinModuleFile.parentFile.mkdirs()
         kotlinModuleFile.writeBytes(packageTableBytes)
     }
 
-    protected open fun createSerializerExtension(): KotlinSerializerExtensionBase = MetadataSerializerExtension()
+    protected open fun createSerializerExtension(): KotlinSerializerExtensionBase = MetadataSerializerExtension(metadataVersion)
 
     private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
             packageFqName.asString().replace('.', '/') + "/" +
@@ -151,29 +155,29 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         private val extension = createSerializerExtension()
 
         fun run() {
-            serializeClasses(classes)
-            serializeMembers(members)
+            val serializer = DescriptorSerializer.createTopLevel(extension)
+            serializeClasses(classes, serializer)
+            serializeMembers(members, serializer)
             serializeStringTable()
             serializeBuiltInsFile()
         }
 
-        private fun serializeClass(classDescriptor: ClassDescriptor) {
-            val classProto = DescriptorSerializer.create(classDescriptor, extension).classProto(classDescriptor).build()
-            proto.addClass_(classProto)
-
-            serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
-        }
-
-        private fun serializeClasses(classes: Collection<DeclarationDescriptor>) {
+        private fun serializeClasses(classes: Collection<DeclarationDescriptor>, parentSerializer: DescriptorSerializer) {
             for (descriptor in DescriptorSerializer.sort(classes)) {
-                if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ENUM_ENTRY) {
-                    serializeClass(descriptor)
-                }
+                if (descriptor !is ClassDescriptor || descriptor.kind == ClassKind.ENUM_ENTRY) continue
+
+                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer)
+                serializeClasses(
+                    descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS),
+                    serializer
+                )
+
+                proto.addClass_(serializer.classProto(descriptor).build())
             }
         }
 
-        private fun serializeMembers(members: Collection<DeclarationDescriptor>) {
-            proto.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(packageFqName, members).build()
+        private fun serializeMembers(members: Collection<DeclarationDescriptor>, serializer: DescriptorSerializer) {
+            proto.`package` = serializer.packagePartProto(packageFqName, members).build()
         }
 
         private fun serializeStringTable() {
@@ -185,7 +189,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         private fun serializeBuiltInsFile() {
             val stream = ByteArrayOutputStream()
             with(DataOutputStream(stream)) {
-                val version = BuiltInsBinaryVersion.INSTANCE.toArray()
+                val version = extension.metadataVersion.toArray()
                 writeInt(version.size)
                 version.forEach { writeInt(it) }
             }

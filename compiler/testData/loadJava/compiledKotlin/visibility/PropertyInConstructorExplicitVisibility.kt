@@ -3,9 +3,9 @@
 package test
 
 open class Base {
-    protected open val prot: Int = 1
-    internal open val int: Int = 1
-    public open val pub: Int = 1
+    protected open val prot: Int = { 1 }()
+    internal open val int: Int = { 1 }()
+    public open val pub: Int = { 1 }()
 }
 
 class Child(

@@ -183,13 +183,20 @@ class KotlinCoreEnvironment private constructor(
         JsSyntheticTranslateExtension.registerExtensionPoint(project)
         CompilerConfigurationExtension.registerExtensionPoint(project)
 
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             try {
                 registrar.registerProjectComponents(project, configuration)
             } catch (e: AbstractMethodError) {
-                throw IllegalStateException(
-                    "The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler", e
-                )
+                val message = "The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler"
+                // Since the scripting plugin is often discovered in the compiler environment, it is often taken from the incompatible
+                // location, and in many cases this is not a fatal error, therefore strong warning is generated instead of exception
+                if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
+                    messageCollector?.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
+                } else {
+                    throw IllegalStateException(message, e)
+                }
             }
         }
 
@@ -200,7 +207,6 @@ class KotlinCoreEnvironment private constructor(
 
         registerProjectServicesForCLI(projectEnvironment)
 
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         registerProjectServices(projectEnvironment, messageCollector)
 
         for (extension in CompilerConfigurationExtension.getInstances(project)) {

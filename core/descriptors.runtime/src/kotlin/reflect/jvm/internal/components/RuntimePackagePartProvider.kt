@@ -16,7 +16,7 @@
 
 package kotlin.reflect.jvm.internal.components
 
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
@@ -59,9 +59,6 @@ class RuntimePackagePartProvider(private val classLoader: ClassLoader) : Package
     @Synchronized
     override fun findPackageParts(packageFqName: String): List<String> =
         packageParts[packageFqName]?.toList().orEmpty()
-
-    // TODO
-    override fun findMetadataPackageParts(packageFqName: String): List<String> = TODO()
 
     override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
         // TODO: load annotations from resource files

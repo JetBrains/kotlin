@@ -2,12 +2,12 @@ package test
 
 public final class PrivateClassMembers {
     /*primary*/ public constructor PrivateClassMembers()
-    internal final val internal: kotlin.Int = 0
+    internal final val internal: kotlin.Int
         internal final fun <get-internal>(): kotlin.Int
     private final var r: kotlin.Int
         private final fun <get-r>(): kotlin.Int
         private final fun <set-r>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
-    private final val v: kotlin.Int = 0
+    private final val v: kotlin.Int
         private final fun <get-v>(): kotlin.Int
     private final fun f(): kotlin.Int
 }

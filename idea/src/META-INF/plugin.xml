@@ -354,6 +354,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames"
                     serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyNothingCallableNamesImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyContractedCallableNames"
+                    serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyContractedCallableNamesImpl"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings"/>
 
@@ -453,6 +456,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <codeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinLanguageCodeStyleSettingsProvider"/>
     <predefinedCodeStyle implementation="org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle"/>
+    <predefinedCodeStyle implementation="org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle"/>
 
     <projectConfigurable instance="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab"
                          id="project.kotlinCompiler"
@@ -700,6 +704,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingPropertyShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyContractedFunctionShortNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeFqNameIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFilePartClassIndex"/>
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeClassByPackageIndex"/>
@@ -836,6 +841,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <projectStructure.sourceRootEditHandler implementation="org.jetbrains.kotlin.idea.roots.ui.KotlinModuleSourceRootEditHandler$TestResource"/>
 
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.roots.KotlinNonJvmSourceRootConverterProvider"/>
+
+    <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.roots.KotlinNonJvmOrderEnumerationHandler$Factory"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
@@ -1639,6 +1646,16 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddWhenRemainingBranchesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertTrimMarginToTrimIndentIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertTrimIndentToTrimMarginIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -2586,7 +2603,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      level="WEAK WARNING"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinRedundantOverrideInspection"
-                     displayName="Redundant override"
+                     displayName="Redundant overriding method"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
                      enabledByDefault="true"
@@ -2910,6 +2927,25 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.FromClosedRangeMigrationInspection"
+                     displayName="MIN_VALUE step in fromClosedRange() since 1.3"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.ObsoleteExperimentalCoroutinesInspection"
+                     displayName="Experimental coroutines usages are deprecated since 1.3"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="ERROR"
                      language="kotlin"
     />
 

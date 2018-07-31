@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 var index = 0
 
 interface IterableIterator : Iterator<Int> {

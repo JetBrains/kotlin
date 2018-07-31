@@ -135,6 +135,8 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = incrementalDataProvider!!.headerMetadata
 
+    override fun incrementalDataProvider_getMetadataVersion(): IntArray = incrementalDataProvider!!.metadataVersion
+
     override fun incrementalDataProvider_getCompiledPackageParts() =
         incrementalDataProvider!!.compiledPackageParts.entries.map {
             CompiledPackagePart(it.key.path, it.value.metadata, it.value.binaryAst)

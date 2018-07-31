@@ -108,6 +108,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     }
 
     class TestModule(val name: String) : Comparable<TestModule> {
+        lateinit var languageVersionSettings: LanguageVersionSettings
+
         private val dependencies = ArrayList<TestModule>()
 
         fun getDependencies(): MutableList<TestModule> = dependencies

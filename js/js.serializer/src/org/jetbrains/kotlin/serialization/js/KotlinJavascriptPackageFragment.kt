@@ -31,15 +31,19 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 
 class KotlinJavascriptPackageFragment(
-        fqName: FqName,
-        storageManager: StorageManager,
-        module: ModuleDescriptor,
-        proto: ProtoBuf.PackageFragment,
-        header: JsProtoBuf.Header,
-        configuration: DeserializationConfiguration
-) : DeserializedPackageFragmentImpl(fqName, storageManager, module, proto, JsContainerSource(fqName, header, configuration)) {
+    fqName: FqName,
+    storageManager: StorageManager,
+    module: ModuleDescriptor,
+    proto: ProtoBuf.PackageFragment,
+    header: JsProtoBuf.Header,
+    metadataVersion: JsMetadataVersion,
+    configuration: DeserializationConfiguration
+) : DeserializedPackageFragmentImpl(
+    fqName, storageManager, module, proto, metadataVersion, JsContainerSource(fqName, header, configuration)
+) {
     val fileMap: Map<Int, FileHolder> =
         proto.getExtension(JsProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
             (if (file.hasId()) file.id else index) to FileHolder(file.annotationList)
@@ -68,9 +72,9 @@ class KotlinJavascriptPackageFragment(
     }
 
     class JsContainerSource(
-            private val fqName: FqName,
-            header: JsProtoBuf.Header,
-            configuration: DeserializationConfiguration
+        private val fqName: FqName,
+        header: JsProtoBuf.Header,
+        configuration: DeserializationConfiguration
     ) : DeserializedContainerSource {
         val annotations: List<ClassId> =
             if (header.annotationCount == 0) emptyList()
@@ -88,7 +92,7 @@ class KotlinJavascriptPackageFragment(
             get() = null
 
         override val isPreReleaseInvisible: Boolean =
-                configuration.reportErrorsOnPreReleaseDependencies && (header.flags and 1) != 0
+            configuration.reportErrorsOnPreReleaseDependencies && (header.flags and 1) != 0
 
         override val presentableString: String
             get() = "Package '$fqName'"

@@ -100,6 +100,10 @@ fun main(args: Array<String>) {
             model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS_IR)
         }
 
+        testClass<AbstractInlineSuspendTests> {
+            model("codegen/boxInline/suspend/", targetBackend = TargetBackend.JS)
+        }
+
         testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
             model("codegen/box/arrays", targetBackend = TargetBackend.JS)
         }

@@ -1,7 +1,7 @@
 // InnerClasses
 
 class Bar(val a: Int) {
-    val b: Int = 0
+    val b: Int = { 0 }()
 
     fun getAPlusB() = a + b
 

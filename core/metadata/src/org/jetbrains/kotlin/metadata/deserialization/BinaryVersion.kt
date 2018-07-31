@@ -65,5 +65,11 @@ abstract class BinaryVersion(private vararg val numbers: Int) {
 
     companion object {
         private const val UNKNOWN = -1
+
+        @JvmStatic
+        fun parseVersionArray(string: String): IntArray? =
+            string.split(".")
+                .map { part -> part.toIntOrNull() ?: return null }
+                .toTypedArray().toIntArray()
     }
 }

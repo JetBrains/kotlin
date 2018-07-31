@@ -23,18 +23,22 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.noarg.gradle.model.builder.SamWithReceiverModelBuilder
+import javax.inject.Inject
 
-class SamWithReceiverGradleSubplugin : Plugin<Project> {
+class SamWithReceiverGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(SamWithReceiverGradleSubplugin::class.java) != null
     }
 
     override fun apply(project: Project) {
         project.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
+        registry.register(SamWithReceiverModelBuilder())
     }
 }
 

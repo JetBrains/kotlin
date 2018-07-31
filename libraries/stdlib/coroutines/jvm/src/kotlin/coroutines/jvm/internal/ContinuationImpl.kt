@@ -13,14 +13,17 @@ import kotlin.jvm.internal.Reflection
 
 @SinceKotlin("1.3")
 internal abstract class BaseContinuationImpl(
-    @JvmField
-    protected val completion: Continuation<Any?>?
+    // This is `public val` so that it is private on JVM and cannot be modified by untrusted code, yet
+    // it has a public getter (since even untrusted code is allowed to inspect its call stack).
+    public val completion: Continuation<Any?>?
 ) : Continuation<Any?>, Serializable {
     // This implementation is final. This fact is used to unroll resumeWith recursion.
     public final override fun resumeWith(result: SuccessOrFailure<Any?>) {
+        // Invoke "resume" debug probe only once, even if previous frames are "resumed" in the loop below, too
+        probeCoroutineResumed(this)
+        // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
         var current = this
         var param = result
-        // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
         while (true) {
             with(current) {
                 val completion = completion!! // fail fast when trying to resume continuation without completion

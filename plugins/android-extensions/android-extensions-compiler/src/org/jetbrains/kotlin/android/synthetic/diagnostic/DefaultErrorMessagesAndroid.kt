@@ -101,5 +101,11 @@ object DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
         MAP.put(ErrorsAndroid.CLASS_SHOULD_BE_PARCELIZE,
                 "{0} should be annotated with ''@Parcelize''",
                 RENDER_CLASS_OR_OBJECT)
+
+        MAP.put(ErrorsAndroid.INAPPLICABLE_IGNORED_ON_PARCEL,
+                "'@IgnoredOnParcel' is only applicable to class properties")
+
+        MAP.put(ErrorsAndroid.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
+                "'@IgnoredOnParcel' is inapplicable to properties declared in the primary constructor")
     }
 }

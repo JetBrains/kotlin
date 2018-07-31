@@ -50,12 +50,18 @@ class BinaryJavaTypeParameter(
 }
 
 class BinaryJavaValueParameter(
-        override val name: Name?,
         override val type: JavaType,
         override val isVararg: Boolean
 ) : JavaValueParameter, MapBasedJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
     override val annotationsByFqName by buildLazyValueForMap()
+
+    override var name: Name? = null
+
+    internal fun updateName(newName: Name) {
+        assert(name == null) { "Parameter can't have two names: $name and $newName" }
+        name = newName
+    }
 }
 
 fun isNotTopLevelClass(classContent: ByteArray): Boolean {

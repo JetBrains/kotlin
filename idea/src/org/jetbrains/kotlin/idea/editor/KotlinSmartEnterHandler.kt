@@ -50,7 +50,9 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
 
             KotlinClassInitializerFixer(),
 
-            KotlinClassBodyFixer()
+            KotlinClassBodyFixer(),
+
+            KotlinValueArgumentListFixer()
         )
 
         addEnterProcessors(KotlinPlainEnterProcessor())
@@ -133,6 +135,8 @@ class KotlinSmartEnterHandler : SmartEnterProcessorWithFixers() {
         }
 
         override fun doEnter(atCaret: PsiElement, file: PsiFile?, editor: Editor, modified: Boolean): Boolean {
+            if (modified && atCaret is KtCallExpression) return true
+
             val block = getControlStatementBlock(editor.caretModel.offset, atCaret) as? KtBlockExpression
             if (block != null) {
                 val firstElement = block.firstChild?.nextSibling

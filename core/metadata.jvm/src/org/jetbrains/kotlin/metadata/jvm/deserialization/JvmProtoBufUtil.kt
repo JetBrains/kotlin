@@ -119,4 +119,8 @@ object JvmProtoBufUtil {
     private fun mapTypeDefault(type: ProtoBuf.Type, nameResolver: NameResolver): String? {
         return if (type.hasClassName()) ClassMapperLite.mapClass(nameResolver.getQualifiedClassName(type.className)) else null
     }
+
+    @JvmStatic
+    fun isMovedFromInterfaceCompanion(proto: ProtoBuf.Property): Boolean =
+        JvmFlags.IS_MOVED_FROM_INTERFACE_COMPANION.get(proto.getExtension(JvmProtoBuf.flags))
 }

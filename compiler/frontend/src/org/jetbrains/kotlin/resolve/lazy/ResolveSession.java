@@ -69,7 +69,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> fileAnnotations;
     private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> danglingAnnotations;
 
-    private KtImportsFactory jetImportFactory;
     private AnnotationResolver annotationResolver;
     private DescriptorResolver descriptorResolver;
     private FunctionDescriptorResolver functionDescriptorResolver;
@@ -86,11 +85,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
-
-    @Inject
-    public void setJetImportFactory(KtImportsFactory jetImportFactory) {
-        this.jetImportFactory = jetImportFactory;
-    }
 
     @Inject
     public void setAnnotationResolve(AnnotationResolver annotationResolver) {
@@ -378,11 +372,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         for (LazyPackageDescriptor lazyPackage : getAllPackages()) {
             ForceResolveUtil.forceResolveAllContents(lazyPackage);
         }
-    }
-
-    @NotNull
-    public KtImportsFactory getJetImportsFactory() {
-        return jetImportFactory;
     }
 
     @Override

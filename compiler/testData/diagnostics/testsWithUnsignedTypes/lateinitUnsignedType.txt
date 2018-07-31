@@ -1,0 +1,4 @@
+package
+
+public lateinit var a: kotlin.UInt
+public fun foo(): kotlin.Unit

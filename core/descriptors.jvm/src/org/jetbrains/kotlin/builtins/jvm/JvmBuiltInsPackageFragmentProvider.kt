@@ -51,6 +51,6 @@ class JvmBuiltInsPackageFragmentProvider(
 
     override fun findPackage(fqName: FqName): DeserializedPackageFragment? =
         finder.findBuiltInsData(fqName)?.let { inputStream ->
-            BuiltInsPackageFragmentImpl(fqName, storageManager, moduleDescriptor, inputStream)
+            BuiltInsPackageFragmentImpl.create(fqName, storageManager, moduleDescriptor, inputStream)
         }
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 data class D(private val x: Long, private val y: Char) {
     fun foo() = "${component1()}${component2()}"
 }

@@ -288,6 +288,12 @@ fun List<CoroutineBlock>.collectVariablesSurvivingBetweenBlocks(localVariables: 
 
                 }
 
+                override fun visitParameter(x: JsParameter) {
+                    varDeclaredIn[x.name]?.add(blockIndex)
+                    varDefinedIn[x.name]?.add(blockIndex)
+                    super.visitParameter(x)
+                }
+
                 override fun visitBinaryExpression(x: JsBinaryOperation) {
                     val lhs = x.arg1
                     if (x.operator.isAssignment && lhs is JsNameRef) {

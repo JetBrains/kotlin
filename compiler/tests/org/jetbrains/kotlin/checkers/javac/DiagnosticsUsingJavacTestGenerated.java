@@ -1068,6 +1068,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/annotations/RecursivelyIncorrectlyAnnotatedParameter.kt");
             }
 
+            @TestMetadata("RetentionsOfAnnotationWithExpressionTarget_after.kt")
+            public void testRetentionsOfAnnotationWithExpressionTarget_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget_after.kt");
+            }
+
+            @TestMetadata("RetentionsOfAnnotationWithExpressionTarget_before.kt")
+            public void testRetentionsOfAnnotationWithExpressionTarget_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/RetentionsOfAnnotationWithExpressionTarget_before.kt");
+            }
+
             @TestMetadata("typeAnnotations.kt")
             public void testTypeAnnotations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/typeAnnotations.kt");
@@ -4118,6 +4128,21 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("localReturnInsidePropertyAccessor.kt")
             public void testLocalReturnInsidePropertyAccessor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/localReturnInsidePropertyAccessor.kt");
+            }
+
+            @TestMetadata("notAFunctionLabel_after.kt")
+            public void testNotAFunctionLabel_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_after.kt");
+            }
+
+            @TestMetadata("notAFunctionLabel_before.kt")
+            public void testNotAFunctionLabel_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/notAFunctionLabel_before.kt");
+            }
+
+            @TestMetadata("redundantLabel.kt")
+            public void testRedundantLabel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/redundantLabel.kt");
             }
 
             @TestMetadata("specialConstructsAndPlatformTypes.kt")
@@ -9385,6 +9410,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/listConstructor.kt");
             }
 
+            @TestMetadata("localFunctionInsideIfBlock.kt")
+            public void testLocalFunctionInsideIfBlock() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/localFunctionInsideIfBlock.kt");
+            }
+
             @TestMetadata("mapFunction.kt")
             public void testMapFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/mapFunction.kt");
@@ -10845,6 +10875,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("inlineClassesInsideAnnotations.kt")
             public void testInlineClassesInsideAnnotations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassesInsideAnnotations.kt");
+            }
+
+            @TestMetadata("lateinitInlineClasses.kt")
+            public void testLateinitInlineClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClasses.kt");
             }
 
             @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")
@@ -13853,6 +13888,26 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("inheritedFromDeprecatedWithQualificationOld.kt")
                 public void testInheritedFromDeprecatedWithQualificationOld() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/objects/kt21515/inheritedFromDeprecatedWithQualificationOld.kt");
+                }
+
+                @TestMetadata("staticsFromJavaNew.kt")
+                public void testStaticsFromJavaNew() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/objects/kt21515/staticsFromJavaNew.kt");
+                }
+
+                @TestMetadata("staticsFromJavaOld.kt")
+                public void testStaticsFromJavaOld() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/objects/kt21515/staticsFromJavaOld.kt");
+                }
+
+                @TestMetadata("staticsFromJavaWithQualificationNew.kt")
+                public void testStaticsFromJavaWithQualificationNew() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/objects/kt21515/staticsFromJavaWithQualificationNew.kt");
+                }
+
+                @TestMetadata("staticsFromJavaWithQualificationOld.kt")
+                public void testStaticsFromJavaWithQualificationOld() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/objects/kt21515/staticsFromJavaWithQualificationOld.kt");
                 }
 
                 @TestMetadata("useDeprecatedConstructorNew.kt")
@@ -17888,33 +17943,58 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
                         }
 
-                        @TestMetadata("accessToStaticMembersOfParentClass.kt")
-                        public void testAccessToStaticMembersOfParentClass() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClass.kt");
+                        @TestMetadata("accessToStaticMembersOfParentClassJKJ_after.kt")
+                        public void testAccessToStaticMembersOfParentClassJKJ_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClassJKJ_after.kt");
                         }
 
-                        @TestMetadata("accessToStaticMembersOfParentClassJKJ.kt")
-                        public void testAccessToStaticMembersOfParentClassJKJ() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClassJKJ.kt");
+                        @TestMetadata("accessToStaticMembersOfParentClassJKJ_before.kt")
+                        public void testAccessToStaticMembersOfParentClassJKJ_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClassJKJ_before.kt");
+                        }
+
+                        @TestMetadata("accessToStaticMembersOfParentClass_after.kt")
+                        public void testAccessToStaticMembersOfParentClass_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClass_after.kt");
+                        }
+
+                        @TestMetadata("accessToStaticMembersOfParentClass_before.kt")
+                        public void testAccessToStaticMembersOfParentClass_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClass_before.kt");
                         }
 
                         public void testAllFilesPresentInCompanionObject() throws Exception {
                             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                         }
 
-                        @TestMetadata("inheritFromContainingClass.kt")
-                        public void testInheritFromContainingClass() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromContainingClass.kt");
+                        @TestMetadata("inheritFromContainingClass_after.kt")
+                        public void testInheritFromContainingClass_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromContainingClass_after.kt");
                         }
 
-                        @TestMetadata("inheritFromJava.kt")
-                        public void testInheritFromJava() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJava.kt");
+                        @TestMetadata("inheritFromContainingClass_before.kt")
+                        public void testInheritFromContainingClass_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromContainingClass_before.kt");
                         }
 
-                        @TestMetadata("inheritFromJavaAfterKotlin.kt")
-                        public void testInheritFromJavaAfterKotlin() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJavaAfterKotlin.kt");
+                        @TestMetadata("inheritFromJavaAfterKotlin_after.kt")
+                        public void testInheritFromJavaAfterKotlin_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJavaAfterKotlin_after.kt");
+                        }
+
+                        @TestMetadata("inheritFromJavaAfterKotlin_before.kt")
+                        public void testInheritFromJavaAfterKotlin_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJavaAfterKotlin_before.kt");
+                        }
+
+                        @TestMetadata("inheritFromJava_after.kt")
+                        public void testInheritFromJava_after() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJava_after.kt");
+                        }
+
+                        @TestMetadata("inheritFromJava_before.kt")
+                        public void testInheritFromJava_before() throws Exception {
+                            runTest("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJava_before.kt");
                         }
                     }
                 }
@@ -20420,6 +20500,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("inlineFunctionAlways.kt")
             public void testInlineFunctionAlways() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sourceCompatibility/inlineFunctionAlways.kt");
+            }
+
+            @TestMetadata("noBigFunctionTypes.kt")
+            public void testNoBigFunctionTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sourceCompatibility/noBigFunctionTypes.kt");
             }
 
             @TestMetadata("noCallableReferencesWithEmptyLHS.kt")
