@@ -54,10 +54,11 @@ class DeclarationStubGenerator(
         constantValueGenerator.typeTranslator = typeTranslator
     }
 
-    fun generateEmptyModuleFragmentStub(descriptor: ModuleDescriptor, irBuiltIns: IrBuiltIns): IrModuleFragment =
-        IrModuleFragmentImpl(descriptor, irBuiltIns)
-
     fun generateOrGetEmptyExternalPackageFragmentStub(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment {
+        val referenced = symbolTable.referenceExternalPackageFragment(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
         return symbolTable.declareExternalPackageFragment(descriptor)
     }
 
