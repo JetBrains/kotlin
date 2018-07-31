@@ -19,6 +19,11 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 class KotlinScriptingSettings : PersistentStateComponent<KotlinScriptingSettings> {
     var isAutoReloadEnabled = false
 
+    /**
+     * true if notification about multiple script definition applicable for one script file is suppressed
+     */
+    var suppressDefinitionsCheck = false
+
     override fun loadState(state: KotlinScriptingSettings) {
         XmlSerializerUtil.copyBean(state, this)
     }

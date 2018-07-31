@@ -124,6 +124,8 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         updateDefinitions()
     }
 
+    fun getAllDefinitions() = currentDefinitions
+
     override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
         return StandardIdeScriptDefinition(project)
     }
@@ -154,6 +156,12 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
         // TODO: clear by script type/definition
         ServiceManager.getService(project, ScriptDependenciesCache::class.java).clear()
+
+        ApplicationManager.getApplication().invokeLater {
+            if (!project.isDisposed) {
+                EditorNotifications.getInstance(project).updateAllNotifications()
+            }
+        }
     }
 
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {
