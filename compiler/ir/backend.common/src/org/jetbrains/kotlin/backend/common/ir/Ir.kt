@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -26,7 +26,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
-abstract class Symbols<out T : CommonBackendContext>(val context: T, private val symbolTable: SymbolTable) {
+abstract class Symbols<out T : CommonBackendContext>(val context: T, private val symbolTable: ReferenceSymbolTable) {
 
     protected val builtIns
         get() = context.builtIns

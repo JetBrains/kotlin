@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
-    private val symbolTable: SymbolTable
+    private val symbolTable: ReferenceSymbolTable
 ) {
 
     lateinit var typeTranslator: TypeTranslator
