@@ -71,14 +71,8 @@ fun compile(
 private fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment) {
     FunctionInlining(this).inline(moduleFragment)
 
-    moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
 
-    do {
-        @Suppress("DEPRECATION")
-        moduleFragment.replaceUnboundSymbols(this)
-        moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
-    } while (symbolTable.unboundClasses.isNotEmpty())
-
+    moduleFragment.replaceUnboundSymbols(this)
     moduleFragment.patchDeclarationParents()
 
     moduleFragment.files.forEach { file ->
