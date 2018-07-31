@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -140,7 +139,6 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
     override fun visitProperty(declaration: IrProperty, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.typeParameters.dumpElements()
             declaration.backingField?.accept(this, "")
             declaration.getter?.accept(this, "")
             declaration.setter?.accept(this, "")
