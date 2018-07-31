@@ -43,7 +43,7 @@ fun compile(
     val psi2IrTranslator = Psi2IrTranslator(configuration.languageVersionSettings)
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext)
 
-    val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files).removeDuplicates()
+    val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files)
 
     val context = JsIrBackendContext(
         analysisResult.moduleDescriptor,
@@ -104,19 +104,4 @@ private fun JsIrBackendContext.lower(file: IrFile) {
     SecondaryCtorLowering(this).runOnFilePostfix(file)
     CallableReferenceLowering(this).lower(file)
     IntrinsicifyCallsLowering(this).lower(file)
-}
-
-// TODO find out why duplicates occur
-private fun IrModuleFragment.removeDuplicates(): IrModuleFragment {
-
-    fun <T> MutableList<T>.removeDuplicates() {
-        val tmp = toSet()
-        clear()
-        addAll(tmp)
-    }
-
-    dependencyModules.removeDuplicates()
-    dependencyModules.forEach { it.externalPackageFragments.removeDuplicates() }
-
-    return this
 }
