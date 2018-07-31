@@ -38,6 +38,8 @@ abstract class AbstractFileRankingTest : LowLevelDebuggerTestBase() {
             val allFilesWithSameName = getKtFiles(expectedFile.name)
 
             for (location in locations) {
+                if (location.method().isBridge || location.method().isSynthetic) continue
+
                 val actualFile = calculator.findMostAppropriateSource(allFilesWithSameName, location)
                 if (actualFile != expectedFile) {
                     problems += "Location ${location.sourceName()}:${location.lineNumber() - 1} is associated with a wrong KtFile:\n" +
