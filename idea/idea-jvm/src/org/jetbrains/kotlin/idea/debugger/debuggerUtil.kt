@@ -70,6 +70,14 @@ fun Method.safeReturnType(): Type? {
     }
 }
 
+fun LocalVariable.safeType(): Type? {
+    return try {
+        return type()
+    } catch (e: ClassNotLoadedException) {
+        null
+    }
+}
+
 fun Location.safeSourceName(): String? {
     return try {
         sourceName()

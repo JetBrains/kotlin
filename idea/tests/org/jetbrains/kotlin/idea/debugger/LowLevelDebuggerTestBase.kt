@@ -33,8 +33,13 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
 
         val options = wholeFile.readLines()
-            .filter { it.matches("^// ?[\\w_]+$".toRegex()) }
-            .mapTo(mutableSetOf()) { it.drop(2).trim() }
+            .asSequence()
+            .filter { it.matches("^// ?[\\w_]+(:.*)$".toRegex()) }
+            .map { it.drop(2).trim() }
+            .filter { !it.startsWith("FILE:") }
+            .toSet()
+
+        val skipLoadingClasses = skipLoadingClasses(options)
 
         loadMultiFiles(files)
         val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.FULL)
@@ -51,14 +56,14 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
                 }
             }
 
-            val process = startDebuggeeProcess(classesDir)
+            val process = startDebuggeeProcess(classesDir, skipLoadingClasses)
             waitUntil { isPortOpen() }
 
             val virtualMachine = attachDebugger()
 
             try {
                 val mainThread = virtualMachine.allThreads().single { it.name() == "main" }
-                waitUntil { areCompiledClassesLoaded(mainThread, classBuilderFactory) }
+                waitUntil { areCompiledClassesLoaded(mainThread, classBuilderFactory, skipLoadingClasses) }
                 doTest(options, mainThread, classBuilderFactory, generationState)
             } finally {
                 virtualMachine.exit(0)
@@ -85,16 +90,33 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
         }
     }
 
-    private fun areCompiledClassesLoaded(mainThread: ThreadReference, factory: OriginCollectingClassBuilderFactory): Boolean {
+    private fun areCompiledClassesLoaded(
+        mainThread: ThreadReference,
+        factory: OriginCollectingClassBuilderFactory,
+        skipLoadingClasses: Set<String>
+    ): Boolean {
         for ((node, _) in factory.origins) {
             val classNode = node as? ClassNode ?: continue
-            mainThread.virtualMachine().classesByName(classNode.name.replace('/', '.')).firstOrNull() ?: return false
+
+            val fqName = classNode.name.replace('/', '.')
+            if (fqName in skipLoadingClasses) {
+                continue
+            }
+
+            mainThread.virtualMachine().classesByName(fqName).firstOrNull() ?: return false
         }
         return true
     }
 
-    private fun startDebuggeeProcess(classesDir: File): Process {
-        val classesToLoad = this.classFileFactory.getClassFiles().joinToString(",") { it.qualifiedName }
+    protected open fun skipLoadingClasses(options: Set<String>): Set<String> {
+        return emptySet()
+    }
+
+    private fun startDebuggeeProcess(classesDir: File, skipLoadingClasses: Set<String>): Process {
+        val classesToLoad = this.classFileFactory.getClassFiles()
+            .map { it.qualifiedName }
+            .filter { it !in skipLoadingClasses }
+            .joinToString(",")
 
         val classpath = listOf(
             classesDir.absolutePath,
