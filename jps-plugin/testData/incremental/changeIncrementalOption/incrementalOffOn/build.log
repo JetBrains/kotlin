@@ -34,6 +34,7 @@ Exit code: NOTHING_DONE
 Building module1
 Actions after cache changed: [REBUILD_ALL_KOTLIN, REBUILD_CHUNK]
 Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/foo/Z.class
 End of files
 Compiling files:
@@ -66,6 +67,7 @@ Exit code: OK
 Building module3
 Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
+  out/production/module3/META-INF/module3.kotlin_module
   out/production/module3/foo/D.class
 End of files
 Compiling files:
@@ -76,6 +78,7 @@ Exit code: OK
 Building module4
 Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
+  out/production/module4/META-INF/module4.kotlin_module
   out/production/module4/foo/E.class
 End of files
 Compiling files:

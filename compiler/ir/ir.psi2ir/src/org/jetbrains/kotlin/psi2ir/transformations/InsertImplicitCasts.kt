@@ -251,6 +251,10 @@ class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid(
         KotlinBuiltIns.isByte(this) ||
                 KotlinBuiltIns.isShort(this) ||
                 KotlinBuiltIns.isInt(this) ||
-                KotlinBuiltIns.isLong(this)
+                KotlinBuiltIns.isLong(this) ||
+                KotlinBuiltIns.isUByte(this) ||
+                KotlinBuiltIns.isUShort(this) ||
+                KotlinBuiltIns.isUInt(this) ||
+                KotlinBuiltIns.isULong(this)
 }
 

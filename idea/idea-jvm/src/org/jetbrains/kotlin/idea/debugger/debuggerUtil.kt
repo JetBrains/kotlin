@@ -16,6 +16,7 @@ import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -45,11 +46,37 @@ fun Method.safeLocationsOfLine(line: Int): List<Location> {
     }
 }
 
-fun Method.safeVariables(): List<LocalVariable> {
+fun Method.safeVariables(): List<LocalVariable>? {
     return try {
         variables()
     } catch (e: AbsentInformationException) {
-        emptyList()
+        null
+    }
+}
+
+fun Method.safeArguments(): List<LocalVariable>? {
+    return try {
+        arguments()
+    } catch (e: AbsentInformationException) {
+        null
+    }
+}
+
+fun Method.safeReturnType(): Type? {
+    return try {
+        returnType()
+    } catch (e: ClassNotLoadedException) {
+        null
+    }
+}
+
+fun Location.safeSourceName(): String? {
+    return try {
+        sourceName()
+    } catch (e: AbsentInformationException) {
+        null
+    } catch (e: InternalError) {
+        null
     }
 }
 
@@ -145,7 +172,7 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
 
     private fun createVisibleVariables() {
         if (visibleVariables == null) {
-            val allVariables = location.method().safeVariables()
+            val allVariables = location.method().safeVariables() ?: emptyList()
             val map = HashMap<String, LocalVariable>(allVariables.size)
 
             for (allVariable in allVariables) {
@@ -180,7 +207,8 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
     override fun virtualMachine() = vm
 }
 
-private val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
+private const val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
+private const val INVOKE_SUSPEND_SIGNATURE = "(Ljava/lang/Object;)Ljava/lang/Object;"
 
 fun isInSuspendMethod(location: Location): Boolean {
     val method = location.method()
@@ -188,7 +216,8 @@ fun isInSuspendMethod(location: Location): Boolean {
 
     for (continuationAsmType in continuationAsmTypes()) {
         if (signature.contains(continuationAsmType.toString()) ||
-            (method.name() == DO_RESUME_METHOD_NAME && signature == DO_RESUME_SIGNATURE)
+            (method.name() == DO_RESUME_METHOD_NAME && signature == DO_RESUME_SIGNATURE) ||
+            (method.name() == INVOKE_SUSPEND_METHOD_NAME && signature == INVOKE_SUSPEND_SIGNATURE)
         ) return true
     }
     return false

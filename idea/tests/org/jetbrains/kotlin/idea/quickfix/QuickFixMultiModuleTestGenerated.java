@@ -274,6 +274,26 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/interface/");
     }
 
+    @TestMetadata("makeInlineFromExpect")
+    public void testMakeInlineFromExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/makeInlineFromExpect/");
+    }
+
+    @TestMetadata("makeInternalFromExpect")
+    public void testMakeInternalFromExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/makeInternalFromExpect/");
+    }
+
+    @TestMetadata("makeOpenFromActual")
+    public void testMakeOpenFromActual() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/makeOpenFromActual/");
+    }
+
+    @TestMetadata("makeOpenFromExpect")
+    public void testMakeOpenFromExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/makeOpenFromExpect/");
+    }
+
     @TestMetadata("memberFunParameterToReceiverByHeader")
     public void testMemberFunParameterToReceiverByHeader() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/memberFunParameterToReceiverByHeader/");

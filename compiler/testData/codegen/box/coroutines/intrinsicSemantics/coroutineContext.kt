@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -21,7 +22,7 @@ suspend fun multipleArgs(a: Any, b: Any, c: Any) =
 fun builder(c: suspend () -> String): String {
     var fromSuspension: String? = null
 
-    val continuation = object : Continuation<String> {
+    val continuation = object : ContinuationAdapter<String>() {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 

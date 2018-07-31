@@ -1,7 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.model.ModelContainer
+import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.After
 import org.junit.AfterClass
@@ -18,6 +21,9 @@ abstract class BaseGradleIT {
     protected var workingDir = File(".")
 
     protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
+
+    protected open val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.None
 
     @Before
     fun setUp() {
@@ -158,7 +164,7 @@ abstract class BaseGradleIT {
     }
 
     // the second parameter is for using with ToolingAPI, that do not like --daemon/--no-daemon  options at all
-    data class BuildOptions(
+    data class BuildOptions constructor(
         val withDaemon: Boolean = false,
         val daemonOptionSupported: Boolean = true,
         val incremental: Boolean? = null,
@@ -171,12 +177,15 @@ abstract class BaseGradleIT {
         val kotlinVersion: String = KOTLIN_VERSION,
         val kotlinDaemonDebugPort: Int? = null,
         val usePreciseJavaTracking: Boolean? = null,
-        val withBuildCache: Boolean = false
+        val withBuildCache: Boolean = false,
+        val kaptOptions: KaptOptions? = null
     )
+
+    data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean)
 
     open inner class Project(
         val projectName: String,
-        val gradleVersionRequirement: GradleVersionRequired = GradleVersionRequired.None,
+        val gradleVersionRequirement: GradleVersionRequired = defaultGradleVersion,
         directoryPrefix: String? = null,
         val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
@@ -266,6 +275,21 @@ abstract class BaseGradleIT {
             }
             throw t
         }
+    }
+
+    fun <T> Project.getModels(modelType: Class<T>): ModelContainer<T> {
+        if (!projectDir.exists()) {
+            setupWorkingDir()
+        }
+
+        val connection = GradleConnector.newConnector().forProjectDirectory(projectDir).connect()
+        val options = defaultBuildOptions()
+        val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}")
+        options.androidGradlePluginVersion?.let { arguments.add("-Pandroid_tools_version=$it") }
+        val env = createEnvironmentVariablesMap(options)
+        val model = connection.action(ModelFetcherBuildAction(modelType)).withArguments(arguments).setEnvironmentVariables(env).run()
+        connection.close()
+        return model
     }
 
     fun CompiledProject.assertSuccessful() {
@@ -523,6 +547,11 @@ abstract class BaseGradleIT {
             } else {
                 // Override possibly enabled system-wide caching:
                 add("-Dorg.gradle.caching=false")
+            }
+
+            options.kaptOptions?.also { kaptOptions ->
+                add("-Pkapt.verbose=${kaptOptions.verbose}")
+                add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

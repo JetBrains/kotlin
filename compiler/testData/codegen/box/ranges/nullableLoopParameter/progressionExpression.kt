@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     var result = 0
     val intRange: IntProgression = 1..3

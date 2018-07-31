@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.Name
@@ -63,12 +64,13 @@ internal class KPackageImpl(
             }
         }
 
-        val metadata: Pair<JvmNameResolver, ProtoBuf.Package>? by ReflectProperties.lazy {
+        val metadata: Triple<JvmNameResolver, ProtoBuf.Package, JvmMetadataVersion>? by ReflectProperties.lazy {
             kotlinClass?.classHeader?.let { header ->
                 val data = header.data
                 val strings = header.strings
                 if (data != null && strings != null) {
-                    JvmProtoBufUtil.readPackageDataFrom(data, strings)
+                    val (nameResolver, proto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+                    Triple(nameResolver, proto, header.metadataVersion)
                 } else null
             }
         }
@@ -101,9 +103,12 @@ internal class KPackageImpl(
         scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getLocalProperty(index: Int): PropertyDescriptor? {
-        return data().metadata?.let { (nameResolver, packageProto) ->
+        return data().metadata?.let { (nameResolver, packageProto, metadataVersion) ->
             packageProto.getExtensionOrNull(JvmProtoBuf.packageLocalVariable, index)?.let { proto ->
-                deserializeToDescriptor(jClass, proto, nameResolver, TypeTable(packageProto.typeTable), MemberDeserializer::loadProperty)
+                deserializeToDescriptor(
+                    jClass, proto, nameResolver, TypeTable(packageProto.typeTable), metadataVersion,
+                    MemberDeserializer::loadProperty
+                )
             }
         }
     }

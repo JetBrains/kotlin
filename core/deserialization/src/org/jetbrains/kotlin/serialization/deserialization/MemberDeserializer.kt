@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
@@ -32,6 +22,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 
 class MemberDeserializer(private val c: DeserializationContext) {
     private val annotationDeserializer = AnnotationDeserializer(c.components.moduleDescriptor, c.components.notFoundClasses)
+
     fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
@@ -135,10 +126,19 @@ class MemberDeserializer(private val c: DeserializationContext) {
             )
         }
 
-        property.initialize(getter, setter)
+        property.initialize(getter, setter, property.checkExperimentalCoroutine(local.typeDeserializer))
 
         return property
     }
+
+    private fun DeserializedMemberDescriptor.checkExperimentalCoroutine(typeDeserializer: TypeDeserializer): Boolean {
+        // Calculate checkExperimentalCoroutine for type parameters
+        typeDeserializer.ownTypeParameters.forEach { it.upperBounds }
+        return typeDeserializer.experimentalSuspendFunctionTypeEncountered && versionAndReleaseCoroutinesMismatch()
+    }
+
+    private fun DeserializedMemberDescriptor.versionAndReleaseCoroutinesMismatch(): Boolean =
+        c.components.configuration.releaseCoroutines && versionRequirement?.version != VersionRequirement.Version(1, 3)
 
     private fun loadOldFlags(oldFlags: Int): Int {
         val lowSixBits = oldFlags and 0x3f
@@ -167,7 +167,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-            emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>()
+            emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>(),
+            (Flags.IS_SUSPEND.get(flags) && function.versionAndReleaseCoroutinesMismatch()) ||
+                    function.checkExperimentalCoroutine(local.typeDeserializer)
         )
         function.isOperator = Flags.IS_OPERATOR.get(flags)
         function.isInfix = Flags.IS_INFIX.get(flags)
@@ -199,7 +201,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
         typeAlias.initialize(
             local.typeDeserializer.ownTypeParameters,
             local.typeDeserializer.simpleType(proto.underlyingType(c.typeTable)),
-            local.typeDeserializer.simpleType(proto.expandedType(c.typeTable))
+            local.typeDeserializer.simpleType(proto.expandedType(c.typeTable)),
+            typeAlias.checkExperimentalCoroutine(local.typeDeserializer)
         )
 
         return typeAlias
@@ -222,6 +225,14 @@ class MemberDeserializer(private val c: DeserializationContext) {
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(proto.flags))
         )
         descriptor.returnType = classDescriptor.defaultType
+
+        // Calculate isExperimentalCoroutineInReleaseEnvironment for type parameters
+        descriptor.typeParameters.forEach { it.upperBounds }
+        descriptor.isExperimentalCoroutineInReleaseEnvironment = local.typeDeserializer.experimentalSuspendFunctionTypeEncountered ||
+                ((c.containingDeclaration as? DeserializedClassDescriptor)?.c?.typeDeserializer?.experimentalSuspendFunctionTypeEncountered == true &&
+                        c.components.configuration.releaseCoroutines &&
+                        descriptor.versionRequirement?.version != VersionRequirement.Version(1, 3))
+
         return descriptor
     }
 
@@ -245,7 +256,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             c.containingDeclaration.asProtoContainer()?.let {
                 c.components.annotationAndConstantLoader
                     .loadExtensionReceiverParameterAnnotations(it, proto, receiverTargetedKind)
-                    .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+                    .map { annotation -> AnnotationWithTarget(annotation, AnnotationUseSiteTarget.RECEIVER) }
                     .toList()
             }.orEmpty()
         }

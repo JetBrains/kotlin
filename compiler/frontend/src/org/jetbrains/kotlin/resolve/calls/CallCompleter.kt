@@ -16,15 +16,16 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
+import org.jetbrains.kotlin.resolve.annotations.hasImplicitIntegerCoercionAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
@@ -48,11 +49,11 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class CallCompleter(
@@ -160,7 +161,8 @@ class CallCompleter(
         val expectedReturnType =
             if (call.isCallableReference()) {
                 // TODO: compute generic type argument for R in the kotlin.Function<R> supertype (KT-12963)
-                if (!TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionType) expectedType.getReturnTypeFromFunctionType()
+                if (!TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionOrSuspendFunctionType)
+                    expectedType.getReturnTypeFromFunctionType()
                 else TypeUtils.NO_EXPECTED_TYPE
             } else expectedType
 
@@ -211,7 +213,7 @@ class CallCompleter(
             }
         }
 
-        if (call.isCallableReference() && !TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionType) {
+        if (call.isCallableReference() && !TypeUtils.noExpectedType(expectedType) && expectedType.isFunctionOrSuspendFunctionType) {
             updateSystemIfNeeded { builder ->
                 candidateDescriptor.valueParameters.zip(expectedType.getValueParameterTypesFromFunctionType())
                     .forEach { (parameter, argument) ->
@@ -280,28 +282,50 @@ class CallCompleter(
 
         for (valueArgument in context.call.valueArguments) {
             val argumentMapping = getArgumentMapping(valueArgument!!)
-            val (expectedType, callPosition) = when (argumentMapping) {
-                is ArgumentMatch -> Pair(
-                    getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context),
-                    CallPosition.ValueArgumentPosition(results.resultingCall, argumentMapping.valueParameter, valueArgument)
-                )
-                else -> Pair(TypeUtils.NO_EXPECTED_TYPE, CallPosition.Unknown)
+
+            val expectedType: KotlinType
+            val callPosition: CallPosition
+            val parameter: ValueParameterDescriptor?
+            when (argumentMapping) {
+                is ArgumentMatch -> {
+                    expectedType = getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument, context)
+                    callPosition = CallPosition.ValueArgumentPosition(results.resultingCall, argumentMapping.valueParameter, valueArgument)
+                    parameter = argumentMapping.valueParameter
+                }
+                else -> {
+                    expectedType = TypeUtils.NO_EXPECTED_TYPE
+                    callPosition = CallPosition.Unknown
+                    parameter = null
+                }
             }
+
             val newContext =
                 context.replaceDataFlowInfo(getDataFlowInfoForArgument(valueArgument))
                     .replaceExpectedType(expectedType)
                     .replaceCallPosition(callPosition)
-            completeOneArgument(valueArgument, newContext)
+            completeOneArgument(valueArgument, parameter, newContext)
         }
     }
 
+    private fun createTypeForConvertableConstant(constant: CompileTimeConstant<*>): SimpleType? {
+        val value = constant.getValue(TypeUtils.NO_EXPECTED_TYPE).safeAs<Number>()?.toLong() ?: return null
+        val typeConstructor = IntegerValueTypeConstructor(
+            value, moduleDescriptor, constant.parameters
+        )
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+            Annotations.EMPTY, typeConstructor, emptyList(), false,
+            ErrorUtils.createErrorScope("Scope for number value type ($typeConstructor)", true)
+        )
+    }
+
     private fun completeOneArgument(
-        valueArgument: ValueArgument,
+        argument: ValueArgument,
+        parameter: ValueParameterDescriptor?,
         context: BasicCallResolutionContext
     ) {
-        if (valueArgument.isExternal()) return
+        if (argument.isExternal()) return
 
-        val expression = valueArgument.getArgumentExpression() ?: return
+        val expression = argument.getArgumentExpression() ?: return
         val deparenthesized = KtPsiUtil.getLastElementDeparenthesized(expression, context.statementFilter) ?: return
 
         val recordedType = context.trace.getType(expression)
@@ -319,6 +343,18 @@ class CallCompleter(
         // so while the expected type is not known, it's IntegerValueType(1), and should be updated when the expected type is known.
         if (recordedType != null && !recordedType.constructor.isDenotable) {
             updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression) ?: updatedType
+        }
+
+        if (parameter?.hasImplicitIntegerCoercionAnnotation() == true) {
+            val argumentCompileTimeValue = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
+            if (argumentCompileTimeValue != null && argumentCompileTimeValue.parameters.isConvertableConstVal) {
+                val generalNumberType = createTypeForConvertableConstant(argumentCompileTimeValue)
+                if (generalNumberType != null) {
+                    updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(
+                        context.trace, context.statementFilter, context.expectedType, generalNumberType, expression
+                    )
+                }
+            }
         }
 
         updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context.statementFilter, context.trace)

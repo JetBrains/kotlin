@@ -82,8 +82,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Byte -> JsIntLiteral(kind.valueOf(expression).toInt())
             is IrConstKind.Short -> JsIntLiteral(kind.valueOf(expression).toInt())
             is IrConstKind.Int -> JsIntLiteral(kind.valueOf(expression))
-            is IrConstKind.Long,
-            is IrConstKind.Char -> super.visitConst(expression, context)
+            is IrConstKind.Long -> throw IllegalStateException("Long const should have been lowered at this point")
+            is IrConstKind.Char -> throw IllegalStateException("Char const should have been lowered at this point")
             is IrConstKind.Float -> JsDoubleLiteral(kind.valueOf(expression).toDouble())
             is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
         }

@@ -106,3 +106,7 @@ public final class C : kotlin/Any {
   // signature: typeAnnotation()V
   public final fun typeAnnotation(): @A(z = true, c = 'x', b = 1.toByte(), s = 42.toShort(), i = 42424242, f = -2.72f, j = 239239239239239L, d = 3.14, za = [true], ca = ['\''], ba = [1.toByte()], sa = [42.toShort()], ia = [42424242], fa = [-2.72f], ja = [239239239239239L], da = [3.14], str = "aba\ncaba'\"\t\u0001\u0002ꙮ", enum = kotlin/annotation/AnnotationTarget.CLASS, klass = C::class, anno = B(value = "aba\ncaba'\"\t\u0001\u0002ꙮ")) kotlin/Unit
 }
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

@@ -41,3 +41,7 @@ public final inner class A.B.C<T#3 /* T */, T#4 /* U */> : kotlin/Any {
   // signature: z(LA$B$C;)V
   public final fun z(c: A<kotlin/Int>.B<kotlin/Any, kotlin/Byte>.C<kotlin/Unit, kotlin/Long>): kotlin/Unit
 }
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

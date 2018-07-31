@@ -44,10 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.FunctionPlaceholders;
-import org.jetbrains.kotlin.types.FunctionPlaceholdersKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.*;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -392,9 +389,21 @@ public class ArgumentTypeResolver {
             @NotNull KtExpression expression
     ) {
         KotlinType type = trace.getType(expression);
-        if (type != null && !type.getConstructor().isDenotable()) {
-            if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
-                IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();
+        return type != null ? updateResultArgumentTypeIfNotDenotable(trace, statementFilter, expectedType, type, expression) : null;
+    }
+
+    @Nullable
+    public KotlinType updateResultArgumentTypeIfNotDenotable(
+            @NotNull BindingTrace trace,
+            @NotNull StatementFilter statementFilter,
+            @NotNull KotlinType expectedType,
+            @NotNull KotlinType targetType,
+            @NotNull KtExpression expression
+    ) {
+        TypeConstructor typeConstructor = targetType.getConstructor();
+        if (!typeConstructor.isDenotable()) {
+            if (typeConstructor instanceof IntegerValueTypeConstructor) {
+                IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) typeConstructor;
                 KotlinType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, expectedType);
                 constantExpressionEvaluator.updateNumberType(primitiveType, expression, statementFilter, trace);
                 return primitiveType;

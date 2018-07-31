@@ -183,13 +183,20 @@ class KotlinCoreEnvironment private constructor(
         JsSyntheticTranslateExtension.registerExtensionPoint(project)
         CompilerConfigurationExtension.registerExtensionPoint(project)
 
+        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             try {
                 registrar.registerProjectComponents(project, configuration)
             } catch (e: AbstractMethodError) {
-                throw IllegalStateException(
-                    "The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler", e
-                )
+                val message = "The provided plugin ${registrar.javaClass.name} is not compatible with this version of compiler"
+                // Since the scripting plugin is often discovered in the compiler environment, it is often taken from the incompatible
+                // location, and in many cases this is not a fatal error, therefore strong warning is generated instead of exception
+                if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
+                    messageCollector?.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
+                } else {
+                    throw IllegalStateException(message, e)
+                }
             }
         }
 
@@ -200,7 +207,6 @@ class KotlinCoreEnvironment private constructor(
 
         registerProjectServicesForCLI(projectEnvironment)
 
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         registerProjectServices(projectEnvironment, messageCollector)
 
         for (extension in CompilerConfigurationExtension.getInstances(project)) {
@@ -211,6 +217,13 @@ class KotlinCoreEnvironment private constructor(
             report(ERROR, message)
         }
         sourceFiles.sortBy { it.virtualFile.path }
+
+        // If not disabled explicitly, we should always support at least the standard script definition
+        if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
+            StandardScriptDefinition !in configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
+        ) {
+            configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+        }
 
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
         if (scriptDefinitionProvider != null) {
@@ -416,12 +429,6 @@ class KotlinCoreEnvironment private constructor(
             parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             setCompatibleBuild()
-            // If not disabled explicitly, we should always support at least the standard script definition
-            if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
-                StandardScriptDefinition !in configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
-            ) {
-                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
-            }
             val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration)
             // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
             // breaks a lot of tests, therefore it is disabled for production and enabled for tests
@@ -458,12 +465,6 @@ class KotlinCoreEnvironment private constructor(
             parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
-            // in tests we assume that standard definition should only be added if no other explicit defs are already added
-            if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
-                configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).isEmpty()
-            ) {
-                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
-            }
             // Tests are supposed to create a single project and dispose it right after use
             return KotlinCoreEnvironment(
                 parentDisposable,

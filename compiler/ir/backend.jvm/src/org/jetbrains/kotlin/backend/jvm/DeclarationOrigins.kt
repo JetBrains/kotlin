@@ -30,10 +30,11 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
     object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR")
     object TO_ARRAY : IrDeclarationOriginImpl("TO_ARRAY")
+    object JVM_STATIC_WRAPPER : IrDeclarationOriginImpl("JVM_STATIC_WRAPPER")
+    object JVM_OVERLOADS_WRAPPER : IrDeclarationOriginImpl("JVM_OVERLOADS_WRAPPER")
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {
     object DEFAULT_IMPLS_DELEGATION : IrStatementOriginImpl("DEFAULT_IMPL_DELEGATION")
-    object BRIDGE_DELEGATION : IrStatementOriginImpl("BRIDGE_DELEGATION")
     object TO_ARRAY : IrDeclarationOriginImpl("TO_ARRAY")
 }

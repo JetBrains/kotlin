@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
 object ObjectThisTest {

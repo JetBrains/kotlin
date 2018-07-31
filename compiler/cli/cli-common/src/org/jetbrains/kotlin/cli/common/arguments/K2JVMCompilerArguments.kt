@@ -72,6 +72,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
+    @Argument(value = "-Xuse-ir", description = "Use the IR backend")
+    var useIR: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by FreezableVar(null)
 
@@ -109,7 +112,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         valueDescription = "{disable|enable}",
         description = "Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable"
     )
-    var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
+    var constructorCallNormalizationMode: String? by FreezableVar(null)
 
     @Argument(
         value = "-Xassertions", valueDescription = "{always-enable|always-disable|jvm|legacy}",
@@ -241,7 +244,11 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xdisable-standard-script", description = "Disable standard kotlin script support")
     var disableStandardScript: Boolean by FreezableVar(false)
 
-    // Paths to output directories for friend modules.
+    @Argument(
+        value = "-Xfriend-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for friend modules (whose internals should be visible)"
+    )
     var friendPaths: Array<String>? by FreezableVar(null)
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {

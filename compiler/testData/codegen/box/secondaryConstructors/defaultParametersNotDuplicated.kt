@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 var global = 0
 
 fun sideEffect() = global++

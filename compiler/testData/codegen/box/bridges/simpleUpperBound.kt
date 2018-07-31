@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 open class A<T : Number> {
     open fun foo(t: T) = "A"
 }

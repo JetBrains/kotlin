@@ -174,6 +174,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var progressiveMode by FreezableVar(false)
 
+    @Argument(
+        value = "-Xmetadata-version",
+        description = "Change metadata version of the generated binary files"
+    )
+    var metadataVersion: String? by FreezableVar(null)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -239,11 +245,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
-        val languageSettingsParser = LanguageSettingsParser()
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
 
-        for (argument in internalArguments) {
-            val (feature, state) = languageSettingsParser.parseInternalArgument(argument, collector) ?: continue
+        for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature

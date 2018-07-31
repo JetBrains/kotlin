@@ -21,12 +21,12 @@ fun fail() {
 fun classCast() {
     val o = Base()
     // EXPRESSION: o as Derived
-    // RESULT: java.lang.ClassCastException: exceptions.Base cannot be cast to exceptions.Derived: Ljava/lang/ClassCastException;
+    // RESULT: java.lang.ClassCastException : exceptions.Base cannot be cast to exceptions.Derived
     //Breakpoint!
     val a = 1
 
     // EXPRESSION: o as Derived
-    // RESULT: java.lang.ClassCastException: exceptions.Base cannot be cast to exceptions.Derived: Ljava/lang/ClassCastException;
+    // RESULT: java.lang.ClassCastException : exceptions.Base cannot be cast to exceptions.Derived
     //Breakpoint!
     val b = 1
 }
@@ -46,7 +46,7 @@ fun genericClassCast() {
         val c = ArrayList<String>()
         c.add("a")
         // EXPRESSION: c.get(0)
-        // RESULT: java.lang.ClassCastException: java.lang.String cannot be cast to java.lang.Number: Ljava/lang/ClassCastException;
+        // RESULT: java.lang.ClassCastException : java.lang.String cannot be cast to java.lang.Number
         //Breakpoint!
         val b = 1
     }

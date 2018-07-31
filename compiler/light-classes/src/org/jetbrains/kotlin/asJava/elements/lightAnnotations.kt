@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.psi.*
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -96,28 +98,17 @@ class KtLightAnnotationForSourceEntry(
 
     override fun findDeclaredAttributeValue(name: String?): PsiAnnotationMemberValue? = getAttributeValue(name, false)
 
+    private fun getCallEntry(name: String): MutableMap.MutableEntry<ValueParameterDescriptor, ResolvedValueArgument>? {
+        val resolvedCall = kotlinOrigin.getResolvedCall() ?: return null
+        return resolvedCall.valueArguments.entries.find { (param, _) -> param.name.asString() == name } ?: return null
+    }
+
     private fun getAttributeValue(name: String?, useDefault: Boolean): PsiAnnotationMemberValue? {
         val name = name ?: "value"
+        val callEntry = getCallEntry(name) ?: return null
 
-        val resolvedCall = kotlinOrigin.getResolvedCall() ?: return null
-        val callEntry = resolvedCall.valueArguments.entries.find { (param, _) -> param.name.asString() == name } ?: return null
-
-        val valueArguments = callEntry.value.arguments
-        val valueArgument = valueArguments.firstOrNull()
-        val argument = valueArgument?.getArgumentExpression()
-        if (argument != null) {
-            val arrayExpected = callEntry.key?.type?.let { KotlinBuiltIns.isArray(it) } ?: false
-
-            if (arrayExpected && (argument is KtStringTemplateExpression || argument is KtConstantExpression || getAnnotationName(argument) != null))
-                return KtLightPsiArrayInitializerMemberValue(
-                    PsiTreeUtil.findCommonParent(valueArguments.map { it.getArgumentExpression() }) as KtElement,
-                    this,
-                    { self ->
-                        valueArguments.mapNotNull {
-                            it.getArgumentExpression()?.let { convertToLightAnnotationMemberValue(self, it) }
-                        }
-                    })
-
+        val valueArgument = callEntry.value.arguments.firstOrNull()
+        if (valueArgument != null) {
             ktLightAnnotationParameterList.attributes.find { (it as KtLightPsiNameValuePair).valueArgument === valueArgument }?.let {
                 return it.value
             }
@@ -153,11 +144,38 @@ class KtLightAnnotationForSourceEntry(
 
     inner class KtLightAnnotationParameterList() : KtLightElementBase(this),
         PsiAnnotationParameterList {
-        override val kotlinOrigin get() = null
+        override val kotlinOrigin: KtElement? get() = null
 
         private val _attributes: Array<PsiNameValuePair> by lazyPub {
-            this@KtLightAnnotationForSourceEntry.kotlinOrigin.valueArguments.map { KtLightPsiNameValuePair(it as KtValueArgument, this) }
+            this@KtLightAnnotationForSourceEntry.kotlinOrigin.valueArguments.map { makeLightPsiNameValuePair(it as KtValueArgument) }
                 .toTypedArray<PsiNameValuePair>()
+        }
+
+        private fun makeArrayInitializerIfExpected(pair: KtLightPsiNameValuePair): PsiAnnotationMemberValue? {
+            val valueArgument = pair.valueArgument
+            val name = valueArgument.name ?: "value"
+            val callEntry = getCallEntry(name) ?: return null
+
+            val valueArguments = callEntry.value.arguments
+            val argument = valueArguments.firstOrNull()?.getArgumentExpression() ?: return null
+
+            if (!callEntry.key.type.let { KotlinBuiltIns.isArray(it) }) return null
+
+            if (argument !is KtStringTemplateExpression && argument !is KtConstantExpression && getAnnotationName(argument) == null) {
+                return null
+            }
+
+            val parent = PsiTreeUtil.findCommonParent(valueArguments.map { it.getArgumentExpression() }) as KtElement
+            return KtLightPsiArrayInitializerMemberValue(parent, pair) { self ->
+                valueArguments.mapNotNull {
+                    it.getArgumentExpression()?.let { convertToLightAnnotationMemberValue(self, it) }
+                }
+            }
+        }
+
+        private fun makeLightPsiNameValuePair(valueArgument: KtValueArgument) = KtLightPsiNameValuePair(valueArgument, this) { self ->
+            makeArrayInitializerIfExpected(self)
+                ?: self.valueArgument.getArgumentExpression()?.let { convertToLightAnnotationMemberValue(self, it) }
         }
 
         override fun getAttributes(): Array<PsiNameValuePair> = _attributes
@@ -233,7 +251,7 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
     override fun findAttributeValue(attributeName: String?) = null
 
     override fun getQualifiedName(): String? {
-        val annotatedElement = member.kotlinOrigin
+        val annotatedElement = member.takeIf(::isFromSources)?.kotlinOrigin
                 ?: // it is out of our hands
                 return getClsNullabilityAnnotation(member)?.qualifiedName
 
@@ -309,7 +327,7 @@ class KtLightNullabilityAnnotation(val member: KtLightElement<*, PsiModifierList
 }
 
 private fun getClsNullabilityAnnotation(member: KtLightElement<*, PsiModifierListOwner>): PsiAnnotation? {
-    if (!accessAnnotationsClsDelegateIsAllowed && ApplicationManager.getApplication().isUnitTestMode && member.kotlinOrigin != null)
+    if (!accessAnnotationsClsDelegateIsAllowed && ApplicationManager.getApplication().isUnitTestMode && isFromSources(member) && member.kotlinOrigin != null)
         LOG.error("nullability should be retrieved from `kotlinOrigin`")
     return member.clsDelegate.modifierList?.annotations?.findLast {
         isNullabilityAnnotation(it.qualifiedName)
@@ -323,6 +341,7 @@ private val backendNullabilityAnnotations = arrayOf(Nullable::class.java.name, N
 private fun KtElement.analyze(): BindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(this)
 
 private fun KtElement.getResolvedCall(): ResolvedCall<out CallableDescriptor>? {
+    if (!isValid) return null
     val context = analyze()
     return this.getResolvedCall(context)
 }

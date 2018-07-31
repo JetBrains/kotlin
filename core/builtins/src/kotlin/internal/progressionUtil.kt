@@ -42,16 +42,10 @@ private fun differenceModulo(a: Long, b: Long, c: Long): Long {
  * @suppress
  */
 @PublishedApi
-internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
-    if (step > 0) {
-        return end - differenceModulo(end, start, step)
-    }
-    else if (step < 0) {
-        return end + differenceModulo(start, end, -step)
-    }
-    else {
-        throw kotlin.IllegalArgumentException("Step is zero.")
-    }
+internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int = when {
+    step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step)
+    step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)
+    else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }
 
 /**
@@ -71,14 +65,8 @@ internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
  * @suppress
  */
 @PublishedApi
-internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long {
-    if (step > 0) {
-        return end - differenceModulo(end, start, step)
-    }
-    else if (step < 0) {
-        return end + differenceModulo(start, end, -step)
-    }
-    else {
-        throw kotlin.IllegalArgumentException("Step is zero.")
-    }
+internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long = when {
+    step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step)
+    step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)
+    else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }

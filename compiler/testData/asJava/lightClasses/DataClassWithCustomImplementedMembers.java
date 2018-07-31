@@ -18,6 +18,7 @@ public final class Wrapper {
         @org.jetbrains.annotations.NotNull
         public final p.Wrapper.Equals copy(@org.jetbrains.annotations.NotNull p.G code) { /* compiled code */ }
 
+        @org.jetbrains.annotations.NotNull
         public java.lang.String toString() { /* compiled code */ }
 
         public int hashCode() { /* compiled code */ }
@@ -40,9 +41,10 @@ public final class Wrapper {
         @org.jetbrains.annotations.NotNull
         public final p.Wrapper.HashCode copy(@org.jetbrains.annotations.NotNull p.G code) { /* compiled code */ }
 
+        @org.jetbrains.annotations.NotNull
         public java.lang.String toString() { /* compiled code */ }
 
-        public boolean equals(java.lang.Object p) { /* compiled code */ }
+        public boolean equals(@org.jetbrains.annotations.Nullable java.lang.Object p) { /* compiled code */ }
     }
 
     public static final class ToString {
@@ -65,6 +67,6 @@ public final class Wrapper {
 
         public int hashCode() { /* compiled code */ }
 
-        public boolean equals(java.lang.Object p) { /* compiled code */ }
+        public boolean equals(@org.jetbrains.annotations.Nullable java.lang.Object p) { /* compiled code */ }
     }
 }

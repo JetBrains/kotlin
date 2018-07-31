@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 interface A<T, U> {
     fun foo(t: T, u: U): String
 }

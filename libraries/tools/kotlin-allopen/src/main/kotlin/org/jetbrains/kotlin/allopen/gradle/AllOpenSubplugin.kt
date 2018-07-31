@@ -22,12 +22,15 @@ import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.internal.AbstractTask
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.allopen.gradle.model.builder.AllOpenModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import javax.inject.Inject
 
-class AllOpenGradleSubplugin : Plugin<Project> {
+class AllOpenGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(AllOpenGradleSubplugin::class.java) != null
 
@@ -38,6 +41,7 @@ class AllOpenGradleSubplugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create("allOpen", AllOpenExtension::class.java)
+        registry.register(AllOpenModelBuilder())
     }
 }
 

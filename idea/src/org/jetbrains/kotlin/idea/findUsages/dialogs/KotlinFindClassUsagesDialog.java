@@ -199,6 +199,8 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         kotlinOptions.setSearchConstructorUsages(constructorUsages.isSelected());
         kotlinOptions.isDerivedClasses = derivedClasses.isSelected();
         kotlinOptions.isDerivedInterfaces = derivedTraits.isSelected();
-        kotlinOptions.setSearchExpected(isSelected(expectedUsages));
+        if (expectedUsages != null) {
+            kotlinOptions.setSearchExpected(expectedUsages.isSelected());
+        }
     }
 }

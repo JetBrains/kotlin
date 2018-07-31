@@ -54,7 +54,6 @@ val FAKE_CONTINUATION_CLASS_DESCRIPTOR_RELEASE =
         createTypeConstructor()
     }
 
-
 fun transformSuspendFunctionToRuntimeFunctionType(suspendFunType: KotlinType, isReleaseCoroutines: Boolean): SimpleType {
     assert(suspendFunType.isSuspendFunctionType) {
         "This type should be suspend function type: $suspendFunType"
@@ -78,32 +77,6 @@ fun transformSuspendFunctionToRuntimeFunctionType(suspendFunType: KotlinType, is
             null,
             suspendFunType.builtIns.nullableAnyType
     ).makeNullableAsSpecified(suspendFunType.isMarkedNullable)
-}
-
-fun transformRuntimeFunctionTypeToSuspendFunction(funType: KotlinType, isReleaseCoroutines: Boolean): SimpleType? {
-    assert(funType.isFunctionType) {
-        "This type should be function type: $funType"
-    }
-
-    val continuationArgumentType = funType.getValueParameterTypesFromFunctionType().lastOrNull()?.type ?: return null
-    if (!isContinuation(continuationArgumentType.constructor.declarationDescriptor?.fqNameSafe, isReleaseCoroutines) ||
-        continuationArgumentType.arguments.size != 1
-    ) {
-        return null
-    }
-
-    val suspendReturnType = continuationArgumentType.arguments.single().type
-
-    return createFunctionType(
-            funType.builtIns,
-            funType.annotations,
-            funType.getReceiverTypeFromFunctionType(),
-            funType.getValueParameterTypesFromFunctionType().dropLast(1).map(TypeProjection::getType),
-            // TODO: names
-            null,
-            suspendReturnType,
-            suspendFunction = true
-    ).makeNullableAsSpecified(funType.isMarkedNullable)
 }
 
 fun isContinuation(name: FqName?, isReleaseCoroutines: Boolean): Boolean {

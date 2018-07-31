@@ -8,10 +8,10 @@ public const val ui1: kotlin.UInt = 0.toUInt()
 public const val ui2: kotlin.UInt = 42.toUInt()
 public const val ul0: kotlin.ULong = 3.toULong()
 public const val us0: kotlin.UShort = 2.toUShort()
-@AnnoUB(ub0 = 1.toUByte(), ub1 = 1.toByte()) public fun f0(): kotlin.Unit
-@AnnoUS(us0 = 7.toUShort(), us1 = 2.toShort()) public fun f1(): kotlin.Unit
-@AnnoUI(ui0 = -1, ui1 = 0, ui2 = 42, ui3 = 100.toUInt()) public fun f2(): kotlin.Unit
-@AnnoUL(ul0 = 3.toLong(), ul1 = 5.toULong()) public fun f3(): kotlin.Unit
+@AnnoUB(ub0 = 1.toUByte(), ub1 = 1.toUByte()) public fun f0(): kotlin.Unit
+@AnnoUS(us0 = 7.toUShort(), us1 = 2.toUShort()) public fun f1(): kotlin.Unit
+@AnnoUI(ui0 = -1.toUInt(), ui1 = 0.toUInt(), ui2 = 42.toUInt(), ui3 = 100.toUInt()) public fun f2(): kotlin.Unit
+@AnnoUL(ul0 = 3.toULong(), ul1 = 5.toULong()) public fun f3(): kotlin.Unit
 
 public final annotation class AnnoUB : kotlin.Annotation {
     public constructor AnnoUB(/*0*/ ub0: kotlin.UByte, /*1*/ ub1: kotlin.UByte)

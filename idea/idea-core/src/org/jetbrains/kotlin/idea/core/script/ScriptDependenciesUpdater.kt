@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -65,6 +66,14 @@ class ScriptDependenciesUpdater(
     private fun listenForChangesInScripts() {
         project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
             override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+                runScriptDependenciesUpdateIfNeeded(file)
+            }
+
+            override fun selectionChanged(event: FileEditorManagerEvent) {
+                event.newFile?.let { runScriptDependenciesUpdateIfNeeded(it) }
+            }
+
+            private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
                 if (file.fileType != KotlinFileType.INSTANCE) return
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return

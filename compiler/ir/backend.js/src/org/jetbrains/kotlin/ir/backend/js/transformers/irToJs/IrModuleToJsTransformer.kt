@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.utils.DFS
 
 class IrModuleToJsTransformer(val backendContext: JsIrBackendContext) : BaseIrElementToJsNodeTransformer<JsNode, Nothing?> {
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode {
@@ -27,42 +28,46 @@ class IrModuleToJsTransformer(val backendContext: JsIrBackendContext) : BaseIrEl
         program.globalBlock.statements += JsVars(JsVars.JsVar(anyName, Namer.JS_OBJECT))
         program.globalBlock.statements += JsVars(JsVars.JsVar(throwableName, Namer.JS_ERROR))
 
+        val preDeclarationBlock = JsGlobalBlock()
+        val postDeclarationBlock = JsGlobalBlock()
+
+        program.globalBlock.statements += preDeclarationBlock
+
         declaration.files.forEach {
             program.globalBlock.statements.add(it.accept(IrFileToJsTransformer(), rootContext))
         }
 
         // sort member forwarding code
-        program.globalBlock.statements += addPostDeclarations(rootContext.staticContext.classModels)
+        processClassModels(rootContext.staticContext.classModels, preDeclarationBlock, postDeclarationBlock)
+
+        program.globalBlock.statements += postDeclarationBlock
+        program.globalBlock.statements += rootContext.staticContext.initializerBlock
 
         return program
     }
 
-
-    private fun addPostDeclarations(classModels: Map<JsName, JsClassModel>): List<JsStatement> {
-
-        val statements = mutableListOf<JsStatement>()
-        val visited = mutableSetOf<JsName>()
-
-        for (name in classModels.keys) {
-            addPostDeclaration(name, visited, statements, classModels)
-        }
-
-        return statements
-    }
-
-    private fun addPostDeclaration(
-        name: JsName,
-        visited: MutableSet<JsName>,
-        statements: MutableList<JsStatement>,
-        classModels: Map<JsName, JsClassModel>
+    private fun processClassModels(
+        classModelMap: Map<JsName, JsClassModel>,
+        preDeclarationBlock: JsGlobalBlock,
+        postDeclarationBlock: JsGlobalBlock
     ) {
-        if (visited.add(name)) {
-            classModels[name]?.run {
-                superName?.let { addPostDeclaration(it, visited, statements, classModels) }
-                interfaces.forEach { addPostDeclaration(it, visited, statements, classModels) }
-
-                statements += postDeclarationBlock.statements
+        val declarationHandler = object : DFS.AbstractNodeHandler<JsName, Unit>() {
+            override fun result() {}
+            override fun afterChildren(current: JsName) {
+                classModelMap[current]?.let {
+                    preDeclarationBlock.statements += it.preDeclarationBlock.statements
+                    postDeclarationBlock.statements += it.postDeclarationBlock.statements
+                }
             }
         }
+
+        DFS.dfs(classModelMap.keys, {
+            val neighbors = mutableListOf<JsName>()
+            classModelMap[it]?.run {
+                if (superName != null) neighbors += superName!!
+                neighbors += interfaces
+            }
+            neighbors
+        }, declarationHandler)
     }
 }

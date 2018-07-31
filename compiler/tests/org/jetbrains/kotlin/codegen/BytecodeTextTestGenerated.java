@@ -910,6 +910,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testNoInlineInCmp() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constProperty/noInlineInCmp.kt");
         }
+
+        @TestMetadata("nonConstValHasNoDefaultValue_after.kt")
+        public void testNonConstValHasNoDefaultValue_after() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_after.kt");
+        }
+
+        @TestMetadata("nonConstValHasNoDefaultValue_before.kt")
+        public void testNonConstValHasNoDefaultValue_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_before.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/constantConditions")
@@ -1053,13 +1063,13 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @TestMetadata("doNotReassignContinuation.kt")
-        public void testDoNotReassignContinuation_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation.kt", "kotlin.coroutines.experimental");
+        public void testDoNotReassignContinuation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation.kt");
         }
 
-        @TestMetadata("doNotReassignContinuation.kt")
-        public void testDoNotReassignContinuation_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation.kt", "kotlin.coroutines");
+        @TestMetadata("doNotReassignContinuation_1_2.kt")
+        public void testDoNotReassignContinuation_1_2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation_1_2.kt");
         }
 
         @TestMetadata("returnUnitInLambda.kt")
@@ -1072,24 +1082,47 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/returnUnitInLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("varValueConflictsWithTable.kt")
+        public void testVarValueConflictsWithTable() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable.kt");
+        }
+
         @TestMetadata("varValueConflictsWithTableSameSort.kt")
+        public void testVarValueConflictsWithTableSameSort() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort.kt");
+        }
+
+        @TestMetadata("varValueConflictsWithTableSameSort_1_2.kt")
         public void testVarValueConflictsWithTableSameSort_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort.kt", "kotlin.coroutines.experimental");
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort_1_2.kt");
         }
 
-        @TestMetadata("varValueConflictsWithTableSameSort.kt")
-        public void testVarValueConflictsWithTableSameSort_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("varValueConflictsWithTable.kt")
+        @TestMetadata("varValueConflictsWithTable_1_2.kt")
         public void testVarValueConflictsWithTable_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable.kt", "kotlin.coroutines.experimental");
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable_1_2.kt");
         }
 
-        @TestMetadata("varValueConflictsWithTable.kt")
-        public void testVarValueConflictsWithTable_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable.kt", "kotlin.coroutines");
+        @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/debug")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Debug extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDebug() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/debug"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("continuationInLvt.kt")
+            public void testContinuationInLvt() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/continuationInLvt.kt");
+            }
+
+            @TestMetadata("probeCoroutineSuspended.kt")
+            public void testProbeCoroutineSuspended() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/probeCoroutineSuspended.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda")
@@ -2060,6 +2093,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noAssertionsForInlineClassesBasedOnNullableTypes.kt");
         }
 
+        @TestMetadata("noBoxingOnCastOperations.kt")
+        public void testNoBoxingOnCastOperations() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingOnCastOperations.kt");
+        }
+
         @TestMetadata("noBoxingOperationsOnNonTrivialSpread.kt")
         public void testNoBoxingOperationsOnNonTrivialSpread() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingOperationsOnNonTrivialSpread.kt");
@@ -2713,6 +2751,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("primitiveToString.kt")
         public void testPrimitiveToString() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitiveToString.kt");
+        }
+
+        @TestMetadata("primitivesAsStringTemplates.kt")
+        public void testPrimitivesAsStringTemplates() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/primitivesAsStringTemplates.kt");
         }
     }
 

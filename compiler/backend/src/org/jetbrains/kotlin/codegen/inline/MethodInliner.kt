@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
+import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
@@ -19,9 +20,13 @@ import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -214,12 +219,42 @@ class MethodInliner(
                         return
                     }
 
+                    // in case of inlining suspend lambda reference as ordinary parameter of inline function:
+                    //   suspend fun foo (...) ...
+                    //   inline fun inlineMe(c: (...) -> ...) ...
+                    //   builder {
+                    //     inlineMe(::foo)
+                    //   }
+                    // we should create additional parameter for continuation.
+                    var coroutineDesc = desc
+                    val actualInvokeDescriptor: FunctionDescriptor
+                    if (info.invokeMethodDescriptor.isSuspend) {
+                        val coroutineInvokeMethodDescriptor = getOrCreateJvmSuspendFunctionView(
+                            info.invokeMethodDescriptor,
+                            inliningContext.state
+                        )
+                        actualInvokeDescriptor = coroutineInvokeMethodDescriptor
+                        val coroutineInvokeDesc = typeMapper.mapAsmMethod(coroutineInvokeMethodDescriptor).descriptor
+                        // And here we expect invoke(...Ljava/lang/Object;) be replaced with invoke(...Lkotlin/coroutines/Continuation;)
+                        // if this does not happen, insert fake continuation, since we could not have one yet.
+                        val argumentTypes = Type.getArgumentTypes(desc)
+                        if (Type.getArgumentTypes(coroutineInvokeDesc).size != argumentTypes.size) {
+                            addFakeContinuationMarker(this)
+                            coroutineDesc = Type.getMethodDescriptor(Type.getReturnType(desc), *argumentTypes, AsmTypes.OBJECT_TYPE)
+                        }
+                    } else {
+                        actualInvokeDescriptor = info.invokeMethodDescriptor
+                    }
+
                     val valueParameters =
-                        listOfNotNull(info.invokeMethodDescriptor.extensionReceiverParameter) + info.invokeMethodDescriptor.valueParameters
+                        listOfNotNull(actualInvokeDescriptor.extensionReceiverParameter) + actualInvokeDescriptor.valueParameters
+
+                    val erasedInvokeFunction = ClosureCodegen.getErasedInvokeFunction(actualInvokeDescriptor)
+                    val invokeParameters = erasedInvokeFunction.valueParameters
 
                     val valueParamShift = Math.max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
                     putStackValuesIntoLocalsForLambdaOnInvoke(
-                        listOf(*info.invokeMethod.argumentTypes), valueParameters, valueParamShift, this, desc
+                        listOf(*info.invokeMethod.argumentTypes), valueParameters, invokeParameters, valueParamShift, this, coroutineDesc
                     )
 
                     if (invokeCall.lambdaInfo.invokeMethodDescriptor.valueParameters.isEmpty()) {
@@ -261,8 +296,6 @@ class MethodInliner(
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
 
-                    //return value boxing/unboxing
-                    val erasedInvokeFunction = ClosureCodegen.getErasedInvokeFunction(info.invokeMethodDescriptor)
                     val bridge = typeMapper.mapAsmMethod(erasedInvokeFunction)
                     StackValue
                         .onStack(info.invokeMethod.returnType, info.invokeMethodDescriptor.returnType)
@@ -994,6 +1027,7 @@ class MethodInliner(
         private fun putStackValuesIntoLocalsForLambdaOnInvoke(
             directOrder: List<Type>,
             directOrderOfArguments: List<ParameterDescriptor>,
+            directOrderOfInvokeParameters: List<ValueParameterDescriptor>,
             shift: Int,
             iv: InstructionAdapter,
             descriptor: String
@@ -1005,18 +1039,25 @@ class MethodInliner(
 
             var currentShift = shift + directOrder.sumBy { it.size }
 
-            val safeToUseArgumentKotlinType = directOrder.size == directOrderOfArguments.size
+            val safeToUseArgumentKotlinType =
+                directOrder.size == directOrderOfArguments.size && directOrderOfArguments.size == directOrderOfInvokeParameters.size
+
             directOrder.asReversed().forEachIndexed { index, type ->
                 currentShift -= type.size
                 val typeOnStack = actualParams[index]
-                if (typeOnStack != type) {
-                    val argumentType = if (safeToUseArgumentKotlinType)
-                        directOrderOfArguments[index].type.takeIf { it.isInlineClassType() }
-                    else
-                        null
-                    // if argument type had inline class type then after substitution it will also have the same type,
-                    // but probably boxed, which is OK because in terms of Kotlin types this is the same type
-                    StackValue.onStack(typeOnStack, argumentType).put(type, argumentType, iv)
+
+                val argumentKotlinType: KotlinType?
+                val invokeParameterKotlinType: KotlinType?
+                if (safeToUseArgumentKotlinType) {
+                    argumentKotlinType = directOrderOfArguments[index].type
+                    invokeParameterKotlinType = directOrderOfInvokeParameters[index].type
+                } else {
+                    argumentKotlinType = null
+                    invokeParameterKotlinType = null
+                }
+
+                if (typeOnStack != type || invokeParameterKotlinType != argumentKotlinType) {
+                    StackValue.onStack(typeOnStack, invokeParameterKotlinType).put(type, argumentKotlinType, iv)
                 }
                 iv.store(currentShift, type)
             }

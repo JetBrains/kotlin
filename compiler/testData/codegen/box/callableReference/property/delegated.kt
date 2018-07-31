@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 import kotlin.reflect.KProperty
 
 val four: Int by NumberDecrypter

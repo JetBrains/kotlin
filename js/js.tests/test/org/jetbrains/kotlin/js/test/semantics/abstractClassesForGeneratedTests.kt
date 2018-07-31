@@ -29,6 +29,8 @@ abstract class AbstractEnumValuesInlineTests : BorrowedInlineTest("enum/")
 
 abstract class AbstractInlineDefaultValuesTests : BorrowedInlineTest("defaultValues/")
 
+abstract class AbstractInlineSuspendTests : BorrowedInlineTest("suspend/")
+
 abstract class AbstractBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         "box/"

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class A : Collection<Char> {
     override val size: Int
         get() = throw UnsupportedOperationException()

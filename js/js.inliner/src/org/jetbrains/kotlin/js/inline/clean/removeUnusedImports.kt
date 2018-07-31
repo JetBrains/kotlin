@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.imported
 
 fun removeUnusedImports(root: JsNode) {
@@ -42,5 +43,13 @@ private class UsedImportsCollector : RecursiveJsVisitor() {
             usedImports += name
         }
         super.visitNameRef(nameRef)
+    }
+
+    override fun visitFunction(x: JsFunction) {
+        x.coroutineMetadata?.apply {
+            accept(suspendObjectRef)
+            accept(baseClassRef)
+        }
+        super.visitFunction(x)
     }
 }

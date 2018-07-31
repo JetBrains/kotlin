@@ -134,6 +134,9 @@ class FunctionNameInspection : NamingConventionInspection(
 ) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return namedFunctionVisitor { function ->
+            if (function.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                return@namedFunctionVisitor
+            }
             if (!TestUtils.isInTestSourceContent(function)) {
                 verifyName(function, holder)
             }
@@ -170,6 +173,10 @@ abstract class PropertyNameInspectionBase protected constructor(
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return propertyVisitor { property ->
+            if (property.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                return@propertyVisitor
+            }
+
             if (property.getKind() == kind) {
                 verifyName(property, holder)
             }

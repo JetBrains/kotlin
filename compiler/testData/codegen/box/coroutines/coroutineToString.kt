@@ -1,19 +1,19 @@
+// LANGUAGE_VERSION: 1.3
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class A<T : String> {
     suspend fun foo() {}
 
     suspend fun bar(): T {
         foo()
-        return suspendCoroutineOrReturn { x ->
+        return suspendCoroutineUninterceptedOrReturn { x ->
             x.resume(x.toString() as T)
             COROUTINE_SUSPENDED
         }
@@ -31,5 +31,5 @@ fun box(): String {
         result = A<String>().bar()
     }
 
-    return if (result == "(COROUTINES_PACKAGE.Continuation<T>) -> kotlin.Any?") "OK" else "Fail: $result"
+    return if (result == "Continuation @ A\$bar\$1") "OK" else "Fail: $result"
 }

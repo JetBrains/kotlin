@@ -70,7 +70,7 @@ class ControlFlowInformationProvider private constructor(
     ) : this(
         declaration,
         trace,
-        ControlFlowProcessor(trace).generatePseudocode(declaration),
+        ControlFlowProcessor(trace, languageVersionSettings).generatePseudocode(declaration),
         languageVersionSettings,
         diagnosticSuppressor
     )

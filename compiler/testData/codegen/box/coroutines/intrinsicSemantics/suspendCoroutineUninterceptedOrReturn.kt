@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -22,7 +23,7 @@ fun builder(shouldSuspend: Boolean, c: suspend () -> String): String {
     var counter = 0
 
     val result = try {
-        c.startCoroutineUninterceptedOrReturn(object: Continuation<String> {
+        c.startCoroutineUninterceptedOrReturn(object: ContinuationAdapter<String>() {
             override val context: CoroutineContext
                 get() =  ContinuationDispatcher { counter++ }
 
@@ -57,7 +58,7 @@ class ContinuationDispatcher(val dispatcher: () -> Unit) : AbstractCoroutineCont
 private class DispatchedContinuation<T>(
         val dispatcher: () -> Unit,
         val continuation: Continuation<T>
-): Continuation<T> {
+): ContinuationAdapter<T>() {
     override val context: CoroutineContext = continuation.context
 
     override fun resume(value: T) {

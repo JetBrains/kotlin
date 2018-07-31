@@ -4,4 +4,4 @@ class C(var v: Int) {
     }
 }
 
-//INFO: <pre><b>public</b> <b>final</b> <b>var</b> v: Int <i>defined in</i> C</pre>
+//INFO: <div class='definition'><pre><a href="psi_element://C"><code>C</code></a><br>public final var <b>v</b>: Int</pre></div>

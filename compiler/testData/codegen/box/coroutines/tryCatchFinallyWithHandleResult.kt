@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -11,7 +12,7 @@ var wasCalled = false
 class Controller {
     val postponedActions = ArrayList<() -> Unit>()
 
-    suspend fun suspendWithValue(v: String): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendWithValue(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
         postponedActions.add {
             x.resume(v)
         }
@@ -19,7 +20,7 @@ class Controller {
         COROUTINE_SUSPENDED
     }
 
-    suspend fun suspendWithException(e: Exception): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendWithException(e: Exception): String = suspendCoroutineUninterceptedOrReturn { x ->
         postponedActions.add {
             x.resumeWithException(e)
         }

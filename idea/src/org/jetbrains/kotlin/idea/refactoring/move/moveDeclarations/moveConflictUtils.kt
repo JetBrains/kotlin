@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.implementedModules
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -284,8 +285,6 @@ class MoveConflictChecker(
 
             val fqName = targetDescriptor.importableFqName ?: return true
             val importableDescriptor = targetDescriptor.getImportableDescriptor()
-            val renderedImportableTarget = DESCRIPTOR_RENDERER_FOR_COMPARISON.render(importableDescriptor)
-            val renderedTarget by lazy { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(targetDescriptor) }
 
             val targetModuleInfo = getModuleInfoByVirtualFile(project, targetScope)
             val dummyFile = KtPsiFactory(targetElement.project).createFile("dummy.kt", "").apply {
@@ -294,6 +293,14 @@ class MoveConflictChecker(
             }
 
             val newTargetDescriptors = dummyFile.resolveImportReference(fqName)
+
+            if (importableDescriptor is TypeAliasDescriptor
+                && newTargetDescriptors.any {
+                    it is ClassDescriptor && it.isExpect && it.importableFqName == importableDescriptor.importableFqName
+                }) return true
+
+            val renderedImportableTarget = DESCRIPTOR_RENDERER_FOR_COMPARISON.render(importableDescriptor)
+            val renderedTarget by lazy { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(targetDescriptor) }
 
             return newTargetDescriptors.any {
                 if (DESCRIPTOR_RENDERER_FOR_COMPARISON.render(it) != renderedImportableTarget) return@any false
@@ -483,8 +490,8 @@ class MoveConflictChecker(
         for (memberToCheck in membersToCheck) {
             for (reference in ReferencesSearch.search(memberToCheck)) {
                 val element = reference.element ?: continue
-                val usageModule = ModuleUtilCore.findModuleForPsiElement(element)
-                if (usageModule != targetModule && !isToBeMoved(element)) {
+                val usageModule = ModuleUtilCore.findModuleForPsiElement(element) ?: continue
+                if (usageModule != targetModule && targetModule !in usageModule.implementedModules && !isToBeMoved(element)) {
                     val container = element.getUsageContext()
                     val message = "${render(container)} uses internal ${render(memberToCheck)} which will be inaccessible after move"
                     conflicts.putValue(element, message.capitalize())

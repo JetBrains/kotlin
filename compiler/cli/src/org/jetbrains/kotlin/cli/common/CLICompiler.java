@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.utils.PathUtil;
 import java.io.File;
 import java.io.PrintStream;
 
+import static org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY;
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR;
 import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
@@ -50,7 +52,6 @@ import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLITool<A> {
 
     public static String KOTLIN_HOME_PROPERTY = "kotlin.home";
-    public static String KOTLIN_HOME_ENV_VAR = "KOTLIN_HOME";
 
     // Used in CompilerRunnerUtil#invokeExecMethod, in Eclipse plugin (KotlinCLICompiler) and in kotlin-gradle-plugin (GradleCompilerRunner)
     @NotNull
@@ -76,7 +77,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector, arguments.getAllWarningsAsErrors());
 
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, groupingCollector);
+        configuration.put(MESSAGE_COLLECTOR_KEY, groupingCollector);
         configuration.put(CLIConfigurationKeys.PERF_MANAGER, performanceManager);
         try {
             setupCommonArgumentsAndServices(configuration, arguments, services);
@@ -97,7 +98,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
                 performanceManager.notifyCompilationFinished();
                 if (arguments.getReportPerf()) {
                     performanceManager.getMeasurementResults().forEach(
-                            it -> configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(INFO, "PERF: " + it.render(), null)
+                            it -> configuration.get(MESSAGE_COLLECTOR_KEY).report(INFO, "PERF: " + it.render(), null)
                     );
                 }
 
@@ -149,6 +150,18 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         if (arguments.getReportOutputFiles()) {
             configuration.put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, true);
         }
+
+        String metadataVersionString = arguments.getMetadataVersion();
+        if (metadataVersionString != null) {
+            int[] versionArray = BinaryVersion.parseVersionArray(metadataVersionString);
+            if (versionArray == null) {
+                configuration.getNotNull(MESSAGE_COLLECTOR_KEY).report(ERROR, "Invalid metadata version: " + metadataVersionString, null);
+            }
+            else {
+                configuration.put(CommonConfigurationKeys.METADATA_VERSION, createMetadataVersion(versionArray));
+            }
+        }
+
         @SuppressWarnings("deprecation")
         CompilerJarLocator locator = services.get(CompilerJarLocator.class);
         if (locator != null) {
@@ -158,14 +171,15 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         setupLanguageVersionSettings(configuration, arguments);
     }
 
+    @NotNull
+    protected abstract BinaryVersion createMetadataVersion(@NotNull int[] versionArray);
+
     private void setupLanguageVersionSettings(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
-
-        MessageCollector collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-
-        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, arguments.configureLanguageVersionSettings(collector));
+        CommonConfigurationKeysKt.setLanguageVersionSettings(
+                configuration,
+                arguments.configureLanguageVersionSettings(configuration.getNotNull(MESSAGE_COLLECTOR_KEY))
+        );
     }
-
-    private static final String kotlinHomeEnvVar = System.getenv(KOTLIN_HOME_ENV_VAR);
 
     @Nullable
     private static KotlinPaths computeKotlinPaths(@NotNull MessageCollector messageCollector, @NotNull CommonCompilerArguments arguments) {
@@ -173,8 +187,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         String kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY);
         File kotlinHome =
                 arguments.getKotlinHome() != null ? new File(arguments.getKotlinHome()) :
-                kotlinHomeProperty != null        ? new File(kotlinHomeProperty) :
-                kotlinHomeEnvVar != null          ? new File(kotlinHomeEnvVar)
+                kotlinHomeProperty != null        ? new File(kotlinHomeProperty)
                                                   : null;
         if (kotlinHome != null) {
             if (kotlinHome.isDirectory()) {

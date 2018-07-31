@@ -1,6 +1,7 @@
 ================ Step #1 =================
 
 Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/A.class
   out/production/module/foo/B.class
 End of files

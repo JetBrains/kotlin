@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeprecationResolver
@@ -139,7 +140,12 @@ class ResolvedAtomCompleter(
                 ?: throw AssertionError("No function descriptor for resolved lambda argument")
         functionDescriptor.setReturnType(returnType)
 
-        val existingLambdaType = trace.getType(ktArgumentExpression) ?: throw AssertionError("No type for resolved lambda argument")
+        val existingLambdaType = trace.getType(ktArgumentExpression)
+        if (existingLambdaType == null) {
+            if (ktFunction is KtNamedFunction && ktFunction.nameIdentifier != null) return // it's a statement
+
+            throw AssertionError("No type for resolved lambda argument: ${ktArgumentExpression.text}")
+        }
         val substitutedFunctionalType = createFunctionType(
             builtIns,
             existingLambdaType.annotations,
@@ -228,7 +234,8 @@ class ResolvedAtomCompleter(
             is FunctionDescriptor -> doubleColonExpressionResolver.bindFunctionReference(
                 callableReferenceExpression,
                 resultType,
-                topLevelCallContext
+                topLevelCallContext,
+                callableCandidate.candidate as FunctionDescriptor
             )
             is PropertyDescriptor -> doubleColonExpressionResolver.bindPropertyReference(
                 callableReferenceExpression,

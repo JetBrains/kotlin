@@ -460,6 +460,8 @@ private fun IrFunction.generateDefaultsFunction(context: CommonBackendContext): 
 
         result.valueParameters += newValueParameters.also { it.forEach { it.parent = result } }
 
+        function.annotations.mapTo(result.annotations) { it.deepCopyWithSymbols() }
+
         result
     }
 }

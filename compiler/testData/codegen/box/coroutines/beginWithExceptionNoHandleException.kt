@@ -1,11 +1,12 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
 import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
-suspend fun suspendHere(): Any = suspendCoroutineOrReturn { x ->}
+suspend fun suspendHere(): Any = suspendCoroutineUninterceptedOrReturn { x ->}
 
 fun builder(c: suspend () -> Unit) {
     try {

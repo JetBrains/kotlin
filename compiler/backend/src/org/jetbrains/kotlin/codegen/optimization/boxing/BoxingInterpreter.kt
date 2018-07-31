@@ -276,14 +276,15 @@ fun isProgressionClass(type: Type) =
     isRangeOrProgression(buildFqNameByInternal(type.internalName))
 
 fun AbstractInsnNode.isAreEqualIntrinsicForSameTypedBoxedValues(values: List<BasicValue>) =
-    isAreEqualIntrinsic() && areSameTypedBoxedValues(values)
+    isAreEqualIntrinsic() && areSameTypedPrimitiveBoxedValues(values)
 
-fun areSameTypedBoxedValues(values: List<BasicValue>): Boolean {
+fun areSameTypedPrimitiveBoxedValues(values: List<BasicValue>): Boolean {
     if (values.size != 2) return false
     val (v1, v2) = values
     return v1 is BoxedBasicValue &&
             v2 is BoxedBasicValue &&
-            v1.descriptor.unboxedType == v2.descriptor.unboxedType
+            v1.descriptor.unboxedType == v2.descriptor.unboxedType &&
+            !v1.descriptor.isInlineClassValue && !v2.descriptor.isInlineClassValue
 }
 
 fun AbstractInsnNode.isAreEqualIntrinsic() =
@@ -299,7 +300,7 @@ fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>, generationState: Gen
     values.none { getUnboxedType(it.type, generationState) in shouldUseEqualsForWrappers }
 
 fun AbstractInsnNode.isJavaLangComparableCompareToForSameTypedBoxedValues(values: List<BasicValue>) =
-    isJavaLangComparableCompareTo() && areSameTypedBoxedValues(values)
+    isJavaLangComparableCompareTo() && areSameTypedPrimitiveBoxedValues(values)
 
 fun AbstractInsnNode.isJavaLangComparableCompareTo() =
     isMethodInsnWith(Opcodes.INVOKEINTERFACE) {

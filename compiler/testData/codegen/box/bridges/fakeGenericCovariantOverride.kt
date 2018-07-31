@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // KT-3985
 
 interface Trait<T> {

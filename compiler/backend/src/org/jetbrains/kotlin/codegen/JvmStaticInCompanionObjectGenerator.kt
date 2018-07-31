@@ -63,7 +63,7 @@ class JvmStaticInCompanionObjectGenerator(
                                 propertyValue.put(signature.returnType, iv)
                             }
                             else {
-                                propertyValue.store(StackValue.onStack(propertyValue.type), iv, true)
+                                propertyValue.store(StackValue.onStack(propertyValue.type, propertyValue.kotlinType), iv, true)
                             }
                         }
                         else {

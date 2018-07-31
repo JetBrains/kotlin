@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -12,7 +13,7 @@ var complete = false
 
 suspend fun suspendHere(x: String): Unit {
     log += "suspendHere($x);"
-    return suspendCoroutineOrReturn { c ->
+    return suspendCoroutineUninterceptedOrReturn { c ->
         postponed = { c.resume(Unit) }
         log += "suspended;"
         COROUTINE_SUSPENDED

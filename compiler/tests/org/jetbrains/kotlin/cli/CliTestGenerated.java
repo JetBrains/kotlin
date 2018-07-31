@@ -261,6 +261,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/internalArgMissingModificator.args");
         }
 
+        @TestMetadata("internalArgNoWarningForEnablingBugfix.args")
+        public void testInternalArgNoWarningForEnablingBugfix() throws Exception {
+            runTest("compiler/testData/cli/jvm/internalArgNoWarningForEnablingBugfix.args");
+        }
+
         @TestMetadata("internalArgUnrecognizedFeature.args")
         public void testInternalArgUnrecognizedFeature() throws Exception {
             runTest("compiler/testData/cli/jvm/internalArgUnrecognizedFeature.args");
@@ -274,6 +279,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("internalArgumentOverrideExtraArgument.args")
         public void testInternalArgumentOverrideExtraArgument() throws Exception {
             runTest("compiler/testData/cli/jvm/internalArgumentOverrideExtraArgument.args");
+        }
+
+        @TestMetadata("invalidMetadataVersion.args")
+        public void testInvalidMetadataVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/invalidMetadataVersion.args");
         }
 
         @TestMetadata("javaSrcWrongPackage.args")
@@ -459,6 +469,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("progressiveModeOn.args")
         public void testProgressiveModeOn() throws Exception {
             runTest("compiler/testData/cli/jvm/progressiveModeOn.args");
+        }
+
+        @TestMetadata("releaseCoroutinesApiVersion1.2.args")
+        public void testReleaseCoroutinesApiVersion1_2() throws Exception {
+            runTest("compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.args");
         }
 
         @TestMetadata("returnAsWhenKey.args")
@@ -848,6 +863,11 @@ public class CliTestGenerated extends AbstractCliTest {
 
         public void testAllFilesPresentInMetadata() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("kotlinPackage.args")
+        public void testKotlinPackage() throws Exception {
+            runTest("compiler/testData/cli/metadata/kotlinPackage.args");
         }
 
         @TestMetadata("moduleName.args")

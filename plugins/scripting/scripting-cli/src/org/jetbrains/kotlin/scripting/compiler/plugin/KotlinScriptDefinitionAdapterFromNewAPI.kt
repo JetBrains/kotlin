@@ -79,6 +79,14 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
             ScriptExpectedLocation.TestsOnly
         )
 
+    override val targetClassAnnotations: List<Annotation>
+        get() = scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.generatedClassAnnotations)
+            .orEmpty()
+
+    override val targetMethodAnnotations: List<Annotation>
+        get() = scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.generatedMethodAnnotations)
+            .orEmpty()
+
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {
         scriptDefinition.properties.getOrNull(ScriptingEnvironmentProperties.getScriptingClass)
                 ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment")

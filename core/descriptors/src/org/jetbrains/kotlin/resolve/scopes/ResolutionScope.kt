@@ -31,7 +31,7 @@ interface ResolutionScope {
     /**
      * Returns contributed classifier, but discriminates deprecated
      *
-     * This method can return some classifier where [getContributedClassifier] haven't returned none,
+     * This method can return some classifier where [getContributedClassifier] haven't returned any,
      * but it should never return different one, even if it is deprecated.
      * Note that implementors are encouraged to provide non-deprecated classifier if it doesn't contradict
      * contract above.

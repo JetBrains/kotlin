@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.jvm.compiler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.text.StringKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
-import kotlin.sequences.SequencesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -118,13 +116,20 @@ public class LoadDescriptorUtil {
     }
 
     public static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
+        List<String> args = new ArrayList<>(Arrays.asList(
+                "-sourcepath", "compiler/testData/loadJava/include",
+                "-d", outDir.getPath())
+        );
+
         List<File> classpath = new ArrayList<>();
 
         classpath.add(ForTestCompileRuntime.runtimeJarForTests());
         classpath.add(KotlinTestUtils.getAnnotationsJar());
 
-        for (File test: javaFiles) {
+        for (File test : javaFiles) {
             String content = FilesKt.readText(test, Charsets.UTF_8);
+
+            args.addAll(InTextDirectivesUtils.findListWithPrefixes(content, "JAVAC_OPTIONS:"));
 
             if (InTextDirectivesUtils.isDirectiveDefined(content, "ANDROID_ANNOTATIONS")) {
                 classpath.add(ForTestCompileRuntime.androidAnnotationsForTests());
@@ -135,11 +140,10 @@ public class LoadDescriptorUtil {
             }
         }
 
-        KotlinTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
-                "-classpath", classpath.stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator)),
-                "-sourcepath", "compiler/testData/loadJava/include",
-                "-d", outDir.getPath()
-        ));
+        args.add("-classpath");
+        args.add(classpath.stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator)));
+
+        KotlinTestUtils.compileJavaFiles(javaFiles, args);
     }
 
     @NotNull

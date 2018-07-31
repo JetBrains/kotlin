@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
 open class DeserializedAnnotations(
-        storageManager: StorageManager,
-        compute: () -> List<AnnotationDescriptor>
+    storageManager: StorageManager,
+    compute: () -> List<AnnotationDescriptor>
 ) : Annotations {
     private val annotations by storageManager.createLazyValue(compute)
 
@@ -39,22 +39,22 @@ open class DeserializedAnnotations(
 }
 
 class NonEmptyDeserializedAnnotations(
-        storageManager: StorageManager,
-        compute: () -> List<AnnotationDescriptor>
+    storageManager: StorageManager,
+    compute: () -> List<AnnotationDescriptor>
 ) : DeserializedAnnotations(storageManager, compute) {
     override fun isEmpty(): Boolean = false
 }
 
 open class DeserializedAnnotationsWithPossibleTargets(
-        storageManager: StorageManager,
-        compute: () -> List<AnnotationWithTarget>
+    storageManager: StorageManager,
+    compute: () -> List<AnnotationWithTarget>
 ) : Annotations {
     private val annotations by storageManager.createLazyValue(compute)
 
     override fun isEmpty(): Boolean = annotations.isEmpty()
 
     override fun findAnnotation(fqName: FqName): AnnotationDescriptor? =
-            annotations.firstOrNull { (annotation, target) -> target == null && annotation.fqName == fqName }?.annotation
+        annotations.firstOrNull { (annotation, target) -> target == null && annotation.fqName == fqName }?.annotation
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = annotations.filter { it.target != null }
 
@@ -66,8 +66,8 @@ open class DeserializedAnnotationsWithPossibleTargets(
 }
 
 class NonEmptyDeserializedAnnotationsWithPossibleTargets(
-        storageManager: StorageManager,
-        compute: () -> List<AnnotationWithTarget>
+    storageManager: StorageManager,
+    compute: () -> List<AnnotationWithTarget>
 ) : DeserializedAnnotationsWithPossibleTargets(storageManager, compute) {
     override fun isEmpty(): Boolean = false
 }

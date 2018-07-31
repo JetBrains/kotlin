@@ -520,6 +520,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
         }
 
+        if (old.hasExtension(JvmProtoBuf.flags) != new.hasExtension(JvmProtoBuf.flags)) return false
+        if (old.hasExtension(JvmProtoBuf.flags)) {
+            if (old.getExtension(JvmProtoBuf.flags) != new.getExtension(JvmProtoBuf.flags)) return false
+        }
+
         if (old.getExtensionCount(JsProtoBuf.propertyAnnotation) != new.getExtensionCount(JsProtoBuf.propertyAnnotation)) {
             return false
         }
@@ -989,6 +994,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         }
 
         if (!checkEqualsAnnotationArgumentValueArrayElement(old, new)) return false
+
+        if (old.hasFlags() != new.hasFlags()) return false
+        if (old.hasFlags()) {
+            if (old.flags != new.flags) return false
+        }
 
         return true
     }
@@ -1724,6 +1734,10 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.propertySignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasExtension(JvmProtoBuf.flags)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.flags)
+    }
+
     for(i in 0..getExtensionCount(JsProtoBuf.propertyAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
@@ -2118,6 +2132,10 @@ fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: (Int) -> Int, fqN
 
     for(i in 0..arrayElementCount - 1) {
         hashCode = 31 * hashCode + getArrayElement(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasFlags()) {
+        hashCode = 31 * hashCode + flags
     }
 
     return hashCode

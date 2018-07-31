@@ -77,6 +77,8 @@ public class Flags {
     public static final BooleanFlagField IS_NEGATED = FlagField.booleanFirst();
     public static final BooleanFlagField IS_NULL_CHECK_PREDICATE = FlagField.booleanAfter(IS_NEGATED);
 
+    // Annotations
+    public static final BooleanFlagField IS_UNSIGNED = FlagField.booleanFirst();
 
     // ---
 

@@ -6,7 +6,7 @@
 package kotlin.js
 
 @kotlin.internal.DynamicExtension
-public fun <T> dynamic.unsafeCast(): T = this
+public inline fun <T> dynamic.unsafeCast(): T = this
 
 private fun isInterfaceImpl(ctor: dynamic, iface: dynamic): Boolean {
     if (ctor === iface) return true;
@@ -14,7 +14,7 @@ private fun isInterfaceImpl(ctor: dynamic, iface: dynamic): Boolean {
     val self = ::isInterfaceImpl
     return js(
         """
-    var metadata = ctor.${'$'}metadata${'$'};
+    var metadata = ctor.${"$"}metadata${"$"};
     if (metadata != null) {
         var interfaces = metadata.interfaces;
         for (var i = 0; i < interfaces.length; i++) {

@@ -1,0 +1,68 @@
+== s ==
+val s = mutableListOf<String>()
+---------------------
+mutableListOf             !<v0>: *
+mutableListOf<String>()   <v1>: {<: [ERROR : Type for mutableListOf<String>()]}   NEW: magic[UNRESOLVED_CALL](mutableListOf<String>()|!<v0>) -> <v1>
+=====================
+== test ==
+fun test(name: String?, flag: Boolean): Boolean {
+    try {
+        name?.let {
+            if (flag) {
+                s.add(it)
+            }
+            else {
+                s.remove(it)
+            }
+
+            return true
+        }
+
+        return false
+    } finally {
+        name?.hashCode()
+    }
+}
+---------------------
+                                                                                                                                <v0>: {<: String?}               NEW: magic[FAKE_INITIALIZER](name: String?) -> <v0>
+                                                                                                                                <v1>: Boolean                    NEW: magic[FAKE_INITIALIZER](flag: Boolean) -> <v1>
+name                                                                                                                            <v2>: String                     NEW: r(name) -> <v2>
+{ if (flag) { s.add(it) } else { s.remove(it) } return true }                                                                   <v3>: {<: (String) -> Nothing}   NEW: r({ if (flag) { s.add(it) } else { s.remove(it) } return true }) -> <v3>
+let { if (flag) { s.add(it) } else { s.remove(it) } return true }                                                               !<v4>: *
+name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true }                                                         !<v4>: *                         COPY
+false                                                                                                                           <v5>: Boolean                    NEW: r(false) -> <v5>
+return false                                                                                                                    !<v6>: *
+{ name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false }                                        !<v6>: *                         COPY
+try { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false } finally { name?.hashCode() }       <v7>: *                          NEW: merge(try { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false } finally { name?.hashCode() }|!<v6>) -> <v7>
+{ try { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false } finally { name?.hashCode() } }   <v7>: *                          COPY
+=====================
+== inlined anonymous_0 ==
+{
+            if (flag) {
+                s.add(it)
+            }
+            else {
+                s.remove(it)
+            }
+
+            return true
+        }
+---------------------
+                                                            <v3>: *          NEW: magic[VALUE_CONSUMER](it|<v2>) -> <v3>
+                                                            <v7>: *          NEW: magic[VALUE_CONSUMER](it|<v6>) -> <v7>
+flag                                                        <v0>: Boolean    NEW: r(flag) -> <v0>
+s                                                           <v1>: *          NEW: r(s) -> <v1>
+it                                                          <v2>: *          NEW: r(it) -> <v2>
+add(it)                                                     <v4>: *          NEW: call(add(it), <ERROR FUNCTION>|<v1>) -> <v4>
+s.add(it)                                                   <v4>: *          COPY
+{ s.add(it) }                                               <v4>: *          COPY
+s                                                           <v5>: *          NEW: r(s) -> <v5>
+it                                                          <v6>: *          NEW: r(it) -> <v6>
+remove(it)                                                  <v8>: *          NEW: call(remove(it), <ERROR FUNCTION>|<v5>) -> <v8>
+s.remove(it)                                                <v8>: *          COPY
+{ s.remove(it) }                                            <v8>: *          COPY
+if (flag) { s.add(it) } else { s.remove(it) }               <v9>: *          NEW: merge(if (flag) { s.add(it) } else { s.remove(it) }|<v4>, <v8>) -> <v9>
+true                                                        <v10>: Boolean   NEW: r(true) -> <v10>
+return true                                                 !<v13>: *
+if (flag) { s.add(it) } else { s.remove(it) } return true   !<v13>: *        COPY
+=====================

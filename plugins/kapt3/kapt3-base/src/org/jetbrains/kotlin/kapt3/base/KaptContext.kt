@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.putJavacOption
+import java.io.Closeable
 import java.io.File
 import javax.tools.JavaFileManager
 
@@ -27,7 +28,7 @@ open class KaptContext(
     private val mapDiagnosticLocations: Boolean,
     processorOptions: Map<String, String>,
     javacOptions: Map<String, String> = emptyMap()
-) : AutoCloseable {
+) : Closeable {
     val context = Context()
     val compiler: KaptJavaCompiler
     val fileManager: KaptJavaFileManager

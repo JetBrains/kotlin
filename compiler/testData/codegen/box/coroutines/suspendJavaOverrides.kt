@@ -1,7 +1,8 @@
+// LANGUAGE_VERSION: 1.3
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 
 // FILE: I.kt
 
@@ -13,16 +14,16 @@ interface I {
 
 public class JavaClass implements I {
     @Override
-    public Object foo(int x, COROUTINES_PACKAGE.Continuation<? super String> continuation) {
-        continuation.resume("OK");
-        return COROUTINES_PACKAGE.intrinsics.IntrinsicsKt.getCOROUTINE_SUSPENDED();
+    public Object foo(int x, kotlin.coroutines.Continuation<? super String> continuation) {
+        continuation.resumeWith("OK");
+        return kotlin.coroutines.intrinsics.IntrinsicsKt.getCOROUTINE_SUSPENDED();
     }
 }
 
 // FILE: main.kt
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)

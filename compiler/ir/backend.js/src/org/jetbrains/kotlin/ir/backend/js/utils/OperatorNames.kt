@@ -26,7 +26,7 @@ object OperatorNames {
 
     val SHL = Name.identifier("shl")
     val SHR = Name.identifier("shr")
-    val SHRU = Name.identifier("shru")
+    val SHRU = Name.identifier("ushr")
 
     val NOT = OperatorNameConventions.NOT
 

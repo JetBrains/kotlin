@@ -2200,6 +2200,23 @@ public final class ProtoBuf {
          * <code>repeated .org.jetbrains.kotlin.metadata.Annotation.Argument.Value array_element = 9;</code>
          */
         int getArrayElementCount();
+
+        /**
+         * <code>optional int32 flags = 10 [default = 0];</code>
+         *
+         * <pre>
+         *isUnsigned
+         * </pre>
+         */
+        boolean hasFlags();
+        /**
+         * <code>optional int32 flags = 10 [default = 0];</code>
+         *
+         * <pre>
+         *isUnsigned
+         * </pre>
+         */
+        int getFlags();
       }
       /**
        * Protobuf type {@code org.jetbrains.kotlin.metadata.Annotation.Argument.Value}
@@ -2312,6 +2329,11 @@ public final class ProtoBuf {
                     mutable_bitField0_ |= 0x00000100;
                   }
                   arrayElement_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.PARSER, extensionRegistry));
+                  break;
+                }
+                case 80: {
+                  bitField0_ |= 0x00000100;
+                  flags_ = input.readInt32();
                   break;
                 }
               }
@@ -2681,6 +2703,29 @@ public final class ProtoBuf {
           return arrayElement_.get(index);
         }
 
+        public static final int FLAGS_FIELD_NUMBER = 10;
+        private int flags_;
+        /**
+         * <code>optional int32 flags = 10 [default = 0];</code>
+         *
+         * <pre>
+         *isUnsigned
+         * </pre>
+         */
+        public boolean hasFlags() {
+          return ((bitField0_ & 0x00000100) == 0x00000100);
+        }
+        /**
+         * <code>optional int32 flags = 10 [default = 0];</code>
+         *
+         * <pre>
+         *isUnsigned
+         * </pre>
+         */
+        public int getFlags() {
+          return flags_;
+        }
+
         private void initFields() {
           type_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.BYTE;
           intValue_ = 0L;
@@ -2691,6 +2736,7 @@ public final class ProtoBuf {
           enumValueId_ = 0;
           annotation_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance();
           arrayElement_ = java.util.Collections.emptyList();
+          flags_ = 0;
         }
         private byte memoizedIsInitialized = -1;
         public final boolean isInitialized() {
@@ -2744,6 +2790,9 @@ public final class ProtoBuf {
           for (int i = 0; i < arrayElement_.size(); i++) {
             output.writeMessage(9, arrayElement_.get(i));
           }
+          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+            output.writeInt32(10, flags_);
+          }
           output.writeRawBytes(unknownFields);
         }
 
@@ -2788,6 +2837,10 @@ public final class ProtoBuf {
           for (int i = 0; i < arrayElement_.size(); i++) {
             size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeMessageSize(9, arrayElement_.get(i));
+          }
+          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32Size(10, flags_);
           }
           size += unknownFields.size();
           memoizedSerializedSize = size;
@@ -2901,6 +2954,8 @@ public final class ProtoBuf {
             bitField0_ = (bitField0_ & ~0x00000080);
             arrayElement_ = java.util.Collections.emptyList();
             bitField0_ = (bitField0_ & ~0x00000100);
+            flags_ = 0;
+            bitField0_ = (bitField0_ & ~0x00000200);
             return this;
           }
 
@@ -2961,6 +3016,10 @@ public final class ProtoBuf {
               bitField0_ = (bitField0_ & ~0x00000100);
             }
             result.arrayElement_ = arrayElement_;
+            if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+              to_bitField0_ |= 0x00000100;
+            }
+            result.flags_ = flags_;
             result.bitField0_ = to_bitField0_;
             return result;
           }
@@ -3000,6 +3059,9 @@ public final class ProtoBuf {
                 arrayElement_.addAll(other.arrayElement_);
               }
               
+            }
+            if (other.hasFlags()) {
+              setFlags(other.getFlags());
             }
             setUnknownFields(
                 getUnknownFields().concat(other.unknownFields));
@@ -3490,6 +3552,54 @@ public final class ProtoBuf {
             ensureArrayElementIsMutable();
             arrayElement_.remove(index);
 
+            return this;
+          }
+
+          private int flags_ ;
+          /**
+           * <code>optional int32 flags = 10 [default = 0];</code>
+           *
+           * <pre>
+           *isUnsigned
+           * </pre>
+           */
+          public boolean hasFlags() {
+            return ((bitField0_ & 0x00000200) == 0x00000200);
+          }
+          /**
+           * <code>optional int32 flags = 10 [default = 0];</code>
+           *
+           * <pre>
+           *isUnsigned
+           * </pre>
+           */
+          public int getFlags() {
+            return flags_;
+          }
+          /**
+           * <code>optional int32 flags = 10 [default = 0];</code>
+           *
+           * <pre>
+           *isUnsigned
+           * </pre>
+           */
+          public Builder setFlags(int value) {
+            bitField0_ |= 0x00000200;
+            flags_ = value;
+            
+            return this;
+          }
+          /**
+           * <code>optional int32 flags = 10 [default = 0];</code>
+           *
+           * <pre>
+           *isUnsigned
+           * </pre>
+           */
+          public Builder clearFlags() {
+            bitField0_ = (bitField0_ & ~0x00000200);
+            flags_ = 0;
+            
             return this;
           }
 

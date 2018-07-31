@@ -20,10 +20,9 @@ import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findNonGenericClassAcrossDependencies
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.lazy.descriptors.script.classId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import kotlin.reflect.KClass
@@ -33,19 +32,15 @@ import kotlin.reflect.KVariance
 import kotlin.reflect.full.primaryConstructor
 
 fun KotlinScriptDefinition.getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
-        template.primaryConstructor?.parameters
-                ?.map { ScriptParameter(Name.identifier(it.name!!), getKotlinTypeByKType(scriptDescriptor, it.type)) }
-        ?: emptyList()
+    template.primaryConstructor?.parameters
+        ?.map { ScriptParameter(Name.identifier(it.name!!), getKotlinTypeByKType(scriptDescriptor, it.type)) }
+            ?: emptyList()
 
 fun getKotlinTypeByKClass(scriptDescriptor: ScriptDescriptor, kClass: KClass<out Any>): KotlinType =
-        getKotlinTypeByFqName(scriptDescriptor,
-                              kClass.qualifiedName ?: throw RuntimeException("Cannot get FQN from $kClass"))
-
-private fun getKotlinTypeByFqName(scriptDescriptor: ScriptDescriptor, fqName: String): KotlinType =
-        scriptDescriptor.module.findNonGenericClassAcrossDependencies(
-                ClassId.topLevel(FqName(fqName)),
-                NotFoundClasses(LockBasedStorageManager.NO_LOCKS, scriptDescriptor.module)
-        ).defaultType
+    scriptDescriptor.module.findNonGenericClassAcrossDependencies(
+        kClass.classId,
+        NotFoundClasses(LockBasedStorageManager.NO_LOCKS, scriptDescriptor.module)
+    ).defaultType
 
 // TODO: support star projections
 // TODO: support annotations on types and type parameters

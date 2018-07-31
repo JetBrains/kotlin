@@ -38,22 +38,26 @@ data class JsBuildMetaInfo(
             multiplatformEnable: Boolean,
             ownVersion: Int,
             coroutinesVersion: Int,
-            multiplatformVersion: Int
-        ) = JsBuildMetaInfo(
-            isEAP = isEAP,
-            compilerBuildVersion = compilerBuildVersion,
-            languageVersionString = languageVersionString,
-            apiVersionString = apiVersionString,
-            coroutinesEnable = coroutinesEnable,
-            coroutinesWarn = coroutinesWarn,
-            coroutinesError = coroutinesError,
-            multiplatformEnable = multiplatformEnable,
-            metadataVersionMajor = JsMetadataVersion.INSTANCE.major,
-            metadataVersionMinor = JsMetadataVersion.INSTANCE.minor,
-            metadataVersionPatch = JsMetadataVersion.INSTANCE.patch,
-            ownVersion = ownVersion,
-            coroutinesVersion = coroutinesVersion,
-            multiplatformVersion = multiplatformVersion
-        )
+            multiplatformVersion: Int,
+            metadataVersionArray: IntArray?
+        ): JsBuildMetaInfo {
+            val metadataVersion = metadataVersionArray?.let(::JsMetadataVersion) ?: JsMetadataVersion.INSTANCE
+            return JsBuildMetaInfo(
+                isEAP = isEAP,
+                compilerBuildVersion = compilerBuildVersion,
+                languageVersionString = languageVersionString,
+                apiVersionString = apiVersionString,
+                coroutinesEnable = coroutinesEnable,
+                coroutinesWarn = coroutinesWarn,
+                coroutinesError = coroutinesError,
+                multiplatformEnable = multiplatformEnable,
+                metadataVersionMajor = metadataVersion.major,
+                metadataVersionMinor = metadataVersion.minor,
+                metadataVersionPatch = metadataVersion.patch,
+                ownVersion = ownVersion,
+                coroutinesVersion = coroutinesVersion,
+                multiplatformVersion = multiplatformVersion
+            )
+        }
     }
 }

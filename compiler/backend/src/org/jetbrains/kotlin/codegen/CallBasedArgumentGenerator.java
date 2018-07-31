@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
@@ -18,12 +19,14 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.StackValue.createDefaultValue;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 
 public class CallBasedArgumentGenerator extends ArgumentGenerator {
     private final ExpressionCodegen codegen;
     private final CallGenerator callGenerator;
     private final List<ValueParameterDescriptor> valueParameters;
     private final List<Type> valueParameterTypes;
+    private final boolean isVarargInvoke;
 
     public CallBasedArgumentGenerator(
             @NotNull ExpressionCodegen codegen,
@@ -36,19 +39,23 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         this.valueParameters = valueParameters;
         this.valueParameterTypes = valueParameterTypes;
 
-        assert valueParameters.size() == valueParameterTypes.size() :
-                "Value parameters and their types mismatch in sizes: " + valueParameters.size() + " != " + valueParameterTypes.size();
+        CallableDescriptor container = valueParameters.isEmpty() ? null : valueParameters.get(0).getContainingDeclaration();
+        this.isVarargInvoke = JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(container);
+
+        if (!isVarargInvoke) {
+            assert valueParameters.size() == valueParameterTypes.size() :
+                    "Value parameters and their types mismatch in sizes: " + valueParameters.size() + " != " + valueParameterTypes.size();
+        }
     }
 
     @Override
     protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
-        Type type = valueParameterTypes.get(i);
         ValueArgument valueArgument = argument.getValueArgument();
         assert valueArgument != null;
         KtExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression != null : valueArgument.asElement().getText();
-        callGenerator.genValueAndPut(parameter, argumentExpression, type, i);
+        callGenerator.genValueAndPut(parameter, argumentExpression, isVarargInvoke ? OBJECT_TYPE : valueParameterTypes.get(i), i);
     }
 
     @Override

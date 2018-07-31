@@ -1,6 +1,7 @@
 ================ Step #1 =================
 
 Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/A.class
 End of files
 Marked as dirty by Kotlin:
@@ -10,7 +11,6 @@ Marked as dirty by Kotlin:
   src/useAfoo.kt
   src/useBbar.kt
 Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/B.class
   out/production/module/use/CreateAKt.class
   out/production/module/use/CreateBKt.class

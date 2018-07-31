@@ -18,8 +18,7 @@ import org.jetbrains.org.objectweb.asm.Type
 class IrFrameMap : FrameMapBase<IrSymbol>()
 
 internal val IrFunction.isStatic
-    get() = (this.dispatchReceiverParameter == null && this !is IrConstructor) ||
-            (parentAsClass.isObject && this.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) //TODO add lowering
+    get() = (this.dispatchReceiverParameter == null && this !is IrConstructor)
 
 fun IrFrameMap.enter(irDeclaration: IrSymbolOwner, type: Type): Int {
     return enter(irDeclaration.symbol, type)

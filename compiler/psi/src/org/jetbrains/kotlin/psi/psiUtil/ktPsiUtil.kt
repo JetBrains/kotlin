@@ -291,6 +291,24 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
     return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
 }
 
+// ----------- Contracts -------------------------------------------------------------------------------------------------------------------
+
+fun KtElement.isContractPresentPsiCheck(): Boolean {
+    val contractAllowedHere = this is KtNamedFunction &&
+            isTopLevel &&
+            hasBlockBody() &&
+            !hasModifier(KtTokens.OPERATOR_KEYWORD)
+    if (!contractAllowedHere) return false
+
+    val firstExpression = ((this as? KtFunction)?.bodyExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: return false
+
+    return firstExpression.isContractDescriptionCallPsiCheck()
+}
+
+fun KtExpression.isContractDescriptionCallPsiCheck(): Boolean =
+    this is KtCallExpression && calleeExpression?.text == "contract"
+
+
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
 
 fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {

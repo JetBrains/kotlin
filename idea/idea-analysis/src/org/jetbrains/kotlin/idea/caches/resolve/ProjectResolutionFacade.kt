@@ -24,8 +24,10 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformSupport
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
@@ -37,11 +39,12 @@ import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
-import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class ProjectResolutionFacade(
@@ -116,10 +119,17 @@ internal class ProjectResolutionFacade(
             ModuleContent(module, syntheticFilesByModule[module] ?: listOf(), module.contentScope())
         }
 
-        val jvmPlatformParameters = JvmPlatformParameters { javaClass: JavaClass ->
-            val psiClass = (javaClass as JavaClassImpl).psi
-            psiClass.getNullableModuleInfo()
-        }
+        val jvmPlatformParameters = JvmPlatformParameters(
+            packagePartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) },
+            moduleByJavaClass = { javaClass: JavaClass ->
+                val psiClass = (javaClass as JavaClassImpl).psi
+                psiClass.getNullableModuleInfo()
+            }
+        )
+
+        val commonPlatformParameters = CommonAnalysisParameters(
+            metadataPartProviderFactory = { IDEPackagePartProvider(it.moduleContentScope) }
+        )
 
         val resolverForProject = ResolverForProjectImpl(
             resolverDebugName,
@@ -132,14 +142,20 @@ internal class ProjectResolutionFacade(
                 val platform = modulePlatform ?: settings.platform
                 IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
             },
-            platformParameters = jvmPlatformParameters,
+            platformParameters = { platform ->
+                when (platform) {
+                    is JvmPlatform -> jvmPlatformParameters
+                    is TargetPlatform.Common -> commonPlatformParameters
+                    else -> PlatformAnalysisParameters.Empty
+                }
+            },
             targetEnvironment = IdeaEnvironment,
             builtIns = builtIns,
             delegateResolver = delegateResolverForProject,
-            packagePartProviderFactory = { moduleContent -> IDEPackagePartProvider(moduleContent.moduleContentScope) },
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
             packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
-            invalidateOnOOCB = invalidateOnOOCB
+            invalidateOnOOCB = invalidateOnOOCB,
+            isReleaseCoroutines = settings.isReleaseCoroutines
         )
 
         if (delegateBuiltIns == null && builtIns is JvmBuiltIns) {

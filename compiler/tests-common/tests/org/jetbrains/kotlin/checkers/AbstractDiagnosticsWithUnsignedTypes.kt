@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -19,6 +20,7 @@ abstract class AbstractDiagnosticsWithUnsignedTypes : AbstractDiagnosticsTest() 
         CompilerTestLanguageVersionSettings(
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
             ApiVersion.KOTLIN_1_3,
-            LanguageVersion.KOTLIN_1_3
+            LanguageVersion.KOTLIN_1_3,
+            mapOf(AnalysisFlag.useExperimental to listOf("kotlin.ExperimentalUnsignedTypes"))
         )
 }

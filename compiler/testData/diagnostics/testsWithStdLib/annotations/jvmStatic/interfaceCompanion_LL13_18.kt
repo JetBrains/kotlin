@@ -46,7 +46,7 @@ interface B {
         @JvmStatic get
 
         private var foo8 = 1
-        @JvmStatic <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>public<!> set
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@JvmStatic<!> <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>public<!> set
 
         public var foo9 = 1
         <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic private set<!>

@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // COMMON_COROUTINES_TEST
 // WITH_COROUTINES
@@ -22,7 +23,7 @@ fun builder(c: suspend () -> Unit) {
 
 fun builderConsumer(c: suspend () -> Consumer): Consumer {
     var res: Consumer? = null
-    c.startCoroutine(object : Continuation<Consumer> {
+    c.startCoroutine(object : ContinuationAdapter<Consumer>() {
         override fun resume(value: Consumer) {
             res = value
         }

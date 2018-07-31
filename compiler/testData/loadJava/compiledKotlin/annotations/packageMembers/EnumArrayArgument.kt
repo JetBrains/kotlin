@@ -7,6 +7,6 @@ annotation class Anno(vararg val t: ElementType)
 
 @Anno(ElementType.METHOD, ElementType.FIELD) fun foo() {}
 
-@field:Anno(ElementType.PACKAGE) val bar = 42
+@field:Anno(ElementType.PACKAGE) val bar = { 42 }()
 
 @Anno() fun baz() {}

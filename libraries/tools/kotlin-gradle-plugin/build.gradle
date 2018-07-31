@@ -32,6 +32,7 @@ pill {
 
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
+    compile project(':kotlin-gradle-plugin-model')
     compileOnly project(':compiler')
     compileOnly project(':compiler:incremental-compilation-impl')
     compileOnly project(':compiler:daemon-common')

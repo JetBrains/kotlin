@@ -38,7 +38,7 @@ abstract class AbstractForInRangeLoopGenerator(
     protected abstract fun storeRangeStartAndEnd()
 
     override fun checkEmptyLoop(loopExit: Label) {
-        loopParameter().put(asmElementType, v)
+        loopParameter().put(asmElementType, elementType, v)
         v.load(endVar, asmElementType)
         if (asmElementType.sort == Type.LONG) {
             v.lcmp()
@@ -69,9 +69,9 @@ abstract class AbstractForInRangeLoopGenerator(
             v.iinc(loopParameterVar, step)
         } else {
             val loopParameter = loopParameter()
-            loopParameter.put(asmElementType, v)
+            loopParameter.put(asmElementType, elementType, v)
             genIncrement(asmElementType, step, v)
-            loopParameter.store(StackValue.onStack(asmElementType), v)
+            loopParameter.store(StackValue.onStack(asmElementType, elementType), v)
         }
     }
 

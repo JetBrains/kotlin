@@ -2632,6 +2632,23 @@ public final class DebugProtoBuf {
          */
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.ValueOrBuilder getArrayElementOrBuilder(
             int index);
+
+        /**
+         * <code>optional int32 flags = 10 [default = 0];</code>
+         *
+         * <pre>
+         *isUnsigned
+         * </pre>
+         */
+        boolean hasFlags();
+        /**
+         * <code>optional int32 flags = 10 [default = 0];</code>
+         *
+         * <pre>
+         *isUnsigned
+         * </pre>
+         */
+        int getFlags();
       }
       /**
        * Protobuf type {@code org.jetbrains.kotlin.metadata.Annotation.Argument.Value}
@@ -2745,6 +2762,11 @@ public final class DebugProtoBuf {
                     mutable_bitField0_ |= 0x00000100;
                   }
                   arrayElement_.add(input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.PARSER, extensionRegistry));
+                  break;
+                }
+                case 80: {
+                  bitField0_ |= 0x00000100;
+                  flags_ = input.readInt32();
                   break;
                 }
               }
@@ -3152,6 +3174,29 @@ public final class DebugProtoBuf {
           return arrayElement_.get(index);
         }
 
+        public static final int FLAGS_FIELD_NUMBER = 10;
+        private int flags_;
+        /**
+         * <code>optional int32 flags = 10 [default = 0];</code>
+         *
+         * <pre>
+         *isUnsigned
+         * </pre>
+         */
+        public boolean hasFlags() {
+          return ((bitField0_ & 0x00000100) == 0x00000100);
+        }
+        /**
+         * <code>optional int32 flags = 10 [default = 0];</code>
+         *
+         * <pre>
+         *isUnsigned
+         * </pre>
+         */
+        public int getFlags() {
+          return flags_;
+        }
+
         private void initFields() {
           type_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Argument.Value.Type.BYTE;
           intValue_ = 0L;
@@ -3162,6 +3207,7 @@ public final class DebugProtoBuf {
           enumValueId_ = 0;
           annotation_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance();
           arrayElement_ = java.util.Collections.emptyList();
+          flags_ = 0;
         }
         private byte memoizedIsInitialized = -1;
         public final boolean isInitialized() {
@@ -3215,6 +3261,9 @@ public final class DebugProtoBuf {
           for (int i = 0; i < arrayElement_.size(); i++) {
             output.writeMessage(9, arrayElement_.get(i));
           }
+          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+            output.writeInt32(10, flags_);
+          }
           getUnknownFields().writeTo(output);
         }
 
@@ -3259,6 +3308,10 @@ public final class DebugProtoBuf {
           for (int i = 0; i < arrayElement_.size(); i++) {
             size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeMessageSize(9, arrayElement_.get(i));
+          }
+          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32Size(10, flags_);
           }
           size += getUnknownFields().getSerializedSize();
           memoizedSerializedSize = size;
@@ -3405,6 +3458,8 @@ public final class DebugProtoBuf {
             } else {
               arrayElementBuilder_.clear();
             }
+            flags_ = 0;
+            bitField0_ = (bitField0_ & ~0x00000200);
             return this;
           }
 
@@ -3478,6 +3533,10 @@ public final class DebugProtoBuf {
             } else {
               result.arrayElement_ = arrayElementBuilder_.build();
             }
+            if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+              to_bitField0_ |= 0x00000100;
+            }
+            result.flags_ = flags_;
             result.bitField0_ = to_bitField0_;
             onBuilt();
             return result;
@@ -3543,6 +3602,9 @@ public final class DebugProtoBuf {
                   arrayElementBuilder_.addAllMessages(other.arrayElement_);
                 }
               }
+            }
+            if (other.hasFlags()) {
+              setFlags(other.getFlags());
             }
             this.mergeUnknownFields(other.getUnknownFields());
             return this;
@@ -4204,6 +4266,54 @@ public final class DebugProtoBuf {
               arrayElement_ = null;
             }
             return arrayElementBuilder_;
+          }
+
+          private int flags_ ;
+          /**
+           * <code>optional int32 flags = 10 [default = 0];</code>
+           *
+           * <pre>
+           *isUnsigned
+           * </pre>
+           */
+          public boolean hasFlags() {
+            return ((bitField0_ & 0x00000200) == 0x00000200);
+          }
+          /**
+           * <code>optional int32 flags = 10 [default = 0];</code>
+           *
+           * <pre>
+           *isUnsigned
+           * </pre>
+           */
+          public int getFlags() {
+            return flags_;
+          }
+          /**
+           * <code>optional int32 flags = 10 [default = 0];</code>
+           *
+           * <pre>
+           *isUnsigned
+           * </pre>
+           */
+          public Builder setFlags(int value) {
+            bitField0_ |= 0x00000200;
+            flags_ = value;
+            onChanged();
+            return this;
+          }
+          /**
+           * <code>optional int32 flags = 10 [default = 0];</code>
+           *
+           * <pre>
+           *isUnsigned
+           * </pre>
+           */
+          public Builder clearFlags() {
+            bitField0_ = (bitField0_ & ~0x00000200);
+            flags_ = 0;
+            onChanged();
+            return this;
           }
 
           // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.Annotation.Argument.Value)
@@ -33542,12 +33652,12 @@ public final class DebugProtoBuf {
       "name\030\002 \002(\005\022[\n\004kind\030\003 \001(\0162D.org.jetbrains" +
       ".kotlin.metadata.QualifiedNameTable.Qual",
       "ifiedName.Kind:\007PACKAGE\")\n\004Kind\022\t\n\005CLASS" +
-      "\020\000\022\013\n\007PACKAGE\020\001\022\t\n\005LOCAL\020\002\"\342\005\n\nAnnotatio" +
+      "\020\000\022\013\n\007PACKAGE\020\001\022\t\n\005LOCAL\020\002\"\364\005\n\nAnnotatio" +
       "n\022\020\n\002id\030\001 \002(\005B\004\220\265\030\001\022D\n\010argument\030\002 \003(\01322." +
       "org.jetbrains.kotlin.metadata.Annotation" +
-      ".Argument\032\373\004\n\010Argument\022\025\n\007name_id\030\001 \002(\005B" +
+      ".Argument\032\215\005\n\010Argument\022\025\n\007name_id\030\001 \002(\005B" +
       "\004\210\265\030\001\022G\n\005value\030\002 \002(\01328.org.jetbrains.kot" +
-      "lin.metadata.Annotation.Argument.Value\032\216" +
+      "lin.metadata.Annotation.Argument.Value\032\240" +
       "\004\n\005Value\022K\n\004type\030\001 \001(\0162=.org.jetbrains.k" +
       "otlin.metadata.Annotation.Argument.Value" +
       ".Type\022\021\n\tint_value\030\002 \001(\022\022\023\n\013float_value\030",
@@ -33557,167 +33667,167 @@ public final class DebugProtoBuf {
       "on\030\010 \001(\0132).org.jetbrains.kotlin.metadata" +
       ".Annotation\022O\n\rarray_element\030\t \003(\01328.org" +
       ".jetbrains.kotlin.metadata.Annotation.Ar" +
-      "gument.Value\"\230\001\n\004Type\022\010\n\004BYTE\020\000\022\010\n\004CHAR\020" +
-      "\001\022\t\n\005SHORT\020\002\022\007\n\003INT\020\003\022\010\n\004LONG\020\004\022\t\n\005FLOAT" +
-      "\020\005\022\n\n\006DOUBLE\020\006\022\013\n\007BOOLEAN\020\007\022\n\n\006STRING\020\010\022" +
-      "\t\n\005CLASS\020\t\022\010\n\004ENUM\020\n\022\016\n\nANNOTATION\020\013\022\t\n\005",
-      "ARRAY\020\014\"\373\005\n\004Type\022>\n\010argument\030\002 \003(\0132,.org" +
-      ".jetbrains.kotlin.metadata.Type.Argument" +
-      "\022\027\n\010nullable\030\003 \001(\010:\005false\022+\n\035flexible_ty" +
-      "pe_capabilities_id\030\004 \001(\005B\004\230\265\030\001\022A\n\024flexib" +
-      "le_upper_bound\030\005 \001(\0132#.org.jetbrains.kot" +
-      "lin.metadata.Type\022\037\n\027flexible_upper_boun" +
-      "d_id\030\010 \001(\005\022\030\n\nclass_name\030\006 \001(\005B\004\220\265\030\001\022\026\n\016" +
-      "type_parameter\030\007 \001(\005\022!\n\023type_parameter_n" +
-      "ame\030\t \001(\005B\004\210\265\030\001\022\035\n\017type_alias_name\030\014 \001(\005" +
-      "B\004\220\265\030\001\0227\n\nouter_type\030\n \001(\0132#.org.jetbrai",
-      "ns.kotlin.metadata.Type\022\025\n\router_type_id" +
-      "\030\013 \001(\005\022=\n\020abbreviated_type\030\r \001(\0132#.org.j" +
-      "etbrains.kotlin.metadata.Type\022\033\n\023abbrevi" +
-      "ated_type_id\030\016 \001(\005\022\r\n\005flags\030\001 \001(\005\032\322\001\n\010Ar" +
-      "gument\022P\n\nprojection\030\001 \001(\01627.org.jetbrai" +
-      "ns.kotlin.metadata.Type.Argument.Project" +
-      "ion:\003INV\0221\n\004type\030\002 \001(\0132#.org.jetbrains.k" +
-      "otlin.metadata.Type\022\017\n\007type_id\030\003 \001(\005\"0\n\n" +
-      "Projection\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\022\010\n\004" +
-      "STAR\020\003*\005\010d\020\310\001\"\230\002\n\rTypeParameter\022\n\n\002id\030\001 ",
-      "\002(\005\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022\026\n\007reified\030\003 \001(\010" +
-      ":\005false\022L\n\010variance\030\004 \001(\01625.org.jetbrain" +
-      "s.kotlin.metadata.TypeParameter.Variance" +
-      ":\003INV\0228\n\013upper_bound\030\005 \003(\0132#.org.jetbrai" +
-      "ns.kotlin.metadata.Type\022\032\n\016upper_bound_i" +
-      "d\030\006 \003(\005B\002\020\001\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001" +
-      "\022\007\n\003INV\020\002*\005\010d\020\350\007\"\244\007\n\005Class\022\020\n\005flags\030\001 \001(" +
-      "\005:\0016\022\025\n\007fq_name\030\003 \002(\005B\004\220\265\030\001\022#\n\025companion" +
-      "_object_name\030\004 \001(\005B\004\210\265\030\001\022D\n\016type_paramet" +
-      "er\030\005 \003(\0132,.org.jetbrains.kotlin.metadata",
-      ".TypeParameter\0226\n\tsupertype\030\006 \003(\0132#.org." +
-      "jetbrains.kotlin.metadata.Type\022\030\n\014supert" +
-      "ype_id\030\002 \003(\005B\002\020\001\022!\n\021nested_class_name\030\007 " +
-      "\003(\005B\006\020\001\210\265\030\001\022?\n\013constructor\030\010 \003(\0132*.org.j" +
-      "etbrains.kotlin.metadata.Constructor\0229\n\010" +
-      "function\030\t \003(\0132\'.org.jetbrains.kotlin.me" +
-      "tadata.Function\0229\n\010property\030\n \003(\0132\'.org." +
-      "jetbrains.kotlin.metadata.Property\022<\n\nty" +
-      "pe_alias\030\013 \003(\0132(.org.jetbrains.kotlin.me" +
-      "tadata.TypeAlias\022<\n\nenum_entry\030\r \003(\0132(.o",
-      "rg.jetbrains.kotlin.metadata.EnumEntry\022\'" +
-      "\n\027sealed_subclass_fq_name\030\020 \003(\005B\006\020\001\220\265\030\001\022" +
-      "<\n\ntype_table\030\036 \001(\0132(.org.jetbrains.kotl" +
-      "in.metadata.TypeTable\022\033\n\023version_require" +
-      "ment\030\037 \001(\005\022Y\n\031version_requirement_table\030" +
-      "  \001(\01326.org.jetbrains.kotlin.metadata.Ve" +
-      "rsionRequirementTable\"x\n\004Kind\022\t\n\005CLASS\020\000" +
-      "\022\r\n\tINTERFACE\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_" +
-      "ENTRY\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020" +
-      "\005\022\024\n\020COMPANION_OBJECT\020\006*\006\010d\020\270\224\001\"\335\002\n\007Pack",
-      "age\0229\n\010function\030\003 \003(\0132\'.org.jetbrains.ko" +
-      "tlin.metadata.Function\0229\n\010property\030\004 \003(\013" +
-      "2\'.org.jetbrains.kotlin.metadata.Propert" +
-      "y\022<\n\ntype_alias\030\005 \003(\0132(.org.jetbrains.ko" +
-      "tlin.metadata.TypeAlias\022<\n\ntype_table\030\036 " +
-      "\001(\0132(.org.jetbrains.kotlin.metadata.Type" +
-      "Table\022Y\n\031version_requirement_table\030  \001(\013" +
-      "26.org.jetbrains.kotlin.metadata.Version" +
-      "RequirementTable*\005\010d\020\310\001\"Z\n\tTypeTable\0221\n\004" +
-      "type\030\001 \003(\0132#.org.jetbrains.kotlin.metada",
-      "ta.Type\022\032\n\016first_nullable\030\002 \001(\005:\002-1\"\214\001\n\013" +
-      "Constructor\022\020\n\005flags\030\001 \001(\005:\0016\022F\n\017value_p" +
-      "arameter\030\002 \003(\0132-.org.jetbrains.kotlin.me" +
-      "tadata.ValueParameter\022\033\n\023version_require" +
-      "ment\030\037 \001(\005*\006\010d\020\270\224\001\"\232\004\n\010Function\022\020\n\005flags" +
-      "\030\t \001(\005:\0016\022\024\n\told_flags\030\001 \001(\005:\0016\022\022\n\004name\030" +
-      "\002 \002(\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(\0132#.org.j" +
-      "etbrains.kotlin.metadata.Type\022\026\n\016return_" +
-      "type_id\030\007 \001(\005\022D\n\016type_parameter\030\004 \003(\0132,." +
-      "org.jetbrains.kotlin.metadata.TypeParame",
-      "ter\022:\n\rreceiver_type\030\005 \001(\0132#.org.jetbrai" +
-      "ns.kotlin.metadata.Type\022\030\n\020receiver_type" +
-      "_id\030\010 \001(\005\022F\n\017value_parameter\030\006 \003(\0132-.org" +
-      ".jetbrains.kotlin.metadata.ValueParamete" +
-      "r\022<\n\ntype_table\030\036 \001(\0132(.org.jetbrains.ko" +
-      "tlin.metadata.TypeTable\022\033\n\023version_requi" +
-      "rement\030\037 \001(\005\0229\n\010contract\030  \001(\0132\'.org.jet" +
-      "brains.kotlin.metadata.Contract*\006\010d\020\270\224\001\"" +
-      "\331\003\n\010Property\022\022\n\005flags\030\013 \001(\005:\003518\022\027\n\told_" +
-      "flags\030\001 \001(\005:\0042054\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n",
-      "\013return_type\030\003 \001(\0132#.org.jetbrains.kotli" +
-      "n.metadata.Type\022\026\n\016return_type_id\030\t \001(\005\022" +
-      "D\n\016type_parameter\030\004 \003(\0132,.org.jetbrains." +
-      "kotlin.metadata.TypeParameter\022:\n\rreceive" +
-      "r_type\030\005 \001(\0132#.org.jetbrains.kotlin.meta" +
-      "data.Type\022\030\n\020receiver_type_id\030\n \001(\005\022M\n\026s" +
-      "etter_value_parameter\030\006 \001(\0132-.org.jetbra" +
-      "ins.kotlin.metadata.ValueParameter\022\024\n\014ge" +
-      "tter_flags\030\007 \001(\005\022\024\n\014setter_flags\030\010 \001(\005\022\033" +
-      "\n\023version_requirement\030\037 \001(\005*\006\010d\020\270\224\001\"\343\001\n\016",
-      "ValueParameter\022\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name" +
-      "\030\002 \002(\005B\004\210\265\030\001\0221\n\004type\030\003 \001(\0132#.org.jetbrai" +
-      "ns.kotlin.metadata.Type\022\017\n\007type_id\030\005 \001(\005" +
-      "\022@\n\023vararg_element_type\030\004 \001(\0132#.org.jetb" +
-      "rains.kotlin.metadata.Type\022\036\n\026vararg_ele" +
-      "ment_type_id\030\006 \001(\005*\005\010d\020\310\001\"\212\003\n\tTypeAlias\022" +
-      "\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022D\n" +
-      "\016type_parameter\030\003 \003(\0132,.org.jetbrains.ko" +
-      "tlin.metadata.TypeParameter\022<\n\017underlyin" +
-      "g_type\030\004 \001(\0132#.org.jetbrains.kotlin.meta",
-      "data.Type\022\032\n\022underlying_type_id\030\005 \001(\005\022:\n" +
-      "\rexpanded_type\030\006 \001(\0132#.org.jetbrains.kot" +
-      "lin.metadata.Type\022\030\n\020expanded_type_id\030\007 " +
-      "\001(\005\022=\n\nannotation\030\010 \003(\0132).org.jetbrains." +
-      "kotlin.metadata.Annotation\022\033\n\023version_re" +
-      "quirement\030\037 \001(\005*\005\010d\020\310\001\"&\n\tEnumEntry\022\022\n\004n" +
-      "ame\030\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001\"\225\003\n\022VersionRequir" +
-      "ement\022\017\n\007version\030\001 \001(\005\022\024\n\014version_full\030\002" +
-      " \001(\005\022M\n\005level\030\003 \001(\01627.org.jetbrains.kotl" +
-      "in.metadata.VersionRequirement.Level:\005ER",
-      "ROR\022\022\n\nerror_code\030\004 \001(\005\022\025\n\007message\030\005 \001(\005" +
-      "B\004\230\265\030\001\022e\n\014version_kind\030\006 \001(\0162=.org.jetbr" +
-      "ains.kotlin.metadata.VersionRequirement." +
-      "VersionKind:\020LANGUAGE_VERSION\"+\n\005Level\022\013" +
-      "\n\007WARNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN\020\002\"J\n\013Ve" +
-      "rsionKind\022\024\n\020LANGUAGE_VERSION\020\000\022\024\n\020COMPI" +
-      "LER_VERSION\020\001\022\017\n\013API_VERSION\020\002\"a\n\027Versio" +
-      "nRequirementTable\022F\n\013requirement\030\001 \003(\01321" +
-      ".org.jetbrains.kotlin.metadata.VersionRe" +
-      "quirement\"\217\002\n\017PackageFragment\022;\n\007strings",
-      "\030\001 \001(\0132*.org.jetbrains.kotlin.metadata.S" +
-      "tringTable\022J\n\017qualified_names\030\002 \001(\01321.or" +
-      "g.jetbrains.kotlin.metadata.QualifiedNam" +
-      "eTable\0227\n\007package\030\003 \001(\0132&.org.jetbrains." +
-      "kotlin.metadata.Package\0223\n\005class\030\004 \003(\0132$" +
-      ".org.jetbrains.kotlin.metadata.Class*\005\010d" +
-      "\020\310\001\"A\n\010Contract\0225\n\006effect\030\001 \003(\0132%.org.je" +
-      "tbrains.kotlin.metadata.Effect\"\306\003\n\006Effec" +
-      "t\022E\n\013effect_type\030\001 \001(\01620.org.jetbrains.k" +
-      "otlin.metadata.Effect.EffectType\022N\n\033effe",
-      "ct_constructor_argument\030\002 \003(\0132).org.jetb" +
-      "rains.kotlin.metadata.Expression\022S\n conc" +
-      "lusion_of_conditional_effect\030\003 \001(\0132).org" +
-      ".jetbrains.kotlin.metadata.Expression\022B\n" +
-      "\004kind\030\004 \001(\01624.org.jetbrains.kotlin.metad" +
-      "ata.Effect.InvocationKind\"C\n\nEffectType\022" +
-      "\024\n\020RETURNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETU" +
-      "RNS_NOT_NULL\020\002\"G\n\016InvocationKind\022\020\n\014AT_M" +
-      "OST_ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST" +
-      "_ONCE\020\002\"\237\003\n\nExpression\022\020\n\005flags\030\001 \001(\005:\0010",
-      "\022!\n\031value_parameter_reference\030\002 \001(\005\022O\n\016c" +
-      "onstant_value\030\003 \001(\01627.org.jetbrains.kotl" +
-      "in.metadata.Expression.ConstantValue\022=\n\020" +
-      "is_instance_type\030\004 \001(\0132#.org.jetbrains.k" +
-      "otlin.metadata.Type\022\033\n\023is_instance_type_" +
-      "id\030\005 \001(\005\022?\n\014and_argument\030\006 \003(\0132).org.jet" +
-      "brains.kotlin.metadata.Expression\022>\n\013or_" +
-      "argument\030\007 \003(\0132).org.jetbrains.kotlin.me" +
-      "tadata.Expression\".\n\rConstantValue\022\010\n\004TR" +
-      "UE\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002*9\n\010Modality\022\t\n",
-      "\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEAL" +
-      "ED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIV" +
-      "ATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIV" +
-      "ATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017" +
-      "\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDE" +
-      "LEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProt" +
-      "oBuf"
+      "gument.Value\022\020\n\005flags\030\n \001(\005:\0010\"\230\001\n\004Type\022" +
+      "\010\n\004BYTE\020\000\022\010\n\004CHAR\020\001\022\t\n\005SHORT\020\002\022\007\n\003INT\020\003\022" +
+      "\010\n\004LONG\020\004\022\t\n\005FLOAT\020\005\022\n\n\006DOUBLE\020\006\022\013\n\007BOOL" +
+      "EAN\020\007\022\n\n\006STRING\020\010\022\t\n\005CLASS\020\t\022\010\n\004ENUM\020\n\022\016",
+      "\n\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\373\005\n\004Type\022>\n\010ar" +
+      "gument\030\002 \003(\0132,.org.jetbrains.kotlin.meta" +
+      "data.Type.Argument\022\027\n\010nullable\030\003 \001(\010:\005fa" +
+      "lse\022+\n\035flexible_type_capabilities_id\030\004 \001" +
+      "(\005B\004\230\265\030\001\022A\n\024flexible_upper_bound\030\005 \001(\0132#" +
+      ".org.jetbrains.kotlin.metadata.Type\022\037\n\027f" +
+      "lexible_upper_bound_id\030\010 \001(\005\022\030\n\nclass_na" +
+      "me\030\006 \001(\005B\004\220\265\030\001\022\026\n\016type_parameter\030\007 \001(\005\022!" +
+      "\n\023type_parameter_name\030\t \001(\005B\004\210\265\030\001\022\035\n\017typ" +
+      "e_alias_name\030\014 \001(\005B\004\220\265\030\001\0227\n\nouter_type\030\n",
+      " \001(\0132#.org.jetbrains.kotlin.metadata.Typ" +
+      "e\022\025\n\router_type_id\030\013 \001(\005\022=\n\020abbreviated_" +
+      "type\030\r \001(\0132#.org.jetbrains.kotlin.metada" +
+      "ta.Type\022\033\n\023abbreviated_type_id\030\016 \001(\005\022\r\n\005" +
+      "flags\030\001 \001(\005\032\322\001\n\010Argument\022P\n\nprojection\030\001" +
+      " \001(\01627.org.jetbrains.kotlin.metadata.Typ" +
+      "e.Argument.Projection:\003INV\0221\n\004type\030\002 \001(\013" +
+      "2#.org.jetbrains.kotlin.metadata.Type\022\017\n" +
+      "\007type_id\030\003 \001(\005\"0\n\nProjection\022\006\n\002IN\020\000\022\007\n\003" +
+      "OUT\020\001\022\007\n\003INV\020\002\022\010\n\004STAR\020\003*\005\010d\020\310\001\"\230\002\n\rType",
+      "Parameter\022\n\n\002id\030\001 \002(\005\022\022\n\004name\030\002 \002(\005B\004\210\265\030" +
+      "\001\022\026\n\007reified\030\003 \001(\010:\005false\022L\n\010variance\030\004 " +
+      "\001(\01625.org.jetbrains.kotlin.metadata.Type" +
+      "Parameter.Variance:\003INV\0228\n\013upper_bound\030\005" +
+      " \003(\0132#.org.jetbrains.kotlin.metadata.Typ" +
+      "e\022\032\n\016upper_bound_id\030\006 \003(\005B\002\020\001\"$\n\010Varianc" +
+      "e\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002*\005\010d\020\350\007\"\244\007\n\005C" +
+      "lass\022\020\n\005flags\030\001 \001(\005:\0016\022\025\n\007fq_name\030\003 \002(\005B" +
+      "\004\220\265\030\001\022#\n\025companion_object_name\030\004 \001(\005B\004\210\265" +
+      "\030\001\022D\n\016type_parameter\030\005 \003(\0132,.org.jetbrai",
+      "ns.kotlin.metadata.TypeParameter\0226\n\tsupe" +
+      "rtype\030\006 \003(\0132#.org.jetbrains.kotlin.metad" +
+      "ata.Type\022\030\n\014supertype_id\030\002 \003(\005B\002\020\001\022!\n\021ne" +
+      "sted_class_name\030\007 \003(\005B\006\020\001\210\265\030\001\022?\n\013constru" +
+      "ctor\030\010 \003(\0132*.org.jetbrains.kotlin.metada" +
+      "ta.Constructor\0229\n\010function\030\t \003(\0132\'.org.j" +
+      "etbrains.kotlin.metadata.Function\0229\n\010pro" +
+      "perty\030\n \003(\0132\'.org.jetbrains.kotlin.metad" +
+      "ata.Property\022<\n\ntype_alias\030\013 \003(\0132(.org.j" +
+      "etbrains.kotlin.metadata.TypeAlias\022<\n\nen",
+      "um_entry\030\r \003(\0132(.org.jetbrains.kotlin.me" +
+      "tadata.EnumEntry\022\'\n\027sealed_subclass_fq_n" +
+      "ame\030\020 \003(\005B\006\020\001\220\265\030\001\022<\n\ntype_table\030\036 \001(\0132(." +
+      "org.jetbrains.kotlin.metadata.TypeTable\022" +
+      "\033\n\023version_requirement\030\037 \001(\005\022Y\n\031version_" +
+      "requirement_table\030  \001(\01326.org.jetbrains." +
+      "kotlin.metadata.VersionRequirementTable\"" +
+      "x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\tINTERFACE\020\001\022\016\n\nENU" +
+      "M_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_" +
+      "CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n\020COMPANION_OBJECT\020",
+      "\006*\006\010d\020\270\224\001\"\335\002\n\007Package\0229\n\010function\030\003 \003(\0132" +
+      "\'.org.jetbrains.kotlin.metadata.Function" +
+      "\0229\n\010property\030\004 \003(\0132\'.org.jetbrains.kotli" +
+      "n.metadata.Property\022<\n\ntype_alias\030\005 \003(\0132" +
+      "(.org.jetbrains.kotlin.metadata.TypeAlia" +
+      "s\022<\n\ntype_table\030\036 \001(\0132(.org.jetbrains.ko" +
+      "tlin.metadata.TypeTable\022Y\n\031version_requi" +
+      "rement_table\030  \001(\01326.org.jetbrains.kotli" +
+      "n.metadata.VersionRequirementTable*\005\010d\020\310" +
+      "\001\"Z\n\tTypeTable\0221\n\004type\030\001 \003(\0132#.org.jetbr",
+      "ains.kotlin.metadata.Type\022\032\n\016first_nulla" +
+      "ble\030\002 \001(\005:\002-1\"\214\001\n\013Constructor\022\020\n\005flags\030\001" +
+      " \001(\005:\0016\022F\n\017value_parameter\030\002 \003(\0132-.org.j" +
+      "etbrains.kotlin.metadata.ValueParameter\022" +
+      "\033\n\023version_requirement\030\037 \001(\005*\006\010d\020\270\224\001\"\232\004\n" +
+      "\010Function\022\020\n\005flags\030\t \001(\005:\0016\022\024\n\told_flags" +
+      "\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n\013return_" +
+      "type\030\003 \001(\0132#.org.jetbrains.kotlin.metada" +
+      "ta.Type\022\026\n\016return_type_id\030\007 \001(\005\022D\n\016type_" +
+      "parameter\030\004 \003(\0132,.org.jetbrains.kotlin.m",
+      "etadata.TypeParameter\022:\n\rreceiver_type\030\005" +
+      " \001(\0132#.org.jetbrains.kotlin.metadata.Typ" +
+      "e\022\030\n\020receiver_type_id\030\010 \001(\005\022F\n\017value_par" +
+      "ameter\030\006 \003(\0132-.org.jetbrains.kotlin.meta" +
+      "data.ValueParameter\022<\n\ntype_table\030\036 \001(\0132" +
+      "(.org.jetbrains.kotlin.metadata.TypeTabl" +
+      "e\022\033\n\023version_requirement\030\037 \001(\005\0229\n\010contra" +
+      "ct\030  \001(\0132\'.org.jetbrains.kotlin.metadata" +
+      ".Contract*\006\010d\020\270\224\001\"\331\003\n\010Property\022\022\n\005flags\030" +
+      "\013 \001(\005:\003518\022\027\n\told_flags\030\001 \001(\005:\0042054\022\022\n\004n",
+      "ame\030\002 \002(\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(\0132#.o" +
+      "rg.jetbrains.kotlin.metadata.Type\022\026\n\016ret" +
+      "urn_type_id\030\t \001(\005\022D\n\016type_parameter\030\004 \003(" +
+      "\0132,.org.jetbrains.kotlin.metadata.TypePa" +
+      "rameter\022:\n\rreceiver_type\030\005 \001(\0132#.org.jet" +
+      "brains.kotlin.metadata.Type\022\030\n\020receiver_" +
+      "type_id\030\n \001(\005\022M\n\026setter_value_parameter\030" +
+      "\006 \001(\0132-.org.jetbrains.kotlin.metadata.Va" +
+      "lueParameter\022\024\n\014getter_flags\030\007 \001(\005\022\024\n\014se" +
+      "tter_flags\030\010 \001(\005\022\033\n\023version_requirement\030",
+      "\037 \001(\005*\006\010d\020\270\224\001\"\343\001\n\016ValueParameter\022\020\n\005flag" +
+      "s\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0221\n\004type\030\003" +
+      " \001(\0132#.org.jetbrains.kotlin.metadata.Typ" +
+      "e\022\017\n\007type_id\030\005 \001(\005\022@\n\023vararg_element_typ" +
+      "e\030\004 \001(\0132#.org.jetbrains.kotlin.metadata." +
+      "Type\022\036\n\026vararg_element_type_id\030\006 \001(\005*\005\010d" +
+      "\020\310\001\"\212\003\n\tTypeAlias\022\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004n" +
+      "ame\030\002 \002(\005B\004\210\265\030\001\022D\n\016type_parameter\030\003 \003(\0132" +
+      ",.org.jetbrains.kotlin.metadata.TypePara" +
+      "meter\022<\n\017underlying_type\030\004 \001(\0132#.org.jet",
+      "brains.kotlin.metadata.Type\022\032\n\022underlyin" +
+      "g_type_id\030\005 \001(\005\022:\n\rexpanded_type\030\006 \001(\0132#" +
+      ".org.jetbrains.kotlin.metadata.Type\022\030\n\020e" +
+      "xpanded_type_id\030\007 \001(\005\022=\n\nannotation\030\010 \003(" +
+      "\0132).org.jetbrains.kotlin.metadata.Annota" +
+      "tion\022\033\n\023version_requirement\030\037 \001(\005*\005\010d\020\310\001" +
+      "\"&\n\tEnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001" +
+      "\"\225\003\n\022VersionRequirement\022\017\n\007version\030\001 \001(\005" +
+      "\022\024\n\014version_full\030\002 \001(\005\022M\n\005level\030\003 \001(\01627." +
+      "org.jetbrains.kotlin.metadata.VersionReq",
+      "uirement.Level:\005ERROR\022\022\n\nerror_code\030\004 \001(" +
+      "\005\022\025\n\007message\030\005 \001(\005B\004\230\265\030\001\022e\n\014version_kind" +
+      "\030\006 \001(\0162=.org.jetbrains.kotlin.metadata.V" +
+      "ersionRequirement.VersionKind:\020LANGUAGE_" +
+      "VERSION\"+\n\005Level\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020\001" +
+      "\022\n\n\006HIDDEN\020\002\"J\n\013VersionKind\022\024\n\020LANGUAGE_" +
+      "VERSION\020\000\022\024\n\020COMPILER_VERSION\020\001\022\017\n\013API_V" +
+      "ERSION\020\002\"a\n\027VersionRequirementTable\022F\n\013r" +
+      "equirement\030\001 \003(\01321.org.jetbrains.kotlin." +
+      "metadata.VersionRequirement\"\217\002\n\017PackageF",
+      "ragment\022;\n\007strings\030\001 \001(\0132*.org.jetbrains" +
+      ".kotlin.metadata.StringTable\022J\n\017qualifie" +
+      "d_names\030\002 \001(\01321.org.jetbrains.kotlin.met" +
+      "adata.QualifiedNameTable\0227\n\007package\030\003 \001(" +
+      "\0132&.org.jetbrains.kotlin.metadata.Packag" +
+      "e\0223\n\005class\030\004 \003(\0132$.org.jetbrains.kotlin." +
+      "metadata.Class*\005\010d\020\310\001\"A\n\010Contract\0225\n\006eff" +
+      "ect\030\001 \003(\0132%.org.jetbrains.kotlin.metadat" +
+      "a.Effect\"\306\003\n\006Effect\022E\n\013effect_type\030\001 \001(\016" +
+      "20.org.jetbrains.kotlin.metadata.Effect.",
+      "EffectType\022N\n\033effect_constructor_argumen" +
+      "t\030\002 \003(\0132).org.jetbrains.kotlin.metadata." +
+      "Expression\022S\n conclusion_of_conditional_" +
+      "effect\030\003 \001(\0132).org.jetbrains.kotlin.meta" +
+      "data.Expression\022B\n\004kind\030\004 \001(\01624.org.jetb" +
+      "rains.kotlin.metadata.Effect.InvocationK" +
+      "ind\"C\n\nEffectType\022\024\n\020RETURNS_CONSTANT\020\000\022" +
+      "\t\n\005CALLS\020\001\022\024\n\020RETURNS_NOT_NULL\020\002\"G\n\016Invo" +
+      "cationKind\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_" +
+      "ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"\237\003\n\nExpression",
+      "\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_parameter_re" +
+      "ference\030\002 \001(\005\022O\n\016constant_value\030\003 \001(\01627." +
+      "org.jetbrains.kotlin.metadata.Expression" +
+      ".ConstantValue\022=\n\020is_instance_type\030\004 \001(\013" +
+      "2#.org.jetbrains.kotlin.metadata.Type\022\033\n" +
+      "\023is_instance_type_id\030\005 \001(\005\022?\n\014and_argume" +
+      "nt\030\006 \003(\0132).org.jetbrains.kotlin.metadata" +
+      ".Expression\022>\n\013or_argument\030\007 \003(\0132).org.j" +
+      "etbrains.kotlin.metadata.Expression\".\n\rC" +
+      "onstantValue\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001\022\010\n\004NUL",
+      "L\020\002*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010" +
+      "ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010" +
+      "INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n" +
+      "\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL" +
+      "\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAK" +
+      "E_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESI" +
+      "ZED\020\003B\017B\rDebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -33767,7 +33877,7 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_metadata_Annotation_Argument_Value_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Annotation_Argument_Value_descriptor,
-        new java.lang.String[] { "Type", "IntValue", "FloatValue", "DoubleValue", "StringValue", "ClassId", "EnumValueId", "Annotation", "ArrayElement", });
+        new java.lang.String[] { "Type", "IntValue", "FloatValue", "DoubleValue", "StringValue", "ClassId", "EnumValueId", "Annotation", "ArrayElement", "Flags", });
     internal_static_org_jetbrains_kotlin_metadata_Type_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_org_jetbrains_kotlin_metadata_Type_fieldAccessorTable = new

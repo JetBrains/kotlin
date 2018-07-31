@@ -1,6 +1,6 @@
 package test
 
-@field:test.Anno(t = {"prosper"}) public val bar: kotlin.Int = 42
+@field:test.Anno(t = {"prosper"}) public val bar: kotlin.Int
     public fun <get-bar>(): kotlin.Int
 @test.Anno(t = {}) public fun baz(): kotlin.Unit
 @test.Anno(t = {"live", "long"}) public fun foo(): kotlin.Unit

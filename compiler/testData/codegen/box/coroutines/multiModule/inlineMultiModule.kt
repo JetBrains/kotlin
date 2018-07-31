@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: NATIVE
 // WITH_COROUTINES
 // WITH_RUNTIME
@@ -15,7 +16,7 @@ var continuation: () -> Unit = { }
 var log = ""
 var finished = false
 
-suspend fun <T> foo(v: T): T = suspendCoroutineOrReturn { x ->
+suspend fun <T> foo(v: T): T = suspendCoroutineUninterceptedOrReturn { x ->
     continuation = {
         x.resume(v)
     }

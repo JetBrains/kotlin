@@ -6,17 +6,16 @@
 package kotlin.js
 
 fun equals(obj1: dynamic, obj2: dynamic): Boolean {
-    if (obj1 == null) {
-        return obj2 == null
+    if (js("obj1 == null").unsafeCast<Boolean>()) {
+        return js("obj2 == null").unsafeCast<Boolean>();
     }
-
-    if (obj2 == null) {
-        return false
+    if (js("obj2 == null").unsafeCast<Boolean>()) {
+        return false;
     }
 
     return js("""
-    if (typeof obj1 === "object" && typeof obj1.equals === "function") {
-        return obj1.equals(obj2);
+    if (typeof obj1 === "object" && typeof obj1.equals_Any_ === "function") {
+        return obj1.equals_Any_(obj2);
     }
 
     if (obj1 !== obj1) {
@@ -31,7 +30,7 @@ fun equals(obj1: dynamic, obj2: dynamic): Boolean {
 }
 
 fun toString(o: dynamic): String = when {
-    o == null -> "null"
+    js("o == null").unsafeCast<Boolean>() -> "null"
     isArrayish(o) -> "[...]"
     else -> js("o.toString()").unsafeCast<String>()
 }
@@ -66,7 +65,11 @@ fun hashCode(obj: dynamic): Int {
     var POW_2_32 = 4294967296;
     // TODO: consider switching to Symbol type once we are on ES6.
     /** @const */
-    var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue${'$'}";
+    var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue${"$"}";
+
+    var byteBuffer = new ArrayBuffer(8);
+    var bufFloat64 = new Float64Array(byteBuffer);
+    var bufInt32 = new Int32Array(byteBuffer);
 
     function getObjectHashCode(obj) {
         if (!(OBJECT_HASH_CODE_PROPERTY_NAME in obj)) {
@@ -91,7 +94,7 @@ fun hashCode(obj: dynamic): Int {
         }
         else {
             bufFloat64[0] = obj;
-            return (bufInt32[highIndex] * 31 | 0) + bufInt32[lowIndex] | 0;
+            return (bufInt32[1] * 31 | 0) + bufInt32[0] | 0;
         }
     }
 
@@ -99,3 +102,6 @@ fun hashCode(obj: dynamic): Int {
     """
     ).unsafeCast<Int>()
 }
+
+// TODO: Use getObjectHashCode instead
+fun identityHashCode(obj: dynamic): Int = hashCode(obj)

@@ -334,19 +334,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         nameStack.push(name);
 
         if (CoroutineUtilKt.isSuspendLambda(functionDescriptor)) {
-            SimpleFunctionDescriptor jvmSuspendFunctionView =
-                    CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                            (SimpleFunctionDescriptor) functionDescriptor,
-                            languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-                    );
-
-            bindingTrace.record(
-                    CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
-                    functionDescriptor,
-                    jvmSuspendFunctionView
-            );
-            closure.setSuspend(true);
-            closure.setSuspendLambda();
+            createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, true);
         }
         functionsStack.push(functionDescriptor);
 
@@ -404,11 +392,43 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         ClassDescriptor classDescriptor = recordClassForCallable(expression, callableDescriptor, supertypes, name);
         MutableClosure closure = recordClosure(classDescriptor, name);
 
+        if (callableDescriptor instanceof SimpleFunctionDescriptor) {
+            SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) callableDescriptor;
+            if (functionDescriptor.isSuspend()) {
+                createAndRecordSuspendFunctionView(closure, functionDescriptor, false);
+            }
+        }
+
         if (receiverType != null) {
             closure.setCaptureReceiverType(receiverType);
         }
 
         super.visitCallableReferenceExpression(expression);
+    }
+
+    private SimpleFunctionDescriptor createAndRecordSuspendFunctionView(
+            MutableClosure closure,
+            SimpleFunctionDescriptor functionDescriptor,
+            boolean isSuspendLambda
+    ) {
+        SimpleFunctionDescriptor jvmSuspendFunctionView =
+                CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                        functionDescriptor,
+                        languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+                        this.bindingContext
+                );
+
+        bindingTrace.record(
+                CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
+                functionDescriptor,
+                jvmSuspendFunctionView
+        );
+
+        closure.setSuspend(true);
+        if (isSuspendLambda) {
+            closure.setSuspendLambda();
+        }
+        return jvmSuspendFunctionView;
     }
 
     @NotNull
@@ -537,11 +557,17 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend() &&
             !functionDescriptor.getVisibility().equals(Visibilities.LOCAL)) {
+
+            if (nameForClassOrPackageMember != null) {
+                nameStack.push(nameForClassOrPackageMember);
+            }
+
+            String name = inventAnonymousClassName();
+            ClassDescriptor classDescriptor = recordClassForFunction(function, functionDescriptor, name, functionDescriptor);
+            MutableClosure closure = recordClosure(classDescriptor, name);
+
             SimpleFunctionDescriptor jvmSuspendFunctionView =
-                    CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                            (SimpleFunctionDescriptor) functionDescriptor,
-                            languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-                    );
+                    createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, false);
 
             // This is a very subtle place (hack).
             // When generating bytecode of some suspend function, we replace the original descriptor
@@ -557,21 +583,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 );
             }
 
-            bindingTrace.record(
-                    CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
-                    functionDescriptor,
-                    jvmSuspendFunctionView
-            );
-
-            if (nameForClassOrPackageMember != null) {
-                nameStack.push(nameForClassOrPackageMember);
-            }
-
-            String name = inventAnonymousClassName();
-            ClassDescriptor classDescriptor =
-                    recordClassForFunction(function, functionDescriptor, name, functionDescriptor);
-            MutableClosure closure = recordClosure(classDescriptor, name);
-            closure.setSuspend(true);
             functionsStack.push(functionDescriptor);
 
             super.visitNamedFunction(function);
@@ -600,21 +611,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             nameStack.push(name);
 
             if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
-                SimpleFunctionDescriptor jvmSuspendFunctionView =
-                        CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                                (SimpleFunctionDescriptor) functionDescriptor,
-                                languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
-                                /*bindingContext*/ null,
-                                /*dropSuspend*/ true
-                        );
-
-                bindingTrace.record(
-                        CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
-                        functionDescriptor,
-                        jvmSuspendFunctionView
-                );
-                closure.setSuspend(true);
-                closure.setSuspendLambda();
+                createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, true);
             }
 
             functionsStack.push(functionDescriptor);

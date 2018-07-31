@@ -98,8 +98,6 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
                 currentBlock = caseBlock
 
                 jsCase.statements.forEach { accept(it) }
-                currentBlock.statements += stateAndJump(jointBlock, x)
-
                 jsCase.statements.clear()
                 jsCase.statements += caseBlock.statements
             }
@@ -292,6 +290,8 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
             }
         }
 
+        tryStack.removeAt(tryStack.lastIndex)
+
         // Handle finally node
         if (finallyNode != null) {
             currentBlock = finallyBlock
@@ -299,8 +299,6 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
             generateFinallyExit()
             hasFinallyBlocks = true
         }
-
-        tryStack.removeAt(tryStack.lastIndex)
 
         currentBlock = successor
     }

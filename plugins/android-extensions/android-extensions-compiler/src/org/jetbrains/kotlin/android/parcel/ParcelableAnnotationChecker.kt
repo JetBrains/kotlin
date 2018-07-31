@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.parcel
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.TypeParceler
 import kotlinx.android.parcel.WriteWith
 import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
@@ -44,6 +45,7 @@ class ParcelableAnnotationChecker : CallChecker {
     companion object {
         val TYPE_PARCELER_FQNAME = FqName(TypeParceler::class.java.name)
         val WRITE_WITH_FQNAME = FqName(WriteWith::class.java.name)
+        val IGNORED_ON_PARCEL_FQNAME = FqName(IgnoredOnParcel::class.java.name)
     }
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -59,6 +61,21 @@ class ParcelableAnnotationChecker : CallChecker {
 
         if (annotationClass.fqNameSafe == WRITE_WITH_FQNAME) {
             checkWriteWithUsage(resolvedCall, annotationEntry, context, annotationOwner)
+        }
+
+        if (annotationClass.fqNameSafe == IGNORED_ON_PARCEL_FQNAME) {
+            checkIgnoredOnParcelUsage(annotationEntry, context, annotationOwner)
+        }
+    }
+
+    private fun checkIgnoredOnParcelUsage(annotationEntry: KtAnnotationEntry, context: CallCheckerContext, element: KtModifierListOwner) {
+        if (element is KtParameter && PsiTreeUtil.getParentOfType(element, KtDeclaration::class.java) is KtPrimaryConstructor) {
+            context.trace.reportFromPlugin(
+                ErrorsAndroid.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY.on(annotationEntry),
+                DefaultErrorMessagesAndroid
+            )
+        } else if (element !is KtProperty || PsiTreeUtil.getParentOfType(element, KtDeclaration::class.java) !is KtClass) {
+            context.trace.reportFromPlugin(ErrorsAndroid.INAPPLICABLE_IGNORED_ON_PARCEL.on(annotationEntry), DefaultErrorMessagesAndroid)
         }
     }
 

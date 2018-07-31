@@ -114,8 +114,6 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), Kot
         } ?: return null
         val project = module.project
 
-        if (isTestRunnerPackageAvailableFor(project, file)) return null
-
         val testFilePath = module.jsTestOutputFilePath ?: return null
         val testElementPath = TestElementPath.forElement(element, module) ?: return null
 
@@ -123,16 +121,19 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), Kot
 
         if (context?.getOriginalConfiguration(MochaConfigurationType.getInstance()) is MochaRunConfiguration) return configData
 
+        if (isTestRunnerPackageAvailableFor(project, file)) return configData
+
         val roots = collectMochaTestRoots(project)
         if (roots.isEmpty()) return null
 
         val dirs = SmartHashSet<VirtualFile>()
         for (root in roots) {
-            if (root.isDirectory) {
-                dirs.add(root)
-            } else if (root == file) return configData
+            when {
+                root.isDirectory -> dirs.add(root)
+                root == file -> return configData
+            }
         }
-        return if (VfsUtilCore.isUnder(file, dirs)) configData else configData
+        return if (VfsUtilCore.isUnder(file, dirs)) configData else null
     }
 
     override val isForTests: Boolean

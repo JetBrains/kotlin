@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -174,11 +175,12 @@ class LazyJavaClassMemberScope(
             )
         } ?: return null
 
-        return newCopyBuilder()
-            .setIsSuspend(true)
+        val functionDescriptor = newCopyBuilder()
             .setValueParameters(valueParameters.dropLast(1))
             .setReturnType(continuationParameter.type.arguments[0].type)
             .build()
+        (functionDescriptor as SimpleFunctionDescriptorImpl?)?.isSuspend = true
+        return functionDescriptor
     }
 
     private fun SimpleFunctionDescriptor.createRenamedCopy(builtinName: Name): SimpleFunctionDescriptor =

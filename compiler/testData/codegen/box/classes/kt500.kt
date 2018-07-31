@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 var GUEST_USER_ID = 3
 val USER_ID =
     try {

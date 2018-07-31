@@ -46,12 +46,14 @@ import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.APT_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.CLASS_OUTPUT_DIR_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.CORRECT_ERROR_TYPES_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.INCREMENTAL_DATA_OUTPUT_DIR_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.INFO_AS_WARNINGS_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.JAVAC_CLI_OPTIONS_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.MAP_DIAGNOSTIC_LOCATIONS_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.SOURCE_OUTPUT_DIR_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.STUBS_OUTPUT_DIR_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.USE_LIGHT_ANALYSIS_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.VERBOSE_MODE_OPTION
+import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.INFO_AS_WARNINGS
 import org.jetbrains.kotlin.kapt3.base.Kapt
 import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.log
@@ -92,6 +94,9 @@ object Kapt3ConfigurationKeys {
 
     val VERBOSE_MODE: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>(VERBOSE_MODE_OPTION.description)
+
+    val INFO_AS_WARNINGS: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>(INFO_AS_WARNINGS_OPTION.description)
 
     @Deprecated("Use APT_MODE instead.")
     val APT_ONLY: CompilerConfigurationKey<String> =
@@ -147,6 +152,9 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
         val VERBOSE_MODE_OPTION: CliOption =
                 CliOption("verbose", "true | false", "Enable verbose output", required = false)
 
+        val INFO_AS_WARNINGS_OPTION: CliOption =
+                CliOption("infoAsWarnings", "true | false", "Show information messages as warnings", required = false)
+
         @Deprecated("Use APT_MODE_OPTION instead.")
         val APT_ONLY_OPTION: CliOption =
                 CliOption("aptOnly", "true | false", "Run only annotation processing, do not compile Kotlin files", required = false)
@@ -172,7 +180,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION, JAVAC_CLI_OPTIONS_OPTION,
                    CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, APT_MODE_OPTION,
                    USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION, INCREMENTAL_DATA_OUTPUT_DIR_OPTION,
-                   CONFIGURATION, MAP_DIAGNOSTIC_LOCATIONS_OPTION)
+                   CONFIGURATION, MAP_DIAGNOSTIC_LOCATIONS_OPTION, INFO_AS_WARNINGS_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -191,6 +199,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             USE_LIGHT_ANALYSIS_OPTION -> configuration.put(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS, value)
             CORRECT_ERROR_TYPES_OPTION -> configuration.put(Kapt3ConfigurationKeys.CORRECT_ERROR_TYPES, value)
             MAP_DIAGNOSTIC_LOCATIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.MAP_DIAGNOSTIC_LOCATIONS, value)
+            INFO_AS_WARNINGS_OPTION -> configuration.put(Kapt3ConfigurationKeys.INFO_AS_WARNINGS, value)
             CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
@@ -221,9 +230,10 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
                                     configuration.get(Kapt3ConfigurationKeys.APT_ONLY))
 
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
+        val infoAsWarnings = configuration.get(Kapt3ConfigurationKeys.INFO_AS_WARNINGS) == "true"
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                                ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
-        val logger = MessageCollectorBackedKaptLogger(isVerbose, messageCollector)
+        val logger = MessageCollectorBackedKaptLogger(isVerbose, infoAsWarnings, messageCollector)
 
         fun abortAnalysis() = AnalysisHandlerExtension.registerExtension(project, AbortAnalysisHandlerExtension())
 
@@ -292,6 +302,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Use light analysis: $useLightAnalysis")
             logger.info("Correct error types: $correctErrorTypes")
             logger.info("Map diagnostic locations: $mapDiagnosticLocations")
+            logger.info("Info as warnings: $infoAsWarnings")
             paths.log(logger)
             logger.info("Annotation processors: " + annotationProcessors.joinToString())
             logger.info("Javac options: $apOptions")

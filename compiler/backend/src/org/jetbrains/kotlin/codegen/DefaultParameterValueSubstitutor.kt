@@ -179,15 +179,16 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             val delegateOwner = delegateFunctionDescriptor.containingDeclaration
             if (delegateOwner is ClassDescriptor && delegateOwner.isCompanionObject) {
                 val singletonValue = StackValue.singleton(delegateOwner, typeMapper)
-                singletonValue.put(singletonValue.type, v)
+                singletonValue.put(singletonValue.type, singletonValue.kotlinType, v)
             }
         }
 
         val receiver = functionDescriptor.extensionReceiverParameter
         if (receiver != null) {
+            val receiverKotlinType = receiver.returnType
             val receiverType = typeMapper.mapType(receiver)
             val receiverIndex = frameMap.enter(receiver, receiverType)
-            StackValue.local(receiverIndex, receiverType).put(receiverType, v)
+            StackValue.local(receiverIndex, receiverType, receiverKotlinType).put(receiverType, receiverKotlinType, v)
         }
         for (parameter in remainingParameters) {
             frameMap.enter(parameter, typeMapper.mapType(parameter))
@@ -196,10 +197,11 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         var mask = 0
         val masks = arrayListOf<Int>()
         for (parameterDescriptor in functionDescriptor.valueParameters) {
-            val paramType = typeMapper.mapType(parameterDescriptor.type)
+            val paramKotlinType = parameterDescriptor.type
+            val paramType = typeMapper.mapType(paramKotlinType)
             if (parameterDescriptor in remainingParameters) {
                 val index = frameMap.getIndex(parameterDescriptor)
-                StackValue.local(index, paramType).put(paramType, v)
+                StackValue.local(index, paramType, paramKotlinType).put(paramType, paramKotlinType, v)
             } else {
                 AsmUtil.pushDefaultValueOnStack(paramType, v)
                 val i = parameterDescriptor.index

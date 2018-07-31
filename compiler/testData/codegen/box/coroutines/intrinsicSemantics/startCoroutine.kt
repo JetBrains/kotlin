@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -7,12 +8,12 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 import kotlin.test.assertEquals
 
-suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume("OK")
     COROUTINE_SUSPENDED
 }
 
-suspend fun suspendWithException(): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendWithException(): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resumeWithException(RuntimeException("OK"))
     COROUTINE_SUSPENDED
 }
@@ -20,7 +21,7 @@ suspend fun suspendWithException(): String = suspendCoroutineOrReturn { x ->
 fun builder(c: suspend () -> String): String {
     var fromSuspension: String? = null
 
-    c.startCoroutine(object: Continuation<String> {
+    c.startCoroutine(object: ContinuationAdapter<String>() {
         override val context: CoroutineContext
             get() =  EmptyCoroutineContext
 

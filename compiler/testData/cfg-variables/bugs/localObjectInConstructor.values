@@ -175,6 +175,14 @@ state                                          <v7>: *         NEW: r(state|<v6>
 println(state)                                 <v8>: *         NEW: call(println(state), println|<v7>) -> <v8>
 if (state) state = true println(state) // OK   <v8>: *         COPY
 =====================
+== run ==
+fun <T, R> T.run(f: T.() -> R) = f()
+---------------------
+      <v0>: {<: T.() -> R}   NEW: magic[FAKE_INITIALIZER](f: T.() -> R) -> <v0>
+      <v2>: {<: T}           NEW: magic[IMPLICIT_RECEIVER](f()) -> <v2>
+f     <v1>: {<: (T) -> R}    NEW: r(f) -> <v1>
+f()   <v3>: {<: R}           NEW: call(f(), invoke|<v1>, <v2>) -> <v3>
+=====================
 == exec ==
 fun <T> exec(f: () -> T): T = f()
 ---------------------

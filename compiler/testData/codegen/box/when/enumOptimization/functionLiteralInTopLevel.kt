@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 // CHECK_CASES_COUNT: function=box$lambda count=0
 // CHECK_IF_COUNT: function=box$lambda count=1
 

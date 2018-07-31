@@ -18,6 +18,7 @@ Exit code: OK
 Building module2
 Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/b/B.class
 End of files
 Compiling files:

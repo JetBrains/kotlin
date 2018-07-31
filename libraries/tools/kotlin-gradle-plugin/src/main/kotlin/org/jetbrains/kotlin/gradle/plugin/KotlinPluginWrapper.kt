@@ -21,11 +21,13 @@ import org.gradle.api.Project
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
 import org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImpl
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -59,37 +61,31 @@ abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver)
     open val projectExtensionClass: KClass<out KotlinProjectExtension> get() = KotlinProjectExtension::class
 }
 
-open class KotlinPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
+open class KotlinPluginWrapper @Inject internal constructor(fileResolver: FileResolver, protected val registry: ToolingModelBuilderRegistry): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
+            KotlinPlugin(KotlinTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion, registry)
 
     override val projectExtensionClass: KClass<out KotlinJvmProjectExtension>
         get() = KotlinJvmProjectExtension::class
 }
 
-open class KotlinCommonPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
+open class KotlinCommonPluginWrapper @Inject internal constructor(fileResolver: FileResolver, protected val registry: ToolingModelBuilderRegistry): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            KotlinCommonPlugin(KotlinCommonTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
+            KotlinCommonPlugin(KotlinCommonTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion, registry)
 }
 
-open class KotlinAndroidPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
+open class KotlinAndroidPluginWrapper @Inject internal constructor(fileResolver: FileResolver, protected val registry: ToolingModelBuilderRegistry): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
             KotlinAndroidPlugin(AndroidTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
 }
 
-open class Kotlin2JsPluginWrapper @Inject constructor(fileResolver: FileResolver): KotlinBasePluginWrapper(fileResolver) {
+open class Kotlin2JsPluginWrapper @Inject internal constructor(fileResolver: FileResolver, protected val registry: ToolingModelBuilderRegistry): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(kotlinGradleBuildServices: KotlinGradleBuildServices) =
-            Kotlin2JsPlugin(Kotlin2JsTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion)
+            Kotlin2JsPlugin(Kotlin2JsTasksProvider(), KotlinSourceSetProviderImpl(fileResolver), kotlinPluginVersion, registry)
 }
 
-fun Project.getKotlinPluginVersion(): String? {
-    val kotlinPluginWrapper = plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
-        project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
-        return null
-    }
-
-    return kotlinPluginWrapper.kotlinPluginVersion
-}
+fun Project.getKotlinPluginVersion(): String? =
+    plugins.asSequence().mapNotNull { (it as? KotlinBasePluginWrapper)?.kotlinPluginVersion }.firstOrNull()
 
 private fun Any.loadKotlinVersionFromResource(log: Logger): String {
     log.kotlinDebug("Loading version information")

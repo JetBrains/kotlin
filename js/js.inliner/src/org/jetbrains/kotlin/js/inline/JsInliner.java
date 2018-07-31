@@ -496,7 +496,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         if (!(descriptor instanceof FunctionDescriptor)) return false;
-        return CommonCoroutineCodegenUtilKt.isBuiltInSuspendCoroutineOrReturn(
+        return CommonCoroutineCodegenUtilKt.isBuiltInSuspendCoroutineUninterceptedOrReturn(
                 (FunctionDescriptor) descriptor.getOriginal(), languageVersionSettings
         );
     }
