@@ -197,6 +197,7 @@ open class SymbolTable : ReferenceSymbolTable {
             currentScope?.dump() ?: "<none>"
     }
 
+    private val externalPackageFragmentTable = FlatSymbolTable<PackageFragmentDescriptor, IrExternalPackageFragment, IrExternalPackageFragmentSymbol>()
     private val classSymbolTable = FlatSymbolTable<ClassDescriptor, IrClass, IrClassSymbol>()
     private val constructorSymbolTable = FlatSymbolTable<ClassConstructorDescriptor, IrConstructor, IrConstructorSymbol>()
     private val enumEntrySymbolTable = FlatSymbolTable<ClassDescriptor, IrEnumEntry, IrEnumEntrySymbol>()
@@ -209,11 +210,17 @@ open class SymbolTable : ReferenceSymbolTable {
     private val variableSymbolTable = ScopedSymbolTable<VariableDescriptor, IrVariable, IrVariableSymbol>()
     private val scopedSymbolTables = listOf(valueParameterSymbolTable, variableSymbolTable, scopedTypeParameterSymbolTable)
 
-    fun declareFile(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor): IrFile =
-        IrFileImpl(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor))
+    fun referenceExternalPackageFragment(descriptor: PackageFragmentDescriptor) =
+        externalPackageFragmentTable.referenced(descriptor) { IrExternalPackageFragmentSymbolImpl(descriptor) }
 
-    fun declareExternalPackageFragment(packageFragmentDescriptor: PackageFragmentDescriptor): IrExternalPackageFragment =
-        IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragmentDescriptor))
+    fun declareExternalPackageFragment(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment {
+        return externalPackageFragmentTable.declare(
+            descriptor,
+            { IrExternalPackageFragmentSymbolImpl(descriptor) },
+            { IrExternalPackageFragmentImpl(it) }
+        )
+    }
+
 
     fun declareAnonymousInitializer(
         startOffset: Int,
