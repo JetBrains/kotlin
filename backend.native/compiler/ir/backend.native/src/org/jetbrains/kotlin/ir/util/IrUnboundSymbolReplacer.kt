@@ -59,44 +59,11 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: Context) {
             symbolTable = context.psi2IrGeneratorContext.symbolTable,
             irBuiltIns = context.irBuiltIns
     ).generateUnboundSymbolsAsDependencies(this)
-
-    // Merge duplicated module and package declarations:
-    this.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {}
-
-        override fun visitModuleFragment(declaration: IrModuleFragment) {
-            declaration.dependencyModules.forEach { it.acceptVoid(this) }
-
-            // TODO: toSet added to avoid duplicates introduced in 8094cb7dc5506895466b4912a44e9e7f99a14902.
-            val dependencyModules = declaration.dependencyModules.toSet().groupBy { it.descriptor }.map { (_, fragments) ->
-                fragments.reduce { firstModule, nextModule ->
-                    firstModule.apply {
-                        mergeFrom(nextModule)
-                    }
-                }
-            }
-
-            declaration.dependencyModules.clear()
-            declaration.dependencyModules.addAll(dependencyModules)
-        }
-
-    })
 }
 
 private fun IrModuleFragment.mergeFrom(other: IrModuleFragment): Unit {
     assert(this.files.isEmpty())
     assert(other.files.isEmpty())
-
-    // TODO: toSet added to avoid duplicates introduced in 8094cb7dc5506895466b4912a44e9e7f99a14902.
-    val thisPackages = this.externalPackageFragments.toSet().groupBy { it.packageFragmentDescriptor }
-    other.externalPackageFragments.forEach {
-        val thisPackage = thisPackages[it.packageFragmentDescriptor]?.single()
-        if (thisPackage == null) {
-            this.externalPackageFragments.add(it)
-        } else {
-            thisPackage.addChildren(it.declarations)
-        }
-    }
 }
 
 private class DeclarationSymbolCollector : IrElementVisitorVoid {

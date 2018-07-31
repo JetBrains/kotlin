@@ -410,11 +410,6 @@ object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent
 
 fun IrModuleFragment.checkDeclarationParents() {
     this.accept(CheckDeclarationParentsVisitor, null)
-    this.dependencyModules.forEach { dependencyModule ->
-        dependencyModule.externalPackageFragments.forEach {
-            it.accept(CheckDeclarationParentsVisitor, null)
-        }
-    }
 }
 
 object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
