@@ -32,7 +32,7 @@ class MessageCollectorAdapter(
         val kind = kind(severity)
         if (kind != null) {
             // Report target when cross-compiling common files
-            if (location != null && kotlinTarget != null && kotlinTarget.isCommonModuleFile(File(location.path))) {
+            if (location != null && kotlinTarget != null && kotlinTarget.isFromIncludedSourceRoot(File(location.path))) {
                 val moduleName = kotlinTarget.module.name
                 prefix += "[$moduleName] "
             }

@@ -41,13 +41,17 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.incremental.*
-import org.jetbrains.kotlin.jps.platforms.*
+import org.jetbrains.kotlin.jps.model.kotlinKind
+import org.jetbrains.kotlin.jps.platforms.KotlinJvmModuleBuildTarget
+import org.jetbrains.kotlin.jps.platforms.KotlinModuleBuildTarget
+import org.jetbrains.kotlin.jps.platforms.kotlinBuildTargets
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -242,13 +246,28 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
 
         val kotlinTarget = context.kotlinBuildTargets[chunk.representativeTarget()] ?: return OK
-
         val messageCollector = MessageCollectorAdapter(context, kotlinTarget)
+
+        // New mpp project model: modules which is imported from sources sets of the compilations shouldn't be compiled for now.
+        // It should be compiled only as one of source root of target compilation, which is added in [KotlinSourceRootProvider].
+        if (chunk.modules.any { it.kotlinKind == KotlinModuleKind.SOURCE_SET_HOLDER }) {
+            if (chunk.modules.size > 1) {
+                messageCollector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Cyclically dependent modules is not supported in multiplatform projects"
+                )
+                return ABORT
+            }
+
+            return NOTHING_DONE
+        }
+
         val kotlinDirtyFilesHolder = KotlinDirtySourceFilesHolder(chunk, context, dirtyFilesHolder)
         val fsOperations = FSOperationsHelper(context, chunk, kotlinDirtyFilesHolder, LOG)
 
         try {
-            val proposedExitCode = doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
+            val proposedExitCode =
+                doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
 
             val actualExitCode = if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
@@ -605,10 +624,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val representativeTarget = chunk.representativeTarget()
         fun SimpleOutputItem.target() =
             sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?: chunk.targets.singleOrNull {
-                        it.outputDir?.let {
-                            outputFile.startsWith(it)
-                        } ?: false
-                    } ?: representativeTarget
+                it.outputDir?.let {
+                    outputFile.startsWith(it)
+                } ?: false
+            } ?: representativeTarget
 
         return outputItemCollector.outputs.groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
     }
