@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.getTypeArgumentOrDefault
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 // backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/irasdescriptors/NewIrUtils.kt
-fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: SymbolTable) {
+fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: ReferenceSymbolTable) {
     val moduleDescriptor = this.descriptor
 
     fun KotlinType.referenceAllClassifiers() {
@@ -126,9 +127,4 @@ fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: SymbolTabl
     }
 
     this.acceptVoid(visitor)
-    this.dependencyModules.forEach { module ->
-        module.externalPackageFragments.forEach {
-            it.acceptVoid(visitor)
-        }
-    }
 }

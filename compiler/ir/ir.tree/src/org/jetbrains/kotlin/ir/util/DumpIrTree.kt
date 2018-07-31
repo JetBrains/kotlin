@@ -65,7 +65,6 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
     override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.files.dumpElements()
-            declaration.externalPackageFragments.dumpElements()
         }
     }
 

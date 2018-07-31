@@ -42,19 +42,6 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         for ((testFile, irFile) in ktFiles.zip(irModule.files)) {
             doTestIrFileAgainstExpectations(dir, testFile, irFile)
         }
-
-        if (shouldDumpDependencies(wholeFile)) {
-            doTestIrModuleDependencies(wholeFile, irModule)
-        }
-    }
-
-    private fun doTestIrModuleDependencies(wholeFile: File, irModule: IrModuleFragment) {
-        irModule.dependencyModules.forEach { irDependencyModule ->
-            val actual = irDependencyModule.dump()
-            val sanitizedModuleName = StringUtil.sanitizeJavaIdentifier(irDependencyModule.descriptor.name.asString())
-            val expectedFileName = wholeFile.absolutePath.replace(".kt", "__$sanitizedModuleName.txt")
-            KotlinTestUtils.assertEqualsToFile(File(expectedFileName), actual)
-        }
     }
 
     protected fun doTestIrFileAgainstExpectations(dir: File, testFile: TestFile, irFile: IrFile) {
