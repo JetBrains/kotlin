@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.name.FqName
@@ -328,3 +325,23 @@ fun IrFunction.createDispatchReceiverParameter() {
         null
     ).also { it.parent = this }
 }
+
+fun ReferenceSymbolTable.referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol =
+    when (classifier) {
+        is TypeParameterDescriptor ->
+            referenceTypeParameter(classifier)
+        is ClassDescriptor ->
+            referenceClass(classifier)
+        else ->
+            throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
+    }
+
+fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunctionSymbol =
+    when (callable) {
+        is ClassConstructorDescriptor ->
+            referenceConstructor(callable)
+        is FunctionDescriptor ->
+            referenceSimpleFunction(callable)
+        else ->
+            throw IllegalArgumentException("Unexpected callable descriptor: $callable")
+    }

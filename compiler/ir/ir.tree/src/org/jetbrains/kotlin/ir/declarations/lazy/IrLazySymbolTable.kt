@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.*
 
 
 class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbolTable by originalTable {
@@ -58,13 +56,5 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
                 stubGenerator?.generateOrGetTypeParameterStub(classifier)
             }
         }
-    }
-
-    override fun referenceFunction(callable: CallableDescriptor): IrFunctionSymbol {
-        return super.referenceFunction(callable)
-    }
-
-    override fun referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol {
-        return super.referenceClassifier(classifier)
     }
 }

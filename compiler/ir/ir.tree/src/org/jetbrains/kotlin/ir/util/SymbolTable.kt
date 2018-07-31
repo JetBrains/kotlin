@@ -42,26 +42,6 @@ interface ReferenceSymbolTable {
     fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol
     fun referenceVariable(descriptor: VariableDescriptor): IrVariableSymbol
 
-    fun referenceFunction(callable: CallableDescriptor): IrFunctionSymbol =
-        when (callable) {
-            is ClassConstructorDescriptor ->
-                referenceConstructor(callable)
-            is FunctionDescriptor ->
-                referenceSimpleFunction(callable)
-            else ->
-                throw IllegalArgumentException("Unexpected callable descriptor: $callable")
-        }
-
-    fun referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol =
-        when (classifier) {
-            is TypeParameterDescriptor ->
-                referenceTypeParameter(classifier)
-            is ClassDescriptor ->
-                referenceClass(classifier)
-            else ->
-                throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
-        }
-
 
     val declarationSystemTable: SymbolTable
     val referenceSymbolTable: ReferenceSymbolTable
