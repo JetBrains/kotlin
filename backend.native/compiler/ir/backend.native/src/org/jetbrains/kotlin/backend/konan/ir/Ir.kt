@@ -45,9 +45,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.translateErased
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -68,12 +66,12 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
 
     fun get(descriptor: FunctionDescriptor): IrFunction {
         return moduleIndexForCodegen.functions[descriptor]
-                ?: symbols.symbolTable.referenceFunction(descriptor).owner
+                ?: symbols.lazySymbolTable.referenceFunction(descriptor).owner
     }
 
     fun get(descriptor: ClassDescriptor): IrClass {
         return moduleIndexForCodegen.classes[descriptor]
-                ?: symbols.symbolTable.referenceClass(descriptor)
+                ?: symbols.lazySymbolTable.referenceClass(descriptor)
                         .also {
                             if (!it.isBound)
                                 error(descriptor)
@@ -92,7 +90,7 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
         assert(descriptor.kind == ClassKind.ENUM_ENTRY)
 
         return originalModuleIndex.enumEntries[descriptor]
-                ?: symbols.symbolTable.referenceEnumEntry(descriptor).owner
+                ?: symbols.lazySymbolTable.referenceEnumEntry(descriptor).owner
     }
 
     fun translateErased(type: KotlinType): IrSimpleType = symbols.symbolTable.translateErased(type)
@@ -127,7 +125,7 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
     }
 }
 
-internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Symbols<Context>(context, symbolTable) {
+internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val lazySymbolTable: ReferenceSymbolTable): Symbols<Context>(context, lazySymbolTable) {
 
     val entryPoint = findMainEntryPoint(context)?.let { symbolTable.referenceSimpleFunction(it) }
 

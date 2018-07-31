@@ -227,7 +227,7 @@ private fun createFakeOverride(
 }
 
 
-fun IrSimpleFunction.setOverrides(symbolTable: SymbolTable) {
+fun IrSimpleFunction.setOverrides(symbolTable: ReferenceSymbolTable) {
     assert(this.overriddenSymbols.isEmpty())
 
     this.descriptor.overriddenDescriptors.mapTo(this.overriddenSymbols) {
@@ -312,7 +312,7 @@ fun IrClass.setSuperSymbols(superTypes: List<IrType>) {
 private fun IrClass.superDescriptors() =
         this.descriptor.typeConstructor.supertypes.map { it.constructor.declarationDescriptor as ClassDescriptor }
 
-fun IrClass.setSuperSymbols(symbolTable: SymbolTable) {
+fun IrClass.setSuperSymbols(symbolTable: ReferenceSymbolTable) {
     assert(this.superTypes.isEmpty())
     this.descriptor.typeConstructor.supertypes.mapTo(this.superTypes) { symbolTable.translateErased(it) }
 
@@ -665,7 +665,7 @@ fun CallableMemberDescriptor.createValueParameter(
     return IrValueParameterImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, descriptor, type, null)
 }
 
-fun SymbolTable.translateErased(type: KotlinType): IrSimpleType {
+fun ReferenceSymbolTable.translateErased(type: KotlinType): IrSimpleType {
     val descriptor = TypeUtils.getClassDescriptor(type)
     if (descriptor == null) return translateErased(type.immediateSupertypes().first())
     val classSymbol = this.referenceClass(descriptor)

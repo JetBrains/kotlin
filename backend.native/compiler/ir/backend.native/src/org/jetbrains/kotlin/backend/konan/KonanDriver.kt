@@ -75,7 +75,7 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
         @Suppress("DEPRECATION")
         context.psi2IrGeneratorContext = generatorContext
 
-        val symbols = KonanSymbols(context, generatorContext.symbolTable)
+        val symbols = KonanSymbols(context, generatorContext.symbolTable, generatorContext.symbolTable.lazyWrapper)
 
         val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles())
 
