@@ -20,6 +20,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class KotlinScriptingSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
+    public static final String ID = "preferences.language.Kotlin.scripting";
+
     private JPanel root;
     private JPanel panelScriptDefinitionsChooser;
     private JCheckBox scriptDependenciesAutoReload;
@@ -97,6 +99,6 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
     @Override
     @NotNull
     public String getId() {
-        return "preferences.language.Kotlin.scripting";
+        return ID;
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.script.configutation
 
+import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
+import org.jetbrains.kotlin.idea.script.configuration.KotlinScriptingSettingsConfigurable
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -86,6 +88,10 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
                 createComponentActionLabel("Ignore") {
                     KotlinScriptingSettings.getInstance(psiFile.project).suppressDefinitionsCheck = true
                     EditorNotifications.getInstance(psiFile.project).updateAllNotifications()
+                }
+
+                createComponentActionLabel("Open Settings") {
+                    ShowSettingsUtilImpl.showSettingsDialog(psiFile.project, KotlinScriptingSettingsConfigurable.ID, "")
                 }
             }
         }
