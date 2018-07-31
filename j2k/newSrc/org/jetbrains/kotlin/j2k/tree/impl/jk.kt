@@ -177,20 +177,20 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression, type: JKTy
     override var type by child(type)
 }
 
-class JKTypeElementImpl(override val type: JKType) : JKTypeElement, JKElementBase() {
+class JKTypeElementImpl(override var type: JKType) : JKTypeElement, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeElement(this, data)
 }
 
 class JKClassTypeImpl(
     override val classReference: JKClassSymbol,
-    override var parameters: List<JKType> = emptyList(),
+    override val parameters: List<JKType> = emptyList(),
     override val nullability: Nullability = Nullability.Default
 ) : JKClassType
 
 
 class JKUnresolvedClassType(
     val name: String,
-    override var parameters: List<JKType>,
+    override val parameters: List<JKType>,
     override val nullability: Nullability = Nullability.Default
 ) : JKParametrizedType
 
@@ -354,6 +354,7 @@ class JKDelegationConstructorCallImpl(
     expression: JKExpression,
     arguments: JKExpressionList
 ) : JKBranchElementBase(), JKDelegationConstructorCall {
+    override var typeArguments by children(emptyList<JKTypeElement>())
     override val expression: JKExpression by child(expression)
     override val arguments: JKExpressionList by child(arguments)
 

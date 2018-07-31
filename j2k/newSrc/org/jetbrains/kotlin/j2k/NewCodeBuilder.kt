@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class NewCodeBuilder {
 
@@ -264,23 +265,15 @@ class NewCodeBuilder {
         }
 
         override fun visitExpressionList(expressionList: JKExpressionList) {
-            expressionList.expressions.firstOrNull()?.accept(this)
-            for (i in 1..expressionList.expressions.lastIndex) {
-                printer.printWithNoIndent(", ")
-                expressionList.expressions[i].accept(this)
-            }
+            renderList(expressionList.expressions) { it.accept(this) }
         }
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
             printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString())
             if (methodCallExpression.typeArguments.isNotEmpty()) {
-                printer.printWithNoIndent("<")
-                methodCallExpression.typeArguments.firstOrNull()?.accept(this)
-                for (i in 1..methodCallExpression.typeArguments.lastIndex) {
-                    printer.printWithNoIndent(", ")
-                    methodCallExpression.typeArguments[i].accept(this)
+                printer.par(ANGLE) {
+                    renderList(methodCallExpression.typeArguments) { it.accept(this) }
                 }
-                printer.printWithNoIndent(">")
             }
             printer.par {
                 methodCallExpression.arguments.accept(this)
@@ -341,9 +334,7 @@ class NewCodeBuilder {
             }
             if (type is JKParametrizedType && type.parameters.isNotEmpty()) {
                 printer.par(ANGLE) {
-                    renderList(type.parameters) {
-                        renderType(it)
-                    }
+                    renderList(type.parameters, renderElement = ::renderType)
                 }
             }
             when (type.nullability) {
@@ -450,9 +441,9 @@ class NewCodeBuilder {
         }
 
         override fun visitBlockStatement(blockStatement: JKBlockStatement) {
-            printer.printWithNoIndent("{ ")
-            blockStatement.block.accept(this)
-            printer.printWithNoIndent(" }")
+            printer.par(CURVED) {
+                blockStatement.block.accept(this)
+            }
         }
 
         /*override fun visitParameter(parameter: JKParameter) {

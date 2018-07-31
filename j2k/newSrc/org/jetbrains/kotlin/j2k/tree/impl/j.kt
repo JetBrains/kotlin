@@ -146,11 +146,12 @@ sealed class JKJavaPrimitiveTypeImpl(override val jvmPrimitiveType: JvmPrimitive
 }
 
 object JKJavaVoidType : JKType {
-    override val nullability: Nullability
+    override var nullability: Nullability
         get() = Nullability.NotNull
+        set(it) {}
 }
 
-class JKJavaArrayTypeImpl(override val type: JKType, override val nullability: Nullability = Nullability.Default) : JKJavaArrayType {
+class JKJavaArrayTypeImpl(override val type: JKType, override var nullability: Nullability = Nullability.Default) : JKJavaArrayType {
 }
 
 class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement {

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.j2k.tree.impl.JKSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 interface JKOperator {
@@ -55,8 +55,7 @@ interface JKParametrizedType : JKType {
 }
 
 interface JKClassType : JKParametrizedType {
-    val classReference: JKSymbol?
-    override val nullability: Nullability
+    val classReference: JKClassSymbol
 }
 
 interface JKJavaPrimitiveType : JKType {

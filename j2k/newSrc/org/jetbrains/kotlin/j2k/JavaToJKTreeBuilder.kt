@@ -285,6 +285,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 with(expressionTreeMapper) { initializer.toJK() }
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
+                backAnnotation[it] = this
             }
         }
 
@@ -302,6 +303,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             ).also {
                 backAnnotation[it] = this
                 symbolProvider.provideUniverseSymbol(this, it)
+                backAnnotation[it] = this
             }
         }
 
@@ -316,6 +318,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                                    JKNameIdentifierImpl(name!!),
                                    with(modifierMapper) { modifierList.toJK() }).also {
                 symbolProvider.provideUniverseSymbol(this, it)
+                backAnnotation[it] = this
             }
         }
 
@@ -331,7 +334,10 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         with(expressionTreeMapper) { it.typeElement.toJK() },
                         JKNameIdentifierImpl(it.name ?: TODO()),
                         with(expressionTreeMapper) { it.initializer.toJK() }
-                    ).also { i -> symbolProvider.provideUniverseSymbol(it, i) }
+                    ).also { i ->
+                        symbolProvider.provideUniverseSymbol(it, i)
+                        backAnnotation[i] = it
+                    }
                 } else TODO()
             }
         }

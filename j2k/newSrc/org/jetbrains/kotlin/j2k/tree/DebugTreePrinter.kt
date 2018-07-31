@@ -79,7 +79,7 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println(type.classNameWithoutJK(), " \"")
         printer.indented {
             if (type is JKClassType) {
-                printer.println((type.classReference as? JKClassSymbol)?.fqName ?: type.classReference?.let { it::class } ?: "Unbound")
+                printer.println((type.classReference as? JKClassSymbol)?.fqName ?: type.classReference.let { it::class })
             }
             if (type is JKJavaPrimitiveType) {
                 printer.println(type.jvmPrimitiveType.javaKeywordName)
