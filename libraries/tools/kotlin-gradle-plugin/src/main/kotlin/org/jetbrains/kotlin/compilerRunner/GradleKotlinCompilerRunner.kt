@@ -111,15 +111,10 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args.destination = null
         }
 
-        var deleteBuildFile = true
-
         try {
-            val res = runCompiler(K2JVM_COMPILER, args, environment)
-            deleteBuildFile = (res == ExitCode.OK || System.getProperty("kotlin.compiler.leave.module.file.on.error") == null)
-            return res
-        }
-        finally {
-            if (deleteBuildFile) {
+            return runCompiler(K2JVM_COMPILER, args, environment)
+        } finally {
+            if (System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {
                 buildFile.delete()
             }
         }

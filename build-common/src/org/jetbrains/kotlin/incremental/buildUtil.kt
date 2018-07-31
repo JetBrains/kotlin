@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.synthetic.SAM_LOOKUP_NAME
 import java.io.File
 import java.util.*
 
+const val DELETE_MODULE_FILE_PROPERTY = "kotlin.delete.module.file.after.build"
+
 fun makeModuleFile(
         name: String,
         isTest: Boolean,
