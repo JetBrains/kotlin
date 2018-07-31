@@ -116,6 +116,7 @@ class ExpressionCodegen(
 
     fun generate() {
         mv.visitCode()
+        val startLabel = markNewLabel()
         irFunction.markLineNumber(true)
         val info = BlockInfo.create()
         val result = irFunction.body!!.accept(this, info)
@@ -134,8 +135,22 @@ class ExpressionCodegen(
                 mv.areturn(returnType)
             }
         }
-        writeLocalVariablesInTable(info)
+        val endLabel = writeLocalVariablesInTable(info)
+        createLocalVariablesForParameters(startLabel, endLabel)
         mv.visitEnd()
+    }
+
+    private fun createLocalVariablesForParameters(startLabel: Label, endLabel: Label) {
+        var register = 0
+        if (!irFunction.isStatic) {
+            mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, register++)
+        }
+        for (i in irFunction.valueParameters.indices) {
+            val param = irFunction.valueParameters[i]
+            val type = typeMapper.mapType(param.descriptor)
+            mv.visitLocalVariable(param.name.asString(), type.descriptor, null, startLabel, endLabel, register)
+            register += type.size
+        }
     }
 
     private fun endsWithReturn(body: IrBody): Boolean {
@@ -164,7 +179,7 @@ class ExpressionCodegen(
         }
     }
 
-    private fun writeLocalVariablesInTable(info: BlockInfo) {
+    private fun writeLocalVariablesInTable(info: BlockInfo): Label {
         val endLabel = markNewLabel()
         info.variables.forEach {
             mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
@@ -173,6 +188,7 @@ class ExpressionCodegen(
         info.variables.reversed().forEach {
             frame.leave(it.declaration.symbol)
         }
+        return endLabel
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo): StackValue {
