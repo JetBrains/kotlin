@@ -121,6 +121,21 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
         get() = KotlinSingleJavaTargetExtension::class
 }
 
+open class KotlinMultiplatformPluginWrapper @Inject constructor(
+    fileResolver: FileResolver,
+    private val instantiator: Instantiator,
+    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
+): KotlinBasePluginWrapper(fileResolver) {
+    override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
+        KotlinMultiplatformPlugin(
+            buildOutputCleanupRegistry, fileResolver,
+            instantiator, kotlinPluginVersion
+        )
+
+    override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
+        get() = KotlinMultiplatformExtension::class
+}
+
 fun Project.getKotlinPluginVersion(): String? =
     plugins.asSequence().mapNotNull { (it as? KotlinBasePluginWrapper)?.kotlinPluginVersion }.firstOrNull()
 
