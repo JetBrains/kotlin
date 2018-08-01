@@ -23,6 +23,6 @@ class KonanProtoBasedClassDataFinder(
 
   override fun findClassData(classId: ClassId): ClassData? {
     val classProto = classIdToProto[classId] ?: return null
-    return ClassData(nameResolver, classProto, classSource(classId))
+    return ClassData(nameResolver, classProto, KonanMetadataVersion.DEFAULT_INSTANCE, classSource(classId))
   }
 }

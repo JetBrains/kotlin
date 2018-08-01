@@ -64,7 +64,7 @@ class KonanMetadataDeserializerForDecompiler(
     }
 
     val membersScope = DeserializedPackageMemberScope(
-      createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, containerSource = null,
+      createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, KonanMetadataVersion.DEFAULT_INSTANCE, containerSource = null,
       components = deserializationComponents
     ) { emptyList() }
 
