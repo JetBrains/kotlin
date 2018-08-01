@@ -144,7 +144,7 @@ internal fun deserializeModule(languageVersionSettings: LanguageVersionSettings,
 internal class KonanSerializationUtil(val context: Context, metadataVersion: BinaryVersion) {
 
     val serializerExtension = KonanSerializerExtension(context, metadataVersion)
-    val topSerializer = KonanDescriptorSerializer.createTopLevel(serializerExtension)
+    val topSerializer = KonanDescriptorSerializer.createTopLevel(context, serializerExtension)
     var classSerializer: KonanDescriptorSerializer = topSerializer
 
     fun serializeClass(packageName: FqName,
@@ -155,7 +155,7 @@ internal class KonanSerializationUtil(val context: Context, metadataVersion: Bin
 
         // TODO: this is to filter out object{}. Change me.
         if (classDescriptor.isExported()) 
-            classSerializer = KonanDescriptorSerializer.create(classDescriptor, serializerExtension)
+            classSerializer = KonanDescriptorSerializer.create(context, classDescriptor, serializerExtension)
 
         val classProto = classSerializer.classProto(classDescriptor).build()
             ?: error("Class not serialized: $classDescriptor")

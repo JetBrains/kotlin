@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.backend.common.onlyIf
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.needsSerializedIr
 import org.jetbrains.kotlin.backend.konan.serialization.IrAwareExtension
 import org.jetbrains.kotlin.backend.konan.serialization.KonanStringTable
@@ -54,6 +55,7 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 
 class KonanDescriptorSerializer private constructor(
+        private val context: Context,
         private val containingDeclaration: DeclarationDescriptor?,
         private val typeParameters: Interner<TypeParameterDescriptor>,
         private val extension: SerializerExtension,
@@ -64,7 +66,7 @@ class KonanDescriptorSerializer private constructor(
     private val contractSerializer = ContractSerializer()
 
     fun createChildSerializer(descriptor: DeclarationDescriptor): KonanDescriptorSerializer =
-            KonanDescriptorSerializer(descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
+            KonanDescriptorSerializer(context, descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
                                  serializeTypeTableToFunction = false)
 
     val stringTable: DescriptorAwareStringTable
@@ -122,6 +124,10 @@ class KonanDescriptorSerializer private constructor(
                 is PropertyDescriptor -> builder.addProperty(propertyProto(descriptor))
                 is FunctionDescriptor -> builder.addFunction(functionProto(descriptor))
             }
+        }
+
+        context.ir.classesDelegatedBackingFields[classDescriptor]?.forEach {
+            builder.addProperty(propertyProto(it))
         }
 
         val nestedClassifiers = sort(DescriptorUtils.getAllDescriptors(classDescriptor.unsubstitutedInnerClassesScope))
@@ -735,29 +741,30 @@ class KonanDescriptorSerializer private constructor(
 
     companion object {
         @JvmStatic
-        fun createTopLevel(extension: SerializerExtension): KonanDescriptorSerializer {
-            return KonanDescriptorSerializer(null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
+        internal fun createTopLevel(context: Context, extension: SerializerExtension): KonanDescriptorSerializer {
+            return KonanDescriptorSerializer(context, null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
                                         serializeTypeTableToFunction = false)
         }
 
         @JvmStatic
-        fun createForLambda(extension: SerializerExtension): KonanDescriptorSerializer {
-            return KonanDescriptorSerializer(null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
+        internal fun createForLambda(context: Context, extension: SerializerExtension): KonanDescriptorSerializer {
+            return KonanDescriptorSerializer(context, null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
                                         serializeTypeTableToFunction = true)
         }
 
         @JvmStatic
-        fun create(descriptor: ClassDescriptor, extension: SerializerExtension): KonanDescriptorSerializer {
+        internal fun create(context: Context, descriptor: ClassDescriptor, extension: SerializerExtension): KonanDescriptorSerializer {
             val container = descriptor.containingDeclaration
             val parentSerializer = if (container is ClassDescriptor)
-                create(container, extension)
+                create(context, container, extension)
             else
-                createTopLevel(extension)
+                createTopLevel(context, extension)
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
             // serializing outer classes before nested classes.
             // Otherwise our interner can get wrong ids because we may serialize classes in any order.
             val serializer = KonanDescriptorSerializer(
+                    context,
                     descriptor,
                     Interner(parentSerializer.typeParameters),
                     parentSerializer.extension,

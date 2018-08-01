@@ -139,10 +139,7 @@ private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<Ir
 }
 
 private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>): LLVMTypeRef {
-    val fieldTypes = fields.map {
-        @Suppress("DEPRECATION")
-        getLLVMType(if (it.isDelegate) context.irBuiltIns.anyNType else it.type)
-    }
+    val fieldTypes = fields.map { getLLVMType(it.type) }
 
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
 

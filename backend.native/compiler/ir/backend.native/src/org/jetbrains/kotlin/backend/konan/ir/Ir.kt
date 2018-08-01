@@ -58,6 +58,7 @@ import kotlin.properties.Delegates
 internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context>(context, irModule) {
 
     val propertiesWithBackingFields = mutableSetOf<PropertyDescriptor>()
+    val classesDelegatedBackingFields = mutableMapOf<ClassDescriptor, MutableList<PropertyDescriptor>>()
 
     val originalModuleIndex = ModuleIndex(irModule)
 

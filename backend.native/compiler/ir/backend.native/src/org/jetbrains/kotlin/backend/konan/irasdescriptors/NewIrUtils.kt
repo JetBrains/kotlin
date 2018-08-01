@@ -102,7 +102,7 @@ val IrProperty.konanBackingField: IrField?
                     this.endOffset,
                     IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                     backingFieldDescriptor,
-                    this.getter!!.returnType // TODO: this copies the behaviour found in backing field descriptor creation, but both are incorrect for property delegation.
+                    this.getter!!.returnType
             ).also {
                 it.parent = this.parent
             }
