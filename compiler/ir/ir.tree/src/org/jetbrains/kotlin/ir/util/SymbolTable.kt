@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
@@ -42,10 +41,6 @@ interface ReferenceSymbolTable {
     fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol
     fun referenceVariable(descriptor: VariableDescriptor): IrVariableSymbol
 
-
-    val declarationSystemTable: SymbolTable
-    val referenceSymbolTable: ReferenceSymbolTable
-
     fun enterScope(owner: DeclarationDescriptor)
 
     fun leaveScope(owner: DeclarationDescriptor)
@@ -53,11 +48,7 @@ interface ReferenceSymbolTable {
 
 open class SymbolTable : ReferenceSymbolTable {
 
-    override val declarationSystemTable: SymbolTable = this
-
-    override val referenceSymbolTable: ReferenceSymbolTable = IrLazySymbolTable(this)
-
-    val lazyWrapper = referenceSymbolTable as IrLazySymbolTable
+    val lazyWrapper = IrLazySymbolTable(this)
 
     private abstract class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> {
         val unboundSymbols = linkedSetOf<S>()

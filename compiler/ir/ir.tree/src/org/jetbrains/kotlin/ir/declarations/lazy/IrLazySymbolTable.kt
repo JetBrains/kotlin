@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.ir.util.*
 
 
 class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbolTable by originalTable {
-    override val declarationSystemTable: SymbolTable = originalTable
-
-    override val referenceSymbolTable: ReferenceSymbolTable = this
 
     /*Don't force builtins class linking before unbound symbols linking: otherwise stdlib compilation will failed*/
     var stubGenerator: DeclarationStubGenerator? = null
