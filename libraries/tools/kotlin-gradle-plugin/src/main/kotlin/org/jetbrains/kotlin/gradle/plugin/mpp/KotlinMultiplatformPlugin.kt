@@ -107,9 +107,14 @@ internal class KotlinMultiplatformPlugin(
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
-        targets.all {
-            it.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.source(production)
-            it.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.source(test)
+        targets.all { target ->
+            target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
+                sourceSets.maybeCreate(mainCompilation.defaultSourceSetName).dependsOn(production)
+            }
+
+            target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
+                sourceSets.maybeCreate(testCompilation.defaultSourceSetName).dependsOn(test)
+            }
         }
     }
 
