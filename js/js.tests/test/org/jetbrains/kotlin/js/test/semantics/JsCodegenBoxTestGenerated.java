@@ -14274,9 +14274,24 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/boxedLongEqualsLong.kt");
             }
 
+            @TestMetadata("intEqualsNullableInt.kt")
+            public void testIntEqualsNullableInt() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/intEqualsNullableInt.kt");
+            }
+
+            @TestMetadata("intEqualsNullableIntWithSmartCasts.kt")
+            public void testIntEqualsNullableIntWithSmartCasts() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/intEqualsNullableIntWithSmartCasts.kt");
+            }
+
             @TestMetadata("objectWithAsymmetricEqualsEqPrimitive.kt")
             public void testObjectWithAsymmetricEqualsEqPrimitive() throws Exception {
                 runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/objectWithAsymmetricEqualsEqPrimitive.kt");
+            }
+
+            @TestMetadata("whenIntAsNullableAny.kt")
+            public void testWhenIntAsNullableAny() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/whenIntAsNullableAny.kt");
             }
 
             @TestMetadata("whenNullableBoxed.kt")
