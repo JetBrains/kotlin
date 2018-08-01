@@ -1,4 +1,4 @@
-// !WITH_BASIC_TYPES
+// SKIP_TXT
 
 /*
  KOTLIN SPEC TEST (NEGATIVE)
@@ -10,6 +10,96 @@
  DESCRIPTION: 'When' without bound value and with not boolean condition in 'when condition'.
  */
 
+fun getInt(number: Int): Int {
+    return number + 11
+}
+
+fun getShort(number: Int): Short {
+    return (number + 11).toShort()
+}
+
+fun getLong(number: Int): Long {
+    return (number + 11).toLong()
+}
+
+fun getFloat(number: Int): Float {
+    return (number + 11).toFloat()
+}
+
+fun getDouble(number: Int): Double {
+    return (number + 11).toDouble()
+}
+
+fun getByte(number: Int): Byte {
+    return (number + 11).toByte()
+}
+
+fun getChar(number: Int): Char {
+    return (number + 11).toChar()
+}
+
+fun getString(number: Int): String {
+    return "${(number + 11).toChar()}..."
+}
+
+fun getNothing(): Nothing = throw Exception()
+
+fun getUnit(): Unit {}
+
+fun getAny(): Any {
+    return Any()
+}
+
+fun getList(): List<Int> {
+    return mutableListOf()
+}
+
+class A {
+    fun getInt(number: Int): Int {
+        return number + 11
+    }
+
+    fun getShort(number: Int): Short {
+        return (number + 11).toShort()
+    }
+
+    fun getLong(number: Int): Long {
+        return (number + 11).toLong()
+    }
+
+    fun getFloat(number: Int): Float {
+        return (number + 11).toFloat()
+    }
+
+    fun getDouble(number: Int): Double {
+        return (number + 11).toDouble()
+    }
+
+    fun getByte(number: Int): Byte {
+        return (number + 11).toByte()
+    }
+
+    fun getChar(number: Int): Char {
+        return (number + 11).toChar()
+    }
+
+    fun getString(number: Int): String {
+        return "${(number + 11).toChar()}..."
+    }
+
+    fun getNothing(): Nothing = throw Exception()
+
+    fun getUnit(): Unit {}
+
+    fun getAny(): Any {
+        return Any()
+    }
+
+    fun getList(): List<Int> {
+        return mutableListOf()
+    }
+}
+
 // CASE DESCRIPTION: 'When' with numbers (Int, Short, Byte, Long, Float, Double) and Char (used as a number) in 'when condition'.
 fun case_1(
     value1: Int,
@@ -20,7 +110,7 @@ fun case_1(
     value6: Long,
     value7: Float,
     value8: Double,
-    value9: _BasicTypesProvider
+    value9: A
 ): String {
     when {
         <!TYPE_MISMATCH!>-9 + 11<!> -> return ""
@@ -54,7 +144,7 @@ fun case_1(
 }
 
 // CASE DESCRIPTION: 'When' with String and Char in 'when condition'.
-fun case_2(value1: String, value2: Char, value3: _BasicTypesProvider): String {
+fun case_2(value1: String, value2: Char, value3: A): String {
     when {
         <!TYPE_MISMATCH!>""<!> -> return ""
         <!CONSTANT_EXPECTED_TYPE_MISMATCH!>'-'<!> -> return ""
@@ -72,7 +162,7 @@ fun case_2(value1: String, value2: Char, value3: _BasicTypesProvider): String {
 }
 
 // CASE DESCRIPTION: 'When' with Nothing in 'when condition'.
-fun case_3(value1: Nothing, <!UNUSED_PARAMETER!>value2<!>: _BasicTypesProvider): String {
+fun case_3(value1: Nothing, <!UNUSED_PARAMETER!>value2<!>: A): String {
     when {
         value1 -> <!UNREACHABLE_CODE!>return ""<!>
         <!UNREACHABLE_CODE!>value2.getNothing() -> return ""<!>
@@ -84,7 +174,7 @@ fun case_3(value1: Nothing, <!UNUSED_PARAMETER!>value2<!>: _BasicTypesProvider):
 }
 
 // CASE DESCRIPTION: 'When' with Unit in 'when condition'.
-fun case_4(value1: Unit, value2: _BasicTypesProvider): String {
+fun case_4(value1: Unit, value2: A): String {
     when {
         <!TYPE_MISMATCH!>value1<!> -> return ""
         <!TYPE_MISMATCH!>value2.getUnit()<!> -> return ""
@@ -97,7 +187,7 @@ fun case_4(value1: Unit, value2: _BasicTypesProvider): String {
 }
 
 // CASE DESCRIPTION: 'When' with Any in 'when condition'.
-fun case_5(value1: Any, value2: _BasicTypesProvider): String {
+fun case_5(value1: Any, value2: A): String {
     when {
         <!TYPE_MISMATCH!>value1<!> -> return ""
         <!TYPE_MISMATCH!>value2.getAny()<!> -> return ""
@@ -108,7 +198,7 @@ fun case_5(value1: Any, value2: _BasicTypesProvider): String {
 }
 
 // CASE DESCRIPTION: 'When' with List (Collection example) in 'when condition'.
-fun case_6(value1: List<Int>, value2: _BasicTypesProvider): String {
+fun case_6(value1: List<Int>, value2: A): String {
     when {
         <!TYPE_MISMATCH!>value1<!> -> return ""
         <!TYPE_MISMATCH!>value2.getList()<!> -> return ""

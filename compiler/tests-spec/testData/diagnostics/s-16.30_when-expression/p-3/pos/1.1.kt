@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
-// !WITH_BASIC_TYPES
+// SKIP_TXT
 
 /*
  KOTLIN SPEC TEST (POSITIVE)
@@ -11,8 +11,66 @@
  DESCRIPTION: 'When' with different variants of the arithmetic expressions (additive expression and multiplicative expression) in the control structure body.
  */
 
+fun getInt(number: Int): Int {
+    return number + 11
+}
+
+fun getShort(number: Int): Short {
+    return (number + 11).toShort()
+}
+
+fun getLong(number: Int): Long {
+    return (number + 11).toLong()
+}
+
+fun getFloat(number: Int): Float {
+    return (number + 11).toFloat()
+}
+
+fun getDouble(number: Int): Double {
+    return (number + 11).toDouble()
+}
+
+fun getByte(number: Int): Byte {
+    return (number + 11).toByte()
+}
+
+fun getChar(number: Int): Char {
+    return (number + 11).toChar()
+}
+
+class A {
+    fun getInt(number: Int): Int {
+        return number + 11
+    }
+
+    fun getShort(number: Int): Short {
+        return (number + 11).toShort()
+    }
+
+    fun getLong(number: Int): Long {
+        return (number + 11).toLong()
+    }
+
+    fun getFloat(number: Int): Float {
+        return (number + 11).toFloat()
+    }
+
+    fun getDouble(number: Int): Double {
+        return (number + 11).toDouble()
+    }
+
+    fun getByte(number: Int): Byte {
+        return (number + 11).toByte()
+    }
+
+    fun getChar(number: Int): Char {
+        return (number + 11).toChar()
+    }
+}
+
 // CASE DESCRIPTION: 'When' with control structure body as arithmetic expression with Short.
-fun case_1(value: Int, value1: Short, value2: _BasicTypesProvider) {
+fun case_1(value: Int, value1: Short, value2: A) {
     val value3: Short = 32767
     val value4: Short = -32768
 
@@ -32,7 +90,7 @@ fun case_1(value: Int, value1: Short, value2: _BasicTypesProvider) {
 }
 
 // CASE DESCRIPTION: 'When' with control structure body as arithmetic expression with Int.
-fun case_2(value: Int, value1: Int, value2: _BasicTypesProvider) {
+fun case_2(value: Int, value1: Int, value2: A) {
     val value3 = 912
     val value4 = 124901924904
 
@@ -59,7 +117,7 @@ fun case_2(value: Int, value1: Int, value2: _BasicTypesProvider) {
 }
 
 // CASE DESCRIPTION: 'When' with control structure body as arithmetic expression with Long.
-fun case_3(value: Int, value1: Long, value2: _BasicTypesProvider) {
+fun case_3(value: Int, value1: Long, value2: A) {
     val value3 = 9L
     val value4 = 124909249042341234L
 
@@ -79,7 +137,7 @@ fun case_3(value: Int, value1: Long, value2: _BasicTypesProvider) {
 }
 
 // CASE DESCRIPTION: 'When' with control structure body as arithmetic expression with Float.
-fun case_4(value: Int, value1: Float, value2: _BasicTypesProvider) {
+fun case_4(value: Int, value1: Float, value2: A) {
     val value3 = 912.2134F
     val value4 = -124901924904.991242f
 
@@ -99,7 +157,7 @@ fun case_4(value: Int, value1: Float, value2: _BasicTypesProvider) {
 }
 
 // CASE DESCRIPTION: 'When' with control structure body as arithmetic expression with Double.
-fun case_5(value: Int, value1: Double, value2: _BasicTypesProvider) {
+fun case_5(value: Int, value1: Double, value2: A) {
     val value3 = 912.2134
     val value4 = -124901924904.99124212
 
@@ -119,7 +177,7 @@ fun case_5(value: Int, value1: Double, value2: _BasicTypesProvider) {
 }
 
 // CASE DESCRIPTION: 'When' with control structure body as arithmetic expression with Byte.
-fun case_6(value: Int, value1: Byte, value2: _BasicTypesProvider) {
+fun case_6(value: Int, value1: Byte, value2: A) {
     val value3: Byte = -11
     val value4: Byte = 3
     val value5: Byte = 127
@@ -141,7 +199,7 @@ fun case_6(value: Int, value1: Byte, value2: _BasicTypesProvider) {
 }
 
 // CASE DESCRIPTION: 'When' with control structure body as arithmetic expression (minus and plus of Integer) with Char.
-fun case_7(value: Int, value1: Char, value2: _BasicTypesProvider) {
+fun case_7(value: Int, value1: Char, value2: A) {
     val value3: Char = 11.toChar()
 
     when {

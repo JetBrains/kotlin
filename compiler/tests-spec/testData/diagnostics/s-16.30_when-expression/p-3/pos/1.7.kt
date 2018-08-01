@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
+// SKIP_TXT
 
 /*
  KOTLIN SPEC TEST (POSITIVE)
@@ -15,9 +16,9 @@ enum class Direction {
 }
 
 sealed class Expr
-data class _SealedChild1(val number: Int) : Expr()
-data class _SealedChild2(val e1: Int, val e2: Int) : Expr()
-data class _SealedChild3(val m1: Int, val m2: Int) : Expr()
+data class Const(val number: Int) : Expr()
+data class Sum(val e1: Int, val e2: Int) : Expr()
+data class Mul(val m1: Int, val m2: Int) : Expr()
 
 fun case_1(value: Int, value1: Int, value2: Boolean?, value3: Direction?, value4: Expr?) {
     when {
@@ -39,17 +40,17 @@ fun case_1(value: Int, value1: Int, value2: Boolean?, value3: Direction?, value4
             else if (value3 == Direction.SOUTH) "3"
             else if (value3 == Direction.NORTH) "4"
             else if (value3 == Direction.EAST) "5"
-        value == 6 -> if (value4 is _SealedChild1) "1"
-            else if (value4 is _SealedChild2) "2"
-            else if (value4 is _SealedChild3) "3"
+        value == 6 -> if (value4 is Const) "1"
+            else if (value4 is Sum) "2"
+            else if (value4 is Mul) "3"
         value == 7 -> {
             if (value4 == null) {
                 "1"
-            } else if (value4 is _SealedChild1) {
+            } else if (value4 is Const) {
                 "2"
-            } else if (value4 is _SealedChild2) {
+            } else if (value4 is Sum) {
                 "3"
-            } else if (value4 is _SealedChild3) {
+            } else if (value4 is Mul) {
                 "4"
             }
         }

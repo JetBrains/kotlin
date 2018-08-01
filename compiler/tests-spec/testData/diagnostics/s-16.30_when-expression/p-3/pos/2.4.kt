@@ -1,4 +1,4 @@
-// !WITH_BASIC_TYPES
+// SKIP_TXT
 
 /*
  KOTLIN SPEC TEST (POSITIVE)
@@ -10,14 +10,31 @@
  DESCRIPTION: 'When' without bound value and different variants of the boolean conditions (boolean literals and return boolean values).
  */
 
+fun isShortString(str: String): Boolean {
+    return str.toString().length < 3
+}
+
+fun isString(value: Any): Boolean {
+    return value is String
+}
+
+class A {
+    fun method_1(str: String): Boolean {
+        return str.toString().length >= 4
+    }
+    fun method_2(value: Any): Boolean {
+        return value is String
+    }
+}
+
 // CASE DESCRIPTION: 'When' without 'else' branch.
-fun case_1(value1: _BasicTypesProvider): String {
+fun case_1(value1: A): String {
     when {
         false || false && true || ((((true)))) -> return ""
-        ((value1.getBoolean("1"))) || true -> return ""
-        value1.getBoolean("2") && ((((false)))) -> return ""
-        value1.getBoolean("3") || !!!!!!getBoolean("4") && getBoolean("5") -> return ""
-        value1.getBoolean("6") -> return ""
+        ((value1.method_1("some string"))) || true -> return ""
+        value1.method_2("") && ((((false)))) -> return ""
+        value1.method_2("") || !!!!!!isShortString("++++") && isString("") -> return ""
+        value1.method_2("") -> return ""
         true && true && true && !!!true && true -> return ""
         false || false || false || !!!false || false -> return ""
     }
@@ -26,13 +43,13 @@ fun case_1(value1: _BasicTypesProvider): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'else' branch.
-fun case_2(value1: _BasicTypesProvider): String {
+fun case_2(value1: A): String {
     return when {
         false || false && true || ((((true)))) -> return ""
-        ((value1.getBoolean("1"))) || true -> return ""
-        value1.getBoolean("2") && ((((false)))) -> return ""
-        value1.getBoolean("3") || !!!!!!getBoolean("4") && getBoolean("5") -> return ""
-        value1.getBoolean("6") -> return ""
+        ((value1.method_1("some string"))) || true -> return ""
+        value1.method_2("") && ((((false)))) -> return ""
+        value1.method_2("") || !!!!!!isShortString("++++") && isString("") -> return ""
+        value1.method_2("") -> return ""
         true && true && true && !!!true && true -> return ""
         false || false || false || !!!false || false -> return ""
         else -> ""
