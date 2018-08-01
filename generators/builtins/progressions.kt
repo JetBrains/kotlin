@@ -35,13 +35,10 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             LONG -> "0L"
             else -> "0"
         }
-        val checkZero = """if (step == $zero) throw kotlin.IllegalArgumentException("Step must be non-zero")"""
+        val checkZero = """if (step == $zero) throw kotlin.IllegalArgumentException("Step must be non-zero.")"""
 
-        val minValue = when (kind) {
-            LONG -> "Long.MIN_VALUE"
-            else -> "Int.MIN_VALUE"
-        }
-        val checkMin = """else if (step == $minValue) throw kotlin.IllegalArgumentException("Step must have an inverse")"""
+        val stepMinValue = "$incrementType.MIN_VALUE"
+        val checkMin = """if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")"""
 
         val hashCode = "=\n" + when (kind) {
             CHAR ->
@@ -103,6 +100,8 @@ public open class $progression
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `$stepMinValue` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: $t, rangeEnd: $t, step: $incrementType): $progression = $progression(rangeStart, rangeEnd, step)
     }
