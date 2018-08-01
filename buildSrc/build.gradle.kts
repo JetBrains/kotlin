@@ -1,3 +1,12 @@
+import java.net.URI
+
+allprojects {
+    repositories {
+        maven {
+            url = URI("https://cache-redirector.jetbrains.com/maven-central")
+        }
+    }
+}
 
 buildscript {
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
