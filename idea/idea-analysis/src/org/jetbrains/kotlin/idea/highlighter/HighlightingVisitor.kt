@@ -48,16 +48,8 @@ abstract class HighlightingVisitor protected constructor(
         }
     }
 
-    protected fun applyHighlighterExtensions(element: PsiElement, descriptor: DeclarationDescriptor): Boolean {
-        if (!NameHighlighter.namesHighlightingEnabled) return false
-
+    protected fun attributeKeyForDeclarationFromExtensions(element: PsiElement, descriptor: DeclarationDescriptor) =
         Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
             extension.highlightDeclaration(element, descriptor)
-        }?.let { key ->
-            highlightName(element, key)
-            return true
         }
-
-        return false
-    }
 }

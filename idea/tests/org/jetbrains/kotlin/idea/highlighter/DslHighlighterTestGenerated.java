@@ -33,4 +33,9 @@ public class DslHighlighterTestGenerated extends AbstractDslHighlighterTest {
     public void testFunctionCalls() throws Exception {
         runTest("idea/testData/dslHighlighter/functionCalls.kt");
     }
+
+    @TestMetadata("propertyAccess.kt")
+    public void testPropertyAccess() throws Exception {
+        runTest("idea/testData/dslHighlighter/propertyAccess.kt");
+    }
 }
