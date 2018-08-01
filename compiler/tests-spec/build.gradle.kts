@@ -6,11 +6,7 @@ plugins {
 }
 
 dependencies {
-    testRuntime(intellijDep())
     testCompile(projectTests(":compiler"))
-    testCompile(projectDist(":kotlin-script-runtime"))
-    testCompile(projectDist(":kotlin-stdlib"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
 }
 
 sourceSets {
@@ -23,8 +19,6 @@ projectTest {
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerSpecTestsKt")
-
-testsJar()
 
 tasks.create("printSpecTestsStatistic").doLast {
     val testDataDir = "./testData"
