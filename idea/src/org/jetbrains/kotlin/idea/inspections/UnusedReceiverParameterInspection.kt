@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.MainFunctionDetector
@@ -69,16 +70,16 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                     callableDeclaration.isOverridable()
                 ) return
 
-                val context = receiverTypeReference.analyze()
+                val context = callableDeclaration.analyze()
                 val receiverType = context[BindingContext.TYPE, receiverTypeReference] ?: return
                 val receiverTypeDeclaration = receiverType.constructor.declarationDescriptor
                 if (DescriptorUtils.isCompanionObject(receiverTypeDeclaration)) return
 
-                val callable = callableDeclaration.descriptor
+                val callable = callableDeclaration.descriptor ?: return
 
-                if (callable != null && MainFunctionDetector.isMain(callable)) return
+                if (MainFunctionDetector.isMain(callable)) return
 
-                val containingDeclaration = callable?.containingDeclaration
+                val containingDeclaration = callable.containingDeclaration
                 if (containingDeclaration != null && containingDeclaration == receiverTypeDeclaration) {
                     val thisLabelName = containingDeclaration.getThisLabelName()
                     if (!callableDeclaration.anyDescendantOfType<KtThisExpression> { it.getLabelName() == thisLabelName }) {
@@ -93,30 +94,11 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                         if (used) return
                         element.acceptChildren(this)
 
-                        val bindingContext = element.analyze()
-                        val resolvedCall = element.getResolvedCall(bindingContext) ?: return
+                        val resolvedCall = element.getResolvedCall(context) ?: return
 
-                        if (isUsageOfReceiver(resolvedCall, bindingContext)) {
-                            used = true
-                        } else if (resolvedCall is VariableAsFunctionResolvedCall
-                            && isUsageOfReceiver(resolvedCall.variableCall, bindingContext)
-                        ) {
+                        if (isUsageOfDescriptor(callable, resolvedCall, context)) {
                             used = true
                         }
-                    }
-
-                    private fun isUsageOfReceiver(resolvedCall: ResolvedCall<*>, bindingContext: BindingContext): Boolean {
-                        // As receiver of call
-                        if (resolvedCall.dispatchReceiver.getThisReceiverOwner(bindingContext) == callable ||
-                            resolvedCall.extensionReceiver.getThisReceiverOwner(bindingContext) == callable
-                        ) {
-                            return true
-                        }
-                        // As explicit "this"
-                        if ((resolvedCall.candidateDescriptor as? ReceiverParameterDescriptor)?.containingDeclaration == callable) {
-                            return true
-                        }
-                        return false
                     }
                 })
 
@@ -174,4 +156,23 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
         override fun startInWriteAction() = false
     }
+}
+
+fun isUsageOfDescriptor(descriptor: DeclarationDescriptor, resolvedCall: ResolvedCall<*>, bindingContext: BindingContext): Boolean {
+    // As receiver of call
+    if (resolvedCall.dispatchReceiver.getThisReceiverOwner(bindingContext) == descriptor ||
+        resolvedCall.extensionReceiver.getThisReceiverOwner(bindingContext) == descriptor
+    ) {
+        return true
+    }
+    // As explicit "this"
+    if ((resolvedCall.candidateDescriptor as? ReceiverParameterDescriptor)?.containingDeclaration == descriptor) {
+        return true
+    }
+
+    if (resolvedCall is VariableAsFunctionResolvedCall) {
+        return isUsageOfDescriptor(descriptor, resolvedCall.variableCall, bindingContext)
+    }
+
+    return false
 }

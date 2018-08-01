@@ -14,14 +14,11 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -42,7 +39,7 @@ class RedundantWithInspection : AbstractKotlinInspection() {
             if (callExpression.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe != FqName("kotlin.with")) return
 
             val lambdaDescriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return
-            val lambdaExtensionReceiver = lambdaDescriptor.extensionReceiverParameter
+
             var used = false
             lambda.functionLiteral.acceptChildren(object : KtVisitorVoid() {
                 override fun visitKtElement(element: KtElement) {
@@ -55,27 +52,13 @@ class RedundantWithInspection : AbstractKotlinInspection() {
                     }
 
                     val resolvedCall = element.getResolvedCall(context) ?: return
-                    if (isUsageOfReceiver(resolvedCall, context)) {
-                        used = true
-                    } else if (resolvedCall is VariableAsFunctionResolvedCall && isUsageOfReceiver(resolvedCall.variableCall, context)) {
-                        used = true
-                    }
-                }
 
-                private fun isUsageOfReceiver(resolvedCall: ResolvedCall<*>, bindingContext: BindingContext): Boolean {
-                    // As receiver of call
-                    if (resolvedCall.dispatchReceiver.getThisReceiverOwner(bindingContext) == lambdaDescriptor ||
-                        resolvedCall.extensionReceiver.getThisReceiverOwner(bindingContext) == lambdaDescriptor
-                    ) {
-                        return true
+                    if (isUsageOfDescriptor(lambdaDescriptor, resolvedCall, context)) {
+                        used = true
                     }
-                    // As explicit "this"
-                    if (resolvedCall.candidateDescriptor == lambdaExtensionReceiver) {
-                        return true
-                    }
-                    return false
                 }
             })
+
             if (!used) {
                 val quickfix = when (receiver) {
                     is KtSimpleNameExpression, is KtStringTemplateExpression, is KtConstantExpression -> RemoveRedundantWithFix()
