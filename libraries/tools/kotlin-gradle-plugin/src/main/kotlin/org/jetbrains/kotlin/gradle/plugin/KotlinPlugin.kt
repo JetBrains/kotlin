@@ -454,16 +454,19 @@ internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlin
 }
 
 internal open class KotlinPlugin(
-    tasksProvider: KotlinTasksProvider,
     kotlinPluginVersion: String,
-        registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(tasksProvider, kotlinPluginVersion, registry) {
+    registry: ToolingModelBuilderRegistry
+) : AbstractKotlinPlugin(KotlinTasksProvider(targetName), kotlinPluginVersion, registry) {
+
+    companion object {
+        private const val targetName = "" // use empty suffix for the task names
+    }
 
     override fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation, kotlinPluginVersion: String) =
             Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.jvm, "").apply {
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.jvm, targetName).apply {
             disambiguationClassifier = null // don't add anything to the task names
         }
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
@@ -474,10 +477,13 @@ internal open class KotlinPlugin(
 }
 
 internal open class KotlinCommonPlugin(
-    tasksProvider: KotlinTasksProvider,
     kotlinPluginVersion: String,
-        registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(tasksProvider, kotlinPluginVersion, registry) {
+    registry: ToolingModelBuilderRegistry
+) : AbstractKotlinPlugin(KotlinTasksProvider(targetName), kotlinPluginVersion, registry) {
+
+    companion object {
+        private const val targetName = "common"
+    }
 
     override fun buildSourceSetProcessor(
         project: Project,
@@ -487,7 +493,7 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.common, "common")
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.common, targetName)
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
 
         super.apply(project)
@@ -495,10 +501,13 @@ internal open class KotlinCommonPlugin(
 }
 
 internal open class Kotlin2JsPlugin(
-    tasksProvider: KotlinTasksProvider,
     kotlinPluginVersion: String,
-        registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPlugin(tasksProvider, kotlinPluginVersion, registry) {
+    registry: ToolingModelBuilderRegistry
+) : AbstractKotlinPlugin(KotlinTasksProvider(targetName), kotlinPluginVersion, registry) {
+
+    companion object {
+        private const val targetName = "2Js"
+    }
 
     override fun buildSourceSetProcessor(
         project: Project,
@@ -510,7 +519,7 @@ internal open class Kotlin2JsPlugin(
         )
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.js, "2Js")
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.js, targetName)
 
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
         super.apply(project)
@@ -518,12 +527,12 @@ internal open class Kotlin2JsPlugin(
 }
 
 internal open class KotlinAndroidPlugin(
-    val tasksProvider: KotlinTasksProvider,
     private val kotlinPluginVersion: String
 ) : Plugin<Project> {
 
     override fun apply(project: Project) {
         val androidTarget = KotlinAndroidTarget("", project)
+        val tasksProvider = AndroidTasksProvider(androidTarget.targetName)
 
         applyToTarget(
             project, androidTarget, tasksProvider,

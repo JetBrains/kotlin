@@ -12,8 +12,6 @@ import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.KotlinCommonTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
@@ -74,7 +72,7 @@ class KotlinUniversalTargetPreset(
         KotlinCommonSourceSetProcessor(
             project,
             compilation,
-            KotlinCommonTasksProvider(),
+            KotlinTasksProvider(compilation.target.targetName),
             kotlinPluginVersion
         )
 
@@ -105,7 +103,7 @@ class KotlinJvmTargetPreset(
         get() = KotlinPlatformType.jvm
 
     override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> =
-        Kotlin2JvmSourceSetProcessor(project, KotlinTasksProvider(), compilation, kotlinPluginVersion)
+        Kotlin2JvmSourceSetProcessor(project, KotlinTasksProvider(compilation.target.targetName), compilation, kotlinPluginVersion)
 
     companion object {
         const val PRESET_NAME = "jvm"
@@ -134,7 +132,7 @@ class KotlinJsTargetPreset(
         get() = KotlinPlatformType.js
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> =
-        Kotlin2JsSourceSetProcessor(project, Kotlin2JsTasksProvider(), compilation, kotlinPluginVersion)
+        Kotlin2JsSourceSetProcessor(project, KotlinTasksProvider(compilation.target.targetName), compilation, kotlinPluginVersion)
 
     companion object {
         const val PRESET_NAME = "js"
@@ -154,10 +152,9 @@ class KotlinAndroidTargetPreset(
         }
 
         KotlinAndroidPlugin.applyToTarget(
-            project, result, AndroidTasksProvider(),
+            project, result, AndroidTasksProvider(name),
             kotlinPluginVersion
         )
-
 
         return result
     }
@@ -182,7 +179,7 @@ class KotlinJvmWithJavaTargetPreset(
         }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
-            Kotlin2JvmSourceSetProcessor(project, KotlinTasksProvider(), compilation, kotlinPluginVersion)
+            Kotlin2JvmSourceSetProcessor(project, KotlinTasksProvider(name), compilation, kotlinPluginVersion)
         }
 
         target.compilations.all { compilation ->
