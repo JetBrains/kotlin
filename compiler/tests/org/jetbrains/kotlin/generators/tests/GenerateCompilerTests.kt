@@ -110,10 +110,6 @@ fun main(args: Array<String>) {
             model("diagnostics/testsWithUnsignedTypes")
         }
 
-        testClass<AbstractDiagnosticsTestSpec> {
-            model("diagnostics/testsSpec")
-        }
-
         testClass<AbstractMultiPlatformIntegrationTest> {
             model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
         }
