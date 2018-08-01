@@ -51,7 +51,8 @@ internal constructor(
     step: Long
 ) : Iterable<ULong> {
     init {
-        if (step == 0.toLong()) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0.toLong()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == Long.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Long.MIN_VALUE to avoid overflow on negation.")
     }
 
     /**
@@ -89,6 +90,8 @@ internal constructor(
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `Long.MIN_VALUE` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: ULong, rangeEnd: ULong, step: Long): ULongProgression = ULongProgression(rangeStart, rangeEnd, step)
     }
