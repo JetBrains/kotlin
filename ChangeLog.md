@@ -22,10 +22,6 @@
 
 ### IDE
 
-#### New Features
-
-- [`KT-24827`](https://youtrack.jetbrains.com/issue/KT-24827) Allow to do an additional check for Kotlin plugin update before an actual install
-
 #### Performance Improvements
 
 - [`KT-20924`](https://youtrack.jetbrains.com/issue/KT-20924) Slow KtLightAbstractAnnotation.getClsDelegate() lightAnnotations.kt 
