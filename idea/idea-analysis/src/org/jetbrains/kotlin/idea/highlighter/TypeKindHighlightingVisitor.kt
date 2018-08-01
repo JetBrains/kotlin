@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.BindingContext
 
-internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext)
-        : AfterAnalysisHighlightingVisitor(holder, bindingContext) {
+internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
+    AfterAnalysisHighlightingVisitor(holder, bindingContext) {
 
     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
         val parent = expression.parent
@@ -36,48 +36,51 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             return
         }
 
-        if (NameHighlighter.namesHighlightingEnabled) {
-            var referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
-            if (referenceTarget is ConstructorDescriptor) {
-                val callElement = expression.getParentOfTypeAndBranch<KtCallExpression>(true) { calleeExpression }
-                    ?: expression.getParentOfTypeAndBranch<KtSuperTypeCallEntry>(true) { calleeExpression }
-                if (callElement == null) {
-                    referenceTarget = referenceTarget.containingDeclaration
-                }
-            }
+        if (!NameHighlighter.namesHighlightingEnabled) return
 
-            if (referenceTarget is ClassDescriptor) {
-                if (referenceTarget.kind == ClassKind.ANNOTATION_CLASS) {
-                    highlightAnnotation(expression)
-                }
-                else {
-                    highlightName(expression, textAttributesKeyForClass(referenceTarget))
-                }
-            }
-            else if (referenceTarget is TypeParameterDescriptor) {
-                highlightName(expression, TYPE_PARAMETER)
-            }
-            else if (referenceTarget is TypeAliasDescriptor) {
-                highlightName(expression, TYPE_ALIAS)
+        val referenceTarget = computeReferencedDescriptor(expression) ?: return
+
+        val key = when (referenceTarget) {
+            is TypeParameterDescriptor -> TYPE_PARAMETER
+            is TypeAliasDescriptor -> TYPE_ALIAS
+            !is ClassDescriptor -> return
+            else -> when (referenceTarget.kind) {
+                ClassKind.ANNOTATION_CLASS -> ANNOTATION
+                else -> textAttributesKeyForClassDeclaration(referenceTarget)
             }
         }
+
+        highlightName(computeHighlightingRangeForUsage(expression, referenceTarget), key)
     }
 
-    private fun highlightAnnotation(expression: KtSimpleNameExpression) {
-        var range = expression.textRange
+    private fun computeReferencedDescriptor(expression: KtSimpleNameExpression): DeclarationDescriptor? {
+        val referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
+
+        if (referenceTarget !is ConstructorDescriptor) return referenceTarget
+
+        val callElement = expression.getParentOfTypeAndBranch<KtCallExpression>(true) { calleeExpression }
+            ?: expression.getParentOfTypeAndBranch<KtSuperTypeCallEntry>(true) { calleeExpression }
+
+        if (callElement != null) {
+            return referenceTarget
+        }
+
+        return referenceTarget.containingDeclaration
+    }
+
+
+    private fun computeHighlightingRangeForUsage(expression: KtSimpleNameExpression, referenceTarget: DeclarationDescriptor): TextRange {
+        val expressionRange = expression.textRange
+
+        if (referenceTarget !is ClassDescriptor || referenceTarget.kind != ClassKind.ANNOTATION_CLASS) return expressionRange
 
         // include '@' symbol if the reference is the first segment of KtAnnotationEntry
         // if "Deprecated" is highlighted then '@' should be highlighted too in "@Deprecated"
         val annotationEntry = PsiTreeUtil.getParentOfType(
-                expression, KtAnnotationEntry::class.java, /* strict = */false, KtValueArgumentList::class.java)
-        if (annotationEntry != null) {
-            val atSymbol = annotationEntry.atSymbol
-            if (atSymbol != null) {
-                range = TextRange(atSymbol.textRange.startOffset, expression.textRange.endOffset)
-            }
-        }
-
-        highlightName(range, ANNOTATION)
+            expression, KtAnnotationEntry::class.java, /* strict = */false, KtValueArgumentList::class.java
+        )
+        val atSymbol = annotationEntry?.atSymbol ?: return expressionRange
+        return TextRange(atSymbol.textRange.startOffset, expression.textRange.endOffset)
     }
 
     override fun visitTypeParameter(parameter: KtTypeParameter) {
@@ -92,7 +95,7 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
             highlightName(
                 identifier,
                 attributeKeyForDeclarationFromExtensions(classOrObject, classDescriptor)
-                    ?: textAttributesKeyForClass(classDescriptor)
+                    ?: textAttributesKeyForClassDeclaration(classDescriptor)
             )
         }
         super.visitClassOrObject(classOrObject)
@@ -114,7 +117,7 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         // Do nothing: 'dynamic' is highlighted as a keyword
     }
 
-    private fun textAttributesKeyForClass(descriptor: ClassDescriptor): TextAttributesKey = when (descriptor.kind) {
+    private fun textAttributesKeyForClassDeclaration(descriptor: ClassDescriptor): TextAttributesKey = when (descriptor.kind) {
         ClassKind.INTERFACE -> TRAIT
         ClassKind.ANNOTATION_CLASS -> ANNOTATION
         ClassKind.OBJECT -> OBJECT
