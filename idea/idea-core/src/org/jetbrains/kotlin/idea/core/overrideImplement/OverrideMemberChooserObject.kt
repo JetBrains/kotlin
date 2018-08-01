@@ -157,6 +157,7 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
     classifierNamePolicy = ClassifierNamePolicy.SOURCE_CODE_QUALIFIED
     overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
     unitReturnType = false
+    enhancedTypes = true
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
     renderUnabbreviatedType = false
     annotationFilter = {
