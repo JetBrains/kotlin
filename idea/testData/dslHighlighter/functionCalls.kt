@@ -21,6 +21,12 @@ fun g() {
 
 }
 
+@A
+class AC {
+    @A
+    fun a() = ""
+}
+
 fun test() {
     f() // 4
 
@@ -31,4 +37,8 @@ fun test() {
     g() // 1
 
     ff() // 4
+
+    with (A()) {
+        a() // 4
+    }
 }

@@ -24,10 +24,16 @@ var BC.p7
     set(i) {}
 
 @A
-class AC
+class AC {
+    @A
+    val a = ""
+}
 
 @B
-class BC
+class BC {
+    @B
+    val b = ""
+}
 
 fun test() {
     p2 // 4
@@ -35,10 +41,12 @@ fun test() {
 
     with(AC()) {
         p1 // 4
+        a // 4
     }
     with(BC()) {
         p3 // 1
         p7 // 1
         p7 = 3 // 1
+        b // 1
     }
 }
