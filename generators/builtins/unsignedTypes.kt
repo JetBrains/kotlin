@@ -341,6 +341,7 @@ class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     val elementType = type.capitalized
     val signedType = type.asSigned.capitalized
     val stepType = signedType
+    val stepMinValue = "$stepType.MIN_VALUE"
 
     override fun getPackage(): String = "kotlin.ranges"
 
@@ -393,7 +394,8 @@ internal constructor(
     step: $stepType
 ) : Iterable<$elementType> {
     init {
-        if (step == 0.to$stepType()) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0.to$stepType()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")
     }
 
     /**
@@ -431,6 +433,8 @@ internal constructor(
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `$stepMinValue` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: $elementType, rangeEnd: $elementType, step: $stepType): ${elementType}Progression = ${elementType}Progression(rangeStart, rangeEnd, step)
     }
