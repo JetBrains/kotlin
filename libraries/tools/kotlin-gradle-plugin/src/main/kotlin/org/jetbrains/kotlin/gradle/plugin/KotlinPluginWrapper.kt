@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
-import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
+import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -82,7 +82,7 @@ open class KotlinPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-            KotlinPlugin(KotlinTasksProvider(), kotlinPluginVersion, registry)
+            KotlinPlugin(kotlinPluginVersion, registry)
 
     override val projectExtensionClass: KClass<out KotlinJvmProjectExtension>
         get() = KotlinJvmProjectExtension::class
@@ -93,7 +93,7 @@ open class KotlinCommonPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-            KotlinCommonPlugin(KotlinCommonTasksProvider(), kotlinPluginVersion, registry)
+            KotlinCommonPlugin(kotlinPluginVersion, registry)
 
     override val projectExtensionClass: KClass<out KotlinSingleJavaTargetExtension>
         get() = KotlinSingleJavaTargetExtension::class
@@ -104,10 +104,7 @@ open class KotlinAndroidPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        KotlinAndroidPlugin(
-            AndroidTasksProvider(),
-            kotlinPluginVersion
-        )
+        KotlinAndroidPlugin(kotlinPluginVersion)
 }
 
 open class Kotlin2JsPluginWrapper @Inject constructor(
@@ -115,7 +112,7 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
     protected val registry: ToolingModelBuilderRegistry
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-        Kotlin2JsPlugin(Kotlin2JsTasksProvider(), kotlinPluginVersion, registry)
+        Kotlin2JsPlugin(kotlinPluginVersion, registry)
 
     override val projectExtensionClass: KClass<out KotlinSingleJavaTargetExtension>
         get() = KotlinSingleJavaTargetExtension::class
