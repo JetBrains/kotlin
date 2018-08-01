@@ -9,11 +9,14 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.psi.JavaModuleSystem
+import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 
 internal object IdeaExtensionPoints {
     const val IDEA_COMPATIBLE_BUILD_NUMBER = "181.3"
 
     fun registerVersionSpecificAppExtensionPoints(area: ExtensionsArea) {
+        @Suppress("DEPRECATION")
+        CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, JavaModuleSystem.EP_NAME, JavaModuleSystem::class.java)
     }
 
