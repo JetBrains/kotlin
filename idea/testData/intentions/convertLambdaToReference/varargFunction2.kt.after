@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun test(vararg i: Int): IntArray {
+    return i.let(::double)
+}
+
+fun double(vararg elements: Int): IntArray = elements.map { it * 2 }.toIntArray()

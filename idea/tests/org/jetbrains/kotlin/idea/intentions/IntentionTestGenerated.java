@@ -5400,6 +5400,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/unwrap.kt");
         }
 
+        @TestMetadata("varargFunction.kt")
+        public void testVarargFunction() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/varargFunction.kt");
+        }
+
+        @TestMetadata("varargFunction2.kt")
+        public void testVarargFunction2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/varargFunction2.kt");
+        }
+
         @TestMetadata("wrongNamedOrder.kt")
         public void testWrongNamedOrder() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/wrongNamedOrder.kt");
