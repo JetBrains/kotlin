@@ -2,8 +2,10 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -109,6 +111,10 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     private fun primitiveArrayClass(type: PrimitiveType) =
         symbolTable.referenceClass(builtIns.getPrimitiveArrayClassDescriptor(type))
 
+    private fun unsignedArrayClass(unsignedType: UnsignedType) =
+        builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.arrayClassId)
+            ?.let { symbolTable.referenceClass(it) }
+
     val byteArray = primitiveArrayClass(PrimitiveType.BYTE)
     val charArray = primitiveArrayClass(PrimitiveType.CHAR)
     val shortArray = primitiveArrayClass(PrimitiveType.SHORT)
@@ -118,7 +124,14 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val doubleArray = primitiveArrayClass(PrimitiveType.DOUBLE)
     val booleanArray = primitiveArrayClass(PrimitiveType.BOOLEAN)
 
-    val arrays = PrimitiveType.values().map { primitiveArrayClass(it) } + array
+    val unsignedArrays = UnsignedType.values().mapNotNull { unsignedType ->
+        unsignedArrayClass(unsignedType)?.let { unsignedType to it }
+    }.toMap()
+
+
+    val primitiveArrays = PrimitiveType.values().associate { it to primitiveArrayClass(it) }
+
+    val arrays = primitiveArrays.values + unsignedArrays.values + array
 
     protected fun arrayExtensionFun(type: KotlinType, name: String): IrSimpleFunctionSymbol {
         val descriptor = builtInsPackage("kotlin")
@@ -130,21 +143,6 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
                 ?: throw Error(type.toString())
         return symbolTable.referenceSimpleFunction(descriptor)
     }
-
-
-    protected val arrayTypes = arrayOf(
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BYTE),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.CHAR),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.SHORT),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.INT),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.LONG),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.FLOAT),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.DOUBLE),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BOOLEAN),
-        builtIns.array.defaultType
-    )
-//    val arrayContentToString = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentToString") })
-//    val arrayContentHashCode = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentHashCode") })
 
     abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
 

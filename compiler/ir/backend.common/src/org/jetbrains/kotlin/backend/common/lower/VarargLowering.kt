@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -109,13 +108,7 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
                     val type = expression.varargElementType
                     log { "$expression: array type:$type, is array of primitives ${!expression.type.isArray()}" }
                     val arrayHandle = arrayType(expression.type)
-                    val arrayConstructor = arrayHandle.arraySymbol.owner.constructors.find { it.valueParameters.size == 1 }!!
                     val block = irBlock(expression.type)
-                    val arrayConstructorCall = irCall(arrayConstructor)
-
-                    if (arrayConstructor.typeParameters.isNotEmpty()) {
-                        arrayConstructorCall.putTypeArgument(0, expression.varargElementType)
-                    }
 
                     val vars = expression.elements.map {
                         val initVar = scope.createTemporaryVariable(
@@ -124,8 +117,10 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
                         block.statements.add(initVar)
                         it to initVar
                     }.toMap()
-                    arrayConstructorCall.putValueArgument(0, calculateArraySize(arrayHandle, hasSpreadElement, scope, expression, vars))
-                    val arrayTmpVariable = scope.createTemporaryVariable(arrayConstructorCall, "array".synthesizedString, true)
+                    val arraySize = calculateArraySize(arrayHandle, hasSpreadElement, scope, expression, vars)
+                    val array = arrayHandle.createArray(this, expression.varargElementType, arraySize)
+
+                    val arrayTmpVariable = scope.createTemporaryVariable(array, "array".synthesizedString, true)
                     val indexTmpVariable = scope.createTemporaryVariable(kIntZero, "index".synthesizedString, true)
                     block.statements.add(arrayTmpVariable)
                     if (hasSpreadElement) {
@@ -173,18 +168,8 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
     private val intPlusInt = symbols.intPlusInt.owner
 
     private fun arrayType(type: IrType): ArrayHandle {
-        val primitiveType = KotlinBuiltIns.getPrimitiveArrayType(type.classifierOrFail.descriptor)
-        return when (primitiveType) {
-            PrimitiveType.BYTE    -> kByteArrayHandler
-            PrimitiveType.SHORT   -> kShortArrayHandler
-            PrimitiveType.CHAR    -> kCharArrayHandler
-            PrimitiveType.INT     -> kIntArrayHandler
-            PrimitiveType.LONG    -> kLongArrayHandler
-            PrimitiveType.FLOAT   -> kFloatArrayHandler
-            PrimitiveType.DOUBLE  -> kDoubleArrayHandler
-            PrimitiveType.BOOLEAN -> kBooleanArrayHandler
-            else                  -> kArrayHandler
-        }
+        val arrayClass = type.classifierOrFail
+        return arrayToHandle[arrayClass] ?: error(arrayClass.descriptor)
     }
 
     private fun IrBuilderWithScope.intPlus() = irCall(intPlusInt)
@@ -201,7 +186,7 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
             putValueArgument(0, value)
         })
     }
-    private fun calculateArraySize(arrayHandle: ArrayHandle, hasSpreadElement: Boolean, scope:Scope, expression: IrVararg, vars: Map<IrVarargElement, IrVariable>): IrExpression? {
+    private fun calculateArraySize(arrayHandle: ArrayHandle, hasSpreadElement: Boolean, scope:Scope, expression: IrVararg, vars: Map<IrVarargElement, IrVariable>): IrExpression {
         context.createIrBuilder(scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
             if (!hasSpreadElement)
                 return irConstInt(expression.elements.size)
@@ -228,27 +213,64 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
         context.log { "VARARG-INJECTOR:    ${msg()}" }
     }
 
-    data class ArrayHandle(val arraySymbol: IrClassSymbol,
-                           val setMethodSymbol: IrFunctionSymbol,
-                           val sizeGetterSymbol: IrFunctionSymbol,
-                           val copyRangeToSymbol: IrFunctionSymbol)
+    abstract inner class ArrayHandle(val arraySymbol: IrClassSymbol) {
+        val setMethodSymbol = arraySymbol.functions.single { it.descriptor.name == OperatorNameConventions.SET }
+        val sizeGetterSymbol = arraySymbol.getPropertyGetter("size")!!
+        val copyRangeToSymbol = symbols.copyRangeTo[arraySymbol.descriptor]!!
+        protected val singleParameterConstructor =
+            arraySymbol.owner.constructors.find { it.valueParameters.size == 1 }!!
 
-    val kByteArrayHandler    = handle(symbols.byteArray)
-    val kCharArrayHandler    = handle(symbols.charArray)
-    val kShortArrayHandler   = handle(symbols.shortArray)
-    val kIntArrayHandler     = handle(symbols.intArray)
-    val kLongArrayHandler    = handle(symbols.longArray)
-    val kFloatArrayHandler   = handle(symbols.floatArray)
-    val kDoubleArrayHandler  = handle(symbols.doubleArray)
-    val kBooleanArrayHandler = handle(symbols.booleanArray)
-    val kArrayHandler        = handle(symbols.array)
+        abstract fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression
+    }
 
-    private fun handle(symbol: IrClassSymbol) = ArrayHandle(
-            arraySymbol = symbol,
-            setMethodSymbol = symbol.functions.single { it.descriptor.name == OperatorNameConventions.SET },
-            sizeGetterSymbol = symbol.getPropertyGetter("size")!!,
-            copyRangeToSymbol = symbols.copyRangeTo[symbol.descriptor]!!
-    )
+    inner class ReferenceArrayHandle : ArrayHandle(symbols.array) {
+        override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
+            return builder.irCall(singleParameterConstructor).apply {
+                putTypeArgument(0, elementType)
+                putValueArgument(0, size)
+            }
+        }
+    }
+
+    inner class PrimitiveArrayHandle(primitiveType: PrimitiveType)
+        : ArrayHandle(symbols.primitiveArrays[primitiveType]!!) {
+
+        override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
+            return builder.irCall(singleParameterConstructor).apply {
+                putValueArgument(0, size)
+            }
+        }
+    }
+
+    inner class UnsignedArrayHandle(
+        arraySymbol: IrClassSymbol,
+        private val wrappedArrayHandle: PrimitiveArrayHandle
+    ) : ArrayHandle(arraySymbol) {
+
+        override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
+            val wrappedArray = wrappedArrayHandle.createArray(builder, elementType, size)
+            return builder.irCall(singleParameterConstructor).apply {
+                putValueArgument(0, wrappedArray)
+            }
+        }
+    }
+
+    private val primitiveArrayHandles = PrimitiveType.values().associate { it to PrimitiveArrayHandle(it) }
+
+    private val unsignedArrayHandles = UnsignedType.values().mapNotNull { unsignedType ->
+        symbols.unsignedArrays[unsignedType]?.let {
+            val primitiveType = when (unsignedType) {
+                UnsignedType.UBYTE -> PrimitiveType.BYTE
+                UnsignedType.USHORT -> PrimitiveType.SHORT
+                UnsignedType.UINT -> PrimitiveType.INT
+                UnsignedType.ULONG -> PrimitiveType.LONG
+            }
+            UnsignedArrayHandle(it, primitiveArrayHandles[primitiveType]!!)
+        }
+    }
+
+    val arrayToHandle =
+        (primitiveArrayHandles.values + unsignedArrayHandles + ReferenceArrayHandle()).associateBy { it.arraySymbol }
 
 }
 
