@@ -29,7 +29,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.mpp.fullName
+import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -75,7 +75,7 @@ open class KotlinTargetConfigurator(
         target.compilations.all { compilation ->
             defineConfigurationsForCompilation(compilation, target, project.configurations)
 
-            project.kotlinExtension.sourceSets.maybeCreate(compilation.fullName).also { sourceSet ->
+            project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
                 compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
             }
 

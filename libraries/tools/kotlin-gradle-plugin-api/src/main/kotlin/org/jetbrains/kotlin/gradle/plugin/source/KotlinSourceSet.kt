@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 
 interface KotlinSourceSet : Named, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
+    val resources: SourceDirectorySet
 
     fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet
 
@@ -19,8 +20,8 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
         const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
         const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
     }
-}
 
-interface KotlinSourceSetWithResources : KotlinSourceSet {
-    val resources: SourceDirectorySet
+    fun dependsOn(other: KotlinSourceSet)
+
+    val dependsOn: Set<KotlinSourceSet>
 }

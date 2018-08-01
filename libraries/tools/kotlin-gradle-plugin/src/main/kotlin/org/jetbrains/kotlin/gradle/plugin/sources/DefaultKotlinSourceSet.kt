@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import groovy.lang.Closure
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.DefaultSourceDirectorySet
@@ -14,15 +15,15 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSetWithResources
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.lang.reflect.Constructor
+import java.util.*
 
 class DefaultKotlinSourceSet(
     private val project: Project,
     val displayName: String,
     fileResolver: FileResolver
-) : KotlinSourceSetWithResources {
+) : KotlinSourceSet {
 
     override val apiConfigurationName: String
         get() = disambiguateName("api")
@@ -52,7 +53,46 @@ class DefaultKotlinSourceSet(
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
+    override fun dependsOn(other: KotlinSourceSet) {
+        dependsOnSourceSetsImpl.add(other)
+
+        // Fail-fast approach: check on each new added edge and report a circular dependency at once when the edge is added.
+        checkForCircularDependencies()
+    }
+
+    private val dependsOnSourceSetsImpl = mutableSetOf<KotlinSourceSet>()
+
+    override val dependsOn: Set<KotlinSourceSet>
+        get() = dependsOnSourceSetsImpl
+
     override fun toString(): String = "source set $name"
+}
+
+private fun KotlinSourceSet.checkForCircularDependencies(): Unit {
+    // If adding an edge creates a cycle, than the source node of the edge belongs to the cycle, so run DFS from that node
+    // to check whether it became reachable from itself
+    val visited = hashSetOf<KotlinSourceSet>()
+    val stack = LinkedHashSet<KotlinSourceSet>() // Store the stack explicitly to pretty-print the cycle
+
+    fun checkReachableRecursively(from: KotlinSourceSet) {
+        stack += from
+        visited += from
+
+        for (to in from.dependsOn) {
+            if (to == this@checkForCircularDependencies)
+                throw InvalidUserCodeException(
+                    "Circular dependsOn hierarchy found in the Kotlin source sets: " +
+                            (stack.toList() + to).joinToString(" -> ") { it.name }
+                )
+
+            if (to !in visited) {
+                checkReachableRecursively(to)
+            }
+        }
+        stack -= from
+    }
+
+    checkReachableRecursively(this@checkForCircularDependencies)
 }
 
 internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
@@ -76,6 +116,20 @@ private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResol
         return@run { name, resolver -> alternativeConstructor.newInstance(name, resolver, defaultFileTreeFactory) }
     }
 }
+
+internal fun KotlinSourceSet.getSourceSetHierarchy(): Set<KotlinSourceSet> {
+    val result = mutableSetOf<KotlinSourceSet>()
+
+    fun processSourceSet(sourceSet: KotlinSourceSet) {
+        if (result.add(sourceSet)) {
+            sourceSet.dependsOn.forEach { processSourceSet(it) }
+        }
+    }
+
+    processSourceSet(this)
+    return result
+}
+
 
 private fun <T> Class<T>.constructorOrNull(vararg parameterTypes: Class<*>): Constructor<T>? =
     try {
