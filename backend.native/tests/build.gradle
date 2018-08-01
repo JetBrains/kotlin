@@ -876,6 +876,12 @@ task innerClass_secondaryConstructor(type: RunKonanTest) {
     source = "codegen/innerClass/secondaryConstructor.kt"
 }
 
+task innerClass_linkTest(type: LinkKonanTest) {
+    goldValue = ""
+    source = "codegen/innerClass/linkTest_main.kt"
+    lib = "codegen/innerClass/linkTest_lib.kt"
+}
+
 task localClass_localHierarchy(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/localClass/localHierarchy.kt"
@@ -1087,6 +1093,12 @@ task classDelegation_withBridge(type: RunKonanTest) {
     source = "codegen/classDelegation/withBridge.kt"
 }
 
+task classDelegation_linkTest(type: LinkKonanTest) {
+    goldValue = "qxx\n123\n42\n117\nzzz\n"
+    source = "codegen/classDelegation/linkTest_main.kt"
+    lib = "codegen/classDelegation/linkTest_lib.kt"
+}
+
 task delegatedProperty_simpleVal(type: RunKonanTest) {
     goldValue = "x\n42\n"
     source = "codegen/delegatedProperty/simpleVal.kt"
@@ -1111,6 +1123,12 @@ task delegatedProperty_delegatedOverride(type: LinkKonanTest) {
     goldValue = "156\nx\n117\n42\n"
     source = "codegen/delegatedProperty/delegatedOverride_main.kt"
     lib = "codegen/delegatedProperty/delegatedOverride_lib.kt"
+}
+
+task delegatedProperty_correctFieldsOrder(type: LinkKonanTest) {
+    goldValue = "qxx\n117\nzzz\nqzz\n"
+    source = "codegen/delegatedProperty/correctFieldsOrder_main.kt"
+    lib = "codegen/delegatedProperty/correctFieldsOrder_lib.kt"
 }
 
 task delegatedProperty_lazy(type: RunKonanTest) {
