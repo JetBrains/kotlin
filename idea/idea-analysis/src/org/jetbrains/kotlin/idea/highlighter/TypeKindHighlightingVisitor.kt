@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 
 internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
     AfterAnalysisHighlightingVisitor(holder, bindingContext) {
@@ -40,7 +42,7 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
 
         val referenceTarget = computeReferencedDescriptor(expression) ?: return
 
-        val key = when (referenceTarget) {
+        val key = attributeKeyForObjectAccess(expression) ?: when (referenceTarget) {
             is TypeParameterDescriptor -> TYPE_PARAMETER
             is TypeAliasDescriptor -> TYPE_ALIAS
             !is ClassDescriptor -> return
@@ -51,6 +53,13 @@ internal class TypeKindHighlightingVisitor(holder: AnnotationHolder, bindingCont
         }
 
         highlightName(computeHighlightingRangeForUsage(expression, referenceTarget), key)
+    }
+
+    private fun attributeKeyForObjectAccess(expression: KtSimpleNameExpression): TextAttributesKey? {
+        val resolvedCall = expression.getResolvedCall(bindingContext)
+        return if (resolvedCall?.resultingDescriptor is FakeCallableDescriptorForObject)
+            attributeKeyForCallFromExtensions(expression, resolvedCall)
+        else null
     }
 
     private fun computeReferencedDescriptor(expression: KtSimpleNameExpression): DeclarationDescriptor? {
