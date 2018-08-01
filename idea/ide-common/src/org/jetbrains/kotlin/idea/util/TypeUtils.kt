@@ -37,7 +37,7 @@ fun KotlinType.approximateFlexibleTypes(
         preferStarForRaw: Boolean = false
 ): KotlinType {
     if (isDynamic()) return this
-    return approximateNonDynamicFlexibleTypes(preferNotNull, preferStarForRaw)
+    return unwrapEnhancement().approximateNonDynamicFlexibleTypes(preferNotNull, preferStarForRaw)
 }
 
 private fun KotlinType.approximateNonDynamicFlexibleTypes(

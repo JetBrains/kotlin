@@ -48,6 +48,7 @@ object IdeDescriptorRenderers {
         renderDefaultVisibility = false
         overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
         unitReturnType = false
+        enhancedTypes = true
         modifiers = DescriptorRendererModifier.ALL
         renderUnabbreviatedType = false
         annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY

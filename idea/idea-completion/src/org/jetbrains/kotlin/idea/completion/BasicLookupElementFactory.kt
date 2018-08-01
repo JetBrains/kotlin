@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -50,7 +51,10 @@ class BasicLookupElementFactory(
 ) {
     companion object {
         // we skip parameter names in functional types in most of cases for shortness
-        val SHORT_NAMES_RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions { parameterNamesInFunctionalTypes = false }
+        val SHORT_NAMES_RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
+            enhancedTypes = true
+            parameterNamesInFunctionalTypes = false
+        }
     }
 
     fun createLookupElement(
