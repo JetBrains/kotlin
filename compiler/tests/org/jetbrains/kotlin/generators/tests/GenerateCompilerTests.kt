@@ -166,10 +166,6 @@ fun main(args: Array<String>) {
             model("codegen/kapt", targetBackend = TargetBackend.JVM)
         }
 
-        testClass<AbstractIrBlackBoxCodegenTest>("IrOnlyBoxCodegenTestGenerated") {
-            model("ir/box", targetBackend = TargetBackend.JVM)
-        }
-
         testClass<AbstractBlackBoxInlineCodegenTest> {
             model("codegen/boxInline")
         }

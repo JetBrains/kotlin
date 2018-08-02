@@ -11472,9 +11472,130 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ir"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("classInitializers.kt")
+        public void testClassInitializers() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/classInitializers.kt");
+        }
+
+        @TestMetadata("enumClass.kt")
+        public void testEnumClass() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/enumClass.kt");
+        }
+
+        @TestMetadata("enumClass2.kt")
+        public void testEnumClass2() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/enumClass2.kt");
+        }
+
+        @TestMetadata("enumClass3.kt")
+        public void testEnumClass3() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/enumClass3.kt");
+        }
+
+        @TestMetadata("fileClassInitializers.kt")
+        public void testFileClassInitializers() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/fileClassInitializers.kt");
+        }
+
         @TestMetadata("kt25405.kt")
         public void testKt25405() throws Exception {
             runTest("compiler/testData/codegen/box/ir/kt25405.kt");
+        }
+
+        @TestMetadata("objectClass.kt")
+        public void testObjectClass() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/objectClass.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/simple.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/ir/closureConversion")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ClosureConversion extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInClosureConversion() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ir/closureConversion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("closureConversion1.kt")
+            public void testClosureConversion1() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/closureConversion/closureConversion1.kt");
+            }
+
+            @TestMetadata("closureConversion2.kt")
+            public void testClosureConversion2() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/closureConversion/closureConversion2.kt");
+            }
+
+            @TestMetadata("closureConversion3.kt")
+            public void testClosureConversion3() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/closureConversion/closureConversion3.kt");
+            }
+
+            @TestMetadata("closureConversion4.kt")
+            public void testClosureConversion4() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/closureConversion/closureConversion4.kt");
+            }
+
+            @TestMetadata("innerClass1.kt")
+            public void testInnerClass1() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/closureConversion/innerClass1.kt");
+            }
+
+            @TestMetadata("innerClass2.kt")
+            public void testInnerClass2() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/closureConversion/innerClass2.kt");
+            }
+
+            @TestMetadata("mutable1.kt")
+            public void testMutable1() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/closureConversion/mutable1.kt");
+            }
+
+            @TestMetadata("mutablePrimitives.kt")
+            public void testMutablePrimitives() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/closureConversion/mutablePrimitives.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/ir/primitiveNumberComparisons")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PrimitiveNumberComparisons extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPrimitiveNumberComparisons() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ir/primitiveNumberComparisons"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("comparableToDouble.kt")
+            public void testComparableToDouble() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/primitiveNumberComparisons/comparableToDouble.kt");
+            }
+
+            @TestMetadata("doubleEqeq.kt")
+            public void testDoubleEqeq() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/primitiveNumberComparisons/doubleEqeq.kt");
+            }
+
+            @TestMetadata("floatEqeq.kt")
+            public void testFloatEqeq() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/primitiveNumberComparisons/floatEqeq.kt");
+            }
+
+            @TestMetadata("mixedNumberTypes.kt")
+            public void testMixedNumberTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/ir/primitiveNumberComparisons/mixedNumberTypes.kt");
+            }
         }
     }
 
