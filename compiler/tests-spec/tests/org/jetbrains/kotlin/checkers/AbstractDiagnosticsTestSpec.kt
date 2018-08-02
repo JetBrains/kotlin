@@ -29,6 +29,7 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
 
         testValidator.printTestInfo()
 
+        this.setSkipTxtDirective(files)
         super.analyzeAndCheck(testDataFile, files)
     }
 
