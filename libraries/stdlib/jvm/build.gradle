@@ -239,7 +239,7 @@ task coroutinesTest(type: Test, dependsOn: coroutinesTestClasses) {
     classpath = sourceSets.coroutinesTest.runtimeClasspath
 }
 
-test.dependsOn coroutinesTest
+check.dependsOn(coroutinesTest)
 
 compileUnsignedKotlin {
     kotlinOptions {
