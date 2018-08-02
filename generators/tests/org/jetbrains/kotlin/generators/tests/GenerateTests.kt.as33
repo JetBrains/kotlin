@@ -67,7 +67,10 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCo
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopyPasteTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.kotlin.idea.debugger.*
+import org.jetbrains.kotlin.idea.debugger.AbstractBeforeExtractFunctionInsertionTest
+import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
+import org.jetbrains.kotlin.idea.debugger.AbstractPositionManagerTest
+import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
@@ -625,10 +628,6 @@ fun main(args: Array<String>) {
             model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
         }
 
-        testClass<AbstractFileRankingTest> {
-            model("debugger/fileRanking")
-        }
-
         testClass<AbstractStubBuilderTest> {
             model("stubs", extension = "kt")
         }
@@ -921,7 +920,8 @@ fun main(args: Array<String>) {
 /*  There is no jps in AS
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest> {
-            model("incremental/multiModule", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
@@ -929,6 +929,10 @@ fun main(args: Array<String>) {
         }
 
         actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiplatform/multiModule")
+
+        testClass<AbstractIncrementalJsJpsTest> {
+            model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+        }
 
         testClass<AbstractMultiplatformJpsTest> {
             model(
@@ -1059,6 +1063,79 @@ fun main(args: Array<String>) {
         }
     }
 /*
+    testGroup("plugins/android-extensions/android-extensions-idea/tests", "plugins/android-extensions/android-extensions-idea/testData") {
+        testClass<AbstractAndroidCompletionTest> {
+            model("android/completion", recursive = false, extension = null)
+        }
+
+        testClass<AbstractAndroidGotoTest> {
+            model("android/goto", recursive = false, extension = null)
+        }
+
+        testClass<AbstractAndroidRenameTest> {
+            model("android/rename", recursive = false, extension = null)
+        }
+
+        testClass<AbstractAndroidLayoutRenameTest> {
+            model("android/renameLayout", recursive = false, extension = null)
+        }
+
+        testClass<AbstractAndroidFindUsagesTest> {
+            model("android/findUsages", recursive = false, extension = null)
+        }
+
+        testClass<AbstractAndroidUsageHighlightingTest> {
+            model("android/usageHighlighting", recursive = false, extension = null)
+        }
+
+        testClass<AbstractAndroidExtractionTest> {
+            model("android/extraction", recursive = false, extension = null)
+        }
+
+        testClass<AbstractParcelCheckerTest> {
+            model("android/parcel/checker", excludeParentDirs = true)
+        }
+
+        testClass<AbstractParcelQuickFixTest> {
+            model("android/parcel/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
+        }
+    }
+
+    testGroup("idea/idea-android/tests", "idea/testData") {
+        testClass<AbstractConfigureProjectTest> {
+            model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
+            model("configuration/android-gsk", pattern = """(\w+)_before\.gradle.kts$""", testMethod = "doTestAndroidGradle")
+        }
+
+        testClass<AbstractAndroidIntentionTest> {
+            model("android/intention", pattern = "^([\\w\\-_]+)\\.kt$")
+        }
+
+        testClass<AbstractAndroidResourceIntentionTest> {
+            model("android/resourceIntention", extension = "test", singleClass = true)
+        }
+
+        testClass<AbstractAndroidQuickFixMultiFileTest> {
+            model("android/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
+        }
+
+        testClass<AbstractKotlinLintTest> {
+            model("android/lint", excludeParentDirs = true)
+        }
+
+        testClass<AbstractAndroidLintQuickfixTest> {
+            model("android/lintQuickfix", pattern = "^([\\w\\-_]+)\\.kt$")
+        }
+
+        testClass<AbstractAndroidResourceFoldingTest> {
+            model("android/folding")
+        }
+
+        testClass<AbstractAndroidGutterIconTest> {
+            model("android/gutterIcon")
+        }
+    }
+
     testGroup("plugins/android-extensions/android-extensions-jps/test", "plugins/android-extensions/android-extensions-jps/testData") {
         testClass<AbstractAndroidJpsTestCase> {
             model("android", recursive = false, extension = null)
