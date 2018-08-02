@@ -196,34 +196,28 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
 
         val project = editor.project!!
-        val templateManager = TemplateManager.getInstance(project) as TemplateManagerImpl
-        try {
-            templateManager.setTemplateTesting(true)
 
-            object : WriteCommandAction.Simple<Any>(project) {
-                override fun run() {
-                    handler.invoke(project, editor, file, dataContext)
-                }
-            }.execute()
+        TemplateManagerImpl.setTemplateTesting(project, testRootDisposable)
 
-            var state = TemplateManagerImpl.getTemplateState(editor)
-            assert(state != null)
-            val range = state!!.currentVariableRange
-            assert(range != null)
-            object : WriteCommandAction.Simple<Any>(project) {
-                override fun run() {
-                    editor.document.replaceString(range!!.startOffset, range.endOffset, newName)
-                }
-            }.execute().throwException()
+        object : WriteCommandAction.Simple<Any>(project) {
+            override fun run() {
+                handler.invoke(project, editor, file, dataContext)
+            }
+        }.execute()
 
-            state = TemplateManagerImpl.getTemplateState(editor)
-            assert(state != null)
-            state!!.gotoEnd(false)
-        }
-        finally {
-            templateManager.setTemplateTesting(false)
-        }
+        var state = TemplateManagerImpl.getTemplateState(editor)
+        assert(state != null)
+        val range = state!!.currentVariableRange
+        assert(range != null)
+        object : WriteCommandAction.Simple<Any>(project) {
+            override fun run() {
+                editor.document.replaceString(range!!.startOffset, range.endOffset, newName)
+            }
+        }.execute().throwException()
 
+        state = TemplateManagerImpl.getTemplateState(editor)
+        assert(state != null)
+        state!!.gotoEnd(false)
 
         checkResultByFile(getTestName(false) + ".kt.after")
     }
@@ -235,8 +229,8 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     private fun doTestInplaceRename(newName: String?, handler: VariableInplaceRenameHandler = KotlinVariableInplaceRenameHandler()) {
         configureByFile(getTestName(false) + ".kt")
         val element = TargetElementUtil.findTargetElement(
-                LightPlatformCodeInsightTestCase.myEditor,
-                TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
+            LightPlatformCodeInsightTestCase.myEditor,
+            TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
         )
 
         assertNotNull(element)

@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.idea.migration
 import com.intellij.openapi.actionSystem.AnActionEvent
 
 class CodeMigrationAction : CodeInspectionAction("Code Migration", "Code migration") {
-    override fun update(e: AnActionEvent?) {
+    override fun update(e: AnActionEvent) {
         super.update(e)
 
-        val project = e?.project
+        val project = e.project
         if (project != null) {
             e.presentation.isEnabledAndVisible = CodeMigrationToggleAction.isEnabled(project)
         }

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 
 class SearchNotPropertyCandidatesAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent?) {
+    override fun actionPerformed(e: AnActionEvent) {
         val project = e?.project!!
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) as? KtFile ?: return
 

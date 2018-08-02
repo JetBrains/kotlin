@@ -56,7 +56,7 @@ class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
         return ModuleServiceManager.getService(moduleInfo.module, AndroidLayoutXmlFileManager::class.java)
     }
 
-    override fun getActionText(context: DataContext?): String? {
+    override fun getActionText(context: DataContext): String? {
         return null
     }
 }

@@ -140,7 +140,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
-            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message!!)
         }
     }
 
@@ -161,7 +161,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
-            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message!!)
         }
     }
 
