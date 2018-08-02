@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK
@@ -65,3 +64,4 @@ infix fun String.fail(p: String): String {
 fun call(): String {
     return "xxx"
 }
+// IGNORE_BACKEND: JVM_IR
