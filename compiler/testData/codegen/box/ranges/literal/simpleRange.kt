@@ -5,6 +5,7 @@
 // WITH_RUNTIME
 
 
+
 fun box(): String {
     val list1 = ArrayList<Int>()
     for (i in 3..9) {
