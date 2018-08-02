@@ -5210,14 +5210,14 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/extension.kt");
         }
 
+        @TestMetadata("extensionOuterScope.kt")
+        public void testExtensionOuterScope() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/extensionOuterScope.kt");
+        }
+
         @TestMetadata("extensionProperty.kt")
         public void testExtensionProperty() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/extensionProperty.kt");
-        }
-
-        @TestMetadata("extentionOuterScope.kt")
-        public void testExtentionOuterScope() throws Exception {
-            runTest("idea/testData/intentions/convertLambdaToReference/extentionOuterScope.kt");
         }
 
         @TestMetadata("fqNameForReceiver.kt")
@@ -5283,6 +5283,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("memberInLambdaArgument.kt")
         public void testMemberInLambdaArgument() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/memberInLambdaArgument.kt");
+        }
+
+        @TestMetadata("memberInScopeFunction.kt")
+        public void testMemberInScopeFunction() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/memberInScopeFunction.kt");
+        }
+
+        @TestMetadata("memberInScopeFunction2.kt")
+        public void testMemberInScopeFunction2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/memberInScopeFunction2.kt");
         }
 
         @TestMetadata("memberOuterScope.kt")
