@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
+import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleProductionSourceInfo
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -73,12 +74,12 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
       val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(libraryPath)
 
       return if (virtualFile != null && virtualFile.exists()) {
-        val libraryDescriptor = KonanDescriptorManager.INSTANCE.getDescriptor(virtualFile, languageVersionSettings)
+        val libraryDescriptor = KonanDescriptorManager.getInstance().getCachedLibraryDescriptor(virtualFile, languageVersionSettings)
 
         //todo: replace reflection by changes to kotlin-native?
         libraryDescriptor.setField("capabilities") { oldValue ->
           val capabilities = oldValue as Map<*, *>
-          val libraryInfo = createLibraryInfo(project, library)
+          val libraryInfo = LibraryInfo(project, library)
           capabilities + Pair(ModuleInfo.Capability, libraryInfo)
         }
 

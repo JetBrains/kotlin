@@ -17,12 +17,14 @@
 package org.jetbrains.konan.analyser.index
 
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
-import org.jetbrains.konan.KotlinWorkaroundUtil.createDecompiledFileViewProvider
+import org.jetbrains.konan.KonanDecompiledFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
@@ -51,7 +53,8 @@ abstract class KonanMetadataDecompilerBase<out V : BinaryVersion>(
   private val invalidBinaryVersion: V,
   stubVersion: Int
 ) : ClassFileDecompilers.Full() {
-  private val stubBuilder = KonanMetadataStubBuilder(stubVersion, fileType, serializerProtocol, this::readFile)
+
+  private val stubBuilder = KonanMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
 
   private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
@@ -61,11 +64,10 @@ abstract class KonanMetadataDecompilerBase<out V : BinaryVersion>(
 
   override fun getStubBuilder() = stubBuilder
 
-  override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
-    return createDecompiledFileViewProvider(manager, file, physical, this::buildDecompiledText)
-  }
+  override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean) =
+    KotlinDecompiledFileViewProvider(manager, file, physical) { provider -> KonanDecompiledFile(provider, ::buildDecompiledText) }
 
-  private fun readFile(file: VirtualFile): FileWithMetadata? {
+  private fun readFileSafely(file: VirtualFile): FileWithMetadata? {
     if (!file.isValid) return null
 
     return try {
@@ -81,22 +83,14 @@ abstract class KonanMetadataDecompilerBase<out V : BinaryVersion>(
   }
 
   private fun buildDecompiledText(virtualFile: VirtualFile): DecompiledText {
-    if (virtualFile.fileType != fileType) {
-      error("Unexpected file type ${virtualFile.fileType}")
-    }
+    assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
 
-    val file = readFile(virtualFile)
+    val file = readFileSafely(virtualFile)
 
     return when (file) {
-      null -> {
-        createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, invalidBinaryVersion)
-      }
-      is FileWithMetadata.Incompatible -> {
-        createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
-      }
-      is FileWithMetadata.Compatible -> {
-        decompiledText(file, targetPlatform, serializerProtocol, flexibleTypeDeserializer, renderer)
-      }
+      is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
+      is FileWithMetadata.Compatible -> decompiledText(file, targetPlatform, serializerProtocol, flexibleTypeDeserializer, renderer)
+      null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, invalidBinaryVersion)
     }
   }
 }

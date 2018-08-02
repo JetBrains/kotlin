@@ -37,23 +37,22 @@ open class KonanMetadataStubBuilder(
   private val serializerProtocol: SerializerExtensionProtocol,
   private val readFile: (VirtualFile) -> FileWithMetadata?
 ) : ClsStubBuilder() {
+
   override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
 
   override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
     val virtualFile = content.file
     assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
+
     val file = readFile(virtualFile) ?: return null
 
-    when (file) {
-      is FileWithMetadata.Incompatible -> {
-        return createIncompatibleAbiVersionFileStub()
-      }
+    return when (file) {
+      is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub()
       is FileWithMetadata.Compatible -> { //todo: this part is implemented in our own way
         val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
         val ktFileText = decompiledText(file, KonanPlatform, serializerProtocol, NullFlexibleTypeDeserializer, renderer)
-        return createFileStub(content.project, ktFileText.text)
+        createFileStub(content.project, ktFileText.text)
       }
     }
   }
 }
-

@@ -7,15 +7,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializerProtocol
 import org.jetbrains.kotlin.backend.konan.serialization.NullFlexibleTypeDeserializer
-import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
 class KonanMetadataDecompiler : KonanMetadataDecompilerBase<KonanMetadataVersion>(
   KonanMetaFileType, KonanPlatform, KonanSerializerProtocol, NullFlexibleTypeDeserializer,
   KonanMetadataVersion.DEFAULT_INSTANCE, KonanMetadataVersion.INVALID_VERSION, KonanMetaFileType.STUB_VERSION
 ) {
+
   override fun doReadFile(file: VirtualFile): FileWithMetadata? {
-    val proto: KonanLinkData.LinkDataPackageFragment = KonanDescriptorManager.INSTANCE.parsePackageFragment(file)
+    val proto = KonanDescriptorManager.getInstance().getCachedPackageFragment(file)
     return FileWithMetadata.Compatible(proto, KonanSerializerProtocol) //todo: check version compatibility
   }
 }
@@ -45,7 +45,6 @@ object KonanMetaFileType : FileType {
 }
 
 class KonanMetaFileTypeFactory : FileTypeFactory() {
-  override fun createFileTypes(consumer: FileTypeConsumer) {
-    consumer.consume(KonanMetaFileType, KonanMetaFileType.defaultExtension)
-  }
+
+  override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(KonanMetaFileType, KonanMetaFileType.defaultExtension)
 }
