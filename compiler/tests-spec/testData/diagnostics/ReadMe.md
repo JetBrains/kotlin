@@ -113,7 +113,7 @@ DIAGNOSTICS: {WARNING=15} | {USELESS_IS_CHECK=1, IMPLICIT_CAST_TO_ANY=14}
 
 ## Statistics on specification tests
 
-To see statistics for existing tests you can run gradle task `printSpecTestStatistic` in the `:compiler:tests-common`.
+To see statistics for existing tests you can run gradle task `printSpecTestStatistic` in the `:compiler:tests-spec`.
 
 Example output:
 ```
