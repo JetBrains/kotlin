@@ -10,6 +10,8 @@ const val MaxB = Byte.MAX_VALUE
 const val MaxS = Short.MAX_VALUE
 const val MaxL = Long.MAX_VALUE
 const val MaxC = Char.MAX_VALUE
+const val MaxUI = UInt.MAX_VALUE
+const val MaxUL = ULong.MAX_VALUE
 
 fun box(): String {
     val list1 = ArrayList<Int>()
@@ -60,6 +62,26 @@ fun box(): String {
     }
     if (list5 != listOf<Char>((MaxC - 2), (MaxC - 1), MaxC)) {
         return "Wrong elements for (MaxC - 2)..MaxC: $list5"
+    }
+
+    val list6 = ArrayList<UInt>()
+    val range6 = (MaxUI - 2u)..MaxUI
+    for (i in range6) {
+        list6.add(i)
+        if (list6.size > 23) break
+    }
+    if (list6 != listOf<UInt>(MaxUI - 2u, MaxUI - 1u, MaxUI)) {
+        return "Wrong elements for (MaxUI - 2u)..MaxUI: $list6"
+    }
+
+    val list7 = ArrayList<ULong>()
+    val range7 = (MaxUL - 2u)..MaxUL
+    for (i in range7) {
+        list7.add(i)
+        if (list7.size > 23) break
+    }
+    if (list7 != listOf<ULong>(MaxUL - 2u, MaxUL - 1u, MaxUL)) {
+        return "Wrong elements for (MaxUL - 2u)..MaxUL: $list7"
     }
 
     return "OK"
