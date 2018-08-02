@@ -76,8 +76,9 @@ abstract class KotlinFileStructureTestBase : KotlinLightCodeInsightFixtureTestCa
 
     protected fun checkResult() {
         val printInfo = Queryable.PrintInfo(arrayOf("text"), arrayOf("location"))
-        TreeUtil.expandAll(popupFixture.tree);
-        val popupText = StructureViewUtil.print(popupFixture.tree, false, printInfo, null).trim { it <= ' ' }
-        UsefulTestCase.assertSameLinesWithFile(testDataPath + "/" + treeFileName, popupText)
+        TreeUtil.expandAll(popupFixture.tree) {
+            val popupText = StructureViewUtil.print(popupFixture.tree, false, printInfo, null).trim { it <= ' ' }
+            UsefulTestCase.assertSameLinesWithFile(testDataPath + "/" + treeFileName, popupText)
+        }
     }
 }
