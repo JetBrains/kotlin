@@ -37,7 +37,7 @@ class RenameBackingFieldReferenceHandler: KotlinVariableInplaceRenameHandler() {
         CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to backing field reference", "Rename", null)
     }
 
-    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         // Do nothing: this method is called not from editor
     }
 }

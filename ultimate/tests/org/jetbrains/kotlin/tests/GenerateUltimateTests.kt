@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.tests
 
 import org.jetbrains.kotlin.generators.tests.generator.*
 import org.jetbrains.kotlin.idea.spring.tests.findUsages.AbstractSpringFindUsagesTest
-import org.jetbrains.kotlin.idea.spring.tests.generate.AbstractGenerateSpringDependencyActionTest
-import org.jetbrains.kotlin.idea.spring.tests.gutter.AbstractSpringClassAnnotatorTest
 import org.jetbrains.kotlin.idea.spring.tests.inspections.AbstractSpringInspectionTest
 import org.jetbrains.kotlin.idea.spring.tests.quickfixes.AbstractSpringQuickFixTest
 import org.jetbrains.kotlin.idea.spring.tests.references.AbstractSpringReferenceCompletionHandlerTest
@@ -39,10 +37,6 @@ fun main(args: Array<String>) {
             model("quickFixes/spring", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
         }
 
-        testClass<AbstractSpringClassAnnotatorTest>() {
-            model("spring/core/gutter", extension = "test", singleClass = true)
-        }
-
         testClass<AbstractSpringReferenceCompletionHandlerTest>() {
             model("spring/core/references/completion/handler")
         }
@@ -53,10 +47,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSpringReferenceNavigationTest>() {
             model("spring/core/references/navigation")
-        }
-
-        testClass<AbstractGenerateSpringDependencyActionTest>() {
-            model("spring/core/generate", pattern = "^([\\w]+)\\.kt$", singleClass = true)
         }
 
         testClass<AbstractSpringRenameTest>() {

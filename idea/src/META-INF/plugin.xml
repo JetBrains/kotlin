@@ -13,16 +13,16 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="181.3" until-build="181.*"/>
+  <idea-version since-build="182.3040" until-build="183.*"/>
 
   <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.modules.remoteServers</depends>
 
   <!-- required for Kotlin/Native plugin -->
   <depends optional="true">org.jetbrains.kotlin.native.platform.deps</depends>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="gradle-java.xml">org.jetbrains.plugins.gradle.java</depends>
   <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
   <depends optional="true" config-file="android.xml">org.jetbrains.android</depends>
@@ -34,6 +34,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
   <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
+  <depends>com.intellij.modules.idea</depends>
   <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
@@ -3034,5 +3035,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <highlighterExtension implementation="org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension"/>
   </extensions>
+
+    <extensions defaultExtensionNs="com.intellij.jvm">
+        <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
+    </extensions>
 
 </idea-plugin>

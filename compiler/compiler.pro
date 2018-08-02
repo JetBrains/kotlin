@@ -51,8 +51,18 @@ messages/**)
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
 
-# Depends on apache batik which has lots of dependencies
+# Nullability annotations used in Guava
+-dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
+-dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
+
+# Depends on apache batick which has lots of dependencies
 -dontwarn com.intellij.util.SVGLoader*
+
+-dontwarn org.jdom.xpath.jaxen.*
+-dontwarn com.intellij.util.io.Decompressor*
+-dontwarn org.w3c.dom.Location
+-dontwarn org.w3c.dom.Window
+
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
