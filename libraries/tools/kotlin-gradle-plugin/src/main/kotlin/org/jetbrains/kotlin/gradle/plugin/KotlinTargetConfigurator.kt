@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
+import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -56,6 +57,14 @@ open class KotlinTargetConfigurator(
         val project = platformTarget.project
         val main = platformTarget.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
+        platformTarget.compilations.all {
+            buildOutputCleanupRegistry.registerOutputs(it.output)
+            it.compileDependencyFiles = project.configurations.maybeCreate(it.compileDependencyConfigurationName)
+            if (it is KotlinCompilationToRunnableFiles) {
+                it.runtimeDependencyFiles = project.configurations.maybeCreate(it.runtimeDependencyConfigurationName)
+            }
+        }
+
         platformTarget.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
             compileDependencyFiles = project.files(main.output, project.configurations.maybeCreate(compileDependencyConfigurationName))
 
@@ -64,9 +73,6 @@ open class KotlinTargetConfigurator(
             }
         }
 
-        platformTarget.compilations.all {
-            buildOutputCleanupRegistry.registerOutputs(it.output)
-        }
     }
 
     private fun <KotlinCompilationType: KotlinCompilation> configureCompilationDefaults(target: KotlinOnlyTarget<KotlinCompilationType>) {
@@ -80,7 +86,8 @@ open class KotlinTargetConfigurator(
             }
 
             if (compilation is KotlinCompilationWithResources) {
-                configureResourceProcessing(compilation, project.files())
+                val sourceSetHierarchy = compilation.kotlinSourceSets.flatMap { it.getSourceSetHierarchy() }.distinct()
+                configureResourceProcessing(compilation, project.files(Callable { sourceSetHierarchy.map { it.resources } }))
             }
 
             createLifecycleTask(compilation)
@@ -336,8 +343,6 @@ open class KotlinTargetConfigurator(
                 description = "Compile classpath for $compilation."
             }
 
-            compilation.compileDependencyFiles = compileClasspathConfiguration
-
             if (compilation is KotlinCompilationToRunnableFiles) {
                 val runtimeConfiguration = configurations.maybeCreate(compilation.deprecatedRuntimeConfigurationName).apply {
                     extendsFrom(compileConfiguration)
@@ -366,8 +371,6 @@ open class KotlinTargetConfigurator(
                     attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(Usage.JAVA_RUNTIME))
                     description = "Runtime classpath of $compilation."
                 }
-
-                compilation.runtimeDependencyFiles = compilation.output.plus(runtimeClasspathConfiguration)
             }
         }
 
