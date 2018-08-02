@@ -20,6 +20,7 @@ dependencies {
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijPluginDep("junit"))
+    compileOnly(intellijPluginDep("testng"))
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-test-framework"))
