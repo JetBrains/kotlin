@@ -175,6 +175,6 @@ Before submitting the pull request, make sure that you can say "YES" to each poi
   - You provided the link to the related issue(s) from YouTrack
   - You made a reasonable amount of changes related only to the provided issues
   - You can explain changes made in the pull request
-  - You ran the build locally, and verified new functionality
-  - You ran related tests locally, and it passed
-  - You do not have merge commits in the PR
+  - You ran the build locally and verified new functionality
+  - You ran related tests locally and they passed
+  - You do not have merge commits in the pull request
