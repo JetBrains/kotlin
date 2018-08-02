@@ -15,6 +15,10 @@ const val MaxL = Long.MAX_VALUE
 const val MinL = Long.MIN_VALUE
 const val MaxC = Char.MAX_VALUE
 const val MinC = Char.MIN_VALUE
+const val MaxUI = UInt.MAX_VALUE
+const val MinUI = UInt.MIN_VALUE
+const val MaxUL = ULong.MAX_VALUE
+const val MinUL = ULong.MIN_VALUE
 
 fun box(): String {
     val list1 = ArrayList<Int>()
@@ -60,6 +64,24 @@ fun box(): String {
     }
     if (list5 != listOf<Char>()) {
         return "Wrong elements for MaxC..MinC: $list5"
+    }
+
+    val list6 = ArrayList<UInt>()
+    for (i in MaxUI..MinUI) {
+        list6.add(i)
+        if (list6.size > 23) break
+    }
+    if (list6 != listOf<UInt>()) {
+        return "Wrong elements for MaxUI..MinUI: $list6"
+    }
+
+    val list7 = ArrayList<ULong>()
+    for (i in MaxUL..MinUL) {
+        list7.add(i)
+        if (list7.size > 23) break
+    }
+    if (list7 != listOf<ULong>()) {
+        return "Wrong elements for MaxUL..MinUL: $list7"
     }
 
     return "OK"
