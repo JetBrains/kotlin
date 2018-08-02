@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -38,4 +39,8 @@ interface IrDeclaration : IrStatement, IrAnnotationContainer {
 
 interface IrSymbolDeclaration<out S : IrSymbol> : IrDeclaration, IrSymbolOwner {
     override val symbol: S
+}
+
+interface IrDeclarationWithVisibility : IrDeclaration {
+    val visibility: Visibility
 }
