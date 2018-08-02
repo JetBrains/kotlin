@@ -47,7 +47,11 @@ fun case_2(value: Int): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking correctness type (numbers) in 'when' without bound value.
+/*
+ CASE DESCRIPTION: Checking correctness type (numbers) in 'when' without bound value.
+ UNEXPECTED BEHAVIOUR
+ ISSUES: KT-25268
+ */
 fun case_3(value: Int): String {
     val whenValue = when {
         value == 0 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1<!>
@@ -63,7 +67,11 @@ fun case_3(value: Int): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking correctness type (numbers) in 'when' with bound value.
+/*
+ CASE DESCRIPTION: Checking correctness type (numbers) in 'when' with bound value.
+ UNEXPECTED BEHAVIOUR
+ ISSUES: KT-25268
+ */
 fun case_4(value: Int): String {
     val whenValue = when (value) {
         0 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1<!>
