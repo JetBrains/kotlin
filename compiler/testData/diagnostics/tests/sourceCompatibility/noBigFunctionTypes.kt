@@ -11,7 +11,10 @@ fun foo(
 
 fun bar(x: Any) {}
 
-fun test(vararg x: <!UNSUPPORTED_FEATURE!>Function30<!><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, Unit>) {
+fun test(
+    w: <!UNSUPPORTED_FEATURE!>(A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A) -> Unit<!>,
+    vararg x: <!UNSUPPORTED_FEATURE!>Function30<!><*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, Unit>
+) {
     bar(<!UNSUPPORTED_FEATURE!>::foo<!>)
     bar(x)
 }
