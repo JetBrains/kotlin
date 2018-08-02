@@ -347,9 +347,7 @@ fun main(args: Array<String>) {
         testClass<AbstractKDocLexerTest> {
             model("kdoc/lexer")
         }
-    }
 
-    testGroup("compiler/tests-ir-jvm/tests", "compiler/testData") {
         testClass<AbstractIrBlackBoxCodegenTest> {
             model("codegen/box", targetBackend = TargetBackend.JVM_IR)
         }
