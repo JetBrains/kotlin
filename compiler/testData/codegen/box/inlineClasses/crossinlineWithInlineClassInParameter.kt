@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 inline class SuccessOrFailure<T>(val a: Any?) {
     fun getOrThrow(): T = a as T
