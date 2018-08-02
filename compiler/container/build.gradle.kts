@@ -9,11 +9,11 @@ jvmTarget = "1.6"
 dependencies {
     compile(project(":core:util.runtime"))
     compile(commonDep("javax.inject"))
-    compileOnly(projectDist(":kotlin-stdlib"))
+    compileOnly(project(":kotlin-stdlib"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(projectDist(":kotlin-stdlib"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
+    testCompile(project(":kotlin-stdlib"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep()) { includeJars("trove4j") }

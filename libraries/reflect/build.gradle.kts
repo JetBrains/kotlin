@@ -46,7 +46,7 @@ configurations.getByName("compileOnly").extendsFrom(shadows)
 val mainJar by configurations.creating
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
 
     proguardDeps(project(":kotlin-stdlib"))
     proguardDeps(project(":kotlin-annotations-jvm"))

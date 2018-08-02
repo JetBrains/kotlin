@@ -25,7 +25,7 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(project(":kotlin-android-extensions-runtime"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(commonDep("junit:junit"))
 
     testRuntime(intellijPluginDep("junit")) { includeJars("idea-junit", "resources_en") }

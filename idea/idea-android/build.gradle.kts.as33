@@ -26,7 +26,7 @@ dependencies {
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("android"))
 
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm"))
@@ -44,7 +44,7 @@ dependencies {
     testCompile(intellijPluginDep("properties"))
     testCompileOnly(intellijPluginDep("android"))
 
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:kapt3-idea"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))

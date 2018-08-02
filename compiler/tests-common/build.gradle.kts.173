@@ -24,7 +24,7 @@ dependencies {
     testCompile(project(":js:js.frontend"))
     testCompile(project(":js:js.translator"))
     testCompileOnly(project(":plugins:android-extensions-compiler"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))

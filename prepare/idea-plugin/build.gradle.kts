@@ -63,9 +63,9 @@ val sideJars by configurations.creating
 dependencies {
     packedJars(protobufFull())
     packedJars(project(":core:builtins", configuration = "builtins"))
-    sideJars(projectDist(":kotlin-script-runtime"))
-    sideJars(projectDist(":kotlin-stdlib"))
-    sideJars(projectDist(":kotlin-reflect"))
+    sideJars(project(":kotlin-script-runtime"))
+    sideJars(project(":kotlin-stdlib"))
+    sideJars(project(":kotlin-reflect"))
     sideJars(project(":kotlin-compiler-client-embeddable"))
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))

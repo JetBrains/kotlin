@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-script-runtime"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:daemon-common"))

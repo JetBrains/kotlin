@@ -17,7 +17,7 @@ dependencies {
     compile(project(":js:js.frontend"))
     compile(project(":js:js.translator"))
 
-    runtime(projectDist(":kotlin-stdlib"))
+    runtime(project(":kotlin-stdlib"))
 }
 
 sourceSets {

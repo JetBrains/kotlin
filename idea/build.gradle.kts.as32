@@ -12,7 +12,7 @@ repositories {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(projectDist(":kotlin-stdlib-jre8"))
+    compile(project(":kotlin-stdlib-jre8"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -68,8 +68,8 @@ dependencies {
 
     testRuntime(commonDep("org.jetbrains", "markdown"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
-    testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-preloader"))
+    testRuntime(project(":kotlin-reflect"))
+    testRuntime(project(":kotlin-preloader"))
 
     testCompile(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
 
