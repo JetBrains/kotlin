@@ -157,8 +157,8 @@ Some of the code in the standard library is created by generating code from temp
 
 ## Submitting patches
 
-The best way to submit a patch is to [fork the project on github](https://help.github.com/articles/fork-a-repo/) then send us a
-[pull request](https://help.github.com/articles/creating-a-pull-request/) via [github](https://github.com).
+The best way to submit a patch is to [fork the project on GitHub](https://help.github.com/articles/fork-a-repo/) and then send us a
+[pull request](https://help.github.com/articles/creating-a-pull-request/) via [GitHub](https://github.com).
 
 If you create your own fork, it might help to enable rebase by default
 when you pull by executing
@@ -167,3 +167,14 @@ git config --global pull.rebase true
 ```
 This will avoid your local repo having too many merge commits
 which will help keep your pull request simple and easy to apply.
+
+## Checklist
+
+Before submitting the pull request, make sure that you can say "YES" to each point in this short checklist:
+
+  - You provided the link to the related issue(s) from YouTrack
+  - You made a reasonable amount of changes related only to the provided issues
+  - You can explain changes made in the pull request
+  - You ran the build locally, and verified new functionality
+  - You ran related tests locally, and it passed
+  - You do not have merge commits in the PR
