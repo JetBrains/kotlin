@@ -30,7 +30,9 @@ enum class TestArea(val title: String) {
 
 data class TestCase(
     val number: Int,
-    val description: String
+    val description: String,
+    val unexpectedBehavior: Boolean,
+    val issues: List<String>?
 )
 
 data class TestInfo(
@@ -39,10 +41,12 @@ data class TestInfo(
     val sectionName: String,
     val paragraphNumber: Int,
     val sentenceNumber: Int,
-    val sentence: String? = null,
+    val sentence: String?,
     val testNumber: Int,
-    val description: String? = null,
-    val cases: List<TestCase>? = null
+    val description: String?,
+    val cases: List<TestCase>?,
+    val unexpectedBehavior: Boolean,
+    val issues: List<String>? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -88,15 +92,20 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
         private const val integerRegex = "[1-9]\\d*"
         private const val testPathRegex =
             "^.*?/s-(?<sectionNumber>(?:$integerRegex)(?:\\.$integerRegex)*)_(?<sectionName>[\\w-]+)/p-(?<paragraphNumber>$integerRegex)/(?<testType>pos|neg)/(?<sentenceNumber>$integerRegex)\\.(?<testNumber>$integerRegex)\\.kt$"
+        private const val testUnexpectedBehaviour = "(?:\n\\s*(?<unexpectedBehaviour>UNEXPECTED BEHAVIOUR))"
+        private const val testIssues = "(?:\n\\s*ISSUES:\\s*(?<issues>(KT-[1-9]\\d*)(,\\s*KT-[1-9]\\d*)*))"
         private const val testContentMetaInfoRegex =
-            "\\/\\*\\s+KOTLIN SPEC TEST \\((?<testType>POSITIVE|NEGATIVE)\\)\\s+SECTION (?<sectionNumber>(?:$integerRegex)(?:\\.$integerRegex)*):\\s*(?<sectionName>.*?)\\s+PARAGRAPH:\\s*(?<paragraphNumber>$integerRegex)\\s+SENTENCE\\s*(?<sentenceNumber>$integerRegex):\\s*(?<sentence>.*?)\\s+NUMBER:\\s*(?<testNumber>$integerRegex)\\s+DESCRIPTION:\\s*(?<testDescription>.*?)\\s+\\*\\/\\s+"
-        private const val testCaseDescriptionRegex = "\\/\\/\\s*CASE DESCRIPTION:\\s*(?<testCaseDescription>.*?)\n"
+            "\\/\\*\\s+KOTLIN SPEC TEST \\((?<testType>POSITIVE|NEGATIVE)\\)\\s+SECTION (?<sectionNumber>(?:$integerRegex)(?:\\.$integerRegex)*):\\s*(?<sectionName>.*?)\\s+PARAGRAPH:\\s*(?<paragraphNumber>$integerRegex)\\s+SENTENCE\\s*(?<sentenceNumber>$integerRegex):\\s*(?<sentence>.*?)\\s+NUMBER:\\s*(?<testNumber>$integerRegex)\\s+DESCRIPTION:\\s*(?<testDescription>.*?)$testUnexpectedBehaviour?$testIssues?\\s+\\*\\/\\s+"
+        private const val testCaseInfo =
+            "(?:(?:\\/\\*\n\\s*)|(?:\\/\\/\\s*))CASE DESCRIPTION:\\s*(?<testCaseDescription>.*?)$testUnexpectedBehaviour?$testIssues?\n(\\s\\*\\/)?"
 
         private fun getTestInfo(
             testInfoMatcher: Matcher,
             directMappedTestTypeEnum: Boolean = false,
             withDetails: Boolean = false,
-            testCases: List<TestCase>? = null
+            testCases: List<TestCase>? = null,
+            unexpectedBehavior: Boolean = false,
+            issues: List<String>? = null
         ): TestInfo {
             val testDescription = if (withDetails) testInfoMatcher.group("testDescription") else null
 
@@ -111,7 +120,22 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
                 if (withDetails) testInfoMatcher.group("sentence") else null,
                 testInfoMatcher.group("testNumber").toInt(),
                 testDescription,
-                if (testCases != null && testCases.isEmpty()) listOf(TestCase(1, testDescription!!)) else testCases
+                testCases,
+                unexpectedBehavior,
+                issues
+            )
+        }
+
+        private fun getSingleTestCase(testInfoMatcher: Matcher): TestCase {
+            val testDescription = testInfoMatcher.group("testDescription")
+            val unexpectedBehaviour = testInfoMatcher.group("unexpectedBehaviour") != null
+            val issues = testInfoMatcher.group("issues")?.split(",")
+
+            return TestCase(
+                1,
+                testDescription,
+                unexpectedBehaviour,
+                issues
             )
         }
 
@@ -120,24 +144,47 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
             var testCasesCounter = 1
 
             while (testCaseInfoMatcher.find()) {
+                val unexpectedBehaviour = testCaseInfoMatcher.group("unexpectedBehaviour") != null
+                val issues = testCaseInfoMatcher.group("issues")?.split(Regex(",\\s*"))
+
                 testCases.add(
                     TestCase(
                         testCasesCounter++,
-                        testCaseInfoMatcher.group("testCaseDescription")
+                        testCaseInfoMatcher.group("testCaseDescription"),
+                        unexpectedBehaviour,
+                        issues
                     )
                 )
             }
 
+            if (testCases.isEmpty()) {
+                testCases.add(getSingleTestCase(testCaseInfoMatcher))
+            }
+
             return testCases
         }
+    }
 
-        private fun getTestFileWithoutMetaInfo(testInfoByContentMatcher: Matcher): File {
-            val testFileContentWithoutMetaInfo = testInfoByContentMatcher.replaceAll("")
-            val tempFile = createTempFile()
-            tempFile.writeText(testFileContentWithoutMetaInfo)
-
-            return tempFile
+    private fun hasUnexpectedBehavior(testCases: List<TestCase>, testInfoMatcher: Matcher): Boolean {
+        testCases.forEach {
+            if (it.unexpectedBehavior) return true
         }
+
+        return testInfoMatcher.group("unexpectedBehaviour") != null
+    }
+
+    private fun getIssues(testCases: List<TestCase>, testInfoMatcher: Matcher): List<String> {
+        val issues = mutableListOf<String>()
+
+        testCases.forEach {
+            if (it.issues != null) issues.addAll(it.issues)
+        }
+
+        val testIssues = testInfoMatcher.group("issues")?.split(Regex(",\\s*"))
+
+        if (testIssues != null) issues.addAll(testIssues)
+
+        return issues.distinct()
     }
 
     private fun parseTestInfo() {
@@ -154,14 +201,17 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
             throw SpecTestValidationException(SpecTestValidationFailedReason.METAINFO_NOT_VALID)
         }
 
-        val testCasesMatcher = Pattern.compile(testCaseDescriptionRegex).matcher(fileContent)
+        val testCasesMatcher = Pattern.compile(testCaseInfo).matcher(fileContent)
+        val testCases = getTestCasesInfo(testCasesMatcher)
 
         testInfoByFilename = getTestInfo(testInfoByFilenameMatcher)
         testInfoByContent = getTestInfo(
             testInfoByContentMatcher,
             withDetails = true,
             directMappedTestTypeEnum = true,
-            testCases = getTestCasesInfo(testCasesMatcher)
+            testCases = testCases,
+            unexpectedBehavior = hasUnexpectedBehavior(testCases, testInfoByContentMatcher),
+            issues = getIssues(testCases, testInfoByContentMatcher)
         )
 
         if (testInfoByFilename != testInfoByContent) {
@@ -182,12 +232,18 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
             "$specUrl#${testInfoByFilename.sectionName}:${testInfoByFilename.paragraphNumber}:${testInfoByFilename.sentenceNumber}"
 
         println("--------------------------------------------------")
+        if (testInfoByContent.unexpectedBehavior) {
+            println("(!!!) HAS UNEXPECTED BEHAVIOUR (!!!)")
+        }
         println("${testInfoByFilename.testType} ${testArea.title} SPEC TEST")
         println("SECTION: ${testInfoByFilename.sectionNumber} ${testInfoByContent.sectionName} (paragraph: ${testInfoByFilename.paragraphNumber})")
         println("SENTENCE ${testInfoByContent.sentenceNumber}: ${testInfoByContent.sentence}")
         println("TEST NUMBER: ${testInfoByContent.testNumber}")
         println("NUMBER OF TEST CASES: ${testInfoByContent.cases!!.size}")
         println("DESCRIPTION: ${testInfoByContent.description}")
+        if (testInfoByContent.issues!!.isNotEmpty()) {
+            println("LINKED ISSUES: ${testInfoByContent.issues!!.joinToString(", ")}")
+        }
     }
 }
 
