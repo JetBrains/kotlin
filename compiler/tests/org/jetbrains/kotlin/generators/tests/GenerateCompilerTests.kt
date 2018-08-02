@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.AbstractCustomScriptCodegenTest
+import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxAgainstJavaCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxInlineCodegenTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
@@ -351,6 +352,10 @@ fun main(args: Array<String>) {
     testGroup("compiler/tests-ir-jvm/tests", "compiler/testData") {
         testClass<AbstractIrBlackBoxCodegenTest> {
             model("codegen/box", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
+            model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrBlackBoxInlineCodegenTest> {
