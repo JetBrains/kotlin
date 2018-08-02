@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 interface TypeWithEnhancement {
     val origin: UnwrappedType
@@ -53,8 +52,12 @@ class FlexibleTypeWithEnhancement(
     override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
             = origin.makeNullableAsSpecified(newNullability).wrapEnhancement(enhancement.unwrap().makeNullableAsSpecified(newNullability))
 
-    override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String
-            = origin.render(renderer, options)
+    override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
+        if (options.enhancedTypes) {
+            return renderer.renderType(enhancement)
+        }
+        return origin.render(renderer, options)
+    }
 
     override val delegate: SimpleType get() = origin.delegate
 }
