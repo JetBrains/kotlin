@@ -139,7 +139,7 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
             )
         }
 
-        private fun getTestCasesInfo(testCaseInfoMatcher: Matcher): List<TestCase> {
+        private fun getTestCasesInfo(testCaseInfoMatcher: Matcher, testInfoMatcher: Matcher): List<TestCase> {
             val testCases = mutableListOf<TestCase>()
             var testCasesCounter = 1
 
@@ -158,7 +158,7 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
             }
 
             if (testCases.isEmpty()) {
-                testCases.add(getSingleTestCase(testCaseInfoMatcher))
+                testCases.add(getSingleTestCase(testInfoMatcher))
             }
 
             return testCases
@@ -202,7 +202,7 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
         }
 
         val testCasesMatcher = Pattern.compile(testCaseInfo).matcher(fileContent)
-        val testCases = getTestCasesInfo(testCasesMatcher)
+        val testCases = getTestCasesInfo(testCasesMatcher, testInfoByContentMatcher)
 
         testInfoByFilename = getTestInfo(testInfoByFilenameMatcher)
         testInfoByContent = getTestInfo(
