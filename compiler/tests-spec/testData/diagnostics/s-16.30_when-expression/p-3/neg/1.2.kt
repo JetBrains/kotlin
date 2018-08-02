@@ -1,4 +1,3 @@
-
 /*
  KOTLIN SPEC TEST (NEGATIVE)
 
