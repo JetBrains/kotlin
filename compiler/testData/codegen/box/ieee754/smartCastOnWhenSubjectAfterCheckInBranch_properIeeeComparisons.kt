@@ -1,6 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 
 fun testF(x: Any) =
     when (x) {
