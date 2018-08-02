@@ -38,13 +38,13 @@ fun box(): String {
     }
 
     val list4 = ArrayList<Long>()
-    val range4 = 5.toLong()..5.toLong()
+    val range4 = 5L..5L
     for (i in range4) {
         list4.add(i)
         if (list4.size > 23) break
     }
-    if (list4 != listOf<Long>(5.toLong())) {
-        return "Wrong elements for 5.toLong()..5.toLong(): $list4"
+    if (list4 != listOf<Long>(5L)) {
+        return "Wrong elements for 5L..5L: $list4"
     }
 
     val list5 = ArrayList<Char>()

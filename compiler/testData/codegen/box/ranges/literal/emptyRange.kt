@@ -35,12 +35,12 @@ fun box(): String {
     }
 
     val list4 = ArrayList<Long>()
-    for (i in 10.toLong()..-5.toLong()) {
+    for (i in 10L..-5L) {
         list4.add(i)
         if (list4.size > 23) break
     }
     if (list4 != listOf<Long>()) {
-        return "Wrong elements for 10.toLong()..-5.toLong(): $list4"
+        return "Wrong elements for 10L..-5L: $list4"
     }
 
     val list5 = ArrayList<Char>()
