@@ -1,8 +1,6 @@
-fun <T> assertEquals(actual: T, expected: T) {
-    if (actual != expected) {
-        throw java.lang.AssertionError("Assertion failed: $actual != $expected")
-    }
-}
+//WITH_RUNTIME
+//IGNORE_BACKEND: JS_IR
+import kotlin.test.assertEquals
 
 val x = 1
 val y = x + 1

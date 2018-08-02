@@ -1,3 +1,6 @@
+// !LANGUAGE: +ProperIeee754Comparisons
+//IGNORE_BACKEND: JS_IR
+
 fun ltDD(x: Comparable<Double>, y: Double) =
     x is Double && x < y
 
