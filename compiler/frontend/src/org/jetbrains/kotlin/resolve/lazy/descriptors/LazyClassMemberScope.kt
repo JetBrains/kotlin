@@ -204,8 +204,18 @@ open class LazyClassMemberScope(
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location, fromSupertypes)
+        generateFunctionsFromAnyForInlineClass(result, name, fromSupertypes)
         c.syntheticResolveExtension.generateSyntheticMethods(thisDescriptor, name, trace.bindingContext, fromSupertypes, result)
         generateFakeOverrides(name, fromSupertypes, result, SimpleFunctionDescriptor::class.java)
+    }
+
+    private fun generateFunctionsFromAnyForInlineClass(
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        name: Name,
+        fromSupertypes: List<SimpleFunctionDescriptor>
+    ) {
+        if (!thisDescriptor.isInline) return
+        addFunctionFromAnyIfNeeded(result, name, fromSupertypes)
     }
 
     private fun generateDataClassMethods(
@@ -255,17 +265,25 @@ open class LazyClassMemberScope(
         }
 
         if (c.languageVersionSettings.supportsFeature(LanguageFeature.DataClassInheritance)) {
-            if (FunctionsFromAny.shouldAddEquals(name, result, fromSupertypes)) {
-                result.add(FunctionsFromAny.createEqualsFunctionDescriptor(thisDescriptor))
-            }
+            addFunctionFromAnyIfNeeded(result, name, fromSupertypes)
+        }
+    }
 
-            if (FunctionsFromAny.shouldAddHashCode(name, result, fromSupertypes)) {
-                result.add(FunctionsFromAny.createHashCodeFunctionDescriptor(thisDescriptor))
-            }
+    private fun addFunctionFromAnyIfNeeded(
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        name: Name,
+        fromSupertypes: List<SimpleFunctionDescriptor>
+    ) {
+        if (FunctionsFromAny.shouldAddEquals(name, result, fromSupertypes)) {
+            result.add(FunctionsFromAny.createEqualsFunctionDescriptor(thisDescriptor))
+        }
 
-            if (FunctionsFromAny.shouldAddToString(name, result, fromSupertypes)) {
-                result.add(FunctionsFromAny.createToStringFunctionDescriptor(thisDescriptor))
-            }
+        if (FunctionsFromAny.shouldAddHashCode(name, result, fromSupertypes)) {
+            result.add(FunctionsFromAny.createHashCodeFunctionDescriptor(thisDescriptor))
+        }
+
+        if (FunctionsFromAny.shouldAddToString(name, result, fromSupertypes)) {
+            result.add(FunctionsFromAny.createToStringFunctionDescriptor(thisDescriptor))
         }
     }
 
