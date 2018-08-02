@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+fun test(list: List<List<Int>>): List<Int> {
+    return list
+            .asSequence()
+            .filter { it.count() > 2 }
+            .map { it + it }
+            .toList()
+            .flatMap { it + it }
+}
