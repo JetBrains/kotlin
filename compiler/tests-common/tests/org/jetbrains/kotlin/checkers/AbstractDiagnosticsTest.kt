@@ -290,6 +290,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun getLazyLogFile(testDataFile: File): File =
         File(FileUtil.getNameWithoutExtension(testDataFile.absolutePath) + ".lazy.log")
 
+    protected fun setSkipTxtDirective(testFiles: List<TestFile>) =
+        testFiles.forEach { it.skipTxtEnabled = true }
+
     protected open fun analyzeModuleContents(
         moduleContext: ModuleContext,
         files: List<KtFile>,
@@ -400,7 +403,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         coroutinesPackage: String
     ) {
         if (skipDescriptorsValidation()) return
-        if (testFiles.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_TXT") }) {
+        if (testFiles.any { it.skipTxtEnabled }) {
             assertFalse(".txt file should not exist if SKIP_TXT directive is used: $expectedFile", expectedFile.exists())
             return
         }
