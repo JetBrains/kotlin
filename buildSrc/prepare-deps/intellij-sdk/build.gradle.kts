@@ -68,18 +68,11 @@ repositories {
     }
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
     maven { setUrl("https://plugins.jetbrains.com/maven") }
-    ivy {
-        artifactPattern("https://raw.github.com/JetBrains/intellij-community/[revision]/lib/src/[artifact].zip")
-        metadataSources {
-            artifact()
-        }
-    }
 }
 
 val intellij by configurations.creating
 val intellijUltimate by configurations.creating
 val sources by configurations.creating
-val `asm-shaded-sources` by configurations.creating
 val `jps-standalone` by configurations.creating
 val `jps-build-test` by configurations.creating
 val `intellij-core` by configurations.creating
@@ -103,12 +96,6 @@ dependencies {
         }
     }
     sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
-    if (platformBaseVersion == "182") {
-        // There is no asm sources for 182 yet
-        `asm-shaded-sources`("asmsources:asm-src:181@zip")
-    } else {
-        `asm-shaded-sources`("asmsources:asm-src:$platformBaseVersion@zip")
-    }
     `jps-standalone`("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
     `jps-build-test`("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
     `intellij-core`("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
@@ -165,14 +152,7 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copyAsmShadedSources by tasks.creating(Copy::class.java) {
-    from(`asm-shaded-sources`)
-    rename(".zip", ".jar")
-    destinationDir = File(repoDir, `asm-shaded-sources`.name)
-}
-
 val copyIntellijSdkSources by tasks.creating(ShadowJar::class.java) {
-    from(copyAsmShadedSources)
     from(sources)
     baseName = "ideaIC"
     version = intellijVersion
@@ -203,7 +183,7 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
 }
 
 val prepareIvyXmls by tasks.creating {
-    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest, copyAsmShadedSources)
+    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest)
 
     val intellijSdkDir = File(repoDir, intellij.name)
     val intellijUltimateSdkDir = File(repoDir, intellijUltimate.name)
@@ -220,7 +200,7 @@ val prepareIvyXmls by tasks.creating {
         outputs.file(File(repoDir, "${intellijUltimate.name}.ivy.xml"))
     }
 
-    val flatDeps = listOf(`intellij-core`, `jps-standalone`, `jps-build-test`, `asm-shaded-sources`)
+    val flatDeps = listOf(`intellij-core`, `jps-standalone`, `jps-build-test`)
     flatDeps.forEach {
         inputs.dir(File(repoDir, it.name))
         outputs.file(File(repoDir, "${it.name}.ivy.xml"))
