@@ -1,6 +1,6 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS_IR
 
 import kotlin.test.assertEquals
 

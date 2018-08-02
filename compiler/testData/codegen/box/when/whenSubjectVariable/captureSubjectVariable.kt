@@ -1,5 +1,4 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// IGNORE_BACKEND: JS
 
 fun box(): String {
     var y: String = "OK"
