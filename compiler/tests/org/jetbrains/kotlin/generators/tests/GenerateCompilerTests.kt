@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.AbstractCustomScriptCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxInlineCodegenTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrCompileKotlinAgainstInlineKotlinTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
@@ -355,10 +354,6 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIrBlackBoxInlineCodegenTest> {
-            model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
-        }
-
-        testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
             model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
         }
     }
