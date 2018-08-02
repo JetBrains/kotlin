@@ -18,6 +18,8 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
         return ConfigurationKind.ALL
     }
 
+    override fun skipDescriptorsValidation(): Boolean = true
+
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         testValidator = DiagnosticSpecTestValidator(testDataFile)
 
@@ -29,7 +31,6 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
 
         testValidator.printTestInfo()
 
-        this.setSkipTxtDirective(files)
         super.analyzeAndCheck(testDataFile, files)
     }
 
