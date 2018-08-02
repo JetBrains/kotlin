@@ -346,11 +346,14 @@ internal abstract class AbstractKotlinPlugin(
     override fun apply(project: Project) {
         project.plugins.apply(JavaPlugin::class.java)
 
+        val target = (project.kotlinExtension as KotlinSingleJavaTargetExtension).target
+
         configureTarget(
-            (project.kotlinExtension as KotlinSingleJavaTargetExtension).target,
+            target,
             { compilation -> buildSourceSetProcessor(project, compilation, kotlinPluginVersion) }
         )
 
+        configureAttributes(target)
         configureProjectGlobalSettings(project, kotlinPluginVersion)
         registry.register(KotlinModelBuilder(kotlinPluginVersion))
     }
@@ -422,7 +425,24 @@ internal abstract class AbstractKotlinPlugin(
             }
         }
 
-        fun configureSourceSetDefaults(
+        private fun configureAttributes(
+            kotlinTarget: KotlinWithJavaTarget
+        ) {
+            val project = kotlinTarget.project
+
+            // Don't set the attributes for common module; otherwise their 'common' platform won't be compatible with the one in
+            // platform-specific modules
+            if (kotlinTarget.platformType != KotlinPlatformType.common) {
+                project.dependencies.attributesSchema.attribute(KotlinPlatformType.attribute)
+                project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).usesPlatformOf(kotlinTarget)
+                project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).usesPlatformOf(kotlinTarget)
+                kotlinTarget.compilations.all { compilation ->
+                    KotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, kotlinTarget, project.configurations)
+                }
+            }
+        }
+
+        private fun configureSourceSetDefaults(
             kotlinTarget: KotlinTarget,
             buildSourceSetProcessor: (KotlinCompilation) -> KotlinSourceSetProcessor<*>
         ) {

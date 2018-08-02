@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert
 import org.junit.Test
@@ -20,6 +21,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testLibAndApp() {
         val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
         val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
+        val oldStyleAppProject = Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")
 
         with(libProject) {
             build("publish") {
@@ -84,6 +86,22 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             build("assemble", "--rerun-tasks") {
                 checkAppBuild()
+            }
+        }
+
+        with(oldStyleAppProject) {
+            setupWorkingDir()
+            gradleBuildScript().appendText("\nallprojects { repositories { maven { url '$libLocalRepoUri' } } }")
+
+            build("assemble") {
+                assertSuccessful()
+                assertTasksExecuted(":app-js:compileKotlin2Js", ":app-jvm:compileKotlin")
+
+                val jvmClassFile = projectDir.resolve(kotlinClassesDir("app-jvm") + "com/example/app/JvmAppKt.class")
+                checkBytecodeContains(jvmClassFile, "CommonKt.id", "MainKt.expectedFun")
+
+                val jsCompiledFilePath = kotlinClassesDir("app-js") + "app-js.js"
+                assertFileContains(jsCompiledFilePath, "lib.expectedFun", "lib.id")
             }
         }
     }
