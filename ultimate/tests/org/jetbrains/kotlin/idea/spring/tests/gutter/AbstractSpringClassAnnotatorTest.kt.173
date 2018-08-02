@@ -25,7 +25,6 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import icons.SpringApiIcons
 import junit.framework.Assert
 import junit.framework.AssertionFailedError
-import org.jetbrains.kotlin.compatibility.projectDisposableEx
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.spring.lineMarking.KotlinSpringClassAnnotator
@@ -56,7 +55,7 @@ abstract class AbstractSpringClassAnnotatorTest : KotlinLightCodeInsightFixtureT
 
         val config = JsonParser().parse(FileUtil.loadFile(configFile, true)) as JsonObject
 
-        PluginTestCaseBase.addJdk(myFixture.projectDisposableEx, PluginTestCaseBase::mockJdk)
+        PluginTestCaseBase.addJdk(myFixture.projectDisposable, PluginTestCaseBase::mockJdk)
 
         val withRuntime = config["withRuntime"]?.asBoolean ?: false
         if (withRuntime) {
