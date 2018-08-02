@@ -51,7 +51,7 @@ private val threadLocalAnnotationFqName = FqName("konan.ThreadLocal")
 val IrClassSymbol.objectIsShared get() =
     !descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName)
 
-internal fun emitLLVM(context: Context) {
+internal fun emitLLVM(context: Context, phaser: PhaseManager) {
     val irModule = context.irModule!!
 
     // Note that we don't set module target explicitly.
@@ -63,8 +63,6 @@ internal fun emitLLVM(context: Context) {
     context.llvmModule = llvmModule
     context.debugInfo.builder = DICreateBuilder(llvmModule)
     context.llvmDeclarations = createLlvmDeclarations(context)
-
-    val phaser = PhaseManager(context)
 
     phaser.phase(KonanPhase.RTTI) {
         irModule.acceptVoid(RTTIGeneratorVisitor(context))

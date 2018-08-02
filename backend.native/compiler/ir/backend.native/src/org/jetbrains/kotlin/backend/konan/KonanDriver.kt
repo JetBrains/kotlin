@@ -52,7 +52,7 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
     val analyzerWithCompilerReport = AnalyzerWithCompilerReport(context.messageCollector,
             environment.configuration.languageVersionSettings)
 
-    val phaser = PhaseManager(context)
+    val phaser = PhaseManager(context, null)
 
     phaser.phase(KonanPhase.FRONTEND) {
         // Build AST and binding info.
@@ -84,21 +84,23 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
 
 //        validateIrModule(context, module)
     }
-    phaser.phase(KonanPhase.SERIALIZER) {
+    phaser.phase(KonanPhase.GEN_SYNTHETIC_FIELDS) {
         markBackingFields(context)
+    }
+    phaser.phase(KonanPhase.SERIALIZER) {
         val serializer = KonanSerializationUtil(context, context.config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!)
         context.serializedLinkData = 
             serializer.serializeModule(context.moduleDescriptor)
     }
     phaser.phase(KonanPhase.BACKEND) {
         phaser.phase(KonanPhase.LOWER) {
-            KonanLower(context).lower()
+            KonanLower(context, phaser).lower()
 //            validateIrModule(context, context.ir.irModule) // Temporarily disabled until moving to new IR finished.
             context.ir.moduleIndexForCodegen = ModuleIndex(context.ir.irModule)
         }
         phaser.phase(KonanPhase.BITCODE) {
-            emitLLVM(context)
-            produceOutput(context)
+            emitLLVM(context, phaser)
+            produceOutput(context, phaser)
         }
         // We always verify bitcode to prevent hard to debug bugs.
         context.verifyBitCode()
@@ -109,7 +111,7 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
     }
 
     phaser.phase(KonanPhase.LINK_STAGE) {
-        LinkStage(context).linkStage()
+        LinkStage(context, phaser).linkStage()
     }
 }
 

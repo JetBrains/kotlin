@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
@@ -56,9 +55,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
-            val field = context.specialDeclarationsFactory.getOuterThisField(irClass)
-            outerThisFieldSymbol = field.symbol
-            irClass.addChild(field)
+            outerThisFieldSymbol = context.specialDeclarationsFactory.getOuterThisField(irClass).symbol
         }
 
         private fun lowerConstructors() {

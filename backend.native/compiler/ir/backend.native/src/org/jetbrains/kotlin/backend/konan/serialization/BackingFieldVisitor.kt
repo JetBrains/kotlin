@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -34,6 +33,8 @@ internal class BackingFieldVisitor(val context: Context) : IrElementVisitorVoid 
     }
 
     override fun visitProperty(declaration: IrProperty) {
+        super.visitProperty(declaration)
+
         if (declaration.isDelegated) {
             val irClass = declaration.parent as? IrClass
             val list = irClass?.let { context.ir.classesDelegatedBackingFields.getOrPut(irClass.descriptor) { mutableListOf() } }
@@ -46,10 +47,15 @@ internal class BackingFieldVisitor(val context: Context) : IrElementVisitorVoid 
     }
 
     override fun visitClass(declaration: IrClass) {
+        if (declaration.isInner)
+            declaration.addChild(context.specialDeclarationsFactory.getOuterThisField(declaration))
+
+        // Mark all dangling fields (they are created when class is inherited via delegation).
         declaration.declarations.filterIsInstance<IrField>().forEach {
             val list = context.ir.classesDelegatedBackingFields.getOrPut(declaration.descriptor) { mutableListOf() }
             list.add(it.descriptor)
         }
+
         super.visitClass(declaration)
     }
 }

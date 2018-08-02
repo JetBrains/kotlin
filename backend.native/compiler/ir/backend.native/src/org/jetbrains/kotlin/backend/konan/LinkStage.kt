@@ -26,7 +26,7 @@ typealias BitcodeFile = String
 typealias ObjectFile = String
 typealias ExecutableFile = String
 
-internal class LinkStage(val context: Context) {
+internal class LinkStage(val context: Context, val phaser: PhaseManager) {
 
     private val config = context.config.configuration
     private val target = context.config.target
@@ -228,7 +228,6 @@ internal class LinkStage(val context: Context) {
 
         val objectFiles: MutableList<String> = mutableListOf()
 
-        val phaser = PhaseManager(context)
         phaser.phase(KonanPhase.OBJECT_FILES) {
             objectFiles.add(
                     when (platform.configurables) {

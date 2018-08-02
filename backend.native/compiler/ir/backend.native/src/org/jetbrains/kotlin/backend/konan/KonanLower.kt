@@ -28,25 +28,23 @@ import org.jetbrains.kotlin.ir.util.checkDeclarationParents
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.replaceUnboundSymbols
 
-internal class KonanLower(val context: Context) {
+internal class KonanLower(val context: Context, val parentPhaser: PhaseManager) {
 
     fun lower() {
         val irModule = context.irModule!!
 
         // Phases to run against whole module.
-        lowerModule(irModule)
+        lowerModule(irModule, parentPhaser)
 
         // Phases to run against a file.
         irModule.files.forEach {
-            lowerFile(it)
+            lowerFile(it, PhaseManager(context, parentPhaser))
         }
 
         irModule.checkDeclarationParents()
     }
 
-    private fun lowerModule(irModule: IrModuleFragment) {
-        val phaser = PhaseManager(context)
-
+    private fun lowerModule(irModule: IrModuleFragment, phaser: PhaseManager) {
         phaser.phase(KonanPhase.REMOVE_EXPECT_DECLARATIONS) {
             irModule.files.forEach(ExpectDeclarationsRemoving(context)::lower)
         }
@@ -90,9 +88,7 @@ internal class KonanLower(val context: Context) {
 //        validateIrModule(context, irModule) // Temporarily disabled until moving to new IR finished.
     }
 
-    private fun lowerFile(irFile: IrFile) {
-        val phaser = PhaseManager(context)
-
+    private fun lowerFile(irFile: IrFile, phaser: PhaseManager) {
         phaser.phase(KonanPhase.LOWER_STRING_CONCAT) {
             StringConcatenationLowering(context).lower(irFile)
         }

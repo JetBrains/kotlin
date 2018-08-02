@@ -25,7 +25,8 @@ enum class KonanPhase(val description: String,
                       var verbose: Boolean = false) {
     /* */ FRONTEND("Frontend builds AST"),
     /* */ PSI_TO_IR("Psi to IR conversion"),
-    /* */ SERIALIZER("Serialize descriptor tree and inline IR bodies"),
+    /* */ GEN_SYNTHETIC_FIELDS("Generate synthetic fields"),
+    /* */ SERIALIZER("Serialize descriptor tree and inline IR bodies", GEN_SYNTHETIC_FIELDS),
     /* */ BACKEND("All backend"),
     /* ... */ LOWER("IR Lowering"),
     /* ... ... */ REMOVE_EXPECT_DECLARATIONS("Expect declarations removing"),
@@ -49,7 +50,7 @@ enum class KonanPhase(val description: String,
     /* ... ... */ LOWER_DEFAULT_PARAMETER_EXTENT("Default Parameter Extent Lowering", LOWER_TAILREC, LOWER_ENUMS),
     /* ... ... */ LOWER_VARARG("Vararg lowering", LOWER_CALLABLES, LOWER_DEFAULT_PARAMETER_EXTENT),
     /* ... ... */ LOWER_COMPILE_TIME_EVAL("Compile time evaluation lowering", LOWER_VARARG),
-    /* ... ... */ LOWER_INNER_CLASSES("Inner classes lowering", LOWER_DEFAULT_PARAMETER_EXTENT),
+    /* ... ... */ LOWER_INNER_CLASSES("Inner classes lowering", LOWER_DEFAULT_PARAMETER_EXTENT, GEN_SYNTHETIC_FIELDS),
     /* ... ... */ LOWER_BUILTIN_OPERATORS("BuiltIn Operators Lowering", LOWER_DEFAULT_PARAMETER_EXTENT),
     /* ... ... */ LOWER_COROUTINES("Coroutines lowering", LOWER_LOCAL_FUNCTIONS),
     /* ... ... */ LOWER_TYPE_OPERATORS("Type operators lowering", LOWER_COROUTINES),
@@ -115,16 +116,21 @@ object KonanPhases {
     }
 }
 
-internal class PhaseManager(val context: Context)  {
+internal class PhaseManager(val context: Context, val parent: PhaseManager? = null)  {
 
     val previousPhases = mutableSetOf<KonanPhase>()
 
-    internal fun phase(phase: KonanPhase, body: () -> Unit) {
+    fun createChild() = PhaseManager(context, this)
+
+    private fun checkPrerequisite(phase: KonanPhase): Boolean =
+            previousPhases.contains(phase) || parent?.checkPrerequisite(phase) == true
+
+    fun phase(phase: KonanPhase, body: () -> Unit) {
 
         if (!phase.enabled) return
 
         phase.prerequisite.forEach {
-            if (!previousPhases.contains(it))
+            if (!checkPrerequisite(it))
                 throw Error("$phase requires $it")
         }
 
