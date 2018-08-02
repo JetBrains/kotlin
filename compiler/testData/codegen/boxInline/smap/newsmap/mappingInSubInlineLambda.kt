@@ -1,7 +1,7 @@
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
+// IGNORE_BACKEND: JVM_IR
 package test
-
 inline fun test(s: () -> Unit) {
     val z = 1;
     s()
