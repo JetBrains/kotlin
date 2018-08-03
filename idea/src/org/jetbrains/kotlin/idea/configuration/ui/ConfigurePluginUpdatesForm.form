@@ -140,15 +140,22 @@
               <text value="Current Kotlin plugin version:"/>
             </properties>
           </component>
-          <component id="e71d" class="javax.swing.JTextPane" binding="currentVersion">
+          <grid id="9be5a" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <editable value="false"/>
-              <text value="{version}"/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="e71d" class="javax.swing.JTextPane" binding="currentVersion">
+                <constraints/>
+                <properties>
+                  <editable value="false"/>
+                  <text value="{version}"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
     </children>
