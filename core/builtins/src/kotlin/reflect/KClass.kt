@@ -77,6 +77,12 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     public val supertypes: List<KType>
 
     /**
+     * The list of the immediate subclasses if this class is a sealed class, or an empty list otherwise.
+     */
+    @SinceKotlin("1.3")
+    public val sealedSubclasses: List<KClass<out T>>
+
+    /**
      * Visibility of this class, or `null` if its visibility cannot be represented in Kotlin.
      */
     @SinceKotlin("1.1")
