@@ -125,7 +125,8 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
 
     val callee = calleeExpression
     if (callee is KtNameReferenceExpression) {
-        val lambdaArgumentCount = valueArguments.mapNotNull { it.getArgumentExpression()?.unpackFunctionLiteral() }.count()
+        val lambdaArgumentCount = valueArguments.count { it.getArgumentExpression()?.unpackFunctionLiteral() != null }
+        val referenceArgumentCount = valueArguments.count { it.getArgumentExpression() is KtCallableReferenceExpression }
         val bindingContext = analyze(BodyResolveMode.PARTIAL)
         val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }
             ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, callee]
@@ -134,7 +135,8 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
         // if there are functions among candidates but none of them have last function parameter then not show the intention
         if (candidates.isNotEmpty() && candidates.none { candidate ->
                 val params = candidate.valueParameters
-                params.lastOrNull()?.type?.isFunctionType == true && params.count { it.type.isFunctionType } == lambdaArgumentCount
+                params.lastOrNull()?.type?.isFunctionType == true &&
+                        params.count { it.type.isFunctionType } == lambdaArgumentCount + referenceArgumentCount
             }
         ) return false
     }
