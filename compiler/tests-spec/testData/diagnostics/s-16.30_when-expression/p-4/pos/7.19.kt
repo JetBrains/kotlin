@@ -12,52 +12,52 @@
 
 // CASE DESCRIPTION: 'When' with 'else' branch (as expression).
 fun case_1(value: Any?): String {
-    val object1 = object {
-        val prop1 = 1
+    val __object_1 = object {
+        val __prop_1 = 1
     }
 
     return when (value) {
         object {} -> ""
         object {
-            val o1 = object {
-                val o2 = object {}
+            val __object_2 = object {
+                val __object_3 = object {}
             }
         } -> ""
         object {
-            var lambda1 = {
+            var __lambda_1 = {
                 when {
                     else -> true
                 }
             }
-            val prop1 = 1
+            val __prop_1 = 1
         } -> ""
-        object1 -> ""
+        __object_1 -> ""
         else -> ""
     }
 }
 
 // CASE DESCRIPTION: 'When' without 'else' branch (as statement).
 fun case_2(value: Any?): String {
-    val object1 = object {
-        val prop1 = 1
+    val __object_1 = object {
+        val __prop_1 = 1
     }
 
     when (value) {
         object {} -> return ""
         object {
-            val o1 = object {
-                val o2 = object {}
+            val __object_2 = object {
+                val __object_3 = object {}
             }
         } -> return ""
         object {
-            var lambda1 = {
+            var __lambda_1 = {
                 when {
                     else -> true
                 }
             }
-            val prop1 = 1
+            val __prop_1 = 1
         } -> return ""
-        object1 -> return ""
+        __object_1 -> return ""
     }
 
     return ""

@@ -9,12 +9,12 @@
  */
 
 fun case_1(value: Int) {
-    val lambda_1 = {
+    val __lambda_1 = {
         throw Exception("Ex")
     }
 
     when (value) {
-        1 -> lambda_1()
+        1 -> __lambda_1()
         2 -> throw Exception("Ex")
         3 -> {
             try {
