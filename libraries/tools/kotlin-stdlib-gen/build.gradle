@@ -11,9 +11,7 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        languageVersion = "1.2"
-        apiVersion = "1.2"
-        freeCompilerArgs = ["-version", "-Xnormalize-constructor-calls=enable"]
+        freeCompilerArgs = ["-version", "-Xnormalize-constructor-calls=enable", "-XXLanguage:-ReleaseCoroutines"]
     }
 }
 
