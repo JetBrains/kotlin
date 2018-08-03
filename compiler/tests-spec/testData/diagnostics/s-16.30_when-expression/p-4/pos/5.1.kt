@@ -1,3 +1,5 @@
+// !WITH_BASIC_TYPES_PROVIDER
+
 /*
  KOTLIN SPEC TEST (POSITIVE)
 
@@ -8,18 +10,8 @@
  DESCRIPTION: 'When' with bound value and containment operator with range operator.
  */
 
-fun getInt(number: Int): Int {
-    return number + 11
-}
-
-class A {
-    fun method1(number: Int): Long {
-        return (number * 100000).toLong()
-    }
-}
-
 // CASE DESCRIPTION: 'When' with various integer ranges (not exhaustive).
-fun case_1(value: Int, value1: Int, value2: Int, value3: Long, value4: A): String {
+fun case_1(value: Int, value1: Int, value2: Int, value3: Long, value4: _BasicTypesProvider): String {
     when (value) {
         in Int.MIN_VALUE..-1000000000000L -> return ""
         in -1000000000000L..0L -> return ""
@@ -28,15 +20,15 @@ fun case_1(value: Int, value1: Int, value2: Int, value3: Long, value4: A): Strin
         in value1..value2 -> return ""
         in value2..1000 -> return ""
         in value2..getInt(value2) -> return ""
-        in getInt(value2)..value4.method1(value2) -> return ""
-        in value4.method1(value2)..value3 -> return ""
+        in getInt(value2)..value4.getLong(value2) -> return ""
+        in value4.getLong(value2)..value3 -> return ""
     }
 
     return ""
 }
 
 // CASE DESCRIPTION: 'When' with various integer ranges and 'else' branch (exhaustive).
-fun case_2(value: Int, value1: Int, value2: Int, value3: Long, value4: A): String = when (value) {
+fun case_2(value: Int, value1: Int, value2: Int, value3: Long, value4: _BasicTypesProvider): String = when (value) {
     in Int.MIN_VALUE..-1000000000000L -> ""
     in -1000000000000L..0L -> ""
     in 1..10.toShort() -> ""
@@ -44,8 +36,8 @@ fun case_2(value: Int, value1: Int, value2: Int, value3: Long, value4: A): Strin
     in value1..value2 -> ""
     in value2..1000 -> ""
     in value2..getInt(value2) -> ""
-    in getInt(value2)..value4.method1(value2) -> ""
-    in value4.method1(value2)..value3 -> ""
+    in getInt(value2)..value4.getLong(value2) -> ""
+    in value4.getLong(value2)..value3 -> ""
     else -> ""
 }
 

@@ -1,3 +1,5 @@
+// !WITH_BASIC_TYPES_PROVIDER
+
 /*
  KOTLIN SPEC TEST (POSITIVE)
 
@@ -8,66 +10,8 @@
  DESCRIPTION: 'When' with different variants of the arithmetic expressions (additive expression and multiplicative expression) in 'when condition'.
  */
 
-fun getShort(number: Int): Short {
-    return (number + 11).toShort()
-}
-
-fun getInt(number: Int): Int {
-    return number + 11
-}
-
-fun getLong(number: Int): Long {
-    return (number + 11).toLong()
-}
-
-fun getFloat(number: Int): Float {
-    return (number + 11).toFloat()
-}
-
-fun getDouble(number: Int): Double {
-    return (number + 11).toDouble()
-}
-
-fun getByte(number: Int): Byte {
-    return (number + 11).toByte()
-}
-
-fun getChar(number: Int): Char {
-    return (number + 11).toChar()
-}
-
-class A {
-    fun getShort(number: Int): Short {
-        return (number + 11).toShort()
-    }
-
-    fun getInt(number: Int): Int {
-        return number + 11
-    }
-
-    fun getLong(number: Int): Long {
-        return (number + 11).toLong()
-    }
-
-    fun getFloat(number: Int): Float {
-        return (number + 11).toFloat()
-    }
-
-    fun getDouble(number: Int): Double {
-        return (number + 11).toDouble()
-    }
-
-    fun getByte(number: Int): Byte {
-        return (number + 11).toByte()
-    }
-
-    fun getChar(number: Int): Char {
-        return (number + 11).toChar()
-    }
-}
-
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Short.
-fun case_1(value: Short, value1: Short, value2: A): String {
+fun case_1(value: Short, value1: Short, value2: _BasicTypesProvider): String {
     val value3 = 912.toShort()
 
     when (value) {
@@ -88,7 +32,7 @@ fun case_1(value: Short, value1: Short, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Short, and 'else' branch.
-fun case_2(value: Short, value1: Short, value2: A): String {
+fun case_2(value: Short, value1: Short, value2: _BasicTypesProvider): String {
     val value3 = 912.toShort()
 
     return when (value) {
@@ -108,7 +52,7 @@ fun case_2(value: Short, value1: Short, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Int.
-fun case_3(value: Int, value1: Int, value2: A): String {
+fun case_3(value: Int, value1: Int, value2: _BasicTypesProvider): String {
     val value3 = 912
 
     when (value) {
@@ -136,7 +80,7 @@ fun case_3(value: Int, value1: Int, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Int, and 'else' branch.
-fun case_4(value: Int, value1: Int, value2: A): String {
+fun case_4(value: Int, value1: Int, value2: _BasicTypesProvider): String {
     val value3 = 912
 
     return when (value) {
@@ -163,7 +107,7 @@ fun case_4(value: Int, value1: Int, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Float.
-fun case_5(value: Float, value1: Float, value2: A): String {
+fun case_5(value: Float, value1: Float, value2: _BasicTypesProvider): String {
     val value3 = 912.113f
 
     when (value) {
@@ -182,7 +126,7 @@ fun case_5(value: Float, value1: Float, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Float, and 'else' branch.
-fun case_6(value: Float, value1: Float, value2: A): String {
+fun case_6(value: Float, value1: Float, value2: _BasicTypesProvider): String {
     val value3 = 912.113f
 
     return when (value) {
@@ -200,7 +144,7 @@ fun case_6(value: Float, value1: Float, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Double.
-fun case_7(value: Double, value1: Double, value2: A): String {
+fun case_7(value: Double, value1: Double, value2: _BasicTypesProvider): String {
     val value3 = 912.113
 
     when (value) {
@@ -219,7 +163,7 @@ fun case_7(value: Double, value1: Double, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Double, and 'else' branch.
-fun case_8(value: Double, value1: Double, value2: A): String {
+fun case_8(value: Double, value1: Double, value2: _BasicTypesProvider): String {
     val value3 = 912.113
 
     return when (value) {
@@ -237,7 +181,7 @@ fun case_8(value: Double, value1: Double, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Byte.
-fun case_9(value: Byte, value1: Byte, value2: A): String {
+fun case_9(value: Byte, value1: Byte, value2: _BasicTypesProvider): String {
     val value3 = 912.toByte()
 
     when (value) {
@@ -258,7 +202,7 @@ fun case_9(value: Byte, value1: Byte, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Byte, and 'else' branch.
-fun case_10(value: Byte, value1: Byte, value2: A): String {
+fun case_10(value: Byte, value1: Byte, value2: _BasicTypesProvider): String {
     val value3 = 912.toByte()
 
     return when (value) {
@@ -301,7 +245,7 @@ fun case_12(value: Char): String = when (value) {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Long.
-fun case_13(value: Long, value1: Long, value2: A): String {
+fun case_13(value: Long, value1: Long, value2: _BasicTypesProvider): String {
     val value3: Long = 34939942345L
 
     when (value) {
@@ -328,7 +272,7 @@ fun case_13(value: Long, value1: Long, value2: A): String {
 }
 
 // CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Long, and 'else' branch.
-fun case_14(value: Long, value1: Long, value2: A): String {
+fun case_14(value: Long, value1: Long, value2: _BasicTypesProvider): String {
     val value3: Long = 34939942345L
 
     return when (value) {
