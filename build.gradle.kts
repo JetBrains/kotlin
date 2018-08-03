@@ -490,6 +490,11 @@ tasks {
         dependsOn("examplesTest")
     }
 
+    "specTest" {
+        dependsOn("dist")
+        dependsOn(":compiler:tests-spec:test")
+    }
+
     "androidCodegenTest" {
         dependsOn(":compiler:android-tests:test")
     }
