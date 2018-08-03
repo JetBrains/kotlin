@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -110,6 +111,17 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
         val settings = myProject.getLanguageVersionSettings()
         Assert.assertEquals(ApiVersion.KOTLIN_1_1, settings.apiVersion)
+    }
+
+    fun testNoKotlincExistsNoSettingsLatestRuntimeNullizeEmptyStrings() {
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.isSaveAllowed = true
+        Kotlin2JsCompilerArgumentsHolder.getInstance(project).update {
+            sourceMapPrefix = ""
+            sourceMapEmbedSources = ""
+        }
+        application.saveAll()
+        Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
     }
 
     //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also PluginStartupComponent)

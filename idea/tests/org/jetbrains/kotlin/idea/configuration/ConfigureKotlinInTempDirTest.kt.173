@@ -109,6 +109,17 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest()
         Assert.assertEquals(ApiVersion.KOTLIN_1_1, settings.apiVersion)
     }
 
+    fun testNoKotlincExistsNoSettingsLatestRuntimeNullizeEmptyStrings() {
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.doNotSave(false)
+        Kotlin2JsCompilerArgumentsHolder.getInstance(project).update {
+            sourceMapPrefix = ""
+            sourceMapEmbedSources = ""
+        }
+        application.saveAll()
+        Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
+    }
+
     //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also PluginStartupComponent)
     /*fun testKotlinSdkAdded() {
         Assert.assertTrue(ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType })

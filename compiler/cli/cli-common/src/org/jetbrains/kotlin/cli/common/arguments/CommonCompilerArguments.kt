@@ -44,7 +44,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<version>",
         description = "Provide source compatibility with specified language version"
     )
-    var languageVersion: String? by FreezableVar(null)
+    var languageVersion: String? by NullableStringFreezableVar(null)
 
     @get:Transient
     var autoAdvanceApiVersion: Boolean by FreezableVar(true)
@@ -55,14 +55,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<version>",
         description = "Allow to use declarations only from the specified version of bundled libraries"
     )
-    var apiVersion: String? by FreezableVar(null)
+    var apiVersion: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-kotlin-home",
         valueDescription = "<path>",
         description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
     )
-    var kotlinHome: String? by FreezableVar(null)
+    var kotlinHome: String? by NullableStringFreezableVar(null)
 
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
     var pluginOptions: Array<String>? by FreezableVar(null)
@@ -101,14 +101,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<path>",
         description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
     )
-    var intellijPluginRoot: String? by FreezableVar(null)
+    var intellijPluginRoot: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-Xcoroutines",
         valueDescription = "{enable|warn|error}",
         description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
-    var coroutinesState: String? by FreezableVar(WARN)
+    var coroutinesState: String? by NullableStringFreezableVar(WARN)
 
     @Argument(
         value = "-Xnew-inference",
@@ -162,7 +162,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<path>",
         description = "Dump detailed performance statistics to the specified file"
     )
-    var dumpPerf: String? by FreezableVar(null)
+    var dumpPerf: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-Xprogressive",
