@@ -73,3 +73,34 @@ public inline val CharSequence.size: Int get() = length
 
 @kotlin.internal.InlineOnly
 internal inline fun String.nativeReplace(pattern: RegExp, replacement: String): String = asDynamic().replace(pattern, replacement)
+
+public actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
+    if (ignoreCase) {
+        val n1 = this.length
+        val n2 = other.length
+        val min = minOf(n1, n2)
+        if (min == 0) return n1 - n2
+        var start = 0
+        while (true) {
+            val end = minOf(start + 16, min)
+            var s1 = this.substring(start, end)
+            var s2 = other.substring(start, end)
+            if (s1 != s2) {
+                s1 = s1.toUpperCase()
+                s2 = s2.toUpperCase()
+                if (s1 != s2) {
+                    s1 = s1.toLowerCase()
+                    s2 = s2.toLowerCase()
+                    if (s1 != s2) {
+                        return s1.compareTo(s2)
+                    }
+                }
+            }
+            if (end == min) break
+            start = end
+        }
+        return n1 - n2
+    } else {
+        return compareTo(other)
+    }
+}
