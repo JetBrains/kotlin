@@ -132,6 +132,8 @@ private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<Ir
             else -> null
         }
     }
+    // TODO: hack over missed parents in deserialized fields/property declarations.
+    fields.forEach{it.parent = irClass}
 
     return fields.sortedBy {
         it.fqNameSafe.localHash.value
