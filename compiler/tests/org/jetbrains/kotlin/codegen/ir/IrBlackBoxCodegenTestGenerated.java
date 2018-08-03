@@ -17844,6 +17844,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/reflection/classes/qualifiedNameOfStandardClasses.kt");
             }
 
+            @TestMetadata("sealedSubclasses.kt")
+            public void testSealedSubclasses() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/classes/sealedSubclasses.kt");
+            }
+
             @TestMetadata("starProjectedType.kt")
             public void testStarProjectedType() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/classes/starProjectedType.kt");
