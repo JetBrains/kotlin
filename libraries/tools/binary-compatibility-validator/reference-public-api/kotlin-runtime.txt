@@ -1293,7 +1293,7 @@ public abstract interface class kotlin/reflect/KProperty2 : kotlin/jvm/functions
 public abstract interface class kotlin/reflect/KProperty2$Getter : kotlin/jvm/functions/Function2, kotlin/reflect/KProperty$Getter {
 }
 
-public abstract interface class kotlin/reflect/KType {
+public abstract interface class kotlin/reflect/KType : kotlin/reflect/KAnnotatedElement {
 	public abstract fun getArguments ()Ljava/util/List;
 	public abstract fun getClassifier ()Lkotlin/reflect/KClassifier;
 	public abstract fun isMarkedNullable ()Z

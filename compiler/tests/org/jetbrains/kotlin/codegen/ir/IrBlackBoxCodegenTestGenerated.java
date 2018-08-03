@@ -17370,6 +17370,29 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testSimpleValAnnotation() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/annotations/simpleValAnnotation.kt");
             }
+
+            @TestMetadata("compiler/testData/codegen/box/reflection/annotations/onTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class OnTypes extends AbstractIrBlackBoxCodegenTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInOnTypes() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/annotations/onTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("differentArgumentTypes.kt")
+                public void testDifferentArgumentTypes() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/differentArgumentTypes.kt");
+                }
+
+                @TestMetadata("differentPositions.kt")
+                public void testDifferentPositions() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/differentPositions.kt");
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/builtins")

@@ -20,7 +20,7 @@ package kotlin.reflect
  * Represents a type. Type is usually either a class with optional type arguments,
  * or a type parameter of some declaration, plus nullability.
  */
-public interface KType {
+public interface KType : KAnnotatedElement {
     /**
      * The declaration of the classifier used in this type.
      * For example, in the type `List<String>` the classifier would be the [KClass] instance for [List].
