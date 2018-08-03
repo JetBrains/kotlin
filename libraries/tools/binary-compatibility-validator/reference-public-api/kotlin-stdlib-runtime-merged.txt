@@ -3293,6 +3293,7 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 	public fun getNestedClasses ()Ljava/util/Collection;
 	public fun getObjectInstance ()Ljava/lang/Object;
 	public fun getQualifiedName ()Ljava/lang/String;
+	public fun getSealedSubclasses ()Ljava/util/List;
 	public fun getSimpleName ()Ljava/lang/String;
 	public fun getSupertypes ()Ljava/util/List;
 	public fun getTypeParameters ()Ljava/util/List;
@@ -4292,6 +4293,7 @@ public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotate
 	public abstract fun getNestedClasses ()Ljava/util/Collection;
 	public abstract fun getObjectInstance ()Ljava/lang/Object;
 	public abstract fun getQualifiedName ()Ljava/lang/String;
+	public abstract fun getSealedSubclasses ()Ljava/util/List;
 	public abstract fun getSimpleName ()Ljava/lang/String;
 	public abstract fun getSupertypes ()Ljava/util/List;
 	public abstract fun getTypeParameters ()Ljava/util/List;

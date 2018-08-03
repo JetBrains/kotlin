@@ -40,6 +40,10 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
     override val supertypes: List<KType>
         get() = error()
 
+    @SinceKotlin("1.3")
+    override val sealedSubclasses: List<KClass<out Any>>
+        get() = error()
+
     @SinceKotlin("1.1")
     override val visibility: KVisibility?
         get() = error()
