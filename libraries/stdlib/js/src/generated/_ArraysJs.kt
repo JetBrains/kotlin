@@ -504,6 +504,7 @@ public actual fun CharArray.copyOf(): CharArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, ByteArray(newSize))
 }
 
@@ -517,6 +518,7 @@ public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, ShortArray(newSize))
 }
 
@@ -530,6 +532,7 @@ public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun IntArray.copyOf(newSize: Int): IntArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, IntArray(newSize))
 }
 
@@ -543,6 +546,7 @@ public actual fun IntArray.copyOf(newSize: Int): IntArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun LongArray.copyOf(newSize: Int): LongArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return withType("LongArray", arrayCopyResize(this, newSize, 0L))
 }
 
@@ -556,6 +560,7 @@ public actual fun LongArray.copyOf(newSize: Int): LongArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, FloatArray(newSize))
 }
 
@@ -569,6 +574,7 @@ public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, DoubleArray(newSize))
 }
 
@@ -582,6 +588,7 @@ public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return withType("BooleanArray", arrayCopyResize(this, newSize, false))
 }
 
@@ -595,6 +602,7 @@ public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun CharArray.copyOf(newSize: Int): CharArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return withType("CharArray", fillFrom(this, CharArray(newSize)))
 }
 
@@ -609,6 +617,7 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
  */
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 public actual fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return arrayCopyResize(this, newSize, null)
 }
 
