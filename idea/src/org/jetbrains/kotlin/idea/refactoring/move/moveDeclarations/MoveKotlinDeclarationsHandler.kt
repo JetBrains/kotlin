@@ -62,7 +62,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         return elements.mapNotNullTo(LinkedHashSet(), getContainer).singleOrNull()
     }
 
-    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else parent is KtFile
+    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else isTopLevelInFileOrScript(this)
 
     private fun doMoveWithCheck(
             project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?, editor: Editor?
