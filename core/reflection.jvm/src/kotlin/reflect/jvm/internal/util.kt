@@ -19,6 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
@@ -30,6 +31,8 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
@@ -102,9 +105,37 @@ internal fun Annotated.computeAnnotations(): List<Annotation> =
         when (source) {
             is ReflectAnnotationSource -> source.annotation
             is RuntimeSourceElementFactory.RuntimeSourceElement -> (source.javaElement as? ReflectJavaAnnotation)?.annotation
-            else -> null
+            else -> it.toAnnotationInstance()
         }
     }
+
+private fun AnnotationDescriptor.toAnnotationInstance(): Annotation? {
+    @Suppress("UNCHECKED_CAST")
+    val annotationClass = annotationClass?.toJavaClass() as? Class<out Annotation> ?: return null
+
+    return createAnnotationInstance(
+        annotationClass,
+        allValueArguments.entries
+            .mapNotNull { (name, value) -> value.toRuntimeValue(annotationClass.classLoader)?.let(name.asString()::to) }
+            .toMap()
+    )
+}
+
+// TODO: consider throwing exceptions such as AnnotationFormatError/AnnotationTypeMismatchException if a value of unexpected type is found
+private fun ConstantValue<*>.toRuntimeValue(classLoader: ClassLoader): Any? = when (this) {
+    is AnnotationValue -> value.toAnnotationInstance()
+    is ArrayValue -> value.map { it.toRuntimeValue(classLoader) }.toTypedArray()
+    is EnumValue -> {
+        val (enumClassId, entryName) = value
+        loadClass(classLoader, enumClassId.packageFqName.asString(), enumClassId.relativeClassName.asString())?.let { enumClass ->
+            @Suppress("UNCHECKED_CAST")
+            Util.getEnumConstantByName(enumClass as Class<out Enum<*>>, entryName.asString())
+        }
+    }
+    is KClassValue -> (value.constructor.declarationDescriptor as? ClassDescriptor)?.toJavaClass()
+    is ErrorValue, is NullValue -> null
+    else -> value  // Primitives and strings
+}
 
 // TODO: wrap other exceptions
 internal inline fun <R> reflectionCall(block: () -> R): R =
