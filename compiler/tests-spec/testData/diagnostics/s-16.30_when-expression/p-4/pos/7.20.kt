@@ -9,10 +9,10 @@
  */
 
 open class A {
-    val prop1 = 1
-    val lamdba1 = {1}
+    val __prop_1 = 1
+    val __lamdba_1 = {1}
 
-    fun fun_1(): Int {
+    fun __fun_1(): Int {
         return 1
     }
 
@@ -20,12 +20,12 @@ open class A {
     fun case_1(value: Any?): String = when (value) {
         this -> ""
         ((this)) -> ""
-        this::prop1.get() -> ""
-        this.prop1 -> ""
-        this.lamdba1() -> ""
-        this::lamdba1.get()() -> ""
-        this.fun_1() -> ""
-        this::fun_1.invoke() -> ""
+        this::__prop_1.get() -> ""
+        this.__prop_1 -> ""
+        this.__lamdba_1() -> ""
+        this::__lamdba_1.get()() -> ""
+        this.__fun_1() -> ""
+        this::__fun_1.invoke() -> ""
         else -> ""
     }
 
@@ -34,12 +34,12 @@ open class A {
         when (value) {
             this -> return ""
             ((this)) -> return ""
-            this::prop1.get() -> return ""
-            this.prop1 -> return ""
-            this.lamdba1() -> return ""
-            this::lamdba1.get()() -> return ""
-            this.fun_1() -> return ""
-            this::fun_1.invoke() -> return ""
+            this::__prop_1.get() -> return ""
+            this.__prop_1 -> return ""
+            this.__lamdba_1() -> return ""
+            this::__lamdba_1.get()() -> return ""
+            this.__fun_1() -> return ""
+            this::__fun_1.invoke() -> return ""
         }
 
         return ""

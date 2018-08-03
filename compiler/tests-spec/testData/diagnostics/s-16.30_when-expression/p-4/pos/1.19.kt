@@ -11,29 +11,29 @@
  */
 
 fun case_1(value: Int) {
-    val object_1 = object {
+    val __object_1 = object {
         val prop_1 = 1
     }
 
     when (value) {
         1 -> object {}
         2 -> object {
-            var lambda_1 = {
+            var __lambda_1 = {
                 when {
                     else -> true
                 }
             }
-            val prop_1 = 1
+            val __prop_1 = 1
         }
-        3 -> object_1
+        3 -> __object_1
         4 -> {
             object {
-                var lambda_1 = {
+                var __lambda_1 = {
                     when {
                         else -> true
                     }
                 }
-                val prop_1 = object_1
+                val __prop_1 = __object_1
             }
         }
     }

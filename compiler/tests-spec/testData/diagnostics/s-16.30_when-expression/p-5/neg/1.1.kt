@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_CLASSES
 
 /*
  KOTLIN SPEC TEST (NEGATIVE)
@@ -10,28 +11,22 @@
  DESCRIPTION: 'When' least upper bound of the types check (when exhaustive via else branch).
  */
 
-open class A {}
-open class B: A() {}
-open class C: B() {}
-open class D: C() {}
-class E: D() {}
-
 // CASE DESCRIPTION: Checking all types except the correct one (custom types) in 'when' without bound value.
 fun case_1(value: Int): String {
     val whenValue = when {
-        value == 0 -> B()
-        value > 0 && value <= 10 -> C()
-        value > 10 && value <= 100 -> D()
-        else -> E()
+        value == 0 -> _ClassLevel2()
+        value > 0 && value <= 10 -> _ClassLevel3()
+        value > 10 && value <= 100 -> _ClassLevel4()
+        else -> _ClassLevel5()
     }
 
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><A>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><C>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><D>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><E>() }
-    checkSubtype<C>(<!TYPE_MISMATCH!>whenValue<!>)
-    checkSubtype<D>(<!TYPE_MISMATCH!>whenValue<!>)
-    checkSubtype<E>(<!TYPE_MISMATCH!>whenValue<!>)
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel1>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel3>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel4>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel5>() }
+    checkSubtype<_ClassLevel3>(<!TYPE_MISMATCH!>whenValue<!>)
+    checkSubtype<_ClassLevel4>(<!TYPE_MISMATCH!>whenValue<!>)
+    checkSubtype<_ClassLevel5>(<!TYPE_MISMATCH!>whenValue<!>)
 
     return ""
 }
@@ -39,19 +34,19 @@ fun case_1(value: Int): String {
 // CASE DESCRIPTION: Checking all types except the correct one (custom types) in 'when' with bound value.
 fun case_2(value: Int): String {
     val whenValue = when (value) {
-        0 -> B()
-        1 -> C()
-        2 -> D()
-        else -> E()
+        0 -> _ClassLevel2()
+        1 -> _ClassLevel3()
+        2 -> _ClassLevel4()
+        else -> _ClassLevel5()
     }
 
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><A>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><C>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><D>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><E>() }
-    checkSubtype<C>(<!TYPE_MISMATCH!>whenValue<!>)
-    checkSubtype<D>(<!TYPE_MISMATCH!>whenValue<!>)
-    checkSubtype<E>(<!TYPE_MISMATCH!>whenValue<!>)
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel1>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel3>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel4>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel5>() }
+    checkSubtype<_ClassLevel3>(<!TYPE_MISMATCH!>whenValue<!>)
+    checkSubtype<_ClassLevel4>(<!TYPE_MISMATCH!>whenValue<!>)
+    checkSubtype<_ClassLevel5>(<!TYPE_MISMATCH!>whenValue<!>)
 
     return ""
 }

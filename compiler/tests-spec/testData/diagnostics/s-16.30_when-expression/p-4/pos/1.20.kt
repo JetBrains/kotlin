@@ -11,11 +11,11 @@
  */
 
 class A {
-    val prop_1 = 1
-    var prop_2 = 2
-    val lambda_1 = {1}
+    val __prop_1 = 1
+    var __prop_2 = 2
+    val __lambda_1 = {1}
 
-    fun fun_1(): Int {
+    fun __fun_1(): Int {
         return 1
     }
 
@@ -23,12 +23,12 @@ class A {
         when (value) {
             1 -> this
             2 -> ((this))
-            3 -> this::prop_1.get()
-            4 -> this.prop_1
-            5 -> this.lambda_1()
-            6 -> this::lambda_1.get()()
-            7 -> this.fun_1()
-            8 -> this::fun_1.invoke()
+            3 -> this::__prop_1.get()
+            4 -> this.__prop_1
+            5 -> this.__lambda_1()
+            6 -> this::__lambda_1.get()()
+            7 -> this.__fun_1()
+            8 -> this::__fun_1.invoke()
         }
     }
 }

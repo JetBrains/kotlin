@@ -1,3 +1,5 @@
+// !WITH_ENUM_CLASSES
+
 /*
  KOTLIN SPEC TEST (POSITIVE)
 
@@ -8,23 +10,15 @@
  DESCRIPTION: Check when exhaustive when all enumerated values are checked.
  */
 
-enum class Direction {
-    NORTH, SOUTH, WEST, EAST
-}
-
-enum class Anything {
-    EVERYTHING
-}
-
 // CASE DESCRIPTION: Checking for exhaustive 'when' (all enum values covered).
-fun case_1(dir: Direction): String = when (dir) {
-    Direction.EAST -> ""
-    Direction.NORTH -> ""
-    Direction.SOUTH -> ""
-    Direction.WEST -> ""
+fun case_1(dir: _EnumClass): String = when (dir) {
+    _EnumClass.EAST -> ""
+    _EnumClass.NORTH -> ""
+    _EnumClass.SOUTH -> ""
+    _EnumClass.WEST -> ""
 }
 
 // CASE DESCRIPTION: Checking for exhaustive 'when' (single enum value covered).
-fun case_2(value: Anything): String = when (value) {
-    Anything.EVERYTHING -> ""
+fun case_2(value: _EnumClassSingle): String = when (value) {
+    _EnumClassSingle.EVERYTHING -> ""
 }

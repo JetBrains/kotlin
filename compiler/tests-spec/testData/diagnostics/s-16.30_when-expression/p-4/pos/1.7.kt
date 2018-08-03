@@ -1,4 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
+// !WITH_ENUM_CLASSES
+// !WITH_SEALED_CLASSES
 
 /*
  KOTLIN SPEC TEST (POSITIVE)
@@ -10,16 +12,7 @@
  DESCRIPTION: 'When' with if expressions in the control structure body.
  */
 
-enum class Direction {
-    NORTH, SOUTH, WEST, EAST
-}
-
-sealed class Expr
-data class Const(val number: Int) : Expr()
-data class Sum(val e1: Int, val e2: Int) : Expr()
-data class Mul(val m1: Int, val m2: Int) : Expr()
-
-fun case_1(value: Int, value1: Int, value2: Boolean?, value3: Direction?, value4: Expr?) {
+fun case_1(value: Int, value1: Int, value2: Boolean?, value3: _EnumClass?, value4: _SealedClass?) {
     when (value) {
         1 -> if (value1 > 1000) "1"
             else if (value1 > 100) "2"
@@ -30,26 +23,26 @@ fun case_1(value: Int, value1: Int, value2: Boolean?, value3: Direction?, value4
         3 -> if (value2 == null) "1"
             else if (value2 == true) "2"
             else if (value2 == false) "3"
-        4 -> if (value3!! == Direction.WEST) "1"
-            else if (value3 == Direction.SOUTH) "2"
-            else if (value3 == Direction.NORTH) "3"
-            else if (value3 == Direction.EAST) "4"
+        4 -> if (value3!! == _EnumClass.WEST) "1"
+            else if (value3 == _EnumClass.SOUTH) "2"
+            else if (value3 == _EnumClass.NORTH) "3"
+            else if (value3 == _EnumClass.EAST) "4"
         5 -> if (value3 == null) "1"
-            else if (value3 == Direction.WEST) "2"
-            else if (value3 == Direction.SOUTH) "3"
-            else if (value3 == Direction.NORTH) "4"
-            else if (value3 == Direction.EAST) "5"
-        6 -> if (value4 is Const) "1"
-            else if (value4 is Sum) "2"
-            else if (value4 is Mul) "3"
+            else if (value3 == _EnumClass.WEST) "2"
+            else if (value3 == _EnumClass.SOUTH) "3"
+            else if (value3 == _EnumClass.NORTH) "4"
+            else if (value3 == _EnumClass.EAST) "5"
+        6 -> if (value4 is _SealedChild1) "1"
+            else if (value4 is _SealedChild2) "2"
+            else if (value4 is _SealedChild3) "3"
         7 -> {
             if (value4 == null) {
                 "1"
-            } else if (value4 is Const) {
+            } else if (value4 is _SealedChild1) {
                 "2"
-            } else if (value4 is Sum) {
+            } else if (value4 is _SealedChild2) {
                 "3"
-            } else if (value4 is Mul) {
+            } else if (value4 is _SealedChild3) {
                 "4"
             }
         }
