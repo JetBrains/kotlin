@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -200,16 +202,25 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
-        IrPropertyImpl(
-            declaration.startOffset, declaration.endOffset,
+        IrPropertyImpl(declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
+            declaration.descriptor,
+            declaration.name,
+            declaration.visibility,
+            declaration.modality,
+            declaration.isVar,
+            declaration.isConst,
+            declaration.isLateinit,
             declaration.isDelegated,
-            declaration.descriptor, // TODO
-            declaration.backingField?.transform(),
-            declaration.getter?.transform(),
-            declaration.setter?.transform()
+            declaration.isExternal
         ).apply {
             transformAnnotations(declaration)
+            this.backingField = declaration.backingField?.transform()
+            this.getter = declaration.getter?.transform()
+            this.setter = declaration.setter?.transform()
+            this.backingField?.let {
+                it.correspondingProperty = this
+            }
         }
 
     override fun visitField(declaration: IrField): IrField =
