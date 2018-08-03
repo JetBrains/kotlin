@@ -126,7 +126,9 @@ class JsIntrinsics(
     val jsToJsType = defineToJsType() // creates name reference to KotlinType
     val jsCode = getInternalFunction("js") // js("<code>")
     val jsHashCode = getInternalFunction("hashCode")
+    val jsGetObjectHashCode = getInternalFunction("getObjectHashCode")
     val jsToString = getInternalFunction("toString")
+    val jsAnyToString = getInternalFunction("anyToString")
     val jsCompareTo = getInternalFunction("compareTo")
     val jsEquals = getInternalFunction("equals")
 

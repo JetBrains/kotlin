@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.Name
@@ -56,3 +57,7 @@ fun IrDeclaration.isEffectivelyExternal() = descriptor.isEffectivelyExternal()
 fun IrSymbol.isEffectivelyExternal() = descriptor.isEffectivelyExternal()
 
 fun IrSymbol.isDynamic() = descriptor.isDynamic()
+
+fun IrCall.isSuperToAny() =
+    superQualifier?.let { this.symbol.owner.descriptor.isFakeOverriddenFromAny() } ?: false
+
