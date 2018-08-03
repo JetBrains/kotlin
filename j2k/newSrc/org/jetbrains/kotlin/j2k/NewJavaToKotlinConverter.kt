@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.j2k.tree.JKElement
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.prettyDebugPrintTree
 
@@ -47,8 +49,10 @@ class NewJavaToKotlinConverter(
 
         val context = ConversionContext(
             symbolProvider,
-            this
-        ) { treeBuilder.backAnnotation[it] }
+            this,
+            { it: JKElement -> treeBuilder.backAnnotation[it] },
+            { it: PsiElement -> it.containingFile in files }
+        )
 
         ConversionsRunner.doApply(fileTrees, context)
 

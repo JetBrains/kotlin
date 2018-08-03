@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiVariable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
@@ -20,6 +22,18 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicableConversionBase() {
+
+    private val typeFlavorCalculator = TypeFlavorCalculator(object : TypeFlavorConverterFacade {
+        override val referenceSearcher: ReferenceSearcher
+            get() = context.converter.converterServices.oldServices.referenceSearcher
+        override val javaDataFlowAnalyzerFacade: JavaDataFlowAnalyzerFacade
+            get() = context.converter.converterServices.oldServices.javaDataFlowAnalyzerFacade
+        override val resolverForConverter: ResolverForConverter
+            get() = context.converter.converterServices.oldServices.resolverForConverter
+
+        override fun inConversionScope(element: PsiElement): Boolean = context.inConversionContext(element)
+
+    })
 
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         return if (element is JKTypeElement) {
@@ -50,12 +64,22 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         return JKClassTypeImpl(context.symbolProvider.provideDirectSymbol(newTarget) as JKClassSymbol, parameters, nullability)
     }
 
+    private fun calculateNullability(typeElement: JKTypeElement): Nullability {
+        val parent = typeElement.parent
+        return when (parent) {
+            is JKJavaMethod -> typeFlavorCalculator.methodNullability(context.backAnnotator(typeElement)!!.parent as PsiMethod)
+            is JKJavaField -> typeFlavorCalculator.variableNullability(context.backAnnotator(typeElement)!!.parent as PsiVariable)
+            is JKLocalVariable -> typeFlavorCalculator.variableNullability(context.backAnnotator(typeElement)!!.parent as PsiVariable)
+            else -> Nullability.Default
+        }
+    }
+
     private fun mapClassType(type: JKClassType, typeElement: JKTypeElement): JKTypeElement {
         val fqNameStr = (type.classReference as? JKClassSymbol)?.fqName ?: return typeElement
 
         val newFqName = JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqNameStr)) ?: return typeElement
 
-        return classTypeByFqName(context.backAnnotator(typeElement), newFqName, type.parameters, type.nullability)?.let {
+        return classTypeByFqName(context.backAnnotator(typeElement), newFqName, type.parameters, calculateNullability(typeElement))?.let {
             JKTypeElementImpl(it)
         } ?: typeElement
     }

@@ -23,8 +23,8 @@ object ConversionsRunner {
 
     private fun createConversions(context: ConversionContext) = listOf(
         ModalityConversion(context),
-        FieldToPropertyConversion(),
         TypeMappingConversion(context),
+        FieldToPropertyConversion(),
         AssignmentAsExpressionToAlsoConversion(context),
         AssignmentStatementValCreationConversion(context),
         AssignmentStatementOperatorConversion(),
