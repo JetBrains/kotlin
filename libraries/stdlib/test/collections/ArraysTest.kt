@@ -724,6 +724,17 @@ class ArraysTest {
 
         assertArrayNotSameButEquals(charArrayOf('A', 'B'), charArrayOf('A', 'B', 'C').copyOf(2))
         assertArrayNotSameButEquals(charArrayOf('A', 'B', '\u0000'), charArrayOf('A', 'B').copyOf(3))
+
+        assertArrayNotSameButEquals(emptyArray(), arrayOf("x").copyOf(0))
+        assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1).copyOf(0))
+        assertArrayNotSameButEquals(longArrayOf(), longArrayOf(1).copyOf(0))
+        assertArrayNotSameButEquals(charArrayOf(), charArrayOf('a').copyOf(0))
+
+        // RuntimeException is the most specific common of JVM and JS implementations
+        assertFailsWith<RuntimeException> { arrayOf("x").copyOf(-1) }
+        assertFailsWith<RuntimeException> { intArrayOf().copyOf(-1) }
+        assertFailsWith<RuntimeException> { longArrayOf().copyOf(-1) }
+        assertFailsWith<RuntimeException> { charArrayOf('c').copyOf(-1) }
     }
 
     @Test fun copyOfRange() {
