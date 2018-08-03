@@ -1,4 +1,5 @@
 // !CHECK_TYPE
+// !WITH_CLASSES
 
 /*
  KOTLIN SPEC TEST (NEGATIVE)
@@ -10,23 +11,18 @@
  DESCRIPTION: 'When' least upper bound of the types check (when exhaustive via boolean bound value).
  */
 
-open class A {}
-open class B: A() {}
-open class C: B() {}
-class D: C() {}
-
 // CASE DESCRIPTION: Checking all types except the correct one in 'when'.
 fun case_1(value: Boolean): String {
     val whenValue = when (value) {
-        true -> B()
-        false -> C()
+        true -> _ClassLevel2()
+        false -> _ClassLevel3()
     }
 
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><D>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><C>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><A>() }
-    checkSubtype<D>(<!TYPE_MISMATCH!>whenValue<!>)
-    checkSubtype<C>(<!TYPE_MISMATCH!>whenValue<!>)
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel4>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel3>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel1>() }
+    checkSubtype<_ClassLevel4>(<!TYPE_MISMATCH!>whenValue<!>)
+    checkSubtype<_ClassLevel3>(<!TYPE_MISMATCH!>whenValue<!>)
 
     return ""
 }
@@ -34,16 +30,16 @@ fun case_1(value: Boolean): String {
 // CASE DESCRIPTION: Checking all types except the correct one in 'when' with null-check branch.
 fun case_2(value: Boolean?): String {
     val whenValue = when (value) {
-        true -> B()
-        false -> C()
-        null -> D()
+        true -> _ClassLevel2()
+        false -> _ClassLevel3()
+        null -> _ClassLevel4()
     }
 
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><D>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><C>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><A>() }
-    checkSubtype<D>(<!TYPE_MISMATCH!>whenValue<!>)
-    checkSubtype<C>(<!TYPE_MISMATCH!>whenValue<!>)
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel4>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel3>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><_ClassLevel1>() }
+    checkSubtype<_ClassLevel4>(<!TYPE_MISMATCH!>whenValue<!>)
+    checkSubtype<_ClassLevel3>(<!TYPE_MISMATCH!>whenValue<!>)
 
     return ""
 }

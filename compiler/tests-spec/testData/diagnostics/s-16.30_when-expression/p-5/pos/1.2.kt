@@ -1,4 +1,6 @@
 // !CHECK_TYPE
+// !WITH_CLASSES
+// !WITH_ENUM_CLASSES
 
 /*
  KOTLIN SPEC TEST (POSITIVE)
@@ -10,55 +12,44 @@
  DESCRIPTION: 'When' least upper bound of the types check (when exhaustive via enum).
  */
 
-enum class Direction {
-    NORTH, SOUTH, WEST, EAST
-}
-
-open class A {}
-open class B: A() {}
-open class C: B() {}
-open class D: C() {}
-open class E: D() {}
-class F: E() {}
-
 // CASE DESCRIPTION: Checking correct type in 'when'.
-fun case_1(value: Direction): String {
+fun case_1(value: _EnumClass): String {
     val whenValue = when (value) {
-        Direction.EAST -> B()
-        Direction.NORTH -> C()
-        Direction.SOUTH -> D()
-        Direction.WEST -> E()
+        _EnumClass.EAST -> _ClassLevel2()
+        _EnumClass.NORTH -> _ClassLevel3()
+        _EnumClass.SOUTH -> _ClassLevel4()
+        _EnumClass.WEST -> _ClassLevel5()
     }
 
-    whenValue checkType { _<B>() }
-    checkSubtype<A>(whenValue)
+    whenValue checkType { _<_ClassLevel2>() }
+    checkSubtype<_ClassLevel1>(whenValue)
 
     return ""
 }
 
 // CASE DESCRIPTION: Checking correct type in 'when' with null-check branch.
-fun case_2(value: Direction?): String {
+fun case_2(value: _EnumClass?): String {
     val whenValue = when (value) {
-        Direction.EAST -> B()
-        Direction.NORTH -> C()
-        Direction.SOUTH -> D()
-        Direction.WEST -> E()
-        null -> F()
+        _EnumClass.EAST -> _ClassLevel2()
+        _EnumClass.NORTH -> _ClassLevel3()
+        _EnumClass.SOUTH -> _ClassLevel4()
+        _EnumClass.WEST -> _ClassLevel5()
+        null -> _ClassLevel6()
     }
 
-    whenValue checkType { _<B>() }
-    checkSubtype<A>(whenValue)
+    whenValue checkType { _<_ClassLevel2>() }
+    checkSubtype<_ClassLevel1>(whenValue)
 
     return ""
 }
 
 // CASE DESCRIPTION: Checking Any type (implicit cast to any) in 'when'.
-fun case_3(value: Direction): String {
+fun case_3(value: _EnumClass): String {
     val whenValue = when (value) {
-        Direction.EAST -> <!IMPLICIT_CAST_TO_ANY!>10<!>
-        Direction.NORTH -> <!IMPLICIT_CAST_TO_ANY!>""<!>
-        Direction.SOUTH -> {<!IMPLICIT_CAST_TO_ANY!>{}<!>}
-        Direction.WEST -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
+        _EnumClass.EAST -> <!IMPLICIT_CAST_TO_ANY!>10<!>
+        _EnumClass.NORTH -> <!IMPLICIT_CAST_TO_ANY!>""<!>
+        _EnumClass.SOUTH -> {<!IMPLICIT_CAST_TO_ANY!>{}<!>}
+        _EnumClass.WEST -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
     }
 
     whenValue checkType { _<Any>() }
@@ -68,12 +59,12 @@ fun case_3(value: Direction): String {
 }
 
 // CASE DESCRIPTION: Checking Any type (implicit cast to any) in 'when' with null-check branch.
-fun case_4(value: Direction?): String {
+fun case_4(value: _EnumClass?): String {
     val whenValue = when (value) {
-        Direction.EAST -> <!IMPLICIT_CAST_TO_ANY!>10<!>
-        Direction.NORTH -> <!IMPLICIT_CAST_TO_ANY!>""<!>
-        Direction.SOUTH -> {<!IMPLICIT_CAST_TO_ANY!>{}<!>}
-        Direction.WEST -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
+        _EnumClass.EAST -> <!IMPLICIT_CAST_TO_ANY!>10<!>
+        _EnumClass.NORTH -> <!IMPLICIT_CAST_TO_ANY!>""<!>
+        _EnumClass.SOUTH -> {<!IMPLICIT_CAST_TO_ANY!>{}<!>}
+        _EnumClass.WEST -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
         null -> <!IMPLICIT_CAST_TO_ANY!>false<!>
     }
 

@@ -11,10 +11,10 @@
  */
 
 fun case_1(value: Int) {
-    val lambda1 = { 0 }
+    val __lambda_1 = { 0 }
 
     when (value) {
-        1 -> lambda1
+        1 -> __lambda_1
         2 -> {{{{}}}}
         3 -> { -> (Int)
             {

@@ -1,3 +1,5 @@
+// !WITH_CLASSES
+
 /*
  KOTLIN SPEC TEST (POSITIVE)
 
@@ -8,13 +10,7 @@
  DESCRIPTION: 'When' with property access expression in the control structure body.
  */
 
-class A {
-    val prop_1 = 1
-    val prop_2 = 2
-    val prop_3 = 3
-}
-
-fun case_1(value: Int, value1: A, value2: A?) {
+fun case_1(value: Int, value1: _Class, value2: _Class?) {
     when (value) {
         1 -> value1.prop_1
         2 -> value2?.prop_1

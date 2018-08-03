@@ -10,7 +10,7 @@
 
 // CASE DESCRIPTION: 'When' with 'else' branch (as expression).
 fun case_1(value: Any?): String {
-    val lambda1 = { 0 }
+    val __lambda_1 = { 0 }
 
     return when (value) {
         {} -> ""
@@ -20,14 +20,14 @@ fun case_1(value: Any?): String {
                 else -> true
             }
         } -> ""
-        lambda1 -> ""
+        __lambda_1 -> ""
         else -> ""
     }
 }
 
 // CASE DESCRIPTION: 'When' without 'else' branch (as statement).
 fun case_2(value: Any?): String {
-    val lambda1 = { 0 }
+    val __lambda_1 = { 0 }
 
     return when (value) {
         {} -> ""
@@ -37,7 +37,7 @@ fun case_2(value: Any?): String {
                 else -> true
             }
         } -> ""
-        lambda1 -> ""
+        __lambda_1 -> ""
         else -> ""
     }
 }

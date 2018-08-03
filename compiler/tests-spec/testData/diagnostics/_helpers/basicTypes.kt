@@ -1,4 +1,4 @@
-tests._basicTypesProvider
+tests._basicTypes
 
 fun getInt(arg: Any) = arg.hashCode()
 fun getShort(arg: Any) = arg.hashCode().toShort()
