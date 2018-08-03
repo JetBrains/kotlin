@@ -1336,4 +1336,23 @@ ${"    "}
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
     }
+
+    @Test fun testCompareToIgnoreCase() {
+        assertTrue("ABC".compareTo("ABC", ignoreCase = false) == 0)
+        assertTrue("ABC".compareTo("aBC", ignoreCase = false) < 0)
+        assertTrue("aBC".compareTo("ABC", ignoreCase = false) > 0)
+        assertTrue("ABC".compareTo("xyz", ignoreCase = false) < 0)
+        assertTrue("abc".compareTo("XYZ", ignoreCase = false) > 0)
+        assertTrue("XYZ".compareTo("abc", ignoreCase = false) < 0)
+        assertTrue("xyz".compareTo("ABC", ignoreCase = false) > 0)
+
+        assertTrue("ABC".compareTo("ABC", ignoreCase = true) == 0)
+        assertTrue("ABC".compareTo("aBC", ignoreCase = true) == 0)
+        assertTrue("aBC".compareTo("ABC", ignoreCase = true) == 0)
+        assertTrue("ABC".compareTo("xyz", ignoreCase = true) < 0)
+        assertTrue("abc".compareTo("XYZ", ignoreCase = true) < 0)
+        assertTrue("XYZ".compareTo("abc", ignoreCase = true) > 0)
+        assertTrue("xyz".compareTo("ABC", ignoreCase = true) > 0)
+    }
+
 }
