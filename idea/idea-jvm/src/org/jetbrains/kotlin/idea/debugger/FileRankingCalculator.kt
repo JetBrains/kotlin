@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -15,13 +16,16 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.FileRankingCalculator.Ranking.Companion.LOW
-import org.jetbrains.kotlin.idea.debugger.FileRankingCalculator.Ranking.Companion.ZERO
+import org.jetbrains.kotlin.idea.debugger.FileRankingCalculator.Ranking.Companion.MAJOR
 import org.jetbrains.kotlin.idea.debugger.FileRankingCalculator.Ranking.Companion.MINOR
 import org.jetbrains.kotlin.idea.debugger.FileRankingCalculator.Ranking.Companion.NORMAL
-import org.jetbrains.kotlin.idea.debugger.FileRankingCalculator.Ranking.Companion.MAJOR
+import org.jetbrains.kotlin.idea.debugger.FileRankingCalculator.Ranking.Companion.ZERO
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes3
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -166,7 +170,7 @@ abstract class FileRankingCalculator(
 
         val jdiPropertyType = when {
             accessor.isGetter -> method.safeReturnType()
-            else -> method.safeArguments()?.map { it.type() }?.singleOrNull()
+            else -> method.safeArguments()?.map { it.safeType() }?.singleOrNull()
         }
 
         return rankingForType(descriptor.returnType, jdiPropertyType, makeTypeMapper(bindingContext))
@@ -219,7 +223,7 @@ abstract class FileRankingCalculator(
     ): Ranking {
         return collect(
             ktParameter.name.asString() == jdiParameter.name(),
-            rankingForType(ktParameter.type, jdiParameter.type(), typeMapper)
+            rankingForType(ktParameter.type, jdiParameter.safeType(), typeMapper)
         )
     }
 
@@ -266,6 +270,9 @@ abstract class FileRankingCalculator(
     private fun fileRankingSafe(file: KtFile, location: Location): Ranking {
         return try {
             fileRanking(file, location)
+        } catch (e: ClassNotLoadedException) {
+            LOG.error("ClassNotLoadedException should never happen in FileRankingCalculator", e)
+            ZERO
         } catch (e: AbsentInformationException) {
             ZERO
         } catch (e: InternalException) {
@@ -411,6 +418,10 @@ abstract class FileRankingCalculator(
 
     private fun makeTypeMapper(bindingContext: BindingContext): KotlinTypeMapper {
         return KotlinTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, "debugger", false)
+    }
+
+    companion object {
+        val LOG = Logger.getInstance("FileRankingCalculator")
     }
 }
 

@@ -22,14 +22,12 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.declarations.lazy.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 
 class DeclarationStubGenerator(
@@ -38,19 +36,31 @@ class DeclarationStubGenerator(
     val origin: IrDeclarationOrigin,
     val languageVersionSettings: LanguageVersionSettings
 ) {
-    private val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings)
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
+
+    private val lazyTable = symbolTable.lazyWrapper
+
+    internal var unboundSymbolGeneration: Boolean
+        get() = lazyTable.stubGenerator != null
+        set(value) {
+            lazyTable.stubGenerator = if (value) this else null
+        }
+
+
+    private val typeTranslator = TypeTranslator(lazyTable, languageVersionSettings, LazyScopedTypeParametersResolver(lazyTable), true)
+    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, lazyTable)
 
     init {
         typeTranslator.constantValueGenerator = constantValueGenerator
         constantValueGenerator.typeTranslator = typeTranslator
     }
 
-    fun generateEmptyModuleFragmentStub(descriptor: ModuleDescriptor, irBuiltIns: IrBuiltIns): IrModuleFragment =
-        IrModuleFragmentImpl(descriptor, irBuiltIns)
-
-    fun generateEmptyExternalPackageFragmentStub(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment =
-        symbolTable.declareExternalPackageFragment(descriptor)
+    fun generateOrGetEmptyExternalPackageFragmentStub(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment {
+        val referenced = symbolTable.referenceExternalPackageFragment(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
+        return symbolTable.declareExternalPackageFragment(descriptor)
+    }
 
     fun generateMemberStub(descriptor: DeclarationDescriptor): IrDeclaration =
         when (descriptor) {
@@ -69,7 +79,7 @@ class DeclarationStubGenerator(
                 throw AssertionError("Unexpected member descriptor: $descriptor")
         }
 
-    private fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty =
+    internal fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty =
         IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
             val getterDescriptor = descriptor.getter
             if (getterDescriptor == null) {
@@ -88,50 +98,38 @@ class DeclarationStubGenerator(
             irProperty.setter = descriptor.setter?.let { generateFunctionStub(it) }
         }
 
-    fun generateFunctionStub(descriptor: FunctionDescriptor): IrSimpleFunction =
-        symbolTable.declareSimpleFunctionWithOverrides(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+    fun generateFunctionStub(descriptor: FunctionDescriptor): IrSimpleFunction {
+        val referenced = symbolTable.referenceSimpleFunction(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
+
+        val origin =
+            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
                 IrDeclarationOrigin.FAKE_OVERRIDE
-            } else {
-                origin
-            },
+            else origin
+        return symbolTable.declareSimpleFunction(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            origin,
             descriptor.original
-        ).also { irFunction ->
-            generateTypeParameterStubs(descriptor.propertyIfAccessor.typeParameters, irFunction)
+        ) { IrLazyFunction(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator) }
+    }
 
-            typeTranslator.buildWithScope(irFunction) {
-                irFunction.returnType = descriptor.returnType!!.toIrType()
-                generateValueParametersStubs(irFunction)
-            }
+    internal fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor {
+        val referenced = symbolTable.referenceConstructor(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
         }
 
-    private fun generateConstructorStub(descriptor: ClassConstructorDescriptor): IrConstructor =
-        symbolTable.declareConstructor(
+        return symbolTable.declareConstructor(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor.original
-        ).also { irConstructor ->
-            // So far, constructors in Kotlin can't have type parameters of their own.
-            irConstructor.returnType = descriptor.returnType.toIrType()
-            generateValueParametersStubs(irConstructor)
-        }
-
-    private fun generateValueParametersStubs(function: IrFunction) {
-        val descriptor = function.descriptor
-        function.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.generateReceiverParameterStub()
-        function.extensionReceiverParameter = descriptor.extensionReceiverParameter?.generateReceiverParameterStub()
-        descriptor.valueParameters.mapTo(function.valueParameters) { generateValueParameterStub(it) }
+        ) { IrLazyConstructor(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator) }
     }
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    private fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
-        IrValueParameterImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, this,
-            type.toIrType(), null
-        )
-
-    private fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter =
-        IrValueParameterImpl(
+    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter {
+        return IrValueParameterImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
             descriptor, descriptor.type.toIrType(), descriptor.varargElementType?.toIrType()
         ).also { irValueParameter ->
@@ -145,49 +143,51 @@ class DeclarationStubGenerator(
                         )
             }
         }
+    }
 
-    private fun generateClassStub(descriptor: ClassDescriptor): IrClass =
-        symbolTable.declareClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irClass ->
-            generateTypeParameterStubs(descriptor.declaredTypeParameters, irClass)
-
-            typeTranslator.buildWithScope(irClass) {
-                // TODO get rid of code duplication, see ClassGenerator#generateClass
-                descriptor.typeConstructor.supertypes.mapNotNullTo(irClass.superTypes) {
-                    it.toIrType()
-                }
-
-                irClass.thisReceiver = descriptor.thisAsReceiverParameter.generateReceiverParameterStub()
-                generateChildStubs(descriptor.constructors, irClass)
-                generateMemberStubs(descriptor.defaultType.memberScope, irClass)
-                generateMemberStubs(descriptor.staticScope, irClass)
-            }
+    internal fun generateClassStub(descriptor: ClassDescriptor): IrClass {
+        val referenceClass = symbolTable.referenceClass(descriptor)
+        if (referenceClass.isBound) {
+            return referenceClass.owner
         }
+        return symbolTable.declareClass(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor
+        ) { IrLazyClass(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator) }
+    }
 
-    private fun generateEnumEntryStub(descriptor: ClassDescriptor): IrEnumEntry =
-        symbolTable.declareEnumEntry(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor)
-
-    private fun generateTypeParameterStubs(typeParameters: List<TypeParameterDescriptor>, container: IrTypeParametersContainer) {
-        typeParameters.mapTo(container.typeParameters) { generateTypeParameterStub(it) }
-
-        typeTranslator.buildWithScope(container) {
-            for (typeParameter in container.typeParameters) {
-                val descriptor = typeParameter.descriptor
-                descriptor.upperBounds.mapTo(typeParameter.superTypes) { it.toIrType() }
-            }
+    internal fun generateEnumEntryStub(descriptor: ClassDescriptor): IrEnumEntry {
+        val referenced = symbolTable.referenceEnumEntry(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
+        return symbolTable.declareEnumEntry(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
+            IrLazyEnumEntryImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
         }
     }
 
-    private fun generateTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter =
-        IrTypeParameterImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
-            descriptor
-        )
-
-    private fun generateMemberStubs(memberScope: MemberScope, container: IrDeclarationContainer) {
-        generateChildStubs(memberScope.getContributedDescriptors(), container)
+    internal fun generateOrGetTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter {
+        val referenced = symbolTable.referenceTypeParameter(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
+        return symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
+            IrLazyTypeParameter(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                it, this, typeTranslator
+            )
+        }
     }
 
-    private fun generateChildStubs(descriptors: Collection<DeclarationDescriptor>, container: IrDeclarationContainer) {
-        descriptors.mapTo(container.declarations) { generateMemberStub(it) }
+    internal fun generateOrGetScopedTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter {
+        val referenced = symbolTable.referenceTypeParameter(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
+        return symbolTable.declareScopedTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor) {
+            IrLazyTypeParameter(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                it, this, typeTranslator
+            )
+        }
     }
 }

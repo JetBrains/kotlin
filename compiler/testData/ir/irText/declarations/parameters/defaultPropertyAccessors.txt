@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
   PROPERTY name:test1 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public flags:final,static
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
   PROPERTY name:test2 visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public flags:
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public flags:static
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:

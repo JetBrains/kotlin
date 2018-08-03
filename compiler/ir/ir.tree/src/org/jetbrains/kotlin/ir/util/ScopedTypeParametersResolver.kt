@@ -10,11 +10,18 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import java.util.*
 
-class ScopedTypeParametersResolver {
+interface TypeParametersResolver {
+    fun enterTypeParameterScope(typeParametersContainer: IrTypeParametersContainer)
+    fun leaveTypeParameterScope()
+
+    fun resolveScopedTypeParameter(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameterSymbol?
+}
+
+class ScopedTypeParametersResolver : TypeParametersResolver {
 
     private val typeParameterScopes = ArrayDeque<Map<TypeParameterDescriptor, IrTypeParameterSymbol>>()
 
-    fun enterTypeParameterScope(typeParametersContainer: IrTypeParametersContainer) {
+    override fun enterTypeParameterScope(typeParametersContainer: IrTypeParametersContainer) {
         typeParameterScopes.addFirst(
             typeParametersContainer.typeParameters.associate {
                 it.descriptor to it.symbol
@@ -22,11 +29,11 @@ class ScopedTypeParametersResolver {
         )
     }
 
-    fun leaveTypeParameterScope() {
+    override fun leaveTypeParameterScope() {
         typeParameterScopes.removeFirst()
     }
 
-    fun resolveScopedTypeParameter(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameterSymbol? {
+    override fun resolveScopedTypeParameter(typeParameterDescriptor: TypeParameterDescriptor): IrTypeParameterSymbol? {
         for (scope in typeParameterScopes) {
             val local = scope[typeParameterDescriptor]
             if (local != null) return local

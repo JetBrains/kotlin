@@ -1,8 +1,10 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: inlined.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// IGNORE_BACKEND: JS
 
 suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
     val l: suspend () -> Unit = { c() }

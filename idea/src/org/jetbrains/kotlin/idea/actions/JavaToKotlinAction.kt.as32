@@ -28,17 +28,18 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ex.MessagesEx
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
-import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
@@ -159,6 +160,14 @@ class JavaToKotlinAction : AnAction() {
         val javaFiles = selectedJavaFiles(e).filter { it.isWritable }.toList()
         val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
 
+        if (javaFiles.isEmpty()) {
+            val statusBar = WindowManager.getInstance().getStatusBar(project)
+            JBPopupFactory.getInstance()
+                .createHtmlTextBalloonBuilder("Nothing to convert:<br>No writable Java files found", MessageType.ERROR, null)
+                .createBalloon()
+                .showInCenterOf(statusBar.component)
+        }
+
         val firstSyntaxError = javaFiles.asSequence().map { PsiTreeUtil.findChildOfType(it, PsiErrorElement::class.java) }.firstOrNull()
 
         if (firstSyntaxError != null) {
@@ -193,14 +202,9 @@ class JavaToKotlinAction : AnAction() {
     }
 
     private fun isAnyJavaFileSelected(project: Project, files: Array<VirtualFile>): Boolean {
-
-        val filesScope = GlobalSearchScopesCore.directoriesScope(project, true, *files)
-        val potentialJavaFiles = FileTypeIndex.getFiles(JavaFileType.INSTANCE, filesScope)
-
-        if (potentialJavaFiles.isEmpty()) return false
-
+        if (files.any { it.isDirectory }) return true // Giving up on directories
         val manager = PsiManager.getInstance(project)
-        return potentialJavaFiles.any { manager.findFile(it) is PsiJavaFile && it.isWritable }
+        return files.any { it.extension == JavaFileType.DEFAULT_EXTENSION && manager.findFile(it) is PsiJavaFile && it.isWritable }
     }
 
     private fun selectedJavaFiles(e: AnActionEvent): Sequence<PsiJavaFile> {

@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
@@ -44,6 +46,15 @@ class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<
 
         val context = element.analyze()
         if (element.isUsedAsExpression(context)) return false
+
+        // This fragment had to be added because of incorrect behaviour of isUsesAsExpression
+        // TODO: remove it after fix of KT-25682
+        val binaryExpression = element.getStrictParentOfType<KtBinaryExpression>()
+        val right = binaryExpression?.right
+        if (binaryExpression?.operationToken == KtTokens.ELVIS &&
+            right != null && (right == element || KtPsiUtil.deparenthesize(right) == element)
+        ) return false
+
         val resolvedCall = element.getResolvedCall(context)
         val receiverType = resolvedCall?.getExplicitReceiverValue()?.type ?: return false
         val receiverClass = receiverType.constructor.declarationDescriptor as? ClassDescriptor ?: return false

@@ -98,12 +98,12 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         Module[] modules = getModules();
         for (Module module : modules) {
             if (module.getName().equals("module1")) {
-                Companion.configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, Companion.getJAVA_CONFIGURATOR());
+                configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, Companion.getJAVA_CONFIGURATOR());
                 Companion.assertConfigured(module, Companion.getJAVA_CONFIGURATOR());
             }
             else if (module.getName().equals("module2")) {
                 Companion.assertNotConfigured(module, Companion.getJAVA_CONFIGURATOR());
-                Companion.configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, Companion.getJAVA_CONFIGURATOR());
+                configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, Companion.getJAVA_CONFIGURATOR());
                 Companion.assertConfigured(module, Companion.getJAVA_CONFIGURATOR());
             }
         }
@@ -157,7 +157,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testJsLibraryWrongKind() {
-        AbstractConfigureKotlinTest.Companion.assertProperlyConfigured(getModule(), AbstractConfigureKotlinTest.Companion.getJS_CONFIGURATOR());
+        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
         assertEquals(1, ModuleRootManager.getInstance(getModule()).orderEntries().process(new LibraryCountingRootPolicy(), 0).intValue());
     }
 

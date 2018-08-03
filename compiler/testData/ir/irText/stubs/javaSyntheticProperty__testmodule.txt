@@ -18,3 +18,4 @@ MODULE_FRAGMENT name:<test-module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:getFoo visibility:public modality:OPEN <> ($this:J) returnType:kotlin.String? flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J flags:
+

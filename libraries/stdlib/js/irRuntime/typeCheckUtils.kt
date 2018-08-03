@@ -5,9 +5,6 @@
 
 package kotlin.js
 
-@kotlin.internal.DynamicExtension
-public inline fun <T> dynamic.unsafeCast(): T = this
-
 private fun isInterfaceImpl(ctor: dynamic, iface: dynamic): Boolean {
     if (ctor === iface) return true;
 

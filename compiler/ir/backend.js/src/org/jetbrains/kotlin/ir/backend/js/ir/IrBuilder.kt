@@ -59,8 +59,8 @@ object JsIrBuilder {
     fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
         IrSetVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, SYNTHESIZED_STATEMENT)
 
-    fun buildGetField(symbol: IrFieldSymbol, receiver: IrExpression?, superQualifierSymbol: IrClassSymbol? = null) =
-        IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, symbol.owner.type, receiver, SYNTHESIZED_STATEMENT, superQualifierSymbol)
+    fun buildGetField(symbol: IrFieldSymbol, receiver: IrExpression?, superQualifierSymbol: IrClassSymbol? = null, type: IrType? = null) =
+        IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, type ?: symbol.owner.type, receiver, SYNTHESIZED_STATEMENT, superQualifierSymbol)
 
     fun buildSetField(symbol: IrFieldSymbol, receiver: IrExpression?, value: IrExpression, type: IrType, superQualifierSymbol: IrClassSymbol? = null) =
         IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, receiver, value, type, SYNTHESIZED_STATEMENT, superQualifierSymbol)

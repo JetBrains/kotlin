@@ -40,7 +40,6 @@ import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.compatibility.projectDisposableEx
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
@@ -334,7 +333,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
     protected fun doTest(path: String, checkAdditionalAfterdata: Boolean = false, action: (PsiFile) -> Unit) {
         val mainFile = File(path)
 
-        PluginTestCaseBase.addJdk(myFixture.projectDisposableEx, PluginTestCaseBase::mockJdk)
+        PluginTestCaseBase.addJdk(myFixture.projectDisposable, PluginTestCaseBase::mockJdk)
 
         fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
 

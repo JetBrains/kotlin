@@ -567,5 +567,8 @@ class QuickFixRegistrar : QuickFixContributor {
         CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT.registerFactory(MoveMemberToCompanionObjectIntention)
 
         NO_COMPANION_OBJECT.registerFactory(AddIsToWhenConditionFix)
+
+        DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.registerFactory(RemoveDefaultParameterValueFix)
+        ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS.registerFactory(RemoveDefaultParameterValueFix)
     }
 }

@@ -36,14 +36,12 @@ import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScrip
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesLoader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.findScriptDefinition
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class ScriptDependenciesUpdater(
     private val project: Project,
-    private val cache: ScriptDependenciesCache,
-    private val scriptDefinitionProvider: ScriptDefinitionProvider
+    private val cache: ScriptDependenciesCache
 ) {
     private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
     private val scriptChangesListenerDelay = 1400
@@ -55,7 +53,7 @@ class ScriptDependenciesUpdater(
     fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
         cache[file]?.let { return it }
 
-        val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return ScriptDependencies.Empty
+        val scriptDef = findScriptDefinition(file, project) ?: return ScriptDependencies.Empty
 
         FromFileAttributeScriptDependenciesLoader(file, scriptDef, project).updateDependencies()
         ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = false)
@@ -75,8 +73,9 @@ class ScriptDependenciesUpdater(
 
             private fun runScriptDependenciesUpdateIfNeeded(file: VirtualFile) {
                 if (file.fileType != KotlinFileType.INSTANCE) return
-                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
+
+                val scriptDef = findScriptDefinition(ktFile) ?: return
 
                 if (!ScriptDefinitionsManager.getInstance(project).isInExpectedLocation(ktFile, scriptDef)) return
                 ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = true)
@@ -101,8 +100,8 @@ class ScriptDependenciesUpdater(
                     return
                 }
 
-                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
+                val scriptDef = findScriptDefinition(ktFile) ?: return
 
                 if (!ScriptDefinitionsManager.getInstance(project).isInExpectedLocation(ktFile, scriptDef)) return
 

@@ -13,7 +13,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="181.4892.42.33" until-build="181.*"/>
+  <idea-version since-build="182.2371" until-build="182.*"/>
 
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.modules.androidstudio</depends>
@@ -23,12 +23,12 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="gradle-java.xml">org.jetbrains.plugins.gradle.java</depends>
   <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="coverage.xml">Coverage</depends>
   <depends optional="true" config-file="i18n.xml">com.intellij.java-i18n</depends>
-  <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
   <depends optional="true" config-file="decompiler.xml">org.jetbrains.java.decompiler</depends>
   <depends optional="true" config-file="git4idea.xml">Git4Idea</depends>
 
@@ -37,6 +37,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
   <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
+  <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
+  <depends optional="true" config-file="injection.xml">org.intellij.intelliLang</depends>
   <!-- CIDR-PLUGIN-PLACEHOLDER-END -->
 
   <project-components>
@@ -62,6 +64,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <component>
       <interface-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</interface-class>
       <implementation-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent</implementation-class>
     </component>
   </project-components>
 
@@ -108,6 +113,16 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <action id="DecompileKotlinToJava" class="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaAction"
             text="Decompile Kotlin To Java">
+      <add-to-group group-id="KotlinToolsGroup"/>
+    </action>
+
+    <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction"
+            text="Run Code Migrations">
+      <!-- TODO: Not assigned to any group because there should be a panel for filling migration options -->
+    </action>
+
+    <action id="KotlinCodeMigrationToggle" class="org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction"
+            text="Enable migrations detection (experimental)">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
@@ -840,6 +855,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <projectStructure.sourceRootEditHandler implementation="org.jetbrains.kotlin.idea.roots.ui.KotlinModuleSourceRootEditHandler$TestResource"/>
 
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.roots.KotlinNonJvmSourceRootConverterProvider"/>
+
+    <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.roots.KotlinNonJvmOrderEnumerationHandler$Factory"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
@@ -2946,6 +2963,15 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
+                     displayName="Redundant 'with' call"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
@@ -3016,5 +3042,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <pluginUpdateVerifier implementation="org.jetbrains.kotlin.idea.update.GooglePluginUpdateVerifier"/>
   </extensions>
+
+    <extensions defaultExtensionNs="com.intellij.jvm">
+        <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
+    </extensions>
 
 </idea-plugin>

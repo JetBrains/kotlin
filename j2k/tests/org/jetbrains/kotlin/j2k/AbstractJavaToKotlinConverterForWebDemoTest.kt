@@ -35,7 +35,6 @@ import com.intellij.psi.augment.TypeAnnotationModifier
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
-import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
@@ -78,7 +77,17 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
             override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
             override fun hasHardcodedContracts(element: PsiElement): Boolean = false
-            override fun getPredefinedNotNulls() = emptyList<String>()
+            override fun getNullables() = emptyList<String>()
+            override fun setNullables(vararg p0: String) = Unit
+            override fun getNotNulls() = emptyList<String>()
+            override fun setNotNulls(vararg p0: String) = Unit
+            override fun getDefaultNullable() = ""
+            override fun setDefaultNullable(defaultNullable: String) = Unit
+            override fun getDefaultNotNull() = ""
+            override fun setDefaultNotNull(p0: String) = Unit
+            override fun setInstrumentedNotNulls(p0: List<String>) = Unit
+            override fun getInstrumentedNotNulls() = emptyList<String>()
+            override fun isJsr305Default(psiAnnotation: PsiAnnotation, p1: Array<PsiAnnotation.TargetType>) = null
         })
 
         applicationEnvironment.application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
@@ -102,7 +111,6 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
         CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, ContainerProvider.EP_NAME, ContainerProvider::class.java)
-        CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)

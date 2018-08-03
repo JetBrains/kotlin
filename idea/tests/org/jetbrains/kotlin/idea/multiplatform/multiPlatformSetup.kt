@@ -107,7 +107,7 @@ private fun setupJsTestOutput(module: Module) {
 }
 
 private fun AbstractMultiModuleTest.createModule(name: String): Module {
-    val moduleDir = PlatformTestCase.createTempDir("")
+    val moduleDir = createTempDir("")
     val module = createModule(moduleDir.toString() + "/" + name, StdModuleTypes.JAVA)
     val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(moduleDir)
     TestCase.assertNotNull(root)

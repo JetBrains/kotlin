@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       RETURN type=kotlin.Nothing from='getValue(Any?, Any) on String: String'
         GET_VAR 'this@getValue: String' type=kotlin.String origin=null
   PROPERTY name:testO visibility:public modality:FINAL flags:delegated,val
-    FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private flags:final
+    FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private flags:final,static
       EXPRESSION_BODY
         CALL 'provideDelegate(Any?, Any) on MyClass: String' type=kotlin.String origin=null
           $receiver: CALL 'constructor MyClass(String)' type=MyClass origin=null
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'testO: String' field=null getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testK visibility:public modality:FINAL flags:delegated,val
-    FIELD DELEGATE name:testK$delegate type:kotlin.String visibility:private flags:final
+    FIELD DELEGATE name:testK$delegate type:kotlin.String visibility:private flags:final,static
       EXPRESSION_BODY
         CONST String type=kotlin.String value=K
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testK> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'testK: String' field=null getter='<get-testK>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testOK visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:public flags:final,static
       EXPRESSION_BODY
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: CALL '<get-testO>(): String' type=kotlin.String origin=GET_PROPERTY

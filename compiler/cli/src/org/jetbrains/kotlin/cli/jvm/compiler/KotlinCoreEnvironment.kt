@@ -603,7 +603,7 @@ class KotlinCoreEnvironment private constructor(
                 registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
                 registerService(
                     ScriptDependenciesProvider::class.java,
-                    CliScriptDependenciesProvider(projectEnvironment.project, scriptDefinitionProvider)
+                    CliScriptDependenciesProvider(projectEnvironment.project)
                 )
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))

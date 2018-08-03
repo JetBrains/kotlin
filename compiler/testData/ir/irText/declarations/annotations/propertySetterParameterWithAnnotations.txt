@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/propertySetterParameterWithAnnotations.kt
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:p visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:static
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:

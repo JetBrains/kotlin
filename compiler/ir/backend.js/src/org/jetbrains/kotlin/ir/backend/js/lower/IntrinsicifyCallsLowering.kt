@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.utils.isNullable
 import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.backend.common.utils.isSubtypeOfClass
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
-import org.jetbrains.kotlin.ir.backend.js.utils.isFakeOverriddenFromAny
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -23,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.isNullConst
@@ -42,11 +41,13 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
     private val memberToTransformer: MemberToTransformer
     private val symbolToTransformer: SymbolToTransformer
     private val nameToTransformer: Map<Name, (IrCall) -> IrExpression>
+    private val dynamicCallOriginToIrFunction: Map<IrStatementOrigin, IrSimpleFunction>
 
     init {
         symbolToTransformer = mutableMapOf()
         memberToTransformer = mutableMapOf()
         nameToTransformer = mutableMapOf()
+        dynamicCallOriginToIrFunction = mutableMapOf()
 
         val primitiveNumbers = context.irBuiltIns.run { listOf(intType, shortType, byteType, floatType, doubleType) }
 
@@ -124,7 +125,8 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
         symbolToTransformer.run {
             add(irBuiltIns.eqeqeqSymbol, intrinsics.jsEqeqeq)
             add(irBuiltIns.eqeqSymbol, ::transformEqeqOperator)
-            // TODO: implement it a right way
+
+            // ieee754equals can only be applied in between statically known Floats or Doubles
             add(irBuiltIns.ieee754equalsFunByOperandType, intrinsics.jsEqeqeq)
 
             add(irBuiltIns.booleanNotSymbol, intrinsics.jsNot)
@@ -223,6 +225,43 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
             put(Name.identifier("equals"), ::transformEqualsMethodCall)
         }
+
+        dynamicCallOriginToIrFunction.run {
+            put(IrStatementOrigin.EXCL, context.intrinsics.jsNot)
+
+            put(IrStatementOrigin.LT, context.intrinsics.jsLt)
+            put(IrStatementOrigin.GT, context.intrinsics.jsGt)
+            put(IrStatementOrigin.LTEQ, context.intrinsics.jsLtEq)
+            put(IrStatementOrigin.GTEQ, context.intrinsics.jsGtEq)
+
+            put(IrStatementOrigin.EQEQ, context.intrinsics.jsEqeq)
+            put(IrStatementOrigin.EQEQEQ, context.intrinsics.jsEqeqeq)
+            put(IrStatementOrigin.EXCLEQ, context.intrinsics.jsNotEq)
+            put(IrStatementOrigin.EXCLEQEQ, context.intrinsics.jsNotEqeq)
+
+            put(IrStatementOrigin.ANDAND, context.intrinsics.jsAnd)
+            put(IrStatementOrigin.OROR, context.intrinsics.jsOr)
+
+            put(IrStatementOrigin.UMINUS, context.intrinsics.jsUnaryMinus)
+            put(IrStatementOrigin.UPLUS, context.intrinsics.jsUnaryPlus)
+
+            put(IrStatementOrigin.PLUS, context.intrinsics.jsPlus)
+            put(IrStatementOrigin.MINUS, context.intrinsics.jsMinus)
+            put(IrStatementOrigin.MUL, context.intrinsics.jsMult)
+            put(IrStatementOrigin.DIV, context.intrinsics.jsDiv)
+            put(IrStatementOrigin.PERC, context.intrinsics.jsMod)
+
+            put(IrStatementOrigin.PLUSEQ, context.intrinsics.jsPlusAssign)
+            put(IrStatementOrigin.MINUSEQ, context.intrinsics.jsMinusAssign)
+            put(IrStatementOrigin.MULTEQ, context.intrinsics.jsMultAssign)
+            put(IrStatementOrigin.DIVEQ, context.intrinsics.jsDivAssign)
+            put(IrStatementOrigin.PERCEQ, context.intrinsics.jsModAssign)
+
+            put(IrStatementOrigin.PREFIX_INCR, context.intrinsics.jsPrefixInc)
+            put(IrStatementOrigin.PREFIX_DECR, context.intrinsics.jsPrefixDec)
+            put(IrStatementOrigin.POSTFIX_INCR, context.intrinsics.jsPostfixInc)
+            put(IrStatementOrigin.POSTFIX_DECR, context.intrinsics.jsPostfixDec)
+        }
     }
 
     override fun lower(irFile: IrFile) {
@@ -261,6 +300,28 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
                 if (call is IrCall) {
                     val symbol = call.symbol
+
+                    if (symbol.isDynamic() || symbol.isEffectivelyExternal()) {
+                        when (call.origin) {
+                            IrStatementOrigin.GET_PROPERTY -> {
+                                val fieldSymbol = IrFieldSymbolImpl((symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty)
+                                return JsIrBuilder.buildGetField(fieldSymbol, call.dispatchReceiver, type = call.type)
+                            }
+
+                            // assignment to a property
+                            IrStatementOrigin.EQ -> {
+                                val fieldSymbol = IrFieldSymbolImpl((symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty)
+                                return JsIrBuilder.buildSetField(fieldSymbol, call.dispatchReceiver, call.getValueArgument(0)!!, call.type)
+
+                            }
+                        }
+                    }
+
+                    if (symbol.isDynamic()) {
+                        dynamicCallOriginToIrFunction[call.origin]?.let {
+                            return irCall(call, it.symbol, dispatchReceiverAsFirstArgument = true)
+                        }
+                    }
 
                     symbolToTransformer[symbol]?.let {
                         return it(call)
@@ -455,17 +516,19 @@ fun shouldReplaceCompareToWithRuntimeCall(call: IrCall): Boolean {
 /*
  Equality translation table:
 
-|                | JsN  | JsN? | Long | Long? | Bool | Bool? | Other | Other? |
-|----------------|------|------|------|-------|------|-------|-------|--------|
-| JsN            | ===  | ===  | ==   | ==    | ===  | ===   | K.eq  | K.eq   |
-| JsN?           | ===  | ==   | ==   | ==    | ===  | K.eq  | K.eq  | K.eq   |
-| Long           | ==   | ==   | K.eq | K.eq  | ===  | ===   | K.eq  | K.eq   |
-| Long?          | ==   | ==   | K.eq | K.eq  | ===  | K.eq  | K.eq  | K.eq   |
-| Bool           | ===  | ===  | ===  | ===   | ===  | ===   | K.eq  | K.eq   |
-| Bool?          | ===  | K.eq | ===  | K.eq  | ===  | ==    | K.eq  | K.eq   |
-| Other with .eq | .eq  | .eq  | .eq  | .eq   | .eq  | .eq   | .eq   | .eq    |
-| Other w/o .eq  | K.eq | K.eq | K.eq | K.eq  | K.eq | K.eq  | K.eq  | K.eq   |
-| Other?         | K.eq | K.eq | K.eq | K.eq  | K.eq | K.eq  | K.eq  | K.eq   |
+|                | JsN  | JsN? | Long | Long? | Bool | Bool? | String | String? | Other | Other? |
+|----------------|------|------|------|-------|------|-------|--------|---------|-------|--------|
+| JsN            | ===  | ===  | ==   | ==    | ===  | ===   | ===    | ===     | K.eq  | K.eq   |
+| JsN?           | ===  | ==   | ==   | ==    | ===  | K.eq  | ===    | K.eq    | K.eq  | K.eq   |
+| Long           | ==   | ==   | K.eq | K.eq  | ===  | ===   | ===    | ===     | K.eq  | K.eq   |
+| Long?          | ==   | ==   | K.eq | K.eq  | ===  | K.eq  | ===    | K.eq    | K.eq  | K.eq   |
+| Bool           | ===  | ===  | ===  | ===   | ===  | ===   | ===    | ===     | K.eq  | K.eq   |
+| Bool?          | ===  | K.eq | ===  | K.eq  | ===  | ==    | ===    | K.eq    | K.eq  | K.eq   |
+| String         | ===  | ===  | ===  | ===   | ===  | ===   | ===    | ===     | K.eq  | K.eq   |
+| String?        | ===  | K.eq | ===  | K.eq  | ===  | K.eq  | ===    | ==      | K.eq  | K.eq   |
+| Other with .eq | .eq  | .eq  | .eq  | .eq   | .eq  | .eq   | .eq    | .eq     | .eq   | .eq    |
+| Other w/o .eq  | K.eq | K.eq | K.eq | K.eq  | K.eq | K.eq  | K.eq   | K.eq    | K.eq  | K.eq   |
+| Other?         | K.eq | K.eq | K.eq | K.eq  | K.eq | K.eq  | K.eq   | K.eq    | K.eq  | K.eq   |
 
 
 JsNumber -- type lowered to JS Number
@@ -488,6 +551,8 @@ fun translateEquals(lhs: IrType, rhs: IrType): EqualityLoweringType = when {
     lhs.isNullableLong() -> translateEqualsForNullableLong(rhs)
     lhs.isBoolean() -> translateEqualsForBoolean(rhs)
     lhs.isNullableBoolean() -> translateEqualsForNullableBoolean(rhs)
+    lhs.isString() -> translateEqualsForString(rhs)
+    lhs.isNullableString() -> translateEqualsForNullableString(rhs)
     lhs.isNullable() -> RuntimeFunctionCall
     else -> RuntimeOrMethodCall
 }
@@ -496,6 +561,7 @@ fun translateEqualsForJsNumber(rhs: IrType): EqualityLoweringType = when {
     rhs.isJsNumber() || rhs.isNullableJsNumber() -> IdentityOperator
     rhs.isLong() || rhs.isNullableLong() -> EqualityOperator
     rhs.isBoolean() || rhs.isNullableBoolean() -> IdentityOperator
+    rhs.isString() || rhs.isNullableString() -> IdentityOperator
     else -> RuntimeFunctionCall
 }
 
@@ -503,7 +569,7 @@ fun translateEqualsForNullableJsNumber(rhs: IrType): EqualityLoweringType = when
     rhs.isJsNumber() -> IdentityOperator
     rhs.isNullableJsNumber() -> EqualityOperator
     rhs.isLong() || rhs.isNullableLong() -> EqualityOperator
-    rhs.isBoolean() -> IdentityOperator
+    rhs.isBoolean() || rhs.isString() -> IdentityOperator
     else -> RuntimeFunctionCall
 }
 
@@ -511,6 +577,7 @@ fun translateEqualsForLong(rhs: IrType): EqualityLoweringType = when {
     rhs.isJsNumber() || rhs.isNullableJsNumber() -> EqualityOperator
     rhs.isLong() || rhs.isNullableLong() -> RuntimeFunctionCall
     rhs.isBoolean() || rhs.isNullableBoolean() -> IdentityOperator
+    rhs.isString() || rhs.isNullableString() -> IdentityOperator
     else -> RuntimeFunctionCall
 }
 
@@ -518,6 +585,7 @@ fun translateEqualsForNullableLong(rhs: IrType): EqualityLoweringType = when {
     rhs.isJsNumber() || rhs.isNullableJsNumber() -> EqualityOperator
     rhs.isLong() || rhs.isNullableLong() -> RuntimeFunctionCall
     rhs.isBoolean() -> IdentityOperator
+    rhs.isString() -> IdentityOperator
     else -> RuntimeFunctionCall
 }
 
@@ -525,6 +593,7 @@ fun translateEqualsForBoolean(rhs: IrType): EqualityLoweringType = when {
     rhs.isJsNumber() || rhs.isNullableJsNumber() -> IdentityOperator
     rhs.isLong() || rhs.isNullableLong() -> IdentityOperator
     rhs.isBoolean() || rhs.isNullableBoolean() -> IdentityOperator
+    rhs.isString() || rhs.isNullableString() -> IdentityOperator
     else -> RuntimeFunctionCall
 }
 
@@ -535,8 +604,30 @@ fun translateEqualsForNullableBoolean(rhs: IrType): EqualityLoweringType = when 
     rhs.isNullableLong() -> RuntimeFunctionCall
     rhs.isBoolean() -> IdentityOperator
     rhs.isNullableBoolean() -> EqualityOperator
+    rhs.isString() -> IdentityOperator
     else -> RuntimeFunctionCall
 }
+
+fun translateEqualsForString(rhs: IrType): EqualityLoweringType = when {
+    rhs.isJsNumber() || rhs.isNullableJsNumber() -> IdentityOperator
+    rhs.isLong() || rhs.isNullableLong() -> IdentityOperator
+    rhs.isBoolean() || rhs.isNullableBoolean() -> IdentityOperator
+    rhs.isString() || rhs.isNullableString() -> IdentityOperator
+    else -> RuntimeFunctionCall
+}
+
+fun translateEqualsForNullableString(rhs: IrType): EqualityLoweringType = when {
+    rhs.isJsNumber() -> IdentityOperator
+    rhs.isNullableJsNumber() -> RuntimeFunctionCall
+    rhs.isLong() -> IdentityOperator
+    rhs.isNullableLong() -> RuntimeFunctionCall
+    rhs.isBoolean() -> IdentityOperator
+    rhs.isNullableBoolean() -> RuntimeFunctionCall
+    rhs.isString() -> IdentityOperator
+    rhs.isNullableString() -> EqualityOperator
+    else -> RuntimeFunctionCall
+}
+
 
 
 private fun IrType.isNullableJsNumber(): Boolean = isNullablePrimitiveType() && !isNullableLong() && !isNullableChar()

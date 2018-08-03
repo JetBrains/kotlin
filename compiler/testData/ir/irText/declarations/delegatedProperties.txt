@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/delegatedProperties.kt
   PROPERTY name:test1 visibility:public modality:FINAL flags:delegated,val
-    FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private flags:final
+    FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private flags:final,static
       EXPRESSION_BODY
         CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
           <T>: kotlin.Int
@@ -103,7 +103,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:test4 visibility:public modality:FINAL flags:delegated,var
-    FIELD DELEGATE name:test4$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ visibility:private flags:final
+    FIELD DELEGATE name:test4$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ visibility:private flags:final,static
       EXPRESSION_BODY
         CALL 'hashMapOf(): HashMap<String, Any> /* = HashMap<String, Any> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ origin=null
           <K>: kotlin.String

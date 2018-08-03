@@ -53,6 +53,12 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             binOp(intrinsics.jsDiv, JsBinaryOperator.DIV)
             binOp(intrinsics.jsMod, JsBinaryOperator.MOD)
 
+            binOp(intrinsics.jsPlusAssign, JsBinaryOperator.ASG_ADD)
+            binOp(intrinsics.jsMinusAssign, JsBinaryOperator.ASG_SUB)
+            binOp(intrinsics.jsMultAssign, JsBinaryOperator.ASG_MUL)
+            binOp(intrinsics.jsDivAssign, JsBinaryOperator.ASG_DIV)
+            binOp(intrinsics.jsModAssign, JsBinaryOperator.ASG_MOD)
+
             binOp(intrinsics.jsBitAnd, JsBinaryOperator.BIT_AND)
             binOp(intrinsics.jsBitOr, JsBinaryOperator.BIT_OR)
             binOp(intrinsics.jsBitXor, JsBinaryOperator.BIT_XOR)

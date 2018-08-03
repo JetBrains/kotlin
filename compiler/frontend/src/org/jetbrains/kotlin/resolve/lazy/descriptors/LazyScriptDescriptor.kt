@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptPriorities
-import org.jetbrains.kotlin.script.getScriptDefinition
+import org.jetbrains.kotlin.script.findScriptDefinition
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -69,7 +69,7 @@ class LazyScriptDescriptor(
 
     val scriptDefinition: () -> KotlinScriptDefinition = resolveSession.storageManager.createLazyValue {
         val file = scriptInfo.script.containingKtFile
-        getScriptDefinition(file) ?: throw RuntimeException("file ${file.name} is not a script")
+        findScriptDefinition(file) ?: throw RuntimeException("file ${file.name} is not a script")
     }
 
     override fun substitute(substitutor: TypeSubstitutor) = this

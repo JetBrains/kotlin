@@ -25,18 +25,18 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProviderKt;
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
 
 import java.util.List;
-import java.util.Objects;
 
 import static kotlin.LazyThreadSafetyMode.PUBLICATION;
 
 public class KtScript extends KtNamedDeclarationStub<KotlinScriptStub> implements KtDeclarationContainer {
-    public final Lazy<KotlinScriptDefinition> kotlinScriptDefinition = LazyKt.lazy(PUBLICATION, () -> Objects.requireNonNull(
-            KotlinScriptDefinitionProviderKt.getScriptDefinition(getContainingKtFile()),
-            () -> "Should not parse a script without definition: " + getContainingKtFile().getVirtualFile().getPath()
-    ));
+    public final Lazy<KotlinScriptDefinition> kotlinScriptDefinition = LazyKt.lazy(PUBLICATION, () -> {
+        ScriptDefinitionProvider definitionsProvider = ScriptDefinitionProvider.Companion.getInstance(getProject());
+        KotlinScriptDefinition definition = definitionsProvider.findScriptDefinition(getContainingKtFile().getName());
+        return definition != null ? definition : definitionsProvider.getDefaultScriptDefinition();
+    });
 
     public KtScript(@NotNull ASTNode node) {
         super(node);

@@ -3367,10 +3367,6 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.ANY, testDataFilePath);
-            }
-
             public void testAllFilesPresentInCallableReference() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/suspend/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
@@ -3381,13 +3377,8 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             }
 
             @TestMetadata("simple.kt")
-            public void testSimple_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt", "kotlin.coroutines");
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/suspend/callableReference/simple.kt");
             }
 
             @TestMetadata("suspendOfOrdinary.kt")

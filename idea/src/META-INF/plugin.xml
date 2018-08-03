@@ -13,16 +13,16 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="181.3" until-build="181.*"/>
+  <idea-version since-build="182.3040" until-build="183.*"/>
 
   <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.modules.remoteServers</depends>
 
   <!-- required for Kotlin/Native plugin -->
   <depends optional="true">org.jetbrains.kotlin.native.platform.deps</depends>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
+  <depends optional="true" config-file="gradle-java.xml">org.jetbrains.plugins.gradle.java</depends>
   <depends optional="true" config-file="maven.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="testng-j.xml">TestNG-J</depends>
   <depends optional="true" config-file="android.xml">org.jetbrains.android</depends>
@@ -34,6 +34,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
   <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
+  <depends>com.intellij.modules.idea</depends>
   <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
@@ -63,6 +64,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <component>
       <interface-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</interface-class>
       <implementation-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</implementation-class>
+    </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent</implementation-class>
     </component>
   </project-components>
 
@@ -109,6 +113,16 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <action id="DecompileKotlinToJava" class="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaAction"
             text="Decompile Kotlin To Java">
+      <add-to-group group-id="KotlinToolsGroup"/>
+    </action>
+
+    <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction"
+            text="Run Code Migrations">
+      <!-- TODO: Not assigned to any group because there should be a panel for filling migration options -->
+    </action>
+
+    <action id="KotlinCodeMigrationToggle" class="org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction"
+            text="Enable migrations detection (experimental)">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
@@ -2911,7 +2925,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      level="INFORMATION"
                      language="kotlin"
     />
-    
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NestedLambdaShadowedImplicitParameterInspection"
                      displayName="Nested lambda has shadowed implicit parameter"
                      groupPath="Kotlin"
@@ -2946,6 +2960,15 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="ERROR"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
+                     displayName="Redundant 'with' call"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
@@ -3017,5 +3040,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <highlighterExtension implementation="org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension"/>
   </extensions>
+
+    <extensions defaultExtensionNs="com.intellij.jvm">
+        <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
+    </extensions>
 
 </idea-plugin>

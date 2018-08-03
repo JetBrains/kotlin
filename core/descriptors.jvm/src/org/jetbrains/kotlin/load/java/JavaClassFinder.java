@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.load.java;
 
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.name.ClassId;

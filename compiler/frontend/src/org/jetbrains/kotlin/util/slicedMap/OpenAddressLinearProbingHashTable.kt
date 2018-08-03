@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.util.slicedMap
 
+import java.util.*
 import java.util.function.BiConsumer
 
 // binary representation of fractional part of phi = (sqrt(5) - 1) / 2
@@ -126,7 +127,24 @@ internal class OpenAddressLinearProbingHashTable<K : Any, V : Any> : AbstractMut
     }
 
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
-        get() = throw IllegalStateException("OpenAddressLinearProbingHashTable::entries is not supported and hardly will be")
+        get() {
+            if (@Suppress("ConstantConditionIf") DEBUG) {
+                return Collections.unmodifiableSet(mutableSetOf<MutableMap.MutableEntry<K, V>>().apply {
+                    forEach { key, value -> add(Entry(key, value)) }
+                })
+            }
+
+            throw IllegalStateException("OpenAddressLinearProbingHashTable::entries is not supported and hardly will be")
+        }
+
+    private class Entry<K, V>(override val key: K, override val value: V) : MutableMap.MutableEntry<K, V> {
+        override fun setValue(newValue: V): V = throw UnsupportedOperationException("This Entry is not mutable.")
+    }
+
+    companion object {
+        // Change to "true" to be able to see the contents of the map in debugger views
+        private const val DEBUG = false
+    }
 }
 
 private fun put(array: Array<Any?>, aShift: Int, key: Any, value: Any?): Boolean {

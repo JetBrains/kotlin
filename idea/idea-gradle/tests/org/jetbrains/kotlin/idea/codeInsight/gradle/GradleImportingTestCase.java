@@ -16,6 +16,7 @@
 package org.jetbrains.kotlin.idea.codeInsight.gradle;
 
 import com.intellij.compiler.server.BuildManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
@@ -23,6 +24,7 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
 import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListenerAdapter;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -44,6 +46,7 @@ import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
+import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -94,6 +97,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
                 Sdk jdk = SdkConfigurationUtil.setupSdk(new Sdk[0], jdkHomeDir, JavaSdk.getInstance(), true, null, GRADLE_JDK_NAME);
                 assertNotNull("Cannot create JDK for " + myJdkHome, jdk);
                 ProjectJdkTable.getInstance().addJdk(jdk);
+                FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle");
             }
         }.execute();
         myProjectSettings = new GradleProjectSettings();

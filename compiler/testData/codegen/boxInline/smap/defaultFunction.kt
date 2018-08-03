@@ -1,6 +1,6 @@
 // FILE: 1.kt
+// IGNORE_BACKEND: JVM_IR
 package test
-
 inline fun inlineFun(capturedParam: String, noinline lambda: () -> String = { capturedParam }): String {
     return lambda()
 }

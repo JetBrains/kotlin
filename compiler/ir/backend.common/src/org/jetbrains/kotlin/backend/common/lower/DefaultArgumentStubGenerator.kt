@@ -174,19 +174,10 @@ private fun maskParameter(function: IrFunction, number: Int) =
 private fun markerParameterDescriptor(descriptor: FunctionDescriptor) =
     descriptor.valueParameters.single { it.name == kConstructorMarkerName }
 
-private fun nullConst(expression: IrElement, type: IrType, context: CommonBackendContext) = when {
-    type.isFloat() -> IrConstImpl.float(expression.startOffset, expression.endOffset, type, 0.0F)
-    type.isDouble() -> IrConstImpl.double(expression.startOffset, expression.endOffset, type, 0.0)
-    type.isBoolean() -> IrConstImpl.boolean(expression.startOffset, expression.endOffset, type, false)
-    type.isByte() -> IrConstImpl.byte(expression.startOffset, expression.endOffset, type, 0)
-    type.isChar() -> IrConstImpl.char(expression.startOffset, expression.endOffset, type, 0.toChar())
-    type.isShort() -> IrConstImpl.short(expression.startOffset, expression.endOffset, type, 0)
-    type.isInt() -> IrConstImpl.int(expression.startOffset, expression.endOffset, type, 0)
-    type.isLong() -> IrConstImpl.long(expression.startOffset, expression.endOffset, type, 0)
-    else -> IrConstImpl.constNull(expression.startOffset, expression.endOffset, context.irBuiltIns.nothingNType)
-}
-
-class DefaultParameterInjector constructor(val context: CommonBackendContext, private val skipInline: Boolean = true) : BodyLoweringPass {
+open class DefaultParameterInjector constructor(
+    val context: CommonBackendContext,
+    private val skipInline: Boolean = true
+) : BodyLoweringPass {
     override fun lower(irBody: IrBody) {
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -290,7 +281,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
                     val defaultValueArgument = if (valueParameterDescriptor.isVararg) {
                         null
                     } else {
-                        nullConst(expression, realFunction.valueParameters[i].type, context)
+                        nullConst(expression, realFunction.valueParameters[i].type)
                     }
                     valueParameterDescriptor to (valueArgument ?: defaultValueArgument)
                 })
@@ -323,6 +314,18 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext, pr
             private fun argumentCount(expression: IrMemberAccessExpression) =
                 expression.descriptor.valueParameters.count { expression.getValueArgument(it) != null }
         })
+    }
+
+    protected open fun nullConst(expression: IrElement, type: IrType) = when {
+        type.isFloat() -> IrConstImpl.float(expression.startOffset, expression.endOffset, type, 0.0F)
+        type.isDouble() -> IrConstImpl.double(expression.startOffset, expression.endOffset, type, 0.0)
+        type.isBoolean() -> IrConstImpl.boolean(expression.startOffset, expression.endOffset, type, false)
+        type.isByte() -> IrConstImpl.byte(expression.startOffset, expression.endOffset, type, 0)
+        type.isChar() -> IrConstImpl.char(expression.startOffset, expression.endOffset, type, 0.toChar())
+        type.isShort() -> IrConstImpl.short(expression.startOffset, expression.endOffset, type, 0)
+        type.isInt() -> IrConstImpl.int(expression.startOffset, expression.endOffset, type, 0)
+        type.isLong() -> IrConstImpl.long(expression.startOffset, expression.endOffset, type, 0)
+        else -> IrConstImpl.constNull(expression.startOffset, expression.endOffset, context.irBuiltIns.nothingNType)
     }
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }

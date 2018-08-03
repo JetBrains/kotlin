@@ -12,9 +12,12 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.configuration.MigrationInfo
+import org.jetbrains.kotlin.idea.configuration.isLanguageVersionUpdate
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
@@ -25,7 +28,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
-class ObsoleteExperimentalCoroutinesInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
+class ObsoleteExperimentalCoroutinesInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool, MigrationFix {
+    override fun isApplicable(migrationInfo: MigrationInfo): Boolean {
+        return migrationInfo.isLanguageVersionUpdate(LanguageVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_3)
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): KtVisitorVoid {
         return simpleNameExpressionVisitor(fun(simpleNameExpression) {
             run {

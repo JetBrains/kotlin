@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -35,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesUpdaterKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.plugins.groovy.GroovyFileType;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +50,9 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        ApplicationManager.getApplication().runWriteAction(
+                () -> FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
+        );
         ScriptDependenciesUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), true);
     }
 

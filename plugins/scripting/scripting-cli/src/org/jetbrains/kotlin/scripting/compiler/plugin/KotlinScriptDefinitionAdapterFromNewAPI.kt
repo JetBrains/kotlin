@@ -24,7 +24,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
 
     protected abstract val scriptDefinition: ScriptDefinition
 
-    protected abstract val scriptFileExtensionWithDot: String
+    abstract val scriptFileExtensionWithDot: String
 
     open val baseClass: KClass<*> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         getScriptingClass(scriptDefinition.compilationConfigurator.defaultConfiguration[ScriptingEnvironmentProperties.baseClass])

@@ -43,7 +43,7 @@ object KotlinAddOrderEntryActionFactory : KotlinIntentionActionsFactory() {
 
             override fun getVariants() = PsiReference.EMPTY_ARRAY
 
-            override fun getRangeInElement(): TextRange? {
+            override fun getRangeInElement(): TextRange {
                 val offset = simpleExpression.startOffset - refElement.startOffset
                 return TextRange(offset, offset + simpleExpression.textLength)
             }

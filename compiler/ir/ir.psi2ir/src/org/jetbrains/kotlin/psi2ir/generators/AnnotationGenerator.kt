@@ -31,7 +31,7 @@ class AnnotationGenerator(
         generateAnnotationsForDeclaration(declaration)
         visitElement(declaration)
         if (declaration is IrTypeParametersContainer) {
-            typeTranslator.leaveScope()
+            typeTranslator.leaveScope(declaration)
         }
     }
 

@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.AbstractCustomScriptCodegenTest
+import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxAgainstJavaCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxInlineCodegenTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrCompileKotlinAgainstInlineKotlinTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
@@ -164,10 +164,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractKapt3BuilderModeBytecodeShapeTest> {
             model("codegen/kapt", targetBackend = TargetBackend.JVM)
-        }
-
-        testClass<AbstractIrBlackBoxCodegenTest>("IrOnlyBoxCodegenTestGenerated") {
-            model("ir/box", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractBlackBoxInlineCodegenTest> {
@@ -358,11 +354,11 @@ fun main(args: Array<String>) {
             model("codegen/box", targetBackend = TargetBackend.JVM_IR)
         }
 
-        testClass<AbstractIrBlackBoxInlineCodegenTest> {
-            model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
+        testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
+            model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR)
         }
 
-        testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
+        testClass<AbstractIrBlackBoxInlineCodegenTest> {
             model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
         }
     }

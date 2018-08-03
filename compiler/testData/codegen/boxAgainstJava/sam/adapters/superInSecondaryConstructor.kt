@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: test.kt
 class Test : Base {
     constructor(f: () -> String) : super(f)

@@ -10,7 +10,6 @@ import com.intellij.internal.statistic.UsagesCollector
 import com.intellij.internal.statistic.beans.GroupDescriptor
 import com.intellij.internal.statistic.beans.UsageDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.util.compat.statistic.getBooleanUsage
 
 class KotlinInlayParameterHintsUsageCollector : UsagesCollector() {
     override fun getGroupId(): GroupDescriptor = GroupDescriptor.create(GROUP_ID)
@@ -19,7 +18,7 @@ class KotlinInlayParameterHintsUsageCollector : UsagesCollector() {
         val provider = InlayParameterHintsExtension.forLanguage(KotlinLanguage.INSTANCE) ?: return emptySet()
 
         return provider.supportedOptions.mapTo(LinkedHashSet()) {
-            getBooleanUsage(it.id, it.get())
+            com.intellij.internal.statistic.utils.getBooleanUsage(it.id, it.get())
         }
     }
 

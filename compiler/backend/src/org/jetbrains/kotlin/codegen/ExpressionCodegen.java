@@ -3373,31 +3373,33 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         TypeAndNullability left754Type = calcTypeForIeee754ArithmeticIfNeeded(left, getLeftOperandType(primitiveNumericComparisonInfo));
         TypeAndNullability right754Type = calcTypeForIeee754ArithmeticIfNeeded(right, getRightOperandType(primitiveNumericComparisonInfo));
+
         if (left754Type != null && right754Type != null) {
-            if (left754Type.type.equals(right754Type.type)) {
-                //check nullability cause there is some optimizations in codegen for non-nullable case
-                if (left754Type.isNullable || right754Type.isNullable) {
-                    if (state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_1) >= 0) {
-                        return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-                            generate754EqualsForNullableTypesViaIntrinsic(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
-                            return Unit.INSTANCE;
-                        });
+            Type comparisonType = comparisonOperandType(left754Type.type, right754Type.type);
+            if (comparisonType == Type.FLOAT_TYPE || comparisonType == Type.DOUBLE_TYPE) {
+                if (left754Type.type.equals(right754Type.type)) {
+                    //check nullability cause there is some optimizations in codegen for non-nullable case
+                    if (left754Type.isNullable || right754Type.isNullable) {
+                        if (state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_1) >= 0) {
+                            return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+                                generate754EqualsForNullableTypesViaIntrinsic(v, opToken, pregeneratedLeft, left, left754Type, right,
+                                                                              right754Type);
+                                return Unit.INSTANCE;
+                            });
+                        }
+                        else {
+                            return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
+                                generate754EqualsForNullableTypes(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
+                                return Unit.INSTANCE;
+                            });
+                        }
                     }
                     else {
-                        return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-                            generate754EqualsForNullableTypes(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
-                            return Unit.INSTANCE;
-                        });
+                        leftType = left754Type.type;
+                        rightType = right754Type.type;
                     }
                 }
-                else {
-                    leftType = left754Type.type;
-                    rightType = right754Type.type;
-                }
-            }
-            else if (shouldUseProperIeee754Comparisons()) {
-                Type comparisonType = comparisonOperandType(left754Type.type, right754Type.type);
-                if (comparisonType == Type.FLOAT_TYPE || comparisonType == Type.DOUBLE_TYPE) {
+                else if (shouldUseProperIeee754Comparisons()) {
                     return Ieee754Equality.create(
                             myFrameMap,
                             genLazy(left, boxIfNullable(left754Type)),

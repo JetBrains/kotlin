@@ -75,6 +75,8 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPla
 
     override fun getNameIdentifier() = null
 
+    override fun getIdentifyingElement(): PsiElement? = getConstructorKeyword()
+
     @Throws(IncorrectOperationException::class)
     override fun setName(name: String): PsiElement = throw IncorrectOperationException("setName to constructor")
 

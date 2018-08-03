@@ -1,5 +1,7 @@
+// !LANGUAGE: +ReleaseCoroutines
+// !API_VERSION: 1.3
 // IGNORE_BACKEND: JS, NATIVE
-// COMMON_COROUTINES_TEST
+// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     suspend fun bar() {}

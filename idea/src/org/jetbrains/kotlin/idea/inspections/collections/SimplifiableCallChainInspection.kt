@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.qualifiedExpressionVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -20,16 +23,12 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
         qualifiedExpressionVisitor(fun(expression) {
             val conversion = findQualifiedConversion(expression, conversionGroups) check@{ conversion, firstResolvedCall, _, context ->
                 // Do not apply on maps due to lack of relevant stdlib functions
-                val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return@check false
                 val firstReceiverType = firstResolvedCall.extensionReceiver?.type
                 if (firstReceiverType != null) {
                     if (conversion.replacement == "mapNotNull" && KotlinBuiltIns.isPrimitiveArray(firstReceiverType)) return@check false
+                    val builtIns = context[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type?.builtIns ?: return@check false
                     val firstReceiverRawType = firstReceiverType.constructor.declarationDescriptor?.defaultType
-                    if (firstReceiverRawType != null) {
-                        if (firstReceiverRawType.isSubtypeOf(builtIns.map.defaultType) ||
-                            firstReceiverRawType.isSubtypeOf(builtIns.mutableMap.defaultType)
-                        ) return@check false
-                    }
+                    if (firstReceiverRawType.isMap(builtIns)) return@check false
                 }
                 if (conversion.replacement.startsWith("joinTo")) {
                     // Function parameter in map must have String result type
@@ -83,4 +82,9 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
             Conversion("kotlin.collections.listOf", "kotlin.collections.filterNotNull", "listOfNotNull")
         )
     }
+}
+
+private fun KotlinType?.isMap(builtIns: KotlinBuiltIns): Boolean {
+    val classDescriptor = this?.constructor?.declarationDescriptor as? ClassDescriptor ?: return false
+    return classDescriptor.name.asString().endsWith("Map") && classDescriptor.isSubclassOf(builtIns.map)
 }

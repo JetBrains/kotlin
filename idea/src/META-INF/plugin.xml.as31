@@ -64,6 +64,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <interface-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</interface-class>
       <implementation-class>org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider</implementation-class>
     </component>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent</implementation-class>
+    </component>
   </project-components>
 
   <application-components>
@@ -109,6 +112,16 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <action id="DecompileKotlinToJava" class="org.jetbrains.kotlin.idea.actions.DecompileKotlinToJavaAction"
             text="Decompile Kotlin To Java">
+      <add-to-group group-id="KotlinToolsGroup"/>
+    </action>
+
+    <action id="KotlinCodeMigration" class="org.jetbrains.kotlin.idea.migration.CodeMigrationAction"
+            text="Run Code Migrations">
+      <!-- TODO: Not assigned to any group because there should be a panel for filling migration options -->
+    </action>
+
+    <action id="KotlinCodeMigrationToggle" class="org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction"
+            text="Enable migrations detection (experimental)">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
@@ -2946,6 +2959,15 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      enabledByDefault="true"
                      cleanupTool="true"
                      level="ERROR"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
+                     displayName="Redundant 'with' call"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 

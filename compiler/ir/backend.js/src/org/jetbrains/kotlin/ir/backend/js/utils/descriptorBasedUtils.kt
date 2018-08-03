@@ -9,37 +9,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 
 val IrConstructorSymbol.constructedClass get() = descriptor.constructedClass
-
-val IrClassSymbol.isAny get() = KotlinBuiltIns.isAny(descriptor)
-
-fun ModuleDescriptor.getFunctions(fqName: FqName): List<FunctionDescriptor> {
-    return getFunctions(fqName.parent(), fqName.shortName())
-}
-
-fun ModuleDescriptor.getFunctions(packageFqName: FqName, name: Name): List<FunctionDescriptor> {
-    return getPackage(packageFqName).memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
-}
-
-fun ModuleDescriptor.getClassifier(fqName: FqName): ClassifierDescriptor? {
-    return getClassifier(fqName.parent(), fqName.shortName())
-}
-
-fun ModuleDescriptor.getClassifier(packageFqName: FqName, name: Name): ClassifierDescriptor? {
-    return getPackage(packageFqName).memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND)
-}
 
 fun createValueParameter(containingDeclaration: CallableDescriptor, index: Int, name: String, type: KotlinType): ValueParameterDescriptor {
     return ValueParameterDescriptorImpl(
@@ -71,3 +50,9 @@ fun CallableMemberDescriptor.isFakeOverriddenFromAny(): Boolean {
     }
     return overriddenDescriptors.all { it.isFakeOverriddenFromAny() }
 }
+
+fun IrDeclaration.isEffectivelyExternal() = descriptor.isEffectivelyExternal()
+
+fun IrSymbol.isEffectivelyExternal() = descriptor.isEffectivelyExternal()
+
+fun IrSymbol.isDynamic() = descriptor.isDynamic()

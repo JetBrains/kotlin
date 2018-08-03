@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.yieldIfNotNull
-import java.lang.UnsupportedOperationException
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.experimental.buildSequence
@@ -646,6 +645,10 @@ class DoubleColonExpressionResolver(
             if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor else null
         if (descriptor is PropertyDescriptor && descriptor.isBuiltInCoroutineContext(languageVersionSettings)) {
             context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable reference to suspend property"))
+        } else if (descriptor is FunctionDescriptor && descriptor.isSuspend
+            && !context.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+        ) {
+            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable reference to suspend function"))
         }
 
         val expressionResult = lhsResult as? DoubleColonLHS.Expression ?: return

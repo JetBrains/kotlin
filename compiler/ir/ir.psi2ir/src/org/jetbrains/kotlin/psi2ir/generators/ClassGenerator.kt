@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.util.StableDescriptorsComparator
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry

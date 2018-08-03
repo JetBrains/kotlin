@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -84,7 +85,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         if (!irClass.isInterface) {
             declaration.resolveFakeOverride()?.let {
                 val implClassDesc = it.descriptor.containingDeclaration as ClassDescriptor
-                if (!KotlinBuiltIns.isAny(implClassDesc)) {
+                if (!KotlinBuiltIns.isAny(implClassDesc) && !it.isEffectivelyExternal()) {
                     val implMethodName = context.getNameForSymbol(it.symbol)
                     val implClassName = context.getNameForSymbol(IrClassSymbolImpl(implClassDesc))
 
@@ -164,7 +165,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         JsArrayLiteral(
             irClass.superTypes.mapNotNull {
                 val symbol = it.classifierOrFail
-                if (symbol.isInterface) JsNameRef(context.getNameForSymbol(symbol)) else null
+                // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
+                if (symbol.isInterface && !symbol.isEffectivelyExternal()) JsNameRef(context.getNameForSymbol(symbol)) else null
             }
         )
     )

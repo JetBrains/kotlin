@@ -789,7 +789,8 @@ public class KotlinTestUtils {
 
             boolean isReleaseCoroutines =
                     !coroutinesPackage.contains("experimental") ||
-                    isDirectiveDefined(expectedText, "LANGUAGE_VERSION: 1.3");
+                    isDirectiveDefined(expectedText, "LANGUAGE_VERSION: 1.3") ||
+                    isDirectiveDefined(expectedText, "!LANGUAGE: +ReleaseCoroutines");
 
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",

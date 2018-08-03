@@ -20,8 +20,17 @@ import java.io.File
 
 private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/core.kt",
+    "libraries/stdlib/js/src/kotlin/js.core.kt",
+    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
+    "libraries/stdlib/js/src/kotlin/dynamic.kt",
+    "libraries/stdlib/js/src/kotlin/annotations.kt",
+
+    "libraries/stdlib/src/kotlin/internal/Annotations.kt",
+
+    "core/builtins/native/kotlin/Annotation.kt",
     "core/builtins/native/kotlin/Number.kt",
     "core/builtins/native/kotlin/Comparable.kt",
+    "core/builtins/src/kotlin/Annotations.kt",
     "core/builtins/src/kotlin/internal/InternalAnnotations.kt",
     "core/builtins/src/kotlin/internal/progressionUtil.kt",
     "core/builtins/src/kotlin/Iterators.kt",
@@ -32,6 +41,7 @@ private val runtimeSources = listOfKtFilesFrom(
     "core/builtins/src/kotlin/Unit.kt",
     "core/builtins/native/kotlin/Collections.kt",
     "core/builtins/native/kotlin/Iterator.kt",
+
     "libraries/stdlib/js/irRuntime",
     BasicBoxTest.COMMON_FILES_DIR_PATH
 )
@@ -105,7 +115,7 @@ abstract class BasicIrBoxTest(
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
         // TODO: cache runtime.js and don't cache kotlin.js for IR BE tests
-        super.runGeneratedCode(listOf(runtimeFile.path) + jsFiles, null, null, testFunction, expectedResult, false)
+        super.runGeneratedCode(listOf(runtimeFile.absolutePath) + jsFiles, null, null, testFunction, expectedResult, false)
     }
 }
 

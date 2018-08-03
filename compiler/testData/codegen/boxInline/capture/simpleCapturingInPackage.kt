@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 
 inline fun inline(s: (Int, Double, Double, String, Long) -> String,

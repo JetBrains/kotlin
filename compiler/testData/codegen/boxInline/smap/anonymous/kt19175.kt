@@ -1,6 +1,6 @@
 // FILE: 1.kt
+// IGNORE_BACKEND: JVM_IR
 package test
-
 abstract class Introspector {
     abstract inner class SchemaRetriever(val transaction: String) {
         inline fun inSchema(crossinline modifier: (String) -> Unit) =
