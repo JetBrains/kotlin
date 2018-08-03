@@ -77,6 +77,17 @@ public inline fun <T> T.apply(block: T.() -> Unit): T {
 }
 
 /**
+ * Calls the specified function [block] with `this` value as its receiver and returns Unit.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> T.unit(block: T.() -> Unit) {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    block()
+}
+
+/**
  * Calls the specified function [block] with `this` value as its argument and returns `this` value.
  */
 @kotlin.internal.InlineOnly
