@@ -40,6 +40,8 @@ internal abstract class KClassImpl<T : Any>(
         get() = TODO()
     override val typeParameters: List<KTypeParameter>
         get() = TODO()
+    override val sealedSubclasses: List<KClass<out T>>
+        get() = TODO()
     override val visibility: KVisibility?
         get() = TODO()
 
