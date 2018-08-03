@@ -5808,11 +5808,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPropertyGetterToInitializer/block.kt");
         }
 
-        @TestMetadata("expectedProperty.kt")
-        public void testExpectedProperty() throws Exception {
-            runTest("idea/testData/intentions/convertPropertyGetterToInitializer/expectedProperty.kt");
-        }
-
         @TestMetadata("extentionProperty.kt")
         public void testExtentionProperty() throws Exception {
             runTest("idea/testData/intentions/convertPropertyGetterToInitializer/extentionProperty.kt");

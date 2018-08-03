@@ -5,16 +5,13 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.resolve.TargetPlatform
 
 class ConvertPropertyGetterToInitializerIntention : SelfTargetingIntention<KtPropertyAccessor>(
     KtPropertyAccessor::class.java, "Convert property getter to initializer"
@@ -27,10 +24,7 @@ class ConvertPropertyGetterToInitializerIntention : SelfTargetingIntention<KtPro
         if (property.hasInitializer()
             || property.receiverTypeReference != null
             || property.containingClass()?.isInterface() == true
-        ) return false
-
-        if ((element.platform == TargetPlatform.Common || ApplicationManager.getApplication().isUnitTestMode)
-            && (property.descriptor as? PropertyDescriptor)?.isExpect == true
+            || (property.descriptor as? PropertyDescriptor)?.isExpect == true
         ) return false
 
         return true

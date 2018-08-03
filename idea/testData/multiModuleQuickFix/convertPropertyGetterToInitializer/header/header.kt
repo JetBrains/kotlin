@@ -1,11 +1,7 @@
-// ENABLE_MULTIPLATFORM
+// "Convert property getter to initializer" "false"
 // ERROR: Expected declaration must not have a body
-// IS_APPLICABLE: false
+// ACTION: Convert to block body
 expect class C {
     val p: Int
         <caret>get() = 1
-}
-
-actual class C {
-    actual val p: Int = 1
 }
