@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
@@ -59,7 +57,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -518,18 +515,19 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    public JvmKotlinType genPropertyOnStack(
+    public static JvmKotlinType genPropertyOnStack(
             InstructionAdapter iv,
             MethodContext context,
             @NotNull PropertyDescriptor propertyDescriptor,
             Type classAsmType,
-            int index
+            int index,
+            GenerationState state
     ) {
         iv.load(index, classAsmType);
         if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true,
                                                /* isDelegated = */ false, context, state.getShouldInlineConstVals())) {
             KotlinType kotlinType = propertyDescriptor.getType();
-            Type type = typeMapper.mapType(kotlinType);
+            Type type = state.getTypeMapper().mapType(kotlinType);
             String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false);
             iv.getfield(classAsmType.getInternalName(), fieldName, type.getDescriptor());
             return new JvmKotlinType(type, kotlinType);
@@ -538,7 +536,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
 
             //noinspection ConstantConditions
-            Method method = typeMapper.mapAsmMethod(getter);
+            Method method = state.getTypeMapper().mapAsmMethod(getter);
             iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor(), false);
             return new JvmKotlinType(method.getReturnType(), getter.getReturnType());
         }
@@ -551,171 +549,31 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private class DataClassMethodGeneratorImpl extends DataClassMethodGenerator {
+        private final FunctionsFromAnyGeneratorImpl functionsFromAnyGenerator;
+
         DataClassMethodGeneratorImpl(
                 KtClassOrObject klass,
                 BindingContext bindingContext
         ) {
             super(klass, bindingContext);
+            this.functionsFromAnyGenerator = new FunctionsFromAnyGeneratorImpl(
+                    klass, bindingContext, descriptor, classAsmType, ImplementationBodyCodegen.this.context, v, state
+            );
         }
 
         @Override
         public void generateEqualsMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties) {
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
-            MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
-            mv.visitParameterAnnotation(0, Type.getDescriptor(Nullable.class), false);
-            InstructionAdapter iv = new InstructionAdapter(mv);
-
-            mv.visitCode();
-            Label eq = new Label();
-            Label ne = new Label();
-
-            iv.load(0, OBJECT_TYPE);
-            iv.load(1, OBJECT_TYPE);
-            iv.ifacmpeq(eq);
-
-            iv.load(1, OBJECT_TYPE);
-            iv.instanceOf(classAsmType);
-            iv.ifeq(ne);
-
-            iv.load(1, OBJECT_TYPE);
-            iv.checkcast(classAsmType);
-            iv.store(2, OBJECT_TYPE);
-
-            for (PropertyDescriptor propertyDescriptor : properties) {
-                KotlinType kotlinType = propertyDescriptor.getReturnType();
-                Type asmType = typeMapper.mapType(kotlinType);
-
-                JvmKotlinType thisPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
-                StackValue.coerce(thisPropertyType.getType(), thisPropertyType.getKotlinType(), asmType, kotlinType, iv);
-
-                JvmKotlinType otherPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 2);
-                StackValue.coerce(otherPropertyType.getType(), otherPropertyType.getKotlinType(), asmType, kotlinType, iv);
-
-                if (asmType.getSort() == Type.FLOAT) {
-                    iv.invokestatic("java/lang/Float", "compare", "(FF)I", false);
-                    iv.ifne(ne);
-                }
-                else if (asmType.getSort() == Type.DOUBLE) {
-                    iv.invokestatic("java/lang/Double", "compare", "(DD)I", false);
-                    iv.ifne(ne);
-                }
-                else {
-                    StackValue value = genEqualsForExpressionsOnStack(
-                            KtTokens.EQEQ, StackValue.onStack(asmType, kotlinType), StackValue.onStack(asmType, kotlinType)
-                    );
-                    value.put(Type.BOOLEAN_TYPE, iv);
-                    iv.ifeq(ne);
-                }
-            }
-
-            iv.mark(eq);
-            iv.iconst(1);
-            iv.areturn(Type.INT_TYPE);
-
-            iv.mark(ne);
-            iv.iconst(0);
-            iv.areturn(Type.INT_TYPE);
-
-            FunctionCodegen.endVisit(mv, "equals", myClass);
+            functionsFromAnyGenerator.generateEqualsMethod(function, properties);
         }
 
         @Override
         public void generateHashCodeMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties) {
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
-            MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "hashCode", "()I", null, null);
-            InstructionAdapter iv = new InstructionAdapter(mv);
-
-            mv.visitCode();
-            boolean first = true;
-            for (PropertyDescriptor propertyDescriptor : properties) {
-                if (!first) {
-                    iv.iconst(31);
-                    iv.mul(Type.INT_TYPE);
-                }
-
-                JvmKotlinType propertyType = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
-                KotlinType kotlinType = propertyDescriptor.getReturnType();
-                Type asmType = typeMapper.mapType(kotlinType);
-                StackValue.coerce(propertyType.getType(), propertyType.getKotlinType(), asmType, kotlinType, iv);
-
-                Label ifNull = null;
-                if (!isPrimitive(asmType)) {
-                    ifNull = new Label();
-                    iv.dup();
-                    iv.ifnull(ifNull);
-                }
-
-                genHashCode(mv, iv, asmType, state.getTarget());
-
-                if (ifNull != null) {
-                    Label end = new Label();
-                    iv.goTo(end);
-                    iv.mark(ifNull);
-                    iv.pop();
-                    iv.iconst(0);
-                    iv.mark(end);
-                }
-
-                if (first) {
-                    first = false;
-                }
-                else {
-                    iv.add(Type.INT_TYPE);
-                }
-            }
-
-            mv.visitInsn(IRETURN);
-
-            FunctionCodegen.endVisit(mv, "hashCode", myClass);
+            functionsFromAnyGenerator.generateHashCodeMethod(function, properties);
         }
 
         @Override
         public void generateToStringMethod(@NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties) {
-            MethodContext context = ImplementationBodyCodegen.this.context.intoFunction(function);
-            MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
-            mv.visitAnnotation(Type.getDescriptor(NotNull.class), false);
-            InstructionAdapter iv = new InstructionAdapter(mv);
-
-            mv.visitCode();
-            genStringBuilderConstructor(iv);
-
-            boolean first = true;
-            for (PropertyDescriptor propertyDescriptor : properties) {
-                if (first) {
-                    iv.aconst(descriptor.getName() + "(" + propertyDescriptor.getName().asString()+"=");
-                    first = false;
-                }
-                else {
-                    iv.aconst(", " + propertyDescriptor.getName().asString() + "=");
-                }
-                genInvokeAppendMethod(iv, JAVA_STRING_TYPE, null);
-
-                JvmKotlinType type = genPropertyOnStack(iv, context, propertyDescriptor, ImplementationBodyCodegen.this.classAsmType, 0);
-                Type asmType = type.getType();
-
-                if (asmType.getSort() == Type.ARRAY) {
-                    Type elementType = correctElementType(asmType);
-                    if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
-                        iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;", false);
-                        asmType = JAVA_STRING_TYPE;
-                    }
-                    else {
-                        if (elementType.getSort() != Type.CHAR) {
-                            iv.invokestatic("java/util/Arrays", "toString", "(" + asmType.getDescriptor() + ")Ljava/lang/String;", false);
-                            asmType = JAVA_STRING_TYPE;
-                        }
-                    }
-                }
-                genInvokeAppendMethod(iv, asmType, type.getKotlinType());
-            }
-
-            iv.aconst(")");
-            genInvokeAppendMethod(iv, JAVA_STRING_TYPE, null);
-
-            iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-            iv.areturn(JAVA_STRING_TYPE);
-
-            FunctionCodegen.endVisit(mv, "toString", myClass);
+            functionsFromAnyGenerator.generateToStringMethod(function, properties);
         }
 
         @Override
@@ -737,7 +595,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                 bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, descriptorToDeclaration(parameter));
                         assert property != null : "Property descriptor is not found for primary constructor parameter: " + parameter;
 
-                        JvmKotlinType propertyType = genPropertyOnStack(iv, context, property, ImplementationBodyCodegen.this.classAsmType, 0);
+                        JvmKotlinType propertyType = genPropertyOnStack(
+                                iv, context, property, ImplementationBodyCodegen.this.classAsmType, 0, state
+                        );
                         StackValue.coerce(propertyType.getType(), componentType, iv);
                     }
                     iv.areturn(componentType);
