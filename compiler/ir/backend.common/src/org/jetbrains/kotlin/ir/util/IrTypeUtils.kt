@@ -21,27 +21,23 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
-val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
+val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflection"))
+val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("coroutines"))
 
-fun IrType.isFunction(): Boolean {
+
+fun IrType.isFunction() = this.isNameInPackage("Function", kotlinPackageFqn)
+fun IrType.isKFunction() = this.isNameInPackage("KFunction", kotlinReflectionPackageFqn)
+fun IrType.isSuspendFunction() = this.isNameInPackage("SuspendFunction", kotlinCoroutinesPackageFqn)
+
+fun IrType.isNameInPackage(prefix: String, packageFqName: FqName): Boolean {
     val classifier = classifierOrNull ?: return false
     val name = classifier.descriptor.name.asString()
-    if (!name.startsWith("Function")) return false
+    if (!name.startsWith(prefix)) return false
     val declaration = classifier.owner as IrDeclaration
     val parent = declaration.parent as? IrPackageFragment ?: return false
 
-    return parent.fqName == kotlinPackageFqn
-}
+    return parent.fqName == packageFqName
 
-
-fun IrType.isKFunction(): Boolean {
-    val classifier = classifierOrNull ?: return false
-    val name = classifier.descriptor.name.asString()
-    if (!name.startsWith("KFunction")) return false
-    val declaration = classifier.owner as IrDeclaration
-    val parent = declaration.parent as? IrPackageFragment ?: return false
-
-    return parent.fqName == kotlinReflectionPackageFqn
 }
 
 

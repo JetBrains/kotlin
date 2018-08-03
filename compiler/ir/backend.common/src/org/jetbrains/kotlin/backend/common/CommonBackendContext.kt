@@ -12,7 +12,11 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.name.FqName
 
-interface CommonBackendContext : BackendContext {
+interface LoggingContext {
+    fun log(message: () -> String)
+}
+
+interface CommonBackendContext : BackendContext, LoggingContext {
     override val ir: Ir<CommonBackendContext>
 
     //TODO move to builtins
@@ -22,8 +26,6 @@ interface CommonBackendContext : BackendContext {
 
     //TODO move to builtins
     fun getInternalFunctions(name: String): List<FunctionDescriptor>
-
-    fun log(message: () -> String)
 
     fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean)
 }

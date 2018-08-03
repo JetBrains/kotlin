@@ -178,8 +178,9 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
             dumpTypeArguments(expression)
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
-            for (valueParameter in expression.descriptor.valueParameters) {
-                expression.getValueArgument(valueParameter.index)?.accept(this, valueParameter.name.asString())
+            for (i in 0..expression.valueArgumentsCount - 1) {
+                val valueArgument = expression.getValueArgument(i)
+                valueArgument?.accept(this, "argument $i")
             }
         }
     }

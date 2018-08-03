@@ -42,10 +42,10 @@ val IrType.classifierOrFail: IrClassifierSymbol
 val IrType.classifierOrNull: IrClassifierSymbol?
     get() = safeAs<IrSimpleType>()?.classifier
 
-fun IrType.makeNotNull() =
+fun IrType.makeNotNull(addKotlinType:Boolean = true) =
     if (this is IrSimpleType && this.hasQuestionMark)
         IrSimpleTypeImpl(
-            makeKotlinType(classifier, arguments, false),
+            if (addKotlinType) makeKotlinType(classifier, arguments, false) else null,
             classifier,
             false,
             arguments,
@@ -55,10 +55,10 @@ fun IrType.makeNotNull() =
     else
         this
 
-fun IrType.makeNullable() =
+fun IrType.makeNullable(addKotlinType:Boolean = true) =
     if (this is IrSimpleType && !this.hasQuestionMark)
         IrSimpleTypeImpl(
-            makeKotlinType(classifier, arguments, true),
+            if (addKotlinType) makeKotlinType(classifier, arguments, true) else null,
             classifier,
             true,
             arguments,
