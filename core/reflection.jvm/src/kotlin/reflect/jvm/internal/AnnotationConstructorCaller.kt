@@ -61,7 +61,7 @@ internal class AnnotationConstructorCaller(
             value ?: throwIllegalArgumentType(index, parameterNames[index], erasedParameterTypes[index])
         }
 
-        return createAnnotationInstance(jClass, methods, parameterNames.zip(values).toMap())
+        return createAnnotationInstance(jClass, parameterNames.zip(values).toMap(), methods)
     }
 }
 
@@ -101,7 +101,11 @@ private fun throwIllegalArgumentType(index: Int, name: String, expectedJvmType: 
     throw IllegalArgumentException("Argument #$index $name is not of the required type $typeString")
 }
 
-private fun createAnnotationInstance(annotationClass: Class<*>, methods: List<ReflectMethod>, values: Map<String, Any>): Any {
+internal fun <T : Any> createAnnotationInstance(
+    annotationClass: Class<T>,
+    values: Map<String, Any>,
+    methods: List<ReflectMethod> = values.keys.map { name -> annotationClass.getDeclaredMethod(name) }
+): T {
     fun equals(other: Any?): Boolean =
         (other as? Annotation)?.annotationClass?.java == annotationClass &&
                 methods.all { method ->
@@ -163,7 +167,7 @@ private fun createAnnotationInstance(annotationClass: Class<*>, methods: List<Re
         }
     }
 
-    return Proxy.newProxyInstance(annotationClass.classLoader, arrayOf(annotationClass)) { _, method, args ->
+    val result = Proxy.newProxyInstance(annotationClass.classLoader, arrayOf(annotationClass)) { _, method, args ->
         val name = method.name
         when (name) {
             "annotationType" -> annotationClass
@@ -176,4 +180,7 @@ private fun createAnnotationInstance(annotationClass: Class<*>, methods: List<Re
             }
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    return result as T
 }
