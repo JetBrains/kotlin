@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.idea.configuration.ui;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
+import org.jetbrains.kotlin.idea.util.VersioningKt;
 
 import javax.swing.*;
 import java.util.List;
@@ -22,10 +24,19 @@ public class ConfigurePluginUpdatesForm {
     public JLabel installStatusLabel;
     private JLabel verifierDisabledText;
     private JTextPane currentVersion;
+    private JPanel bundledCompilerVersionPanel;
+    private JTextPane compilerVersion;
 
     public ConfigurePluginUpdatesForm() {
         showVerifierDisabledStatus();
         currentVersion.setText(KotlinPluginUtil.getPluginVersion());
+
+        if (ApplicationManager.getApplication().isInternal()) {
+            String buildNumber = VersioningKt.getBuildNumber();
+            compilerVersion.setText(buildNumber);
+        } else {
+            bundledCompilerVersionPanel.setVisible(false);
+        }
     }
 
     public void initChannels(List<String> channels) {
