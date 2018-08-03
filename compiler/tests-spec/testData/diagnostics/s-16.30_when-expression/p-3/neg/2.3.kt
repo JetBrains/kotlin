@@ -8,12 +8,6 @@
  DESCRIPTION: 'When' without bound value and with invalid list of the boolean conditions in 'when entry'.
  */
 
-class A {
-    operator fun contains(a: Int): Boolean {
-        return a > 30
-    }
-}
-
 // CASE DESCRIPTION: 'When' with list of expressions and an extra comma at the end.
 fun case_1(value1: Int, value2: Any, value3: IntRange): String {
     when {

@@ -16,10 +16,17 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
     companion object {
         // map of pairs: source helper filename - target helper filename
         private val directives = mapOf(
-            "WITH_BASIC_TYPES_PROVIDER" to Pair("basicTypesProvider.kt", "BASIC_TYPES_PROVIDER.kt")
+            "WITH_BASIC_TYPES" to Pair("basicTypes.kt", "BASIC_TYPES.kt"),
+            "WITH_CLASSES" to Pair("classes.kt", "CLASSES.kt"),
+            "WITH_ENUM_CLASSES" to Pair("enumClasses.kt", "ENUM_CLASSES.kt"),
+            "WITH_SEALED_CLASSES" to Pair("sealedClasses.kt", "SEALED_CLASSES.kt"),
+            "WITH_FUNS" to Pair("funs.kt", "FUNS.kt"),
+            "WITH_OBJECTS" to Pair("objects.kt", "OBJECTS.kt"),
+            "WITH_TYPEALIASES" to Pair("typeAliases.kt", "TYPE_ALIASES.kt")
         )
 
-        private const val HELPERS_PATH = "./compiler/tests-spec/testData/helpers"
+        private const val MODULE_PATH = "./compiler/tests-spec"
+        private const val HELPERS_PATH = "$MODULE_PATH/testData/diagnostics/_helpers"
     }
 
     private lateinit var testValidator: DiagnosticSpecTestValidator

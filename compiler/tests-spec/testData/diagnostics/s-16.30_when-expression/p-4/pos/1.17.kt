@@ -11,7 +11,7 @@
  */
 
 fun case_1(value: Int) {
-    val fun_1 = fun(): Int {
+    val __fun_1 = fun(): Int {
         return 0
     }
 
@@ -22,7 +22,7 @@ fun case_1(value: Int) {
                 else -> true
             }
         }
-        3 -> fun_1
+        3 -> __fun_1
         4 -> {
             fun() {fun() {fun() {}}}
         }

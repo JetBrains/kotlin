@@ -1,3 +1,5 @@
+// !WITH_SEALED_CLASSES
+
 /*
  KOTLIN SPEC TEST (POSITIVE)
 
@@ -8,59 +10,32 @@
  DESCRIPTION: Check when exhaustive when possible subtypes of the sealed class are covered and contains a null check.
  */
 
-sealed class Expr1
-data class Const1(val n: String) : Expr1()
-data class Sum1(val e1: String, val e2: String) : Expr1()
-data class Mul1(val m1: String, val m2: String) : Expr1()
-
-sealed class Expr2
-class Const2() : Expr2() {
-    fun m1(): String {
-        return ""
-    }
-}
-class Sum2() : Expr2() {
-    fun m2(): String {
-        return ""
-    }
-}
-class Mul2() : Expr2() {
-    fun m3(): String {
-        return ""
-    }
-}
-
-sealed class Expr3
-object Const1O : Expr3()
-object Sum1O : Expr3()
-object Mul1O : Expr3()
-
 // CASE DESCRIPTION: Checking for exhaustive 'when' (all sealed class subtypes and null value covered).
-fun case_1(expr: Expr1?): String = when (expr) {
-    is Const1 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.n
-    is Sum1 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.e1 + <!DEBUG_INFO_SMARTCAST!>expr<!>.e2
-    is Mul1 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.m1 + <!DEBUG_INFO_SMARTCAST!>expr<!>.m2
-    null -> ""
+fun case_1(expr: _SealedClass?): Int = when (expr) {
+    is _SealedChild1 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.number
+    is _SealedChild2 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.e1 + <!DEBUG_INFO_SMARTCAST!>expr<!>.e2
+    is _SealedChild3 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.m1 + <!DEBUG_INFO_SMARTCAST!>expr<!>.m2
+    null -> 0
 }
 
 // CASE DESCRIPTION: Checking for exhaustive 'when' (sealed class itself and null value covered).
-fun case_2(expr: Expr1?): String = when (expr) {
-    is Expr1 -> ""
+fun case_2(expr: _SealedClass?): String = when (expr) {
+    is _SealedClass -> ""
     null -> ""
 }
 
 // CASE DESCRIPTION: Checking for exhaustive 'when' (all sealed class with methods subtypes and null value covered).
-fun case_3(expr: Expr2?): String = when (expr) {
-    is Const2 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.m1()
-    is Sum2 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.m2()
-    is Mul2 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.m3()
+fun case_3(expr: _SealedClassWithMethods?): String = when (expr) {
+    is _SealedWithMethodsChild1 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.m1()
+    is _SealedWithMethodsChild2 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.m2()
+    is _SealedWithMethodsChild3 -> <!DEBUG_INFO_SMARTCAST!>expr<!>.m3()
     null -> ""
 }
 
 // CASE DESCRIPTION: Checking for exhaustive 'when' (all objects covered using implicit equality operator and null value covered).
-fun case_4(expr: Expr3?): String = when (expr) {
-    Const1O -> ""
-    Sum1O -> ""
-    Mul1O -> ""
+fun case_4(expr: _SealedClassWithObjects?): String = when (expr) {
+    _SealedWithObjectsChild1 -> ""
+    _SealedWithObjectsChild2 -> ""
+    _SealedWithObjectsChild3 -> ""
     null -> ""
 }

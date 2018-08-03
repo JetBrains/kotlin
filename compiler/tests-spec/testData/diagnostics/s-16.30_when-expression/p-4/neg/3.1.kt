@@ -1,3 +1,5 @@
+// !WITH_CLASSES
+
 /*
  KOTLIN SPEC TEST (NEGATIVE)
 
@@ -8,12 +10,10 @@
  DESCRIPTION: 'When' with bound value and type test condition (without companion object in class), but without type checking operator.
  */
 
-class A {}
-
 // CASE DESCRIPTION: 'When' with custom class type test condition.
 fun case_1(value: Any): String {
     when (value) {
-        <!NO_COMPANION_OBJECT!>A<!> -> return ""
+        <!NO_COMPANION_OBJECT!>_EmptyClass<!> -> return ""
     }
 
     return ""

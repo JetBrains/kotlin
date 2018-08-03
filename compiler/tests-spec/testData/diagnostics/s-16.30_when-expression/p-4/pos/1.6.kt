@@ -1,4 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
+// !WITH_ENUM_CLASSES
+// !WITH_SEALED_CLASSES
 
 /*
  KOTLIN SPEC TEST (POSITIVE)
@@ -10,16 +12,7 @@
  DESCRIPTION: 'When' with exhaustive when expression in the control structure body.
  */
 
-enum class Direction {
-    NORTH, SOUTH, WEST, EAST
-}
-
-sealed class Expr
-data class Const(val number: Int) : Expr()
-data class Sum(val e1: Int, val e2: Int) : Expr()
-data class Mul(val m1: Int, val m2: Int) : Expr()
-
-fun case_1(value: Int, value1: Int, value2: Boolean?, value3: Direction?, value4: Expr?) {
+fun case_1(value: Int, value1: Int, value2: Boolean?, value3: _EnumClass?, value4: _SealedClass?) {
     when (value) {
         1 -> when {
             value1 > 1000 -> "1"
@@ -37,28 +30,28 @@ fun case_1(value: Int, value1: Int, value2: Boolean?, value3: Direction?, value4
             null -> "3"
         }
         4 -> when(value3!!) {
-            Direction.WEST -> "1"
-            Direction.SOUTH -> "2"
-            Direction.NORTH -> "3"
-            Direction.EAST -> "4"
+            _EnumClass.WEST -> "1"
+            _EnumClass.SOUTH -> "2"
+            _EnumClass.NORTH -> "3"
+            _EnumClass.EAST -> "4"
         }
         5 -> when(value3) {
-            Direction.WEST -> "1"
-            Direction.SOUTH -> "2"
-            Direction.NORTH -> "3"
-            Direction.EAST -> "4"
+            _EnumClass.WEST -> "1"
+            _EnumClass.SOUTH -> "2"
+            _EnumClass.NORTH -> "3"
+            _EnumClass.EAST -> "4"
             null -> "5"
         }
         6 -> when(value4!!) {
-            is Const -> "1"
-            is Sum -> "2"
-            is Mul -> "3"
+            is _SealedChild1 -> "1"
+            is _SealedChild2 -> "2"
+            is _SealedChild3 -> "3"
         }
         7 -> {
             when(value4) {
-                is Const -> "1"
-                is Sum -> "2"
-                is Mul -> "3"
+                is _SealedChild1 -> "1"
+                is _SealedChild2 -> "2"
+                is _SealedChild3 -> "3"
                 null -> "4"
             }
         }
