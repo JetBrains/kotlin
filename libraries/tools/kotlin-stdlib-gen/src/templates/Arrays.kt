@@ -453,6 +453,7 @@ object ArrayOps : TemplateGroupBase() {
             - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with ${primitive.zero} values.
             """
         }
+        val newSizeCheck = """require(newSize >= 0) { "Invalid new array size: ${'$'}newSize." }"""
         specialFor(ArraysOfPrimitives) {
             sample("samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf")
             returns("SELF")
@@ -467,6 +468,7 @@ object ArrayOps : TemplateGroupBase() {
                     else ->
                         body { "return fillFrom(this, ${primitive}Array(newSize))" }
                 }
+                body { newSizeCheck + "\n" + body }
             }
 
         }
@@ -476,7 +478,12 @@ object ArrayOps : TemplateGroupBase() {
             on(Platform.JS) {
                 family = ArraysOfObjects
                 suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
-                body { "return arrayCopyResize(this, newSize, null)" }
+                body {
+                    """
+                    $newSizeCheck
+                    return arrayCopyResize(this, newSize, null)
+                    """
+                }
             }
         }
         on(Platform.JVM) {
