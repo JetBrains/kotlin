@@ -85,7 +85,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
     protected abstract fun analyzeAndCheck(testDataFile: File, files: List<TestFile>)
 
-    protected fun getKtFiles(testFiles: List<TestFile>, includeExtras: Boolean): List<KtFile> {
+    protected open fun getKtFiles(testFiles: List<TestFile>, includeExtras: Boolean): List<KtFile> {
         var declareFlexibleType = false
         var declareCheckType = false
         val ktFiles = arrayListOf<KtFile>()
@@ -123,7 +123,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val module: TestModule?,
             fileName: String,
             textWithMarkers: String,
-            directives: Map<String, String>
+            val directives: Map<String, String>
     ) {
         private val diagnosedRanges: List<CheckerTestUtil.DiagnosedRange> = ArrayList()
         val actualDiagnostics: MutableList<ActualDiagnostic> = ArrayList()

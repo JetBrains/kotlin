@@ -1,3 +1,5 @@
+// !WITH_BASIC_TYPES_PROVIDER
+
 /*
  KOTLIN SPEC TEST (NEGATIVE)
 
@@ -8,13 +10,7 @@
  DESCRIPTION: 'When' with bound value and with invalid list of the conditions in 'when entry'.
  */
 
-class A {
-    fun getInt(number: Int): Int {
-        return number + 11
-    }
-}
-
-fun case_1(value: Int, value2: A): String {
+fun case_1(value: Int, value2: _BasicTypesProvider): String {
     when (value) {
         -10000, value2.getInt(11), Int.MIN_VALUE, <!SYNTAX!><!>-> return ""
         21, <!SYNTAX!>,<!> <!SYNTAX!><!>-> return ""
