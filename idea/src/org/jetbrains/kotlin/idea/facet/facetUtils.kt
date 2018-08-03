@@ -253,15 +253,28 @@ fun parseCompilerArgumentsToFacet(
     kotlinFacet: KotlinFacet,
     modelsProvider: IdeModifiableModelsProvider?
 ) {
+    val compilerArgumentsClass = kotlinFacet.configuration.settings.compilerArguments?.javaClass ?: return
+    val currentArgumentsBean = compilerArgumentsClass.newInstance()
+    val defaultArgumentsBean = compilerArgumentsClass.newInstance()
+    parseCommandLineArguments(defaultArguments, defaultArgumentsBean)
+    parseCommandLineArguments(arguments, currentArgumentsBean)
+    applyCompilerArgumentsToFacet(currentArgumentsBean, defaultArgumentsBean, kotlinFacet, modelsProvider)
+}
+
+fun applyCompilerArgumentsToFacet(
+    arguments: CommonCompilerArguments,
+    defaultArguments: CommonCompilerArguments?,
+    kotlinFacet: KotlinFacet,
+    modelsProvider: IdeModifiableModelsProvider
+) {
     with(kotlinFacet.configuration.settings) {
         val compilerArguments = this.compilerArguments ?: return
 
-        val defaultCompilerArguments = compilerArguments::class.java.newInstance()
-        parseCommandLineArguments(defaultArguments, defaultCompilerArguments)
+        val defaultCompilerArguments = defaultArguments?.let { copyBean(it) } ?: compilerArguments::class.java.newInstance()
         defaultCompilerArguments.convertPathsToSystemIndependent()
 
-        parseCommandLineArguments(arguments, compilerArguments)
-
+        val emptyArgs = compilerArguments::class.java.newInstance()
+        copyBeanTo(arguments, compilerArguments) { property, value -> value != property.get(emptyArgs) }
         compilerArguments.convertPathsToSystemIndependent()
 
         // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.

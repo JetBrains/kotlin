@@ -30,6 +30,7 @@ import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.gradle.KotlinGradleModel
 import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
@@ -78,6 +79,10 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule: DataNode<ModuleData>,
         ideProject: DataNode<ProjectData>
     ) {
+        if (resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) != null) {
+            return super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        }
+
         val outputToSourceSet = ideProject.getUserData(GradleProjectResolver.MODULES_OUTPUTS)
         val sourceSetByName = ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS)
 
