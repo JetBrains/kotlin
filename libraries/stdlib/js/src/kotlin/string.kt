@@ -32,6 +32,11 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = asDynamic().toUpperCase()
 
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
+ *
+ * @sample samples.text.Strings.toLowerCase
+ */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = asDynamic().toLowerCase()
 
