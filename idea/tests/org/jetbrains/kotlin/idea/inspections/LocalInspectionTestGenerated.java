@@ -3252,6 +3252,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses/implicitThisReceiver.kt");
         }
 
+        @TestMetadata("invalidFunctionReference.kt")
+        public void testInvalidFunctionReference() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses/invalidFunctionReference.kt");
+        }
+
+        @TestMetadata("invalidFunctionReference2.kt")
+        public void testInvalidFunctionReference2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses/invalidFunctionReference2.kt");
+        }
+
+        @TestMetadata("invalidFunctionReference3.kt")
+        public void testInvalidFunctionReference3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses/invalidFunctionReference3.kt");
+        }
+
+        @TestMetadata("invalidFunctionReference4.kt")
+        public void testInvalidFunctionReference4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses/invalidFunctionReference4.kt");
+        }
+
         @TestMetadata("it.kt")
         public void testIt() throws Exception {
             runTest("idea/testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses/it.kt");
