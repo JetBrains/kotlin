@@ -111,7 +111,11 @@ internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 public expect fun String.substring(startIndex: Int): String
 public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
-
+/**
+ * Returns a copy of this string converted to upper case using the rules of the default locale.
+ *
+ * @sample samples.text.Strings.toUpperCase
+ */
 public expect fun String.toUpperCase(): String
 
 /**
