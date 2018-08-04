@@ -6,7 +6,6 @@
 package kotlin.text
 
 import kotlin.js.RegExp
-import kotlin.math.min
 
 /**
  * Converts the characters in the specified array to a string.
@@ -71,21 +70,26 @@ public actual inline fun String.compareTo(other: String, ignoreCase: Boolean): I
     if (ignoreCase) {
         val n1 = this.length
         val n2 = other.length
-        val min = min(n1, n2) - 1
-        for (i in 0..min) {
-            var c1 = this[i]
-            var c2 = other[i]
-            if (c1 != c2) {
-                c1 = c1.toUpperCase()
-                c2 = c2.toUpperCase()
-                if (c1 != c2) {
-                    c1 = c1.toLowerCase()
-                    c2 = c2.toLowerCase()
-                    if (c1 != c2) {
-                        return c1 - c2
+        val min = minOf(n1, n2)
+        if (min == 0) return n1 - n2
+        var start = 0
+        while (true) {
+            val end = minOf(start + 16, min)
+            var s1 = this.substring(start, end)
+            var s2 = other.substring(start, end)
+            if (s1 != s2) {
+                s1 = s1.toUpperCase()
+                s2 = s2.toUpperCase()
+                if (s1 != s2) {
+                    s1 = s1.toLowerCase()
+                    s2 = s2.toLowerCase()
+                    if (s1 != s2) {
+                        return s1.compareTo(s2)
                     }
                 }
             }
+            if (end == min) break
+            start = end
         }
         return n1 - n2
     } else {
