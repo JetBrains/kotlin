@@ -10,7 +10,6 @@ import com.intellij.openapi.util.Key
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
 import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer
-import org.jetbrains.konan.settings.KonanPaths
 
 class KonanValueRendererFactory : ValueRendererFactory {
   override fun createRenderer(context: ValueRendererFactory.FactoryContext): ValueRenderer? {
@@ -32,9 +31,9 @@ class KonanValueRendererFactory : ValueRendererFactory {
 
 
 private fun initLLDBDriver(project: Project, driver: LLDBDriver) {
-  val lldbPrettyPrinters = KonanPaths.getInstance(project).konanDist()?.resolve("tools/konan_lldb.py")
-  if (lldbPrettyPrinters != null) {
-    driver.executeConsoleCommand("command script import \"$lldbPrettyPrinters\"")
-  }
+//  val lldbPrettyPrinters = KonanPaths.getInstance(project).konanDist()?.resolve("tools/konan_lldb.py")
+//  if (lldbPrettyPrinters != null) {
+//    driver.executeConsoleCommand("command script import \"$lldbPrettyPrinters\"")
+//  }
   driver.executeConsoleCommand("settings set target.process.thread.step-avoid-regexp ^::Kotlin_")
 }

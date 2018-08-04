@@ -6,7 +6,6 @@
 package org.jetbrains.konan.gradle.execution
 
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
-import org.jetbrains.konan.settings.isExecutable
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 import java.io.File
@@ -25,7 +24,7 @@ class GradleKonanConfiguration(val id: String,
   private val myName: String = "$name [$profileName]"
 
   val isExecutable: Boolean
-    get() = targetType?.isExecutable ?: false
+    get() = true //targetType?.isExecutable ?: false
 
   override fun getName(): String {
     return myName

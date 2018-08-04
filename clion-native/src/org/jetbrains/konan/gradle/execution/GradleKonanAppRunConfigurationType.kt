@@ -34,11 +34,6 @@ class GradleKonanAppRunConfigurationType protected constructor() : Configuration
       override fun getId(): String {
         return myDefaultFactoryId
       }
-
-      override fun onNewConfigurationCreated(configuration: GradleKonanAppRunConfiguration) {
-        super.onNewConfigurationCreated(configuration)
-        configuration.setupDefaultTargetAndExecutable()
-      }
     }
 
   init {

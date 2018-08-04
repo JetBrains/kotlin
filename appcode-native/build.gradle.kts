@@ -3,7 +3,7 @@ import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 
 plugins {
     kotlin("jvm")
-    id("com.github.jk1.tcdeps") version "0.17"
+    id("com.github.jk1.tcdeps") version "0.18"
 }
 
 repositories {
@@ -16,13 +16,12 @@ repositories {
     }
 }
 
+val appcodeVersion = rootProject.extra["versions.appcode"] as String
+val appcodeVersionRepo = rootProject.extra["versions.appcode.repo"] as String
+
 dependencies {
-    compile(project(":idea:idea-native"))
-    compileOnly(tc("ijplatform_master_CIDR_AppCode_Installers:183.931:unscrambled/appcode.jar"))
-    compile(intellijDep()) {
-        includeJars("java-api", "java-impl")
-        isTransitive = false
-    }
+    compile(project(":kotlin-ultimate:cidr-native"))
+    compileOnly(tc("$appcodeVersionRepo:$appcodeVersion:unscrambled/appcode.jar"))
 }
 
 sourceSets {

@@ -26,10 +26,6 @@ class KonanTestRunConfigurationEditor<BC : CidrBuildConfiguration,
 
   override fun isValidSuiteName(): Boolean = true
 
-  override fun createSuiteCompletionCondition(): Condition<DeclarationDescriptor>? = Condition {
-    false
-  }
-
   override fun collectSuiteTests(): Set<String> = emptySet()
 
   override fun createSuiteAdapter(): OCFieldAdapter<DeclarationDescriptor> = object : OCFieldAdapter<DeclarationDescriptor> {

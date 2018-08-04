@@ -3,7 +3,7 @@ import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 
 plugins {
     kotlin("jvm")
-    id("com.github.jk1.tcdeps") version "0.17"
+    id("com.github.jk1.tcdeps") version "0.18"
 }
 
 repositories {
@@ -17,11 +17,15 @@ repositories {
 }
 
 val clionVersion = rootProject.extra["versions.clion"] as String
+val clionVersionRepo = rootProject.extra["versions.clion.repo"] as String
 
 dependencies {
-    compile(project(":idea:idea-ultimate:cidr-native"))
-    compile(project(":idea:idea-gradle:native"))
-    compileOnly(tc("ijplatform_master_CIDR_CLion_Installers:$clionVersion:unscrambled/clion.jar"))
+    compile(project(":idea:idea-native"))
+    compileOnly(tc("$clionVersionRepo:$clionVersion:unscrambled/clion.jar"))
+    compile(intellijDep()) {
+        includeJars("java-api", "java-impl")
+        isTransitive = false
+    }
 }
 
 sourceSets {

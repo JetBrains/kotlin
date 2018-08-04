@@ -5,7 +5,7 @@
   <name>Kotlin/Native for CLion</name>
   <vendor>JetBrains</vendor>
 
-  <idea-version since-build="183.3" until-build="183.*"/> <!--TODO restrict compatibility -->
+  <idea-version since-build="183.3" until-build="191.*"/> <!--TODO restrict compatibility -->
 
   <description>Kotlin/Native support</description>
 
@@ -13,6 +13,12 @@
 
   <depends>com.intellij.modules.clion</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
+
+  <application-components>
+    <component>
+      <implementation-class>org.jetbrains.konan.gradle.internal.KotlinNativeIdeInitializer</implementation-class>
+    </component>
+  </application-components>
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="org.jetbrains.konan.gradle.GradleKonanWorkspace"/>
