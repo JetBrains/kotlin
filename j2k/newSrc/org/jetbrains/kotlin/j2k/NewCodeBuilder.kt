@@ -178,7 +178,7 @@ class NewCodeBuilder {
             printer.printWithNoIndent(")", ": ")
             ktFunction.returnType.accept(this)
             if (ktFunction.block !== JKBodyStub) {
-                printer.block(multiline = true) {
+                printer.block(multiline = ktFunction.block.statements.isNotEmpty()) {
                     ktFunction.block.accept(this)
                 }
             }
