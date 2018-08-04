@@ -96,7 +96,7 @@ class Strings {
 
     @Sample
     fun toLowerCase() {
-        assertPrints("HI".toLowerCase(), "hi")
+        assertPrints("Iced frappé!".toLowerCase(), "iced frappé!")
     }
 
 }
