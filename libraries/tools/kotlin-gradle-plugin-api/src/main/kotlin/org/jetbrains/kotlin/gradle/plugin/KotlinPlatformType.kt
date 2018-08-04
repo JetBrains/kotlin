@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeCompatibilityRule
+import org.gradle.api.attributes.CompatibilityCheckDetails
 import java.io.Serializable
 
 enum class KotlinPlatformType: Named, Serializable {
-    common, jvm, js,
+    common, jvm, js, androidJvm,
     native; // TODO: split native into separate entries here or transform the enum to interface and implement entries in K/N
 
     override fun toString(): String = name
@@ -21,5 +23,14 @@ enum class KotlinPlatformType: Named, Serializable {
             "org.jetbrains.kotlin.platform.type",
             KotlinPlatformType::class.java
         )
+    }
+
+    class CompatibilityRule : AttributeCompatibilityRule<KotlinPlatformType> {
+        override fun execute(details: CompatibilityCheckDetails<KotlinPlatformType>) = with(details) {
+            when {
+                producerValue == jvm && consumerValue == androidJvm -> compatible()
+                producerValue == consumerValue -> compatible()
+            }
+        }
     }
 }
