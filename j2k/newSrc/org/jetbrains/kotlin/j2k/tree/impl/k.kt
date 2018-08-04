@@ -36,7 +36,7 @@ class JKKtPropertyImpl(
     override var modifierList: JKModifierList by child(modifierList)
     override var type by child(type)
     override var name: JKNameIdentifier by child(name)
-    override val initializer: JKExpression by child(initializer)
+    override var initializer: JKExpression by child(initializer)
     override val getter: JKBlock by child(getter)
     override val setter: JKBlock by child(setter)
 }
