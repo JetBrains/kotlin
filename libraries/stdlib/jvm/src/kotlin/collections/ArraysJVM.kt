@@ -43,3 +43,8 @@ internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
     @Suppress("UNCHECKED_CAST")
     return java.lang.reflect.Array.newInstance(reference.javaClass.componentType, size) as Array<T>
 }
+
+@SinceKotlin("1.3")
+internal fun copyOfRangeToIndexCheck(toIndex: Int, size: Int) {
+    if (toIndex > size) throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
+}

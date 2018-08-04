@@ -370,11 +370,34 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
+    val f_copyOfRangeJvmImpl = fn("copyOfRangeImpl(fromIndex: Int, toIndex: Int)") {
+        include(InvariantArraysOfObjects, ArraysOfPrimitives)
+        platforms(Platform.JVM)
+    } builderWith { primitive ->
+        since("1.3")
+        visibility("internal")
+        annotation("@PublishedApi")
+        annotation("""@JvmName("copyOfRange")""")
+        returns("SELF")
+        body {
+            """
+            copyOfRangeToIndexCheck(toIndex, size)
+            return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+            """
+        }
+    }
 
     val f_copyOfRange = fn("copyOfRange(fromIndex: Int, toIndex: Int)") {
         include(InvariantArraysOfObjects, ArraysOfPrimitives)
     } builderWith { primitive ->
-        doc { "Returns new array which is a copy of range of original array." }
+        doc {
+            """
+            Returns a new array which is a copy of the specified range of the original array.
+
+            @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+            @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
+            """
+        }
         returns("SELF")
 
         on(Platform.JS) {
@@ -383,18 +406,29 @@ object ArrayOps : TemplateGroupBase() {
                 suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                 returns("Array<T>")
             }
-            when(primitive) {
+            val rangeCheck = "AbstractList.checkRangeIndexes(fromIndex, toIndex, size)"
+            when (primitive) {
                 PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
                     body { "return withType(\"${primitive}Array\", this.asDynamic().slice(fromIndex, toIndex))" }
                 else -> {
-                    inline(suppressWarning = true)
                     body { "return this.asDynamic().slice(fromIndex, toIndex)" }
                 }
             }
+            body { rangeCheck + "\n" + body }
         }
         on(Platform.JVM) {
+            annotation("""@JvmName("copyOfRangeInline")""")
             inlineOnly()
-            body { "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)" }
+            body {
+                """
+                return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+                    copyOfRangeImpl(fromIndex, toIndex)
+                } else {
+                    if (toIndex > size) throw IndexOutOfBoundsException("toIndex: ${'$'}toIndex, size: ${'$'}size")
+                    java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+                }
+                """
+            }
         }
         on(Platform.Common) {
             specialFor(InvariantArraysOfObjects) {

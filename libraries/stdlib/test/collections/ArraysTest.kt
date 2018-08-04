@@ -606,6 +606,15 @@ class ArraysTest {
         assertEquals(listOf<Short>(200, 100), shortArrayOf(50, 100, 200).slice(2 downTo 1))
         assertEquals(listOf(100L, 200L, 30L), longArrayOf(50L, 100L, 200L, 30L).slice(1..3))
         assertEquals(listOf(true, false, true), booleanArrayOf(true, false, true, true).slice(iter))
+
+        for (range in listOf(-1 until 0, 0 until 2, 2..2)) {
+            val bounds = "range: $range"
+            val exClass = IndexOutOfBoundsException::class
+            assertFailsWith(exClass, bounds) { arrayOf("x").slice(range) }
+            assertFailsWith(exClass, bounds) { intArrayOf(1).slice(range) }
+            assertFailsWith(exClass, bounds) { longArrayOf(1L).slice(range) }
+            assertFailsWith(exClass, bounds) { charArrayOf('C').slice(range) }
+        }
     }
 
     @Test fun sliceArray() {
@@ -625,6 +634,15 @@ class ArraysTest {
 //        assertArrayNotSameButEquals(shortArrayOf(200, 100), shortArrayOf(50, 100, 200).sliceArray(2 downTo 1))
         assertArrayNotSameButEquals(longArrayOf(100L, 200L, 30L), longArrayOf(50L, 100L, 200L, 30L).sliceArray(1..3))
         assertArrayNotSameButEquals(booleanArrayOf(true, false, true), booleanArrayOf(true, false, true, true).sliceArray(coll))
+
+        for (range in listOf(-1 until 0, 0 until 2, 2..2)) {
+            val bounds = "range: $range"
+            val exClass = IndexOutOfBoundsException::class
+            assertFailsWith(exClass, bounds) { arrayOf("x").sliceArray(range) }
+            assertFailsWith(exClass, bounds) { intArrayOf(1).sliceArray(range) }
+            assertFailsWith(exClass, bounds) { longArrayOf(1L).sliceArray(range) }
+            assertFailsWith(exClass, bounds) { charArrayOf('C').sliceArray(range) }
+        }
     }
 
     @Test fun iterators() {
@@ -738,6 +756,7 @@ class ArraysTest {
     }
 
     @Test fun copyOfRange() {
+        assertArrayNotSameButEquals(arrayOf("b", "c"), arrayOf("a", "b", "c").copyOfRange(1, 3))
         assertArrayNotSameButEquals(booleanArrayOf(true, false, true), booleanArrayOf(true, false, true, true).copyOfRange(0, 3))
         assertArrayNotSameButEquals(byteArrayOf(0, 1, 2), byteArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3))
         assertArrayNotSameButEquals(shortArrayOf(0, 1, 2), shortArrayOf(0, 1, 2, 3, 4, 5).copyOfRange(0, 3))
@@ -746,6 +765,22 @@ class ArraysTest {
         assertArrayNotSameButEquals(floatArrayOf(0F, 1F, 2F), floatArrayOf(0F, 1F, 2F, 3F, 4F, 5F).copyOfRange(0, 3))
         assertArrayNotSameButEquals(doubleArrayOf(0.0, 1.0, 2.0), doubleArrayOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0).copyOfRange(0, 3))
         assertArrayNotSameButEquals(charArrayOf('0', '1', '2'), charArrayOf('0', '1', '2', '3', '4', '5').copyOfRange(0, 3))
+
+        for (pos in 0..3) {
+            assertArrayNotSameButEquals(emptyArray(), arrayOf("a", "b", "c").copyOfRange(pos, pos))
+            assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1, 2, 3).copyOfRange(pos, pos))
+            assertArrayNotSameButEquals(charArrayOf(), charArrayOf('a', 'b', 'c').copyOfRange(pos, pos))
+            assertArrayNotSameButEquals(longArrayOf(), LongArray(3) { it.toLong() }.copyOfRange(pos, pos))
+        }
+
+        for ((start, end) in listOf(-1 to 0, 0 to 2, 2 to 2, 1 to 0)) {
+            val bounds = "start: $start, end: $end"
+            val exClass = if (start > end) IllegalArgumentException::class else IndexOutOfBoundsException::class
+            assertFailsWith(exClass, bounds) { arrayOf("x").copyOfRange(start, end) }
+            assertFailsWith(exClass, bounds) { intArrayOf(1).copyOfRange(start, end) }
+            assertFailsWith(exClass, bounds) { longArrayOf(1L).copyOfRange(start, end) }
+            assertFailsWith(exClass, bounds) { charArrayOf('C').copyOfRange(start, end) }
+        }
     }
 
 
