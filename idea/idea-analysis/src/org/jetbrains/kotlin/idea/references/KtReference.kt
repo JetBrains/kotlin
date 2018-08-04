@@ -49,8 +49,8 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
         return ResolveCache.getInstance(expression.project).resolveWithCaching(this, kotlinResolver, false, incompleteCode)
     }
 
-    override fun isReferenceTo(element: PsiElement?): Boolean {
-        return element != null && matchesTarget(element)
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        return matchesTarget(element)
     }
 
     override fun getCanonicalText(): String = "<TBD>"

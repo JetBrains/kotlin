@@ -75,13 +75,11 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         }
     }
 
-    override fun isReferenceTo(element: PsiElement?): Boolean {
-        if (element != null) {
-            if (!canBeReferenceTo(element)) return false
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        if (!canBeReferenceTo(element)) return false
 
-            for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
-                if (extension.isReferenceTo(this, element)) return true
-            }
+        for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
+            if (extension.isReferenceTo(this, element)) return true
         }
 
         return super.isReferenceTo(element)
