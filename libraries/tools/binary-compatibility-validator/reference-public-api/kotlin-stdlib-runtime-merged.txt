@@ -1142,6 +1142,15 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun contains ([Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun contains ([SS)Z
 	public static final fun contains ([ZZ)Z
+	public static final fun copyOfRange ([BII)[B
+	public static final fun copyOfRange ([CII)[C
+	public static final fun copyOfRange ([DII)[D
+	public static final fun copyOfRange ([FII)[F
+	public static final fun copyOfRange ([III)[I
+	public static final fun copyOfRange ([JII)[J
+	public static final fun copyOfRange ([Ljava/lang/Object;II)[Ljava/lang/Object;
+	public static final fun copyOfRange ([SII)[S
+	public static final fun copyOfRange ([ZII)[Z
 	public static final fun count ([BLkotlin/jvm/functions/Function1;)I
 	public static final fun count ([CLkotlin/jvm/functions/Function1;)I
 	public static final fun count ([DLkotlin/jvm/functions/Function1;)I
