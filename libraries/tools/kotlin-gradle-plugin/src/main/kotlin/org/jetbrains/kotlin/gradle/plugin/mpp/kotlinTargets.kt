@@ -65,7 +65,7 @@ open class KotlinAndroidTarget(
         internal set
 
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.jvm
+        get() = KotlinPlatformType.androidJvm
 
     private val compilationFactory = KotlinJvmAndroidCompilationFactory(project, this)
 

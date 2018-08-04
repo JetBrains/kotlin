@@ -113,6 +113,14 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             usesPlatformOf(compilation.target)
             project.addExtendsFromRelation(name, compilation.runtimeDependencyConfigurationName)
         }
+
+        // TODO this code depends on the convention that is present in the Android plugin as there's no public API
+        // We should request such API in the Android plugin
+        val apiElementsConfigurationName = "${variant.name}ApiElements"
+        val runtimeElementsConfigurationName = "${variant.name}RuntimeElements"
+        listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).forEach { outputConfigurationName ->
+            project.configurations.findByName(outputConfigurationName)?.usesPlatformOf(compilation.target)
+        }
     }
 
     private inner class KaptVariant(variantData: BaseVariant) : KaptVariantData<BaseVariant>(variantData) {
