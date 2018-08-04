@@ -113,6 +113,12 @@ public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
 
 public expect fun String.toUpperCase(): String
+
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
+ *
+ * @sample samples.text.Strings.toLowerCase
+ */
 public expect fun String.toLowerCase(): String
 public expect fun String.capitalize(): String
 public expect fun String.decapitalize(): String
