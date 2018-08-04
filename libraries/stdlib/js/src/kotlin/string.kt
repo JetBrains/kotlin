@@ -6,6 +6,7 @@
 package kotlin.text
 
 import kotlin.js.RegExp
+import kotlin.math.min
 
 /**
  * Converts the characters in the specified array to a string.
@@ -67,5 +68,27 @@ internal inline fun String.nativeReplace(pattern: RegExp, replacement: String): 
 
 @kotlin.internal.InlineOnly
 public actual inline fun String.compareTo(other: String, ignoreCase: Boolean): Int {
-    return if (ignoreCase) toUpperCase().compareTo(other.toUpperCase()) else compareTo(other)
+    if (ignoreCase) {
+        val n1 = this.length
+        val n2 = other.length
+        val min = min(n1, n2) - 1
+        for (i in 0..min) {
+            var c1 = this[i]
+            var c2 = other[i]
+            if (c1 != c2) {
+                c1 = c1.toUpperCase()
+                c2 = c2.toUpperCase()
+                if (c1 != c2) {
+                    c1 = c1.toLowerCase()
+                    c2 = c2.toLowerCase()
+                    if (c1 != c2) {
+                        return c1 - c2
+                    }
+                }
+            }
+        }
+        return n1 - n2
+    } else {
+        return compareTo(other)
+    }
 }

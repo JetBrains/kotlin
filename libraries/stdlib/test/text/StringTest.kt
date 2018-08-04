@@ -1339,20 +1339,18 @@ ${"    "}
 
     @Test fun testCompareToIgnoreCase() {
         assertTrue("ABC".compareTo("ABC", ignoreCase = false) == 0)
-        assertTrue("ABC".compareTo("aBC", ignoreCase = false) < 0)
-        assertTrue("aBC".compareTo("ABC", ignoreCase = false) > 0)
-        assertTrue("ABC".compareTo("xyz", ignoreCase = false) < 0)
-        assertTrue("abc".compareTo("XYZ", ignoreCase = false) > 0)
-        assertTrue("XYZ".compareTo("abc", ignoreCase = false) < 0)
-        assertTrue("xyz".compareTo("ABC", ignoreCase = false) > 0)
+        assertTrue("ABC".compareTo("ABc", ignoreCase = false) < 0)
+        assertTrue("ABc".compareTo("ABC", ignoreCase = false) > 0)
+        assertTrue("ABC".compareTo("ABx", ignoreCase = false) < 0)
+        assertTrue("ABx".compareTo("ABC", ignoreCase = false) > 0)
+        assertTrue("[".compareTo("aa", ignoreCase = false) < 0)
 
         assertTrue("ABC".compareTo("ABC", ignoreCase = true) == 0)
-        assertTrue("ABC".compareTo("aBC", ignoreCase = true) == 0)
-        assertTrue("aBC".compareTo("ABC", ignoreCase = true) == 0)
-        assertTrue("ABC".compareTo("xyz", ignoreCase = true) < 0)
-        assertTrue("abc".compareTo("XYZ", ignoreCase = true) < 0)
-        assertTrue("XYZ".compareTo("abc", ignoreCase = true) > 0)
-        assertTrue("xyz".compareTo("ABC", ignoreCase = true) > 0)
+        assertTrue("ABC".compareTo("ABc", ignoreCase = true) == 0)
+        assertTrue("ABc".compareTo("ABC", ignoreCase = true) == 0)
+        assertTrue("ABC".compareTo("ABx", ignoreCase = true) < 0)
+        assertTrue("ABx".compareTo("ABC", ignoreCase = true) > 0)
+        assertTrue("[".compareTo("aa", ignoreCase = true) < 0)
     }
 
 }
