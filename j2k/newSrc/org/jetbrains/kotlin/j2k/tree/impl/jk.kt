@@ -189,6 +189,8 @@ class JKNullLiteral : JKLiteralExpression, JKElementBase() {
         get() = "null"
     override val type: LiteralType
         get() = NULL
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLiteralExpression(this, data)
 }
 
 class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase() {
