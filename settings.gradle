@@ -183,7 +183,13 @@ include ":kotlin-build-common",
 def isIncludeNative = hasProperty("kotlinNativeEnabled") && kotlinNativeEnabled != 'false'
 if (isIncludeNative) {
     include ":idea:idea-native",
-            ":idea:idea-gradle:native"
+            ":idea:idea-gradle:native",
+            ":kotlin-ultimate:cidr-native",
+            ":kotlin-ultimate:appcode-native",
+            ":kotlin-ultimate:clion-native",
+            ":prepare:cidr-plugin",
+            ":prepare:appcode-plugin",
+            ":prepare:clion-plugin"
 
     // native
     include ':kotlin-native:dependencies'
