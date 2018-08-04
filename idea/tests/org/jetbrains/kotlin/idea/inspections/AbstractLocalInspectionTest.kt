@@ -190,7 +190,12 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
 
         val allLocalFixActions = highlightInfos.flatMap { it.quickFixActionMarkers ?: emptyList() }.map { it.first.action }
 
-        val localFixActions = allLocalFixActions.filter { fix -> localFixTextString == null || fix.text == localFixTextString }
+        val localFixActions = if (localFixTextString == null || localFixTextString == "none") {
+            allLocalFixActions
+        } else {
+            allLocalFixActions.filter { fix -> fix.text == localFixTextString }
+        }
+
         val availableDescription = allLocalFixActions.joinToString { it.text }
 
         val fixDescription = localFixTextString?.let { "with specified text '$localFixTextString'" } ?: ""
@@ -201,6 +206,10 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         )
 
         val localFixAction = localFixActions.singleOrNull { it !is EmptyIntentionAction }
+        if (localFixTextString == "none") {
+            Assert.assertTrue("Expected no fix action", localFixAction == null)
+            return false
+        }
         TestCase.assertTrue(
             "More than one fix action $fixDescription\n" +
                     "Available actions: $availableDescription",

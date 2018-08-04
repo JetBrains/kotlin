@@ -13,20 +13,23 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.ConvertLambdaToReferenceIntention
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.psi.lambdaExpressionVisitor
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -47,15 +50,39 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                         }
                     }
                 }
+                val quickFix = if (canMove(lambdaExpression, callableReference, context))
+                    IntentionWrapper(MoveIntoParenthesesIntention(), lambdaExpression.containingFile)
+                else
+                    null
                 holder.registerProblem(
                     lambdaExpression,
                     "Suspicious callable reference as the only lambda element",
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                    IntentionWrapper(MoveIntoParenthesesIntention(), lambdaExpression.containingFile)
+                    quickFix
                 )
-
             }
         })
+    }
+
+    private fun canMove(
+        lambdaExpression: KtLambdaExpression,
+        callableReference: KtCallableReferenceExpression,
+        context: BindingContext
+    ): Boolean {
+        val lambdaDescriptor = context[BindingContext.FUNCTION, lambdaExpression.functionLiteral] ?: return false
+        val lambdaParameter = lambdaDescriptor.extensionReceiverParameter ?: lambdaDescriptor.valueParameters.singleOrNull()
+
+        val functionReceiver = callableReference.receiverExpression?.mainReference?.resolveToDescriptors(context)?.firstOrNull()
+        if (functionReceiver == lambdaParameter) return true
+        val lambdaParameterType = lambdaParameter?.type
+        if (functionReceiver is VariableDescriptor && functionReceiver.type == lambdaParameterType) return true
+        if (functionReceiver is ClassDescriptor && functionReceiver == lambdaParameterType?.constructor?.declarationDescriptor) return true
+
+        if (lambdaParameterType == null) return false
+        val functionDescriptor =
+            callableReference.callableReference.mainReference.resolveToDescriptors(context).firstOrNull() as? FunctionDescriptor
+        val functionParameterType = functionDescriptor?.valueParameters?.firstOrNull()?.type ?: return false
+        return functionParameterType == lambdaParameterType
     }
 
     class MoveIntoParenthesesIntention : ConvertLambdaToReferenceIntention(
