@@ -79,7 +79,7 @@ class JKParameterImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParameter(this, data)
 
     override var modifierList by child(modifierList)
-    override val initializer by child(initializer)
+    override var initializer by child(initializer)
     override val name by child(name)
     override var type by child(type)
 }
@@ -203,7 +203,7 @@ class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(
 class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) :
     JKLocalVariable, JKBranchElementBase() {
     override var modifierList by child(modifierList)
-    override val initializer by child(initializer)
+    override var initializer by child(initializer)
     override val name by child(name)
     override val type by child(type)
 

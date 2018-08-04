@@ -23,6 +23,7 @@ object ConversionsRunner {
 
     private fun createConversions(context: ConversionContext) = listOf(
         ModalityConversion(context),
+        ImplicitInitializerConversion(),
         TypeMappingConversion(context),
         FieldToPropertyConversion(),
         AssignmentAsExpressionToAlsoConversion(context),
@@ -33,7 +34,7 @@ object ConversionsRunner {
         JavaMethodToKotlinFunctionConversion(),
         LiteralConversion(),
         InnerClassConversion(),
-        ModifiersConversion(),
+        ModifiersConversion(context),
         PolyadicExpressionConversion(),
         BinaryExpressionConversion()
     )
