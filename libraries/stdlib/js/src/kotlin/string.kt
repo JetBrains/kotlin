@@ -24,7 +24,11 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     return String(chars.copyOfRange(offset, offset + length))
 }
 
-
+/**
+ * Returns a copy of this string converted to upper case using the rules of the default locale.
+ *
+ * @sample samples.text.Strings.toUpperCase
+ */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = asDynamic().toUpperCase()
 
