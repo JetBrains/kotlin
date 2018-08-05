@@ -10872,6 +10872,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassImplementsCollection.kt");
             }
 
+            @TestMetadata("inlineClassWithForbiddenUnderlyingType.kt")
+            public void testInlineClassWithForbiddenUnderlyingType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassWithForbiddenUnderlyingType.kt");
+            }
+
             @TestMetadata("inlineClassesInsideAnnotations.kt")
             public void testInlineClassesInsideAnnotations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassesInsideAnnotations.kt");

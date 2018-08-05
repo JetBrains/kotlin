@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object InlineClassDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -70,6 +75,17 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             }
 
             return
+        }
+
+        val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
+        if (baseParameterType != null &&
+            (baseParameterType.isUnit() || baseParameterType.isNothing() || baseParameterType.isTypeParameter())
+        ) {
+            val typeReference = baseParameter.typeReference
+            if (typeReference != null) {
+                trace.report(Errors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(typeReference, baseParameterType))
+                return
+            }
         }
     }
 
