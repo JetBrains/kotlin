@@ -1256,6 +1256,6 @@ public fun CharSequence.lines(): List<String> = lineSequence().toList()
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
  */
-fun CharSequence.splitTo(destination: MutableCollection<String>, vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0) {
+public fun CharSequence.splitTo(destination: MutableCollection<String>, vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0) {
     rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).map { substring(it) }.toCollection(destination)
 }
