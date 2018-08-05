@@ -1343,4 +1343,11 @@ ${"    "}
         string.splitTo(list, " ")
         assertEquals(5, list.size)
     }
+
+    @Test fun testSplitToCollectionWithMoreThanOneDelimiter() {
+        val string = "String us,ed to te,st splitTo()"
+        val list = mutableListOf<String>()
+        string.splitTo(list, " ", ",")
+        assertEquals(7, list.size)
+    }
 }
