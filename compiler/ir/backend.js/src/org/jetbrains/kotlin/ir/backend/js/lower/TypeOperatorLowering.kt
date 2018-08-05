@@ -50,7 +50,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf.symbol
     private val typeOfIntrinsicSymbol = context.intrinsics.jsTypeOf.symbol
-    private val toJSTypeIntrinsicSymbol = context.intrinsics.jsToJsType.symbol
+    private val jsClassIntrinsicSymbol = context.intrinsics.jsClass
 
     private val stringMarker = JsIrBuilder.buildString(context.irBuiltIns.stringType, "string")
     private val booleanMarker = JsIrBuilder.buildString(context.irBuiltIns.stringType, "boolean")
@@ -241,13 +241,14 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
             }
 
             private fun wrapTypeReference(toType: IrType) =
-                JsIrBuilder.buildCall(toJSTypeIntrinsicSymbol).apply { putTypeArgument(0, toType) }
+                JsIrBuilder.buildCall(jsClassIntrinsicSymbol).apply { putTypeArgument(0, toType) }
 
             private fun generateGenericArrayCheck(argument: IrExpression) =
                 JsIrBuilder.buildCall(isArraySymbol).apply { putValueArgument(0, argument) }
 
             private fun generatePrimitiveArrayTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
-                TODO("Implement Typed Array check")
+                val f = context.intrinsics.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!
+                return JsIrBuilder.buildCall(f).apply { putValueArgument(0, argument) }
             }
 
             private fun generateInterfaceCheck(argument: IrExpression, toType: IrType): IrExpression {

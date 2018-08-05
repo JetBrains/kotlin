@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -157,6 +158,15 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             val simpleNameProp = JsPropertyInitializer(JsNameRef(Namer.METADATA_SIMPLE_NAME), JsStringLiteral(simpleName.identifier))
             metadataLiteral.propertyInitializers += simpleNameProp
         }
+
+        val classKind = JsStringLiteral(
+            when {
+                irClass.isInterface -> "interface"
+                irClass.isObject -> "object"
+                else -> "class"
+            }
+        )
+        metadataLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef(Namer.METADATA_CLASS_KIND), classKind)
 
         metadataLiteral.propertyInitializers += generateSuperClasses()
         return jsAssignment(JsNameRef(Namer.METADATA, classNameRef), metadataLiteral).makeStmt()

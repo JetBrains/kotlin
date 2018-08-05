@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.js.test
 
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.Result
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -24,9 +21,11 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
     "libraries/stdlib/js/src/kotlin/dynamic.kt",
     "libraries/stdlib/js/src/kotlin/annotations.kt",
+    "libraries/stdlib/js/src/kotlin/reflect",
+    "libraries/stdlib/js/src/kotlin/annotationsJVM.kt",
 
-    "libraries/stdlib/src/kotlin/internal/Annotations.kt",
-
+    "libraries/stdlib/src/kotlin/internal",
+    "libraries/stdlib/src/kotlin/util/Standard.kt",
     "core/builtins/native/kotlin/Annotation.kt",
     "core/builtins/native/kotlin/Number.kt",
     "core/builtins/native/kotlin/Comparable.kt",
@@ -39,8 +38,13 @@ private val runtimeSources = listOfKtFilesFrom(
     "core/builtins/src/kotlin/Range.kt",
     "core/builtins/src/kotlin/Ranges.kt",
     "core/builtins/src/kotlin/Unit.kt",
+    "core/builtins/src/kotlin/reflect",
+    "core/builtins/src/kotlin/Function.kt",
+
     "core/builtins/native/kotlin/Collections.kt",
     "core/builtins/native/kotlin/Iterator.kt",
+
+    "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
 
     "libraries/stdlib/js/irRuntime",
     BasicBoxTest.COMMON_FILES_DIR_PATH
@@ -85,13 +89,20 @@ abstract class BasicIrBoxTest(
             // TODO: split input files to some parts (global common, local common, test)
             .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
 
+        val runtimeConfiguration = config.configuration.copy()
+
+        // TODO: is it right in general? Maybe sometimes we need to compile with newer versions or with additional language features.
+        runtimeConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(
+            LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
+            specificFeatures = mapOf(
+                LanguageFeature.AllowContractsForCustomFunctions to LanguageFeature.State.ENABLED,
+                LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
+            )
+        )
+
+
         if (runtimeResult == null) {
-            val myConfiguration = config.configuration.copy()
-
-            // TODO: is it right in general? Maybe sometimes we need to compile with newer versions or with additional language features.
-            myConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
-
-            runtimeResult = compile(config.project, runtimeSources.map(::createPsiFile), myConfiguration)
+            runtimeResult = compile(config.project, runtimeSources.map(::createPsiFile), runtimeConfiguration)
             runtimeFile.write(runtimeResult!!.generatedCode)
         }
 
@@ -101,7 +112,7 @@ abstract class BasicIrBoxTest(
             compile(
                 config.project,
                 allFiles,
-                config.configuration,
+                runtimeConfiguration,
                 FqName((testPackage?.let { "$it." } ?: "") + testFunction))
         } else {
             compile(

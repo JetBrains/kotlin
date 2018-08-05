@@ -1,12 +1,12 @@
 // IGNORE_BACKEND: JVM_IR
-inline fun run(block: () -> Unit) = block()
+inline fun run2(block: () -> Unit) = block()
 
 class A {
     val prop: Int
     constructor(arg: Boolean) {
         if (arg) {
             prop = 1
-            run { return }
+            run2 { return }
             throw RuntimeException("fail 0")
         }
         prop = 2

@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 // See KT-12337 Reference to property with invisible setter should not be a KMutableProperty
 
 import kotlin.reflect.KProperty1

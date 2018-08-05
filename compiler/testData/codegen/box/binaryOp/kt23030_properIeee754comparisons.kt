@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND: JS_IR
 class C {
     operator fun Int.compareTo(c: Char) = 0
 

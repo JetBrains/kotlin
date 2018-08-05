@@ -4,6 +4,12 @@
  */
 package kotlin
 
+open class Error(override val message: String?, override val cause: Throwable?) : Throwable() {
+    constructor() : this(null, null)
+    constructor(_message: String?) : this(_message, null)
+    constructor(_cause: Throwable?) : this(null, _cause)
+}
+
 open class Exception(override val message: String?, override val cause: Throwable?) : Throwable() {
     constructor() : this(null, null)
     constructor(_message: String?) : this(_message, null)

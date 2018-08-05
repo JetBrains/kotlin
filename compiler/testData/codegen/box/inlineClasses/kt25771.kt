@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 inline class SuccessOrFailure<out T>(val value: Any?) {
     val isFailure: Boolean get() = value is Failure

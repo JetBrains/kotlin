@@ -26,6 +26,8 @@ fun IrType.isInterface() = toKotlinType().isInterface()
 
 fun IrType.isPrimitiveArray() = KotlinBuiltIns.isPrimitiveArray(toKotlinType())
 
+fun IrType.getPrimitiveArrayElementType() = KotlinBuiltIns.getPrimitiveArrayElementType(toKotlinType())
+
 fun IrType.isTypeParameter() = toKotlinType().isTypeParameter()
 
 fun IrType.isFunctionOrKFunction() = toKotlinType().isFunctionOrKFunctionType

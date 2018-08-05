@@ -325,9 +325,10 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
                             // assignment to a property
                             IrStatementOrigin.EQ -> {
-                                val fieldSymbol = IrFieldSymbolImpl((symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty)
-                                return JsIrBuilder.buildSetField(fieldSymbol, call.dispatchReceiver, call.getValueArgument(0)!!, call.type)
-
+                                if (symbol.descriptor is PropertyAccessorDescriptor) {
+                                    val fieldSymbol = IrFieldSymbolImpl((symbol.descriptor as PropertyAccessorDescriptor).correspondingProperty)
+                                    return JsIrBuilder.buildSetField(fieldSymbol, call.dispatchReceiver, call.getValueArgument(0)!!, call.type)
+                                }
                             }
                         }
                     }
