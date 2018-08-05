@@ -1368,4 +1368,12 @@ ${"    "}
         assertEquals("Integer", list[0])
         assertEquals("Integer", list[1])
     }
+
+    @Test fun testSplitToCollectionLimiting() {
+        val string = "Integer,Integer,Integer,Integer"
+        val list = mutableListOf<String>()
+        string.splitTo(list, ",", limit = 2)
+        assertEquals(2, list.size)
+        assertEquals("Integer,Integer,Integer", list[1])
+    }
 }
