@@ -1247,3 +1247,7 @@ public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n
  * * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
 public fun CharSequence.lines(): List<String> = lineSequence().toList()
+
+fun CharSequence.splitTo(destination: MutableCollection<String>, vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0) {
+    rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).map { substring(it) }.toCollection(destination)
+}
