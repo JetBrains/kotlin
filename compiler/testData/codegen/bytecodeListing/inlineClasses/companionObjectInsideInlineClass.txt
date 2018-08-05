@@ -10,7 +10,10 @@ public final class Foo$Companion {
 public final static class Foo$Erased {
     public final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
     public static method constructor(p0: int): int
+    public static method equals(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public static method hashCode(p0: int): int
     public final static method inInlineClass(p0: int): void
+    public static @org.jetbrains.annotations.NotNull method toString(p0: int): java.lang.String
 }
 
 @kotlin.Metadata
@@ -21,7 +24,10 @@ public final class Foo {
     inner class Foo$Companion
     static method <clinit>(): void
     public method <init>(p0: int): void
+    public method equals(p0: java.lang.Object): boolean
     public final method getX(): int
+    public method hashCode(): int
     public final method inInlineClass(): void
+    public method toString(): java.lang.String
     public final method unbox(): int
 }

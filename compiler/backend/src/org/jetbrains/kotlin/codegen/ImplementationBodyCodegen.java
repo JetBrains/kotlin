@@ -434,6 +434,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFunctionsForDataClasses();
 
+        generateFunctionsFromAnyForInlineClasses();
+
         if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
             new CollectionStubMethodGenerator(typeMapper, descriptor).generate(functionCodegen, v);
 
@@ -554,6 +556,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!descriptor.isData()) return;
         if (!(myClass instanceof KtClassOrObject)) return;
         new DataClassMethodGeneratorImpl((KtClassOrObject)myClass, bindingContext).generate();
+    }
+
+    private void generateFunctionsFromAnyForInlineClasses() {
+        if (!descriptor.isInline()) return;
+        if (!(myClass instanceof KtClassOrObject)) return;
+        new FunctionsFromAnyGeneratorImpl(
+                (KtClassOrObject) myClass, bindingContext, descriptor, classAsmType, context, v, state
+        ).generate();
     }
 
     private class DataClassMethodGeneratorImpl extends DataClassMethodGenerator {

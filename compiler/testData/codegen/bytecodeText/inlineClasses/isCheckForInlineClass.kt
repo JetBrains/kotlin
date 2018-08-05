@@ -1,8 +1,12 @@
 // !LANGUAGE: +InlineClasses
 
+// FILE: utils.kt
+
 inline class UInt(val u: Int) {
     fun member() {}
 }
+
+// FILE: test.kt
 
 fun UInt?.extension() {}
 
@@ -16,6 +20,7 @@ fun test(a: Any, b: Any?) {
     }
 }
 
+// @TestKt.class:
 // 2 INSTANCEOF UInt
 // 2 CHECKCAST UInt
 

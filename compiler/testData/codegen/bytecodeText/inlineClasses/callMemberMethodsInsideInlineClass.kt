@@ -15,4 +15,4 @@ inline class Foo(val x: Int) {
 // 2 INVOKESTATIC Foo\$Erased.empty \(I\)V
 // 2 INVOKESTATIC Foo\$Erased.withParam \(ILjava/lang/String;\)V
 // 2 INVOKESTATIC Foo\$Erased.withInlineClassParam \(II\)V
-// 0 INVOKEVIRTUAL
+// 5 INVOKEVIRTUAL

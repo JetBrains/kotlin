@@ -410,7 +410,7 @@ public abstract class StackValue {
         );
     }
 
-    private static void unboxInlineClass(@NotNull Type type, @NotNull KotlinType targetInlineClassType, @NotNull InstructionAdapter v) {
+    public static void unboxInlineClass(@NotNull Type type, @NotNull KotlinType targetInlineClassType, @NotNull InstructionAdapter v) {
         Type owner = KotlinTypeMapper.mapInlineClassTypeAsDeclaration(targetInlineClassType);
 
         coerce(type, owner, v);

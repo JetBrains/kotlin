@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -31,6 +34,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.jetbrains.org.objectweb.asm.Opcodes.IRETURN;
 
 public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
@@ -40,6 +44,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
     private final ClassBuilder v;
     private final GenerationState generationState;
     private final KotlinTypeMapper typeMapper;
+    private final JvmKotlinType underlyingType;
 
     public FunctionsFromAnyGeneratorImpl(
             @NotNull KtClassOrObject declaration,
@@ -57,6 +62,10 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         this.v = v;
         this.generationState = state;
         this.typeMapper = state.getTypeMapper();
+        this.underlyingType = new JvmKotlinType(
+                typeMapper.mapType(descriptor),
+                InlineClassesUtilsKt.substitutedUnderlyingType(descriptor.getDefaultType())
+        );
     }
 
     @Override
@@ -64,7 +73,14 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
             @NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties
     ) {
         MethodContext context = fieldOwnerContext.intoFunction(function);
-        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+        JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), "toString", getToStringDesc(), null, null);
+
+        if (fieldOwnerContext.getContextKind() != OwnerKind.ERASED_INLINE_CLASS && classDescriptor.isInline()) {
+            FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
+            return;
+        }
+
         mv.visitAnnotation(Type.getDescriptor(NotNull.class), false);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -82,9 +98,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
             }
             genInvokeAppendMethod(iv, JAVA_STRING_TYPE, null);
 
-            JvmKotlinType type = ImplementationBodyCodegen.genPropertyOnStack(
-                    iv, context, propertyDescriptor, classAsmType, 0, generationState
-            );
+            JvmKotlinType type = genOrLoadOnStack(iv, context, propertyDescriptor, 0);
             Type asmType = type.getType();
 
             if (asmType.getSort() == Type.ARRAY) {
@@ -117,7 +131,14 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
             @NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties
     ) {
         MethodContext context = fieldOwnerContext.intoFunction(function);
-        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "hashCode", "()I", null, null);
+        JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), "hashCode", getHashCodeDesc(), null, null);
+
+        if (fieldOwnerContext.getContextKind() != OwnerKind.ERASED_INLINE_CLASS && classDescriptor.isInline()) {
+            FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
+            return;
+        }
+
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         mv.visitCode();
@@ -128,9 +149,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
                 iv.mul(Type.INT_TYPE);
             }
 
-            JvmKotlinType propertyType = ImplementationBodyCodegen.genPropertyOnStack(
-                    iv, context, propertyDescriptor, classAsmType, 0, generationState
-            );
+            JvmKotlinType propertyType = genOrLoadOnStack(iv, context, propertyDescriptor, 0);
             KotlinType kotlinType = propertyDescriptor.getReturnType();
             Type asmType = typeMapper.mapType(kotlinType);
             StackValue.coerce(propertyType.getType(), propertyType.getKotlinType(), asmType, kotlinType, iv);
@@ -172,39 +191,32 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
             @NotNull FunctionDescriptor function, @NotNull List<? extends PropertyDescriptor> properties
     ) {
         MethodContext context = fieldOwnerContext.intoFunction(function);
-        MethodVisitor
-                mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
-        mv.visitParameterAnnotation(0, Type.getDescriptor(Nullable.class), false);
+        JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), "equals", getEqualsDesc(), null, null);
+
+        boolean isErasedInlineClassKind = fieldOwnerContext.getContextKind() == OwnerKind.ERASED_INLINE_CLASS;
+        if (!isErasedInlineClassKind && classDescriptor.isInline()) {
+            FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
+            return;
+        }
+
+        mv.visitParameterAnnotation(isErasedInlineClassKind ? 1 : 0, Type.getDescriptor(Nullable.class), false);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         mv.visitCode();
         Label eq = new Label();
         Label ne = new Label();
 
-        iv.load(0, OBJECT_TYPE);
-        iv.load(1, OBJECT_TYPE);
-        iv.ifacmpeq(eq);
-
-        iv.load(1, OBJECT_TYPE);
-        iv.instanceOf(classAsmType);
-        iv.ifeq(ne);
-
-        iv.load(1, OBJECT_TYPE);
-        iv.checkcast(classAsmType);
-        iv.store(2, OBJECT_TYPE);
+        int storedValueIndex = generateBasicChecksAndStoreTarget(iv, eq, ne);
 
         for (PropertyDescriptor propertyDescriptor : properties) {
             KotlinType kotlinType = propertyDescriptor.getReturnType();
             Type asmType = typeMapper.mapType(kotlinType);
 
-            JvmKotlinType thisPropertyType = ImplementationBodyCodegen.genPropertyOnStack(
-                    iv, context, propertyDescriptor, classAsmType, 0, generationState
-            );
+            JvmKotlinType thisPropertyType = genOrLoadOnStack(iv,context, propertyDescriptor, 0);
             StackValue.coerce(thisPropertyType.getType(), thisPropertyType.getKotlinType(), asmType, kotlinType, iv);
 
-            JvmKotlinType otherPropertyType = ImplementationBodyCodegen.genPropertyOnStack(
-                    iv, context, propertyDescriptor, classAsmType, 2, generationState
-            );
+            JvmKotlinType otherPropertyType = genOrLoadOnStack(iv,context, propertyDescriptor, storedValueIndex);
             StackValue.coerce(otherPropertyType.getType(), otherPropertyType.getKotlinType(), asmType, kotlinType, iv);
 
             if (asmType.getSort() == Type.FLOAT) {
@@ -233,5 +245,78 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         iv.areturn(Type.INT_TYPE);
 
         FunctionCodegen.endVisit(mv, "equals", getDeclaration());
+    }
+
+    private int generateBasicChecksAndStoreTarget(InstructionAdapter iv, Label eq, Label ne) {
+        if (fieldOwnerContext.getContextKind() == OwnerKind.ERASED_INLINE_CLASS) {
+            SimpleType wrapperKotlinType = classDescriptor.getDefaultType();
+            Type wrapperType = typeMapper.mapTypeAsDeclaration(wrapperKotlinType);
+            int secondParameterIndex = underlyingType.getType().getSize();
+
+            iv.load(secondParameterIndex, OBJECT_TYPE);
+            iv.instanceOf(wrapperType);
+            iv.ifeq(ne);
+
+            int unboxedValueIndex = secondParameterIndex + 1;
+
+            iv.load(secondParameterIndex, OBJECT_TYPE);
+            iv.checkcast(wrapperType);
+            StackValue.unboxInlineClass(wrapperType, wrapperKotlinType, iv);
+            iv.store(unboxedValueIndex, underlyingType.getType());
+
+            return unboxedValueIndex;
+        }
+        else {
+            iv.load(0, OBJECT_TYPE);
+            iv.load(1, OBJECT_TYPE);
+            iv.ifacmpeq(eq);
+
+            iv.load(1, OBJECT_TYPE);
+            iv.instanceOf(classAsmType);
+            iv.ifeq(ne);
+
+            iv.load(1, OBJECT_TYPE);
+            iv.checkcast(classAsmType);
+            iv.store(2, OBJECT_TYPE);
+
+            return 2;
+        }
+    }
+
+    private JvmKotlinType genOrLoadOnStack(InstructionAdapter iv, MethodContext context, PropertyDescriptor propertyDescriptor, int index) {
+        if (fieldOwnerContext.getContextKind() == OwnerKind.ERASED_INLINE_CLASS) {
+            iv.load(index, underlyingType.getType());
+            return underlyingType;
+        }
+        else {
+            return ImplementationBodyCodegen.genPropertyOnStack(
+                    iv, context, propertyDescriptor, classAsmType, index, generationState
+            );
+        }
+    }
+
+    private String getToStringDesc() {
+        return "(" + getFirstParameterDesc() + ")Ljava/lang/String;";
+    }
+
+    private String getHashCodeDesc() {
+        return "(" + getFirstParameterDesc() + ")I";
+    }
+
+    private String getEqualsDesc() {
+        return "(" + getFirstParameterDesc() + "Ljava/lang/Object;)Z";
+    }
+
+    private String getFirstParameterDesc() {
+        return fieldOwnerContext.getContextKind() == OwnerKind.ERASED_INLINE_CLASS ? underlyingType.getType().getDescriptor() : "";
+    }
+
+    private int getAccess() {
+        int access = ACC_PUBLIC;
+        if (fieldOwnerContext.getContextKind() == OwnerKind.ERASED_INLINE_CLASS) {
+            access |= ACC_STATIC;
+        }
+
+        return access;
     }
 }

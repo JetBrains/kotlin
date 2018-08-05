@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
@@ -61,6 +62,13 @@ class ErasedInlineClassBodyCodegen(
         super.generateSyntheticPartsAfterBody()
 
         generateUnboxMethod()
+        generateFunctionsFromAny()
+    }
+
+    private fun generateFunctionsFromAny() {
+        FunctionsFromAnyGeneratorImpl(
+            myClass as KtClassOrObject, bindingContext, descriptor, classAsmType, context, v, state
+        ).generate()
     }
 
     private fun generateUnboxMethod() {

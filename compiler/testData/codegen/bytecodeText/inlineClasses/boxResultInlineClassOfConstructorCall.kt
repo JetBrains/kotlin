@@ -1,6 +1,10 @@
 // !LANGUAGE: +InlineClasses
 
+// FILE: utils.kt
+
 inline class Result<T>(val a: Any?)
+
+// FILE: test.kt
 
 fun test() {
     val a = Result<Int>(1) // valueOf
@@ -10,6 +14,7 @@ fun test() {
     val d = Result<Result<Int>>(Result<Int>(1)) // valueOf
 }
 
+// @TestKt.class:
 // 0 INVOKESTATIC Result\$Erased.box
 // 0 INVOKEVIRTUAL Result.unbox
 

@@ -256,7 +256,7 @@ public class FunctionCodegen {
             );
         }
         else if (shouldDelegateMethodBodyToInlineClass(origin, functionDescriptor, contextKind, containingDeclaration, bindingContext)) {
-            generateMethodInsideInlineClassWrapper(origin, functionDescriptor, (ClassDescriptor) containingDeclaration, mv);
+            generateMethodInsideInlineClassWrapper(origin, functionDescriptor, (ClassDescriptor) containingDeclaration, mv, typeMapper);
         }
         else {
             generateMethodBody(
@@ -304,11 +304,12 @@ public class FunctionCodegen {
         return isInlineClass && simpleFunctionOrProperty;
     }
 
-    private void generateMethodInsideInlineClassWrapper(
+    public static void generateMethodInsideInlineClassWrapper(
             @NotNull JvmDeclarationOrigin origin,
             @NotNull FunctionDescriptor functionDescriptor,
-            ClassDescriptor containingDeclaration,
-            MethodVisitor mv
+            @NotNull ClassDescriptor containingDeclaration,
+            @NotNull MethodVisitor mv,
+            @NotNull KotlinTypeMapper typeMapper
     ) {
         mv.visitCode();
 
