@@ -14,12 +14,9 @@ public final static class Foo$Erased {
 public final class Foo {
     private final field l: long
     public method <init>(p0: long): void
-    public final method empty(): void
     public method equals(p0: java.lang.Object): boolean
-    public final method extension(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public final method getL(): long
     public method hashCode(): int
-    public final method param(p0: double): void
     public method toString(): java.lang.String
     public final method unbox(): long
 }

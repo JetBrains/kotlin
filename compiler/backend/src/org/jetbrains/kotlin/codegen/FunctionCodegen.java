@@ -196,6 +196,10 @@ public class FunctionCodegen {
             return;
         }
 
+        if (!shouldGenerateMethodInsideInlineClass(origin, functionDescriptor, contextKind, containingDeclaration)) {
+            return;
+        }
+
         boolean hasSpecialBridge = hasSpecialBridgeMethod(functionDescriptor);
         JvmMethodGenericSignature jvmSignature = strategy.mapMethodSignature(functionDescriptor, typeMapper, contextKind, hasSpecialBridge);
         Method asmMethod = jvmSignature.getAsmMethod();
@@ -255,7 +259,7 @@ public class FunctionCodegen {
                     origin, functionDescriptor, methodContext, strategy, mv, jvmSignature, asmMethod, flags, staticInCompanionObject
             );
         }
-        else if (shouldDelegateMethodBodyToInlineClass(origin, functionDescriptor, contextKind, containingDeclaration, bindingContext)) {
+        else if (canDelegateMethodBodyToInlineClass(origin, functionDescriptor, contextKind, containingDeclaration)) {
             generateMethodInsideInlineClassWrapper(origin, functionDescriptor, (ClassDescriptor) containingDeclaration, mv, typeMapper);
         }
         else {
@@ -277,12 +281,21 @@ public class FunctionCodegen {
         return v.newMethod(origin, access, name, desc, signature, exceptions);
     }
 
-    private static boolean shouldDelegateMethodBodyToInlineClass(
+    private static boolean shouldGenerateMethodInsideInlineClass(
             @NotNull JvmDeclarationOrigin origin,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull OwnerKind contextKind,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull BindingContext bindingContext
+            @NotNull DeclarationDescriptor containingDeclaration
+    ) {
+        return !canDelegateMethodBodyToInlineClass(origin, functionDescriptor, contextKind, containingDeclaration) ||
+               !functionDescriptor.getOverriddenDescriptors().isEmpty();
+    }
+
+    private static boolean canDelegateMethodBodyToInlineClass(
+            @NotNull JvmDeclarationOrigin origin,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull OwnerKind contextKind,
+            @NotNull DeclarationDescriptor containingDeclaration
     ) {
         // special kind / function
         if (contextKind == OwnerKind.ERASED_INLINE_CLASS) return false;
