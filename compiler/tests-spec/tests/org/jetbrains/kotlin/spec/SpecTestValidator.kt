@@ -3,11 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test
+package org.jetbrains.kotlin.spec
 
-import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Severity
 import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -244,80 +241,5 @@ abstract class SpecTestValidator(private val testDataFile: File, private val tes
         if (testInfoByContent.issues!!.isNotEmpty()) {
             println("LINKED ISSUES: ${testInfoByContent.issues!!.joinToString(", ")}")
         }
-    }
-}
-
-class DiagnosticSpecTestValidator(testDataFile: File) : SpecTestValidator(testDataFile, TestArea.DIAGNOSTIC) {
-    private lateinit var diagnostics: MutableList<Diagnostic>
-    private lateinit var diagnosticStats: MutableMap<String, Int>
-    private lateinit var diagnosticSeverityStats: MutableMap<Severity, Int>
-
-    private fun collectDiagnosticStatistic() {
-        diagnosticSeverityStats = mutableMapOf()
-
-        diagnostics.forEach {
-            val severity = it.factory.severity
-
-            if (diagnosticSeverityStats.contains(severity)) {
-                diagnosticSeverityStats[severity] = diagnosticSeverityStats[severity]!! + 1
-            } else {
-                diagnosticSeverityStats[severity] = 1
-            }
-        }
-    }
-
-    private fun computeTestType(): TestType {
-        return if (Severity.ERROR in diagnosticSeverityStats) TestType.NEGATIVE else TestType.POSITIVE
-    }
-
-    private fun collectDiagnostics(files: List<BaseDiagnosticsTest.TestFile>) {
-        diagnostics = mutableListOf()
-        diagnosticStats = mutableMapOf()
-
-        files.forEach {
-            it.actualDiagnostics.forEach {
-                val diagnosticName = it.diagnostic.factory.name
-
-                if (diagnosticStats.contains(diagnosticName)) {
-                    diagnosticStats[diagnosticName] = diagnosticStats[diagnosticName]!! + 1
-                } else {
-                    diagnosticStats[diagnosticName] = 1
-                }
-
-                diagnostics.add(it.diagnostic)
-            }
-        }
-
-        collectDiagnosticStatistic()
-    }
-
-    private fun validateTestType(files: List<BaseDiagnosticsTest.TestFile>) {
-        if (!this::diagnostics.isInitialized) {
-            this.collectDiagnostics(files)
-        }
-
-        val computedTestType = computeTestType()
-
-        if (computedTestType != testInfo.testType) {
-            val isNotNegative = computedTestType == TestType.POSITIVE && testInfo.testType == TestType.NEGATIVE
-            val isNotPositive = computedTestType == TestType.NEGATIVE && testInfo.testType == TestType.POSITIVE
-            val reason = when {
-                isNotNegative -> SpecTestValidationFailedReason.TEST_IS_NOT_NEGATIVE
-                isNotPositive -> SpecTestValidationFailedReason.TEST_IS_NOT_POSITIVE
-                else -> SpecTestValidationFailedReason.UNKNOWN
-            }
-
-            throw SpecTestValidationException(reason)
-        }
-    }
-
-    fun printDiagnosticStatistic() {
-        val diagnostics = if (diagnosticStats.isNotEmpty()) "$diagnosticSeverityStats | $diagnosticStats" else "does not contain"
-
-        println("DIAGNOSTICS: $diagnostics")
-    }
-
-    fun validateByDiagnostics(files: List<BaseDiagnosticsTest.TestFile>) {
-        validateTestType(files)
     }
 }
