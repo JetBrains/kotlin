@@ -50,13 +50,18 @@ messages/**)
 -dontwarn org.jetbrains.annotations.ReadOnly
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
+-dontwarn com.intellij.util.io.Compressor$Tar
 
 # Nullability annotations used in Guava
 -dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
 -dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
+-dontwarn org.checkerframework.checker.nullness.qual.Nullable
+-dontwarn org.checkerframework.checker.nullness.qual.MonotonicNonNull
 
 # Depends on apache batick which has lots of dependencies
 -dontwarn com.intellij.util.SVGLoader*
+-dontwarn org.apache.batik.script.rhino.RhinoInterpreter
+-dontwarn org.apache.batik.script.rhino.RhinoInterpreterFactory
 
 -dontwarn org.jdom.xpath.jaxen.*
 -dontwarn com.intellij.util.io.Decompressor*
