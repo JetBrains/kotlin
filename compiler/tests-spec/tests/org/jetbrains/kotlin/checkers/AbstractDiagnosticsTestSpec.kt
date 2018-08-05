@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.checkers
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.spec.DiagnosticSpecTestValidator
+import org.jetbrains.kotlin.spec.SpecTestValidationException
 import org.jetbrains.kotlin.test.*
 import org.junit.Assert
 import java.io.File
