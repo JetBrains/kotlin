@@ -1336,4 +1336,11 @@ ${"    "}
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
     }
+
+    @Test fun testSplitToCollection() {
+        val string = "String used to test splitTo()"
+        val list = mutableListOf<String>()
+        string.splitTo(list, " ")
+        assertEquals(5, list.size)
+    }
 }
