@@ -46,29 +46,20 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
     }
 
     private fun KtCallExpression.replaceableAssertion(): String? {
-        var result: String? = null
-        val referencedName = (calleeExpression as? KtNameReferenceExpression)?.getReferencedName() ?: return result
-        if (!assertions.contains(referencedName)) {
-            return result
+        val referencedName = (calleeExpression as? KtNameReferenceExpression)?.getReferencedName() ?: return null
+        if (referencedName !in assertions) {
+            return null
         }
 
         if (getCallableDescriptor()?.containingDeclaration?.fqNameSafe != FqName("kotlin.test")) {
-            return result
+            return null
         }
 
-        if (valueArguments.size != 1 && valueArguments.size != 2) return result
-        val binaryExpression = valueArguments.first().getArgumentExpression() as? KtBinaryExpression ?: return result
+        if (valueArguments.size != 1 && valueArguments.size != 2) return null
+        val binaryExpression = valueArguments.first().getArgumentExpression() as? KtBinaryExpression ?: return null
         val operationToken = binaryExpression.operationToken
 
-        assertionMap.entries.forEach {
-            val (assertion, token) = it.key
-            if (referencedName == assertion && operationToken == token) {
-                result = it.value
-                return@forEach
-            }
-        }
-
-        return result
+        return assertionMap[Pair(referencedName, operationToken)]
     }
 
     companion object {
