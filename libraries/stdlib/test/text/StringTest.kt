@@ -1350,4 +1350,13 @@ ${"    "}
         string.splitTo(list, " ", ",")
         assertEquals(7, list.size)
     }
+
+    @Test fun testSplitToCollectionNotIgnoringCase() {
+        val string = "StringstringString"
+        val list = mutableListOf<String>()
+        string.splitTo(list, "string")
+        assertEquals(2, list.size)
+        assertEquals("String", list[0])
+        assertEquals("String", list[1])
+    }
 }
