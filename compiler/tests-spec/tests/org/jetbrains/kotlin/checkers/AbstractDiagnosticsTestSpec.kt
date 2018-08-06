@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -84,7 +85,8 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
         testFiles: List<TestFile>,
         moduleFiles: Map<TestModule?, List<TestFile>>,
         moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
-        moduleBindings: Map<TestModule?, BindingContext>
+        moduleBindings: Map<TestModule?, BindingContext>,
+        languageVersionSettingsByModule: Map<TestModule?, LanguageVersionSettings>
     ) {
         try {
             testValidator.validateByDiagnostics(testFiles)
