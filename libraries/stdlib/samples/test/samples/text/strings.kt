@@ -94,4 +94,14 @@ class Strings {
         assertPrints(byteArray.toString(charset), "Hello")
     }
 
+    @Sample
+    fun toLowerCase() {
+        assertPrints("Iced frappé!".toLowerCase(), "iced frappé!")
+    }
+
+    @Sample
+    fun toUpperCase() {
+        assertPrints("Iced frappé!".toUpperCase(), "ICED FRAPPÉ!")
+    }
+
 }
