@@ -32,7 +32,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class SerializerCodegenImpl(
         private val codegen: ImplementationBodyCodegen,
         serializableClass: ClassDescriptor
-) : SerializerCodegen(codegen.myClass, codegen.bindingContext) {
+) : SerializerCodegen(codegen.descriptor, codegen.bindingContext) {
 
 
     private val serialDescField = "\$\$serialDesc"

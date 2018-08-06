@@ -17,6 +17,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -28,5 +29,6 @@ class SerializationComponentRegistrar : ComponentRegistrar {
         ExpressionCodegenExtension.registerExtension(project, SerializationCodegenExtension())
         SyntheticResolveExtension.registerExtension(project, SerializationResolveExtension())
         JsSyntheticTranslateExtension.registerExtension(project, SerializationJsExtension())
+        IrGenerationExtension.registerExtension(project, SerializationLoweringExtension())
     }
 }

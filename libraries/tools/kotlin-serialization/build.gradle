@@ -8,7 +8,7 @@ configureJvmProject(project)
 configurePublishing(project)
 
 group = 'org.jetbrains.kotlinx'
-version = '0.6.2'
+version = '0.7.1'
 if (!project.hasProperty("deploy")) {
     version = "$version-SNAPSHOT"
 }
@@ -47,7 +47,7 @@ jar {
     manifestAttributes(manifest, project)
 }
 
-ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+//ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
 
 artifacts {
     archives sourcesJar

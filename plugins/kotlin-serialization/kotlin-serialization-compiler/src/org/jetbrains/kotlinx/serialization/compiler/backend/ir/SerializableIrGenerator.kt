@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -29,8 +30,10 @@ class SerializableIrGenerator(
     override val compilerContext: BackendContext,
     bindingContext: BindingContext
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
-    override val translator: TypeTranslator = TypeTranslator(compilerContext.symbolTable)
-
+    override val translator: TypeTranslator = TypeTranslator(compilerContext.externalSymbols, compilerContext.irBuiltIns.languageVersionSettings)
+    private val _table = SymbolTable()
+    override val BackendContext.localSymbolTable: SymbolTable
+        get() = _table
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
         irClass.contributeConstructor(constructorDescriptor) { ctor ->
@@ -52,8 +55,8 @@ class SerializableIrGenerator(
             val exceptionCtor =
                 serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
                     .unsubstitutedPrimaryConstructor!!
-            val exceptionCtorRef = compilerContext.symbolTable.referenceConstructor(exceptionCtor)
-            val exceptionType = exceptionCtor.returnType.toIrType()
+            val exceptionCtorRef = compilerContext.externalSymbols.referenceConstructor(exceptionCtor)
+            val exceptionType = exceptionCtorRef.owner.returnType
 
             val thiz = irClass.thisReceiver!!
             if (KotlinBuiltIns.isAny(irClass.descriptor.getSuperClassOrAny()))

@@ -22,24 +22,26 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
-import org.jetbrains.kotlin.ir.util.withScope
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperty
+
+val BackendContext.externalSymbols: ReferenceSymbolTable get() = ir.symbols.externalSymbolTable
 
 interface IrBuilderExtension {
     val compilerContext: BackendContext
     val translator: TypeTranslator
 
-    fun IrClass.contributeFunction(descriptor: FunctionDescriptor, bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit) {
-        val f = compilerContext.symbolTable.declareSimpleFunctionWithOverrides(
+    val BackendContext.localSymbolTable: SymbolTable
+
+    fun IrClass.contributeFunction(descriptor: FunctionDescriptor, fromStubs: Boolean = false, bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit) {
+        val f: IrSimpleFunction = if (!fromStubs) compilerContext.localSymbolTable.declareSimpleFunctionWithOverrides(
             this.startOffset,
             this.endOffset,
             SERIALIZABLE_PLUGIN_ORIGIN,
             descriptor
-        )
+        ) else compilerContext.externalSymbols.referenceSimpleFunction(descriptor).owner
         f.parent = this
         f.returnType = descriptor.returnType!!.toIrType()
         f.createParameterDeclarations()
@@ -51,7 +53,7 @@ interface IrBuilderExtension {
         descriptor: ClassConstructorDescriptor,
         bodyGen: IrBlockBodyBuilder.(IrConstructor) -> Unit
     ) {
-        val c = compilerContext.symbolTable.declareConstructor(
+        val c = compilerContext.localSymbolTable.declareConstructor(
             this.startOffset,
             this.endOffset,
             SERIALIZABLE_PLUGIN_ORIGIN,
@@ -90,12 +92,20 @@ interface IrBuilderExtension {
             startOffset,
             endOffset,
             classDescriptor.defaultType.toIrType(),
-            compilerContext.symbolTable.referenceClass(classDescriptor)
+            compilerContext.externalSymbols.referenceClass(classDescriptor)
+        )
+
+    fun IrBuilderWithScope.irGetObject(irObject: IrClass) =
+        IrGetObjectValueImpl(
+            startOffset,
+            endOffset,
+            irObject.defaultType,
+            irObject.symbol
         )
 
     fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
-            compilerContext.symbolTable.withScope(irDeclaration.descriptor) {
+            compilerContext.localSymbolTable.withScope(irDeclaration.descriptor) {
                 builder(irDeclaration)
             }
         }
@@ -139,8 +149,12 @@ interface IrBuilderExtension {
     fun KotlinType.toIrType() = translateType(this)
 
 
-    val SerializableProperty.irField: IrField
-        get () = compilerContext.symbolTable.referenceField(this.descriptor).owner
+    val SerializableProperty.irField: IrField get() = compilerContext.externalSymbols.referenceField(this.descriptor).owner
+//        get () {
+//            val symb = compilerContext.localSymbolTable.referenceField(this.descriptor)
+//            return if (symb.isBound) symb.owner
+//            else compilerContext.localSymbolTable.declareField()
+//        }
 
     /*
      The rest of the file is mainly copied from FunctionGenerator.
@@ -155,7 +169,7 @@ interface IrBuilderExtension {
             +IrDelegatingConstructorCallImpl(
                 startOffset, endOffset,
                 compilerContext.irBuiltIns.unitType,
-                compilerContext.symbolTable.referenceConstructor(anyConstructor),
+                compilerContext.externalSymbols.referenceConstructor(anyConstructor),
                 anyConstructor
             )
         }
@@ -182,7 +196,7 @@ interface IrBuilderExtension {
     }
 
     fun generatePropertyBackingField(propertyDescriptor: PropertyDescriptor): IrField {
-        return compilerContext.symbolTable.declareField(
+        return compilerContext.localSymbolTable.declareField(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             SERIALIZABLE_PLUGIN_ORIGIN,
@@ -196,7 +210,7 @@ interface IrBuilderExtension {
         fieldSymbol: IrFieldSymbol,
         ownerSymbol: IrValueSymbol
     ): IrSimpleFunction {
-        return compilerContext.symbolTable.declareSimpleFunctionWithOverrides(
+        return compilerContext.localSymbolTable.declareSimpleFunctionWithOverrides(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             SERIALIZABLE_PLUGIN_ORIGIN, descriptor
         ).buildWithScope { irAccessor ->
@@ -228,7 +242,7 @@ interface IrBuilderExtension {
                 irAccessor.symbol,
                 IrGetFieldImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    compilerContext.symbolTable.referenceField(property),
+                    compilerContext.localSymbolTable.referenceField(property),
                     property.type.toIrType(),
                     receiver
                 )
@@ -254,7 +268,7 @@ interface IrBuilderExtension {
         irBody.statements.add(
             IrSetFieldImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                compilerContext.symbolTable.referenceField(property),
+                compilerContext.localSymbolTable.referenceField(property),
                 receiver,
                 IrGetValueImpl(startOffset, endOffset, irValueParameter.type, irValueParameter.symbol),
                 compilerContext.irBuiltIns.unitType

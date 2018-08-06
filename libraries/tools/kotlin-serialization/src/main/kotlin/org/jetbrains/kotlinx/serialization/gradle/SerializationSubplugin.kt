@@ -45,14 +45,14 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
     }
 
     private val log = Logging.getLogger(this.javaClass)
-    private val pluginVersion = "0.6.2-SNAPSHOT"
+    private val pluginVersion = "0.7.1-SNAPSHOT"
 
     override fun isApplicable(project: Project, task: AbstractCompile) = SerializationGradleSubplugin.isEnabled(project)
 
     override fun apply(
         project: Project,
         kotlinCompile: AbstractCompile,
-        javaCompile: AbstractCompile,
+        javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
         javaSourceSet: SourceSet?

@@ -10,6 +10,7 @@
         <expressionCodegenExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationCodegenExtension"/>
         <syntheticResolveExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationResolveExtension"/>
         <jsSyntheticTranslateExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationJsExtension"/>
+        <irGenerationExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension"/>
 
         <gradleProjectImportHandler implementation="org.jetbrains.kotlinx.serialization.idea.KotlinSerializationGradleImportHandler"/>
         <mavenProjectImportHandler implementation="org.jetbrains.kotlinx.serialization.idea.KotlinSerializationMavenImportHandler"/>
