@@ -135,7 +135,8 @@ open class KotlinNativeCompile: DefaultTask() {
     }
 }
 
-// Copied from Kotlin/Native repo.
+/** Copied from Kotlin/Native repo. */
+
 open class KonanCompilerDownloadTask : DefaultTask() {
 
     internal companion object {
