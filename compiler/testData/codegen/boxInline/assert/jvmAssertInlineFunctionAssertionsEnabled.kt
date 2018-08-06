@@ -1,7 +1,7 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: inline.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
+// FULL_JDK
 
 inline fun inlineMe() {
     assert(false) { "FROM INLINED" }
@@ -10,7 +10,7 @@ inline fun inlineMe() {
 // FILE: inlineSite.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 
-class Checker {
+class CheckerJvmAssertInlineFunctionAssertionsEnabled {
     fun check() {
         inlineMe()
         throw RuntimeException("FAIL 0")
@@ -19,11 +19,11 @@ class Checker {
 
 class Dummy
 
-fun enableAssertions(): Checker {
+fun enableAssertions(): CheckerJvmAssertInlineFunctionAssertionsEnabled {
     val loader = Dummy::class.java.classLoader
-    loader.setDefaultAssertionStatus(true)
-    val c = loader.loadClass("Checker")
-    return c.newInstance() as Checker
+    loader.setClassAssertionStatus("CheckerJvmAssertInlineFunctionAssertionsEnabled", true)
+    val c = loader.loadClass("CheckerJvmAssertInlineFunctionAssertionsEnabled")
+    return c.newInstance() as CheckerJvmAssertInlineFunctionAssertionsEnabled
 }
 
 fun box(): String {
@@ -32,6 +32,5 @@ fun box(): String {
         c.check()
         return "FAIL 2"
     } catch (ignore: AssertionError) {}
-
     return "OK"
 }

@@ -4,6 +4,8 @@
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
 
+package superClassInitializer
+
 interface Checker {
     fun checkTrue(): Boolean
     fun checkFalse(): Boolean
@@ -91,8 +93,8 @@ class ShouldBeEnabled : Checker {
 
 fun setDesiredAssertionStatus(v: Boolean): Checker {
     val loader = Checker::class.java.classLoader
-    loader.setDefaultAssertionStatus(v)
-    val c = loader.loadClass(if (v) "ShouldBeEnabled" else "ShouldBeDisabled")
+    loader.setPackageAssertionStatus("superClassInitializer", v)
+    val c = loader.loadClass(if (v) "superClassInitializer.ShouldBeEnabled" else "superClassInitializer.ShouldBeDisabled")
     return c.newInstance() as Checker
 }
 

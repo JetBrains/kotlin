@@ -4,6 +4,8 @@
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
 
+package localClass
+
 interface Checker {
     fun checkTrue(): Boolean
     fun checkFalse(): Boolean
@@ -137,8 +139,8 @@ class ShouldBeEnabled : Checker {
 
 fun setDesiredAssertionStatus(v: Boolean): Checker {
     val loader = Checker::class.java.classLoader
-    loader.setDefaultAssertionStatus(v)
-    val c = loader.loadClass(if (v) "ShouldBeEnabled" else "ShouldBeDisabled")
+    loader.setPackageAssertionStatus("localClass", v)
+    val c = loader.loadClass(if (v) "localClass.ShouldBeEnabled" else "localClass.ShouldBeDisabled")
     return c.newInstance() as Checker
 }
 
