@@ -39,8 +39,10 @@ import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     private val typeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
@@ -109,7 +111,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
             }
         }
 
-        val expressionTypeInfo = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, element] ?: return "Type is unknown"
+        val expressionTypeInfo = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, element] ?: noTypeInfo(DataFlowInfo.EMPTY)
         val expressionType = element.getType(bindingContext)
         val result = expressionType?.let { typeRenderer.renderType(it) } ?: return "Type is unknown"
 
