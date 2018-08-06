@@ -251,7 +251,7 @@ fun parseCompilerArgumentsToFacet(
     arguments: List<String>,
     defaultArguments: List<String>,
     kotlinFacet: KotlinFacet,
-    modelsProvider: IdeModifiableModelsProvider
+    modelsProvider: IdeModifiableModelsProvider?
 ) {
     with(kotlinFacet.configuration.settings) {
         val compilerArguments = this.compilerArguments ?: return
@@ -267,7 +267,8 @@ fun parseCompilerArgumentsToFacet(
         // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.
         // The rest is combined into string and stored in CompilerSettings.additionalArguments
 
-        kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
+        if (modelsProvider != null)
+            kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
 
         val primaryFields = compilerArguments.primaryFields
         val ignoredFields = compilerArguments.ignoredFields
