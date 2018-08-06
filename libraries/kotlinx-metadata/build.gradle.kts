@@ -4,6 +4,9 @@ plugins {
     kotlin("jvm")
 }
 
+jvmTarget = "1.6"
+javaHome = rootProject.extra["JDK_16"] as String
+
 sourceSets {
     "main" { projectDefault() }
     "test" { }
