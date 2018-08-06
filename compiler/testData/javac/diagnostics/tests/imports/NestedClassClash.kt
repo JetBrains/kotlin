@@ -35,5 +35,5 @@ public class A2 {
 // FILE: a.kt
 package b
 
-fun test() = A1().<!MISSING_DEPENDENCY_CLASS!>getB<!>()
+fun test() = A1().getB()
 fun test2() = A2().<!MISSING_DEPENDENCY_CLASS!>getB<!>()
