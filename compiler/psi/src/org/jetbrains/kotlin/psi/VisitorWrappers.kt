@@ -402,3 +402,11 @@ fun qualifiedExpressionRecursiveVisitor(block: (KtQualifiedExpression) -> Unit) 
             block(qualifiedExpression)
         }
     }
+
+fun returnExpressionVisitor(block: (KtReturnExpression) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitReturnExpression(returnExpression: KtReturnExpression) {
+            super.visitReturnExpression(returnExpression)
+            block(returnExpression)
+        }
+    }
