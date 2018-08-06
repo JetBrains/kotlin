@@ -22,7 +22,6 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all") }
 
-    testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(project(":kotlin-annotation-processing-base"))
     testCompile(projectTests(":kotlin-annotation-processing-base"))

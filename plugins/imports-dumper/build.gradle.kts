@@ -15,9 +15,7 @@ dependencies {
 
     compile(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
-
 
     embeddedComponents("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion) { isTransitive = false }
 }
