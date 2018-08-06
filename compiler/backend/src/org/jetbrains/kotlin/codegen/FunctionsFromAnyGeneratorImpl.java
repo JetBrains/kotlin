@@ -82,6 +82,12 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         }
 
         mv.visitAnnotation(Type.getDescriptor(NotNull.class), false);
+
+        if (!generationState.getClassBuilderMode().generateBodies) {
+            FunctionCodegen.endVisit(mv, "toString", getDeclaration());
+            return;
+        }
+
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         mv.visitCode();
@@ -136,6 +142,11 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
 
         if (fieldOwnerContext.getContextKind() != OwnerKind.ERASED_INLINE_CLASS && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
+            return;
+        }
+
+        if (!generationState.getClassBuilderMode().generateBodies) {
+            FunctionCodegen.endVisit(mv, "hashCode", getDeclaration());
             return;
         }
 
@@ -201,6 +212,12 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         }
 
         mv.visitParameterAnnotation(isErasedInlineClassKind ? 1 : 0, Type.getDescriptor(Nullable.class), false);
+
+        if (!generationState.getClassBuilderMode().generateBodies) {
+            FunctionCodegen.endVisit(mv, "equals", getDeclaration());
+            return;
+        }
+
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         mv.visitCode();
