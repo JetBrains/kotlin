@@ -1478,18 +1478,21 @@ public abstract class StackValue {
                 }
 
                 Type typeOfValueOnStack = getter.getReturnType();
+                KotlinType kotlinTypeOfValueOnStack = getterDescriptor.getReturnType();
                 if (DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
                     if (this.type.equals(K_CLASS_TYPE)) {
                         wrapJavaClassIntoKClass(v);
                         typeOfValueOnStack = K_CLASS_TYPE;
+                        kotlinTypeOfValueOnStack = null;
                     }
                     else if (this.type.equals(K_CLASS_ARRAY_TYPE)) {
                         wrapJavaClassesIntoKClasses(v);
                         typeOfValueOnStack = K_CLASS_ARRAY_TYPE;
+                        kotlinTypeOfValueOnStack = null;
                     }
                 }
 
-                coerce(typeOfValueOnStack, type, v);
+                coerce(typeOfValueOnStack, kotlinTypeOfValueOnStack, type, kotlinType, v);
 
                 KotlinType returnType = descriptor.getReturnType();
                 if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
@@ -1563,10 +1566,14 @@ public abstract class StackValue {
                 v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
             }
             else {
-                coerce(topOfStackType, ArraysKt.last(setter.getParameterTypes()), v);
+                PropertySetterDescriptor setterDescriptor = descriptor.getSetter();
+                KotlinType setterLastParameterType =
+                        setterDescriptor != null ? CollectionsKt.last(setterDescriptor.getValueParameters()).getReturnType() : null;
+
+                coerce(topOfStackType, topOfStackKotlinType, ArraysKt.last(this.setter.getParameterTypes()), setterLastParameterType, v);
                 setter.genInvokeInstruction(v);
 
-                Type returnType = setter.getReturnType();
+                Type returnType = this.setter.getReturnType();
                 if (returnType != Type.VOID_TYPE) {
                     pop(v, returnType);
                 }
