@@ -85,8 +85,14 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         return CodeStyleSettingsManager.getSettings(project).getCustomSettings(KotlinCodeStyleSettings.class);
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Object clone() {
+        return cloneSettings();
+    }
+
+    @NotNull
+    public KotlinCodeStyleSettings cloneSettings() {
         KotlinCodeStyleSettings clone = new KotlinCodeStyleSettings(getContainer());
         clone.copyFrom(this);
         return clone;
