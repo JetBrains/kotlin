@@ -153,6 +153,7 @@ public inline fun String.trimEnd(): String = (this as CharSequence).trimEnd().to
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
  * @return Returns a char sequence of length at least [length] consisting of `this` char sequence prepended with [padChar] as many times
  * as are necessary to reach that length.
+ * @sample samples.text.Strings.padStart
  */
 public fun CharSequence.padStart(length: Int, padChar: Char = ' '): CharSequence {
     if (length < 0)
@@ -174,6 +175,7 @@ public fun CharSequence.padStart(length: Int, padChar: Char = ' '): CharSequence
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
  * @return Returns a string of length at least [length] consisting of `this` string prepended with [padChar] as many times
  * as are necessary to reach that length.
+ * @sample samples.text.Strings.padStart
  */
 public fun String.padStart(length: Int, padChar: Char = ' '): String =
     (this as CharSequence).padStart(length, padChar).toString()
@@ -186,6 +188,7 @@ public fun String.padStart(length: Int, padChar: Char = ' '): String =
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
  * @return Returns a char sequence of length at least [length] consisting of `this` char sequence appended with [padChar] as many times
  * as are necessary to reach that length.
+ * @sample samples.text.Strings.padEnd
  */
 public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): CharSequence {
     if (length < 0)
@@ -207,6 +210,7 @@ public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): CharSequence {
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
  * @return Returns a string of length at least [length] consisting of `this` string appended with [padChar] as many times
  * as are necessary to reach that length.
+ * @sample samples.text.Strings.padEnd
  */
 public fun String.padEnd(length: Int, padChar: Char = ' '): String =
     (this as CharSequence).padEnd(length, padChar).toString()

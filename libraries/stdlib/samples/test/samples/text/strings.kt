@@ -104,4 +104,17 @@ class Strings {
         assertPrints("Iced frappé!".toUpperCase(), "ICED FRAPPÉ!")
     }
 
+    @Sample
+    fun padStart() {
+        val string = "a"
+        assertPrints(string.padStart(3), "  a")
+        assertPrints(string.padStart(3, '#'), "##a")
+    }
+
+    @Sample
+    fun padEnd() {
+        val string = "a"
+        assertPrints(string.padEnd(3), "a  ")
+        assertPrints(string.padEnd(3, '#'), "a##")
+    }
 }
