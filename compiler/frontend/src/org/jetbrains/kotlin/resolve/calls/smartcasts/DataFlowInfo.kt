@@ -101,5 +101,5 @@ interface DataFlowInfo {
 
 object DataFlowInfoFactory {
     @JvmField
-    val EMPTY: DataFlowInfo = DelegatingDataFlowInfo()
+    val EMPTY: DataFlowInfo = DataFlowInfoImpl()
 }

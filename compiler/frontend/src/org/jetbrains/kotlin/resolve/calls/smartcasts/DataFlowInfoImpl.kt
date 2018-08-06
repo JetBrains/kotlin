@@ -40,7 +40,7 @@ private fun <K, V> ImmutableMultimap<K, V>.put(key: K, value: V): ImmutableMulti
     return put(key, oldSet.add(value))
 }
 
-internal class DelegatingDataFlowInfo private constructor(
+internal class DataFlowInfoImpl private constructor(
     override val completeNullabilityInfo: ImmutableMap<DataFlowValue, Nullability>,
     override val completeTypeInfo: ImmutableMultimap<DataFlowValue, KotlinType>
 ) : DataFlowInfo {
@@ -267,7 +267,7 @@ internal class DelegatingDataFlowInfo private constructor(
         if (this === DataFlowInfo.EMPTY) return other
         if (this === other) return this
 
-        assert(other is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + other }
+        assert(other is DataFlowInfoImpl) { "Unknown DataFlowInfo type: " + other }
 
         val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         for ((key, otherFlags) in other.completeNullabilityInfo) {
@@ -304,7 +304,7 @@ internal class DelegatingDataFlowInfo private constructor(
         if (this === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY
         if (this === other) return this
 
-        assert(other is DelegatingDataFlowInfo) { "Unknown DataFlowInfo type: " + other }
+        assert(other is DataFlowInfoImpl) { "Unknown DataFlowInfo type: " + other }
 
         val resultNullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
         for ((key, otherFlags) in other.completeNullabilityInfo) {
@@ -390,7 +390,7 @@ internal class DelegatingDataFlowInfo private constructor(
                 return parent
             }
 
-            return DelegatingDataFlowInfo(resultingNullabilityInfo, resultingTypeInfo)
+            return DataFlowInfoImpl(resultingNullabilityInfo, resultingTypeInfo)
         }
     }
 }
