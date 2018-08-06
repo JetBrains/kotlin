@@ -10026,6 +10026,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisEmptyConstructor.kt");
         }
 
+        @TestMetadata("addParenthesisExpectClass.kt")
+        public void testAddParenthesisExpectClass() throws Exception {
+            runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisExpectClass.kt");
+        }
+
         @TestMetadata("addParenthesisForInvalidSealedClass.kt")
         public void testAddParenthesisForInvalidSealedClass() throws Exception {
             runTest("idea/testData/quickfix/supertypeInitialization/addParenthesisForInvalidSealedClass.kt");

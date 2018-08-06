@@ -27,17 +27,21 @@ class AddDefaultConstructorFix(expectClass: KtClass) : KotlinQuickFixAction<KtCl
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
+        fun superTypeEntryToClass(typeEntry: KtSuperTypeListEntry, context: BindingContext): KtClass? {
+            val baseType = context[BindingContext.TYPE, typeEntry.typeReference] ?: return null
+            val baseClassDescriptor = baseType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+            if (!baseClassDescriptor.isExpect) return null
+            if (baseClassDescriptor.kind != ClassKind.CLASS) return null
+            return DescriptorToSourceUtils.descriptorToDeclaration(baseClassDescriptor) as? KtClass
+        }
+
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtClass>? {
             val argumentList = diagnostic.psiElement as? KtValueArgumentList ?: return null
             if (argumentList.arguments.isNotEmpty()) return null
             val derivedClass = argumentList.getStrictParentOfType<KtClassOrObject>() ?: return null
             val context = derivedClass.analyze()
             val baseTypeCallEntry = derivedClass.superTypeListEntries.filterIsInstance<KtSuperTypeCallEntry>().firstOrNull() ?: return null
-            val baseType = context[BindingContext.TYPE, baseTypeCallEntry.typeReference] ?: return null
-            val baseClassDescriptor = baseType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
-            if (!baseClassDescriptor.isExpect) return null
-            if (baseClassDescriptor.kind != ClassKind.CLASS) return null
-            val baseClass = DescriptorToSourceUtils.descriptorToDeclaration(baseClassDescriptor) as? KtClass ?: return null
+            val baseClass = superTypeEntryToClass(baseTypeCallEntry, context) ?: return null
             return AddDefaultConstructorFix(baseClass)
         }
     }
