@@ -60,7 +60,7 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
     override fun getText(): String {
         return calculatePossibleArgumentNames()
                        .singleOrNull()
-                       ?.let { "Add name to argument: '${createArgumentWithName(it).text}'" }
+                       ?.let { "Add name to argument: '${createArgumentWithName(it, reformat = false).text}'" }
                ?: "Add name to argument..."
     }
 
@@ -92,9 +92,9 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
         }
     }
 
-    private fun createArgumentWithName(name: Name): KtValueArgument {
+    private fun createArgumentWithName(name: Name, reformat: Boolean = true): KtValueArgument {
         val argumentExpression = element!!.getArgumentExpression()!!
-        return KtPsiFactory(element!!).createArgument(argumentExpression, name, element!!.getSpreadElement() != null)
+        return KtPsiFactory(element!!).createArgument(argumentExpression, name, element!!.getSpreadElement() != null, reformat = reformat)
     }
 
     private fun chooseNameAndAdd(project: Project, editor: Editor, names: List<Name>) {

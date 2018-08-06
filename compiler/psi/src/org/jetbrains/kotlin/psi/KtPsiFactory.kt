@@ -482,13 +482,19 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
             createExpressionByPattern("if ($0) $1", condition, thenExpr)) as KtIfExpression
     }
 
-    fun createArgument(expression: KtExpression?, name: Name? = null, isSpread: Boolean = false): KtValueArgument {
-        val argumentList = buildByPattern({ pattern, args -> createByPattern(pattern, *args) { createCallArguments(it) } }) {
+    fun createArgument(
+        expression: KtExpression?,
+        name: Name? = null,
+        isSpread: Boolean = false,
+        reformat: Boolean = true
+    ): KtValueArgument {
+        val argumentList = buildByPattern(
+            { pattern, args -> createByPattern(pattern, *args, reformat = reformat) { createCallArguments(it) } }) {
             appendFixedText("(")
 
             if (name != null) {
                 appendName(name)
-                appendFixedText("=")
+                appendFixedText(" = ")
             }
 
             if (isSpread) {
