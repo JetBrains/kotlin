@@ -8,6 +8,7 @@ package test.io
 import kotlin.test.*
 import java.io.Writer
 import java.io.BufferedReader
+import kotlin.random.Random
 
 class IOStreamsTest {
     @Test fun testGetStreamOfFile() {
@@ -43,4 +44,25 @@ class IOStreamsTest {
 
         assertEquals(x.asList(), result)
     }
+
+    @Test fun readWriteBytes() {
+        val file = createTempFile("temp", Random.nextLong().toString())
+        try {
+            val bytes = Random.nextBytes(256_000)
+
+            file.outputStream().use { outStream ->
+                outStream.write(bytes)
+            }
+
+            val inBytes = file.inputStream().use { inStream ->
+                inStream.readBytes()
+            }
+
+            assertTrue(inBytes contentEquals bytes, "Expected to read the same content back, read bytes of length ${inBytes.size}")
+
+        } finally {
+            file.delete()
+        }
+    }
+
 }
