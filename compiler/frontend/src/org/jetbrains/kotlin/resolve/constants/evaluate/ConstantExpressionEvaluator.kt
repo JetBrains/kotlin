@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
@@ -45,8 +47,11 @@ import java.util.*
 
 class ConstantExpressionEvaluator(
     internal val module: ModuleDescriptor,
-    internal val languageVersionSettings: LanguageVersionSettings
+    internal val languageVersionSettings: LanguageVersionSettings,
+    project: Project
 ) {
+    private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
+
     fun updateNumberType(
         numberType: KotlinType,
         expression: KtExpression?,
@@ -268,6 +273,8 @@ class ConstantExpressionEvaluator(
         val visitor = ConstantExpressionEvaluatorVisitor(this, trace)
         val constant = visitor.evaluate(expression, expectedType) ?: return null
 
+        checkExperimentalityOfConstantLiteral(expression, constant, expectedType, trace)
+
         return if (!constant.isError) constant else null
     }
 
@@ -279,8 +286,39 @@ class ConstantExpressionEvaluator(
         return evaluateExpression(expression, trace, expectedType)?.toConstantValue(expectedType)
     }
 
+    private fun checkExperimentalityOfConstantLiteral(
+        expression: KtExpression,
+        constant: CompileTimeConstant<*>,
+        expectedType: KotlinType?,
+        trace: BindingTrace
+    ) {
+        if (constant.isError) return
+        if (!constant.parameters.isUnsignedNumberLiteral && !constant.parameters.isUnsignedLongNumberLiteral) return
+
+        val constantType = when {
+            constant is TypedCompileTimeConstant<*> -> constant.type
+            expectedType != null -> constant.toConstantValue(expectedType).getType(module)
+            else -> return
+        }
+
+        if (!UnsignedTypes.isUnsignedType(constantType)) return
+
+
+        with(ExperimentalUsageChecker) {
+            val descriptor = constantType.constructor.declarationDescriptor ?: return
+            val experimentalities = descriptor.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings)
+
+            reportNotAcceptedExperimentalities(
+                experimentalities, expression, languageVersionSettings, trace, EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS
+            )
+        }
+    }
 
     companion object {
+        private val EXPERIMENTAL_UNSIGNED_LITERALS_DIAGNOSTICS = ExperimentalUsageChecker.ExperimentalityDiagnostics(
+            Errors.EXPERIMENTAL_UNSIGNED_LITERALS, Errors.EXPERIMENTAL_UNSIGNED_LITERALS_ERROR
+        )
+
         @JvmStatic
         fun getConstant(expression: KtExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
             val constant = getPossiblyErrorConstant(expression, bindingContext) ?: return null
