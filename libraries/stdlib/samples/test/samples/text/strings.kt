@@ -1,8 +1,6 @@
 package samples.text
 
 import samples.*
-import kotlin.test.*
-import java.util.*
 
 class Strings {
 
@@ -106,15 +104,19 @@ class Strings {
 
     @Sample
     fun padStart() {
-        val string = "a"
-        assertPrints(string.padStart(3), "  a")
-        assertPrints(string.padStart(3, '#'), "##a")
+        val padWithoutChar = "a".padStart(3)
+        assertPrints("'$padWithoutChar'", "'  a'")
+
+        val padWithChar = "a".padStart(3, '#')
+        assertPrints("'$padWithChar'", "'##a'")
     }
 
     @Sample
     fun padEnd() {
-        val string = "a"
-        assertPrints(string.padEnd(3), "a  ")
-        assertPrints(string.padEnd(3, '#'), "a##")
+        val padWithoutChar = "a".padEnd(3)
+        assertPrints("'$padWithoutChar'", "'a  '")
+
+        val padWithChar = "a".padEnd(3, '#')
+        assertPrints("'$padWithChar'", "'a##'")
     }
 }
