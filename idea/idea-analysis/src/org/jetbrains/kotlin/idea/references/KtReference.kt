@@ -56,7 +56,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
     override fun getCanonicalText(): String = "<TBD>"
 
     open fun canRename(): Boolean = false
-    override fun handleElementRename(newElementName: String?): PsiElement? = throw IncorrectOperationException()
+    override fun handleElementRename(newElementName: String): PsiElement? = throw IncorrectOperationException()
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
 

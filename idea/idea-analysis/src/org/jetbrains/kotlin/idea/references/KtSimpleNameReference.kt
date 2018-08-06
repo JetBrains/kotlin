@@ -100,9 +100,8 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         return true
     }
 
-    override fun handleElementRename(newElementName: String?): PsiElement {
+    override fun handleElementRename(newElementName: String): PsiElement {
         if (!canRename()) throw IncorrectOperationException()
-        if (newElementName == null) return expression
 
         if (newElementName.unquote() == "") {
             val qualifiedElement = expression.getQualifiedElement()
