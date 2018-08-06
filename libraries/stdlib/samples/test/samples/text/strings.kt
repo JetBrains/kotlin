@@ -1,8 +1,6 @@
 package samples.text
 
 import samples.*
-import kotlin.test.*
-import java.util.*
 
 class Strings {
 
@@ -104,4 +102,21 @@ class Strings {
         assertPrints("Iced frappé!".toUpperCase(), "ICED FRAPPÉ!")
     }
 
+    @Sample
+    fun padStart() {
+        val padWithSpace = "a".padStart(3)
+        assertPrints("'$padWithSpace'", "'  a'")
+
+        val padWithChar = "a".padStart(3, '#')
+        assertPrints("'$padWithChar'", "'##a'")
+    }
+
+    @Sample
+    fun padEnd() {
+        val padWithSpace = "a".padEnd(3)
+        assertPrints("'$padWithSpace'", "'a  '")
+
+        val padWithChar = "a".padEnd(3, '#')
+        assertPrints("'$padWithChar'", "'a##'")
+    }
 }
