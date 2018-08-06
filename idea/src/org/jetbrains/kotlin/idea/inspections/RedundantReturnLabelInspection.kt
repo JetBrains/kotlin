@@ -20,7 +20,8 @@ class RedundantReturnLabelInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         returnExpressionVisitor(fun(returnExpression) {
             val label = returnExpression.getTargetLabel() ?: return
-            if (returnExpression.getParentOfType<KtNamedFunction>(true, KtLambdaExpression::class.java) == null) return
+            val function = returnExpression.getParentOfType<KtNamedFunction>(true, KtLambdaExpression::class.java) ?: return
+            if (function.name == null) return
             val labelName = label.getReferencedName()
             holder.registerProblem(
                 label,
