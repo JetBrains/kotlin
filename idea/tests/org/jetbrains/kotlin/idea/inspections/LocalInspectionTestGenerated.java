@@ -3948,6 +3948,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/redundantReturnLabel")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantReturnLabel extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantReturnLabel() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantReturnLabel"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("inAnonymousFunction.kt")
+        public void testInAnonymousFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantReturnLabel/inAnonymousFunction.kt");
+        }
+
+        @TestMetadata("inFunction.kt")
+        public void testInFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantReturnLabel/inFunction.kt");
+        }
+
+        @TestMetadata("inFunction2.kt")
+        public void testInFunction2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantReturnLabel/inFunction2.kt");
+        }
+
+        @TestMetadata("inLambda.kt")
+        public void testInLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantReturnLabel/inLambda.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/redundantSamConstructor")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
