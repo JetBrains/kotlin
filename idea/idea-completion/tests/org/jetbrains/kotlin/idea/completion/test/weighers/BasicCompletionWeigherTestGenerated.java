@@ -79,6 +79,11 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/weighers/basic/DslCallsWithMultipleReceivers.kt");
     }
 
+    @TestMetadata("DslMemberCalls.kt")
+    public void testDslMemberCalls() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/DslMemberCalls.kt");
+    }
+
     @TestMetadata("ExactMatchForKeyword.kt")
     public void testExactMatchForKeyword() throws Exception {
         runTest("idea/idea-completion/testData/weighers/basic/ExactMatchForKeyword.kt");
