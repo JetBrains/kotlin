@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 
+/** Copied from Kotlin/Native repository. */
+
 internal enum class KotlinNativeProjectProperty(val propertyName: String) {
     KONAN_HOME                     ("konan.home"),
     KONAN_JVM_ARGS                 ("konan.jvmArgs"),
