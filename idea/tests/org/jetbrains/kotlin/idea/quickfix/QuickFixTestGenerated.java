@@ -461,6 +461,34 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addDefaultConstructor")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddDefaultConstructor extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddDefaultConstructor() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addDefaultConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("expect.kt")
+        public void testExpect() throws Exception {
+            runTest("idea/testData/quickfix/addDefaultConstructor/expect.kt");
+        }
+
+        @TestMetadata("expectInterface.kt")
+        public void testExpectInterface() throws Exception {
+            runTest("idea/testData/quickfix/addDefaultConstructor/expectInterface.kt");
+        }
+
+        @TestMetadata("interface.kt")
+        public void testInterface() throws Exception {
+            runTest("idea/testData/quickfix/addDefaultConstructor/interface.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addExclExclCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
