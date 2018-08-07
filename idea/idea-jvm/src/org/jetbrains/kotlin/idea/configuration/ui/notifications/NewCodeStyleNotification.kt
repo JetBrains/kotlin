@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.idea.configuration.ui.notifications
 
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationDisplayType
-import com.intellij.notification.NotificationType
-import com.intellij.notification.NotificationsConfiguration
+import com.intellij.notification.*
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.formatter.canRestore
+import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.restore
 import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
 
 private const val KOTLIN_UPDATE_CODE_STYLE_GROUP_ID = "Update Kotlin code style"
@@ -49,4 +52,27 @@ private class KotlinCodeStyleChangedNotification(val project: Project) : Notific
         """.trimIndent(),
     NotificationType.WARNING,
     null
-)
+) {
+    init {
+        val ktFormattingSettings = ktCodeStyleSettings(project)
+        if (ktFormattingSettings != null && ktFormattingSettings.canRestore()) {
+            addAction(object : NotificationAction("Restore old settings") {
+                override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+                    restore(project)
+                }
+            })
+        }
+    }
+
+    companion object {
+        val LOG = Logger.getInstance("KotlinCodeStyleChangedNotification")
+
+        private fun restore(project: Project) {
+            val ktSettings = ktCodeStyleSettings(project) ?: return
+
+            runWriteAction {
+                ktSettings.restore()
+            }
+        }
+    }
+}

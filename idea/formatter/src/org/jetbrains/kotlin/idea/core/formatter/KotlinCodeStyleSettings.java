@@ -170,6 +170,10 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         return tempSettings;
     }
 
+    public boolean canRestore() {
+        return settingsAgainstPreviousDefaults != null;
+    }
+
     public void restore() {
         if (settingsAgainstPreviousDefaults != null) {
             copyFrom(settingsAgainstPreviousDefaults);

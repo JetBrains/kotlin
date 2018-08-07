@@ -231,6 +231,10 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         return provider == null ? null : provider.getSupportedFields();
     }
 
+    public boolean canRestore() {
+        return settingsAgainstPreviousDefaults != null;
+    }
+
     public void restore() {
         if (settingsAgainstPreviousDefaults != null) {
             CompatibilityKt.copyFromEx(this, settingsAgainstPreviousDefaults);
