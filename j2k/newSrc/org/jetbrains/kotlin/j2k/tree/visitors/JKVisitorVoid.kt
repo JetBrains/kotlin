@@ -27,6 +27,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitAccessModifier(accessModifier: JKAccessModifier, data: Nothing?) = visitAccessModifier(accessModifier)
     fun visitModalityModifier(modalityModifier: JKModalityModifier) = visitModifier(modalityModifier, null)
     override fun visitModalityModifier(modalityModifier: JKModalityModifier, data: Nothing?) = visitModalityModifier(modalityModifier)
+    fun visitMutabilityModifier(mutabilityModifier: JKMutabilityModifier) = visitModifier(mutabilityModifier, null)
+    override fun visitMutabilityModifier(mutabilityModifier: JKMutabilityModifier, data: Nothing?) = visitMutabilityModifier(mutabilityModifier)
     fun visitTypeElement(typeElement: JKTypeElement) = visitTreeElement(typeElement, null)
     override fun visitTypeElement(typeElement: JKTypeElement, data: Nothing?) = visitTypeElement(typeElement)
     fun visitStatement(statement: JKStatement) = visitTreeElement(statement, null)
