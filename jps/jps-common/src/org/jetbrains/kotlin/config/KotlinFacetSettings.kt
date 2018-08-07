@@ -115,7 +115,10 @@ var CommonCompilerArguments.apiVersionView: VersionView
 enum class KotlinModuleKind {
     DEFAULT,
     SOURCE_SET_HOLDER,
-    COMPILATION_AND_SOURCE_SET_HOLDER
+    COMPILATION_AND_SOURCE_SET_HOLDER;
+
+    val isNewMPP: Boolean
+        get() = this != DEFAULT
 }
 
 class KotlinFacetSettings {
