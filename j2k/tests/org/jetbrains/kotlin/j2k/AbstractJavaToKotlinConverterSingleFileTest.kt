@@ -78,10 +78,14 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
             actual = createKotlinFile(actual).dumpTextWithErrors()
         }
 
-        val kotlinPath = javaPath.replace(".java", ".kt")
-        val expectedFile = File(kotlinPath)
 
+        val expectedFile = provideExpectedFile(javaPath)
         compareResults(expectedFile, actual)
+    }
+
+    open fun provideExpectedFile(javaPath: String): File {
+        val kotlinPath = javaPath.replace(".java", ".kt")
+        return File(kotlinPath)
     }
 
     open fun compareResults(expectedFile: File, actual: String) {

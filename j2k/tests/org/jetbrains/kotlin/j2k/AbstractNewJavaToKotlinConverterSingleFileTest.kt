@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.j2k.IdeaNewJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import java.io.File
 
 abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterSingleFileTest() {
 
@@ -39,4 +40,8 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
             it.text
         }.single()
     }
+
+    override fun provideExpectedFile(javaPath: String): File =
+        File(javaPath.replace(".java", ".new.kt")).takeIf { it.exists() }
+            ?: super.provideExpectedFile(javaPath)
 }
