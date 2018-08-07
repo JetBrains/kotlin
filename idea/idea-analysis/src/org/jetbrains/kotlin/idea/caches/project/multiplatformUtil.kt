@@ -16,14 +16,24 @@ import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
+import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.resolve.TargetPlatform
+
+internal val Module.isNewMPPModule: Boolean
+    get() = KotlinFacet.get(this)?.configuration?.settings?.kind?.isNewMPP ?: false
 
 val Module.implementingModules: List<Module>
     get() = cached(CachedValueProvider {
+        val moduleManager = ModuleManager.getInstance(project)
         CachedValueProvider.Result(
-            ModuleManager.getInstance(project).modules.filter { name in it.findImplementedModuleNames() },
+            if (isNewMPPModule) {
+                moduleManager.getModuleDependentModules(this)
+            } else {
+                moduleManager.modules.filter { name in it.findOldFashionedImplementedModuleNames() }
+            },
             ProjectRootModificationTracker.getInstance(project)
         )
     })
@@ -31,15 +41,19 @@ val Module.implementingModules: List<Module>
 val Module.implementedModules: List<Module>
     get() = cached<List<Module>>(
         CachedValueProvider {
-            val modelsProvider = IdeModelsProviderImpl(project)
             CachedValueProvider.Result(
-                findImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) },
+                if (isNewMPPModule) {
+                    rootManager.dependencies.toList()
+                } else {
+                    val modelsProvider = IdeModelsProviderImpl(project)
+                    findOldFashionedImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) }
+                },
                 ProjectRootModificationTracker.getInstance(project)
             )
         }
     )
 
-private fun Module.findImplementedModuleNames(): List<String> {
+private fun Module.findOldFashionedImplementedModuleNames(): List<String> {
     val facet = FacetManager.getInstance(this).findFacet(
         KotlinFacetType.TYPE_ID,
         FacetTypeRegistry.getInstance().findFacetType(ID)!!.defaultFacetName
