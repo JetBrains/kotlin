@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -849,12 +848,12 @@ public class FunctionCodegen {
 
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = valueParameterIterator.next();
-                List<VariableDescriptor> destructuringVariables = ValueParameterDescriptorImpl.getDestructuringVariablesOrNull(parameter);
+                String nameForDestructuredParameter = ValueParameterDescriptorImpl.getNameForDestructuredParameterOrNull(parameter);
 
                 parameterName =
-                        destructuringVariables == null
+                        nameForDestructuredParameter == null
                         ? computeParameterName(i, parameter)
-                        : "$" + joinParameterNames(destructuringVariables);
+                        : nameForDestructuredParameter;
             }
             else {
                 String lowercaseKind = kind.name().toLowerCase();
@@ -904,11 +903,11 @@ public class FunctionCodegen {
             List<ValueParameterDescriptor> destructuredParametersForSuspendLambda
     ) {
         for (ValueParameterDescriptor parameter : destructuredParametersForSuspendLambda) {
-            List<VariableDescriptor> destructuringVariables = ValueParameterDescriptorImpl.getDestructuringVariablesOrNull(parameter);
-            if (destructuringVariables == null) continue;
+            String nameForDestructuredParameter = ValueParameterDescriptorImpl.getNameForDestructuredParameterOrNull(parameter);
+            if (nameForDestructuredParameter == null) continue;
 
             Type type = typeMapper.mapType(parameter.getType());
-            mv.visitLocalVariable("$" + joinParameterNames(destructuringVariables), type.getDescriptor(), null, methodBegin, methodEnd, shift);
+            mv.visitLocalVariable(nameForDestructuredParameter, type.getDescriptor(), null, methodBegin, methodEnd, shift);
             shift += type.getSize();
         }
         return shift;
@@ -921,14 +920,6 @@ public class FunctionCodegen {
         }
 
         return parameter.getName().asString();
-    }
-
-    private static String joinParameterNames(@NotNull List<VariableDescriptor> variables) {
-        // stub for anonymous destructuring declaration entry
-        return StringsKt.join(
-                CollectionsKt.map(variables, descriptor -> descriptor.getName().isSpecial() ? "$_$" : descriptor.getName().asString()),
-                "_"
-        );
     }
 
     private static void generateFacadeDelegateMethodBody(

@@ -24,11 +24,9 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -118,6 +116,7 @@ class ExpressionCodegen(
 
     fun generate() {
         mv.visitCode()
+        val startLabel = markNewLabel()
         irFunction.markLineNumber(true)
         val info = BlockInfo.create()
         val result = irFunction.body!!.accept(this, info)
@@ -137,7 +136,33 @@ class ExpressionCodegen(
             }
         }
         writeLocalVariablesInTable(info)
+        writeParameterInLocalVariableTable(startLabel)
         mv.visitEnd()
+    }
+
+    private fun writeParameterInLocalVariableTable(startLabel: Label) {
+        if (!irFunction.isStatic) {
+            mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, markNewLabel(), 0)
+        }
+        val extensionReceiverParameter = irFunction.extensionReceiverParameter
+        if (extensionReceiverParameter != null) {
+            writeValueParameterInLocalVariableTable(extensionReceiverParameter, startLabel)
+        }
+        for (param in irFunction.valueParameters) {
+            writeValueParameterInLocalVariableTable(param, startLabel)
+        }
+    }
+
+    private fun writeValueParameterInLocalVariableTable(param: IrValueParameter, startLabel: Label) {
+        val descriptor = param.descriptor
+        val nameForDestructuredParameter = if (descriptor is ValueParameterDescriptor)
+            ValueParameterDescriptorImpl.getNameForDestructuredParameterOrNull(descriptor) else null
+        val type = typeMapper.mapType(descriptor)
+        // NOTE: we expect all value parameters to be present in the frame.
+        mv.visitLocalVariable(
+            nameForDestructuredParameter ?: param.name.asString(),
+            type.descriptor, null, startLabel, markNewLabel(), findLocalIndex(param.symbol)
+        )
     }
 
     private fun endsWithReturn(body: IrBody): Boolean {
@@ -169,7 +194,18 @@ class ExpressionCodegen(
     private fun writeLocalVariablesInTable(info: BlockInfo) {
         val endLabel = markNewLabel()
         info.variables.forEach {
-            mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
+            when (it.declaration.origin) {
+                IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                IrDeclarationOrigin.FOR_LOOP_ITERATOR,
+                IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE -> {
+                    // Ignore implicitly created variables
+                }
+                else -> {
+                    mv.visitLocalVariable(
+                        it.declaration.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index
+                    )
+                }
+            }
         }
 
         info.variables.reversed().forEach {

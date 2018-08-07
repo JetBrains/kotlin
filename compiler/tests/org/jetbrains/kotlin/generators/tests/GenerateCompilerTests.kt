@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
-import org.jetbrains.kotlin.codegen.AbstractCustomScriptCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxAgainstJavaCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxInlineCodegenTest
+import org.jetbrains.kotlin.codegen.ir.AbstractIrCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
@@ -354,6 +354,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
             model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrCheckLocalVariablesTableTest> {
+            model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrBlackBoxInlineCodegenTest> {
