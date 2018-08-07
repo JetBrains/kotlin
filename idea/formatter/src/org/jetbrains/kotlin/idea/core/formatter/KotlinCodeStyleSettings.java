@@ -23,8 +23,10 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.codeStyle.*;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle;
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle;
+import org.jetbrains.kotlin.idea.util.FormatterUtilKt;
 import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 
 import static com.intellij.util.ReflectionUtil.copyFields;
@@ -63,6 +65,12 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     @ReflectionUtil.SkipInEquals
     public String CODE_STYLE_DEFAULTS = null;
 
+    /**
+     * Load settings with previous IDEA defaults to have an ability to restore them.
+     */
+    @Nullable
+    private KotlinCodeStyleSettings settingsAgainstPreviousDefaults = null;
+
     private final boolean isTempForDeserialize;
 
     public KotlinCodeStyleSettings(CodeStyleSettings container) {
@@ -95,6 +103,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public KotlinCodeStyleSettings cloneSettings() {
         KotlinCodeStyleSettings clone = new KotlinCodeStyleSettings(getContainer());
         clone.copyFrom(this);
+        clone.settingsAgainstPreviousDefaults = this.settingsAgainstPreviousDefaults;
         return clone;
     }
 
@@ -136,10 +145,17 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         }
 
         KotlinCodeStyleSettings tempSettings = readExternalToTemp(parentElement);
-        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(tempSettings.CODE_STYLE_DEFAULTS)) {
+        String customDefaults = tempSettings.CODE_STYLE_DEFAULTS;
+
+        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
             KotlinStyleGuideCodeStyle.Companion.applyToKotlinCustomSettings(this, true);
-        } else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(tempSettings.CODE_STYLE_DEFAULTS)) {
+        } else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
             KotlinObsoleteCodeStyle.Companion.applyToKotlinCustomSettings(this, true);
+        } else if (customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle()) {
+            // Temporary load settings against previous defaults
+            settingsAgainstPreviousDefaults = new KotlinCodeStyleSettings(null, true);
+            KotlinObsoleteCodeStyle.Companion.applyToKotlinCustomSettings(settingsAgainstPreviousDefaults, true);
+            settingsAgainstPreviousDefaults.readExternal(parentElement);
         }
 
         // Actual read
@@ -152,5 +168,11 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         tempSettings.readExternal(parentElement);
 
         return tempSettings;
+    }
+
+    public void restore() {
+        if (settingsAgainstPreviousDefaults != null) {
+            copyFrom(settingsAgainstPreviousDefaults);
+        }
     }
 }
