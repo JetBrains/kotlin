@@ -104,8 +104,8 @@ class Strings {
 
     @Sample
     fun padStart() {
-        val padWithoutChar = "a".padStart(3)
-        assertPrints("'$padWithoutChar'", "'  a'")
+        val padWithSpace = "a".padStart(3)
+        assertPrints("'$padWithSpace'", "'  a'")
 
         val padWithChar = "a".padStart(3, '#')
         assertPrints("'$padWithChar'", "'##a'")
@@ -113,8 +113,8 @@ class Strings {
 
     @Sample
     fun padEnd() {
-        val padWithoutChar = "a".padEnd(3)
-        assertPrints("'$padWithoutChar'", "'a  '")
+        val padWithSpace = "a".padEnd(3)
+        assertPrints("'$padWithSpace'", "'a  '")
 
         val padWithChar = "a".padEnd(3, '#')
         assertPrints("'$padWithChar'", "'a##'")
