@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
 interface JKJavaField : JKField, JKBranchElement
 
 interface JKJavaMethod : JKMethod, JKBranchElement {
-    val block: JKBlock
 }
 
 interface JKJavaMethodCallExpression : JKMethodCallExpression
