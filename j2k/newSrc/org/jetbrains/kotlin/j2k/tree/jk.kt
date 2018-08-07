@@ -58,6 +58,7 @@ interface JKMethod : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
     var parameters: List<JKParameter>
     val returnType: JKTypeElement
+    var block: JKBlock
 }
 
 interface JKField : JKDeclaration, JKModifierListOwner {
