@@ -76,7 +76,10 @@ class AnnotationSplitter(
                 add(PROPERTY_SETTER)
             }
             if (hasBackingField) add(FIELD)
-            if (isVar) add(PROPERTY_SETTER)
+            if (isVar) {
+                add(PROPERTY_SETTER)
+                add(SETTER_PARAMETER)
+            }
             if (hasDelegate) add(PROPERTY_DELEGATE_FIELD)
         }
     }

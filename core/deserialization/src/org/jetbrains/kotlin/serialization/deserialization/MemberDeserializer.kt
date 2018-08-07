@@ -118,7 +118,10 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 setter.initialize(valueParameters.single())
                 setter
             } else {
-                DescriptorFactory.createDefaultSetter(property, annotations)
+                DescriptorFactory.createDefaultSetter(
+                    property, annotations,
+                    Annotations.EMPTY /* Otherwise presumably the setter is not default */
+                )
             }
         } else {
             null

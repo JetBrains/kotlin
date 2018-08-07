@@ -171,7 +171,7 @@ class Delegate {
     fun test() {
         check(::delegate.getter, annotationExists = true)
         check(::delegate.setter, annotationExists = true)
-        check(::delegate.setter.parameters.first(), annotationExists = false) // https://youtrack.jetbrains.com/issue/KT-25500
+        check(::delegate.setter.parameters.first(), annotationExists = true)
     }
 
     class CustomDelegate {

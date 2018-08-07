@@ -438,8 +438,7 @@ class FunctionDescriptorResolver(
             }
 
             val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptor(
-                parameterScope, functionDescriptor,
-                valueParameter, i, type, trace
+                parameterScope, functionDescriptor, valueParameter, i, type, trace, Annotations.EMPTY
             )
 
             // Do not report NAME_SHADOWING for lambda destructured parameters as they may be not fully resolved at this time

@@ -533,21 +533,10 @@ public class FunctionCodegen {
             }
 
             if (kind == JvmMethodParameterKind.VALUE) {
-                ValueParameterDescriptor parameter = iterator.next();
-                AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper);
-
-                if (functionDescriptor instanceof PropertySetterDescriptor) {
-                    PropertyDescriptor propertyDescriptor = ((PropertySetterDescriptor) functionDescriptor).getCorrespondingProperty();
-                    Annotated targetedAnnotations = new AnnotatedWithOnlyTargetedAnnotations(propertyDescriptor);
-                    annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), SETTER_PARAMETER);
-                }
-
-                if (functionDescriptor instanceof ConstructorDescriptor) {
-                    annotationCodegen.genAnnotations(parameter, parameterSignature.getAsmType(), CONSTRUCTOR_PARAMETER);
-                }
-                else {
-                    annotationCodegen.genAnnotations(parameter, parameterSignature.getAsmType());
-                }
+                AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper).genAnnotations(
+                        iterator.next(),
+                        parameterSignature.getAsmType()
+                );
             }
             else if (kind == JvmMethodParameterKind.RECEIVER) {
                 ReceiverParameterDescriptor receiver = JvmCodegenUtil.getDirectMember(functionDescriptor).getExtensionReceiverParameter();

@@ -8,11 +8,10 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -22,7 +21,6 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 internal abstract class KPropertyImpl<out R> private constructor(
     override val container: KDeclarationContainerImpl,
@@ -159,7 +157,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             // TODO: default setter created this way won't have any source information
-            property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY)
+            property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)
         }
 
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {

@@ -503,12 +503,18 @@ public class PropertyCodegen {
                                     : DescriptorFactory.createDefaultGetter(descriptor, Annotations.Companion.getEMPTY()));
     }
 
-    public void generateSetter(@Nullable KtNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable KtPropertyAccessor setter) {
+    public void generateSetter(
+            @Nullable KtNamedDeclaration p,
+            @NotNull PropertyDescriptor descriptor,
+            @Nullable KtPropertyAccessor setter
+    ) {
         if (!descriptor.isVar()) return;
 
         generateAccessor(p, setter, descriptor.getSetter() != null
                                     ? descriptor.getSetter()
-                                    : DescriptorFactory.createDefaultSetter(descriptor, Annotations.Companion.getEMPTY()));
+                                    : DescriptorFactory.createDefaultSetter(
+                                            descriptor, Annotations.Companion.getEMPTY(), Annotations.Companion.getEMPTY()
+                                    ));
     }
 
     private void generateAccessor(

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.ir.IrElement
@@ -13,10 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-class AnnotationGenerator(
-    context: GeneratorContext
-) : IrElementVisitorVoid {
-
+class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
     private val typeTranslator = context.typeTranslator
     private val constantValueGenerator = context.constantValueGenerator
 
@@ -38,16 +34,7 @@ class AnnotationGenerator(
     override fun visitValueParameter(declaration: IrValueParameter) {
         super.visitValueParameter(declaration)
 
-        val descriptor = declaration.descriptor
-        val containingDeclaration = descriptor.containingDeclaration
-
-        if (containingDeclaration is PropertySetterDescriptor) {
-            containingDeclaration.correspondingProperty.annotations.getUseSiteTargetedAnnotations()
-                .filter { it.target == AnnotationUseSiteTarget.SETTER_PARAMETER }
-                .generateAnnotationConstructorCalls(declaration)
-        }
-
-        descriptor.type.annotations.getAllAnnotations()
+        declaration.descriptor.type.annotations.getAllAnnotations()
             .filter { it.target == AnnotationUseSiteTarget.RECEIVER }
             .generateAnnotationConstructorCalls(declaration)
     }
@@ -81,5 +68,3 @@ class AnnotationGenerator(
             else -> target == null
         }
 }
-
-

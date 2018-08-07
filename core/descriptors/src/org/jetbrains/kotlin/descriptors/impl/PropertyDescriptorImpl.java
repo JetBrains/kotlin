@@ -399,7 +399,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
                 // it can not be assigned to because of the projection
                 substitutedDescriptor.setSetterProjectedOut(true);
                 substitutedValueParameters = Collections.<ValueParameterDescriptor>singletonList(
-                        PropertySetterDescriptorImpl.createSetterParameter(newSetter, getBuiltIns(copyConfiguration.owner).getNothingType())
+                        PropertySetterDescriptorImpl.createSetterParameter(
+                                newSetter,
+                                getBuiltIns(copyConfiguration.owner).getNothingType(),
+                                setter.getValueParameters().get(0).getAnnotations()
+                        )
                 );
             }
             if (substitutedValueParameters.size() != 1) {
