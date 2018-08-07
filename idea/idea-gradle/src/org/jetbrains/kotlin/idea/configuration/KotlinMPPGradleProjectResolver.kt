@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.google.common.graph.GraphBuilder
+import com.google.common.graph.Graphs
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
@@ -330,16 +332,22 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     )
                     for (sourceSet in compilation.sourceSets) {
                         if (sourceSet.fullName() == compilation.fullName()) continue
-                        addDependency(dataNode, sourceSet, gradleModule, ideModule, resolverCtx)
+                        val targetDataNode = getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx) ?: continue
+                        addDependency(dataNode, targetDataNode)
                     }
                 }
             }
+            val sourceSetGraph = GraphBuilder.directed().build<KotlinSourceSet>()
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
                 dataNode.data.productionModuleId?.let {
                     val productionModuleDataNode = ideModule.findChildModuleByInternalName(it)
                     if (productionModuleDataNode != null) {
                         addDependency(dataNode, productionModuleDataNode)
                     }
+                }
+                for (targetSourceSetName in sourceSet.dependsOnSourceSets) {
+                    val targetSourceSet = mppModel.sourceSets[targetSourceSetName] ?: continue
+                    sourceSetGraph.putEdge(sourceSet, targetSourceSet)
                 }
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))) {
                     buildDependencies(
@@ -351,10 +359,11 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         ideProject
                     )
                 }
-                for (targetSourceSetName in sourceSet.dependsOnSourceSets) {
-                    val targetSourceSet = mppModel.sourceSets[targetSourceSetName] ?: continue
-                    addDependency(dataNode, targetSourceSet, gradleModule, ideModule, resolverCtx)
-                }
+            }
+            for (edge in Graphs.transitiveClosure(sourceSetGraph).edges()) {
+                val fromDataNode = getSiblingKotlinModuleData(edge.source(), gradleModule, ideModule, resolverCtx) ?: continue
+                val toDataNode = getSiblingKotlinModuleData(edge.target(), gradleModule, ideModule, resolverCtx) ?: continue
+                addDependency(fromDataNode, toDataNode)
             }
         }
 
@@ -403,16 +412,14 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             fromModule.createChild(ProjectKeys.MODULE_DEPENDENCY, moduleDependencyData)
         }
 
-        private fun addDependency(
-            fromModule: DataNode<*>,
-            toModule: KotlinModule,
+        private fun getSiblingKotlinModuleData(
+            kotlinModule: KotlinModule,
             gradleModule: IdeaModule,
             ideModule: DataNode<ModuleData>,
             resolverCtx: ProjectResolverContext
-        ) {
-            val usedModuleId = getKotlinModuleId(gradleModule, toModule, resolverCtx)
-            val usedModuleDataNode = ideModule.findChildModuleById(usedModuleId) ?: return
-            addDependency(fromModule, usedModuleDataNode)
+        ): DataNode<*>? {
+            val usedModuleId = getKotlinModuleId(gradleModule, kotlinModule, resolverCtx)
+            return ideModule.findChildModuleById(usedModuleId)
         }
 
         private fun createContentRootData(sourceDirs: Set<File>, sourceType: ExternalSystemSourceType, parentNode: DataNode<*>) {
