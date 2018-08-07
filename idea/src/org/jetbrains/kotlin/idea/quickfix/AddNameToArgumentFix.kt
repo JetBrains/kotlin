@@ -51,17 +51,16 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
         assert(possibleNames.isNotEmpty()) { "isAvailable() should be checked before invoke()" }
         if (possibleNames.size == 1 || editor == null || !editor.component.isShowing) {
             addName(project, element, possibleNames.first())
-        }
-        else {
+        } else {
             chooseNameAndAdd(project, editor, possibleNames)
         }
     }
 
     override fun getText(): String {
         return calculatePossibleArgumentNames()
-                       .singleOrNull()
-                       ?.let { "Add name to argument: '${createArgumentWithName(it, reformat = false).text}'" }
-               ?: "Add name to argument..."
+            .singleOrNull()
+            ?.let { "Add name to argument: '${createArgumentWithName(it, reformat = false).text}'" }
+            ?: "Add name to argument..."
     }
 
     override fun getFamilyName() = "Add name to argument"
@@ -75,15 +74,15 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
         val argumentType = element!!.getArgumentExpression()?.let { context.getType(it) }
 
         val usedParameters = resolvedCall.call.valueArguments
-                .map { resolvedCall.getArgumentMapping(it) }
-                .filterIsInstance<ArgumentMatch>()
-                .filter { argumentMatch -> argumentType == null || argumentType.isError || !argumentMatch.isError() }
-                .map { it.valueParameter }
-                .toSet()
+            .map { resolvedCall.getArgumentMapping(it) }
+            .filterIsInstance<ArgumentMatch>()
+            .filter { argumentMatch -> argumentType == null || argumentType.isError || !argumentMatch.isError() }
+            .map { it.valueParameter }
+            .toSet()
 
         return resolvedCall.resultingDescriptor.valueParameters
-                .filter { it !in usedParameters }
-                .map { it.name }
+            .filter { it !in usedParameters }
+            .map { it.name }
     }
 
     private fun addName(project: Project, argument: KtValueArgument, name: Name) {
