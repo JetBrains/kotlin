@@ -265,7 +265,7 @@ fun applyCompilerArgumentsToFacet(
     arguments: CommonCompilerArguments,
     defaultArguments: CommonCompilerArguments?,
     kotlinFacet: KotlinFacet,
-    modelsProvider: IdeModifiableModelsProvider
+    modelsProvider: IdeModifiableModelsProvider?
 ) {
     with(kotlinFacet.configuration.settings) {
         val compilerArguments = this.compilerArguments ?: return
