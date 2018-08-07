@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType
@@ -68,6 +69,12 @@ var JKModifierList.visibility
         modifiers = modifiers.filterNot { it is JKAccessModifier } + JKAccessModifierImpl(value)
     }
 
+var JKModifierList.mutability
+    get() = modifiers.filterIsInstance<JKMutabilityModifier>().firstOrNull()?.mutability ?: Mutability.Default
+    set(value) {
+        modifiers = modifiers.filterNot { it is JKMutabilityModifier } +
+                listOfNotNull(if (value != Mutability.Default) JKMutabilityModifierImpl(value) else null)
+    }
 
 class JKParameterImpl(
     type: JKTypeElement,
@@ -315,6 +322,10 @@ class JKModalityModifierImpl(override val modality: JKModalityModifier.Modality)
 
 class JKAccessModifierImpl(override val visibility: JKAccessModifier.Visibility) : JKAccessModifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAccessModifier(this, data)
+}
+
+class JKMutabilityModifierImpl(override val mutability: Mutability) : JKMutabilityModifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitMutabilityModifier(this, data)
 }
 
 class JKLambdaExpressionImpl(parameters: List<JKParameter>, returnType: JKTypeElement, statement: JKStatement) :

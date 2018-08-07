@@ -24,6 +24,7 @@ import com.intellij.psi.impl.source.tree.ChildRole
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
+import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
@@ -272,7 +273,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(
-                with(modifierMapper) { modifierList.toJK() },
+                with(modifierMapper) { modifierList.toJK(finalAsMutability = true) },
                 with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
                 JKNameIdentifierImpl(name),
                 with(expressionTreeMapper) { initializer.toJK() }
@@ -361,10 +362,10 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
     }
 
     private inner class ModifierMapper {
-        fun PsiModifierList?.toJK(): JKModifierList {
+        fun PsiModifierList?.toJK(finalAsMutability: Boolean = false): JKModifierList {
 
             val modifiers = if (this == null) mutableListOf()
-            else PsiModifier.MODIFIERS.filter { hasExplicitModifier(it) }.mapNotNull { modifierToJK(it) }.toMutableList()
+            else PsiModifier.MODIFIERS.filter { hasExplicitModifier(it) }.mapNotNull { modifierToJK(it, finalAsMutability) }.toMutableList()
 
             modifiers += extractAccess()
             modifiers += extractModality()
@@ -397,7 +398,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             return JKAccessModifierImpl(visibility)
         }
 
-        fun modifierToJK(name: String): JKModifier? = when (name) {
+        fun modifierToJK(name: String, finalAsMutability: Boolean): JKModifier? = when (name) {
             PsiModifier.NATIVE -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.NATIVE)
             PsiModifier.STATIC -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.STATIC)
             PsiModifier.STRICTFP -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.STRICTFP)
@@ -409,7 +410,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             PsiModifier.PUBLIC -> null
             PsiModifier.PRIVATE -> null
 
-            PsiModifier.FINAL -> null
+            PsiModifier.FINAL -> if (finalAsMutability) JKMutabilityModifierImpl(Mutability.NonMutable) else null
             PsiModifier.ABSTRACT -> null
 
             else -> TODO("Not yet supported")

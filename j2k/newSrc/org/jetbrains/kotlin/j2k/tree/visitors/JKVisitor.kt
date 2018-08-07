@@ -15,6 +15,7 @@ interface JKVisitor<out R, in D> {
     fun visitModifierList(modifierList: JKModifierList, data: D): R = visitTreeElement(modifierList, data)
     fun visitAccessModifier(accessModifier: JKAccessModifier, data: D): R = visitModifier(accessModifier, data)
     fun visitModalityModifier(modalityModifier: JKModalityModifier, data: D): R = visitModifier(modalityModifier, data)
+    fun visitMutabilityModifier(mutabilityModifier: JKMutabilityModifier, data: D): R = visitModifier(mutabilityModifier, data)
     fun visitTypeElement(typeElement: JKTypeElement, data: D): R = visitTreeElement(typeElement, data)
     fun visitStatement(statement: JKStatement, data: D): R = visitTreeElement(statement, data)
     fun visitBlock(block: JKBlock, data: D): R = visitTreeElement(block, data)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.NewCodeBuilder.ParenthesisKind.*
+import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
@@ -83,6 +84,8 @@ class NewCodeBuilder {
             )
         }
 
+        override fun visitMutabilityModifier(mutabilityModifier: JKMutabilityModifier) {}
+
         override fun visitKtModifier(ktModifier: JKKtModifier) {
             printer.printWithNoIndent(
                 when (ktModifier.type) {
@@ -143,11 +146,11 @@ class NewCodeBuilder {
         }
 
         override fun visitKtProperty(ktProperty: JKKtProperty) {
-            // TODO: Fix this, as Modality is not mutability
-            if (ktProperty.modifierList.modality == JKModalityModifier.Modality.FINAL) {
-                printer.print("val")
-            } else {
-                printer.print("var")
+            ktProperty.modifierList.accept(this)
+
+            when (ktProperty.modifierList.mutability) {
+                Mutability.Default, Mutability.Mutable -> printer.print("var")
+                Mutability.NonMutable -> printer.print("val")
             }
 
             printer.printWithNoIndent(" ", ktProperty.name.value, ": ")
