@@ -14,7 +14,7 @@ fun main() {
 // ORDER: foo2
 // ORDER: foo4
 // ORDER: fooloooooong
-// ORDER: foo3
 // ORDER: foo5
+// ORDER: foo3
 // ORDER: fooval
 // ORDER: foo1

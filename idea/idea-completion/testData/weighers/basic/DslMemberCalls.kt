@@ -11,10 +11,10 @@ fun main() {
     }
 }
 
+// ORDER: foo6
 // ORDER: foo2
 // ORDER: foo3
-// ORDER: foo6
 // ORDER: foo4
-// ORDER: foo1
 // ORDER: fooLocal
 // ORDER: foo5
+// ORDER: foo1

@@ -825,7 +825,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBasicCompletionWeigherTest> {
-            model("weighers/basic", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("weighers/basic", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractSmartCompletionWeigherTest> {

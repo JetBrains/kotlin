@@ -135,6 +135,7 @@ class FuzzyType(
     private fun matchedSubstitutor(otherType: FuzzyType, matchKind: MatchKind): TypeSubstitutor? {
         if (type.isError) return null
         if (otherType.type.isError) return null
+        if (otherType.type.isUnit() && matchKind == MatchKind.IS_SUBTYPE) return TypeSubstitutor.EMPTY
 
         fun KotlinType.checkInheritance(otherType: KotlinType): Boolean {
             return when (matchKind) {
