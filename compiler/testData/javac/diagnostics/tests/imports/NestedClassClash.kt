@@ -1,3 +1,4 @@
+// SKIP_JAVAC
 // FILE: a/A.java
 package a;
 

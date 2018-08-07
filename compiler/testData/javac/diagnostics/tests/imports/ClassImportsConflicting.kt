@@ -1,3 +1,4 @@
+// SKIP_JAVAC
 // FILE: b.kt
 package b
 
