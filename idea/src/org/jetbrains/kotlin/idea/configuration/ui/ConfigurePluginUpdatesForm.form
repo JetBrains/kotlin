@@ -56,7 +56,7 @@
               <visible value="true"/>
             </properties>
           </component>
-          <grid id="5d5c6" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+          <grid id="5d5c6" layout-manager="FlowLayout" hgap="0" vgap="5" flow-align="1">
             <constraints/>
             <properties/>
             <border type="none"/>
