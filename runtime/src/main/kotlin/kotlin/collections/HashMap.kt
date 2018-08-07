@@ -552,7 +552,7 @@ actual class HashMap<K, V> private constructor(
 
     internal class KeysItr<K, V>(map: HashMap<K, V>) : Itr<K, V>(map), MutableIterator<K> {
         override fun next(): K {
-            if (index >= map.length) throw IndexOutOfBoundsException()
+            if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
             val result = map.keysArray[lastIndex]
             initNext()
@@ -563,7 +563,7 @@ actual class HashMap<K, V> private constructor(
 
     internal class ValuesItr<K, V>(map: HashMap<K, V>) : Itr<K, V>(map), MutableIterator<V> {
         override fun next(): V {
-            if (index >= map.length) throw IndexOutOfBoundsException()
+            if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
             val result = map.valuesArray!![lastIndex]
             initNext()
@@ -574,7 +574,7 @@ actual class HashMap<K, V> private constructor(
     internal class EntriesItr<K, V>(map: HashMap<K, V>) : Itr<K, V>(map),
             MutableIterator<MutableMap.MutableEntry<K, V>> {
         override fun next(): EntryRef<K, V> {
-            if (index >= map.length) throw IndexOutOfBoundsException()
+            if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
             val result = EntryRef(map, lastIndex)
             initNext()
@@ -582,7 +582,7 @@ actual class HashMap<K, V> private constructor(
         }
 
         internal fun nextHashCode(): Int {
-            if (index >= map.length) throw IndexOutOfBoundsException()
+            if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
             val result = map.keysArray[lastIndex].hashCode() xor map.valuesArray!![lastIndex].hashCode()
             initNext()
@@ -590,7 +590,7 @@ actual class HashMap<K, V> private constructor(
         }
 
         fun nextAppendString(sb: StringBuilder) {
-            if (index >= map.length) throw IndexOutOfBoundsException()
+            if (index >= map.length) throw NoSuchElementException()
             lastIndex = index++
             val key = map.keysArray[lastIndex]
             if (key == map) sb.append("(this Map)") else sb.append(key)

@@ -330,6 +330,7 @@ actual class ArrayList<E> private constructor(
         }
 
         override fun remove() {
+            check(lastIndex != -1) { "Call next() or previous() before removing element from the iterator." }
             list.removeAt(lastIndex)
             index = lastIndex
             lastIndex = -1
