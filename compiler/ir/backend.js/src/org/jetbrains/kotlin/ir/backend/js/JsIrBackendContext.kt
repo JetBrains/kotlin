@@ -62,7 +62,7 @@ class JsIrBackendContext(
     val originalModuleIndex = ModuleIndex(irModuleFragment)
 
     override val ir = object : Ir<CommonBackendContext>(this, irModuleFragment) {
-        override val symbols = object : Symbols<CommonBackendContext>(this@JsIrBackendContext, symbolTable) {
+        override val symbols = object : Symbols<CommonBackendContext>(this@JsIrBackendContext, symbolTable.lazyWrapper) {
 
             override fun calc(initializer: () -> IrClassSymbol): IrClassSymbol {
                 return object : IrClassSymbol {
