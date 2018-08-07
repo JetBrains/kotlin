@@ -62,7 +62,6 @@ fun case_2(value1: String, value2: Char, value3: _BasicTypesProvider): String {
         <!TYPE_MISMATCH!>value1<!> -> return ""
         <!TYPE_MISMATCH!>"$value1${getString(43)}"<!> -> return ""
         <!TYPE_MISMATCH!>"${value3.getString(33)}"<!> -> return ""
-        <!TYPE_MISMATCH!>"${value3.getString(33)}"<!> -> return ""
         <!TYPE_MISMATCH!>getChar(32)<!> -> return ""
         <!TYPE_MISMATCH!>value3.getChar(32) - 20<!> -> return ""
         <!TYPE_MISMATCH!>value1 + "..." + value3.getString(43)<!> -> return ""

@@ -9,7 +9,7 @@ fun getByte(arg: Any) = arg.hashCode().toByte()
 fun getChar(arg: Any) = arg.hashCode().toChar()
 fun getString(arg: Any) = arg.hashCode().toString()
 fun getBoolean(arg: Any) = arg.hashCode() % 2 == 0
-fun getNothing() = throw Exception()
+fun getNothing(): Nothing = throw Exception()
 fun getUnit() = {}
 fun getAny() = Any()
 fun getList() = mutableListOf<Int>()
@@ -24,7 +24,7 @@ class _BasicTypesProvider {
     fun getChar(arg: Any) = arg.hashCode().toChar()
     fun getString(arg: Any) = arg.hashCode().toString()
     fun getBoolean(arg: Any) = arg.hashCode() % 2 == 0
-    fun getNothing() = throw Exception()
+    fun getNothing(): Nothing = throw Exception()
     fun getUnit() = {}
     fun getAny() = Any()
     fun getList() = mutableListOf<Int>()
