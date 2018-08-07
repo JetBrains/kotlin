@@ -67,21 +67,29 @@ class RedundantLocalsEliminationMethodTransformer(private val languageVersionSet
     private fun removeWithReplacement(
         methodNode: MethodNode
     ): Boolean {
-        val insns = findSafeAstorePredecessors(methodNode, ignoreLocalVariableTable = false) {
+        val cfg = ControlFlowGraph.build(methodNode)
+        val insns = findSafeAstorePredecessors(methodNode, cfg, ignoreLocalVariableTable = false) {
             it.isUnitInstance() || it.opcode == Opcodes.ACONST_NULL || it.opcode == Opcodes.ALOAD
         }
-        insns.asIterable().firstOrNull { (pred, astore) ->
-            val index = astore.localIndex()
+        for ((pred, astore) in insns) {
+            val aload = findSingleLoadFromAstore(astore, cfg, methodNode) ?: continue
 
             methodNode.instructions.removeAll(listOf(pred, astore))
-
-            methodNode.instructions.asSequence()
-                .filter { it.opcode == Opcodes.ALOAD && it.localIndex() == index }
-                .toList()
-                .forEach { methodNode.instructions.set(it, pred.clone()) }
+            methodNode.instructions.set(aload, pred.clone())
             return true
         }
         return false
+    }
+
+    private fun findSingleLoadFromAstore(
+        astore: AbstractInsnNode,
+        cfg: ControlFlowGraph,
+        methodNode: MethodNode
+    ): AbstractInsnNode? {
+        val aload = methodNode.instructions.asSequence()
+            .singleOrNull { it.opcode == Opcodes.ALOAD && it.localIndex() == astore.localIndex() } ?: return null
+        val succ = findImmediateSuccessors(astore, cfg, methodNode).singleOrNull() ?: return null
+        return if (aload == succ) aload else null
     }
 
     private fun AbstractInsnNode.clone() = when (this) {
@@ -143,37 +151,34 @@ class RedundantLocalsEliminationMethodTransformer(private val languageVersionSet
     private fun removeAloadCheckcastContinuationAstore(methodNode: MethodNode, languageVersionSettings: LanguageVersionSettings): Boolean {
         // Here we ignore the duplicates of continuation in local variable table,
         // Since it increases performance greatly.
-        val insns = findSafeAstorePredecessors(methodNode, ignoreLocalVariableTable = true) {
+        val cfg = ControlFlowGraph.build(methodNode)
+        val insns = findSafeAstorePredecessors(methodNode, cfg, ignoreLocalVariableTable = true) {
             it.opcode == Opcodes.CHECKCAST &&
                     (it as TypeInsnNode).desc == languageVersionSettings.continuationAsmType().internalName &&
                     it.previous?.opcode == Opcodes.ALOAD
         }
 
+        var changed = false
+
         for ((checkcast, astore) in insns) {
-            val aload = checkcast.previous
-            val index = astore.localIndex()
+            val aloadk = checkcast.previous
+            val aloadn = findSingleLoadFromAstore(astore, cfg, methodNode) ?: continue
 
-            methodNode.instructions.removeAll(listOf(aload, checkcast, astore))
-
-            methodNode.instructions.asSequence()
-                .filter { it.opcode == Opcodes.ALOAD && it.localIndex() == index }
-                .toList()
-                .forEach {
-                    methodNode.instructions.insertBefore(it, aload.clone())
-                    methodNode.instructions.set(it, checkcast.clone())
-                }
+            methodNode.instructions.removeAll(listOf(aloadk, checkcast, astore))
+            methodNode.instructions.insertBefore(aloadn, aloadk.clone())
+            methodNode.instructions.set(aloadn, checkcast.clone())
+            changed = true
         }
-        return insns.isNotEmpty()
+        return changed
     }
 
     private fun findSafeAstorePredecessors(
         methodNode: MethodNode,
+        cfg: ControlFlowGraph,
         ignoreLocalVariableTable: Boolean,
         predicate: (AbstractInsnNode) -> Boolean
     ): Map<AbstractInsnNode, AbstractInsnNode> {
         val insns = methodNode.instructions.asSequence().filter { predicate(it) }.toList()
-
-        val cfg = ControlFlowGraph.build(methodNode)
         val res = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
 
         for (insn in insns) {

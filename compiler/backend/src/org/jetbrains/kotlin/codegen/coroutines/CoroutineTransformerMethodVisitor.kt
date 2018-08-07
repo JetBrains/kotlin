@@ -709,7 +709,7 @@ private class SuspensionPoint(
     }
 }
 
-private fun getLastParameterIndex(desc: String, access: Int) =
+internal fun getLastParameterIndex(desc: String, access: Int) =
     Type.getArgumentTypes(desc).dropLast(1).map { it.size }.sum() + (if (!isStatic(access)) 1 else 0)
 
 private fun getParameterTypesForCoroutineConstructor(desc: String, hasDispatchReceiver: Boolean, thisName: String) =
@@ -842,7 +842,7 @@ private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode):
 private val SAFE_OPCODES =
     ((Opcodes.DUP..Opcodes.DUP2_X2) + Opcodes.NOP + Opcodes.POP + Opcodes.POP2 + (Opcodes.IFEQ..Opcodes.GOTO)).toSet()
 
-private fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
+internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
     val fakeContinuations = methodNode.instructions.asSequence().filter(::isFakeContinuationMarker).toList()
     for (fakeContinuation in fakeContinuations) {
         methodNode.instructions.removeAll(listOf(fakeContinuation.previous.previous, fakeContinuation.previous))

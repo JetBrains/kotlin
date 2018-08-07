@@ -9,9 +9,7 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
-import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
-import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodName
+import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
@@ -179,6 +177,12 @@ class AnonymousObjectTransformer(
         }
 
         deferringMethods.forEach { method ->
+            replaceFakeContinuationsWithRealOnes(
+                method.intermediate,
+                if (!inliningContext.isContinuation)
+                    getLastParameterIndex(method.intermediate.desc, method.intermediate.access)
+                else 0
+            )
             removeFinallyMarkers(method.intermediate)
             method.visitEnd()
 
