@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.F
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
+import org.jetbrains.kotlin.idea.quickfix.QuickFixActionBase
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -85,6 +86,7 @@ object J2KPostProcessingRegistrar {
         registerGeneralInspectionBasedProcessing(RedundantVisibilityModifierInspection())
         registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
         registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection())
+        registerGeneralInspectionBasedProcessing(CanBeValInspection())
 
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
 
@@ -192,12 +194,28 @@ object J2KPostProcessingRegistrar {
                 if (descriptor is ProblemDescriptor) {
                     if (this is IntentionWrapper) {
                         @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
-                        fun applyIntention() {
-                            val action = this.action as? SelfTargetingIntention<PsiElement> ?: return
+                        fun applySelfTargetingIntention(action: SelfTargetingIntention<PsiElement>) {
                             val target = action.getTarget(descriptor.psiElement.startOffset, descriptor.psiElement.containingFile) ?: return
                             if (!action.isApplicableTo(target, descriptor.psiElement.startOffset)) return
                             action.applyTo(target, null)
                         }
+
+                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
+                        fun applyQuickFixActionBase(action: QuickFixActionBase<PsiElement>) {
+                            if (!action.isAvailable(project, null, descriptor.psiElement.containingFile)) return
+                            action.invoke(project, null, descriptor.psiElement.containingFile)
+                        }
+
+
+                        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
+                        fun applyIntention() {
+                            val action = this.action
+                            when (action) {
+                                is SelfTargetingIntention<*> -> applySelfTargetingIntention(action as SelfTargetingIntention<PsiElement>)
+                                is QuickFixActionBase<*> -> applyQuickFixActionBase(action)
+                            }
+                        }
+
 
                         if (this.startInWriteAction()) {
                             ApplicationManager.getApplication().runWriteAction(::applyIntention)
