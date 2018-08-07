@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 1.3-M1 IDE plugins update
+
+### IDE
+
+- Kotlin plugin for Android Studio 3.3 Canary 4 is ready
+- [`KT-25713`](https://youtrack.jetbrains.com/issue/KT-25713) Android Studio on 182 platform: Gradle project re-import fails 
+- [`KT-25733`](https://youtrack.jetbrains.com/issue/KT-25733) "Convert Java File to Kotlin File" action was always disabled
+
+
 ## 1.3-M1
 
 ### Language design
@@ -7,6 +16,7 @@
 - [`KEEP-104`](https://github.com/Kotlin/KEEP/issues/104) Inline classes
 - [`KEEP-135`](https://github.com/Kotlin/KEEP/issues/135) Unsigned integer types
 - [`KEEP-95`](https://github.com/Kotlin/KEEP/issues/95) Experimental API annotations
+- [`KT-4895`](https://youtrack.jetbrains.com/issue/KT-4895) Support assignment of "when" subject to a variable
 - [`KT-13762`](https://youtrack.jetbrains.com/issue/KT-13762) Prohibit annotations with target 'EXPRESSION' and retention 'BINARY' or 'RUNTIME'
 - [`KT-16681`](https://youtrack.jetbrains.com/issue/KT-16681) kotlin allows mutating the field of read-only property
 - [`KT-21515`](https://youtrack.jetbrains.com/issue/KT-21515) Restrict visibility of classifiers, nested in companion objects
