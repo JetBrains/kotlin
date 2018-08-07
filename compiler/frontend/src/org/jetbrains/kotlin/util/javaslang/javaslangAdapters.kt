@@ -29,3 +29,4 @@ operator fun <T> Tuple2<T, *>.component1(): T = _1()
 operator fun <T> Tuple2<*, T>.component2(): T = _2()
 
 fun <T> Option<T>.getOrNull(): T? = getOrElse(null as T?)
+fun <K, V> ImmutableMap<K, V>.getOrNull(k: K): V? = get(k)?.getOrElse(null as V?)
