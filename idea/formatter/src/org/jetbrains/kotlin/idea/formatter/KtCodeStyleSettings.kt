@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -33,3 +34,9 @@ fun ktCodeStyleSettings(project: Project): KtCodeStyleSettings? {
 
     return KtCodeStyleSettings(ktCustomSettings, ktCommonSettings)
 }
+
+val CodeStyleSettings.kotlinCommonSettings: KotlinCommonCodeStyleSettings
+    get() = getCommonSettings(KotlinLanguage.INSTANCE) as KotlinCommonCodeStyleSettings
+
+val CodeStyleSettings.kotlinCustomSettings: KotlinCodeStyleSettings
+    get() = getCustomSettings(KotlinCodeStyleSettings::class.java)
