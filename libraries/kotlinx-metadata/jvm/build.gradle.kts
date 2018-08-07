@@ -79,6 +79,3 @@ if (deployVersion != null) {
     publish()
 }
 
-projectTest {
-    workingDir = rootDir
-}
