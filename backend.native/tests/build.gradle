@@ -63,9 +63,10 @@ dependencies {
 }
 
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
-ext.externalTestsDir = project.file("external")
-ext.externalStdlibTestsDir = project.file("stdlib_external")
+ext.externalTestsDir = project.file("build/external")
+ext.externalStdlibTestsDir = project.file("build/stdlib_external")
 externalTestsDir.mkdirs()
+externalStdlibTestsDir.mkdirs()
 
 ext.platformManager = project.rootProject.platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
@@ -114,43 +115,32 @@ task installTestLibrary(type: KlibInstall) {
 }
 
 // Gets tests from the same Kotlin compiler build
-task update_external_tests() {
-    doLast {
-        // Unzip.
-        delete temporaryDir
-        copy {
-            configurations.update_tests.asFileTree.each {
-                from(zipTree(it)) {
-                    include('compiler/**', 'stdlib/**')
-                }
-                into(temporaryDir)
-            }
-        }
-        // Copy only used tests into the test directory.
-        externalTestsDir.mkdirs()
-        delete("${externalTestsDir.canonicalPath}/codegen")
-        delete("${externalTestsDir.canonicalPath}/compileKotlinAgainstKotlin")
+def update_external_tests() {
+    // Copy only used tests into the test directory.
+    externalTestsDir.mkdirs()
+    delete("${externalTestsDir.canonicalPath}/codegen")
+    delete("${externalTestsDir.canonicalPath}/compileKotlinAgainstKotlin")
 
-        copy {
-            from temporaryDir.absolutePath + "/compiler"
+    copy {
+        configurations.update_tests.asFileTree.each {
+            from(zipTree(it))
             into(externalTestsDir)
-            include 'codegen/box/**'
-            include 'codegen/boxInline/**'
-            include 'compileKotlinAgainstKotlin/**'
+            include 'compiler/codegen/box/**'
+            include 'compiler/codegen/boxInline/**'
+            include 'compiler/compileKotlinAgainstKotlin/**'
         }
+    }
 
-        externalStdlibTestsDir.mkdirs()
-        delete("${externalStdlibTestsDir.canonicalPath}/common")
-        delete("${externalStdlibTestsDir.canonicalPath}/test")
-        copy {
-            from temporaryDir.absolutePath + "/stdlib"
+    externalStdlibTestsDir.mkdirs()
+    delete("${externalStdlibTestsDir.canonicalPath}/common")
+    delete("${externalStdlibTestsDir.canonicalPath}/test")
+    copy {
+        configurations.update_tests.asFileTree.each {
+            from(zipTree(it))
             into(externalStdlibTestsDir)
-            include 'common/**'
-            include 'test/**'
+            include 'stdlib/common/**'
+            include 'stdlib/test/**'
         }
-
-        //clean tmp dir.
-        delete temporaryDir
     }
 }
 
@@ -216,6 +206,8 @@ def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfigurati
 }
 
 task run_external () {
+    update_external_tests()
+
     // Create tasks for external tests.
     createTestTasks(externalTestsDir, RunExternalTestGroup) { }
 
@@ -2938,15 +2930,17 @@ task runKonanRegexTests(type: RunKonanTest) {
 
 task buildKonanStdlibTests(type: BuildKonanTest) {
     outputSourceSetName = "testOutputStdlib"
-    flags = [ "-Xmulti-platform" ]
-    compileList = [ "stdlib_external/test", "stdlib_external/common",
+    flags = [ "-Xmulti-platform", "-friend-modules", project.rootProject.file("dist/klib/common/stdlib") ]
+    def testSources = externalStdlibTestsDir.absolutePath
+    compileList = [ "$testSources/stdlib/test", "$testSources/stdlib/common",
                     "stdlib_external/utils.kt", "stdlib_external/jsCollectionFactoriesActuals.kt" ]
+    excludeList = [ "$testSources/stdlib/test/internalAnnotations.kt" ]
 }
 
 task runStdlibTests(type: RunStdlibTest) {
     outputSourceSetName = "testOutputStdlib"
     // runs all tests and hence source name should be not null
-    source = "stdlib_external/testUtils.kt"
+    source = "stdlib_external/utils.kt"
     useFilter = false
     runnerLogger = RunKonanTest.Logger.GTEST
 }
