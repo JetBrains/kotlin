@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.roots.ExternalProjectSystemRegistry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.util.io.FileUtil
@@ -124,13 +125,17 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
 fun Module.getOrCreateFacet(
     modelsProvider: IdeModifiableModelsProvider,
     useProjectSettings: Boolean,
+    externalSystemId: String? = null,
     commitModel: Boolean = false
 ): KotlinFacet {
     val facetModel = modelsProvider.getModifiableFacetModel(this)
 
     val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
             ?: with(KotlinFacetType.INSTANCE) { createFacet(this@getOrCreateFacet, defaultFacetName, createDefaultConfiguration(), null) }
-                .apply { facetModel.addFacet(this) }
+                .apply {
+                    val externalSource = externalSystemId?.let { ExternalProjectSystemRegistry.getInstance().getSourceById(it) }
+                    facetModel.addFacet(this, externalSource)
+                }
     facet.configuration.settings.useProjectSettings = useProjectSettings
     if (commitModel) {
         runWriteAction {

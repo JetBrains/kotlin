@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.util.*
 
@@ -220,7 +221,7 @@ fun configureFacetByGradleModule(
         moduleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
     )
 
-    val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
+    val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false, GradleConstants.SYSTEM_ID.id)
     kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
 
     if (sourceSetNode == null) {
