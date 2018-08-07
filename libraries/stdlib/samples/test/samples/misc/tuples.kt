@@ -22,21 +22,25 @@ class Tuples {
 
     @Sample
     fun pairToList() {
-        val list = Pair(1, "a").toList()
-        assertPrints(list, "[1, a]")
-        assertTrue(list[0] is Int)
-        assertTrue(list[1] is String)
-        assertFalse(list[1] is Int)
+        val anyList: List<Any> = Pair(1, "a").toList()
+        assertPrints(anyList, "[1, a]")
+        assertTrue(anyList[0] is Int)
+        assertTrue(anyList[1] is String)
+
+        val intList: List<Int> = Pair(0, 1).toList()
+        assertPrints(intList, "[0, 1]")
     }
 
     @Sample
     fun tripleToList() {
-        val list = Triple(1, "a", 0.5).toList()
-        assertPrints(list, "[1, a, 0.5]")
-        assertTrue(list[0] is Int)
-        assertTrue(list[1] is String)
-        assertTrue(list[2] is Double)
-        assertFalse(list[2] is String)
+        val anyList = Triple(1, "a", 0.5).toList()
+        assertPrints(anyList, "[1, a, 0.5]")
+        assertTrue(anyList[0] is Int)
+        assertTrue(anyList[1] is String)
+        assertTrue(anyList[2] is Double)
+
+        val intList: List<Int> = Triple(0, 1, 2).toList()
+        assertPrints(intList, "[0, 1, 2]")
     }
 
 }
