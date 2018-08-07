@@ -54,7 +54,7 @@ repositories {
 
 dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
-    update_tests (group: 'org',  name: 'Kotlin_dev_CompilerAllPlugins', version: kotlinVersion) {
+    update_tests (group: 'org',  name: 'Kotlin_dev_CompilerAllPlugins', version: testKotlinVersion) {
         artifact {
             name = 'internal/kotlin-test-data'
             type = 'zip'
@@ -119,15 +119,13 @@ task update_external_tests() {
         // Unzip.
         delete temporaryDir
         copy {
-//            configurations.update_tests.asFileTree.each {
-//                from(zipTree(it)) {
-            from(zipTree(file('/Users/ppunegov/ws/kotlin/dist/kotlin-test-data.zip'))) {
-
-                include('compiler/**', 'stdlib/**')
+            configurations.update_tests.asFileTree.each {
+                from(zipTree(it)) {
+                    include('compiler/**', 'stdlib/**')
                 }
-            into(temporaryDir)
+                into(temporaryDir)
+            }
         }
-
         // Copy only used tests into the test directory.
         externalTestsDir.mkdirs()
         delete("${externalTestsDir.canonicalPath}/codegen")
