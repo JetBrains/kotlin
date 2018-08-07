@@ -34,5 +34,5 @@ fun test() {
     }
 }
 
-// EXIST: {"lookupString":"child", "attributes":["bold"]}
-// EXIST: {"lookupString":"container", "attributes":["grayed"]}
+// EXIST: child
+// ABSENT: container

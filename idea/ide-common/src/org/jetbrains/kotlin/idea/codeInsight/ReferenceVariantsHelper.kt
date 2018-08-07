@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -177,14 +178,18 @@ class ReferenceVariantsHelper(
         val containingDeclaration = resolutionScope.ownerDescriptor
 
         val smartCastManager = resolutionFacade.frontendService<SmartCastManager>()
-        val implicitReceiverTypes = resolutionScope.getImplicitReceiversWithInstance().flatMap {
+        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
+
+        val implicitReceiverTypes = resolutionScope.getImplicitReceiversWithInstance(
+            languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)
+        ).flatMap {
             smartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
-                    it.value,
-                    bindingContext,
-                    containingDeclaration,
-                    dataFlowInfo,
-                    resolutionFacade.frontendService<LanguageVersionSettings>(),
-                    resolutionFacade.frontendService<DataFlowValueFactory>()
+                it.value,
+                bindingContext,
+                containingDeclaration,
+                dataFlowInfo,
+                languageVersionSettings,
+                resolutionFacade.frontendService<DataFlowValueFactory>()
             )
         }.toSet()
 

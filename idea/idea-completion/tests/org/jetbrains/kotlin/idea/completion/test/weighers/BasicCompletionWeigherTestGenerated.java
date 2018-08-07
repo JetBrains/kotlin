@@ -204,6 +204,11 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/weighers/basic/SuperMembers.kt");
     }
 
+    @TestMetadata("UnavailableDslReceiver.kt")
+    public void testUnavailableDslReceiver() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/UnavailableDslReceiver.kt");
+    }
+
     @TestMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -406,16 +406,13 @@ abstract class CompletionSession(
                                       nameExpression: KtSimpleNameExpression,
                                       callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<ReceiverType>? {
         var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
-                bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
-                stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
-                withImplicitReceiversWhenExplicitPresent = true)
+            bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
+            stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
+            withImplicitReceiversWhenExplicitPresent = true
+        )
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {
             receiverTypes = receiverTypes?.map { ReceiverType(it.type.makeNotNullable(), it.receiverIndex) }
-        }
-
-        if (receiverTypes != null && nameExpression.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) {
-            receiverTypes -= receiverTypes.shadowedByDslMarkers()
         }
 
         return receiverTypes
