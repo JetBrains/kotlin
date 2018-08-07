@@ -154,8 +154,6 @@ public class DefaultErrorMessages {
         MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @UseExperimental is ignored", TO_STRING);
         MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET, "Experimental annotation cannot be used on the following code elements: {0}. Please remove these targets", STRING);
 
-        MAP.put(ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR, "An accessor will not be generated for ''{0}'', so the annotation will not be written to the class file", STRING);
-
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "Unsigned literals are experimental and their usages should be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "Unsigned literals are experimental and their usages must be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
 

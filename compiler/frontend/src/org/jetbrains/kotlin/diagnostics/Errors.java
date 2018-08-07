@@ -253,8 +253,6 @@ public interface Errors {
     DiagnosticFactory1<KtAnnotationEntry, FqName> USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<KtAnnotationEntry, String> EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR = DiagnosticFactory1.create(WARNING);
-
     DiagnosticFactory1<PsiElement, FqName> EXPERIMENTAL_UNSIGNED_LITERALS = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, FqName> EXPERIMENTAL_UNSIGNED_LITERALS_ERROR = DiagnosticFactory1.create(ERROR);
 

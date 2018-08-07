@@ -11,19 +11,18 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class JvmAnnotationsTargetNonExistentAccessorChecker : DeclarationChecker {
     companion object {
@@ -78,7 +77,7 @@ class JvmAnnotationsTargetNonExistentAccessorChecker : DeclarationChecker {
         val annotationDescriptor = context.trace[BindingContext.ANNOTATION, entry] ?: return
         if (annotationDescriptor.annotationClass?.getAnnotationRetention() == KotlinRetention.SOURCE) return
 
-        context.trace.reportDiagnosticOnce(Errors.ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR.on(entry, declarationName))
+        context.trace.reportDiagnosticOnce(ErrorsJvm.ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR.on(entry, declarationName))
     }
 
     private fun isSpecialStaticProperty(descriptor: MemberDescriptor): Boolean {
