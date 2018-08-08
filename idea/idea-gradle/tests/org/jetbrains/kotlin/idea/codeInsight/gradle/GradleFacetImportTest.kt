@@ -2228,6 +2228,60 @@ compileTestKotlin {
         assertAllModulesConfigured()
     }
 
+    @Test
+    fun testNoFriendPathsAreShown() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.70-eap-4")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+                maven {
+                    url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                }
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.70-eap-4"
+            }
+        """
+        )
+        importProject()
+
+        Assert.assertEquals(
+            "-Xdump-declarations-to=tmpTest",
+            testFacetSettings.compilerSettings!!.additionalArguments
+        )
+
+        assertAllModulesConfigured()
+
+        Assert.assertEquals(
+            listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
+                   "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
+                   "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
+            getSourceRootInfos("project_main")
+        )
+        Assert.assertEquals(
+            listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
+                   "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
+                   "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
+            getSourceRootInfos("project_test")
+        )
+    }
+
     private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
         val module = getModule(projectName)
         val moduleInfo = if (isProduction) module.productionSourceInfo() else module.testSourceInfo()

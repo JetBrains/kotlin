@@ -198,8 +198,11 @@ private val jvmSpecificUIExposedFields = listOf(
     K2JVMCompilerArguments::destination.name,
     K2JVMCompilerArguments::classpath.name
 )
+private val jvmSpecificUIHiddenFields = listOf(
+    K2JVMCompilerArguments::friendPaths.name
+)
 val jvmUIExposedFields = commonUIExposedFields + jvmSpecificUIExposedFields
-private val jvmPrimaryFields = commonPrimaryFields + jvmSpecificUIExposedFields
+private val jvmPrimaryFields = commonPrimaryFields + jvmSpecificUIExposedFields + jvmSpecificUIHiddenFields
 
 private val jsSpecificUIExposedFields = listOf(
     K2JSCompilerArguments::sourceMap.name,
