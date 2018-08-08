@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.typeEnhancement.TypeEnhancementKt;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
@@ -138,11 +139,16 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
 
         enhanced.setOverriddenDescriptors(getOverriddenDescriptors());
 
+        ReceiverParameterDescriptor enhancedReceiver =
+                enhancedReceiverType == null ? null : DescriptorFactory.createExtensionReceiverParameterForCallable(
+                        this, enhancedReceiverType, Annotations.Companion.getEMPTY()
+                );
+
         enhanced.setType(
                 enhancedReturnType,
                 getTypeParameters(), // TODO
                 getDispatchReceiverParameter(),
-                enhancedReceiverType
+                enhancedReceiver
         );
         return enhanced;
     }

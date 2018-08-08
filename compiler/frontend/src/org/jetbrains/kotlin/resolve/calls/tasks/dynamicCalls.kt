@@ -104,7 +104,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
             dynamicType,
             createTypeParameters(propertyDescriptor, call),
             createDynamicDispatchReceiverParameter(propertyDescriptor),
-            null as KotlinType?
+            null
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)

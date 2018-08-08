@@ -361,7 +361,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                     /* outType                   = */ substituteTypeAndTryGetCopied(oldDescriptor.type)!!,
                     /* typeParameters            = */ oldDescriptor.typeParameters,
                     /* dispatchReceiverParameter = */ (containingDeclaration as ClassDescriptor).thisAsReceiverParameter,
-                    /* receiverType              = */ substituteTypeAndTryGetCopied(oldDescriptor.extensionReceiverParameter?.type))
+                    /* extensionReceiverParameter= */ copyReceiverParameter(oldDescriptor.extensionReceiverParameter, this)
+                )
 
                 initialize(
                     /* getter = */ oldDescriptor.getter?.let { copyPropertyGetterDescriptor(it, this) },

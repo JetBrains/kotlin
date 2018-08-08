@@ -15,21 +15,14 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toIrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -363,8 +356,7 @@ fun createField(
     ).apply {
         initialize(null, null)
 
-        val receiverType: KotlinType? = null
-        setType(type.toKotlinType(), emptyList(), owner.thisAsReceiverParameter, receiverType)
+        setType(type.toKotlinType(), emptyList(), owner.thisAsReceiverParameter, null)
     }
 
     return IrFieldImpl(startOffset, endOffset, origin, descriptor, type)

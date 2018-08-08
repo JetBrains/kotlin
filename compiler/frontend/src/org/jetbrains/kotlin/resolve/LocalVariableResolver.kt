@@ -179,7 +179,7 @@ class LocalVariableResolver(
             type = variableTypeAndInitializerResolver.resolveType(propertyDescriptor, scope, variable, dataFlowInfo, trace, local = true)
 
             val receiverParameter = (containingDeclaration as ScriptDescriptor).thisAsReceiverParameter
-            propertyDescriptor.setType(type, emptyList<TypeParameterDescriptor>(), receiverParameter, null as KotlinType?)
+            propertyDescriptor.setType(type, emptyList<TypeParameterDescriptor>(), receiverParameter, null)
             initializeWithDefaultGetterSetter(propertyDescriptor)
             trace.record(BindingContext.VARIABLE, variable, propertyDescriptor)
             result = propertyDescriptor

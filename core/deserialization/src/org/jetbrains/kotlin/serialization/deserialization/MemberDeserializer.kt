@@ -63,7 +63,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
             local.typeDeserializer.ownTypeParameters,
             getDispatchReceiverParameter(),
-            proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }
+            proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }?.let { receiverType ->
+                DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, Annotations.EMPTY)
+            }
         )
 
         val getter = if (hasGetter) {

@@ -275,7 +275,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
         val propertyType = getPropertyType(field)
 
-        propertyDescriptor.setType(propertyType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
+        propertyDescriptor.setType(propertyType, listOf(), getDispatchReceiverParameter(), null)
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.type)) {
             propertyDescriptor.setCompileTimeInitializer(

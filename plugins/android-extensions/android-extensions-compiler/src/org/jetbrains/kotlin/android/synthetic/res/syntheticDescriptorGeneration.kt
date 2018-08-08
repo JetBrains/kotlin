@@ -123,7 +123,8 @@ private fun genProperty(
             flexibleType,
             emptyList<TypeParameterDescriptor>(),
             null,
-            receiverType)
+            DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, Annotations.EMPTY)
+    )
 
     val getter = PropertyGetterDescriptorImpl(
             property,

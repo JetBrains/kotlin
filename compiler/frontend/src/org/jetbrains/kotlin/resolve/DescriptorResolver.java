@@ -1230,9 +1230,7 @@ public class DescriptorResolver {
                 false
         );
         propertyWrapper.setDescriptor(propertyDescriptor);
-        propertyDescriptor.setType(
-                type, Collections.emptyList(), getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null
-        );
+        propertyDescriptor.setType(type, Collections.emptyList(), getDispatchReceiverParameterIfNeeded(classDescriptor), null);
 
         Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
         Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(

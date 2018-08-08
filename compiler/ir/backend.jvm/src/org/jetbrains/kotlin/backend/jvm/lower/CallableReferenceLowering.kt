@@ -474,7 +474,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                                 /* outType                   = */ superNameProperty.type,
                                 /* typeParameters            = */ superNameProperty.typeParameters,
                                 /* dispatchReceiverParameter = */ superNameProperty.dispatchReceiverParameter,
-                                /* receiverType              = */ superNameProperty.extensionReceiverParameter?.type
+                                /* extensionReceiverParameter= */ superNameProperty.extensionReceiverParameter
                             )
                             //overriddenDescriptors += superNameProperty.getter
                         }

@@ -173,8 +173,7 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
             false
         )
 
-
-        desc.setType(builtIns.anyType, emptyList(), closureBoxTypeDescriptor.thisAsReceiverParameter, null as ReceiverParameterDescriptor?)
+        desc.setType(builtIns.anyType, emptyList(), closureBoxTypeDescriptor.thisAsReceiverParameter, null)
         desc.initialize(null, null)
 
         return desc

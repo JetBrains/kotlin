@@ -431,11 +431,7 @@ public class ErrorUtils {
                 SourceElement.NO_SOURCE,
                 false, false, false, false, false, false
         );
-        descriptor.setType(ERROR_PROPERTY_TYPE,
-                           Collections.<TypeParameterDescriptor>emptyList(),
-                           null,
-                           (KotlinType) null
-        );
+        descriptor.setType(ERROR_PROPERTY_TYPE, Collections.<TypeParameterDescriptor>emptyList(), null, null);
 
         return descriptor;
     }
