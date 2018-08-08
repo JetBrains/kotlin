@@ -496,3 +496,5 @@ fun FunctionDescriptor.isSuspendLambdaOrLocalFunction() = this.isSuspend && when
     is SimpleFunctionDescriptor -> this.visibility == Visibilities.LOCAL
     else -> false
 }
+
+fun FunctionDescriptor.isLocalSuspendFunctionNotSuspendLambda() = isSuspendLambdaOrLocalFunction() && this !is AnonymousFunctionDescriptor
