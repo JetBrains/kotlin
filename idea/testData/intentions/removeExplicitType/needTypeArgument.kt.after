@@ -1,0 +1,2 @@
+// WITH_RUNTIME
+val x = setOf<Int>()
