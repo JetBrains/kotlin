@@ -9,6 +9,8 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl.WithDestructuringDeclaration
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
@@ -34,7 +36,10 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                     val descriptor = lambda.analyze()[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
                     val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
 
-                    if (lambda.bodyExpression?.usesDescriptor(iterableParameter) != true && it.calleeExpression != null) {
+                    if (iterableParameter !is WithDestructuringDeclaration &&
+                        lambda.bodyExpression?.usesDescriptor(iterableParameter) != true &&
+                        it.calleeExpression != null) {
+
                         holder.registerProblem(
                             it.calleeExpression!!,
                             "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
