@@ -86,37 +86,41 @@ internal fun emitLLVM(context: Context, phaser: PhaseManager) {
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
     var devirtualizationAnalysisResult: Devirtualization.AnalysisResult? = null
     phaser.phase(KonanPhase.DEVIRTUALIZATION) {
-        devirtualizationAnalysisResult = Devirtualization.run(irModule, context, moduleDFG!!, externalModulesDFG!!)
+        externalModulesDFG?.let { externalModulesDFG ->
+            devirtualizationAnalysisResult = Devirtualization.run(irModule, context, moduleDFG!!, externalModulesDFG)
 
-        val privateFunctions = moduleDFG!!.symbolTable.getPrivateFunctionsTableForExport()
-        privateFunctions.forEachIndexed { index, it ->
-            val function = codegenVisitor.codegen.llvmFunction(it.first)
-            LLVMAddAlias(
-                    context.llvmModule,
-                    function.type,
-                    function,
-                    irModule.descriptor.privateFunctionSymbolName(index, it.second.name)
-            )!!
+            val privateFunctions = moduleDFG!!.symbolTable.getPrivateFunctionsTableForExport()
+            privateFunctions.forEachIndexed { index, it ->
+                val function = codegenVisitor.codegen.llvmFunction(it.first)
+                LLVMAddAlias(
+                        context.llvmModule,
+                        function.type,
+                        function,
+                        irModule.descriptor.privateFunctionSymbolName(index, it.second.name)
+                )!!
+            }
+            context.privateFunctions = privateFunctions
+
+            val privateClasses = moduleDFG!!.symbolTable.getPrivateClassesTableForExport()
+
+            privateClasses.forEachIndexed { index, it ->
+                val typeInfoPtr = codegenVisitor.codegen.typeInfoValue(it.first)
+                LLVMAddAlias(
+                        context.llvmModule,
+                        typeInfoPtr.type,
+                        typeInfoPtr,
+                        irModule.descriptor.privateClassSymbolName(index, it.second.name)
+                )!!
+            }
+            context.privateClasses = privateClasses
         }
-        context.privateFunctions = privateFunctions
-
-        val privateClasses = moduleDFG!!.symbolTable.getPrivateClassesTableForExport()
-
-        privateClasses.forEachIndexed { index, it ->
-            val typeInfoPtr = codegenVisitor.codegen.typeInfoValue(it.first)
-            LLVMAddAlias(
-                    context.llvmModule,
-                    typeInfoPtr.type,
-                    typeInfoPtr,
-                    irModule.descriptor.privateClassSymbolName(index, it.second.name)
-            )!!
-        }
-        context.privateClasses = privateClasses
     }
 
     phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
-        val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!, devirtualizationAnalysisResult, false).build()
-        EscapeAnalysis.computeLifetimes(context, moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
+        externalModulesDFG?.let { externalModulesDFG ->
+            val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG, devirtualizationAnalysisResult, false).build()
+            EscapeAnalysis.computeLifetimes(context, moduleDFG!!, externalModulesDFG, callGraph, lifetimes)
+        }
     }
 
     phaser.phase(KonanPhase.SERIALIZE_DFG) {

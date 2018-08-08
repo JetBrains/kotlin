@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -929,7 +930,7 @@ internal object DFGSerializer {
     }
 
     // TODO: Deserialize functions bodies lazily.
-    fun deserialize(context: Context, startPrivateTypeIndex: Int, startPrivateFunIndex: Int): ExternalModulesDFG {
+    fun deserialize(context: Context, startPrivateTypeIndex: Int, startPrivateFunIndex: Int): ExternalModulesDFG? {
         var privateTypeIndex = startPrivateTypeIndex
         var privateFunIndex = startPrivateFunIndex
         val publicTypesMap = mutableMapOf<Long, DataFlowIR.Type.Public>()
@@ -949,8 +950,10 @@ internal object DFGSerializer {
                 val reader = ArraySlice(libraryDataFlowGraph)
                 val dataLayoutHash = reader.readLong()
                 val expectedHash = computeDataLayoutHash(Module::class)
-                if (dataLayoutHash != expectedHash)
-                    error("Expected data layout hash: $expectedHash but actual is: $dataLayoutHash")
+                if (dataLayoutHash != expectedHash) {
+                    context.report(null, null, "Expected data layout hash: $expectedHash but actual is: $dataLayoutHash", false)
+                    return null
+                }
                 val moduleDataFlowGraph = Module(reader)
 
                 val symbolTable = moduleDataFlowGraph.symbolTable
