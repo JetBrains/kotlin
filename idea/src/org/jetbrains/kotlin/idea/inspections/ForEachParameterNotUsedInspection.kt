@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
-class ForEachParameterNotUsed : AbstractKotlinInspection() {
+class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     companion object {
         private val COLLECTIONS_FOREACH_FQNAME = FqName("kotlin.collections.forEach")
         private val SEQUENCES_FOREACH_FQNAME = FqName("kotlin.sequences.forEach")

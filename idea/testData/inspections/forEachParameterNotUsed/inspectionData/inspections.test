@@ -1,1 +1,1 @@
-// INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.ForEachParameterNotUsed
+// INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.ForEachParameterNotUsedInspection
