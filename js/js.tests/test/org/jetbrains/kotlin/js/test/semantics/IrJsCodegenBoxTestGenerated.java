@@ -19725,6 +19725,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/unsignedTypes/iterateOverListOfBoxedUnsignedValues.kt");
         }
 
+        @TestMetadata("signedToUnsignedLiteralConversion.kt")
+        public void testSignedToUnsignedLiteralConversion() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/signedToUnsignedLiteralConversion.kt");
+        }
+
         @TestMetadata("unsignedTypeValuesInsideStringTemplates.kt")
         public void testUnsignedTypeValuesInsideStringTemplates() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedTypeValuesInsideStringTemplates.kt");
