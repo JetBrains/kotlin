@@ -276,7 +276,7 @@ object SourceNavigationHelper {
             SourceNavigationHelper.NavigationKind.SOURCES_TO_CLASS_FILES -> {
                 val file = from.containingFile
                 if (file is KtFile && file.isCompiled) return from
-                if (!ProjectRootsUtil.isInContent(from, false, true, false, true)) return from
+                if (!ProjectRootsUtil.isInContent(from, false, true, false, true, false)) return from
                 if (KtPsiUtil.isLocal(from)) return from
             }
         }

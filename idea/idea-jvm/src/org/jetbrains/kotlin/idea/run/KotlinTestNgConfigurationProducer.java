@@ -112,7 +112,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
         Project project = context.getProject();
         PsiElement leaf = location.getPsiElement();
 
-        if (!ProjectRootsUtil.isInProjectOrLibSource(leaf)) {
+        if (!ProjectRootsUtil.isInProjectOrLibSource(leaf, false)) {
             return false;
         }
 
