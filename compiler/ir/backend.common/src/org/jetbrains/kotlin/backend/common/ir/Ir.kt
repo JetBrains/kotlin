@@ -175,6 +175,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     val kFunctionImpl = calc { symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl) }
 
+    val functionReference = calc { symbolTable.referenceClass(context.getInternalClass("FunctionReference")) }
+
     val kProperty0Impl = calc { symbolTable.referenceClass(context.reflectionTypes.kProperty0Impl) }
     val kProperty1Impl = calc { symbolTable.referenceClass(context.reflectionTypes.kProperty1Impl) }
     val kProperty2Impl = calc { symbolTable.referenceClass(context.reflectionTypes.kProperty2Impl) }

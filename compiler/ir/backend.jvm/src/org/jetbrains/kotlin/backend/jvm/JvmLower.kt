@@ -57,6 +57,7 @@ class JvmLower(val context: JvmBackendContext) {
             },
             Visibilities.PUBLIC //TODO properly figure out visibility
         ).runOnFilePostfix(irFile)
+        CallableReferenceLowering(context).lower(irFile)
 
         EnumClassLowering(context).runOnFilePostfix(irFile)
         //Should be before SyntheticAccessorLowering cause of synthetic accessor for companion constructor

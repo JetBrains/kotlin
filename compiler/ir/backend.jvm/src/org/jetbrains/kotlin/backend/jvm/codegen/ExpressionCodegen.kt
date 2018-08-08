@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicFunction
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.backend.jvm.lower.CrIrType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -949,13 +951,19 @@ class ExpressionCodegen(
             assert(classReference is IrGetClass)
             JavaClassProperty.generateImpl(mv, gen((classReference as IrGetClass).argument, data))
         } else {
-            val type = classReference.classType.toKotlinType()
-            if (TypeUtils.isTypeParameter(type)) {
-                assert(TypeUtils.isReifiedTypeParameter(type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + type }
-                putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
-            }
+            val classType = classReference.classType
+            if (classType is CrIrType) {
+                putJavaLangClassInstance(mv, classType.type)
+                return
+            } else {
+                val type = classType.toKotlinType()
+                if (TypeUtils.isTypeParameter(type)) {
+                    assert(TypeUtils.isReifiedTypeParameter(type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + type }
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
+                }
 
-            putJavaLangClassInstance(mv, typeMapper.mapType(type))
+                putJavaLangClassInstance(mv, typeMapper.mapType(type))
+            }
         }
 
         if (wrapIntoKClass) {
@@ -1025,7 +1033,7 @@ class ExpressionCodegen(
 
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
-        val isInline = (!state.isInlineDisabled || InlineUtil.containsReifiedTypeParameters(descriptor)) && (InlineUtil.isInline(descriptor) || InlineUtil.isArrayConstructorWithLambda(descriptor))
+        val isInline = descriptor.isInlineCall(state)
 
         if (!isInline) return IrCallGenerator.DefaultCallGenerator
 
@@ -1130,3 +1138,7 @@ fun DefaultCallArgs.generateOnStackIfNeeded(callGenerator: IrCallGenerator, isCo
     }
     return toInts.isNotEmpty()
 }
+
+internal fun CallableDescriptor.isInlineCall(state: GenerationState) =
+    (!state.isInlineDisabled || InlineUtil.containsReifiedTypeParameters(this)) &&
+            (InlineUtil.isInline(this) || InlineUtil.isArrayConstructorWithLambda(this))

@@ -239,7 +239,7 @@ fun IrConstructor.callsSuper(): Boolean {
     return callsSuper
 }
 
-fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int) = when (this) {
+fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int, name: Name = this.name) = when (this) {
     is ValueParameterDescriptor -> this.copy(newOwner, name, index)
     is ReceiverParameterDescriptor -> ValueParameterDescriptorImpl(
         containingDeclaration = newOwner,
