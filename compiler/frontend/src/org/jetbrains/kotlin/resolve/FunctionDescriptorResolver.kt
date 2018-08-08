@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.contracts.description.LazyContractProvider
 import org.jetbrains.kotlin.contracts.parsing.ContractParsingServices
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
@@ -55,6 +57,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker
 import org.jetbrains.kotlin.resolve.source.toSourceElement
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -75,7 +78,8 @@ class FunctionDescriptorResolver(
     private val overloadChecker: OverloadChecker,
     private val contractParsingServices: ContractParsingServices,
     private val expressionTypingServices: ExpressionTypingServices,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val storageManager: StorageManager
 ) {
     fun resolveFunctionDescriptor(
         containingDescriptor: DeclarationDescriptor,
@@ -209,10 +213,15 @@ class FunctionDescriptorResolver(
             }
         }
 
+        val extensionReceiver = receiverType?.let {
+            val splitter = AnnotationSplitter.create(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            DescriptorFactory.createExtensionReceiverParameterForCallable(
+                functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
+            )
+        }
+
         functionDescriptor.initialize(
-            receiverType?.let {
-                DescriptorFactory.createExtensionReceiverParameterForCallable(functionDescriptor, it, Annotations.EMPTY)
-            },
+            extensionReceiver,
             getDispatchReceiverParameterIfNeeded(container),
             typeParameterDescriptors,
             valueParameterDescriptors,

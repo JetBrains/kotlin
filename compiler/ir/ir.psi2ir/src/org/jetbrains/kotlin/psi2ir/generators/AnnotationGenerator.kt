@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -31,24 +30,12 @@ class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
         }
     }
 
-    override fun visitValueParameter(declaration: IrValueParameter) {
-        super.visitValueParameter(declaration)
-
-        declaration.descriptor.type.annotations.getAllAnnotations()
-            .filter { it.target == AnnotationUseSiteTarget.RECEIVER }
-            .generateAnnotationConstructorCalls(declaration)
-    }
-
     private fun generateAnnotationsForDeclaration(declaration: IrDeclaration) {
         declaration.descriptor.annotations.getAllAnnotations()
             .filter { isAnnotationTargetMatchingDeclaration(it.target, declaration) }
-            .generateAnnotationConstructorCalls(declaration)
-    }
-
-    private fun List<AnnotationWithTarget>.generateAnnotationConstructorCalls(declaration: IrDeclaration) {
-        mapTo(declaration.annotations) {
-            constantValueGenerator.generateAnnotationConstructorCall(it.annotation)
-        }
+            .mapTo(declaration.annotations) {
+                constantValueGenerator.generateAnnotationConstructorCall(it.annotation)
+            }
     }
 
     private fun isAnnotationTargetMatchingDeclaration(target: AnnotationUseSiteTarget?, element: IrElement): Boolean =

@@ -39,9 +39,7 @@ object LateinitIntrinsicApplicabilityChecker : CallChecker {
         // An optimization
         if (descriptor.name.asString() != "isInitialized") return
 
-        // TODO: store "@receiver:..." annotations in ReceiverParameterDescriptor
-        val annotations = descriptor.extensionReceiverParameter?.value?.type?.annotations?.getUseSiteTargetedAnnotations() ?: return
-        if (annotations.none { it.annotation.fqName == ACCESSIBLE_LATEINIT_PROPERTY_LITERAL }) return
+        if (descriptor.extensionReceiverParameter?.annotations?.hasAnnotation(ACCESSIBLE_LATEINIT_PROPERTY_LITERAL) != true) return
 
         val expression = (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression?.let(KtPsiUtil::safeDeparenthesize)
         if (expression !is KtCallableReferenceExpression) {

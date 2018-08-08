@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.annotation
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 interface WrappedAnnotated : Annotated {
@@ -25,19 +24,3 @@ interface WrappedAnnotated : Annotated {
 }
 
 class AnnotatedWithFakeAnnotations(override val originalAnnotated: Annotated, override val annotations: Annotations) : WrappedAnnotated
-
-class AnnotatedWithOnlyTargetedAnnotations(original: Annotated) : Annotated {
-    override val annotations: Annotations = UseSiteTargetedAnnotations(original.annotations)
-
-    private class UseSiteTargetedAnnotations(private val additionalAnnotations: Annotations) : Annotations {
-        override fun isEmpty() = true
-
-        override fun getUseSiteTargetedAnnotations() = getAdditionalTargetedAnnotations()
-
-        override fun getAllAnnotations() = getAdditionalTargetedAnnotations()
-
-        override fun iterator() = emptyList<AnnotationDescriptor>().iterator()
-
-        private fun getAdditionalTargetedAnnotations() = additionalAnnotations.getUseSiteTargetedAnnotations()
-    }
-}

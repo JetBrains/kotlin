@@ -939,8 +939,9 @@ public class DescriptorResolver {
 
         ReceiverParameterDescriptor receiverDescriptor;
         if (receiverType != null) {
+            AnnotationSplitter splitter = AnnotationSplitter.create(storageManager, receiverType.getAnnotations(), EnumSet.of(RECEIVER));
             receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
-                    propertyDescriptor, receiverType, Annotations.Companion.getEMPTY()
+                    propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER)
             );
         }
         else {

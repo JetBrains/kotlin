@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
-import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
@@ -73,7 +72,8 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
-import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
+import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_GETTER;
+import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_SETTER;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -532,22 +532,16 @@ public class FunctionCodegen {
                 continue;
             }
 
-            if (kind == JvmMethodParameterKind.VALUE) {
-                AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper).genAnnotations(
-                        iterator.next(),
-                        parameterSignature.getAsmType()
-                );
-            }
-            else if (kind == JvmMethodParameterKind.RECEIVER) {
-                ReceiverParameterDescriptor receiver = JvmCodegenUtil.getDirectMember(functionDescriptor).getExtensionReceiverParameter();
+            AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper);
+            Annotated annotated =
+                    kind == JvmMethodParameterKind.VALUE
+                    ? iterator.next()
+                    : kind == JvmMethodParameterKind.RECEIVER
+                      ? JvmCodegenUtil.getDirectMember(functionDescriptor).getExtensionReceiverParameter()
+                      : null;
 
-                if (receiver != null) {
-                    AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper);
-                    Annotated targetedAnnotations = new AnnotatedWithOnlyTargetedAnnotations(receiver.getType());
-                    annotationCodegen.genAnnotations(targetedAnnotations, parameterSignature.getAsmType(), RECEIVER);
-
-                    annotationCodegen.genAnnotations(receiver, parameterSignature.getAsmType());
-                }
+            if (annotated != null) {
+                annotationCodegen.genAnnotations(annotated, parameterSignature.getAsmType());
             }
         }
     }

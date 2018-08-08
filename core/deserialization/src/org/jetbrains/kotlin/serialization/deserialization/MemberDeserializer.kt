@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
@@ -63,8 +61,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
             local.typeDeserializer.ownTypeParameters,
             getDispatchReceiverParameter(),
-            proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }?.let { receiverType ->
-                DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, Annotations.EMPTY)
+            proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.let { receiverType ->
+                DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, receiverAnnotations)
             }
         )
 
@@ -257,8 +255,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val local = c.childContext(function, proto.typeParameterList)
 
         function.initializeWithCoroutinesExperimentalityStatus(
-            proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }?.let { receiverType ->
-                DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, Annotations.EMPTY)
+            proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.let { receiverType ->
+                DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, receiverAnnotations)
             },
             getDispatchReceiverParameter(),
             local.typeDeserializer.ownTypeParameters,
@@ -351,20 +349,12 @@ class MemberDeserializer(private val c: DeserializationContext) {
         }
     }
 
-    private fun getReceiverParameterAnnotations(
-        proto: MessageLite,
-        kind: AnnotatedCallableKind,
-        receiverTargetedKind: AnnotatedCallableKind = kind
-    ): Annotations {
-        return DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+    private fun getReceiverParameterAnnotations(proto: MessageLite, kind: AnnotatedCallableKind): Annotations =
+        DeserializedAnnotations(c.storageManager) {
             c.containingDeclaration.asProtoContainer()?.let {
-                c.components.annotationAndConstantLoader
-                    .loadExtensionReceiverParameterAnnotations(it, proto, receiverTargetedKind)
-                    .map { annotation -> AnnotationWithTarget(annotation, AnnotationUseSiteTarget.RECEIVER) }
-                    .toList()
+                c.components.annotationAndConstantLoader.loadExtensionReceiverParameterAnnotations(it, proto, kind)
             }.orEmpty()
         }
-    }
 
     private fun valueParameters(
         valueParameters: List<ProtoBuf.ValueParameter>,
