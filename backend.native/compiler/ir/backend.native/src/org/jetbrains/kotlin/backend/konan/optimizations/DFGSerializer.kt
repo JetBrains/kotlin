@@ -407,12 +407,13 @@ internal object DFGSerializer {
         }
     }
 
-    class Field(val type: Int?, val hash: Long, val name: String?) {
+    class Field(val receiverType: Int?, val type: Int, val hash: Long, val name: String?) {
 
-        constructor(data: ArraySlice) : this(data.readNullableInt(), data.readLong(), data.readNullable { readString() })
+        constructor(data: ArraySlice) : this(data.readNullableInt(), data.readInt(), data.readLong(), data.readNullable { readString() })
 
         fun write(result: ArraySlice) {
-            result.writeNullableInt(type)
+            result.writeNullableInt(receiverType)
+            result.writeInt(type)
             result.writeLong(hash)
             result.writeNullable(name) { writeString(it) }
         }
@@ -869,7 +870,7 @@ internal object DFGSerializer {
                                         VirtualCall(buildCall(virtualCall), typeMap[virtualCall.receiverType]!!)
 
                                 fun buildField(field: DataFlowIR.Field) =
-                                        Field(field.type?.let { typeMap[it]!! }, field.hash, field.name)
+                                        Field(field.receiverType?.let { typeMap[it]!! }, typeMap[field.type]!!, field.hash, field.name)
 
                                 when (node) {
                                     is DataFlowIR.Node.Parameter -> Node.parameter(node.index)
@@ -1076,7 +1077,7 @@ internal object DFGSerializer {
                 }
 
                 fun deserializeField(field: Field) =
-                        DataFlowIR.Field(field.type?.let { types[it] }, field.hash, field.name)
+                        DataFlowIR.Field(field.receiverType?.let { types[it] }, types[field.type], field.hash, field.name)
 
                 fun deserializeBody(body: FunctionBody): DataFlowIR.FunctionBody {
                     val nodes = body.nodes.map {

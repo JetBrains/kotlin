@@ -209,7 +209,7 @@ internal object DataFlowIR {
         }
     }
 
-    data class Field(val type: Type?, val hash: Long, val name: String? = null)
+    data class Field(val receiverType: Type?, val type: Type, val hash: Long, val name: String? = null)
 
     class Edge(val castToType: Type?) {
 

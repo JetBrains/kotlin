@@ -163,7 +163,7 @@ internal object Devirtualization {
 
         class VirtualCallSiteReceivers(val receiver: Node, val caller: DataFlowIR.FunctionSymbol, val devirtualizedCallees: List<DevirtualizedCallee>)
 
-        class ConstraintGraph : DirectedGraph<Node, Node> {
+        inner class ConstraintGraph : DirectedGraph<Node, Node> {
 
             private var nodesCount = 0
 
@@ -172,7 +172,7 @@ internal object Devirtualization {
 
             val voidNode = addNode { Node.Ordinary(it, { "Void" }) }
             val virtualNode = addNode { Node.Source(it, VIRTUAL_TYPE_ID, { "Virtual" }) }
-            val arrayItemField = DataFlowIR.Field(null, 1, "Array\$Item")
+            val arrayItemField = DataFlowIR.Field(null, symbolTable.mapClass(context.irBuiltIns.anyClass.owner), 1, "Array\$Item")
             val functions = mutableMapOf<DataFlowIR.FunctionSymbol, Function>()
             val concreteClasses = mutableMapOf<DataFlowIR.Type.Declared, Node>()
             val externalFunctions = mutableMapOf<DataFlowIR.FunctionSymbol, Node>()
