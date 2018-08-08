@@ -15,7 +15,10 @@ pill {
 
 dependencies {
     compile project(':kotlin-stdlib')
-    
+
+    // Granular compile dependency; At runtime, it is covered by the compiler distribution the kotlin-gradle-plugin depends on.
+    compileOnly(project(':compiler:util')) { transitive = false }
+
     compileOnly gradleApi()
     compileOnly 'com.android.tools.build:gradle:0.4.2'
 }

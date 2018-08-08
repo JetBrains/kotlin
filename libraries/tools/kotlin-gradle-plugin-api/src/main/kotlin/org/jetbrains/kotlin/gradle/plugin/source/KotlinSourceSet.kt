@@ -9,12 +9,15 @@ import groovy.lang.Closure
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 
 interface KotlinSourceSet : Named, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
     val resources: SourceDirectorySet
+    val languageSettings: LanguageSettingsBuilder
 
     fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet
+    fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder
 
     companion object {
         const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
