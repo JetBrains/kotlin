@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class Foo<T>(val x: T)
 
 typealias FooStr = Foo<String>
