@@ -221,17 +221,18 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             val imports = file.importDirectives
             val scopeToImport = getMemberScope(parentFqName, moduleDescriptor) ?: return ImportDescriptorResult.FAIL
             val importedScopes = imports
-                    .filter { it.isAllUnder }
-                    .mapNotNull {
-                        val importPath = it.importPath
-                        if (importPath != null) {
-                            val fqName = importPath.fqName
-                            getMemberScope(fqName, moduleDescriptor)
-                        }
-                        else {
-                            null
-                        }
+                .asSequence()
+                .filter { it.isAllUnder }
+                .mapNotNull {
+                    val importPath = it.importPath
+                    if (importPath != null) {
+                        val fqName = importPath.fqName
+                        getMemberScope(fqName, moduleDescriptor)
+                    } else {
+                        null
                     }
+                }
+                .toList()
 
             val filePackage = moduleDescriptor.getPackage(file.packageFqName)
 

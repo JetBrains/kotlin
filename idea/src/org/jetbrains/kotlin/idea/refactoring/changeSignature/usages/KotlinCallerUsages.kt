@@ -35,8 +35,10 @@ class KotlinCallerUsage(element: KtNamedDeclaration): KotlinUsageInfo<KtNamedDec
             else -> null
         } ?: return true
         changeInfo.getNonReceiverParameters()
-                .withIndex()
-                .filter { it.value.isNewParameter }
+            .asSequence()
+            .withIndex()
+            .filter { it.value.isNewParameter }
+            .toList()
                 .forEach {
                     val newParameter = it.value.getDeclarationSignature(it.index, changeInfo.methodDescriptor.originalPrimaryCallable)
                     parameterList.addParameter(newParameter).addToShorteningWaitSet()

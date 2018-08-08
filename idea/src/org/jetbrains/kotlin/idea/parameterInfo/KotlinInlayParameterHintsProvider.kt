@@ -174,7 +174,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         val resolvedCallee = resolvedCall?.candidateDescriptor
         if (resolvedCallee is FunctionDescriptor) {
             val paramNames =
-                resolvedCallee.valueParameters.map { it.name }.filter { !it.isSpecial }.map(Name::asString)
+                resolvedCallee.valueParameters.asSequence().map { it.name }.filter { !it.isSpecial }.map(Name::asString).toList()
             val fqName = if (resolvedCallee is ConstructorDescriptor)
                 resolvedCallee.containingDeclaration.fqNameSafe.asString()
             else

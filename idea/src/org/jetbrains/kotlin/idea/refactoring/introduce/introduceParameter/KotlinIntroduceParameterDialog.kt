@@ -248,7 +248,7 @@ class KotlinIntroduceParameterDialog private constructor(
                 val space = if (statement.isMultiLine()) "\n" else " "
                 val parameters = function.valueParameters
                 val parametersText = if (parameters.isNotEmpty()) {
-                    " " + parameters.map { it.name }.joinToString() + " ->"
+                    " " + parameters.asSequence().map { it.name }.joinToString() + " ->"
                 } else ""
                 val text = "{$parametersText$space${statement.text}$space}"
 

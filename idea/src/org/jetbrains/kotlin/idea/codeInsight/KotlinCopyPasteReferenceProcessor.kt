@@ -347,7 +347,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
             = findImportableDescriptors(fqName, file).firstIsInstanceOrNull<CallableDescriptor>()
 
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
-        val fqNames = referencesToRestore.map { it.refData.fqName }.toSortedSet()
+        val fqNames = referencesToRestore.asSequence().map { it.refData.fqName }.toSortedSet()
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
             declarationsToImportSuggested = fqNames

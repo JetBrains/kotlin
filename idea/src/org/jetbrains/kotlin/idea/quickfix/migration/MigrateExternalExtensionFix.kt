@@ -64,11 +64,13 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
     }
 
     private fun fixNativeClass(containingClass: KtClassOrObject) {
-        val membersToFix = containingClass.declarations.filterIsInstance<KtCallableDeclaration>().filter { isMemberDeclaration(it) && !isMemberExtensionDeclaration(it) }. map {
-             it to fetchJsNativeAnnotations(it)
-        }.filter {
-            it.second.annotations.isNotEmpty()
-        }
+        val membersToFix =
+            containingClass.declarations.asSequence().filterIsInstance<KtCallableDeclaration>()
+                .filter { isMemberDeclaration(it) && !isMemberExtensionDeclaration(it) }. map {
+                it to fetchJsNativeAnnotations(it)
+            }.filter {
+                it.second.annotations.isNotEmpty()
+            }.toList()
 
         membersToFix.asReversed().forEach { (memberDeclaration, annotations) ->
             if (annotations.nativeAnnotation != null && !annotations.isGetter && !annotations.isSetter && !annotations.isInvoke) {

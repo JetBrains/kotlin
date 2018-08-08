@@ -74,6 +74,7 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
         val argumentType = element!!.getArgumentExpression()?.let { context.getType(it) }
 
         val usedParameters = resolvedCall.call.valueArguments
+            .asSequence()
             .map { resolvedCall.getArgumentMapping(it) }
             .filterIsInstance<ArgumentMatch>()
             .filter { argumentMatch -> argumentType == null || argumentType.isError || !argumentMatch.isError() }
@@ -81,8 +82,10 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
             .toSet()
 
         return resolvedCall.resultingDescriptor.valueParameters
+            .asSequence()
             .filter { it !in usedParameters }
             .map { it.name }
+            .toList()
     }
 
     private fun addName(project: Project, argument: KtValueArgument, name: Name) {

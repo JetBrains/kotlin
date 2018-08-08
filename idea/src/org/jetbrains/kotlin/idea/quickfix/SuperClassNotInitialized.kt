@@ -83,8 +83,10 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                 val substitutor = TypeConstructorSubstitution.create(superClass.typeConstructor, superType.arguments).buildSubstitutor()
 
                 val substitutedConstructors = constructors
+                    .asSequence()
                     .filter { it.valueParameters.isNotEmpty() }
                     .mapNotNull { it.substitute(substitutor) }
+                    .toList()
 
                 if (substitutedConstructors.isNotEmpty()) {
                     val parameterTypes: List<List<KotlinType>> = substitutedConstructors.map {
@@ -93,7 +95,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
                     fun canRenderOnlyFirstParameters(n: Int) = parameterTypes.map { it.take(n) }.toSet().size == parameterTypes.size
 
-                    val maxParams = parameterTypes.map { it.size }.max()!!
+                    val maxParams = parameterTypes.asSequence().map { it.size }.max()!!
                     val maxParamsToDisplay = if (maxParams <= DISPLAY_MAX_PARAMS) {
                         maxParams
                     } else {
@@ -101,7 +103,9 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     }
 
                     for ((constructor, types) in substitutedConstructors.zip(parameterTypes)) {
-                        val typesRendered = types.take(maxParamsToDisplay).map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }
+                        val typesRendered =
+                            types.asSequence().take(maxParamsToDisplay).map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }
+                                .toList()
                         val parameterString = typesRendered.joinToString(", ", "(", if (types.size <= maxParamsToDisplay) ")" else ",...)")
                         val text = "Add constructor parameters from " + superClass.name.asString() + parameterString
                         fixes.addIfNotNull(AddParametersFix.create(delegator, classOrObjectDeclaration, constructor, text))

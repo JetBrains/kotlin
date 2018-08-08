@@ -145,10 +145,12 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
         if (importNames.isEmpty()) return emptyList()
 
         return importNames
-                .flatMap { collectSuggestionsForName(it, callTypeAndReceiver) }
-                .distinct()
-                .map { it.fqNameSafe }
-                .distinct()
+            .flatMap { collectSuggestionsForName(it, callTypeAndReceiver) }
+            .asSequence()
+            .distinct()
+            .map { it.fqNameSafe }
+            .distinct()
+            .toList()
     }
 
     private fun collectSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<DeclarationDescriptor> {

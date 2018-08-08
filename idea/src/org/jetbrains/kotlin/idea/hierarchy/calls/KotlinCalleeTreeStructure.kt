@@ -44,7 +44,7 @@ class KotlinCalleeTreeStructure(
             is KtClassOrObject -> {
                 superTypeListEntries.filterIsInstance<KtCallElement>() +
                 getAnonymousInitializers().map { it.body } +
-                declarations.filterIsInstance<KtProperty>().map { it.initializer }
+                        declarations.asSequence().filterIsInstance<KtProperty>().map { it.initializer }.toList()
             }
             else -> emptyList()
         }.filterNotNull()

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Add indices to 'for' loop"),
     LowPriorityAction {
     private val WITH_INDEX_NAME = "withIndex"
-    private val WITH_INDEX_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
+    private val WITH_INDEX_FQ_NAMES = sequenceOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
 
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         if (element.loopParameter == null) return null

@@ -48,6 +48,7 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingOffsetIndependentIn
         val functionDescriptor = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.FUNCTION, functionLiteral]!!
 
         val parameterString = functionDescriptor.valueParameters
+            .asSequence()
             .mapIndexed { index, parameterDescriptor ->
                 parameterDescriptor.render(psiName = functionLiteral.valueParameters.getOrNull(index)?.let {
                     it.name ?: it.destructuringDeclaration?.text

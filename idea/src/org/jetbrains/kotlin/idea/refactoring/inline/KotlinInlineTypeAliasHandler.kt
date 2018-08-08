@@ -106,13 +106,14 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
             val context = usage.analyze(BodyResolveMode.PARTIAL)
 
             val argumentTypes = usage
-                    .typeArguments
-                    .filterNotNull()
-                    .mapNotNull {
-                        val type = context[BindingContext.ABBREVIATED_TYPE, it.typeReference] ?:
-                                   context[BindingContext.TYPE, it.typeReference]
-                        if (type != null) TypeProjectionImpl(type) else null
-                    }
+                .typeArguments
+                .asSequence()
+                .filterNotNull()
+                .mapNotNull {
+                    val type = context[BindingContext.ABBREVIATED_TYPE, it.typeReference] ?: context[BindingContext.TYPE, it.typeReference]
+                    if (type != null) TypeProjectionImpl(type) else null
+                }
+                .toList()
             if (argumentTypes.size != typeConstructorsToInline.size) return null
             val substitution = (typeConstructorsToInline zip argumentTypes).toMap()
             val substitutor = TypeSubstitutor.create(substitution)

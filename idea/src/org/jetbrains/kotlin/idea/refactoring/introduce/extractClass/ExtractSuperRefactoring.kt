@@ -155,7 +155,7 @@ class ExtractSuperRefactoring(
                     elementsToMove,
                     moveTarget,
                     originalClass,
-                    memberInfos.filter { it.isToAbstract }.mapNotNull { it.member }
+                    memberInfos.asSequence().filter { it.isToAbstract }.mapNotNull { it.member }.toList()
             )
 
             project.runSynchronouslyWithProgress(RefactoringBundle.message("detecting.possible.conflicts"), true) {

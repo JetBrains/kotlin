@@ -105,10 +105,12 @@ class ChangeMemberFunctionSignatureFix private constructor(
             val superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor)
 
             return superFunctions
+                .asSequence()
                 .filter { it.kind.isReal }
                 .map { signatureToMatch(functionDescriptor, it) }
                 .distinctBy { it.sourceCode }
                 .sortedBy { it.preview }
+                .toList()
         }
 
         /**
@@ -207,13 +209,13 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 SourceElement.NO_SOURCE
             )
 
-            val parameters = newParameters.withIndex().map { (index, parameter) ->
+            val parameters = newParameters.asSequence().withIndex().map { (index, parameter) ->
                 ValueParameterDescriptorImpl(
                     descriptor, null, index,
                     parameter.annotations, parameter.name, parameter.returnType!!, parameter.declaresDefaultValue(),
                     parameter.isCrossinline, parameter.isNoinline, parameter.varargElementType, SourceElement.NO_SOURCE
                 )
-            }
+            }.toList()
 
             return descriptor.apply {
                 initialize(

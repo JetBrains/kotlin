@@ -115,7 +115,7 @@ fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersio
     }
 
     var modulesStr =
-        selectedNewerModulesInfos.take(NUMBER_OF_MODULES_TO_SHOW).joinToString(separator = "") {
+        selectedNewerModulesInfos.asSequence().take(NUMBER_OF_MODULES_TO_SHOW).joinToString(separator = "") {
             "<li>${it.module.name} (${it.externalCompilerVersion})</li><br/>"
         }
 

@@ -133,7 +133,7 @@ private fun KtAnnotationEntry.applicableUseSiteTargets(): List<AnnotationUseSite
         if (chosenTarget.isNullOrBlank())
             targets.take(1)
         else
-            targets.filter { it.renderName == chosenTarget }.take(1)
+            targets.asSequence().filter { it.renderName == chosenTarget }.take(1).toList()
     } else {
         targets
     }

@@ -68,7 +68,8 @@ class KotlinReferenceImporter : ReferenceImporter {
     ): ImportFixBase<out KtExpression>? {
         var importFix: ImportFixBase<out KtExpression>? = null
         DaemonCodeAnalyzerEx.processHighlights(editor.document, file.project, null, offset, offset) { info ->
-            importFix = info.quickFixActionRanges?.map { it.first.action }?.filterIsInstance<ImportFixBase<*>>()?.firstOrNull()
+            importFix = info.quickFixActionRanges?.asSequence()
+                ?.map { it.first.action }?.filterIsInstance<ImportFixBase<*>>()?.firstOrNull()
             importFix == null
         }
         return importFix

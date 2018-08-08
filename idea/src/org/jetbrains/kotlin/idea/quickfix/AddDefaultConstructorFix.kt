@@ -40,7 +40,8 @@ class AddDefaultConstructorFix(expectClass: KtClass) : KotlinQuickFixAction<KtCl
             if (argumentList.arguments.isNotEmpty()) return null
             val derivedClass = argumentList.getStrictParentOfType<KtClassOrObject>() ?: return null
             val context = derivedClass.analyze()
-            val baseTypeCallEntry = derivedClass.superTypeListEntries.filterIsInstance<KtSuperTypeCallEntry>().firstOrNull() ?: return null
+            val baseTypeCallEntry = derivedClass.superTypeListEntries.asSequence().filterIsInstance<KtSuperTypeCallEntry>().firstOrNull()
+                ?: return null
             val baseClass = superTypeEntryToClass(baseTypeCallEntry, context) ?: return null
             return AddDefaultConstructorFix(baseClass)
         }

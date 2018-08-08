@@ -360,7 +360,7 @@ private fun makeCall(
         return when (outputValue) {
             is OutputValue.ExpressionValue -> {
                 val exprText = if (outputValue.callSiteReturn) {
-                    val firstReturn = outputValue.originalExpressions.filterIsInstance<KtReturnExpression>().firstOrNull()
+                    val firstReturn = outputValue.originalExpressions.asSequence().filterIsInstance<KtReturnExpression>().firstOrNull()
                     val label = firstReturn?.getTargetLabel()?.text ?: ""
                     "return$label $callText"
                 }

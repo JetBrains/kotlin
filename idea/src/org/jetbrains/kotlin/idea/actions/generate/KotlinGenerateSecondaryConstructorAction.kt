@@ -87,10 +87,12 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
 
     private fun choosePropertiesToInitialize(klass: KtClassOrObject, context: BindingContext): List<DescriptorMemberChooserObject> {
         val candidates = klass.declarations
-                .filterIsInstance<KtProperty>()
-                .filter { it.isVar || context.diagnostics.forElement(it).any { it.factory in Errors.MUST_BE_INITIALIZED_DIAGNOSTICS } }
-                .map { context.get(BindingContext.VARIABLE, it) as PropertyDescriptor }
-                .map { DescriptorMemberChooserObject(it.source.getPsi()!!, it) }
+            .asSequence()
+            .filterIsInstance<KtProperty>()
+            .filter { it.isVar || context.diagnostics.forElement(it).any { it.factory in Errors.MUST_BE_INITIALIZED_DIAGNOSTICS } }
+            .map { context.get(BindingContext.VARIABLE, it) as PropertyDescriptor }
+            .map { DescriptorMemberChooserObject(it.source.getPsi()!!, it) }
+            .toList()
         if (ApplicationManager.getApplication().isUnitTestMode || candidates.isEmpty()) return candidates
 
         return with(MemberChooser(candidates.toTypedArray(), true, true, klass.project, false, null)) {

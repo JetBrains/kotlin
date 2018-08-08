@@ -74,9 +74,9 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
     }
 
     private fun List<KtLightClassImpl>.withEmptyConstructors(): List<KtClass> {
-        return map { it.kotlinOrigin }.filterIsInstance<KtClass>()
+        return map { it.kotlinOrigin }.asSequence().filterIsInstance<KtClass>()
             .filter { it.primaryConstructorParameters.isEmpty() }
-            .filter { klass -> klass.secondaryConstructors.all { cons -> cons.valueParameters.isEmpty() } }
+            .filter { klass -> klass.secondaryConstructors.all { cons -> cons.valueParameters.isEmpty() } }.toList()
     }
 
     private fun List<KtClass>.thatHasNoCompanionObjects(): List<KtClass> {
@@ -112,7 +112,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
         val body = getBody()
         return body == null || run {
             val declarations = body.declarations
-            declarations.filterIsInstance<KtProperty>().none { property ->
+            declarations.asSequence().filterIsInstance<KtProperty>().none { property ->
                 // Simplified "backing field required"
                 when {
                     property.isAbstract() -> false
@@ -121,7 +121,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
                     !property.isVar -> property.getter == null
                     else -> property.getter == null || property.setter == null
                 }
-            } && declarations.filterIsInstance<KtNamedFunction>().none { function ->
+            } && declarations.asSequence().filterIsInstance<KtNamedFunction>().none { function ->
                 val name = function.name
                 val valueParameters = function.valueParameters
                 val noTypeParameters = function.typeParameters.isEmpty()

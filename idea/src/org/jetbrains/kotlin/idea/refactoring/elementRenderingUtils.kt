@@ -242,7 +242,7 @@ fun KtElement.renderTrimmed(): String {
                 it.accept(this)
             }
             function.name?.let { builder.append(" $it") }
-            function.valueParameters.mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
+            function.valueParameters.asSequence().mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
             function.equalsToken?.let { builder.append(" = ") }
             function.bodyExpression?.accept(this)
         }
@@ -255,12 +255,12 @@ fun KtElement.renderTrimmed(): String {
         }
 
         override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
-            constructor.valueParameters.mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
+            constructor.valueParameters.asSequence().mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
         }
 
         override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
             builder.append("constructor")
-            constructor.valueParameters.mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
+            constructor.valueParameters.asSequence().mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
             constructor.bodyExpression?.accept(this)
         }
 

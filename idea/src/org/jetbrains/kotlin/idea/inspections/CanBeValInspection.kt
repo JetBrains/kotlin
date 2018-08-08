@@ -103,7 +103,8 @@ class CanBeValInspection : AbstractKotlinInspection() {
             private fun Pseudocode.collectWriteInstructions(descriptor: DeclarationDescriptor): Set<WriteValueInstruction> =
                     with (instructionsIncludingDeadCode) {
                         filterIsInstance<WriteValueInstruction>()
-                        .filter { (it.target as? AccessTarget.Call)?.resolvedCall?.resultingDescriptor == descriptor }
+                            .asSequence()
+                            .filter { (it.target as? AccessTarget.Call)?.resolvedCall?.resultingDescriptor == descriptor }
                         .toSet() +
 
                         filterIsInstance<LocalFunctionDeclarationInstruction>()

@@ -52,18 +52,18 @@ class KotlinFacetCompilerPluginsTab(
 
         val pluginInfos: List<PluginInfo> = ArrayList<PluginInfo>().apply {
             parsePluginOptions(configuration)
-                    .sortedWith(
-                            Comparator<CliOptionValue> { o1, o2 ->
-                                var result = o1.pluginId.compareTo(o2.pluginId)
-                                if (result == 0) {
-                                    result = o1.optionName.compareTo(o2.optionName)
-                                }
-                                if (result == 0) {
-                                    result = o1.value.compareTo(o2.value)
-                                }
-                                result
-                            }
-                    )
+                .sortedWith(
+                    Comparator<CliOptionValue> { o1, o2 ->
+                        var result = o1.pluginId.compareTo(o2.pluginId)
+                        if (result == 0) {
+                            result = o1.optionName.compareTo(o2.optionName)
+                        }
+                        if (result == 0) {
+                            result = o1.value.compareTo(o2.value)
+                        }
+                        result
+                    }
+                )
                     .groupBy({ it.pluginId })
                     .mapTo(this) { PluginInfo(it.key, it.value.map { "${it.optionName}=${it.value}" }) }
             sortBy { it.id }

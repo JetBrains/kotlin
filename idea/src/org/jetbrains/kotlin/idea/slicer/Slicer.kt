@@ -80,9 +80,11 @@ private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor
     processor()
     val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
     DescriptorUtils
-            .getAllOverriddenDescriptors(descriptor)
-            .mapNotNull { it.source.getPsi() }
-            .filter { scope.contains(it) }
+        .getAllOverriddenDescriptors(descriptor)
+        .asSequence()
+        .mapNotNull { it.source.getPsi() }
+        .filter { scope.contains(it) }
+        .toList()
             .forEach(processor)
 }
 

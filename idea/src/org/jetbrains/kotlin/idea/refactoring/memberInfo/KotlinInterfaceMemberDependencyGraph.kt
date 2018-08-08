@@ -37,7 +37,8 @@ class KotlinInterfaceMemberDependencyGraph<T : KtNamedDeclaration, M : MemberInf
 
     @Suppress("UNCHECKED_CAST")
     override fun getDependent() = delegateGraph.dependent
-            .mapNotNull { it.unwrapped }
+        .asSequence()
+        .mapNotNull { it.unwrapped }
             .filterIsInstanceTo(LinkedHashSet<KtNamedDeclaration>()) as Set<T>
 
     @Suppress("UNCHECKED_CAST")
@@ -45,7 +46,8 @@ class KotlinInterfaceMemberDependencyGraph<T : KtNamedDeclaration, M : MemberInf
         val psiMember = lightElementForMemberInfo(member) ?: return emptySet()
         val psiMemberDependencies = delegateGraph.getDependenciesOf(psiMember) ?: return emptySet()
         return psiMemberDependencies
-                .mapNotNull { it.unwrapped }
+            .asSequence()
+            .mapNotNull { it.unwrapped }
                 .filterIsInstanceTo(LinkedHashSet<KtNamedDeclaration>()) as Set<T>
     }
 }

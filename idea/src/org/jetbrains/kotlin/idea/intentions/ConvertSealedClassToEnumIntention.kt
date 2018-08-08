@@ -140,8 +140,9 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
 
         if (entriesToAdd.isNotEmpty()) {
             val firstEntry = entriesToAdd
-                    .reversed()
-                    .map { klass.addDeclarationBefore(it, null) }
+                .reversed()
+                .asSequence()
+                .map { klass.addDeclarationBefore(it, null) }
                     .last()
             // TODO: Add formatter rule
             firstEntry.parent.addBefore(psiFactory.createNewLine(), firstEntry)

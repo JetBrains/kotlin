@@ -333,7 +333,7 @@ private fun TypePredicate.getRepresentativeTypes(): Set<KotlinType> {
         is AllSubtypes -> Collections.singleton(upperBound)
         is ForAllTypes -> {
             if (typeSets.isEmpty()) AllTypes.getRepresentativeTypes()
-            else typeSets.map { it.getRepresentativeTypes() }.reduce { a, b -> a.intersect(b) }
+            else typeSets.asSequence().map { it.getRepresentativeTypes() }.reduce { a, b -> a.intersect(b) }
         }
         is ForSomeType -> typeSets.flatMapTo(LinkedHashSet<KotlinType>()) { it.getRepresentativeTypes() }
         is AllTypes -> emptySet()

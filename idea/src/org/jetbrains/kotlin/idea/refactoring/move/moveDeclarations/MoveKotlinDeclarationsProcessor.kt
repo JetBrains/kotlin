@@ -322,7 +322,7 @@ class MoveKotlinDeclarationsProcessor(
             }
 
             val internalUsageScopes: List<KtElement> = if (descriptor.scanEntireFile) {
-                newDeclarations.map { it.containingKtFile }.distinct()
+                newDeclarations.asSequence().map { it.containingKtFile }.distinct().toList()
             } else {
                 newDeclarations
             }

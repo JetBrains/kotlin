@@ -47,7 +47,7 @@ class AddMissingDestructuringIntention : SelfTargetingIntention<KtDestructuringD
         )
 
         val newEntries = entries.joinToString(postfix = ", ") { it.text } +
-                         primaryParameters.drop(entries.size).joinToString {
+                         primaryParameters.asSequence().drop(entries.size).joinToString {
                              KotlinNameSuggester.suggestNameByName(it.name.asString(), nameValidator)
                          }
         val initializer = element.initializer ?: return
