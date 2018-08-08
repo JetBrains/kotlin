@@ -69,6 +69,11 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/weighers/basic/DslCalls.kt");
     }
 
+    @TestMetadata("DslCallsAnnotatedFunctionType.kt")
+    public void testDslCallsAnnotatedFunctionType() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/DslCallsAnnotatedFunctionType.kt");
+    }
+
     @TestMetadata("DslCallsWithMultipleReceivers.kt")
     public void testDslCallsWithMultipleReceivers() throws Exception {
         runTest("idea/idea-completion/testData/weighers/basic/DslCallsWithMultipleReceivers.kt");

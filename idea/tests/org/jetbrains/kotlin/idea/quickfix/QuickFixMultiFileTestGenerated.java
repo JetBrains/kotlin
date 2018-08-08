@@ -459,6 +459,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("idea/testData/quickfix/autoImports/dslMarkers.before.Main.kt");
         }
 
+        @TestMetadata("dslMarkersOnReceiver.before.Main.kt")
+        public void testDslMarkersOnReceiver() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/dslMarkersOnReceiver.before.Main.kt");
+        }
+
         @TestMetadata("extensionFunctionImport.before.Main.kt")
         public void testExtensionFunctionImport() throws Exception {
             runTest("idea/testData/quickfix/autoImports/extensionFunctionImport.before.Main.kt");

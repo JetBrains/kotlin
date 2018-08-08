@@ -25,7 +25,9 @@ object DslMarkerUtils {
     data class DslMarkersFromReceiver(
         val common: Set<FqName>,
         val fromContainingFunctionType: Set<FqName>
-    )
+    ) {
+        fun all() = common + fromContainingFunctionType
+    }
 
     fun extractDslMarkerFqNames(receiver: ReceiverValue): DslMarkersFromReceiver {
         val errorLevel = extractDslMarkerFqNames(receiver.type)

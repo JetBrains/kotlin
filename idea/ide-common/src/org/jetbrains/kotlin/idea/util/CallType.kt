@@ -213,7 +213,17 @@ sealed class CallTypeAndReceiver<TReceiver : KtElement?, out TCallType : CallTyp
     }
 }
 
-data class ReceiverType(val type: KotlinType, val receiverIndex: Int, val implicit: Boolean = false)
+data class ReceiverType(
+    val type: KotlinType,
+    val receiverIndex: Int,
+    val implicitValue: ReceiverValue? = null
+) {
+    val implicit: Boolean get() = implicitValue != null
+
+    fun extractDslMarkers() =
+        implicitValue?.let(DslMarkerUtils::extractDslMarkerFqNames)?.all()
+            ?: DslMarkerUtils.extractDslMarkerFqNames(type)
+}
 
 fun CallTypeAndReceiver<*, *>.receiverTypes(
         bindingContext: BindingContext,
@@ -305,9 +315,13 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     var receiverIndex = 0
 
     fun addReceiverType(receiverValue: ReceiverValue, implicit: Boolean) {
-        val types = receiverValueTypes(receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly, languageVersionSettings,
-                                       resolutionFacade.frontendService<DataFlowValueFactory>())
-        types.mapTo(result) { ReceiverType(it, receiverIndex, implicit) }
+        val types = receiverValueTypes(
+            receiverValue, dataFlowInfo, bindingContext, moduleDescriptor, stableSmartCastsOnly, languageVersionSettings,
+            resolutionFacade.frontendService<DataFlowValueFactory>()
+        )
+
+        types.mapTo(result) { type -> ReceiverType(type, receiverIndex, receiverValue.takeIf { implicit }) }
+
         receiverIndex++
     }
     if (withImplicitReceiversWhenExplicitPresent || expressionReceiver == null) {
@@ -350,7 +364,7 @@ fun Collection<ReceiverType>.shadowedByDslMarkers(): Set<ReceiverType> {
 
     this
             .mapNotNull { receiver ->
-                val dslMarkers = DslMarkerUtils.extractDslMarkerFqNames(receiver.type)
+                val dslMarkers = receiver.extractDslMarkers()
                 (receiver to dslMarkers).takeIf { dslMarkers.isNotEmpty() }
             }
             .forEach { (v, dslMarkers) -> dslMarkers.forEach { typesByDslScopes.getOrPut(it, { mutableListOf() }) += v } }

@@ -24,8 +24,7 @@ class DslMembersCompletion(
     private val callTypeAndReceiver: CallTypeAndReceiver<*, *>
 ) {
     private val nearestReceiver = receiverTypes?.firstOrNull()
-    private val nearestReceiverMarkers = nearestReceiver?.takeIf { it.implicit }
-        ?.let { DslMarkerUtils.extractDslMarkerFqNames(it.type) }.orEmpty()
+    private val nearestReceiverMarkers = nearestReceiver?.takeIf { it.implicit }?.extractDslMarkers().orEmpty()
 
     private val factory = object : AbstractLookupElementFactory {
         override fun createLookupElement(
