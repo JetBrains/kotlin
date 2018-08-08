@@ -116,9 +116,9 @@ open internal class SupplementaryRangeSet(charClass: AbstractCharClass, val igno
         var index = startIndex
 
         val high = testString[index++]
-        val result = next.matches(index, testString, matchResult)
-        if (contains(high) && result >= 0) {
-            return result
+        if (contains(high)) {
+            val result = next.matches(index, testString, matchResult)
+            if (result >= 0) return result
         }
 
         if (index < rightBound) {
