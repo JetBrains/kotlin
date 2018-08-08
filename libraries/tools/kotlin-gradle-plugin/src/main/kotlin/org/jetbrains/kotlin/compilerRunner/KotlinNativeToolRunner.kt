@@ -106,6 +106,15 @@ internal abstract class KonanCliRunner(
 
     override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
+    private fun String.escapeQuotes() = replace("\"", "\\\"")
+
+    private fun List<Pair<String, String>>.escapeQuotesForWindows() =
+        if (HostManager.hostIsMingw) {
+            map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() }
+        } else {
+            this
+        }
+
     override fun run(args: List<String>) {
         project.logger.info("Run tool: $toolName with args: ${args.joinToString(separator = " ")}")
         if (classpath.isEmpty) {
@@ -118,7 +127,12 @@ internal abstract class KonanCliRunner(
             spec.main = mainClass
             spec.classpath = classpath
             spec.jvmArgs(jvmArgs)
-            spec.systemProperties(System.getProperties().map { (k, v) -> k.toString() to v }.toMap())
+            spec.systemProperties(
+                System.getProperties()
+                    .map { (k, v) -> k.toString() to v.toString() }
+                    .escapeQuotesForWindows()
+                    .toMap()
+            )
             spec.systemProperties(additionalSystemProperties)
             spec.args(listOf(toolName) + args)
             blacklistEnvironment.forEach { spec.environment.remove(it) }
