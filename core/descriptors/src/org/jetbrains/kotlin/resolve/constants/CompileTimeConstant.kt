@@ -42,7 +42,7 @@ interface CompileTimeConstant<out T> {
 
     val isUnsignedNumberLiteral: Boolean get() = parameters.isUnsignedNumberLiteral
 
-    class Parameters(
+    data class Parameters(
         val canBeUsedInAnnotation: Boolean,
         val isPure: Boolean,
         // `isUnsignedNumberLiteral` means that this constant represents simple number literal with `u` suffix (123u, 0xFEu)
@@ -172,7 +172,8 @@ class IntegerValueTypeConstant(
 
     override fun toString() = typeConstructor.toString()
 
-    override fun equals(other: Any?) = other is IntegerValueTypeConstant && value == other.value
+    override fun equals(other: Any?) = other is IntegerValueTypeConstant && value == other.value && parameters == other.parameters
 
-    override fun hashCode() = value.hashCode()
+    override fun hashCode() = 31 * value.hashCode() + parameters.hashCode()
+
 }
