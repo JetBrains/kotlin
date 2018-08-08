@@ -32,7 +32,8 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor {
-            if (it.calleeExpression?.text != EXPRESSION_NAME) return@callExpressionVisitor
+            val calleeExpression = it.calleeExpression
+            if (calleeExpression?.text != EXPRESSION_NAME) return@callExpressionVisitor
 
             when (it.getCallableDescriptor()?.fqNameOrNull()) {
                 COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
@@ -41,11 +42,10 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                     val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
 
                     if (iterableParameter !is WithDestructuringDeclaration &&
-                        lambda.bodyExpression?.usesDescriptor(iterableParameter) != true &&
-                        it.calleeExpression != null) {
+                        lambda.bodyExpression?.usesDescriptor(iterableParameter) != true) {
 
                         holder.registerProblem(
-                            it.calleeExpression!!,
+                            calleeExpression,
                             "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                         )
