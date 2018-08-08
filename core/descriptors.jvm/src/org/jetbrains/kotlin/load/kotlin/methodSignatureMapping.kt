@@ -76,7 +76,7 @@ internal val ClassDescriptor.internalName: String
             return JvmClassName.byClassId(it).internalName
         }
 
-        return computeInternalName(this)
+        return computeInternalName(this, isIrBackend = false)
     }
 
 internal val ClassId.internalName: String
@@ -89,7 +89,14 @@ private fun StringBuilder.appendErasedType(type: KotlinType) {
 }
 
 internal fun KotlinType.mapToJvmType() =
-        mapType(this, JvmTypeFactoryImpl, TypeMappingMode.DEFAULT, TypeMappingConfigurationImpl, descriptorTypeWriter = null)
+    mapType(
+        this,
+        JvmTypeFactoryImpl,
+        TypeMappingMode.DEFAULT,
+        TypeMappingConfigurationImpl,
+        descriptorTypeWriter = null,
+        isIrBackend = false
+    )
 
 sealed class JvmType {
     // null means 'void'
