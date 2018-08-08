@@ -44,8 +44,6 @@ class JvmLower(val context: JvmBackendContext) {
         InterfaceLowering(context.state).runOnFilePostfix(irFile)
         InterfaceDelegationLowering(context.state).runOnFilePostfix(irFile)
         SharedVariablesLowering(context).runOnFilePostfix(irFile)
-        InnerClassesLowering(context).runOnFilePostfix(irFile)
-        InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
 
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
 
@@ -58,6 +56,11 @@ class JvmLower(val context: JvmBackendContext) {
             Visibilities.PUBLIC //TODO properly figure out visibility
         ).runOnFilePostfix(irFile)
         CallableReferenceLowering(context).lower(irFile)
+
+        InnerClassesLowering(context).runOnFilePostfix(irFile)
+        InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
+
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
 
         EnumClassLowering(context).runOnFilePostfix(irFile)
         //Should be before SyntheticAccessorLowering cause of synthetic accessor for companion constructor
