@@ -171,6 +171,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
         <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
                 text="Copy Current File As Diagnostic Test"/>
+
+        <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"
+                text="Formatter settings info"/>
       </group>
       <separator/>
 
