@@ -122,8 +122,13 @@ fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, cop
     }
 
     if (targetClass.hasActualModifier()) {
-        val expectClassDescriptors = targetClass.resolveToDescriptorIfAny()?.expectedDescriptors() ?: emptyList()
-        if (expectClassDescriptors.any { (it as? ClassDescriptor)?.findCallableMemberBySignature(immediateSuper)?.isExpect == true }) {
+        val expectClassDescriptors =
+            targetClass.resolveToDescriptorIfAny()?.expectedDescriptors()?.filterIsInstance<ClassDescriptor>().orEmpty()
+        if (expectClassDescriptors.any { expectClassDescriptor ->
+                val expectMemberDescriptor = expectClassDescriptor.findCallableMemberBySignature(immediateSuper)
+                expectMemberDescriptor?.isExpect == true && expectMemberDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+            }
+        ) {
             newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
         }
     } else {

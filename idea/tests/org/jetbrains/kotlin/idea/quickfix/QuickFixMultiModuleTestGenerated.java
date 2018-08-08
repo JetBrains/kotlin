@@ -229,6 +229,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/implementAbstractExpectMemberInheritedFromInterface/");
     }
 
+    @TestMetadata("implementMembersInActualClassNoExpectMember")
+    public void testImplementMembersInActualClassNoExpectMember() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/implementMembersInActualClassNoExpectMember/");
+    }
+
     @TestMetadata("implementMembersInImplClassNonImplInheritor")
     public void testImplementMembersInImplClassNonImplInheritor() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/implementMembersInImplClassNonImplInheritor/");
