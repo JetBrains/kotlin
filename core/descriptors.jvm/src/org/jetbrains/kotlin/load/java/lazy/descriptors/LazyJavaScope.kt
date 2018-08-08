@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
@@ -130,14 +132,16 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         val effectiveSignature = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters.descriptors)
 
         functionDescriptorImpl.initialize(
-                effectiveSignature.receiverType,
-                getDispatchReceiverParameter(),
-                effectiveSignature.typeParameters,
-                effectiveSignature.valueParameters,
-                effectiveSignature.returnType,
-                Modality.convertFromFlags(method.isAbstract, !method.isFinal),
-                method.visibility,
-                if (effectiveSignature.receiverType != null)
+            effectiveSignature.receiverType?.let {
+                DescriptorFactory.createExtensionReceiverParameterForCallable(functionDescriptorImpl, it, Annotations.EMPTY)
+            },
+            getDispatchReceiverParameter(),
+            effectiveSignature.typeParameters,
+            effectiveSignature.valueParameters,
+            effectiveSignature.returnType,
+            Modality.convertFromFlags(method.isAbstract, !method.isFinal),
+            method.visibility,
+            if (effectiveSignature.receiverType != null)
                     mapOf(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER to valueParameters.descriptors.first())
                 else
                     emptyMap<FunctionDescriptor.UserDataKey<ValueParameterDescriptor>, ValueParameterDescriptor>()

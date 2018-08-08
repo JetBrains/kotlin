@@ -112,7 +112,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @Nullable KotlinType receiverType
     ) {
-        ReceiverParameterDescriptor extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverType);
+        ReceiverParameterDescriptor extensionReceiverParameter =
+                DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverType, Annotations.Companion.getEMPTY());
         setType(outType, typeParameters, dispatchReceiverParameter, extensionReceiverParameter);
     }
 

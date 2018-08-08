@@ -154,7 +154,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun DeserializedSimpleFunctionDescriptor.initializeWithCoroutinesExperimentalityStatus(
-        receiverParameterType: KotlinType?,
+        extensionReceiverParameter: ReceiverParameterDescriptor?,
         dispatchReceiverParameter: ReceiverParameterDescriptor?,
         typeParameters: List<TypeParameterDescriptor>,
         unsubstitutedValueParameters: List<ValueParameterDescriptor>,
@@ -165,7 +165,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         isSuspend: Boolean
     ) {
         initialize(
-            receiverParameterType,
+            extensionReceiverParameter,
             dispatchReceiverParameter,
             typeParameters,
             unsubstitutedValueParameters,
@@ -174,7 +174,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             visibility,
             userDataMap,
             computeExperimentalityModeForFunctions(
-                receiverParameterType,
+                extensionReceiverParameter,
                 unsubstitutedValueParameters,
                 typeParameters,
                 unsubstitutedReturnType,
@@ -184,7 +184,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun DeserializedCallableMemberDescriptor.computeExperimentalityModeForFunctions(
-        extensionReceiverType: KotlinType?,
+        extensionReceiverParameter: ReceiverParameterDescriptor?,
         parameters: Collection<ValueParameterDescriptor>,
         typeParameters: Collection<TypeParameterDescriptor>,
         returnType: KotlinType?,
@@ -193,7 +193,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         if (!versionAndReleaseCoroutinesMismatch()) return CoroutinesCompatibilityMode.COMPATIBLE
         if (fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) return CoroutinesCompatibilityMode.COMPATIBLE
 
-        val types = parameters.map { it.type } + listOfNotNull(extensionReceiverType)
+        val types = parameters.map { it.type } + listOfNotNull(extensionReceiverParameter?.type)
 
         if (returnType?.containsSuspendFunctionType() == true) return CoroutinesCompatibilityMode.INCOMPATIBLE
         if (typeParameters.any { typeParameter -> typeParameter.upperBounds.any { it.containsSuspendFunctionType() } }) {
@@ -252,7 +252,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val local = c.childContext(function, proto.typeParameterList)
 
         function.initializeWithCoroutinesExperimentalityStatus(
-            proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) },
+            proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) }?.let { receiverType ->
+                DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, Annotations.EMPTY)
+            },
             getDispatchReceiverParameter(),
             local.typeDeserializer.ownTypeParameters,
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),

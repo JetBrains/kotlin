@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 interface StubContext {
@@ -315,7 +314,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
         private fun AccessorForConstructorDescriptor.constructorDescriptorWithMarker(marker: KotlinType) =
             ClassConstructorDescriptorImpl.createSynthesized(containingDeclaration, annotations, false, source).also {
                 it.initialize(
-                    DescriptorUtils.getReceiverParameterType(extensionReceiverParameter),
+                    extensionReceiverParameter?.copy(this),
                     dispatchReceiverParameter,
                     emptyList()/*TODO*/,
                     calleeDescriptor.valueParameters.map {

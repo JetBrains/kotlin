@@ -396,7 +396,7 @@ private fun IrFunction.generateDefaultsFunction(context: CommonBackendContext): 
         } + syntheticParameters
 
         descriptor.initialize(
-            /* receiverParameterType         = */ extensionReceiverParameter?.type,
+            /* receiverParameterType         = */ extensionReceiverParameter,
             /* dispatchReceiverParameter     = */ dispatchReceiverParameter,
             /* typeParameters                = */ typeParameters.map {
                 TypeParameterDescriptorImpl.createForFurtherModification(

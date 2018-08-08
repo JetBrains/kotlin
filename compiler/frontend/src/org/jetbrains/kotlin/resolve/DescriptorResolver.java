@@ -930,8 +930,15 @@ public class DescriptorResolver {
             }
         }
 
-        ReceiverParameterDescriptor receiverDescriptor =
-                DescriptorFactory.createExtensionReceiverParameterForCallable(propertyDescriptor, receiverType);
+        ReceiverParameterDescriptor receiverDescriptor;
+        if (receiverType != null) {
+            receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
+                    propertyDescriptor, receiverType, Annotations.Companion.getEMPTY()
+            );
+        }
+        else {
+            receiverDescriptor = null;
+        }
 
         LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeForInitializerResolutionWithTypeParameters, propertyDescriptor);
         KotlinType propertyType = propertyInfo.getVariableType();

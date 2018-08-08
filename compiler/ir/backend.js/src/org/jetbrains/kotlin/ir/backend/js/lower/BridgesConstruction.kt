@@ -123,7 +123,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         )
 
         bridgeDescriptorForIrFunction.initialize(
-            bridge.descriptor.extensionReceiverParameter?.returnType, containingClass.thisAsReceiverParameter,
+            bridge.descriptor.extensionReceiverParameter?.copy(bridge.descriptor), containingClass.thisAsReceiverParameter,
             bridge.descriptor.typeParameters,
             bridge.descriptor.valueParameters.map { it.copy(bridgeDescriptorForIrFunction, it.name, it.index) },
             bridge.descriptor.returnType, bridge.descriptor.modality, function.visibility

@@ -159,19 +159,19 @@ class ResolvedAtomCompleter(
         trace.recordType(ktArgumentExpression, substitutedFunctionalType)
 
         // Mainly this is needed for builder-like inference, when we have type `SomeType<K, V>.() -> Unit` and now we want to update those K, V
-        val extensionReceiverParameter = functionDescriptor.extensionReceiverParameter
-        if (extensionReceiverParameter != null) {
-            require(extensionReceiverParameter is ReceiverParameterDescriptorImpl) {
-                "Extension receiver for anonymous function ($extensionReceiverParameter) should be ReceiverParameterDescriptorImpl"
+        val receiver = functionDescriptor.extensionReceiverParameter
+        if (receiver != null) {
+            require(receiver is ReceiverParameterDescriptorImpl) {
+                "Extension receiver for anonymous function ($receiver) should be ReceiverParameterDescriptorImpl"
             }
 
-            val valueType = extensionReceiverParameter.value.type.unwrap()
+            val valueType = receiver.value.type.unwrap()
             val newValueType = resultSubstitutor.substituteKeepAnnotations(valueType)
 
-            val newReceiverValue = extensionReceiverParameter.value.replaceType(newValueType)
+            val newReceiverValue = receiver.value.replaceType(newValueType)
 
             functionDescriptor.setExtensionReceiverParameter(
-                ReceiverParameterDescriptorImpl(extensionReceiverParameter.containingDeclaration, newReceiverValue)
+                ReceiverParameterDescriptorImpl(receiver.containingDeclaration, newReceiverValue, receiver.annotations)
             )
         }
     }

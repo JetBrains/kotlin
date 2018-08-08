@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -46,8 +47,10 @@ internal fun genClearCacheFunction(packageFragmentDescriptor: PackageFragmentDes
             SourceElement.NO_SOURCE) {}
 
     val unitType = packageFragmentDescriptor.builtIns.unitType
-    function.initialize(receiverType, null, emptyList(), emptyList(), unitType, Modality.FINAL, Visibilities.PUBLIC)
-    return function
+    return function.initialize(
+        DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, Annotations.EMPTY),
+        null, emptyList(), emptyList(), unitType, Modality.FINAL, Visibilities.PUBLIC
+    )
 }
 
 internal fun genPropertyForWidget(

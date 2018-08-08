@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -315,11 +316,11 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                 val newDispatchReceiverParameter = oldDispatchReceiverParameter?.let { descriptorSubstituteMap.getOrDefault(it, it) as ReceiverParameterDescriptor }
                 val newTypeParameters = oldDescriptor.typeParameters        // TODO substitute types
                 val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, this)
-                val newReceiverParameterType = substituteTypeAndTryGetCopied(oldDescriptor.extensionReceiverParameter?.type)
+                val newReceiverParameter = copyReceiverParameter(oldDescriptor.extensionReceiverParameter, this)
                 val newReturnType = substituteTypeAndTryGetCopied(oldDescriptor.returnType)
 
                 initialize(
-                    /* receiverParameterType        = */ newReceiverParameterType,
+                    /* extensionReceiverParameter   = */ newReceiverParameter,
                     /* dispatchReceiverParameter    = */ newDispatchReceiverParameter,
                     /* typeParameters               = */ newTypeParameters,
                     /* unsubstitutedValueParameters = */ newValueParameters,
@@ -338,11 +339,11 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
             (descriptorSubstituteMap[oldDescriptor] as ClassConstructorDescriptorImpl).apply {
                 val newTypeParameters = oldDescriptor.typeParameters
                 val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, this)
-                val receiverParameterType = substituteTypeAndTryGetCopied(oldDescriptor.dispatchReceiverParameter?.type)
+                val newReceiverParameter = copyReceiverParameter(oldDescriptor.dispatchReceiverParameter, this)
                 val returnType = substituteTypeAndTryGetCopied(oldDescriptor.returnType)
 
                 initialize(
-                    /* receiverParameterType        = */ receiverParameterType,
+                    /* extensionReceiverParameter   = */ newReceiverParameter,
                     /* dispatchReceiverParameter    = */ null,                              //  For constructor there is no explicit dispatch receiver.
                     /* typeParameters               = */ newTypeParameters,
                     /* unsubstitutedValueParameters = */ newValueParameters,
@@ -430,6 +431,18 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                 descriptorSubstituteMap[oldDescriptor] = newDescriptor
                 newDescriptor
             }
+
+        private fun copyReceiverParameter(
+            oldReceiverParameter: ReceiverParameterDescriptor?, containingDeclaration: CallableDescriptor
+        ): ReceiverParameterDescriptor? {
+            if (oldReceiverParameter == null) return null
+            val substituteTypeAndTryGetCopied = substituteTypeAndTryGetCopied(oldReceiverParameter.type) ?: return null
+            return ReceiverParameterDescriptorImpl(
+                containingDeclaration,
+                ExtensionReceiver(containingDeclaration, substituteTypeAndTryGetCopied, oldReceiverParameter.value),
+                oldReceiverParameter.annotations
+            )
+        }
 
         private fun substituteTypeAndTryGetCopied(type: KotlinType?): KotlinType? {
             val substitutedType = substituteType(type) ?: return null

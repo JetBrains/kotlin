@@ -138,7 +138,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
     }
 
     private fun createDynamicDispatchReceiverParameter(owner: CallableDescriptor): ReceiverParameterDescriptorImpl {
-        return ReceiverParameterDescriptorImpl(owner, TransientReceiver(dynamicType))
+        return ReceiverParameterDescriptorImpl(owner, TransientReceiver(dynamicType), Annotations.EMPTY)
     }
 
     private fun createTypeParameters(owner: DeclarationDescriptor, call: Call): List<TypeParameterDescriptor> =
