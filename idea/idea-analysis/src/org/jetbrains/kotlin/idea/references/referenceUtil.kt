@@ -71,8 +71,7 @@ val PsiReference.unwrappedTargets: Set<PsiElement>
 fun PsiReference.canBeReferenceTo(candidateTarget: PsiElement): Boolean {
     // optimization
     return element.containingFile == candidateTarget.containingFile
-           || ProjectRootsUtil.isInProjectOrLibSource(element)
-           || ScratchUtil.isScratch(element.containingFile.virtualFile)
+            || ProjectRootsUtil.isInProjectOrLibSource(element, includeScriptsOutsideSourceRoots = true)
 }
 
 fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {

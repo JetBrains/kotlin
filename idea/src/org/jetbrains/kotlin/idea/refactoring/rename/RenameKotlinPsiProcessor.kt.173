@@ -47,7 +47,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
         val searchParameters = KotlinReferencesSearchParameters(
                 element,
-                element.project.projectScope(),
+                element.useScope,
                 kotlinOptions = KotlinReferencesSearchOptions(searchForComponentConventions = false)
         )
         val references = ReferencesSearch.search(searchParameters).toMutableList()
