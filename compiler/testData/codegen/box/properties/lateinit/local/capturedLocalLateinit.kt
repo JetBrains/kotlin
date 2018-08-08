@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // LANGUAGE_VERSION: 1.2
 
 fun runNoInline(f: () -> Unit) = f()

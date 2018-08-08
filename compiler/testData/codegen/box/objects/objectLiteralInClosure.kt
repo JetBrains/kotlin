@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 package p
 
 private class C(val y: Int) {

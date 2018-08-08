@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class A {
     private fun foo() = "OK"
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 // WITH_RUNTIME
 inline fun Inline.calcExt(s: (Int) -> Int, p: Int) : Int {
