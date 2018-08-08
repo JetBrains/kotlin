@@ -23,13 +23,16 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
 class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     companion object {
-        private val COLLECTIONS_FOREACH_FQNAME = FqName("kotlin.collections.forEach")
-        private val SEQUENCES_FOREACH_FQNAME = FqName("kotlin.sequences.forEach")
+        private const val EXPRESSION_NAME = "forEach"
+        private val COLLECTIONS_FOREACH_FQNAME = FqName("kotlin.collections.$EXPRESSION_NAME")
+        private val SEQUENCES_FOREACH_FQNAME = FqName("kotlin.sequences.$EXPRESSION_NAME")
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor {
-            when(it.getCallableDescriptor()?.fqNameOrNull()) {
+            if (it.calleeExpression?.text != EXPRESSION_NAME) return@callExpressionVisitor
+
+            when (it.getCallableDescriptor()?.fqNameOrNull()) {
                 COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
                     val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression() ?: return@callExpressionVisitor
                     val descriptor = lambda.analyze()[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
