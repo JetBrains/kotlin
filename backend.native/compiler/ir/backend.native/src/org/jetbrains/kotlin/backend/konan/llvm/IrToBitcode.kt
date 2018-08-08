@@ -811,7 +811,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef =
             functionGenerationContext.getObjectValue(
                     value.symbol.owner,
-                    value.symbol.objectIsShared && context.config.threadsAreAllowed,
                     currentCodeContext.exceptionHandler,
                     value.startLocation
             )

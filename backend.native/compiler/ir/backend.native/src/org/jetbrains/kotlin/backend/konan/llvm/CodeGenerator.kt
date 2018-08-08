@@ -673,7 +673,6 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     fun getObjectValue(
             descriptor: ClassDescriptor,
-            shared: Boolean,
             exceptionHandler: ExceptionHandler,
             locationInfo: LocationInfo?
     ): LLVMValueRef {
@@ -695,6 +694,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
         }
 
+        val shared = descriptor.symbol.objectIsShared && context.config.threadsAreAllowed
         val objectPtr = codegen.getObjectInstanceStorage(descriptor, shared)
         val bbCurrent = currentBlock
         val bbInit= basicBlock("label_init", locationInfo)
