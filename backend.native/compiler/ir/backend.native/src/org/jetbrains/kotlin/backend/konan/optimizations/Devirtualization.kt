@@ -172,7 +172,7 @@ internal object Devirtualization {
 
             val voidNode = addNode { Node.Ordinary(it, { "Void" }) }
             val virtualNode = addNode { Node.Source(it, VIRTUAL_TYPE_ID, { "Virtual" }) }
-            val arrayItemField = DataFlowIR.Field(null, symbolTable.mapClass(context.irBuiltIns.anyClass.owner), 1, "Array\$Item")
+            val arrayItemField = DataFlowIR.Field(null, symbolTable.mapClassReferenceType(context.irBuiltIns.anyClass.owner), 1, "Array\$Item")
             val functions = mutableMapOf<DataFlowIR.FunctionSymbol, Function>()
             val concreteClasses = mutableMapOf<DataFlowIR.Type.Declared, Node>()
             val externalFunctions = mutableMapOf<DataFlowIR.FunctionSymbol, Node>()
@@ -362,6 +362,14 @@ internal object Devirtualization {
 
                         is DataFlowIR.Node.StaticCall ->
                             dfs(node.callee)
+
+                        is DataFlowIR.Node.FieldRead ->
+                            if (entryPoint == null && node.field.type.isFinal)
+                                addInstantiatingClass(node.field.type)
+
+                        is DataFlowIR.Node.FieldWrite ->
+                            if (entryPoint == null && node.field.type.isFinal)
+                                addInstantiatingClass(node.field.type)
 
                         is DataFlowIR.Node.VirtualCall -> {
                             if (node.receiverType == DataFlowIR.Type.Virtual)
@@ -676,7 +684,19 @@ internal object Devirtualization {
                     constraintGraph.concreteClasses.getOrPut(type) { sourceNode(concreteType(type)) { "Class\$$type" } }
 
             private fun fieldNode(field: DataFlowIR.Field) =
-                    constraintGraph.fields.getOrPut(field) { ordinaryNode { "Field\$$field" } }
+                    constraintGraph.fields.getOrPut(field) {
+                        val fieldNode = ordinaryNode { "Field\$$field" }
+                        if (entryPoint == null) {
+                            // TODO: This is conservative.
+                            val fieldType = field.type.resolved()
+                            // Some user of our library might place some value into the field.
+                            if (fieldType.isFinal)
+                                concreteClass(fieldType).addEdge(fieldNode)
+                            else
+                                constraintGraph.virtualNode.addEdge(fieldNode)
+                        }
+                        fieldNode
+                    }
 
             private var stack = mutableListOf<DataFlowIR.FunctionSymbol>()
 
@@ -898,8 +918,6 @@ internal object Devirtualization {
                             }
                             // And throw anything.
                             receiverNode.addCastEdge(Node.CastEdge(function.throws, virtualTypeFilter))
-                            // And write to some array anything. TODO: This is conservative.
-                            receiverNode.addCastEdge(Node.CastEdge(fieldNode(constraintGraph.arrayItemField), virtualTypeFilter))
 
                             if (callees.isEmpty() && returnType.isFinal && entryPoint == null) {
                                 // If we are in a library and facing final return type with no possible callees -
