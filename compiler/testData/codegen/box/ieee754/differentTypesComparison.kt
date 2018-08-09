@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JS_IR
 fun box(): String {
     if (0.toByte().compareTo(-0.0) != 1) return "fail 1.1"
