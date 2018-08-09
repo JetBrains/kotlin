@@ -146,6 +146,7 @@ public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T): Int {
     var index = 0
     for (item in this) {
+        checkIndexOverflow(index)
         if (element == item)
             return index
         index++
@@ -161,6 +162,7 @@ public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T): 
 public inline fun <T> Sequence<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     var index = 0
     for (item in this) {
+        checkIndexOverflow(index)
         if (predicate(item))
             return index
         index++
@@ -177,6 +179,7 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     var lastIndex = -1
     var index = 0
     for (item in this) {
+        checkIndexOverflow(index)
         if (predicate(item))
             lastIndex = index
         index++
@@ -229,6 +232,7 @@ public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: 
     var lastIndex = -1
     var index = 0
     for (item in this) {
+        checkIndexOverflow(index)
         if (element == item)
             lastIndex = index
         index++
@@ -852,7 +856,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndex
 public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {
     var index = 0
     for (item in this)
-        destination.add(transform(index++, item))
+        destination.add(transform(checkIndexOverflow(index++), item))
     return destination
 }
 
@@ -976,7 +980,7 @@ public inline fun <T> Sequence<T>.any(predicate: (T) -> Boolean): Boolean {
  */
 public fun <T> Sequence<T>.count(): Int {
     var count = 0
-    for (element in this) count++
+    for (element in this) checkCountOverflow(++count)
     return count
 }
 
@@ -987,7 +991,7 @@ public fun <T> Sequence<T>.count(): Int {
  */
 public inline fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) checkCountOverflow(++count)
     return count
 }
 
@@ -1013,7 +1017,7 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (acc: R, T) -> 
 public inline fun <T, R> Sequence<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R {
     var index = 0
     var accumulator = initial
-    for (element in this) accumulator = operation(index++, accumulator, element)
+    for (element in this) accumulator = operation(checkIndexOverflow(index++), accumulator, element)
     return accumulator
 }
 
@@ -1035,7 +1039,7 @@ public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
  */
 public inline fun <T> Sequence<T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit {
     var index = 0
-    for (item in this) action(index++, item)
+    for (item in this) action(checkIndexOverflow(index++), item)
 }
 
 /**
@@ -1293,7 +1297,7 @@ public inline fun <S, T : S> Sequence<T>.reduceIndexed(operation: (index: Int, a
     var index = 1
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
-        accumulator = operation(index++, accumulator, iterator.next())
+        accumulator = operation(checkIndexOverflow(index++), accumulator, iterator.next())
     }
     return accumulator
 }
@@ -1696,7 +1700,7 @@ public fun Sequence<Byte>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        checkCountOverflow(++count)
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -1712,7 +1716,7 @@ public fun Sequence<Short>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        checkCountOverflow(++count)
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -1728,7 +1732,7 @@ public fun Sequence<Int>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        checkCountOverflow(++count)
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -1744,7 +1748,7 @@ public fun Sequence<Long>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        checkCountOverflow(++count)
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -1760,7 +1764,7 @@ public fun Sequence<Float>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        checkCountOverflow(++count)
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -1776,7 +1780,7 @@ public fun Sequence<Double>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        checkCountOverflow(++count)
     }
     return if (count == 0) Double.NaN else sum / count
 }

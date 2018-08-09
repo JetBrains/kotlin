@@ -9701,7 +9701,7 @@ public inline fun CharArray.count(): Int {
  */
 public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9710,7 +9710,7 @@ public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
  */
 public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9719,7 +9719,7 @@ public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
  */
 public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9728,7 +9728,7 @@ public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
  */
 public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9737,7 +9737,7 @@ public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
  */
 public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9746,7 +9746,7 @@ public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
  */
 public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9755,7 +9755,7 @@ public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
  */
 public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9764,7 +9764,7 @@ public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
  */
 public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9773,7 +9773,7 @@ public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
  */
 public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -13504,7 +13504,7 @@ public fun Array<out Byte>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13518,7 +13518,7 @@ public fun Array<out Short>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13532,7 +13532,7 @@ public fun Array<out Int>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13546,7 +13546,7 @@ public fun Array<out Long>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13560,7 +13560,7 @@ public fun Array<out Float>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13574,7 +13574,7 @@ public fun Array<out Double>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13587,7 +13587,7 @@ public fun ByteArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13600,7 +13600,7 @@ public fun ShortArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13613,7 +13613,7 @@ public fun IntArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13626,7 +13626,7 @@ public fun LongArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13639,7 +13639,7 @@ public fun FloatArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13652,7 +13652,7 @@ public fun DoubleArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
