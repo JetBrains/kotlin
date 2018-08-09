@@ -857,6 +857,12 @@ fun runTest() {
             return false
         }
 
+        def inproperIeee754Comparisons = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
+        if (inproperIeee754Comparisons.contains('-ProperIeee754Comparisons')) {
+            // K/N supports only proper IEEE754 comparisons
+            return false
+        }
+
         def version = findLinesWithPrefixesRemoved(text, '// LANGUAGE_VERSION: ')
         if (version.size() != 0 && version.contains("1.3")) {
             // 1.3 is not yet supported
