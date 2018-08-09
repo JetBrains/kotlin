@@ -102,7 +102,7 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
         return false;
     }
 
-    @Override
+    //@Override since 181
     public UserDataHolderEx getCustomContext() {
         return null;
     }
@@ -126,5 +126,10 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
     @Override
     public Editor getEditor() {
         return myFixture.getEditor();
+    }
+
+    //@Override since 183
+    public boolean isSingleParameterInfo() {
+        return false;
     }
 }
