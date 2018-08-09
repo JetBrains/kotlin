@@ -9,7 +9,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl.WithDestructuringDeclaration
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
@@ -22,14 +21,15 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
 class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     companion object {
-        private val COLLECTIONS_FOREACH_FQNAME = FqName("kotlin.collections.forEach")
-        private val SEQUENCES_FOREACH_FQNAME = FqName("kotlin.sequences.forEach")
+        private const val FOREACH_NAME = "forEach"
+        private val COLLECTIONS_FOREACH_FQNAME = FqName("kotlin.collections.$FOREACH_NAME")
+        private val SEQUENCES_FOREACH_FQNAME = FqName("kotlin.sequences.$FOREACH_NAME")
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor {
             val calleeExpression = it.calleeExpression as? KtNameReferenceExpression ?: return@callExpressionVisitor
-            if (calleeExpression.getReferencedName() != "forEach") return@callExpressionVisitor
+            if (calleeExpression.getReferencedName() != FOREACH_NAME) return@callExpressionVisitor
             when (it.getCallableDescriptor()?.fqNameOrNull()) {
                 COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
                     val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression() ?: return@callExpressionVisitor
@@ -37,11 +37,11 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                     val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
 
                     if (iterableParameter !is WithDestructuringDeclaration &&
-                        lambda.bodyExpression?.usesDescriptor(iterableParameter) != true &&
-                        it.calleeExpression != null) {
+                        lambda.bodyExpression?.usesDescriptor(iterableParameter) != true
+                    ) {
 
                         holder.registerProblem(
-                            it.calleeExpression!!,
+                            calleeExpression,
                             "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                         )
