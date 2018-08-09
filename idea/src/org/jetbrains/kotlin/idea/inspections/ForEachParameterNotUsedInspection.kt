@@ -34,6 +34,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
             when (it.getCallableDescriptor()?.fqNameOrNull()) {
                 COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
                     val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression() ?: return@callExpressionVisitor
+                    if (lambda.functionLiteral.arrow != null) return@callExpressionVisitor
                     val descriptor = lambda.analyze()[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
                     val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
 
