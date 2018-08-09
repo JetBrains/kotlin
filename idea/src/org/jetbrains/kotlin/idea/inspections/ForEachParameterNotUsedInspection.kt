@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl.WithDestructuringDeclaration
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.intentions.SpecifyExplicitLambdaSignatureIntention
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.name.FqName
@@ -41,14 +45,28 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                     if (iterableParameter !is WithDestructuringDeclaration &&
                         lambda.bodyExpression?.usesDescriptor(iterableParameter) != true
                     ) {
-
                         holder.registerProblem(
                             calleeExpression,
                             "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                            IntroduceAnonymousParameterFix()
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private class IntroduceAnonymousParameterFix : LocalQuickFix {
+        override fun getFamilyName() = "Introduce anonymous parameter"
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val callExpression = descriptor.psiElement.parent as? KtCallExpression ?: return
+            val literal = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.functionLiteral ?: return
+            val psiFactory = KtPsiFactory(project)
+            val newParameterList = psiFactory.createLambdaParameterList("_")
+            with (SpecifyExplicitLambdaSignatureIntention) {
+                literal.setParameterListIfAny(psiFactory, newParameterList)
             }
         }
     }
