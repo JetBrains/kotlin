@@ -41,5 +41,21 @@ class IndexOverflowJVMTest {
 
 
 
+    @Test
+    fun dropTwiceMaxValue() {
+
+        val halfMax = (1 shl 30) + 1
+
+        val dropOnce = longCountSequence.drop(halfMax)
+        val dropTwice = dropOnce.drop(halfMax)
+
+        val expectedEnd = halfMax.toLong() * 2
+
+        assertEquals(expectedEnd, dropTwice.first())
+
+        val dropTake = dropOnce.take(halfMax + 1)
+
+        assertEquals(expectedEnd, dropTake.last())
+    }
 
 }
