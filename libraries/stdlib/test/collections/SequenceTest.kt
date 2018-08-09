@@ -152,6 +152,11 @@ public class SequenceTest {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
         assertFailsWith<IllegalArgumentException> { fibonacci().drop(-1) }
+
+        val dropMax = fibonacci().drop(Int.MAX_VALUE)
+        val dropMore = dropMax.drop(Int.MAX_VALUE)
+        val takeMore = dropMax.take(Int.MAX_VALUE)
+
     }
 
     @Test fun take() {
