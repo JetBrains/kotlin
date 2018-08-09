@@ -742,6 +742,8 @@ public class BodyResolver {
         }
 
         resolvePropertyAccessors(c, property, propertyDescriptor);
+
+        ForceResolveUtil.forceResolveAllContents(propertyDescriptor.getAnnotations());
     }
 
     private void resolvePropertyDeclarationBodies(@NotNull BodiesResolveContext c) {
@@ -797,13 +799,13 @@ public class BodyResolver {
                 languageVersionSettings.supportsFeature(LanguageFeature.ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets);
 
         if (getterDescriptor != null) {
-            if (getter != null || forceResolveAnnotations) {
-                ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
-            }
-
             if (getter != null) {
                 LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
                 resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+            }
+
+            if (getter != null || forceResolveAnnotations) {
+                ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
             }
         }
 
@@ -811,13 +813,13 @@ public class BodyResolver {
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
 
         if (setterDescriptor != null) {
-            if (setter != null || forceResolveAnnotations) {
-                ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
-            }
-
             if (setter != null) {
                 LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
                 resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+            }
+
+            if (setter != null || forceResolveAnnotations) {
+                ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
             }
         }
     }
