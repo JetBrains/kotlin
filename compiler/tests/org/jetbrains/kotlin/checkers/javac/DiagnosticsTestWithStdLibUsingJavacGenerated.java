@@ -1134,9 +1134,34 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/callInContractDescription.kt");
                 }
 
+                @TestMetadata("emptyContract.kt")
+                public void testEmptyContract() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/emptyContract.kt");
+                }
+
+                @TestMetadata("illegalCallSites.kt")
+                public void testIllegalCallSites() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/illegalCallSites.kt");
+                }
+
+                @TestMetadata("illegalConstructionInContractBlock.kt")
+                public void testIllegalConstructionInContractBlock() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/illegalConstructionInContractBlock.kt");
+                }
+
+                @TestMetadata("illegalEqualsCondition.kt")
+                public void testIllegalEqualsCondition() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/illegalEqualsCondition.kt");
+                }
+
                 @TestMetadata("nestedConditionalEffects.kt")
                 public void testNestedConditionalEffects() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/nestedConditionalEffects.kt");
+                }
+
+                @TestMetadata("nonLambdaLiteralAsArgument.kt")
+                public void testNonLambdaLiteralAsArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/nonLambdaLiteralAsArgument.kt");
                 }
 
                 @TestMetadata("notFirstStatement.kt")
@@ -1147,6 +1172,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 @TestMetadata("referenceToProperty.kt")
                 public void testReferenceToProperty() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/referenceToProperty.kt");
+                }
+
+                @TestMetadata("typeReferences.kt")
+                public void testTypeReferences() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/typeReferences.kt");
                 }
 
                 @TestMetadata("unlabeledReceiver.kt")

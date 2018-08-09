@@ -1,0 +1,3 @@
+package
+
+public fun emptyContract(): kotlin.Unit
