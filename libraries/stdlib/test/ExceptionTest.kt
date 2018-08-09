@@ -22,6 +22,7 @@ class ExceptionTest {
     @Test fun nullPointerException() = testCreateException(::NullPointerException, ::NullPointerException)
     @Test fun classCastException() = testCreateException(::ClassCastException, ::ClassCastException)
     @Test fun noSuchElementException() = testCreateException(::NoSuchElementException, ::NoSuchElementException)
+    @Test fun arithmeticException() = testCreateException(::ArithmeticException, ::ArithmeticException)
 
     @Test fun noWhenBranchMatchedException() = testCreateException(::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException)
     @Test fun uninitializedPropertyAccessException() = testCreateException(::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException)
