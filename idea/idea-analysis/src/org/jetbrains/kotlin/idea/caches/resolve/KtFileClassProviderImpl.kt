@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.util.isInDumbMode
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileClassProvider
@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.psi.analysisContext
 class KtFileClassProviderImpl(val kotlinAsJavaSupport: KotlinAsJavaSupport) :
     KtFileClassProvider {
     override fun getFileClasses(file: KtFile): Array<PsiClass> {
+        if (file.project.isInDumbMode()) {
+            return PsiClass.EMPTY_ARRAY
+        }
+
         // TODO We don't currently support finding light classes for scripts
         if (file.isCompiled || file.isScript()) {
             return PsiClass.EMPTY_ARRAY

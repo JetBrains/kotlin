@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -248,7 +249,7 @@ class FileScopeFactory(
         parentScope: ImportingScope
     ): ImportingScope {
         val scope = packageView.memberScope
-        val names by lazy(LazyThreadSafetyMode.PUBLICATION) { scope.computeAllNames() }
+        val names by lazy(LazyThreadSafetyMode.PUBLICATION) { scope.computeAllNames()?.let(::THashSet) }
         val packageName = packageView.fqName
         val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
 

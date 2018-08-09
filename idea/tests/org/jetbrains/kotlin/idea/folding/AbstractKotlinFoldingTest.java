@@ -76,7 +76,7 @@ public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFi
 
     private void doExpandSettingsTest(String fileText) {
         try {
-            VirtualFile tempFile = PlatformTestCase.createTempFile("kt", null, fileText, Charset.defaultCharset());
+            VirtualFile tempFile = createTempFile("kt", null, fileText, Charset.defaultCharset());
             assertFoldingRegionsForFile(tempFile.getPath());
         }
         catch (IOException e) {

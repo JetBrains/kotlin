@@ -181,10 +181,13 @@ fun KtSimpleNameReference.canBePsiMethodReference(): Boolean {
 }
 
 private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
-    // call to Java constructor
-        (this is PsiMethod && isConstructor && containingClass == unwrappedCandidate) ||
+    when {
+        // call to Java constructor
+        this is PsiMethod && isConstructor && containingClass == unwrappedCandidate -> true
         // call to Kotlin constructor
-    (this is KtConstructor<*> && getContainingClassOrObject() == unwrappedCandidate)
+        this is KtConstructor<*> && getContainingClassOrObject().isEquivalentTo(unwrappedCandidate) -> true
+        else -> false
+    }
 
 fun AbstractKtReference<out KtExpression>.renameImplicitConventionalCall(newName: String?): KtExpression {
     if (newName == null) return expression

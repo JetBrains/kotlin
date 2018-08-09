@@ -44,6 +44,3 @@ package p {
 package
 
 public fun </*0*/ Y> test(/*0*/ b: p.B<Y>?, /*1*/ y: Y): kotlin.Unit
-
-package p {
-}

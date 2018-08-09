@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -195,6 +196,11 @@ class PropertyReferenceCodegen(
 
         @JvmStatic
         fun generateCallableReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
+            iv.aconst(getSignatureString(callable, state))
+        }
+
+        @JvmStatic
+        fun getSignatureString(callable: CallableDescriptor, state: GenerationState): String {
             if (callable is LocalVariableDescriptor) {
                 val asmType = state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, callable)
                         ?: throw AssertionError("No delegated property metadata owner for $callable")
@@ -203,8 +209,7 @@ class PropertyReferenceCodegen(
                 if (index < 0) {
                     throw AssertionError("Local delegated property is not found in $asmType: $callable")
                 }
-                iv.aconst("<v#$index>") // v = "variable"
-                return
+                return "<v#$index>"
             }
 
             val accessor = when (callable) {
@@ -218,7 +223,7 @@ class PropertyReferenceCodegen(
             }
             val declaration = DescriptorUtils.unwrapFakeOverride(accessor).original
             val method = state.typeMapper.mapAsmMethod(declaration)
-            iv.aconst(method.name + method.descriptor)
+            return method.name + method.descriptor
         }
 
         @JvmStatic

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     val f = fun (s: String): String = s
     val g = f as String.() -> String

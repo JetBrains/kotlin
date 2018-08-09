@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.onlyIf
+import org.jetbrains.kotlin.backend.common.utils.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
@@ -84,7 +87,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         if (!irClass.isInterface) {
             declaration.resolveFakeOverride()?.let {
                 val implClassDesc = it.descriptor.containingDeclaration as ClassDescriptor
-                if (!KotlinBuiltIns.isAny(implClassDesc)) {
+                if (!KotlinBuiltIns.isAny(implClassDesc) && !it.isEffectivelyExternal()) {
                     val implMethodName = context.getNameForSymbol(it.symbol)
                     val implClassName = context.getNameForSymbol(IrClassSymbolImpl(implClassDesc))
 
@@ -164,7 +167,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         JsArrayLiteral(
             irClass.superTypes.mapNotNull {
                 val symbol = it.classifierOrFail
-                if (symbol.isInterface) JsNameRef(context.getNameForSymbol(symbol)) else null
+                // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
+                if (symbol.isInterface && !irClass.defaultType.isBuiltinFunctionalTypeOrSubtype() && !symbol.isEffectivelyExternal()) JsNameRef(context.getNameForSymbol(symbol)) else null
             }
         )
     )

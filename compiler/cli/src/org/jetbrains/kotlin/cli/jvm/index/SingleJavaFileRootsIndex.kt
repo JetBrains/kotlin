@@ -35,12 +35,12 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
     private val classIdsInRoots = ArrayList<List<ClassId>>(roots.size)
 
     fun findJavaSourceClass(classId: ClassId): VirtualFile? =
-            roots.indices
-                    .find { index -> classId in getClassIdsForRootAt(index) }
-                    ?.let { index -> roots[index].file }
+        roots.indices
+            .find { index -> classId in getClassIdsForRootAt(index) }
+            ?.let { index -> roots[index].file }
 
     fun findJavaSourceClasses(packageFqName: FqName): List<ClassId> =
-            roots.indices.flatMap(this::getClassIdsForRootAt).filter { root -> root.packageFqName == packageFqName }
+        roots.indices.flatMap(this::getClassIdsForRootAt).filter { root -> root.packageFqName == packageFqName }
 
     private fun getClassIdsForRootAt(index: Int): List<ClassId> {
         for (i in classIdsInRoots.size..index) {
@@ -73,7 +73,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
         private fun tokenText(): String = lexer.tokenText
 
         private fun atClass(): Boolean =
-                braceBalance == 0 && lexer.tokenType in CLASS_KEYWORDS
+            braceBalance == 0 && lexer.tokenType in CLASS_KEYWORDS
 
         fun readClassIds(): List<ClassId> {
             var packageFqName = FqName.ROOT

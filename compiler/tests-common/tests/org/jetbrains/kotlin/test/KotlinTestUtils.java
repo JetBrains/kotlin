@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
+import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -789,7 +790,8 @@ public class KotlinTestUtils {
 
             boolean isReleaseCoroutines =
                     !coroutinesPackage.contains("experimental") ||
-                    isDirectiveDefined(expectedText, "LANGUAGE_VERSION: 1.3");
+                    isDirectiveDefined(expectedText, "LANGUAGE_VERSION: 1.3") ||
+                    isDirectiveDefined(expectedText, "!LANGUAGE: +ReleaseCoroutines");
 
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",

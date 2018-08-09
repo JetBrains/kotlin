@@ -32,6 +32,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
@@ -63,9 +64,12 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
+import org.jetbrains.kotlin.cli.common.config.ContentRoot
+import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
@@ -84,11 +88,11 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
-import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -182,6 +186,7 @@ class KotlinCoreEnvironment private constructor(
         PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
         JsSyntheticTranslateExtension.registerExtensionPoint(project)
         CompilerConfigurationExtension.registerExtensionPoint(project)
+        IrGenerationExtension.registerExtensionPoint(project)
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -213,9 +218,7 @@ class KotlinCoreEnvironment private constructor(
             extension.updateConfiguration(configuration)
         }
 
-        sourceFiles += CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration) { message ->
-            report(ERROR, message)
-        }
+        sourceFiles += createKtFiles(project)
         sourceFiles.sortBy { it.virtualFile.path }
 
         // If not disabled explicitly, we should always support at least the standard script definition
@@ -246,7 +249,7 @@ class KotlinCoreEnvironment private constructor(
 
         val outputDirectory =
             configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
-                    ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
+                ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
 
         classpathRootsResolver = ClasspathRootsResolver(
             PsiManager.getInstance(project),
@@ -259,7 +262,7 @@ class KotlinCoreEnvironment private constructor(
         )
 
         val (initialRoots, javaModules) =
-                classpathRootsResolver.convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
+                classpathRootsResolver.convertClasspathRoots(configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS))
         this.initialRoots = initialRoots
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
@@ -411,6 +414,52 @@ class KotlinCoreEnvironment private constructor(
 
     fun getSourceFiles(): List<KtFile> = sourceFiles
 
+    private fun createKtFiles(project: Project): List<KtFile> {
+        val sourceRoots = getSourceRootsCheckingForDuplicates()
+
+        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+        val psiManager = PsiManager.getInstance(project)
+
+        val processedFiles = hashSetOf<VirtualFile>()
+        val result = mutableListOf<KtFile>()
+
+        val virtualFileCreator = PreprocessedFileCreator(project)
+
+        for (sourceRootPath in sourceRoots) {
+            val vFile = localFileSystem.findFileByPath(sourceRootPath)
+            if (vFile == null) {
+                val message = "Source file or directory not found: $sourceRootPath"
+
+                val buildFilePath = configuration.get(JVMConfigurationKeys.MODULE_XML_FILE)
+                if (buildFilePath != null && Logger.isInitialized()) {
+                    LOG.warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
+                }
+
+                report(ERROR, message)
+                continue
+            }
+
+            if (!vFile.isDirectory && vFile.fileType != KotlinFileType.INSTANCE) {
+                report(ERROR, "Source entry is not a Kotlin file: $sourceRootPath")
+                continue
+            }
+
+            for (file in File(sourceRootPath).walkTopDown()) {
+                if (!file.isFile) continue
+
+                val virtualFile = localFileSystem.findFileByPath(file.absolutePath)?.let(virtualFileCreator::create)
+                if (virtualFile != null && processedFiles.add(virtualFile)) {
+                    val psiFile = psiManager.findFile(virtualFile)
+                    if (psiFile is KtFile) {
+                        result.add(psiFile)
+                    }
+                }
+            }
+        }
+
+        return result
+    }
+
     private fun report(severity: CompilerMessageSeverity, message: String) {
         configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(severity, message)
     }
@@ -419,6 +468,8 @@ class KotlinCoreEnvironment private constructor(
         init {
             setCompatibleBuild()
         }
+
+        private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
 
         private val APPLICATION_LOCK = Object()
         private var ourApplicationEnvironment: JavaCoreApplicationEnvironment? = null
@@ -554,14 +605,14 @@ class KotlinCoreEnvironment private constructor(
 
             val pluginRoot =
                 configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
-                        ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
-                        ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
-                        // hack for load extensions when compiler run directly from project directory (e.g. in tests)
-                        ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
-                        ?: throw IllegalStateException(
-                            "Unable to find extension point configuration $configFilePath " +
-                                    "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
-                        )
+                    ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
+                    ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
+                    // hack for load extensions when compiler run directly from project directory (e.g. in tests)
+                    ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
+                    ?: throw IllegalStateException(
+                        "Unable to find extension point configuration $configFilePath " +
+                                "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
+                    )
 
             CoreApplicationEnvironment.registerExtensionPointAndExtensions(pluginRoot, configFilePath, Extensions.getRootArea())
         }
@@ -603,7 +654,7 @@ class KotlinCoreEnvironment private constructor(
                 registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
                 registerService(
                     ScriptDependenciesProvider::class.java,
-                    CliScriptDependenciesProvider(projectEnvironment.project, scriptDefinitionProvider)
+                    CliScriptDependenciesProvider(projectEnvironment.project)
                 )
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))

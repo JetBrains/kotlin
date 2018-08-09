@@ -87,6 +87,7 @@ val runMocha by task<NpmTask> {
     val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
     setArgs(listOf("run", target))
 
+    setIgnoreExitValue(rootProject.getBooleanProperty("ignoreTestFailures") ?: false)
 
     dependsOn(npmInstall, "test")
 

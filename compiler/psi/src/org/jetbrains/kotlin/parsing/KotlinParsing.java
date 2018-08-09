@@ -1472,7 +1472,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
             }
             else {
-                closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, false);
+                closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, true);
                 return accessorKind;
             }
         }
@@ -1508,7 +1508,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         parseFunctionBody();
 
-        closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, false);
+        closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, true);
 
         return accessorKind;
     }

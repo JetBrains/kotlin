@@ -72,12 +72,18 @@ abstract class CustomLibraryDescriptorWithDeferredConfig
         return suitableLibraryKinds
     }
 
-    fun finishLibConfiguration(module: Module, rootModel: ModifiableRootModel) {
+    fun finishLibConfiguration(
+        module: Module,
+        rootModel: ModifiableRootModel,
+        isNewProject: Boolean
+    ) {
         configureKotlinSettings(module.project, rootModel.sdk)
 
-        KotlinCommonCompilerArgumentsHolder.getInstance(module.project).update {
-            languageVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
-            apiVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+        if (isNewProject) {
+            KotlinCommonCompilerArgumentsHolder.getInstance(module.project).update {
+                languageVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+                apiVersionView = VersionView.Specific(LanguageVersion.LATEST_STABLE)
+            }
         }
 
         val library = rootModel.orderEntries().findLibrary { library ->

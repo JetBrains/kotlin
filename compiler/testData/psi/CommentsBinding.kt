@@ -71,3 +71,9 @@ var prop: Int // Int
   set(value) {} // this is setter
 
 val prop2: Int get = 1 // prop2
+
+var prop3: Int // Int
+    // this comment is for getter
+    get() = 1
+    // this comment is for setter
+    set(value) {}

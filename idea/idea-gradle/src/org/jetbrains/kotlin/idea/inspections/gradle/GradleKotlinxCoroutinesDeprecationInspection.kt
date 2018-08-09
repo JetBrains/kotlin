@@ -11,12 +11,15 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.configuration.getWholeModuleGroup
+import org.jetbrains.kotlin.idea.configuration.isLanguageVersionUpdate
 import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.inspections.migration.DEPRECATED_COROUTINES_LIBRARIES_INFORMATION
 import org.jetbrains.kotlin.idea.inspections.migration.DeprecatedForKotlinLibInfo
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
 import org.jetbrains.kotlin.idea.versions.LibInfo
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
@@ -28,7 +31,11 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrC
 private val LibInfo.gradleMarker get() = "$groupId:$name:"
 
 @Suppress("SpellCheckingInspection")
-class GradleKotlinxCoroutinesDeprecationInspection : GradleBaseInspection(), CleanupLocalInspectionTool {
+class GradleKotlinxCoroutinesDeprecationInspection : GradleBaseInspection(), CleanupLocalInspectionTool, MigrationFix {
+    override fun isApplicable(migrationInfo: MigrationInfo): Boolean {
+        return migrationInfo.isLanguageVersionUpdate(LanguageVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_3)
+    }
+
     override fun buildVisitor(): BaseInspectionVisitor = DependencyFinder()
 
     private open class DependencyFinder : KotlinGradleInspectionVisitor() {

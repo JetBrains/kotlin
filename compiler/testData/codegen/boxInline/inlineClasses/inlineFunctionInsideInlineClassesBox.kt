@@ -11,6 +11,8 @@ inline class A(val x: Int) {
     inline fun result(other: A): String = if (other.x == x) "OK" else "fail"
 }
 
+inline fun stub() {}
+
 // FILE: 2.kt
 
 import test.*

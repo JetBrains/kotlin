@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 abstract class Base(val fn: () -> String)
 
 interface Host {

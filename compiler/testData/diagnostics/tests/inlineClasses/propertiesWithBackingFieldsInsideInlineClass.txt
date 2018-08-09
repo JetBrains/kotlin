@@ -24,7 +24,7 @@ public final inline class Foo : A, B {
     public open override /*1*/ val goodSize: kotlin.Int
     public final lateinit var lateinitProperty: kotlin.String
     public final val x: kotlin.Int
-    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
 }

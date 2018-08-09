@@ -27,11 +27,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-class CliScriptDependenciesProvider(
-        private val project: Project,
-        private val scriptDefinitionProvider: ScriptDefinitionProvider
-) : ScriptDependenciesProvider {
-
+class CliScriptDependenciesProvider(private val project: Project) : ScriptDependenciesProvider {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptDependencies?>()
     private val scriptContentLoader = ScriptContentLoader(project)
@@ -45,7 +41,7 @@ class CliScriptDependenciesProvider(
         val cached = cache[path]
         return if (cached != null) cached
         else {
-            val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+            val scriptDef = findScriptDefinition(file, project)
             if (scriptDef != null) {
                 val result = scriptContentLoader.loadContentsAndResolveDependencies(scriptDef, file)
 
@@ -60,8 +56,7 @@ class CliScriptDependenciesProvider(
                     cache.put(path, deps)
                 }
                 deps
-            }
-            else null
+            } else null
         }
     }
 }

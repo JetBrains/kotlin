@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.script.getScriptDefinition
+import org.jetbrains.kotlin.script.findScriptDefinition
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.yieldIfNotNull
@@ -75,7 +75,7 @@ fun getScriptRelatedModuleInfo(project: Project, virtualFile: VirtualFile): Modu
     return null
 }
 
-private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean, Boolean) -> T
+private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean) -> T
 
 private sealed class ModuleInfoCollector<out T>(
     val onResult: (IdeaModuleInfo?) -> T,
@@ -88,12 +88,11 @@ private sealed class ModuleInfoCollector<out T>(
             LOG.error("Could not find correct module information.\nReason: $reason")
             NotUnderContentRootModuleInfo
         },
-        virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource, isScript ->
+        virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource ->
             collectInfosByVirtualFile(
                 project,
                 virtualFile,
                 isLibrarySource,
-                isScript,
                 {
                     return@processor it ?: NotUnderContentRootModuleInfo
                 })
@@ -106,12 +105,11 @@ private sealed class ModuleInfoCollector<out T>(
             LOG.warn("Could not find correct module information.\nReason: $reason")
             null
         },
-        virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource, isScript ->
+        virtualFileProcessor = processor@ { project, virtualFile, isLibrarySource ->
             collectInfosByVirtualFile(
                 project,
                 virtualFile,
                 isLibrarySource,
-                isScript,
                 { return@processor it })
         }
     )
@@ -122,13 +120,12 @@ private sealed class ModuleInfoCollector<out T>(
             LOG.warn("Could not find correct module information.\nReason: $reason")
             emptySequence()
         },
-        virtualFileProcessor = { project, virtualFile, isLibrarySource, isScript ->
+        virtualFileProcessor = { project, virtualFile, isLibrarySource ->
             buildSequence {
                 collectInfosByVirtualFile(
                     project,
                     virtualFile,
                     isLibrarySource,
-                    isScript,
                     { yieldIfNotNull(it) })
             }
         }
@@ -170,11 +167,19 @@ private fun <T> PsiElement.collectInfos(c: ModuleInfoCollector<T>): T {
     val virtualFile = containingFile.originalFile.virtualFile
             ?: return c.onFailure("Analyzing element of type ${this::class.java} in non-physical file $containingFile of type ${containingFile::class.java}\nText:\n$text")
 
+    if (containingKtFile?.isScript() == true) {
+        getModuleRelatedModuleInfo(ProjectFileIndex.SERVICE.getInstance(project), virtualFile)?.let {
+            return c.onResult(it)
+        }
+        findScriptDefinition(virtualFile, project)?.let {
+            return c.onResult(ScriptModuleInfo(project, virtualFile, it))
+        }
+    }
+
     return c.virtualFileProcessor(
         project,
         virtualFile,
-        (containingFile as? KtFile)?.isCompiled ?: false,
-        containingKtFile?.isScript() ?: false
+        (containingFile as? KtFile)?.isCompiled ?: false
     )
 }
 
@@ -184,8 +189,7 @@ private fun <T> KtLightElement<*, *>.processLightElement(c: ModuleInfoCollector<
         return c.virtualFileProcessor(
             project,
             containingFile.virtualFile.sure { "Decompiled class should be build from physical file" },
-            false,
-            (containingFile as? KtFile)?.isScript() ?: false
+            false
         )
     }
 
@@ -202,7 +206,6 @@ private inline fun <T> collectInfosByVirtualFile(
     project: Project,
     virtualFile: VirtualFile,
     treatAsLibrarySource: Boolean,
-    isScript: Boolean = getScriptDefinition(virtualFile, project) != null,
     onOccurrence: (IdeaModuleInfo?) -> T
 ): T {
 
@@ -211,12 +214,6 @@ private inline fun <T> collectInfosByVirtualFile(
     val moduleRelatedModuleInfo = getModuleRelatedModuleInfo(projectFileIndex, virtualFile)
     if (moduleRelatedModuleInfo != null) {
         onOccurrence(moduleRelatedModuleInfo)
-    }
-
-    if (moduleRelatedModuleInfo == null && isScript) {
-        getScriptDefinition(virtualFile, project)?.let {
-            onOccurrence(ScriptModuleInfo(project, virtualFile, it))
-        }
     }
 
     projectFileIndex.getOrderEntriesForFile(virtualFile).forEach {

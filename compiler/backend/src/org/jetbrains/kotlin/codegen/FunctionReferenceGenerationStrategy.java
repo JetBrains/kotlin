@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.model.DelegatingResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -94,8 +92,8 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
          */
 
         int receivers = CallableReferenceUtilKt.computeExpectedNumberOfReceivers(referencedFunction, receiverType != null);
-        KtCallExpression fakeExpression =
-                CodegenUtil.constructFakeFunctionCall(state.getProject(), functionDescriptor.getValueParameters().size() - receivers);
+        int fakeArgCount = functionDescriptor.getValueParameters().size() - receivers;
+        KtCallExpression fakeExpression = CodegenUtil.constructFakeFunctionCall(state.getProject(), fakeArgCount);
         List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
         ReceiverValue dispatchReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getDispatchReceiverParameter());
@@ -106,11 +104,40 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
 
             private final Map<ValueParameterDescriptor, ResolvedValueArgument> argumentMap = new LinkedHashMap<>();
             {
-                int index = 0;
-                List<ValueParameterDescriptor> parameters = referencedFunction.getValueParameters();
-                for (ValueArgument argument : fakeArguments) {
-                    argumentMap.put(parameters.get(index), new ExpressionValueArgument(argument));
-                    index++;
+                int i = 0;
+
+                for (ValueParameterDescriptor parameter : referencedFunction.getValueParameters()) {
+                    if (parameter.getVarargElementType() != null) {
+                        // Two cases are possible for a function reference with a vararg parameter of type T: either several arguments
+                        // of type T are bound to that parameter, or one argument of type Array<out T>. In the former case the argument
+                        // is bound as a VarargValueArgument, in the latter it's an ExpressionValueArgument
+
+                        if (i == fakeArgCount) {
+                            // If we've exhausted the argument list of the reference and we still have one vararg parameter left,
+                            // we should use its default value if present, or simply an empty vararg instead
+                            argumentMap.put(
+                                    parameter,
+                                    ArgumentsUtilsKt.hasDefaultValue(parameter) ? DefaultValueArgument.DEFAULT : new VarargValueArgument()
+                            );
+                            continue;
+                        }
+
+                        if (functionDescriptor.getValueParameters().get(receivers + i).getType().equals(parameter.getVarargElementType())) {
+                            argumentMap.put(parameter, new VarargValueArgument(fakeArguments.subList(i, fakeArgCount)));
+                            i = fakeArgCount;
+                            continue;
+                        }
+                    }
+
+                    if (i < fakeArgCount) {
+                        argumentMap.put(parameter, new ExpressionValueArgument(fakeArguments.get(i++)));
+                    }
+                    else {
+                        assert ArgumentsUtilsKt.hasDefaultValue(parameter) :
+                                "Parameter should be either vararg or expression or default: " + parameter +
+                                " (reference in: " + functionDescriptor.getContainingDeclaration() + ")";
+                        argumentMap.put(parameter, DefaultValueArgument.DEFAULT);
+                    }
                 }
             }
 

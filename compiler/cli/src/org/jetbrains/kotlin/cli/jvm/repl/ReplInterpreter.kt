@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.jvm.repl
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -26,22 +27,21 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.PrintWriter
 import java.net.URLClassLoader
 import java.util.concurrent.atomic.AtomicInteger
 
 class ReplInterpreter(
-        disposable: Disposable,
-        private val configuration: CompilerConfiguration,
-        private val replConfiguration: ReplConfiguration
+    disposable: Disposable,
+    private val configuration: CompilerConfiguration,
+    private val replConfiguration: ReplConfiguration
 ) {
     private val lineNumber = AtomicInteger()
 
     private val previousIncompleteLines = arrayListOf<String>()
 
-    private val classpathRoots = configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
+    private val classpathRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
         when (root) {
             is JvmModulePathRoot -> root.file // TODO: only add required modules
             is JvmClasspathRoot -> root.file
@@ -60,14 +60,18 @@ class ReplInterpreter(
 
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
             val msg = messageRenderer.render(severity, message, location).trimEnd()
-            with (replConfiguration.writer) {
+            with(replConfiguration.writer) {
                 when (severity) {
                     CompilerMessageSeverity.EXCEPTION -> sendInternalErrorReport(msg)
                     CompilerMessageSeverity.ERROR -> outputCompileError(msg)
-                    CompilerMessageSeverity.STRONG_WARNING -> {} // TODO consider reporting this and two below
-                    CompilerMessageSeverity.WARNING -> {}
-                    CompilerMessageSeverity.INFO -> {}
-                    else -> {}
+                    CompilerMessageSeverity.STRONG_WARNING -> {
+                    } // TODO consider reporting this and two below
+                    CompilerMessageSeverity.WARNING -> {
+                    }
+                    CompilerMessageSeverity.INFO -> {
+                    }
+                    else -> {
+                    }
                 }
             }
         }
@@ -86,14 +90,17 @@ class ReplInterpreter(
     private val evalState by lazy { scriptEvaluator.createState() }
 
     fun eval(line: String): ReplEvalResult {
-
         val fullText = (previousIncompleteLines + line).joinToString(separator = "\n")
 
         try {
-
-            val evalRes = scriptEvaluator.compileAndEval(evalState, ReplCodeLine(lineNumber.getAndIncrement(), 0, fullText), null, object : InvokeWrapper {
-                override fun <T> invoke(body: () -> T): T = replConfiguration.executionInterceptor.execute(body)
-            })
+            val evalRes = scriptEvaluator.compileAndEval(
+                evalState,
+                ReplCodeLine(lineNumber.getAndIncrement(), 0, fullText),
+                null,
+                object : InvokeWrapper {
+                    override fun <T> invoke(body: () -> T): T = replConfiguration.executionInterceptor.execute(body)
+                }
+            )
 
             when {
                 evalRes !is ReplEvalResult.Incomplete -> previousIncompleteLines.clear()
@@ -101,8 +108,7 @@ class ReplInterpreter(
                 else -> return ReplEvalResult.Error.CompileTime("incomplete code")
             }
             return evalRes
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             val writer = PrintWriter(System.err)
             classLoader.dumpClasses(writer)
             writer.flush()

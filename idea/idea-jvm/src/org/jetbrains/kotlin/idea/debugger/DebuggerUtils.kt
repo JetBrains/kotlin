@@ -43,28 +43,29 @@ import java.util.*
 
 object DebuggerUtils {
     fun findSourceFileForClassIncludeLibrarySources(
-            project: Project,
-            scope: GlobalSearchScope,
-            className: JvmClassName,
-            fileName: String,
-            location: Location? = null
+        project: Project,
+        scope: GlobalSearchScope,
+        className: JvmClassName,
+        fileName: String,
+        location: Location? = null
     ): KtFile? {
         return runReadAction {
             findSourceFileForClass(
-                    project,
-                    listOf(scope, KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)),
-                    className,
-                    fileName,
-                    location)
+                project,
+                listOf(scope, KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)),
+                className,
+                fileName,
+                location
+            )
         }
     }
 
     fun findSourceFileForClass(
-            project: Project,
-            scopes: List<GlobalSearchScope>,
-            className: JvmClassName,
-            fileName: String,
-            location: Location?
+        project: Project,
+        scopes: List<GlobalSearchScope>,
+        className: JvmClassName,
+        fileName: String,
+        location: Location?
     ): KtFile? {
         if (!isKotlinSourceFile(fileName)) return null
         if (DumbService.getInstance(project).isDumb) return null
@@ -90,7 +91,9 @@ object DebuggerUtils {
             return null
         }
 
-        location?.let { return FileRankingCalculatorForIde.findMostAppropriateSource(filesWithExactName, it) }
+        if (location != null) {
+            return FileRankingCalculatorForIde.findMostAppropriateSource(filesWithExactName, location)
+        }
 
         return filesWithExactName.first()
     }
@@ -104,24 +107,29 @@ object DebuggerUtils {
         return result
     }
 
-    private fun findFilesByNameInPackage(className: JvmClassName, fileName: String, project: Project, searchScope: GlobalSearchScope): List<KtFile> {
+    private fun findFilesByNameInPackage(
+        className: JvmClassName,
+        fileName: String,
+        project: Project,
+        searchScope: GlobalSearchScope
+    ): List<KtFile> {
         val files = findFilesWithExactPackage(className.packageFqName, searchScope, project).filter { it.name == fileName }
         return files.sortedWith(JavaElementFinder.byClasspathComparator(searchScope))
     }
 
     fun analyzeInlinedFunctions(
-            resolutionFacadeForFile: ResolutionFacade,
-            file: KtFile,
-            analyzeOnlyReifiedInlineFunctions: Boolean,
-            bindingContext: BindingContext? = null
+        resolutionFacadeForFile: ResolutionFacade,
+        file: KtFile,
+        analyzeOnlyReifiedInlineFunctions: Boolean,
+        bindingContext: BindingContext? = null
     ): Pair<BindingContext, List<KtFile>> {
         val analyzedElements = HashSet<KtElement>()
         val context = analyzeElementWithInline(
-                resolutionFacadeForFile,
-                file,
-                1,
-                analyzedElements,
-                !analyzeOnlyReifiedInlineFunctions, bindingContext
+            resolutionFacadeForFile,
+            file,
+            1,
+            analyzedElements,
+            !analyzeOnlyReifiedInlineFunctions, bindingContext
         )
 
         //We processing another files just to annotate anonymous classes within their inline functions
@@ -149,12 +157,12 @@ object DebuggerUtils {
     }
 
     private fun analyzeElementWithInline(
-            resolutionFacade: ResolutionFacade,
-            element: KtElement,
-            deep: Int,
-            analyzedElements: MutableSet<KtElement>,
-            analyzeInlineFunctions: Boolean,
-            fullResolveContext: BindingContext? = null
+        resolutionFacade: ResolutionFacade,
+        element: KtElement,
+        deep: Int,
+        analyzedElements: MutableSet<KtElement>,
+        analyzeInlineFunctions: Boolean,
+        fullResolveContext: BindingContext? = null
     ): BindingContext {
         val project = element.project
         val inlineFunctions = HashSet<KtNamedFunction>()
@@ -219,7 +227,15 @@ object DebuggerUtils {
             for (inlineFunction in inlineFunctions) {
                 val body = inlineFunction.bodyExpression
                 if (body != null) {
-                    innerContexts.add(analyzeElementWithInline(resolutionFacade, inlineFunction, deep + 1, analyzedElements, analyzeInlineFunctions))
+                    innerContexts.add(
+                        analyzeElementWithInline(
+                            resolutionFacade,
+                            inlineFunction,
+                            deep + 1,
+                            analyzedElements,
+                            analyzeInlineFunctions
+                        )
+                    )
                 }
             }
 
@@ -230,6 +246,6 @@ object DebuggerUtils {
     }
 
     private fun hasReifiedTypeParameters(descriptor: CallableDescriptor): Boolean {
-        return descriptor.typeParameters.any() { it.isReified }
+        return descriptor.typeParameters.any { it.isReified }
     }
 }

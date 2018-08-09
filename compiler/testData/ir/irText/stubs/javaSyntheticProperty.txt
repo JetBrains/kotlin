@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/javaSyntheticProperty.kt
   PROPERTY name:test visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String? visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String? visibility:public flags:final,static
       EXPRESSION_BODY
         CALL 'getFoo(): String!' type=kotlin.String? origin=GET_PROPERTY
           $this: CALL 'constructor J()' type=J origin=null

@@ -111,6 +111,20 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
                 listOfNotNull((it.content.firstOrNull() as? Text)?.textTrim)
             }
         }
+        element.getChild("sourceSets")?.let {
+            val items = it.getChildren("sourceSet")
+            sourceSetNames = items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+        }
+        kind = element.getChild("newMppModelJpsModuleKind")?.let {
+            val kindName = (it.content.firstOrNull() as? Text)?.textTrim
+            if (kindName != null) {
+                try {
+                    KotlinModuleKind.valueOf(kindName)
+                } catch (e: Exception) {
+                    null
+                }
+            } else null
+        } ?: KotlinModuleKind.DEFAULT
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)
@@ -258,6 +272,16 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
                     }
                 }
         )
+    }
+    if (sourceSetNames.isNotEmpty()) {
+        element.addContent(
+            Element("sourceSets").apply {
+                sourceSetNames.map { addContent(Element("sourceSet").apply { addContent(it) }) }
+            }
+        )
+    }
+    if (kind != KotlinModuleKind.DEFAULT) {
+        element.addContent(Element("newMppModelJpsModuleKind").apply { addContent(kind.name) })
     }
     productionOutputPath?.let {
         if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {

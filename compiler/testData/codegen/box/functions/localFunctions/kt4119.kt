@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun foo(f: (Int?) -> Int): Int {
     return f(0)
 }

@@ -53,6 +53,12 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             binOp(intrinsics.jsDiv, JsBinaryOperator.DIV)
             binOp(intrinsics.jsMod, JsBinaryOperator.MOD)
 
+            binOp(intrinsics.jsPlusAssign, JsBinaryOperator.ASG_ADD)
+            binOp(intrinsics.jsMinusAssign, JsBinaryOperator.ASG_SUB)
+            binOp(intrinsics.jsMultAssign, JsBinaryOperator.ASG_MUL)
+            binOp(intrinsics.jsDivAssign, JsBinaryOperator.ASG_DIV)
+            binOp(intrinsics.jsModAssign, JsBinaryOperator.ASG_MOD)
+
             binOp(intrinsics.jsBitAnd, JsBinaryOperator.BIT_AND)
             binOp(intrinsics.jsBitOr, JsBinaryOperator.BIT_OR)
             binOp(intrinsics.jsBitXor, JsBinaryOperator.BIT_XOR)
@@ -125,6 +131,17 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val receiver = args[1]
                 val value = args[2]
                 JsInvocation(JsNameRef(Namer.KPROPERTY_SET, reference), listOf(receiver, value))
+            }
+
+            add(intrinsics.jsGetContinuation) { _, context: JsGenerationContext ->
+                context.continuation
+            }
+
+            add(intrinsics.jsCoroutineContext) { _, context: JsGenerationContext ->
+                val contextGetter = backendContext.coroutineGetContext
+                val getterName = context.getNameForSymbol(contextGetter)
+                val continuation = context.continuation
+                JsInvocation(JsNameRef(getterName, continuation))
             }
         }
     }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 public open class Outer private constructor(val s: String) {
 
     companion object {

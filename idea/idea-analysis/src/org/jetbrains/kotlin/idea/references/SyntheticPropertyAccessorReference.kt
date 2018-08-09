@@ -56,7 +56,7 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
         return result
     }
 
-    override fun isReferenceTo(element: PsiElement?): Boolean {
+    override fun isReferenceTo(element: PsiElement): Boolean {
         if (element !is PsiMethod || !isAccessorName(element.name)) return false
         if (!getter && expression.readWriteAccess(true) == ReferenceAccess.READ) return false
         return super.isReferenceTo(element)
@@ -105,8 +105,8 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
         }
     }
 
-    override fun handleElementRename(newElementName: String?): PsiElement? {
-        if (!Name.isValidIdentifier(newElementName!!)) return expression
+    override fun handleElementRename(newElementName: String): PsiElement? {
+        if (!Name.isValidIdentifier(newElementName)) return expression
 
         val newNameAsName = Name.identifier(newElementName)
         val newName = if (getter) {

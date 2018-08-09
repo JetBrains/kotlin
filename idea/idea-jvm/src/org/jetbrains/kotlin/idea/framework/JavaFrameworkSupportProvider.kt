@@ -45,7 +45,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                         JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
                         "Kotlin/\u200BJS")
 
-                description!!.finishLibConfiguration(module, rootModel)
+                description!!.finishLibConfiguration(module, rootModel, false)
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {

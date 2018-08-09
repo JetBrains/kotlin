@@ -188,7 +188,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
 
                 val languageVersionSettings =
                     moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
-                val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module)
+                val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module, projectContext.project)
 
                 resolverForModuleFactory.createResolverForModule(
                     descriptor as ModuleDescriptorImpl,
@@ -433,7 +433,7 @@ interface LanguageSettingsProvider {
         project: Project
     ) = getLanguageVersionSettings(moduleInfo, project, null)
 
-    fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion
+    fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion
 
     object Default : LanguageSettingsProvider {
         override fun getLanguageVersionSettings(
@@ -442,7 +442,7 @@ interface LanguageSettingsProvider {
             isReleaseCoroutines: Boolean?
         ) = LanguageVersionSettingsImpl.DEFAULT
 
-        override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion = TargetPlatformVersion.NoVersion
+        override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion = TargetPlatformVersion.NoVersion
     }
 }
 

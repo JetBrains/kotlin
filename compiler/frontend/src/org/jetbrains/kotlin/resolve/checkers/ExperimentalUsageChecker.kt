@@ -21,7 +21,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -45,13 +47,18 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class ExperimentalUsageChecker(project: Project) : CallChecker {
     private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
 
-    internal data class Experimentality(val annotationFqName: FqName, val severity: Severity) {
+    data class Experimentality(val annotationFqName: FqName, val severity: Severity) {
         enum class Severity { WARNING, ERROR }
 
         companion object {
             val DEFAULT_SEVERITY = Severity.ERROR
         }
     }
+
+    data class ExperimentalityDiagnostics(
+        val warning: DiagnosticFactory1<PsiElement, FqName>,
+        val error: DiagnosticFactory1<PsiElement, FqName>
+    )
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val experimentalities =
@@ -73,21 +80,37 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private val EXPERIMENTAL_SHORT_NAME = EXPERIMENTAL_FQ_NAME.shortName()
         private val USE_EXPERIMENTAL_SHORT_NAME = USE_EXPERIMENTAL_FQ_NAME.shortName()
 
-        private fun reportNotAcceptedExperimentalities(
+        private val EXPERIMENTAL_API_DIAGNOSTICS = ExperimentalityDiagnostics(
+            Errors.EXPERIMENTAL_API_USAGE, Errors.EXPERIMENTAL_API_USAGE_ERROR
+        )
+
+        fun reportNotAcceptedExperimentalities(
             experimentalities: Collection<Experimentality>, element: PsiElement, context: CheckerContext
         ) {
+            reportNotAcceptedExperimentalities(
+                experimentalities, element, context.languageVersionSettings, context.trace, EXPERIMENTAL_API_DIAGNOSTICS
+            )
+        }
+
+        fun reportNotAcceptedExperimentalities(
+            experimentalities: Collection<Experimentality>,
+            element: PsiElement,
+            languageVersionSettings: LanguageVersionSettings,
+            trace: BindingTrace,
+            diagnostics: ExperimentalityDiagnostics
+        ) {
             for ((annotationFqName, severity) in experimentalities) {
-                if (!element.isExperimentalityAccepted(annotationFqName, context)) {
+                if (!element.isExperimentalityAccepted(annotationFqName, languageVersionSettings, trace.bindingContext)) {
                     val diagnostic = when (severity) {
-                        Experimentality.Severity.WARNING -> Errors.EXPERIMENTAL_API_USAGE
-                        Experimentality.Severity.ERROR -> Errors.EXPERIMENTAL_API_USAGE_ERROR
+                        Experimentality.Severity.WARNING -> diagnostics.warning
+                        Experimentality.Severity.ERROR -> diagnostics.error
                     }
-                    context.trace.report(diagnostic.on(element, annotationFqName))
+                    trace.reportDiagnosticOnce(diagnostic.on(element, annotationFqName))
                 }
             }
         }
 
-        private fun DeclarationDescriptor.loadExperimentalities(
+        fun DeclarationDescriptor.loadExperimentalities(
             moduleAnnotationsResolver: ModuleAnnotationsResolver,
             languageVersionSettings: LanguageVersionSettings
         ): Set<Experimentality> {

@@ -2,15 +2,18 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -26,7 +29,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
 
-abstract class Symbols<out T : CommonBackendContext>(val context: T, private val symbolTable: SymbolTable) {
+abstract class Symbols<out T : CommonBackendContext>(val context: T, private val symbolTable: ReferenceSymbolTable) {
 
     protected val builtIns
         get() = context.builtIns
@@ -41,7 +44,13 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
         return initializer()
     }
 
-    val refClass = calc { symbolTable.referenceClass(context.getInternalClass("Ref")) }
+    /**
+     * Use this table to reference external dependencies.
+     */
+    open val externalSymbolTable: ReferenceSymbolTable
+        get() = symbolTable
+
+//    val refClass = calc { symbolTable.referenceClass(context.getInternalClass("Ref")) }
 
     //abstract val areEqualByValue: List<IrFunctionSymbol>
 
@@ -108,6 +117,10 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     private fun primitiveArrayClass(type: PrimitiveType) =
         symbolTable.referenceClass(builtIns.getPrimitiveArrayClassDescriptor(type))
 
+    private fun unsignedArrayClass(unsignedType: UnsignedType) =
+        builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.arrayClassId)
+            ?.let { symbolTable.referenceClass(it) }
+
     val byteArray = primitiveArrayClass(PrimitiveType.BYTE)
     val charArray = primitiveArrayClass(PrimitiveType.CHAR)
     val shortArray = primitiveArrayClass(PrimitiveType.SHORT)
@@ -117,7 +130,14 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val doubleArray = primitiveArrayClass(PrimitiveType.DOUBLE)
     val booleanArray = primitiveArrayClass(PrimitiveType.BOOLEAN)
 
-    val arrays = PrimitiveType.values().map { primitiveArrayClass(it) } + array
+    val unsignedArrays = UnsignedType.values().mapNotNull { unsignedType ->
+        unsignedArrayClass(unsignedType)?.let { unsignedType to it }
+    }.toMap()
+
+
+    val primitiveArrays = PrimitiveType.values().associate { it to primitiveArrayClass(it) }
+
+    val arrays = primitiveArrays.values + unsignedArrays.values + array
 
     protected fun arrayExtensionFun(type: KotlinType, name: String): IrSimpleFunctionSymbol {
         val descriptor = builtInsPackage("kotlin")
@@ -129,21 +149,6 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
                 ?: throw Error(type.toString())
         return symbolTable.referenceSimpleFunction(descriptor)
     }
-
-
-    protected val arrayTypes = arrayOf(
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BYTE),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.CHAR),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.SHORT),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.INT),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.LONG),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.FLOAT),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.DOUBLE),
-        builtIns.getPrimitiveArrayKotlinType(PrimitiveType.BOOLEAN),
-        builtIns.array.defaultType
-    )
-//    val arrayContentToString = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentToString") })
-//    val arrayContentHashCode = arrayTypes.associateBy({ it }, { arrayExtensionFun(it, "contentHashCode") })
 
     abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
 
@@ -175,6 +180,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
     val kFunctionImpl = calc { symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl) }
+
+    val functionReference = calc { symbolTable.referenceClass(context.getInternalClass("FunctionReference")) }
 
     val kProperty0Impl = calc { symbolTable.referenceClass(context.reflectionTypes.kProperty0Impl) }
     val kProperty1Impl = calc { symbolTable.referenceClass(context.reflectionTypes.kProperty1Impl) }

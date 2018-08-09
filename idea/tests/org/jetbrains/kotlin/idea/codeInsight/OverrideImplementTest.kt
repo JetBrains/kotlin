@@ -25,6 +25,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement"
     }
 
+    fun testAndroidxNotNull() {
+        doOverrideDirectoryTest("foo")
+    }
+
     fun testEmptyClassBodyFunctionMethod() {
         doImplementFileTest()
     }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class A {
     inner class Inner {
         val o = 111

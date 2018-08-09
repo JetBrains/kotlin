@@ -1,0 +1,6 @@
+package
+
+public fun foo(): kotlin.Unit
+public fun </*0*/ T> id(/*0*/ x: T): T
+public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
+public fun takeUByte(/*0*/ u: kotlin.UByte): kotlin.Unit

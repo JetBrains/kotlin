@@ -91,6 +91,9 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Unsafe use of a nullable receiver of type {0}", RENDER_TYPE);
 
+        MAP.put(ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR,
+                "An accessor will not be generated for ''{0}'', so the annotation will not be written to the class file", STRING);
+
         MAP.put(WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument can be null in Java, but exhaustive when contains no null branch");
 
         MAP.put(JAVA_CLASS_ON_COMPANION,

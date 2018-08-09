@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class A {
     public var prop = "OK"
         private set

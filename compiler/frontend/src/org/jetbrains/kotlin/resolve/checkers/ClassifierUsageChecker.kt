@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeprecationResolver
@@ -62,7 +63,19 @@ fun checkClassifierUsages(
             }
         }
 
-        private fun runCheckersWithTarget(target: ClassifierDescriptor, expression: KtReferenceExpression) {
+        override fun visitFunctionType(type: KtFunctionType) {
+            super.visitFunctionType(type)
+
+            val kotlinType = context.trace.get(BindingContext.TYPE, type.parent as? KtTypeReference ?: return)
+            if (kotlinType != null) {
+                val descriptor = kotlinType.constructor.declarationDescriptor
+                if (descriptor is ClassifierDescriptor) {
+                    runCheckersWithTarget(descriptor, type)
+                }
+            }
+        }
+
+        private fun runCheckersWithTarget(target: ClassifierDescriptor, expression: KtElement) {
             for (checker in checkers) {
                 checker.check(target, expression, context)
             }

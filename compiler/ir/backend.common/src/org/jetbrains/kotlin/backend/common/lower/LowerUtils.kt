@@ -88,6 +88,13 @@ inline fun IrGeneratorWithScope.irBlock(
 ) =
     this.irBlock(expression.startOffset, expression.endOffset, origin, resultType, body)
 
+inline fun IrGeneratorWithScope.irComposite(
+    expression: IrExpression, origin: IrStatementOrigin? = null,
+    resultType: IrType? = expression.type,
+    body: IrBlockBuilder.() -> Unit
+) =
+    this.irComposite(expression.startOffset, expression.endOffset, origin, resultType, body)
+
 inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockBodyBuilder.() -> Unit) =
     this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
 
@@ -232,7 +239,7 @@ fun IrConstructor.callsSuper(): Boolean {
     return callsSuper
 }
 
-fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int) = when (this) {
+fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index: Int, name: Name = this.name) = when (this) {
     is ValueParameterDescriptor -> this.copy(newOwner, name, index)
     is ReceiverParameterDescriptor -> ValueParameterDescriptorImpl(
         containingDeclaration = newOwner,

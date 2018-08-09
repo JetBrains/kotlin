@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.types.toIrType
@@ -246,7 +247,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
             val delegationCall =
                 if (!isConstructor)
-                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor.returnType!!.toIrType()!!, calleeDescriptor, 0)
+                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor.returnType!!.toIrType()!!, calleeDescriptor, calleeDescriptor.typeParametersCount)
                 else {
                     val delegationConstructor = createFunctionSymbol(accessor.calleeDescriptor)
                     IrDelegatingConstructorCallImpl(

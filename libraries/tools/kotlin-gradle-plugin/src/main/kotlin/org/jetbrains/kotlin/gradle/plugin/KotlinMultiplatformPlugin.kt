@@ -21,9 +21,8 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetContainer
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
@@ -110,7 +109,10 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             // Since the two projects may add source sets in arbitrary order, and both may do that after the plugin is applied,
             // we need to handle all source sets of the two projects and connect them once we get a match:
             // todo warn if no match found
-            matchSymmetricallyByNames(commonProject.sourceSets, namedSourceSetsContainer(platformProject)) { commonSourceSet, _ ->
+            matchSymmetricallyByNames(
+                getKotlinSourceSetsSafe(commonProject),
+                namedSourceSetsContainer(platformProject)
+            ) { commonSourceSet: Named, _ ->
                 addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
             }
         }
@@ -121,13 +123,13 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
      * regardless of the order in which they are added to the containers.
      */
     private fun <A, B> matchSymmetricallyByNames(
-        containerA: NamedDomainObjectContainer<A>,
-        containerB: NamedDomainObjectContainer<B>,
+        containerA: NamedDomainObjectCollection<out A>,
+        containerB: NamedDomainObjectCollection<out B>,
         whenMatched: (A, B) -> Unit
     ) {
         val matchedNames = mutableSetOf<String>()
 
-        fun <T, R> NamedDomainObjectContainer<T>.matchAllWith(other: NamedDomainObjectContainer<R>, match: (T, R) -> Unit) {
+        fun <T, R> NamedDomainObjectCollection<T>.matchAllWith(other: NamedDomainObjectCollection<R>, match: (T, R) -> Unit) {
             this@matchAllWith.all { item ->
                 val itemName = this@matchAllWith.namer.determineName(item)
                 if (itemName !in matchedNames) {
@@ -144,36 +146,38 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     }
 
     protected open fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
-            project.sourceSets
+        project.kotlinExtension.sourceSets
 
-    protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
-        val platformTask = platformProject.tasks
-            .filterIsInstance<AbstractKotlinCompile<*>>()
-            .firstOrNull { it.sourceSetName == commonSourceSet.name }
+    protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
+        platformProject.whenEvaluated { // At the point when the source set in the platform module is created, the task does not exist
+            val platformTask = platformProject.tasks
+                .filterIsInstance<AbstractKotlinCompile<*>>()
+                .single { it.sourceSetName == commonSourceSet.name }
 
-        platformTask?.source(commonSourceSet.kotlin!!)
+            platformTask.source(getKotlinSourceDirectorySetSafe(commonSourceSet))
+        }
     }
 
-    protected val SourceSet.kotlin: SourceDirectorySet?
-        get() {
-            // Access through reflection, because another project's KotlinSourceSet might be loaded
-            // by a different class loader:
-            val convention = (getConvention("kotlin") ?: getConvention("kotlin2js")) ?: return null
-            val kotlinSourceSetIface = convention.javaClass.interfaces.find { it.name == KotlinSourceSet::class.qualifiedName }
-            val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
-            return getKotlin(convention) as? SourceDirectorySet
-        }
+    private fun getKotlinSourceSetsSafe(project: Project): NamedDomainObjectCollection<out Named> {
+        // Access through reflection, because another project's KotlinProjectExtension might be loaded by a different class loader:
+        val kotlinExt = project.extensions.getByName("kotlin")
+        @Suppress("UNCHECKED_CAST")
+        val sourceSets = kotlinExt.javaClass.getMethod("getSourceSets").invoke(kotlinExt) as NamedDomainObjectCollection<out Named>
+        return sourceSets
+    }
 
-    companion object {
-        @JvmStatic
-        protected fun <T> Project.whenEvaluated(fn: Project.() -> T) {
-            if (state.executed) {
-                fn()
-            }
-            else {
-                afterEvaluate { it.fn() }
-            }
-        }
+    protected fun getKotlinSourceDirectorySetSafe(from: Any): SourceDirectorySet? {
+        val getKotlin = from.javaClass.getMethod("getKotlin")
+        return getKotlin(from) as? SourceDirectorySet
+    }
+}
+
+internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
+    if (state.executed) {
+        fn()
+    }
+    else {
+        afterEvaluate { it.fn() }
     }
 }
 
@@ -190,11 +194,12 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
     override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
         (project.extensions.getByName("android") as BaseExtension).sourceSets
 
-    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
+    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
         val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
         val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
-        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: return
-        kotlinSourceSet.kotlin.source(commonSourceSet.kotlin!!)
+        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
+                ?: return
+        kotlinSourceSet.kotlin.source(getKotlinSourceDirectorySetSafe(commonSourceSet)!!)
     }
 }
 
@@ -211,6 +216,3 @@ open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js")
         super.apply(project)
     }
 }
-
-private val Project.sourceSets: SourceSetContainer
-    get() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets

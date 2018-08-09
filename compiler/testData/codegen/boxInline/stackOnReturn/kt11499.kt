@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: 1.kt
 object CrashMe {
     fun <T> crash(value: T): T? = null

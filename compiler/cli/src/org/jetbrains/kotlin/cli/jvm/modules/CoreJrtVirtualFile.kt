@@ -36,10 +36,10 @@ internal class CoreJrtVirtualFile(private val handler: CoreJrtHandler, private v
     override fun getFileSystem(): VirtualFileSystem = handler.virtualFileSystem
 
     override fun getName(): String =
-            path.fileName.toString()
+        path.fileName.toString()
 
     override fun getPath(): String =
-            FileUtil.toSystemIndependentName(handler.jdkHomePath + URLUtil.JAR_SEPARATOR + path)
+        FileUtil.toSystemIndependentName(handler.jdkHomePath + URLUtil.JAR_SEPARATOR + path)
 
     override fun isWritable(): Boolean = false
 
@@ -55,8 +55,7 @@ internal class CoreJrtVirtualFile(private val handler: CoreJrtHandler, private v
     override fun getChildren(): Array<out VirtualFile> {
         val paths = try {
             Files.newDirectoryStream(path).use(Iterable<Path>::toList)
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             emptyList<Path>()
         }
         return when {
@@ -66,26 +65,26 @@ internal class CoreJrtVirtualFile(private val handler: CoreJrtHandler, private v
     }
 
     override fun getOutputStream(requestor: Any, newModificationStamp: Long, newTimeStamp: Long): OutputStream =
-            throw UnsupportedOperationException()
+        throw UnsupportedOperationException()
 
     override fun contentsToByteArray(): ByteArray =
-            Files.readAllBytes(path)
+        Files.readAllBytes(path)
 
     override fun getTimeStamp(): Long =
-            attributes.lastModifiedTime().toMillis()
+        attributes.lastModifiedTime().toMillis()
 
     override fun getLength(): Long = attributes.size()
 
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {}
 
     override fun getInputStream(): InputStream =
-            VfsUtilCore.inputStreamSkippingBOM(Files.newInputStream(path).buffered(), this)
+        VfsUtilCore.inputStreamSkippingBOM(Files.newInputStream(path).buffered(), this)
 
     override fun getModificationStamp(): Long = 0
 
     override fun equals(other: Any?): Boolean =
-            other is CoreJrtVirtualFile && path == other.path && fileSystem == other.fileSystem
+        other is CoreJrtVirtualFile && path == other.path && fileSystem == other.fileSystem
 
     override fun hashCode(): Int =
-            path.hashCode()
+        path.hashCode()
 }

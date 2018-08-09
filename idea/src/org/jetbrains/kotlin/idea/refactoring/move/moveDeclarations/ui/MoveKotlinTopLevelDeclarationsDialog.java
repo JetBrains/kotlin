@@ -66,9 +66,9 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinFileChooserDialog;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtDeclarationContainer;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -171,9 +171,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         sourceFiles,
                         new Function1<KtFile, Iterable<?>>() {
                             @Override
-                            public Iterable<?> invoke(KtFile jetFile) {
-                                KtDeclarationContainer container = jetFile.isScript() ? jetFile.getScript() : jetFile;
-                                return container != null ? container.getDeclarations() : emptyList();
+                            public Iterable<?> invoke(KtFile ktFile) {
+                                return KtPsiUtilKt.getFileOrScriptDeclarations(ktFile);
                             }
                         }
                 ),
@@ -450,7 +449,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 }
         );
         for (Map.Entry<KtFile, List<KtNamedDeclaration>> entry : fileToElements.entrySet()) {
-            if (entry.getKey().getDeclarations().size() != entry.getValue().size()) return false;
+            if (KtPsiUtilKt.getFileOrScriptDeclarations(entry.getKey()).size() != entry.getValue().size()) return false;
         }
         return true;
     }

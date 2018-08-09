@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:IMPLICIT_INT visibility:public modality:FINAL flags:const,val
     annotations:
       CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
-    FIELD PROPERTY_BACKING_FIELD name:IMPLICIT_INT type:kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:IMPLICIT_INT type:kotlin.Int visibility:public flags:final,static
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=255
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-IMPLICIT_INT> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:EXPLICIT_INT visibility:public modality:FINAL flags:const,val
     annotations:
       CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
-    FIELD PROPERTY_BACKING_FIELD name:EXPLICIT_INT type:kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:EXPLICIT_INT type:kotlin.Int visibility:public flags:final,static
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=255
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-EXPLICIT_INT> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:LONG_CONST visibility:public modality:FINAL flags:const,val
     annotations:
       CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
-    FIELD PROPERTY_BACKING_FIELD name:LONG_CONST type:kotlin.Long visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:LONG_CONST type:kotlin.Long visibility:public flags:final,static
       EXPRESSION_BODY
         CONST Long type=kotlin.Long value=255
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-LONG_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Long flags:
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:NON_CONST visibility:public modality:FINAL flags:val
     annotations:
       CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
-    FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public flags:final,static
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=255
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-NON_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:BIGGER_THAN_UBYTE visibility:public modality:FINAL flags:const,val
     annotations:
       CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
-    FIELD PROPERTY_BACKING_FIELD name:BIGGER_THAN_UBYTE type:kotlin.Int visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:BIGGER_THAN_UBYTE type:kotlin.Int visibility:public flags:final,static
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=256
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-BIGGER_THAN_UBYTE> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:UINT_CONST visibility:public modality:FINAL flags:const,val
     annotations:
       CALL 'constructor ImplicitIntegerCoercion()' type=kotlin.internal.ImplicitIntegerCoercion origin=null
-    FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.UInt visibility:public flags:final
+    FIELD PROPERTY_BACKING_FIELD name:UINT_CONST type:kotlin.UInt visibility:public flags:final,static
       EXPRESSION_BODY
         CONST Int type=kotlin.UInt value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-UINT_CONST> visibility:public modality:FINAL <> () returnType:kotlin.UInt flags:

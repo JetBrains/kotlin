@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.actions.internal.benchmark
 
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.psi.PsiWhiteSpace
@@ -65,7 +66,6 @@ class TopLevelCompletionBenchmarkAction : AbstractCompletionBenchmarkAction() {
 
         return TopLevelCompletionBenchmarkScenario(ktFiles, settings, project, benchmarkSink, random)
     }
-
 
     data class Settings(val seed: Long, val lines: Int, val files: Int)
 

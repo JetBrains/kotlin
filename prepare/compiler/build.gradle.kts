@@ -63,6 +63,7 @@ dependencies {
     proguardLibraryJars(projectDist(":kotlin-stdlib"))
     proguardLibraryJars(projectDist(":kotlin-script-runtime"))
     proguardLibraryJars(projectDist(":kotlin-reflect"))
+    proguardLibraryJars(project(":kotlin-annotations-jvm"))
     proguardLibraryJars(projectDist(":kotlin-scripting-common"))
     proguardLibraryJars(projectDist(":kotlin-scripting-jvm"))
 
@@ -71,7 +72,7 @@ dependencies {
     compile(project(":kotlin-reflect"))
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeIntellijCoreJarDependencies(project, { !(it.startsWith("jdom") || it.startsWith("log4j")) }) }
-    fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-java-1.3") }
+    fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
     fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
 }

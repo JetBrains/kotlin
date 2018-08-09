@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
+import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
-import org.jetbrains.kotlin.config.ContentRoot
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
@@ -46,13 +46,13 @@ import java.util.jar.Manifest
 import kotlin.LazyThreadSafetyMode.NONE
 
 class ClasspathRootsResolver(
-        private val psiManager: PsiManager,
-        private val messageCollector: MessageCollector?,
-        private val additionalModules: List<String>,
-        private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?,
-        private val javaModuleFinder: CliJavaModuleFinder,
-        private val requireStdlibModule: Boolean,
-        private val outputDirectory: VirtualFile?
+    private val psiManager: PsiManager,
+    private val messageCollector: MessageCollector?,
+    private val additionalModules: List<String>,
+    private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?,
+    private val javaModuleFinder: CliJavaModuleFinder,
+    private val requireStdlibModule: Boolean,
+    private val outputDirectory: VirtualFile?
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
@@ -80,9 +80,9 @@ class ClasspathRootsResolver(
     }
 
     private fun computeRoots(
-            javaSourceRoots: List<RootWithPrefix>,
-            jvmClasspathRoots: List<VirtualFile>,
-            jvmModulePathRoots: List<VirtualFile>
+        javaSourceRoots: List<RootWithPrefix>,
+        jvmClasspathRoots: List<VirtualFile>,
+        jvmModulePathRoots: List<VirtualFile>
     ): RootsAndModules {
         val result = mutableListOf<JavaRoot>()
         val modules = mutableListOf<JavaModule>()
@@ -93,8 +93,7 @@ class ClasspathRootsResolver(
             val modularRoot = modularSourceRoot(root, hasOutputDirectoryInClasspath)
             if (modularRoot != null) {
                 modules += modularRoot
-            }
-            else {
+            } else {
                 result += JavaRoot(root, JavaRoot.RootType.SOURCE, packagePrefix?.let { prefix ->
                     if (isValidJavaFqName(prefix)) FqName(prefix)
                     else null.also {
@@ -128,11 +127,11 @@ class ClasspathRootsResolver(
 
     private fun findSourceModuleInfo(root: VirtualFile): Pair<VirtualFile, PsiJavaModule>? {
         val moduleInfoFile =
-                when {
-                    root.isDirectory -> root.findChild(PsiJavaModule.MODULE_INFO_FILE)
-                    root.name == PsiJavaModule.MODULE_INFO_FILE -> root
-                    else -> null
-                } ?: return null
+            when {
+                root.isDirectory -> root.findChild(PsiJavaModule.MODULE_INFO_FILE)
+                root.name == PsiJavaModule.MODULE_INFO_FILE -> root
+                else -> null
+            } ?: return null
 
         val psiFile = psiManager.findFile(moduleInfoFile) ?: return null
         val psiJavaModule = psiFile.children.singleOrNull { it is PsiJavaModule } as? PsiJavaModule ?: return null
@@ -144,9 +143,9 @@ class ClasspathRootsResolver(
         val (moduleInfoFile, psiJavaModule) = findSourceModuleInfo(root) ?: return null
         val sourceRoot = JavaModule.Root(root, isBinary = false)
         val roots =
-                if (hasOutputDirectoryInClasspath)
-                    listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
-                else listOf(sourceRoot)
+            if (hasOutputDirectoryInClasspath)
+                listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
+            else listOf(sourceRoot)
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
     }
 
@@ -155,7 +154,7 @@ class ClasspathRootsResolver(
         val manifest: Attributes? by lazy(NONE) { readManifestAttributes(root) }
 
         val moduleInfoFile =
-                root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
+            root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
                 ?: root.takeIf { isJar }?.findFileByRelativePath(MULTI_RELEASE_MODULE_INFO_CLS_FILE)?.takeIf {
                     manifest?.getValue(IS_MULTI_RELEASE)?.equals("true", ignoreCase = true) == true
                 }
@@ -190,8 +189,7 @@ class ClasspathRootsResolver(
         val manifestFile = jarRoot.findChild("META-INF")?.findChild("MANIFEST.MF")
         return try {
             manifestFile?.inputStream?.let(::Manifest)?.mainAttributes
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             null
         }
     }
@@ -211,16 +209,17 @@ class ClasspathRootsResolver(
             val existing = javaModuleFinder.findModule(module.name)
             if (existing == null) {
                 javaModuleFinder.addUserModule(module)
-            }
-            else if (module.moduleRoots != existing.moduleRoots) {
+            } else if (module.moduleRoots != existing.moduleRoots) {
                 fun JavaModule.getRootFile() =
-                        moduleRoots.firstOrNull()?.file?.let { VfsUtilCore.getVirtualFileForJar(it) ?: it }
+                    moduleRoots.firstOrNull()?.file?.let { VfsUtilCore.getVirtualFileForJar(it) ?: it }
 
                 val thisFile = module.getRootFile()
                 val existingFile = existing.getRootFile()
                 val atExistingPath = if (existingFile == null) "" else " at: ${existingFile.path}"
-                report(STRONG_WARNING, "The root is ignored because a module with the same name '${module.name}' " +
-                                       "has been found earlier on the module path$atExistingPath", thisFile)
+                report(
+                    STRONG_WARNING, "The root is ignored because a module with the same name '${module.name}' " +
+                            "has been found earlier on the module path$atExistingPath", thisFile
+                )
             }
         }
 
@@ -257,8 +256,7 @@ class ClasspathRootsResolver(
             val module = javaModuleFinder.findModule(moduleName)
             if (module == null) {
                 report(ERROR, "Module $moduleName cannot be found in the module graph")
-            }
-            else {
+            } else {
                 for ((root, isBinary) in module.moduleRoots) {
                     result.add(JavaRoot(root, if (isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE))
                 }
@@ -267,10 +265,10 @@ class ClasspathRootsResolver(
 
         if (requireStdlibModule && sourceModule != null && !javaModuleGraph.reads(sourceModule.name, KOTLIN_STDLIB_MODULE_NAME)) {
             report(
-                    ERROR,
-                    "The Kotlin standard library is not found in the module graph. " +
-                    "Please ensure you have the 'requires $KOTLIN_STDLIB_MODULE_NAME' clause in your module definition",
-                    sourceModule.moduleInfoFile
+                ERROR,
+                "The Kotlin standard library is not found in the module graph. " +
+                        "Please ensure you have the 'requires $KOTLIN_STDLIB_MODULE_NAME' clause in your module definition",
+                sourceModule.moduleInfoFile
             )
         }
     }
@@ -314,8 +312,8 @@ class ClasspathRootsResolver(
             throw IllegalStateException("${if (file != null) file.path + ":" else ""}$severity: $message (no MessageCollector configured)")
         }
         messageCollector.report(
-                severity, message,
-                if (file == null) null else CompilerMessageLocation.create(MessageUtil.virtualFileToPath(file))
+            severity, message,
+            if (file == null) null else CompilerMessageLocation.create(MessageUtil.virtualFileToPath(file))
         )
     }
 

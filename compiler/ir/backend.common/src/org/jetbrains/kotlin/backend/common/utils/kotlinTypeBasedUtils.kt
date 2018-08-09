@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.utils
 
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -36,3 +37,5 @@ fun List<IrType>.commonSupertype() = CommonSupertypes.commonSupertype(map(IrType
 fun IrType.isSubtypeOf(superType: IrType) = toKotlinType().isSubtypeOf(superType.toKotlinType())
 
 fun IrType.isSubtypeOfClass(superClass: IrClassSymbol) = DescriptorUtils.isSubtypeOfClass(toKotlinType(), superClass.descriptor)
+
+fun IrType.isBuiltinFunctionalTypeOrSubtype() = toKotlinType().isBuiltinFunctionalTypeOrSubtype

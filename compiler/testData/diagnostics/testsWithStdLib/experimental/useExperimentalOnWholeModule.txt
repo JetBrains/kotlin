@@ -16,9 +16,6 @@ package api {
 // -- Module: <usage> --
 package
 
-package api {
-}
-
 package usage {
     public fun use(): kotlin.Unit
 }

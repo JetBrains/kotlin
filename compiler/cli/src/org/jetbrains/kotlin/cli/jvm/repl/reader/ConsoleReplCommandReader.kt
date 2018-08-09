@@ -28,26 +28,24 @@ import java.util.logging.Logger
 
 class ConsoleReplCommandReader : ReplCommandReader {
     private val lineReader = LineReaderBuilder.builder()
-            .appName("kotlin")
-            .terminal(TerminalBuilder.terminal())
-            .variable(LineReader.HISTORY_FILE, File(File(System.getProperty("user.home")), ".kotlinc_history").absolutePath)
-            .build()
-            .apply {
-                setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION)
-            }
+        .appName("kotlin")
+        .terminal(TerminalBuilder.terminal())
+        .variable(LineReader.HISTORY_FILE, File(File(System.getProperty("user.home")), ".kotlinc_history").absolutePath)
+        .build()
+        .apply {
+            setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION)
+        }
 
     override fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine): String? {
         val prompt = if (next == ReplFromTerminal.WhatNextAfterOneLine.INCOMPLETE) "... " else ">>> "
-        try {
-            return lineReader.readLine(prompt)
-        }
-        catch (e: UserInterruptException) {
+        return try {
+            lineReader.readLine(prompt)
+        } catch (e: UserInterruptException) {
             println("<interrupted>")
             System.out.flush()
-            return ""
-        }
-        catch (e: EndOfFileException) {
-            return null
+            ""
+        } catch (e: EndOfFileException) {
+            null
         }
     }
 
@@ -55,7 +53,7 @@ class ConsoleReplCommandReader : ReplCommandReader {
 
     private companion object {
         init {
-            Logger.getLogger("org.jline").level = Level.OFF;
+            Logger.getLogger("org.jline").level = Level.OFF
         }
     }
 }

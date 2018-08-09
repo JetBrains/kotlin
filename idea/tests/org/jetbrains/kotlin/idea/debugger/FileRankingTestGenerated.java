@@ -54,6 +54,11 @@ public class FileRankingTestGenerated extends AbstractFileRankingTest {
         runTest("idea/testData/debugger/fileRanking/multilinePrimaryConstructorWithBody.kt");
     }
 
+    @TestMetadata("parametersWithUnloadedClass.kt")
+    public void testParametersWithUnloadedClass() throws Exception {
+        runTest("idea/testData/debugger/fileRanking/parametersWithUnloadedClass.kt");
+    }
+
     @TestMetadata("propertyDelegates.kt")
     public void testPropertyDelegates() throws Exception {
         runTest("idea/testData/debugger/fileRanking/propertyDelegates.kt");

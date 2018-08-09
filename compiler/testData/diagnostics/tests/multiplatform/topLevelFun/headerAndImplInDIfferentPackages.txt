@@ -9,9 +9,6 @@ package common {
 // -- Module: <m2-jvm> --
 package
 
-package common {
-}
-
 package jvm {
     public actual fun foo(): kotlin.Unit
 }
@@ -19,9 +16,6 @@ package jvm {
 
 // -- Module: <m3-js> --
 package
-
-package common {
-}
 
 package js {
     public actual fun foo(): kotlin.Unit

@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -16,13 +19,17 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -171,6 +178,21 @@ fun IrFunction.createParameterDeclarations() {
     }
 }
 
+fun IrClass.createParameterDeclarations() {
+    thisReceiver = IrValueParameterImpl(
+        startOffset, endOffset,
+        IrDeclarationOrigin.INSTANCE_RECEIVER,
+        descriptor.thisAsReceiverParameter,
+        this.symbol.typeWith(this.typeParameters.map { it.defaultType }),
+        null
+    ).also { valueParameter ->
+        valueParameter.parent = this
+    }
+
+    assert(typeParameters.isEmpty())
+    assert(descriptor.declaredTypeParameters.isEmpty())
+}
+
 //fun IrClass.createParameterDeclarations() {
 //    descriptor.thisAsReceiverParameter.let {
 //        thisReceiver = IrValueParameterImpl(
@@ -314,6 +336,40 @@ fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter 
     )
 }
 
+fun createField(
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    name: Name,
+    isMutable: Boolean,
+    origin: IrDeclarationOrigin,
+    owner: ClassDescriptor
+): IrField {
+    val descriptor = PropertyDescriptorImpl.create(
+        /* containingDeclaration = */ owner,
+        /* annotations           = */ Annotations.EMPTY,
+        /* modality              = */ Modality.FINAL,
+        /* visibility            = */ Visibilities.PRIVATE,
+        /* isVar                 = */ isMutable,
+        /* name                  = */ name,
+        /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
+        /* source                = */ SourceElement.NO_SOURCE,
+        /* lateInit              = */ false,
+        /* isConst               = */ false,
+        /* isExpect              = */ false,
+        /* isActual                = */ false,
+        /* isExternal            = */ false,
+        /* isDelegated           = */ false
+    ).apply {
+        initialize(null, null)
+
+        val receiverType: KotlinType? = null
+        setType(type.toKotlinType(), emptyList(), owner.thisAsReceiverParameter, receiverType)
+    }
+
+    return IrFieldImpl(startOffset, endOffset, origin, descriptor, type)
+}
+
 fun IrFunction.createDispatchReceiverParameter() {
     assert(this.dispatchReceiverParameter == null)
 
@@ -328,3 +384,23 @@ fun IrFunction.createDispatchReceiverParameter() {
         null
     ).also { it.parent = this }
 }
+
+fun ReferenceSymbolTable.referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol =
+    when (classifier) {
+        is TypeParameterDescriptor ->
+            referenceTypeParameter(classifier)
+        is ClassDescriptor ->
+            referenceClass(classifier)
+        else ->
+            throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
+    }
+
+fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunctionSymbol =
+    when (callable) {
+        is ClassConstructorDescriptor ->
+            referenceConstructor(callable)
+        is FunctionDescriptor ->
+            referenceSimpleFunction(callable)
+        else ->
+            throw IllegalArgumentException("Unexpected callable descriptor: $callable")
+    }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl
 
-
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
@@ -42,10 +41,10 @@ import kotlin.concurrent.write
 const val KOTLIN_REPL_JVM_TARGET_PROPERTY = "kotlin.repl.jvm.target"
 
 open class GenericReplChecker(
-        disposable: Disposable,
-        private val scriptDefinition: KotlinScriptDefinition,
-        private val compilerConfiguration: CompilerConfiguration,
-        messageCollector: MessageCollector
+    disposable: Disposable,
+    private val scriptDefinition: KotlinScriptDefinition,
+    private val compilerConfiguration: CompilerConfiguration,
+    messageCollector: MessageCollector
 ) : ReplCheckAction {
 
     internal val environment = run {
@@ -57,7 +56,7 @@ open class GenericReplChecker(
             if (get(JVMConfigurationKeys.JVM_TARGET) == null) {
                 put(JVMConfigurationKeys.JVM_TARGET,
                     System.getProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY)?.let { JvmTarget.fromString(it) }
-                    ?: if (getJavaVersion() >= 0x10008) JvmTarget.JVM_1_8 else JvmTarget.JVM_1_6)
+                        ?: if (getJavaVersion() >= 0x10008) JvmTarget.JVM_1_8 else JvmTarget.JVM_1_6)
             }
         }
         KotlinCoreEnvironment.createForProduction(disposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -72,11 +71,15 @@ open class GenericReplChecker(
             val checkerState = state.asState(GenericReplCheckerState::class.java)
             val scriptFileName = makeScriptBaseName(codeLine)
             val virtualFile =
-                    LightVirtualFile("$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, StringUtil.convertLineSeparators(codeLine.code)).apply {
-                        charset = CharsetToolkit.UTF8_CHARSET
-                    }
+                LightVirtualFile(
+                    "$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}",
+                    KotlinLanguage.INSTANCE,
+                    StringUtil.convertLineSeparators(codeLine.code)
+                ).apply {
+                    charset = CharsetToolkit.UTF8_CHARSET
+                }
             val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
-                                  ?: error("Script file not analyzed at line ${codeLine.no}: ${codeLine.code}")
+                ?: error("Script file not analyzed at line ${codeLine.no}: ${codeLine.code}")
 
             val errorHolder = createDiagnosticHolder()
 

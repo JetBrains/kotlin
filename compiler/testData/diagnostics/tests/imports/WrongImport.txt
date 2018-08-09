@@ -44,7 +44,4 @@ package a {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
-
-    package a.b {
-    }
 }

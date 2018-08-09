@@ -44,6 +44,3 @@ package p {
 package
 
 public fun test(): kotlin.Unit
-
-package p {
-}

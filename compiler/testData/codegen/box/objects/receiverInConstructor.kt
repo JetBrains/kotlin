@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class A(open val v: String)
 
 fun A.a(newv: String) = object: A("fail") {

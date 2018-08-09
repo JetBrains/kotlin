@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -43,17 +44,23 @@ class JvmLower(val context: JvmBackendContext) {
         InterfaceLowering(context.state).runOnFilePostfix(irFile)
         InterfaceDelegationLowering(context.state).runOnFilePostfix(irFile)
         SharedVariablesLowering(context).runOnFilePostfix(irFile)
-        InnerClassesLowering(context).runOnFilePostfix(irFile)
-        InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
 
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
+
         LocalDeclarationsLowering(
             context,
             object : LocalNameProvider {
                 override fun localName(descriptor: DeclarationDescriptor): String =
                     NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
-            }
+            },
+            Visibilities.PUBLIC //TODO properly figure out visibility
         ).runOnFilePostfix(irFile)
+        CallableReferenceLowering(context).lower(irFile)
+
+        InnerClassesLowering(context).runOnFilePostfix(irFile)
+        InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
+
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
 
         EnumClassLowering(context).runOnFilePostfix(irFile)
         //Should be before SyntheticAccessorLowering cause of synthetic accessor for companion constructor

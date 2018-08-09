@@ -23,7 +23,6 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:tests-common"))
     testCompile(project(":kotlin-android-extensions-runtime"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))

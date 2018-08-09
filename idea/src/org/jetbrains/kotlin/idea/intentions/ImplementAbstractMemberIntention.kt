@@ -213,7 +213,7 @@ abstract class ImplementAbstractMemberIntentionBase :
             selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
             cellRenderer = renderer
         }
-        val builder = PopupChooserBuilder(list)
+        val builder = PopupChooserBuilder<PsiElement>(list)
         renderer.installSpeedSearch(builder)
         builder
                 .setTitle(CodeInsightBundle.message("intention.implement.abstract.method.class.chooser.title"))

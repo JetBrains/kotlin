@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.referenceClassifier
+import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.visitors.*
 
 // backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/ir/util/IrUnboundSymbolReplacer.kt
@@ -57,42 +59,6 @@ internal fun IrModuleFragment.replaceUnboundSymbols(context: JsIrBackendContext)
         symbolTable = context.symbolTable,
         irBuiltIns = context.irBuiltIns
     ).generateUnboundSymbolsAsDependencies(this)
-
-    // Merge duplicated module and package declarations:
-    this.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {}
-
-        override fun visitModuleFragment(declaration: IrModuleFragment) {
-            declaration.dependencyModules.forEach { it.acceptVoid(this) }
-
-            val dependencyModules = declaration.dependencyModules.toSet().groupBy { it.descriptor }.map { (_, fragments) ->
-                fragments.reduce { firstModule, nextModule ->
-                    firstModule.apply {
-                        mergeFrom(nextModule)
-                    }
-                }
-            }
-
-            declaration.dependencyModules.clear()
-            declaration.dependencyModules.addAll(dependencyModules)
-        }
-
-    })
-}
-
-private fun IrModuleFragment.mergeFrom(other: IrModuleFragment): Unit {
-    assert(this.files.isEmpty())
-    assert(other.files.isEmpty())
-
-    val thisPackages = this.externalPackageFragments.groupBy { it.packageFragmentDescriptor }
-    other.externalPackageFragments.forEach {
-        val thisPackage = thisPackages[it.packageFragmentDescriptor]?.toSet()?.single()
-        if (thisPackage == null) {
-            this.externalPackageFragments.add(it)
-        } else {
-            thisPackage.addChildren(it.declarations)
-        }
-    }
 }
 
 private class DeclarationSymbolCollector : IrElementVisitorVoid {

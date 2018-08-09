@@ -1,3 +1,5 @@
+// !LANGUAGE: +ReleaseCoroutines
+// !API_VERSION: 1.3
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 suspend fun foo() {}
 

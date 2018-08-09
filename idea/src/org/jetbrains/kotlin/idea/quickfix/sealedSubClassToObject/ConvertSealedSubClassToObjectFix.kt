@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.intentions.ConvertSecondaryConstructorToPrimaryIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -47,9 +48,9 @@ class ConvertSealedSubClassToObjectFix : LocalQuickFix {
     }
 
     private fun KtClass.changeToObject(factory: KtPsiFactory) {
-        getClassOrInterfaceKeyword()?.replace(factory.createExpression(KtTokens.OBJECT_KEYWORD.value))
-        secondaryConstructors.forEach { delete() }
+        secondaryConstructors.forEach { ConvertSecondaryConstructorToPrimaryIntention().applyTo(it, null) }
         primaryConstructor?.delete()
+        getClassOrInterfaceKeyword()?.replace(factory.createExpression(KtTokens.OBJECT_KEYWORD.value))
     }
 
     private fun KtClass.transformToObject(factory: KtPsiFactory) {

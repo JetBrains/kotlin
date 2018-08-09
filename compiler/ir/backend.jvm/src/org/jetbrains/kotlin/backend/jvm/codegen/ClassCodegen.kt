@@ -84,6 +84,7 @@ class ClassCodegen private constructor(
             signature.interfaces.toTypedArray()
         )
         AnnotationCodegen.forClass(visitor.visitor, this, typeMapper).genAnnotations(descriptor, null)
+        visitor.visitSource(irClass.symbol.descriptor.source.containingFile.name!!, null)
 
         irClass.declarations.forEach {
             generateDeclaration(it)
@@ -212,8 +213,8 @@ class ClassCodegen private constructor(
             sourceMapper = DefaultSourceMapper(
                 SourceInfo.createInfoForIr(
                     fileEntry.getSourceRangeInfo(irClass.startOffset, irClass.endOffset).endLineNumber + 1,
-                    irClass.name.asString(),
-                    fileEntry.name
+                    this.visitor.thisName,
+                    this.psiElement.containingFile.name
                 )
             )
         }

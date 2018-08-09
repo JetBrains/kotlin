@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.incremental.LookupTrackerImpl
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
-import org.jetbrains.kotlin.jps.build.KotlinCommonModuleSourceRoot
+import org.jetbrains.kotlin.jps.build.KotlinIncludedModuleSourceRoot
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
 import org.jetbrains.kotlin.jps.build.isKotlinSourceFile
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
@@ -124,13 +124,13 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo>(
         val buildRootIndex = context.projectDescriptor.buildRootIndex
         val roots = buildRootIndex.getTargetRoots(jpsModuleBuildTarget, context)
         roots.forEach { rootDescriptor ->
-            val isCommonRoot = rootDescriptor is KotlinCommonModuleSourceRoot
+            val isIncludedSourceRoot = rootDescriptor is KotlinIncludedModuleSourceRoot
 
             rootDescriptor.root.walkTopDown()
                 .onEnter { file -> file !in moduleExcludes }
                 .forEach { file ->
                     if (!compilerExcludes.isExcluded(file) && file.isFile && file.isKotlinSourceFile) {
-                        receiver[file] = Source(file, isCommonRoot)
+                        receiver[file] = Source(file, isIncludedSourceRoot)
                     }
                 }
 
@@ -138,14 +138,14 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo>(
     }
 
     /**
-     * @property isCommonModule for reporting errors during cross-compilation common module sources
+     * @property isIncludedSourceRoot for reporting errors during cross-compilation common module sources
      */
     class Source(
         val file: File,
-        val isCommonModule: Boolean
+        val isIncludedSourceRoot: Boolean
     )
 
-    fun isCommonModuleFile(file: File): Boolean = sources[file]?.isCommonModule == true
+    fun isFromIncludedSourceRoot(file: File): Boolean = sources[file]?.isIncludedSourceRoot == true
 
     val sourceFiles: Collection<File>
         get() = sources.values.map { it.file }

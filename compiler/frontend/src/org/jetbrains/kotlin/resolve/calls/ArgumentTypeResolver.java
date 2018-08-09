@@ -23,15 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
+import org.jetbrains.kotlin.builtins.UnsignedTypes;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.StatementFilter;
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
-import org.jetbrains.kotlin.resolve.TypeResolver;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
@@ -41,6 +40,8 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -69,6 +70,7 @@ public class ArgumentTypeResolver {
     @NotNull private final ReflectionTypes reflectionTypes;
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
     @NotNull private final FunctionPlaceholders functionPlaceholders;
+    @NotNull private final ModuleDescriptor moduleDescriptor;
 
     private ExpressionTypingServices expressionTypingServices;
 
@@ -78,7 +80,8 @@ public class ArgumentTypeResolver {
             @NotNull KotlinBuiltIns builtIns,
             @NotNull ReflectionTypes reflectionTypes,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
-            @NotNull FunctionPlaceholders functionPlaceholders
+            @NotNull FunctionPlaceholders functionPlaceholders,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.typeResolver = typeResolver;
         this.doubleColonExpressionResolver = doubleColonExpressionResolver;
@@ -86,6 +89,7 @@ public class ArgumentTypeResolver {
         this.reflectionTypes = reflectionTypes;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.functionPlaceholders = functionPlaceholders;
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     // component dependency cycle
@@ -218,6 +222,11 @@ public class ArgumentTypeResolver {
             return expressionTypingServices.getTypeInfo(expression, newContext);
         }
 
+        // TODO: probably should be "is unsigned type or is supertype of unsigned type" to support Comparable<UInt> expected types too
+        if (UnsignedTypes.INSTANCE.isUnsignedType(context.expectedType)) {
+            convertSignedConstantToUnsigned(expression, context);
+        }
+
         KotlinTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
@@ -226,6 +235,28 @@ public class ArgumentTypeResolver {
         ResolutionContext newContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(DEPENDENT);
 
         return expressionTypingServices.getTypeInfo(expression, newContext);
+    }
+
+    private void convertSignedConstantToUnsigned(
+            @NotNull KtExpression expression,
+            @NotNull CallResolutionContext<?> context
+    ) {
+        CompileTimeConstant<?> constant = context.trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
+        if (!(constant instanceof IntegerValueTypeConstant) || !constantCanBeConvertedToUnsigned(constant)) return;
+
+        IntegerValueTypeConstant unsignedConstant = IntegerValueTypeConstant.convertToUnsignedConstant(
+                (IntegerValueTypeConstant) constant, moduleDescriptor
+        );
+
+        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, unsignedConstant);
+
+        updateResultArgumentTypeIfNotDenotable(
+                context.trace, context.statementFilter, context.expectedType, unsignedConstant.getUnknownIntegerType(), expression
+        );
+    }
+
+    public static boolean constantCanBeConvertedToUnsigned(@NotNull CompileTimeConstant<?> constant) {
+        return !constant.isError() && constant.getParameters().isPure();
     }
 
     @NotNull

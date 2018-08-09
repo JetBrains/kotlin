@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections.migration
 
+import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.ApplicationManager
@@ -12,8 +13,11 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.configuration.MigrationInfo
+import org.jetbrains.kotlin.idea.configuration.isLanguageVersionUpdate
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -24,7 +28,11 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class FromClosedRangeMigrationInspection : AbstractKotlinInspection() {
+class FromClosedRangeMigrationInspection : AbstractKotlinInspection(), MigrationFix, CleanupLocalInspectionTool {
+    override fun isApplicable(migrationInfo: MigrationInfo): Boolean {
+        return migrationInfo.isLanguageVersionUpdate(LanguageVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_3)
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         simpleNameExpressionVisitor(fun(simpleNameExpression) {
             val callExpression = simpleNameExpression.parent as? KtCallExpression ?: return

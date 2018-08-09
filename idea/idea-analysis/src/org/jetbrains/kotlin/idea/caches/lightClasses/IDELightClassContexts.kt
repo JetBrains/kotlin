@@ -191,11 +191,11 @@ internal object IDELightClassContexts {
     }
 
     private fun isGeneratedForDataClass(name: Name): Boolean {
-        return name == DataClassDescriptorResolver.EQUALS_METHOD_NAME ||
+        return name == FunctionsFromAny.EQUALS_METHOD_NAME ||
                 // known failure is related to equals override, checking for other methods 'just in case'
                 name == DataClassDescriptorResolver.COPY_METHOD_NAME ||
-                name == DataClassDescriptorResolver.HASH_CODE_METHOD_NAME ||
-                name == DataClassDescriptorResolver.TO_STRING_METHOD_NAME ||
+                name == FunctionsFromAny.HASH_CODE_METHOD_NAME ||
+                name == FunctionsFromAny.TO_STRING_METHOD_NAME ||
                 DataClassDescriptorResolver.isComponentLike(name)
     }
 
@@ -276,7 +276,7 @@ internal object IDELightClassContexts {
 
         val moduleInfo = files.first().getModuleInfo()
         val container = createContainer("LightClassStub", JvmPlatform) {
-            val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget
+            val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project) as? JvmTarget
             configureModule(
                 ModuleContext(moduleDescriptor, project), JvmPlatform,
                 jvmTarget ?: JvmTarget.DEFAULT, trace

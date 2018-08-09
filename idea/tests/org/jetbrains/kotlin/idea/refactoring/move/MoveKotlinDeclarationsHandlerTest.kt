@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsHandler
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
@@ -40,7 +39,7 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
 
     private fun doTest(action: (rootDir: VirtualFile, handler: MoveKotlinDeclarationsHandler) -> Unit) {
         val path = "$testDataPath$testRoot/${getTestName(true)}"
-        val rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, PlatformTestCase.myFilesToDelete, false)
+        val rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false)
         prepareProject(rootDir)
         PsiDocumentManager.getInstance(myProject).commitAllDocuments()
         action(rootDir, MoveKotlinDeclarationsHandler())
@@ -202,5 +201,20 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
     fun testTypeAlias() = doTest { rootDir, handler ->
         val typeAlias = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtTypeAlias>()!!
         assert(handler.canMove(arrayOf<PsiElement>(typeAlias), null))
+    }
+
+    fun testTopLevelClassInScript() = doTest { rootDir, handler ->
+        val klass = getElementAtCaret(rootDir, "test.kts").getNonStrictParentOfType<KtClass>()!!
+        assert(handler.canMove(arrayOf<PsiElement>(klass), null))
+    }
+
+    fun testTopLevelFunInScript() = doTest { rootDir, handler ->
+        val function = getElementAtCaret(rootDir, "test.kts").getNonStrictParentOfType<KtNamedFunction>()!!
+        assert(handler.canMove(arrayOf<PsiElement>(function), null))
+    }
+
+    fun testTopLevelValInScript() = doTest { rootDir, handler ->
+        val property = getElementAtCaret(rootDir, "test.kts").getNonStrictParentOfType<KtProperty>()!!
+        assert(handler.canMove(arrayOf<PsiElement>(property), null))
     }
 }

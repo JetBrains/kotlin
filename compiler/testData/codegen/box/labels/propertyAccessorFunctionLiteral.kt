@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 val Int.getter: Int
     get() {
         return {

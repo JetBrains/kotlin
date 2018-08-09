@@ -176,7 +176,7 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
             // rearrange
             val referenceElement = referencePlugin.xmlElement!!
             val newElement = referenceElement.parent.addAfter(plugin.xmlElement!!, referenceElement)
-            plugin.xmlTag.delete()
+            plugin.xmlTag?.delete()
 
             return domModel.build.plugins.plugins.single { it.xmlElement == newElement }
         }
@@ -203,7 +203,7 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
         val existingGoals = execution.goals.goals.mapNotNull { it.rawText }
         for (goal in goals.filter { it !in existingGoals }) {
             val goalTag = execution.goals.ensureTagExists().createChildTag("goal", goal)
-            execution.goals.xmlTag.add(goalTag)
+            execution.goals.xmlTag?.add(goalTag)
         }
 
         return execution
@@ -301,20 +301,22 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
             execution.configuration.xmlTag?.findSubTags("sourceDirs")?.forEach { it.deleteCascade() }
         } else {
             val sourceDirsTag = executionConfiguration(execution, "sourceDirs")
-            val newSourceDirsTag = execution.configuration.createChildTag("sourceDirs")
-            for (dir in sourceDirs) {
-                newSourceDirsTag.add(newSourceDirsTag.createChildTag("source", dir))
+            execution.configuration.createChildTag("sourceDirs")?.let { newSourceDirsTag ->
+                for (dir in sourceDirs) {
+                    newSourceDirsTag.add(newSourceDirsTag.createChildTag("source", dir))
+                }
+                sourceDirsTag.replace(newSourceDirsTag)
             }
-            sourceDirsTag.replace(newSourceDirsTag)
         }
     }
 
     fun executionSourceDirs(execution: MavenDomPluginExecution): List<String> {
         return execution.configuration.xmlTag
-            .getChildrenOfType<XmlTag>().firstOrNull { it.localName == "sourceDirs" }
+            ?.getChildrenOfType<XmlTag>()
+            ?.firstOrNull { it.localName == "sourceDirs" }
             ?.getChildrenOfType<XmlTag>()
             ?.map { it.getChildrenOfType<XmlText>().joinToString("") { it.text } }
-                ?: emptyList()
+            ?: emptyList()
     }
 
     private fun executionConfiguration(execution: MavenDomPluginExecution, name: String): XmlTag {
@@ -439,7 +441,7 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
         null
     )
 
-    private fun MavenDomElement.createChildTag(name: String, value: String? = null) = xmlTag.createChildTag(name, value)
+    private fun MavenDomElement.createChildTag(name: String, value: String? = null) = xmlTag?.createChildTag(name, value)
     private fun XmlTag.createChildTag(name: String, value: String? = null) = createChildTag(name, namespace, value, false)!!
 
     private tailrec fun XmlTag.deleteCascade() {
@@ -667,7 +669,7 @@ private fun PomFile.changeConfigurationOrProperty(
 ): XmlTag? {
     val configuration = kotlinPlugin.configuration
     if (configuration.exists()) {
-        val subTag = configuration.xmlTag.findFirstSubTag(configurationTagName)
+        val subTag = configuration.xmlTag?.findFirstSubTag(configurationTagName)
         if (subTag != null) {
             subTag.value.text = value
             return subTag

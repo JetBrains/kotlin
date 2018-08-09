@@ -1,5 +1,4 @@
-
-extra["versions.intellijSdk"] = "181.4892.42"
+extra["versions.intellijSdk"] = "182.3684.101"
 extra["versions.androidBuildTools"] = "r23.0.1"
 extra["versions.idea.NodeJS"] = "181.3494.12"
 //extra["versions.androidStudioRelease"] = "3.1.0.5"
@@ -29,9 +28,25 @@ val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterI
 val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
 when (platform) {
+    "183" -> {
+        extra["versions.jar.guava"] = "25.1-jre"
+        extra["versions.jar.groovy-all"] = "2.4.15"
+        extra["versions.jar.lombok-ast"] = "0.2.3"
+        extra["versions.jar.swingx-core"] = "1.6.2-2"
+        extra["versions.jar.kxml2"] = "2.3.0"
+        extra["versions.jar.streamex"] = "0.6.7"
+        extra["versions.jar.gson"] = "2.8.4"
+        extra["versions.jar.oro"] = "2.0.8"
+        extra["versions.jar.picocontainer"] = "1.2"
+        for (jar in gradleJars) {
+            extra["versions.jar.$jar"] = "4.5.1"
+        }
+
+        extra["ignore.jar.snappy-in-java"] = true
+    }
     "182" -> {
         extra["versions.jar.guava"] = "23.6-jre"
-        extra["versions.jar.groovy-all"] = "2.4.12"
+        extra["versions.jar.groovy-all"] = "2.4.15"
         extra["versions.jar.lombok-ast"] = "0.2.3"
         extra["versions.jar.swingx-core"] = "1.6.2-2"
         extra["versions.jar.kxml2"] = "2.3.0"

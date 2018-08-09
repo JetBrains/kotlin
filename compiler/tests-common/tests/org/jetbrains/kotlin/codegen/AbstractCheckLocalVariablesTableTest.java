@@ -42,8 +42,8 @@ import java.util.regex.Pattern;
  */
 
 public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithTmpdir {
-    private File ktFile;
-    private KotlinCoreEnvironment environment;
+    protected File ktFile;
+    protected KotlinCoreEnvironment environment;
 
     public AbstractCheckLocalVariablesTableTest() {
     }
@@ -82,6 +82,10 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         ClassReader cr = new ClassReader(outputFile.asByteArray());
         List<LocalVariable> actualLocalVariables = readLocalVariable(cr, methodName);
 
+        doCompare(text, actualLocalVariables);
+    }
+
+    protected void doCompare(String text, List<LocalVariable> actualLocalVariables) {
         KotlinTestUtils.assertEqualsToFile(ktFile, text.substring(0, text.indexOf("// VARIABLE : ")) + getActualVariablesAsString(actualLocalVariables));
     }
 
@@ -93,8 +97,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         return builder.toString();
     }
 
-
-    private static class LocalVariable {
+    protected static class LocalVariable {
         private final String name;
         private final String type;
         private final int index;

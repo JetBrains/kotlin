@@ -1,2 +1,2 @@
-warning: duplicate source root: compiler/testData/cli/jvm/simple.kt
+warning: duplicate source root: $TESTDATA_DIR$/simple.kt
 OK

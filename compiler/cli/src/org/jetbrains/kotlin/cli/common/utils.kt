@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -30,15 +29,16 @@ fun checkKotlinPackageUsage(environment: KotlinCoreEnvironment, files: Collectio
         return true
     }
     val messageCollector = environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-    val kotlinPackage = FqName.topLevel(Name.identifier("kotlin"))
-    files.forEach {
-        if (it.packageFqName.isSubpackageOf(kotlinPackage)) {
-            messageCollector.report(CompilerMessageSeverity.ERROR,
-                                    "Only the Kotlin standard library is allowed to use the 'kotlin' package",
-                                    MessageUtil.psiElementToMessageLocation(it.packageDirective!!))
+    val kotlinPackage = FqName("kotlin")
+    for (file in files) {
+        if (file.packageFqName.isSubpackageOf(kotlinPackage)) {
+            messageCollector.report(
+                CompilerMessageSeverity.ERROR,
+                "Only the Kotlin standard library is allowed to use the 'kotlin' package",
+                MessageUtil.psiElementToMessageLocation(file.packageDirective!!)
+            )
             return false
         }
     }
     return true
 }
-

@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -75,6 +78,17 @@ fun IrType.toKotlinType(): KotlinType {
     }
 }
 
+fun IrType.getClass(): IrClass? =
+    (this.classifierOrNull as? IrClassSymbol)?.owner
+
+fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArgument>): IrSimpleType =
+    IrSimpleTypeImpl(
+        this,
+        hasQuestionMark,
+        arguments,
+        emptyList()
+    )
+
 private fun makeKotlinType(
     classifier: IrClassifierSymbol,
     arguments: List<IrTypeArgument>,
@@ -95,6 +109,20 @@ fun ClassifierDescriptor.toIrType(hasQuestionMark: Boolean = false): IrType {
     return IrSimpleTypeImpl(defaultType, symbol, hasQuestionMark, listOf(), listOf())
 }
 
+val IrTypeParameter.defaultType: IrType get() = symbol.owner.defaultType
+
+fun IrClassifierSymbol.typeWith(vararg arguments: IrType): IrSimpleType = typeWith(arguments.toList())
+
+fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
+    IrSimpleTypeImpl(
+        this,
+        false,
+        arguments.map { makeTypeProjection(it, Variance.INVARIANT) },
+        emptyList()
+    )
+
+fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
+
 fun KotlinType.toIrType(): IrType? {
     if (isDynamic()) return IrDynamicTypeImpl(this, listOf(), Variance.INVARIANT)
 
@@ -113,6 +141,7 @@ fun KotlinType.toIrType(): IrType? {
     return IrSimpleTypeImpl(this, symbol, isMarkedNullable, arguments, annotations)
 }
 
+// TODO: this function creates unbound symbol which is the great source of problems
 private fun ClassifierDescriptor.getSymbol(): IrClassifierSymbol = when (this) {
     is ClassDescriptor -> IrClassSymbolImpl(this)
     is TypeParameterDescriptor -> IrTypeParameterSymbolImpl(this)

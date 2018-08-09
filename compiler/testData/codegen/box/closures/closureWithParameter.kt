@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun box() : String {
     return apply( "OK", {arg: String -> arg } )
 }
