@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 class C(val i: Int) {
   operator fun component1() = i + 1
