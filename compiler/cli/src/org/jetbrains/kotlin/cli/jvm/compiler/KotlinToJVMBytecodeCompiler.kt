@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
@@ -64,13 +66,13 @@ import java.net.URLClassLoader
 
 object KotlinToJVMBytecodeCompiler {
 
-    private fun getAbsolutePaths(buildFile: File, module: Module): List<String> {
+    private fun getAbsoluteFiles(buildFile: File, module: Module): List<File> {
         return module.getSourceFiles().map { sourceFile ->
             val source = File(sourceFile)
             if (!source.isAbsolute) {
-                File(buildFile.absoluteFile.parentFile, sourceFile).absolutePath
+                File(buildFile.absoluteFile.parentFile, sourceFile)
             } else {
-                source.absolutePath
+                source
             }
         }
     }
@@ -136,10 +138,12 @@ object KotlinToJVMBytecodeCompiler {
 
         val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
 
+        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            val moduleSourcePaths = getAbsolutePaths(buildFile, module)
-            val ktFiles = environment.getSourceFiles().filter { file -> file.virtualFilePath in moduleSourcePaths }
+            val moduleSourceFiles = getAbsoluteFiles(buildFile, module).map { file -> localFileSystem.findFileByPath(file.path) }
+            val ktFiles = environment.getSourceFiles().filter { file -> file.virtualFile in moduleSourceFiles }
 
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
@@ -180,7 +184,7 @@ object KotlinToJVMBytecodeCompiler {
 
     internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File) {
         for (module in chunk) {
-            configuration.addKotlinSourceRoots(getAbsolutePaths(buildFile, module))
+            configuration.addKotlinSourceRoots(getAbsoluteFiles(buildFile, module).map(File::getPath))
         }
 
         for (module in chunk) {
