@@ -1,0 +1,14 @@
+package
+
+public const val constVal: kotlin.Int = 10
+public val globalVariable: kotlin.Int = 10
+public val globalVariableWithGetter: kotlin.Int
+public val prop: kotlin.UByte = 255
+public fun takeNullableUInt(/*0*/ u: kotlin.UInt?): kotlin.Unit
+public fun takeUByte(/*0*/ u: kotlin.UByte): kotlin.Unit
+public fun takeUBytes(/*0*/ vararg u: kotlin.UByte /*kotlin.UByteArray*/): kotlin.Unit
+public fun takeUInt(/*0*/ u: kotlin.UInt): kotlin.Unit
+public fun takeULong(/*0*/ u: kotlin.ULong): kotlin.Unit
+public fun takeUShort(/*0*/ u: kotlin.UShort): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun kotlin.Int.myPlus(/*0*/ other: kotlin.Int): kotlin.Int

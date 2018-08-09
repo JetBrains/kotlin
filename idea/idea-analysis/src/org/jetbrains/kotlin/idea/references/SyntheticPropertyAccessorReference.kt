@@ -105,8 +105,8 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
         }
     }
 
-    override fun handleElementRename(newElementName: String?): PsiElement? {
-        if (!Name.isValidIdentifier(newElementName!!)) return expression
+    override fun handleElementRename(newElementName: String): PsiElement? {
+        if (!Name.isValidIdentifier(newElementName)) return expression
 
         val newNameAsName = Name.identifier(newElementName)
         val newName = if (getter) {

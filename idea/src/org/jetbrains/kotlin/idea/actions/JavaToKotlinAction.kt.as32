@@ -99,9 +99,11 @@ class JavaToKotlinAction : AnAction() {
             return result
         }
 
-        fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project,
-                         enableExternalCodeProcessing: Boolean = true,
-                         askExternalCodeProcessing: Boolean = true): List<KtFile> {
+        fun convertFiles(
+            javaFiles: List<PsiJavaFile>, project: Project,
+            enableExternalCodeProcessing: Boolean = true,
+            askExternalCodeProcessing: Boolean = true
+        ): List<KtFile> {
             var converterResult: JavaToKotlinConverter.FilesResult? = null
             fun convert() {
                 val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)

@@ -26,10 +26,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFileAnnotationList
-import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.*
 import java.util.*
 
 // NOTE: in this file we collect only LANGUAGE INDEPENDENT methods working with PSI and not modifying it
@@ -297,6 +294,13 @@ val PsiElement.startOffset: Int
 
 val PsiElement.endOffset: Int
     get() = textRange.endOffset
+
+val KtPureElement.pureStartOffset: Int
+    get() = psiOrParent.textRange.startOffset
+
+val KtPureElement.pureEndOffset: Int
+    get() = psiOrParent.textRange.endOffset
+
 
 fun PsiElement.getStartOffsetIn(ancestor: PsiElement): Int {
     var offset = 0

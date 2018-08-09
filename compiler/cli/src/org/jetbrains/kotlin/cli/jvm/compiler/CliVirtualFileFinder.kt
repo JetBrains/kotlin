@@ -29,16 +29,19 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 import java.io.InputStream
 
 class CliVirtualFileFinder(
-        private val index: JvmDependenciesIndex,
-        private val scope: GlobalSearchScope
+    private val index: JvmDependenciesIndex,
+    private val scope: GlobalSearchScope
 ) : VirtualFileFinder() {
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
-            findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
+        findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
 
     override fun findMetadata(classId: ClassId): InputStream? {
         assert(!classId.isNestedClass) { "Nested classes are not supported here: $classId" }
 
-        return findBinaryClass(classId, classId.shortClassName.asString() + MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION)?.inputStream
+        return findBinaryClass(
+            classId,
+            classId.shortClassName.asString() + MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION
+        )?.inputStream
     }
 
     override fun hasMetadataPackage(fqName: FqName): Boolean {
@@ -59,7 +62,7 @@ class CliVirtualFileFinder(
     }
 
     private fun findBinaryClass(classId: ClassId, fileName: String): VirtualFile? =
-            index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, _ ->
-                dir.findChild(fileName)?.takeIf(VirtualFile::isValid)
-            }?.takeIf { it in scope }
+        index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, _ ->
+            dir.findChild(fileName)?.takeIf(VirtualFile::isValid)
+        }?.takeIf { it in scope }
 }

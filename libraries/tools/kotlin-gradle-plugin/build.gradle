@@ -130,6 +130,10 @@ pluginBundle {
             id = 'org.jetbrains.kotlin.jvm'
             description = displayName = 'Kotlin JVM plugin'
         }
+        kotlinMultiplatformPlugin {
+            id = 'org.jetbrains.kotlin.multiplatform'
+            description = displayName = 'Kotlin Multiplatform plugin'
+        }
         kotlinAndroidPlugin {
             id = 'org.jetbrains.kotlin.android'
             description = displayName = 'Kotlin Android plugin'

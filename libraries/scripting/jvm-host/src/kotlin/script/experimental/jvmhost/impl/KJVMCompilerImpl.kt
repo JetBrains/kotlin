@@ -121,10 +121,10 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
                 }
                 fun addRoot(moduleName: String, file: File) {
                     if (isModularJava) {
-                        add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                        add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
                         add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, moduleName)
                     } else {
-                        add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+                        add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
                     }
                 }
                 // TODO: implement logic similar to compiler's  -no-stdlib (and -no-reflect?)

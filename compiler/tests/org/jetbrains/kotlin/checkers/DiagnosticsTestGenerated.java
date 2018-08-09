@@ -13055,6 +13055,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/headerClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("baseExpectClassWithoutConstructor.kt")
+                public void testBaseExpectClassWithoutConstructor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/baseExpectClassWithoutConstructor.kt");
+                }
+
                 @TestMetadata("classKinds.kt")
                 public void testClassKinds() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/classKinds.kt");
@@ -18842,6 +18847,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("elvisRHS.kt")
             public void testElvisRHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/elvisRHS.kt");
+            }
+
+            @TestMetadata("enumEntryMembers_after.kt")
+            public void testEnumEntryMembers_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/enumEntryMembers_after.kt");
+            }
+
+            @TestMetadata("enumEntryMembers_before.kt")
+            public void testEnumEntryMembers_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/enumEntryMembers_before.kt");
             }
 
             @TestMetadata("equals.kt")

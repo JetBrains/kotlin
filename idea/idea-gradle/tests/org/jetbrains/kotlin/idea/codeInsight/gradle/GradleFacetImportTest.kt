@@ -2228,6 +2228,47 @@ compileTestKotlin {
         assertAllModulesConfigured()
     }
 
+    @Test
+    fun testNoFriendPathsAreShown() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.70-eap-4")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+                maven {
+                    url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                }
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.70-eap-4"
+            }
+        """
+        )
+        importProject()
+
+        Assert.assertEquals(
+            "-Xdump-declarations-to=tmpTest",
+            testFacetSettings.compilerSettings!!.additionalArguments
+        )
+
+        assertAllModulesConfigured()
+    }
+
     private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
         val module = getModule(projectName)
         val moduleInfo = if (isProduction) module.productionSourceInfo() else module.testSourceInfo()

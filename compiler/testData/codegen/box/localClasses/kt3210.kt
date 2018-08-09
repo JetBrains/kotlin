@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 package org.example
 
 interface SomeTrait {}

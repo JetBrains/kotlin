@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
-import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.facet.getCleanRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
@@ -46,7 +46,7 @@ class AddReflectionQuickFix(element: KtElement)
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect",
-                                                                                       getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
+                                                                                       getCleanRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddReflectionQuickFix)
@@ -59,7 +59,7 @@ class AddScriptRuntimeQuickFix(element: KtElement) : AddKotlinLibQuickFix(elemen
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor(
         "org.jetbrains.kotlin", "kotlin-script-runtime",
-        getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion()
+        getCleanRuntimeLibraryVersion(module) ?: bundledRuntimeVersion()
     )
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -83,7 +83,7 @@ class AddTestLibQuickFix(element: KtElement)
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test",
-                                                                                       getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
+                                                                                       getCleanRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
 
     companion object : KotlinSingleIntentionActionFactory() {
         val KOTLIN_TEST_UNRESOLVED = setOf(

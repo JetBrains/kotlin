@@ -20,17 +20,9 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.jps.model.expectedByModules
+import org.jetbrains.kotlin.jps.model.sourceSetModules
 import java.io.File
 
-/**
- * - adds roots with KotlinSourceRootType as JavaSourceRootDescriptor (see note below)
- * - for Multiplatform Projects: adds all the source roots of the expectedBy modules to the platform modules.
- *
- * Note: `KotlinSourceRootType` cannot be supported directly, since `SourceRootDescriptors` are computed by
- * `ModuleBuildTarget.computeAllTargets`. `ModuleBuildTarget` is required for incremental compilation.
- * We cannot define our own `ModuleBuildTarget` since it is final and `ModuleBuildTarget` supports only `JavaSourceRootDescriptor`.
- * So the only one way to support `KotlinSourceRootType` is to add a fake `JavaSourceRootDescriptor` for each source root with that type.
- */
 class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDescriptor>(JavaModuleBuildTargetType.ALL_TYPES) {
     override fun getAdditionalRoots(
         target: BuildTarget<JavaSourceRootDescriptor>,
@@ -41,7 +33,12 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
 
         val result = mutableListOf<JavaSourceRootDescriptor>()
 
-        // add source roots with type KotlinSourceRootType
+        // Add source roots with type KotlinSourceRootType.
+        //
+        // Note: `KotlinSourceRootType` cannot be supported directly, since `SourceRootDescriptors` are computed by
+        // `ModuleBuildTarget.computeAllTargets`. `ModuleBuildTarget` is required for incremental compilation.
+        // We cannot define our own `ModuleBuildTarget` since it is final and `ModuleBuildTarget` supports only `JavaSourceRootDescriptor`.
+        // So the only one way to support `KotlinSourceRootType` is to add a fake `JavaSourceRootDescriptor` for each source root with that type.
         val kotlinSourceRootType = if (target.isTests) KotlinSourceRootType.TestSource else KotlinSourceRootType.Source
         module.getSourceRoots(kotlinSourceRootType).forEach {
             result.add(
@@ -56,26 +53,37 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
             )
         }
 
-        // add source roots of the expectedBy modules
+        // new multiplatform model support:
+        module.sourceSetModules.forEach { sourceSetModule ->
+            addModuleSourceRoots(result, sourceSetModule, target, false)
+        }
+
+        // legacy multiplatform model support:
         module.expectedByModules.forEach { commonModule ->
-            addCommonModuleSourceRoots(result, commonModule, target)
+            // At the moment, incremental compilation is not supported by K2Metadata compiler.
+            // To avoid long running compilation of common modules, we do not run K2Metadata at all:
+            // instead all the common source roots are transitively added to the final platform modules.
+            val isRecursive = true
+
+            addModuleSourceRoots(result, commonModule, target, isRecursive)
         }
 
         return result
     }
 
-    private fun addCommonModuleSourceRoots(
+    private fun addModuleSourceRoots(
         result: MutableList<JavaSourceRootDescriptor>,
-        commonModule: JpsModule,
-        target: ModuleBuildTarget
+        module: JpsModule,
+        target: ModuleBuildTarget,
+        recursive: Boolean = false
     ) {
-        for (commonSourceRoot in commonModule.sourceRoots) {
+        for (commonSourceRoot in module.sourceRoots) {
             val isCommonTestsRootType = commonSourceRoot.rootType.isTestsRootType
             if (isCommonTestsRootType != null && target.isTests == isCommonTestsRootType) {
                 val javaSourceRootProperties = commonSourceRoot.properties as? JavaSourceRootProperties
 
                 result.add(
-                    KotlinCommonModuleSourceRoot(
+                    KotlinIncludedModuleSourceRoot(
                         commonSourceRoot.file,
                         target,
                         javaSourceRootProperties?.isForGeneratedSources ?: false,
@@ -87,20 +95,20 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
             }
         }
 
-        // At the moment, incremental compilation is not supported by K2Metadata compiler.
-        // To avoid long running compilation of common modules, we do not run K2Metadata at all:
-        // instead all the common source roots are transitively added to the final platform modules.
-        JpsJavaExtensionService.dependencies(commonModule)
-            .also {
-                if (!target.isTests) it.productionOnly()
-            }
-            .processModules {
-                addCommonModuleSourceRoots(
-                    result,
-                    it,
-                    ModuleBuildTarget(it, target.targetType as JavaModuleBuildTargetType)
-                )
-            }
+        if (recursive) {
+            JpsJavaExtensionService.dependencies(module)
+                .also {
+                    if (!target.isTests) it.productionOnly()
+                }
+                .processModules {
+                    addModuleSourceRoots(
+                        result,
+                        it,
+                        ModuleBuildTarget(it, target.targetType as JavaModuleBuildTargetType),
+                        true
+                    )
+                }
+        }
     }
 }
 
@@ -108,13 +116,13 @@ private val JpsModuleSourceRootType<*>.isTestsRootType
     get() = when (this) {
         is KotlinSourceRootType -> this == KotlinSourceRootType.TestSource
         is KotlinResourceRootType -> this == KotlinResourceRootType.TestResource
-    // for compatibility:
+        // for compatibility:
         is JavaSourceRootType -> this == JavaSourceRootType.TEST_SOURCE
         is JavaResourceRootType -> this == JavaResourceRootType.TEST_RESOURCE
         else -> null
     }
 
-class KotlinCommonModuleSourceRoot(
+class KotlinIncludedModuleSourceRoot(
     root: File,
     target: ModuleBuildTarget,
     isGenerated: Boolean,

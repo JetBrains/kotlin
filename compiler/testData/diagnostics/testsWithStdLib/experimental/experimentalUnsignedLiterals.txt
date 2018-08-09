@@ -1,0 +1,6 @@
+package
+
+public const val unsignedConst: kotlin.UInt = 0.toUInt()
+public const val unsignedLongConst: kotlin.ULong = 0.toULong()
+public fun takeAll(/*0*/ b: kotlin.UByte, /*1*/ s: kotlin.UShort, /*2*/ i: kotlin.UInt, /*3*/ l: kotlin.ULong, /*4*/ vararg uints: kotlin.UInt /*kotlin.UIntArray*/): kotlin.Unit
+public fun test(): kotlin.Unit

@@ -25,6 +25,6 @@ fun test(a: Any, b: Any?) {
 // 2 CHECKCAST UInt
 
 // 1 INVOKEVIRTUAL UInt.unbox
-// 2 INVOKESTATIC UInt\$Erased.member
+// 1 INVOKESTATIC UInt\$Erased.member
 
 // 0 intValue

@@ -331,7 +331,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     private void configureFacetAndCheckJvm(JvmTarget jvmTarget) {
         IdeModifiableModelsProviderImpl modelsProvider = new IdeModifiableModelsProviderImpl(getProject());
         try {
-            KotlinFacet facet = FacetUtilsKt.getOrCreateFacet(getModule(), modelsProvider, false, false);
+            KotlinFacet facet = FacetUtilsKt.getOrCreateFacet(getModule(), modelsProvider, false, null, false);
             TargetPlatformKind.Jvm platformKind = TargetPlatformKind.Jvm.Companion.get(jvmTarget);
             FacetUtilsKt.configureFacet(
                     facet,

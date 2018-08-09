@@ -42,7 +42,7 @@ class JvmBackendContext(
     }
 
     override val ir: Ir<CommonBackendContext> = object : Ir<CommonBackendContext>(this, irModuleFragment) {
-        override val symbols: Symbols<CommonBackendContext> = object : Symbols<CommonBackendContext>(this@JvmBackendContext, symbolTable) {
+        override val symbols: Symbols<CommonBackendContext> = object : Symbols<CommonBackendContext>(this@JvmBackendContext, symbolTable.lazyWrapper) {
 
             override val areEqual
                 get () = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())

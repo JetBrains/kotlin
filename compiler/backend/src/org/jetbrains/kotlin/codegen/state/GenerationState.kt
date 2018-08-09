@@ -181,13 +181,15 @@ class GenerationState private constructor(
         filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS
     )
     val bindingContext: BindingContext = bindingTrace.bindingContext
+    private val isIrBackend = configuration.get(JVMConfigurationKeys.IR) ?: false
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
         this.bindingContext,
         classBuilderMode,
         IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         this.moduleName,
         isJvm8Target,
-        configuration.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+        configuration.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+        isIrBackend
     )
     val intrinsics: IntrinsicMethods = run {
         val shouldUseConsistentEquals = languageVersionSettings.supportsFeature(LanguageFeature.ThrowNpeOnExplicitEqualsForBoxedNull) &&
@@ -251,7 +253,8 @@ class GenerationState private constructor(
                     BuilderFactoryForDuplicateSignatureDiagnostics(
                         it, this.bindingContext, diagnostics, this.moduleName,
                         isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
-                        shouldGenerate = { !shouldOnlyCollectSignatures(it) }
+                        shouldGenerate = { !shouldOnlyCollectSignatures(it) },
+                        isIrBackend = isIrBackend
                     ).apply { duplicateSignatureFactory = this }
                 },
                 { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },

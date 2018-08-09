@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun foo() : String {
     val u = {
         class B(val data : String)

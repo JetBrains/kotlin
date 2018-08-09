@@ -81,7 +81,7 @@ open class MetadataSerializer(
     }
 
     protected open fun performSerialization(
-            files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File
+        files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File
     ) {
         val packageTable = hashMapOf<FqName, PackageParts>()
 
@@ -91,23 +91,29 @@ open class MetadataSerializer(
             for (declaration in file.declarations) {
                 declaration.accept(object : KtVisitorVoid() {
                     override fun visitNamedFunction(function: KtNamedFunction) {
-                        members.add(bindingContext.get(BindingContext.FUNCTION, function)
-                                    ?: error("No descriptor found for function ${function.fqName}"))
+                        members.add(
+                            bindingContext.get(BindingContext.FUNCTION, function)
+                                ?: error("No descriptor found for function ${function.fqName}")
+                        )
                     }
 
                     override fun visitProperty(property: KtProperty) {
-                        members.add(bindingContext.get(BindingContext.VARIABLE, property)
-                                    ?: error("No descriptor found for property ${property.fqName}"))
+                        members.add(
+                            bindingContext.get(BindingContext.VARIABLE, property)
+                                ?: error("No descriptor found for property ${property.fqName}")
+                        )
                     }
 
                     override fun visitTypeAlias(typeAlias: KtTypeAlias) {
-                        members.add(bindingContext.get(BindingContext.TYPE_ALIAS, typeAlias)
-                                    ?: error("No descriptor found for type alias ${typeAlias.fqName}"))
+                        members.add(
+                            bindingContext.get(BindingContext.TYPE_ALIAS, typeAlias)
+                                ?: error("No descriptor found for type alias ${typeAlias.fqName}")
+                        )
                     }
 
                     override fun visitClassOrObject(classOrObject: KtClassOrObject) {
                         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
-                                              ?: error("No descriptor found for class ${classOrObject.fqName}")
+                            ?: error("No descriptor found for class ${classOrObject.fqName}")
                         val destFile = File(destDir, getClassFilePath(ClassId(packageFqName, classDescriptor.name)))
                         PackageSerializer(listOf(classDescriptor), emptyList(), packageFqName, destFile).run()
                     }
@@ -139,17 +145,17 @@ open class MetadataSerializer(
     protected open fun createSerializerExtension(): KotlinSerializerExtensionBase = MetadataSerializerExtension(metadataVersion)
 
     private fun getPackageFilePath(packageFqName: FqName, fileName: String): String =
-            packageFqName.asString().replace('.', '/') + "/" +
-            PackagePartClassUtils.getFilePartShortName(fileName) + DOT_METADATA_FILE_EXTENSION
+        packageFqName.asString().replace('.', '/') + "/" +
+                PackagePartClassUtils.getFilePartShortName(fileName) + DOT_METADATA_FILE_EXTENSION
 
     private fun getClassFilePath(classId: ClassId): String =
-            classId.asSingleFqName().asString().replace('.', '/') + DOT_METADATA_FILE_EXTENSION
+        classId.asSingleFqName().asString().replace('.', '/') + DOT_METADATA_FILE_EXTENSION
 
     protected inner class PackageSerializer(
-            private val classes: Collection<DeclarationDescriptor>,
-            private val members: Collection<DeclarationDescriptor>,
-            private val packageFqName: FqName,
-            private val destFile: File
+        private val classes: Collection<DeclarationDescriptor>,
+        private val members: Collection<DeclarationDescriptor>,
+        private val packageFqName: FqName,
+        private val destFile: File
     ) {
         private val proto = ProtoBuf.PackageFragment.newBuilder()
         private val extension = createSerializerExtension()

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 val f : (Any) -> String = { it.toString() }
 
 fun box() : String {

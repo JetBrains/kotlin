@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 public class Test {
     val content = 1
     inner class A {

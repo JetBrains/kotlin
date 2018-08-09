@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class A {
     operator fun component1() = "O"
     operator fun component2(): String = throw RuntimeException("fail 0")

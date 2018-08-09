@@ -1,6 +1,4 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS
 
 fun box(): String {
     var y: String = "OK"

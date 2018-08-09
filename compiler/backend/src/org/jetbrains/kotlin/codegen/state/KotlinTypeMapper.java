@@ -10,7 +10,6 @@ import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.reflect.KType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
@@ -87,6 +86,7 @@ public class KotlinTypeMapper {
     private final String moduleName;
     private final boolean isJvm8Target;
     private final boolean isReleaseCoroutines;
+    private boolean isIrBackend;
 
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
         @NotNull
@@ -158,7 +158,7 @@ public class KotlinTypeMapper {
             @NotNull String moduleName,
             boolean isJvm8Target
     ) {
-        this(bindingContext, classBuilderMode, incompatibleClassTracker, moduleName, isJvm8Target, false);
+        this(bindingContext, classBuilderMode, incompatibleClassTracker, moduleName, isJvm8Target, false, false);
     }
 
     public KotlinTypeMapper(
@@ -167,7 +167,8 @@ public class KotlinTypeMapper {
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName,
             boolean isJvm8Target,
-            boolean isReleaseCoroutines
+            boolean isReleaseCoroutines,
+            boolean isIrBackend
     ) {
         this.bindingContext = bindingContext;
         this.classBuilderMode = classBuilderMode;
@@ -175,6 +176,7 @@ public class KotlinTypeMapper {
         this.moduleName = moduleName;
         this.isJvm8Target = isJvm8Target;
         this.isReleaseCoroutines = isReleaseCoroutines;
+        this.isIrBackend = isIrBackend;
     }
 
     public static final boolean RELEASE_COROUTINES_DEFAULT = false;
@@ -505,7 +507,8 @@ public class KotlinTypeMapper {
                 (ktType, asmType, typeMappingMode) -> {
                     writeGenericType(ktType, asmType, signatureVisitor, typeMappingMode);
                     return Unit.INSTANCE;
-                }
+                },
+                isIrBackend
         );
     }
 
@@ -541,7 +544,8 @@ public class KotlinTypeMapper {
     ) {
         return TypeSignatureMappingKt.mapType(
                 kotlinType, AsmTypeFactory.INSTANCE, mode, staticTypeMappingConfiguration, null,
-                (ktType, asmType, typeMappingMode) -> Unit.INSTANCE
+                (ktType, asmType, typeMappingMode) -> Unit.INSTANCE,
+                false
         );
     }
 
@@ -1677,7 +1681,7 @@ public class KotlinTypeMapper {
         if (recordedType != null) {
             return recordedType.getInternalName();
         }
-        return TypeSignatureMappingKt.computeInternalName(classDescriptor, typeMappingConfiguration);
+        return TypeSignatureMappingKt.computeInternalName(classDescriptor, typeMappingConfiguration, isIrBackend);
     }
 
     public static class InternalNameMapper {

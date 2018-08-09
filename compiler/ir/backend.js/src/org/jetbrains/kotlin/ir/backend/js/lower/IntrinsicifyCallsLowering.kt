@@ -207,21 +207,36 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 { call -> irCall(call, context.intrinsics.jsPropertySet.symbol, dispatchReceiverAsFirstArgument = true) }
             )
 
-            addWithPredicate(
-                Name.identifier("hashCode"),
-                { call -> (call.superQualifier == null) && (call.symbol.owner.descriptor.isFakeOverriddenFromAny()) },
-                { call -> irCall(call, intrinsics.jsHashCode, dispatchReceiverAsFirstArgument = true) }
-            )
-
-            addWithPredicate(
-                Name.identifier("toString"), ::shouldReplaceToStringWithRuntimeCall,
-                { call -> irCall(call, intrinsics.jsToString, dispatchReceiverAsFirstArgument = true) }
-            )
 
             addWithPredicate(
                 Name.identifier("compareTo"), ::shouldReplaceCompareToWithRuntimeCall,
                 { call -> irCall(call, intrinsics.jsCompareTo, dispatchReceiverAsFirstArgument = true) }
             )
+
+            put(Name.identifier("toString")) { call ->
+                if (shouldReplaceToStringWithRuntimeCall(call)) {
+                    if (call.isSuperToAny()) {
+                        irCall(call, intrinsics.jsAnyToString, dispatchReceiverAsFirstArgument = true)
+                    } else {
+                        irCall(call, intrinsics.jsToString, dispatchReceiverAsFirstArgument = true)
+                    }
+                } else {
+                    call
+                }
+            }
+
+            put(Name.identifier("hashCode")) { call ->
+                if (call.symbol.owner.descriptor.isFakeOverriddenFromAny()) {
+                    if (call.isSuperToAny()) {
+                        irCall(call, intrinsics.jsGetObjectHashCode, dispatchReceiverAsFirstArgument = true)
+                    } else {
+                        irCall(call, intrinsics.jsHashCode, dispatchReceiverAsFirstArgument = true)
+                    }
+                } else {
+                    call
+                }
+            }
+
 
             put(Name.identifier("equals"), ::transformEqualsMethodCall)
         }
@@ -464,7 +479,6 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
     }
 
     private fun transformEqualsMethodCall(call: IrCall): IrExpression {
-        if (call.superQualifier != null) return call
         val symbol = call.symbol
         if (!symbol.isBound) return call
         val function = (symbol.owner as? IrFunction) ?: return call
@@ -475,7 +489,11 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             is EqualityOperator -> irCall(call, intrinsics.jsEqeq.symbol)
             is RuntimeFunctionCall -> irCall(call, intrinsics.jsEquals, true)
             is RuntimeOrMethodCall -> if (symbol.owner.descriptor.isFakeOverriddenFromAny()) {
-                irCall(call, intrinsics.jsEquals, true)
+                if (call.isSuperToAny()) {
+                    irCall(call, intrinsics.jsEqeqeq.symbol, dispatchReceiverAsFirstArgument = true)
+                } else {
+                    irCall(call, intrinsics.jsEquals, dispatchReceiverAsFirstArgument = true)
+                }
             } else {
                 call
             }
@@ -484,8 +502,6 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 }
 
 fun shouldReplaceToStringWithRuntimeCall(call: IrCall): Boolean {
-    if (call.superQualifier != null) return false
-
     // TODO: (KOTLIN-CR-2079)
     //  - User defined extension functions Any?.toString() call can be lost during lowering.
     //  - Use direct method call for dynamic types???
@@ -501,8 +517,6 @@ fun shouldReplaceToStringWithRuntimeCall(call: IrCall): Boolean {
 }
 
 fun shouldReplaceCompareToWithRuntimeCall(call: IrCall): Boolean {
-    if (call.superQualifier != null) return false
-
     // TODO: Replace all compareTo to with runtime call when Comparable<*>.compareTo() bridge is implemented
     return call.symbol.owner.dispatchReceiverParameter?.run {
         type is IrDynamicType
@@ -650,8 +664,7 @@ fun irCall(
             newSymbol,
             newSymbol.descriptor,
             typeArgumentsCount,
-            origin,
-            superQualifierSymbol
+            origin
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,

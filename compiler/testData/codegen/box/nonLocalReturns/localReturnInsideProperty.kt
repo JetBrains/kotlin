@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface ClassData
 
 fun f() = object : ClassData {

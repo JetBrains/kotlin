@@ -2958,10 +2958,29 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      language="kotlin"
     />
 
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
                      displayName="Redundant 'with' call"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.ConvertCallChainIntoSequenceInspection"
+                     displayName="Call chain on collection should be converted into 'Sequence'"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousAsDynamicInspection"
+                     displayName="Suspicious 'asDynamic' member invocation"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
                      language="kotlin"

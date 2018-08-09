@@ -1,4 +1,4 @@
-// "Suppress for declarations annotated by 'java.lang.SuppressWarnings'" "false"
+// "Suppress unused warning if annotated by 'java.lang.SuppressWarnings'" "false"
 // ACTION: Safe delete 'Unused'
 // ACTION: Create test
 // ACTION: Rename file to Unused.kt

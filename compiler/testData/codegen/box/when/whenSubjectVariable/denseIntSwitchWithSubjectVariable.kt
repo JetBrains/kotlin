@@ -1,7 +1,6 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS_IR
 
 fun dense(x: Int): Int {
     return when (val xx = x) {

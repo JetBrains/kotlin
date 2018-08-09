@@ -98,6 +98,7 @@ public final class Statics {
         public const final val x1: kotlin.String = ""
         @kotlin.jvm.JvmStatic public final val x2: kotlin.String = ""
         @kotlin.jvm.JvmStatic private final val x3: kotlin.String = ""
+        @kotlin.jvm.JvmStatic private final val x4: kotlin.String = ""
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

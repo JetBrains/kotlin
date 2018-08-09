@@ -44,7 +44,13 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
         return initializer()
     }
 
-    val refClass = calc { symbolTable.referenceClass(context.getInternalClass("Ref")) }
+    /**
+     * Use this table to reference external dependencies.
+     */
+    open val externalSymbolTable: ReferenceSymbolTable
+        get() = symbolTable
+
+//    val refClass = calc { symbolTable.referenceClass(context.getInternalClass("Ref")) }
 
     //abstract val areEqualByValue: List<IrFunctionSymbol>
 
@@ -174,6 +180,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
     val kFunctionImpl = calc { symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl) }
+
+    val functionReference = calc { symbolTable.referenceClass(context.getInternalClass("FunctionReference")) }
 
     val kProperty0Impl = calc { symbolTable.referenceClass(context.reflectionTypes.kProperty0Impl) }
     val kProperty1Impl = calc { symbolTable.referenceClass(context.reflectionTypes.kProperty1Impl) }

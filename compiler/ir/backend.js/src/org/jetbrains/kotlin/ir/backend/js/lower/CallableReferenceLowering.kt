@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 // TODO: generate $metadata$ property and fill it with corresponding KFunction/KProperty interface
-class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
+class CallableReferenceLowering(val context: JsIrBackendContext) {
 
     private data class CallableReferenceKey(
         val declaration: IrFunction,
@@ -47,12 +48,26 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
     private val newDeclarations = mutableListOf<IrDeclaration>()
 
-    override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(CallableReferenceCollector())
-        buildClosures()
-        irFile.transformChildrenVoid(CallableReferenceTransformer())
-        irFile.declarations += newDeclarations
-    }
+    fun getReferenceCollector() = object : FileLoweringPass {
+        private val collector = CallableReferenceCollector()
+        override fun lower(irFile: IrFile) = irFile.acceptVoid(collector)
+    }::lower
+
+    fun getClosureBuilder() = object : FileLoweringPass {
+        override fun lower(irFile: IrFile) {
+            newDeclarations.clear()
+            buildClosures(irFile)
+            irFile.declarations += newDeclarations
+        }
+
+    }::lower
+
+    fun getReferenceReplacer() = object : FileLoweringPass {
+        private val replacer = CallableReferenceTransformer()
+        override fun lower(irFile: IrFile) {
+            irFile.transformChildrenVoid(replacer)
+        }
+    }::lower
 
     private fun makeCallableKey(declaration: IrFunction, reference: IrCallableReference) =
         CallableReferenceKey(declaration, reference.dispatchReceiver != null, reference.extensionReceiver != null)
@@ -72,15 +87,30 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         }
     }
 
-    private fun buildClosures() {
+    private fun buildClosures(irFile: IrFile) {
+
+        val declarationsSet = mutableSetOf<IrFunctionSymbol>()
+        irFile.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+
+            override fun visitFunction(declaration: IrFunction) {
+                super.visitFunction(declaration)
+                declarationsSet += declaration.symbol
+            }
+        })
+
+
         for (v in collectedReferenceMap.values) {
             newDeclarations += v.accept(object : IrElementVisitor<List<IrDeclaration>, Nothing?> {
                 override fun visitElement(element: IrElement, data: Nothing?) = error("Unreachable execution")
                 override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?) =
-                    lowerKFunctionReference(expression.symbol.owner, expression)
+                    if (expression.symbol in declarationsSet) lowerKFunctionReference(expression.symbol.owner, expression) else emptyList()
 
                 override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?) =
-                    lowerKPropertyReference(expression.getter!!.owner, expression)
+                    if (expression.getter in declarationsSet) lowerKPropertyReference(
+                        expression.getter!!.owner,
+                        expression
+                    ) else emptyList()
             }, null)
         }
     }

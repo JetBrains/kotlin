@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
+import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
-import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
-import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
+import org.jetbrains.kotlin.psi2ir.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -58,7 +58,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             generateLambdaBody(ktFunction)
         }
 
-    fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrSimpleFunction =
+    fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction =
         declareSimpleFunctionInner(functionDescriptor, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE).buildWithScope { irFunction ->
             generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
         }
@@ -77,17 +77,17 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     private fun declareSimpleFunctionInner(
         descriptor: FunctionDescriptor,
-        ktElement: KtElement,
+        ktElement: KtPureElement,
         origin: IrDeclarationOrigin
     ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
-            ktElement.startOffset, ktElement.endOffset, origin,
+            ktElement.pureStartOffset, ktElement.pureEndOffset, origin,
             descriptor
         )
 
     fun generateFunctionParameterDeclarationsAndReturnType(
         irFunction: IrFunction,
-        ktParameterOwner: KtElement?,
+        ktParameterOwner: KtPureElement?,
         ktReceiverParameterElement: KtElement?
     ) {
         declarationGenerator.generateScopedTypeParameterDeclarations(irFunction, irFunction.descriptor.propertyIfAccessor.typeParameters)
@@ -208,7 +208,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     fun generatePrimaryConstructor(
         primaryConstructorDescriptor: ClassConstructorDescriptor,
-        ktClassOrObject: KtClassOrObject
+        ktClassOrObject: KtPureClassOrObject
     ): IrConstructor =
         declareConstructor(ktClassOrObject, ktClassOrObject.primaryConstructor ?: ktClassOrObject, primaryConstructorDescriptor) {
             if (
@@ -233,13 +233,13 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
 
     private inline fun declareConstructor(
-        ktConstructorElement: KtElement,
-        ktParametersElement: KtElement,
+        ktConstructorElement: KtPureElement,
+        ktParametersElement: KtPureElement,
         constructorDescriptor: ClassConstructorDescriptor,
         generateBody: BodyGenerator.() -> IrBody?
     ): IrConstructor =
         context.symbolTable.declareConstructor(
-            ktConstructorElement.startOffset, ktConstructorElement.endOffset, IrDeclarationOrigin.DEFINED,
+            ktConstructorElement.pureStartOffset, ktConstructorElement.pureEndOffset, IrDeclarationOrigin.DEFINED,
             constructorDescriptor
         ).buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null)
@@ -254,8 +254,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     private fun generateValueParameterDeclarations(
         irFunction: IrFunction,
-        ktParameterOwner: KtElement?,
-        ktReceiverParameterElement: KtElement?,
+        ktParameterOwner: KtPureElement?,
+        ktReceiverParameterElement: KtPureElement?,
         withDefaultValues: Boolean = true
     ) {
         val functionDescriptor = irFunction.descriptor
@@ -291,13 +291,13 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     private fun generateReceiverParameterDeclaration(
         receiverParameterDescriptor: ReceiverParameterDescriptor,
-        ktElement: KtElement?
+        ktElement: KtPureElement?
     ): IrValueParameter =
         declareParameter(receiverParameterDescriptor, ktElement)
 
-    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtElement?) =
+    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?) =
         context.symbolTable.declareValueParameter(
-            ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
+            ktElement.pureStartOffsetOrUndefined, ktElement.pureEndOffsetOrUndefined,
             IrDeclarationOrigin.DEFINED,
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()

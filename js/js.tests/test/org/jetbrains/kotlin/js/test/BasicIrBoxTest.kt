@@ -77,7 +77,8 @@ abstract class BasicIrBoxTest(
         incrementalData: IncrementalData,
         remap: Boolean,
         testPackage: String?,
-        testFunction: String
+        testFunction: String,
+        doNotCache: Boolean
     ) {
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
@@ -94,12 +95,22 @@ abstract class BasicIrBoxTest(
             runtimeFile.write(runtimeResult!!.generatedCode)
         }
 
-        val result = compile(
-            config.project,
-            filesToCompile,
-            config.configuration,
-            FqName((testPackage?.let { "$it." } ?: "") + testFunction),
-            listOf(runtimeResult!!.moduleDescriptor))
+        val result = if (doNotCache) {
+            val runtimeFiles = runtimeSources.map(::createPsiFile)
+            val allFiles = runtimeFiles + filesToCompile
+            compile(
+                config.project,
+                allFiles,
+                config.configuration,
+                FqName((testPackage?.let { "$it." } ?: "") + testFunction))
+        } else {
+            compile(
+                config.project,
+                filesToCompile,
+                config.configuration,
+                FqName((testPackage?.let { "$it." } ?: "") + testFunction),
+                listOf(runtimeResult!!.moduleDescriptor))
+        }
 
         outputFile.write(result.generatedCode)
     }

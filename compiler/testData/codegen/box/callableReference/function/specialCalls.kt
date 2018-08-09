@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun baz(i: Int) = i
 fun <T> bar(x: T): T = x
 

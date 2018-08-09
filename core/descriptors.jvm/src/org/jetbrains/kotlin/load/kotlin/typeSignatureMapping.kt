@@ -51,13 +51,15 @@ fun <T : Any> mapType(
     mode: TypeMappingMode,
     typeMappingConfiguration: TypeMappingConfiguration<T>,
     descriptorTypeWriter: JvmDescriptorTypeWriter<T>?,
-    writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3
+    writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3,
+    isIrBackend: Boolean
 ): T {
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
             transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),
             factory, mode, typeMappingConfiguration, descriptorTypeWriter,
-            writeGenericType
+            writeGenericType,
+            isIrBackend
         )
     }
 
@@ -78,7 +80,7 @@ fun <T : Any> mapType(
         // It's not very important because such types anyway are prohibited in declarations
         return mapType(
             commonSupertype.replaceArgumentsWithStarProjections(),
-            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
+            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType, isIrBackend
         )
     }
 
@@ -116,7 +118,8 @@ fun <T : Any> mapType(
                         mapType(
                             memberType, factory,
                             mode.toGenericArgumentMode(memberProjection.projectionKind),
-                            typeMappingConfiguration, descriptorTypeWriter, writeGenericType
+                            typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
+                            isIrBackend
                         )
 
                 descriptorTypeWriter?.writeArrayEnd()
@@ -130,7 +133,15 @@ fun <T : Any> mapType(
                 val typeForMapping = computeUnderlyingType(kotlinType)
                 if (typeForMapping != null) {
                     val newMode = if (typeForMapping.isInlineClassType()) mode else mode.wrapInlineClassesMode()
-                    return mapType(typeForMapping, factory, newMode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
+                    return mapType(
+                        typeForMapping,
+                        factory,
+                        newMode,
+                        typeMappingConfiguration,
+                        descriptorTypeWriter,
+                        writeGenericType,
+                        isIrBackend
+                    )
                 }
             }
 
@@ -144,7 +155,13 @@ fun <T : Any> mapType(
                                 val enumClassIfEnumEntry = if (descriptor.kind == ClassKind.ENUM_ENTRY)
                                     descriptor.containingDeclaration as ClassDescriptor
                                 else descriptor
-                                factory.createObjectType(computeInternalName(enumClassIfEnumEntry.original, typeMappingConfiguration))
+                                factory.createObjectType(
+                                    computeInternalName(
+                                        enumClassIfEnumEntry.original,
+                                        typeMappingConfiguration,
+                                        isIrBackend
+                                    )
+                                )
                             }
                 }
 
@@ -156,7 +173,12 @@ fun <T : Any> mapType(
         descriptor is TypeParameterDescriptor -> {
             val type = mapType(
                 getRepresentativeUpperBound(descriptor),
-                factory, mode, typeMappingConfiguration, writeGenericType = DO_NOTHING_3, descriptorTypeWriter = null
+                factory,
+                mode,
+                typeMappingConfiguration,
+                writeGenericType = DO_NOTHING_3,
+                descriptorTypeWriter = null,
+                isIrBackend = isIrBackend
             )
             descriptorTypeWriter?.writeTypeVariable(descriptor.getName(), type)
             return type
@@ -237,9 +259,10 @@ private fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
 
 fun computeInternalName(
     klass: ClassDescriptor,
-    typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl
+    typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl,
+    isIrBackend: Boolean
 ): String {
-    val container = klass.containingDeclaration
+    val container = if (isIrBackend) getContainer(klass.containingDeclaration) else klass.containingDeclaration
 
     val name = SpecialNames.safeIdentifier(klass.name).identifier
     if (container is PackageFragmentDescriptor) {
@@ -253,10 +276,15 @@ fun computeInternalName(
     val containerInternalName =
         typeMappingConfiguration.getPredefinedInternalNameForClass(containerClass) ?: computeInternalName(
             containerClass,
-            typeMappingConfiguration
+            typeMappingConfiguration,
+            isIrBackend
         )
     return containerInternalName + "$" + name
 }
+
+private fun getContainer(container: DeclarationDescriptor?): DeclarationDescriptor? =
+        container as? ClassDescriptor ?: container as? PackageFragmentDescriptor ?:
+        container?.let { getContainer(it.containingDeclaration) }
 
 private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
     val upperBounds = descriptor.upperBounds

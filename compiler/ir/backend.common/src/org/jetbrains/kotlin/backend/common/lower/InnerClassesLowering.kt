@@ -247,6 +247,31 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 return newCall
             }
 
+            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                val callee = expression.symbol as? IrConstructorSymbol ?: return expression
+                val parent = callee.owner.parent as? IrClass ?: return expression
+                if (!parent.isInner) return expression
+
+                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+
+                val newReference = expression.run { IrFunctionReferenceImpl(startOffset, endOffset, type, newCallee, newCallee.descriptor, typeArgumentsCount, origin) }
+
+                newReference.let {
+                    it.dispatchReceiver = expression.dispatchReceiver
+                    it.extensionReceiver = expression.extensionReceiver
+                    for (t in 0 until expression.typeArgumentsCount) {
+                        it.putTypeArgument(t, expression.getTypeArgument(t))
+                    }
+
+                    for (v in 0 until expression.valueArgumentsCount) {
+                        it.putValueArgument(v, expression.getValueArgument(v))
+                    }
+                }
+
+                return newReference
+            }
             // TODO callable references?
         })
     }

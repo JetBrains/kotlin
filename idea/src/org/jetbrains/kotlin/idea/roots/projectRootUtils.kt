@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.idea.roots
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.util.EmptyRunnable
 import org.jetbrains.jps.model.JpsElement
 import org.jetbrains.jps.model.ex.JpsElementBase
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -50,4 +53,8 @@ fun TargetPlatformKind<*>.asTargetPlatform() = when (this) {
     is TargetPlatformKind.Jvm -> JvmPlatform
     is TargetPlatformKind.JavaScript -> JsPlatform
     is TargetPlatformKind.Common -> TargetPlatform.Common
+}
+
+fun Project.invalidateProjectRoots() {
+    ProjectRootManagerEx.getInstanceEx(this).makeRootsChange(EmptyRunnable.INSTANCE, false, true)
 }

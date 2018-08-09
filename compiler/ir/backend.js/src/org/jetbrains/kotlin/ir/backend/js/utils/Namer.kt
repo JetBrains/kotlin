@@ -60,6 +60,8 @@ object Namer {
     val DEFINE_INLINE_FUNCTION = "defineInlineFunction"
     val DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "\$default"
 
+    val CONTINUATION = "\$cont"
+
     val JS_ERROR = JsNameRef("Error")
 
     val JS_OBJECT = JsNameRef("Object")

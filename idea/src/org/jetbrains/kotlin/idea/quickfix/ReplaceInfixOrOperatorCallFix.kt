@@ -70,7 +70,7 @@ class ReplaceInfixOrOperatorCallFix(
             is KtBinaryExpression -> {
                 replacement = if (element.operationToken == KtTokens.IDENTIFIER) {
                     val newExpression = psiFactory.createExpressionByPattern(
-                            "$0?.$1($2)$elvis", element.left ?: return, element.operationReference, element.right ?: return)
+                            "$0?.$1($2)$elvis", element.left ?: return, element.operationReference.text, element.right ?: return)
                     element.replace(newExpression)
                 }
                 else {

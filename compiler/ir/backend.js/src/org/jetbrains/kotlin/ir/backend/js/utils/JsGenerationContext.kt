@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -44,4 +45,20 @@ class JsGenerationContext {
 
     fun getNameForSymbol(symbol: IrSymbol): JsName = staticContext.getNameForSymbol(symbol, this)
     fun getNameForLoop(loop: IrLoop): JsName? = staticContext.getNameForLoop(loop, this)
+
+    val continuation
+        get() = if (isCoroutineDoResume()) {
+            JsThisRef()
+        } else {
+            if (currentFunction!!.descriptor.isSuspend) {
+                JsNameRef(currentScope.declareName(Namer.CONTINUATION))
+            } else {
+                getNameForSymbol(currentFunction.valueParameters.last().symbol).makeRef()
+            }
+        }
+
+    private fun isCoroutineDoResume(): Boolean {
+        val overriddenSymbols = (currentFunction as? IrSimpleFunction)?.overriddenSymbols ?: return false
+        return staticContext.doResumeFunctionSymbol in overriddenSymbols
+    }
 }

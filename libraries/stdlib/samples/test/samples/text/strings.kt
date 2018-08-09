@@ -1,8 +1,6 @@
 package samples.text
 
 import samples.*
-import kotlin.test.*
-import java.util.*
 
 class Strings {
 
@@ -104,4 +102,29 @@ class Strings {
         assertPrints("Iced frappé!".toUpperCase(), "ICED FRAPPÉ!")
     }
 
+    @Sample
+    fun padStart() {
+        val padWithSpace = "125".padStart(5)
+        assertPrints("'$padWithSpace'", "'  125'")
+
+        val padWithChar = "a".padStart(5, '.')
+        assertPrints("'$padWithChar'", "'....a'")
+
+        // string is returned as is, when its length is greater than the specified
+        val noPadding = "abcde".padStart(3)
+        assertPrints("'$noPadding'", "'abcde'")
+    }
+
+    @Sample
+    fun padEnd() {
+        val padWithSpace = "125".padEnd(5)
+        assertPrints("'$padWithSpace'", "'125  '")
+
+        val padWithChar = "a".padEnd(5, '.')
+        assertPrints("'$padWithChar'", "'a....'")
+
+        // string is returned as is, when its length is greater than the specified
+        val noPadding = "abcde".padEnd(3)
+        assertPrints("'$noPadding'", "'abcde'")
+    }
 }

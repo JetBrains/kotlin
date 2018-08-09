@@ -242,6 +242,9 @@ fun TranslationContext.createCoroutineResult(resolvedCall: ResolvedCall<*>): JsE
     }
 }
 
+fun KotlinType.refineType() =
+    TypeUtils.getAllSupertypes(this).find(KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType) ?: this
+
 /**
  * Tries to get precise statically known primitive type. Takes generic supertypes into account. Doesn't handle smart-casts.
  * This is needed to be compatible with JVM NaN behaviour:
@@ -256,7 +259,7 @@ fun TranslationContext.getPrecisePrimitiveType(expression: KtExpression): Kotlin
     val bindingContext = bindingContext()
     val ktType = bindingContext.getType(expression) ?: return null
 
-    return TypeUtils.getAllSupertypes(ktType).find(KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType) ?: ktType
+    return ktType.refineType()
 }
 
 fun TranslationContext.getPrecisePrimitiveTypeNotNull(expression: KtExpression): KotlinType {

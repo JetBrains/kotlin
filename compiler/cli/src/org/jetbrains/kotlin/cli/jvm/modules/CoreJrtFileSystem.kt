@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.modules
 
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.DeprecatedVirtualFileSystem
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -47,9 +46,9 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
         }
 
     internal class CoreJrtHandler(
-            val virtualFileSystem: CoreJrtFileSystem,
-            val jdkHomePath: String,
-            private val root: Path
+        val virtualFileSystem: CoreJrtFileSystem,
+        val jdkHomePath: String,
+        private val root: Path
     ) {
         fun findFile(fileName: String): VirtualFile? {
             val path = root.resolve(fileName)
@@ -80,9 +79,9 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
 
     companion object {
         private fun loadJrtFsJar(jdkHome: File): File? =
-                File(jdkHome, "lib/jrt-fs.jar").takeIf(File::exists)
+            File(jdkHome, "lib/jrt-fs.jar").takeIf(File::exists)
 
         fun isModularJdk(jdkHome: File): Boolean =
-                loadJrtFsJar(jdkHome) != null
+            loadJrtFsJar(jdkHome) != null
     }
 }

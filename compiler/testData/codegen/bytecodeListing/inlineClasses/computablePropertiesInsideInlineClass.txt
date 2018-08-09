@@ -14,8 +14,6 @@ public final class Foo {
     private final field x: int
     public method <init>(p0: int): void
     public method equals(p0: java.lang.Object): boolean
-    public final method getAsThis(): int
-    public final method getProp(): int
     public final method getX(): int
     public method hashCode(): int
     public method toString(): java.lang.String

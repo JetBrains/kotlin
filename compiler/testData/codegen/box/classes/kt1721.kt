@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class T(val f : () -> Any?) {
     fun call() : Any? = f()
 }

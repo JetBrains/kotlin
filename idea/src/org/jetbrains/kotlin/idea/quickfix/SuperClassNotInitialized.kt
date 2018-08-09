@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -64,7 +64,9 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         val constructors = superClass.constructors.filter {
             it.isVisible(classDescriptor) || (superClass.modality == Modality.SEALED && inSameFile)
         }
-        if (constructors.isEmpty()) return emptyList() // no accessible constructor
+        if (constructors.isEmpty() && (!superClass.isExpect || superClass.kind != ClassKind.CLASS)) {
+            return emptyList() // no accessible constructor
+        }
 
         val fixes = ArrayList<IntentionAction>()
 
@@ -122,7 +124,13 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val element = element ?: return
+            val context = (element.getStrictParentOfType<KtClassOrObject>() ?: element).analyze()
+            val baseClass = AddDefaultConstructorFix.superTypeEntryToClass(element, context)
+
             val newSpecifier = element.replaced(KtPsiFactory(project).createSuperTypeCallEntry(element.text + "()"))
+            if (baseClass != null && baseClass.hasExpectModifier() && baseClass.secondaryConstructors.isEmpty()) {
+                baseClass.createPrimaryConstructorIfAbsent()
+            }
 
             if (putCaretIntoParenthesis) {
                 if (editor != null) {

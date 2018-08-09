@@ -12,7 +12,7 @@ public final class K : p.Nameless {
 package p {
 
     public open class Nameless {
-        public/*package*/ constructor Nameless()
+        public constructor Nameless()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

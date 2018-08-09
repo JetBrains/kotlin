@@ -21,6 +21,35 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
         get() = GradleVersionRequired.AtLeast("4.6")
 
     @Test
+    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android")) {
+        build("assemble", "compileDebugUnitTestJavaWithJavac") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":lib:compileDebugKotlinAndroidLib",
+                ":lib:compileReleaseKotlinAndroidLib",
+                ":lib:compileKotlinJvmLib",
+                ":lib:compileKotlinJsLib",
+                ":app:compileDebugKotlinAndroidApp",
+                ":app:compileReleaseKotlinAndroidApp",
+                ":app:compileKotlinJvmApp",
+                ":app:compileKotlinJsApp",
+                ":lib:compileDebugUnitTestJavaWithJavac",
+                ":app:compileDebugUnitTestJavaWithJavac"
+            )
+
+            listOf("debug", "release").forEach { variant ->
+                assertFileExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/ExpectedLibClass.class")
+                assertFileExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/CommonLibClass.class")
+                assertFileExists("lib/build/tmp/kotlin-classes/$variant/com/example/lib/AndroidLibClass.class")
+
+                assertFileExists("app/build/tmp/kotlin-classes/$variant/com/example/app/AKt.class")
+                assertFileExists("app/build/tmp/kotlin-classes/$variant/com/example/app/KtUsageKt.class")
+            }
+        }
+    }
+
+    @Test
     fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
         setupWorkingDir()
 
