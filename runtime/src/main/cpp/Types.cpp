@@ -47,7 +47,7 @@ void CheckInstance(const ObjHeader* obj, const TypeInfo* type_info) {
   if (IsInstance(obj, type_info)) {
     return;
   }
-  ThrowClassCastException();
+  ThrowClassCastException(obj, type_info);
 }
 
 KBoolean Kotlin_TypeInfo_isInstance(KConstRef obj, KNativePtr typeInfo) {

@@ -39,7 +39,7 @@ void RUNTIME_NORETURN ThrowNullPointerException();
 // Context is evaluated from caller's address.
 void RUNTIME_NORETURN ThrowArrayIndexOutOfBoundsException();
 // Throws class cast exception.
-void RUNTIME_NORETURN ThrowClassCastException();
+void RUNTIME_NORETURN ThrowClassCastException(const ObjHeader* instance, const TypeInfo* type_info);
 // Throws arithmetic exception.
 void RUNTIME_NORETURN ThrowArithmeticException();
 // Throws number format exception.
