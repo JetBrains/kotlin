@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.translate.expression
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -208,11 +209,16 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
             entries: List<KtWhenEntry>,
             expectedType: KotlinType
     ): Pair<List<EntryWithConstants>, Int> {
+        val classId = WhenChecker.getClassIdForTypeIfEnum(expectedType)
         return collectConstantEntries(
-                fromIndex, entries,
-                { (it.toConstantValue(expectedType) as? EnumValue)?.enumEntryName?.identifier },
-                { uniqueEnumNames.add(it) },
-                { JsStringLiteral(it) }
+            fromIndex, entries,
+            {
+                (it.toConstantValue(expectedType) as? EnumValue)
+                    ?.takeIf { enumEntry -> enumEntry.enumClassId == classId }
+                    ?.enumEntryName?.identifier
+            },
+            { uniqueEnumNames.add(it) },
+            { JsStringLiteral(it) }
         )
     }
 

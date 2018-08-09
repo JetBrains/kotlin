@@ -2962,6 +2962,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/bigEnum.kt");
         }
 
+        @TestMetadata("differentEnumClasses.kt")
+        public void testDifferentEnumClasses() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/differentEnumClasses.kt");
+        }
+
+        @TestMetadata("differentEnumClasses2.kt")
+        public void testDifferentEnumClasses2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/differentEnumClasses2.kt");
+        }
+
         @TestMetadata("duplicatingItems.kt")
         public void testDuplicatingItems() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/duplicatingItems.kt");

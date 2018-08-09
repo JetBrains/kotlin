@@ -959,11 +959,18 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     private boolean isWhenWithEnums(@NotNull KtWhenExpression expression) {
-        return WhenChecker.isWhenByEnum(expression, bindingContext) &&
-               switchCodegenProvider.checkAllItemsAreConstantsSatisfying(
-                       expression,
-                       constant -> constant instanceof EnumValue || constant instanceof NullValue
-               );
+        ClassId enumClassId = WhenChecker.getClassIdForEnumSubject(expression, bindingContext);
+        if (enumClassId == null) return false;
+
+        return switchCodegenProvider.checkAllItemsAreConstantsSatisfying(
+                expression,
+                constant -> isEnumEntryOrNull(enumClassId, constant)
+        );
+    }
+
+    private static boolean isEnumEntryOrNull(ClassId enumClassId, ConstantValue<?> constant) {
+        return (constant instanceof EnumValue && ((EnumValue) constant).getEnumClassId().equals(enumClassId)) ||
+               constant instanceof NullValue;
     }
 
     @NotNull

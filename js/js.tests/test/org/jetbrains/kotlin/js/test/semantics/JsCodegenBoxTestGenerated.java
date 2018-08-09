@@ -21619,6 +21619,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/when/enumOptimization/bigEnum.kt");
             }
 
+            @TestMetadata("differentEnumClasses.kt")
+            public void testDifferentEnumClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/when/enumOptimization/differentEnumClasses.kt");
+            }
+
+            @TestMetadata("differentEnumClasses2.kt")
+            public void testDifferentEnumClasses2() throws Exception {
+                runTest("compiler/testData/codegen/box/when/enumOptimization/differentEnumClasses2.kt");
+            }
+
             @TestMetadata("duplicatingItems.kt")
             public void testDuplicatingItems() throws Exception {
                 runTest("compiler/testData/codegen/box/when/enumOptimization/duplicatingItems.kt");
