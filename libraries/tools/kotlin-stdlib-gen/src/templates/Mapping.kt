@@ -204,10 +204,11 @@ object Mapping : TemplateGroupBase() {
         returns("C")
 
         body {
+            fun checkOverflow(value: String) = if (f == Sequences || f == Iterables) "checkIndexOverflow($value)" else value
             """
                 var index = 0
                 for (item in this)
-                    destination.add(transform(index++, item))
+                    destination.add(transform(${checkOverflow("index++")}, item))
                 return destination
             """
         }

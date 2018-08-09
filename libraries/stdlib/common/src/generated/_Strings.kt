@@ -883,7 +883,7 @@ public inline fun CharSequence.count(): Int {
  */
 public inline fun CharSequence.count(predicate: (Char) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
