@@ -22,8 +22,10 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
@@ -81,6 +83,16 @@ abstract class AbstractKotlinCompilation(
 
                         if (this is KotlinCompilationToRunnableFiles) {
                             addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName, forced = false)
+                        }
+
+                        if (sourceSet.name != defaultSourceSetName) {
+                            // Temporary solution for checking consistency across source sets participating in a compilation that may
+                            // not be interconnected with the dependsOn relation: check the settings as if the default source set of
+                            // the compilation depends on the one added to the compilation:
+                            defaultSourceSetLanguageSettingsChecker.runAllChecks(
+                                kotlinExtension.sourceSets.getByName(defaultSourceSetName),
+                                sourceSet
+                            )
                         }
                     }
                 }

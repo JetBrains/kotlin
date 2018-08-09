@@ -9,19 +9,22 @@ import groovy.lang.Closure
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
+import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 
 interface KotlinSourceSet : Named, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
+    fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet
+
     val resources: SourceDirectorySet
 
-    fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet
+    val languageSettings: LanguageSettingsBuilder
+    fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder
+
+    fun dependsOn(other: KotlinSourceSet)
+    val dependsOn: Set<KotlinSourceSet>
 
     companion object {
         const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
         const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
     }
-
-    fun dependsOn(other: KotlinSourceSet)
-
-    val dependsOn: Set<KotlinSourceSet>
 }

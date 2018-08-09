@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert
@@ -224,6 +225,71 @@ class NewMultiplatformIT : BaseGradleIT() {
             )
 
             expectedKotlinOutputFiles.forEach { assertFileExists(it) }
+        }
+    }
+
+    @Test
+    fun testLanguageSettingsApplied() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+
+        gradleBuildScript().appendText(
+            "\n" + """
+                kotlin.sourceSets.jvm6Main.languageSettings {
+                    languageVersion = '1.3'
+                    apiVersion = '1.3'
+                    enableLanguageFeature('InlineClasses')
+                    progressiveMode = true
+                }
+            """.trimIndent()
+        )
+
+        build("compileKotlinJvm6") {
+            assertSuccessful()
+            assertContains("-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses", " -Xprogressive")
+        }
+    }
+
+    @Test
+    fun testLanguageSettingsConsistency() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+
+        gradleBuildScript().appendText(
+            "\n" + """
+                kotlin.sourceSets {
+                    foo { }
+                    bar { dependsOn foo }
+                }
+            """.trimIndent()
+        )
+
+        fun testMonotonousCheck(sourceSetConfigurationChange: String, expectedErrorHint: String) {
+            gradleBuildScript().appendText("\nkotlin.sourceSets.foo.${sourceSetConfigurationChange}")
+            build("tasks") {
+                assertFailed()
+                assertContains(expectedErrorHint)
+            }
+            gradleBuildScript().appendText("\nkotlin.sourceSets.bar.${sourceSetConfigurationChange}")
+            build("tasks") {
+                assertSuccessful()
+            }
+        }
+
+        testMonotonousCheck("languageSettings.languageVersion = '1.4'", SourceSetConsistencyChecks.languageVersionCheckHint)
+        testMonotonousCheck("languageSettings.enableLanguageFeature('InlineClasses')", SourceSetConsistencyChecks.unstableFeaturesHint)
+
+        // check that enabling a bugfix feature and progressive mode or advancing API level
+        // don't require doing the same for dependent source sets:
+        gradleBuildScript().appendText(
+            "\n" + """
+                kotlin.sourceSets.foo.languageSettings {
+                    apiVersion = '1.3'
+                    enableLanguageFeature('SoundSmartcastForEnumEntries')
+                    progressiveMode = true
+                }
+            """.trimIndent()
+        )
+        build("tasks") {
+            assertSuccessful()
         }
     }
 }

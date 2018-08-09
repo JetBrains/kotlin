@@ -13,6 +13,7 @@ import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -41,9 +42,15 @@ class DefaultKotlinSourceSet(
         filter.include("**/*.java", "**/*.kt", "**/*.kts")
     }
 
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
+
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + " resources", fileResolver)
 
     override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet = kotlin.apply { ConfigureUtil.configure(configureClosure, this) }
+
+    override fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder = languageSettings.apply {
+        ConfigureUtil.configure(configureClosure, this)
+    }
 
     override fun getName(): String = displayName
 
@@ -58,6 +65,8 @@ class DefaultKotlinSourceSet(
 
         // Fail-fast approach: check on each new added edge and report a circular dependency at once when the edge is added.
         checkForCircularDependencies()
+
+        project.afterEvaluate { defaultSourceSetLanguageSettingsChecker.runAllChecks(this, other) }
     }
 
     private val dependsOnSourceSetsImpl = mutableSetOf<KotlinSourceSet>()
