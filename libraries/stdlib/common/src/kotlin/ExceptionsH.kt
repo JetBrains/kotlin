@@ -88,6 +88,12 @@ public expect open class NoSuchElementException : RuntimeException {
     constructor(message: String?)
 }
 
+@SinceKotlin("1.3")
+public expect open class ArithmeticException : RuntimeException {
+    constructor()
+    constructor(message: String?)
+}
+
 @Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.")
 public expect open class NoWhenBranchMatchedException : RuntimeException {
     constructor()
