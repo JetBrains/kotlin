@@ -130,7 +130,7 @@ private fun ObjCExportMapper.bridgeType(kotlinType: KotlinType): TypeBridge = ko
                 KonanPrimitiveType.LONG -> ObjCValueType.LONG_LONG
                 KonanPrimitiveType.FLOAT -> ObjCValueType.FLOAT
                 KonanPrimitiveType.DOUBLE -> ObjCValueType.DOUBLE
-                KonanPrimitiveType.NON_NULL_NATIVE_PTR -> error("Can't produce pointer type to framework API") // TODO
+                KonanPrimitiveType.NON_NULL_NATIVE_PTR -> ObjCValueType.POINTER
             }
             ValueTypeBridge(objCValueType)
         },

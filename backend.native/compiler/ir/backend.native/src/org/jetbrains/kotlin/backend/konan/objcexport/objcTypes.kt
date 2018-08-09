@@ -123,5 +123,6 @@ internal enum class ObjCValueType(val encoding: String) {
     UNSIGNED_INT("I"),
     UNSIGNED_LONG_LONG("Q"),
     FLOAT("f"),
-    DOUBLE("d")
+    DOUBLE("d"),
+    POINTER("^v")
 }

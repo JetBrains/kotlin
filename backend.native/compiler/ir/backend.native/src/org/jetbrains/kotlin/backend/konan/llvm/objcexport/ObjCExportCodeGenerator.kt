@@ -100,7 +100,7 @@ internal class ObjCExportCodeGenerator(
         ObjCValueType.CHAR, ObjCValueType.SHORT, ObjCValueType.INT, ObjCValueType.LONG_LONG,
         ObjCValueType.UNSIGNED_CHAR, ObjCValueType.UNSIGNED_SHORT, ObjCValueType.UNSIGNED_INT,
         ObjCValueType.UNSIGNED_LONG_LONG,
-        ObjCValueType.FLOAT, ObjCValueType.DOUBLE -> value
+        ObjCValueType.FLOAT, ObjCValueType.DOUBLE, ObjCValueType.POINTER -> value
     }
 
     private fun FunctionGenerationContext.objCToKotlin(
@@ -113,7 +113,7 @@ internal class ObjCExportCodeGenerator(
         ObjCValueType.CHAR, ObjCValueType.SHORT, ObjCValueType.INT, ObjCValueType.LONG_LONG,
         ObjCValueType.UNSIGNED_CHAR, ObjCValueType.UNSIGNED_SHORT, ObjCValueType.UNSIGNED_INT,
         ObjCValueType.UNSIGNED_LONG_LONG,
-        ObjCValueType.FLOAT, ObjCValueType.DOUBLE -> value
+        ObjCValueType.FLOAT, ObjCValueType.DOUBLE, ObjCValueType.POINTER -> value
     }
 
     fun FunctionGenerationContext.kotlinReferenceToObjC(value: LLVMValueRef) =
@@ -1115,6 +1115,7 @@ private val ObjCValueType.llvmType: LLVMTypeRef get() = when (this) {
     ObjCValueType.UNSIGNED_LONG_LONG -> int64Type
     ObjCValueType.FLOAT -> LLVMFloatType()!!
     ObjCValueType.DOUBLE -> LLVMDoubleType()!!
+    ObjCValueType.POINTER -> kInt8Ptr
 }
 
 private val MethodBridgeParameter.objCType: LLVMTypeRef get() = when (this) {

@@ -741,22 +741,22 @@ abstract class ObjCExportHeaderGenerator(
     private fun mapType(kotlinType: KotlinType, typeBridge: TypeBridge): ObjCType = when (typeBridge) {
         ReferenceBridge -> mapReferenceType(kotlinType)
         is ValueTypeBridge -> {
-            val cName = when (typeBridge.objCValueType) {
-                ObjCValueType.BOOL -> "BOOL"
-                ObjCValueType.UNICHAR -> "unichar"
-                ObjCValueType.CHAR -> "int8_t"
-                ObjCValueType.SHORT -> "int16_t"
-                ObjCValueType.INT -> "int32_t"
-                ObjCValueType.LONG_LONG -> "int64_t"
-                ObjCValueType.UNSIGNED_CHAR -> "uint8_t"
-                ObjCValueType.UNSIGNED_SHORT -> "uint16_t"
-                ObjCValueType.UNSIGNED_INT -> "uint32_t"
-                ObjCValueType.UNSIGNED_LONG_LONG -> "uint64_t"
-                ObjCValueType.FLOAT -> "float"
-                ObjCValueType.DOUBLE -> "double"
+            when (typeBridge.objCValueType) {
+                ObjCValueType.BOOL -> ObjCPrimitiveType("BOOL")
+                ObjCValueType.UNICHAR -> ObjCPrimitiveType("unichar")
+                ObjCValueType.CHAR -> ObjCPrimitiveType("int8_t")
+                ObjCValueType.SHORT -> ObjCPrimitiveType("int16_t")
+                ObjCValueType.INT -> ObjCPrimitiveType("int32_t")
+                ObjCValueType.LONG_LONG -> ObjCPrimitiveType("int64_t")
+                ObjCValueType.UNSIGNED_CHAR -> ObjCPrimitiveType("uint8_t")
+                ObjCValueType.UNSIGNED_SHORT -> ObjCPrimitiveType("uint16_t")
+                ObjCValueType.UNSIGNED_INT -> ObjCPrimitiveType("uint32_t")
+                ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType("uint64_t")
+                ObjCValueType.FLOAT -> ObjCPrimitiveType("float")
+                ObjCValueType.DOUBLE -> ObjCPrimitiveType("double")
+                ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType)
             }
             // TODO: consider other namings.
-            ObjCPrimitiveType(cName)
         }
     }
 }
