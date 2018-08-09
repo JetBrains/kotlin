@@ -708,6 +708,8 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         }
 
         val compilation = target.compilations.getByName(variantDataName)
+        val defaultSourceSet = project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName)
+
         val kotlinTaskName = compilation.compileKotlinTaskName
         // todo: Investigate possibility of creating and configuring kotlinTask before evaluation
         val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName, variantDataName)
@@ -717,6 +719,8 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
         kotlinTask.description = "Compiles the $variantDataName kotlin."
 
+        // Register the source only after the task is created, because tne task is required for that:
+        compilation.source(defaultSourceSet)
         configureSources(kotlinTask, variantData, compilation)
 
         // In MPPs, add the common main Kotlin sources to non-test variants, the common test sources to test variants
