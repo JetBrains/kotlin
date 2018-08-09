@@ -2267,19 +2267,6 @@ compileTestKotlin {
         )
 
         assertAllModulesConfigured()
-
-        Assert.assertEquals(
-            listOf("file:///src/main/java" to JavaSourceRootType.SOURCE,
-                   "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                   "file:///src/main/resources" to JavaResourceRootType.RESOURCE),
-            getSourceRootInfos("project_main")
-        )
-        Assert.assertEquals(
-            listOf("file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                   "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                   "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE),
-            getSourceRootInfos("project_test")
-        )
     }
 
     private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
