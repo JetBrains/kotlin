@@ -33,18 +33,16 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor {
-            val calleeExpression = it.calleeExpression as? KtNameReferenceExpression ?: return@callExpressionVisitor
-            if (calleeExpression.getReferencedName() != FOREACH_NAME) return@callExpressionVisitor
+            val calleeExpression = it.calleeExpression as? KtNameReferenceExpression
+            if (calleeExpression?.getReferencedName() != FOREACH_NAME) return@callExpressionVisitor
+            val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression()
+            if (lambda == null || lambda.functionLiteral.arrow != null) return@callExpressionVisitor
             when (it.getCallableDescriptor()?.fqNameOrNull()) {
                 COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
-                    val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression() ?: return@callExpressionVisitor
-                    if (lambda.functionLiteral.arrow != null) return@callExpressionVisitor
                     val descriptor = lambda.analyze()[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
                     val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
 
-                    if (iterableParameter !is WithDestructuringDeclaration &&
-                        lambda.bodyExpression?.usesDescriptor(iterableParameter) != true
-                    ) {
+                    if (iterableParameter !is WithDestructuringDeclaration && !lambda.bodyExpression.usesDescriptor(iterableParameter)) {
                         holder.registerProblem(
                             calleeExpression,
                             "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
@@ -65,13 +63,14 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
             val literal = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.functionLiteral ?: return
             val psiFactory = KtPsiFactory(project)
             val newParameterList = psiFactory.createLambdaParameterList("_")
-            with (SpecifyExplicitLambdaSignatureIntention) {
+            with(SpecifyExplicitLambdaSignatureIntention) {
                 literal.setParameterListIfAny(psiFactory, newParameterList)
             }
         }
     }
 
-    private fun KtBlockExpression.usesDescriptor(descriptor: VariableDescriptor): Boolean {
+    private fun KtBlockExpression?.usesDescriptor(descriptor: VariableDescriptor): Boolean {
+        if (this == null) return false
         var used = false
         acceptChildren(object : KtVisitorVoid() {
             override fun visitKtElement(element: KtElement) {
