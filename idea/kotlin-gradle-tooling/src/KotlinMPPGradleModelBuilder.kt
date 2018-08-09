@@ -44,7 +44,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             true,
             SourceSetCachedFinder(project)
         )
-        val sourceSets = buildSourceSets(project) ?: return null
+        val sourceSets = buildSourceSets(dependencyResolver, project) ?: return null
         val sourceSetMap = sourceSets.map { it.name to it }.toMap()
         val targets = buildTargets(sourceSetMap, dependencyResolver, project) ?: return null
         computeSourceSetsDeferredInfo(sourceSets, targets)
@@ -60,37 +60,42 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         return getCoroutines(experimentalExt) as? String
     }
 
-    private fun buildSourceSets(project: Project): Collection<KotlinSourceSetImpl>? {
+    private fun buildSourceSets(dependencyResolver: DependencyResolver, project: Project): Collection<KotlinSourceSetImpl>? {
         val kotlinExt = project.extensions.findByName("kotlin") ?: return null
         val getSourceSets = kotlinExt.javaClass.getMethodOrNull("getSourceSets") ?: return null
         @Suppress("UNCHECKED_CAST")
         val sourceSets =
             (getSourceSets(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
-        return sourceSets.mapNotNull { buildSourceSet(it) }
+        return sourceSets.mapNotNull { buildSourceSet(it, dependencyResolver, project) }
     }
 
-    private fun buildSourceSet(gradleSourceSet: Named): KotlinSourceSetImpl? {
+    private fun buildSourceSet(
+        gradleSourceSet: Named,
+        dependencyResolver: DependencyResolver,
+        project: Project
+    ): KotlinSourceSetImpl? {
         val sourceSetClass = gradleSourceSet.javaClass
         val getSourceDirSet = sourceSetClass.getMethodOrNull("getKotlin") ?: return null
         val getResourceDirSet = sourceSetClass.getMethodOrNull("getResources") ?: return null
         val getDependsOn = sourceSetClass.getMethodOrNull("getDependsOn") ?: return null
         val sourceDirs = (getSourceDirSet(gradleSourceSet) as? SourceDirectorySet)?.srcDirs ?: emptySet()
         val resourceDirs = (getResourceDirSet(gradleSourceSet) as? SourceDirectorySet)?.srcDirs ?: emptySet()
+        val dependencies = buildSourceSetDependencies(gradleSourceSet, dependencyResolver, project)
         @Suppress("UNCHECKED_CAST")
         val dependsOnSourceSets = (getDependsOn(gradleSourceSet) as? Set<Named>)?.mapTo(LinkedHashSet()) { it.name } ?: emptySet<String>()
-        return KotlinSourceSetImpl(gradleSourceSet.name, sourceDirs, resourceDirs, dependsOnSourceSets)
+        return KotlinSourceSetImpl(gradleSourceSet.name, sourceDirs, resourceDirs, dependencies, dependsOnSourceSets)
     }
 
     private fun buildDependencies(
-        gradleCompilation: Any,
+        dependencyHolder: Any,
         dependencyResolver: DependencyResolver,
         configurationNameAccessor: String,
         scope: String,
         project: Project
     ): Collection<KotlinDependency> {
-        val gradleCompilationClass = gradleCompilation.javaClass
-        val getConfigurationName = gradleCompilationClass.getMethodOrNull(configurationNameAccessor) ?: return emptyList()
-        val configurationName = getConfigurationName(gradleCompilation) as? String ?: return emptyList()
+        val dependencyHolderClass = dependencyHolder.javaClass
+        val getConfigurationName = dependencyHolderClass.getMethodOrNull(configurationNameAccessor) ?: return emptyList()
+        val configurationName = getConfigurationName(dependencyHolder) as? String ?: return emptyList()
         val configuration = project.configurations.findByName(configurationName) ?: return emptyList()
         if (!configuration.isCanBeResolved) return emptyList()
         val artifactsByProjectPath = configuration
@@ -180,11 +185,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val output = buildCompilationOutput(gradleCompilation, compileKotlinTask) ?: return null
         val arguments = buildCompilationArguments(compileKotlinTask) ?: return null
         val dependencyClasspath = buildDependencyClasspath(compileKotlinTask)
-        val dependencies = buildDependencies(gradleCompilation, dependencyResolver, project)
+        val dependencies = buildCompilationDependencies(gradleCompilation, dependencyResolver, project)
         return KotlinCompilationImpl(isAndroid, gradleCompilation.name, kotlinSourceSets, dependencies, output, arguments, dependencyClasspath)
     }
 
-    private fun buildDependencies(
+    private fun buildCompilationDependencies(
         gradleCompilation: Named,
         dependencyResolver: DependencyResolver,
         project: Project
@@ -195,6 +200,27 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             )
             this += buildDependencies(
                 gradleCompilation, dependencyResolver, "getRuntimeDependencyConfigurationName", "RUNTIME", project
+            )
+        }
+    }
+
+    private fun buildSourceSetDependencies(
+        gradleSourceSet: Named,
+        dependencyResolver: DependencyResolver,
+        project: Project
+    ): Set<KotlinDependency> {
+        return LinkedHashSet<KotlinDependency>().apply {
+            this += buildDependencies(
+                gradleSourceSet, dependencyResolver, "getApiConfigurationName", "COMPILE", project
+            )
+            this += buildDependencies(
+                gradleSourceSet, dependencyResolver, "getImplementationConfigurationName", "COMPILE", project
+            )
+            this += buildDependencies(
+                gradleSourceSet, dependencyResolver, "getCompileOnlyConfigurationName", "COMPILE", project
+            )
+            this += buildDependencies(
+                gradleSourceSet, dependencyResolver, "getRuntimeOnlyConfigurationName", "RUNTIME", project
             )
         }
     }
@@ -252,7 +278,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         for (sourceSet in sourceSets) {
             val compilations = sourceSetToCompilations[sourceSet] ?: continue
             sourceSet.platform = compilations.map { it.platform }.distinct().singleOrNull() ?: KotlinPlatform.COMMON
-            sourceSet.dependencies = compilations.flatMapTo(LinkedHashSet()) { it.dependencies }
             sourceSet.isTestModule = compilations.all { it.isTestModule }
             sourceSet.isAndroid = compilations.all { it.isAndroid }
         }

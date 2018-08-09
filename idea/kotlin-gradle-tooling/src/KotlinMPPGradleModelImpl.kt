@@ -11,15 +11,13 @@ class KotlinSourceSetImpl(
     override val name: String,
     override val sourceDirs: Set<File>,
     override val resourceDirs: Set<File>,
+    override val dependencies: Set<KotlinDependency>,
     override val dependsOnSourceSets: Set<String>
 ) : KotlinSourceSet {
     override var isAndroid: Boolean = false
         internal set
 
     override var platform: KotlinPlatform = KotlinPlatform.COMMON
-        internal set
-
-    override var dependencies: Set<KotlinDependency> = emptySet()
         internal set
 
     override var isTestModule: Boolean = false
