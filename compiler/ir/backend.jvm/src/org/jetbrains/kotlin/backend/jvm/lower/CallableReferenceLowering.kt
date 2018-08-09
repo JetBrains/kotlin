@@ -282,7 +282,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
 
             override fun buildIr(): IrConstructor {
                 argumentToPropertiesMap = boundFunctionParameters.associate {
-                    it to buildPropertyWithBackingField(it.name.safeName(), it.type, false)
+                    it to buildPropertyWithBackingField(it.name.safeName(), it.type)
                 }
 
                 val startOffset = irFunctionReference.startOffset
@@ -310,15 +310,20 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
 
                             val irReceiver = valueParameters.firstOrNull()
                             val receiver = boundFunctionParameters.singleOrNull()
-
+                            //TODO pass proper receiver
                             val receiverValue = receiver?.let {
                                 irGet(irReceiver!!.symbol.owner)
                             } ?: irNull()
                             putValueArgument(1, receiverValue)
-                            //TODO use receiver from base class
-                            receiver?.let {
-                                +irSetField(irGet(functionReferenceThis.owner), argumentToPropertiesMap[it]!!.owner, receiverValue)
-                            }
+                        }
+
+                        //TODO don't write receiver again: use it from base class
+                        boundFunctionParameters.forEachIndexed { index, it ->
+                            +irSetField(
+                                irGet(functionReferenceThis.owner),
+                                argumentToPropertiesMap[it]!!.owner,
+                                irGet(valueParameters[index])
+                            )
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
                         // Save all arguments to fields.
@@ -409,10 +414,10 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                 }
             }
 
-        private fun buildPropertyWithBackingField(name: Name, type: KotlinType, isMutable: Boolean): IrFieldSymbol {
+        private fun buildPropertyWithBackingField(name: Name, type: KotlinType): IrFieldSymbol {
             val fieldSymbol = IrFieldSymbolImpl(
                 JvmPropertyDescriptorImpl.createFinalField(
-                    Name.identifier("this$0"), type, functionReferenceClassDescriptor,
+                    name, type, functionReferenceClassDescriptor,
                     Annotations.EMPTY, JavaVisibilities.PACKAGE_VISIBILITY, Opcodes.ACC_SYNTHETIC, SourceElement.NO_SOURCE
                 )
             )
