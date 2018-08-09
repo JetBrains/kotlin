@@ -12,37 +12,44 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.formatter.canRestore
-import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
-import org.jetbrains.kotlin.idea.formatter.restore
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.formatter.*
 import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
 
 private const val KOTLIN_UPDATE_CODE_STYLE_GROUP_ID = "Update Kotlin code style"
 private const val KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME = "update.kotlin.code.style.notified"
 
 fun notifyKotlinStyleUpdateIfNeeded(project: Project) {
-    if (PropertiesComponent.getInstance(project).getBoolean(KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME, false)) {
+    if (!isDefaultOfficialCodeStyle) return
+
+    @Suppress("DEPRECATION") // Suggested fix is absent in 173. BUNCH: 181
+    val isProjectSettings = CodeStyleSettingsManager.getInstance(project).USE_PER_PROJECT_SETTINGS
+    val settingsComponent: PropertiesComponent = if (isProjectSettings) {
+        PropertiesComponent.getInstance(project)
+    } else {
+        PropertiesComponent.getInstance()
+    }
+
+    if (settingsComponent.getBoolean(KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME, false)) {
         return
     }
 
-    if (!isDefaultOfficialCodeStyle) return
+    val notification = KotlinCodeStyleChangedNotification.create(project, isProjectSettings) ?: return
+    notification.isImportant = true
 
     NotificationsConfiguration.getNotificationsConfiguration()
         .register(KOTLIN_UPDATE_CODE_STYLE_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
-
-    val notification = KotlinCodeStyleChangedNotification(project)
-    notification.isImportant = true
 
     if (ApplicationManager.getApplication().isUnitTestMode) {
         return
     }
 
-    PropertiesComponent.getInstance(project).setValue(KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME, true, false)
+    settingsComponent.setValue(KOTLIN_UPDATE_CODE_STYLE_PROPERTY_NAME, true, false)
 
     notification.notify(project)
 }
 
-private class KotlinCodeStyleChangedNotification(val project: Project) : Notification(
+private class KotlinCodeStyleChangedNotification(val project: Project, isProjectSettings: Boolean) : Notification(
     KOTLIN_UPDATE_CODE_STYLE_GROUP_ID,
     "Kotlin Code Style",
     """
@@ -55,10 +62,31 @@ private class KotlinCodeStyleChangedNotification(val project: Project) : Notific
 ) {
     init {
         val ktFormattingSettings = ktCodeStyleSettings(project)
+
+        if (isProjectSettings) {
+            addAction(object : NotificationAction("Apply new code style") {
+                override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+                    notification.expire()
+
+                    val ktSettings = ktCodeStyleSettings(project) ?: return
+
+                    runWriteAction {
+                        KotlinStyleGuideCodeStyle.apply(ktSettings.all)
+                    }
+                }
+            })
+        }
+
         if (ktFormattingSettings != null && ktFormattingSettings.canRestore()) {
             addAction(object : NotificationAction("Restore old settings") {
                 override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-                    restore(project)
+                    notification.expire()
+
+                    val ktSettings = ktCodeStyleSettings(project) ?: return
+
+                    runWriteAction {
+                        ktSettings.restore()
+                    }
                 }
             })
         }
@@ -67,12 +95,14 @@ private class KotlinCodeStyleChangedNotification(val project: Project) : Notific
     companion object {
         val LOG = Logger.getInstance("KotlinCodeStyleChangedNotification")
 
-        private fun restore(project: Project) {
-            val ktSettings = ktCodeStyleSettings(project) ?: return
+        fun create(project: Project, isProjectSettings: Boolean): KotlinCodeStyleChangedNotification? {
+            val ktFormattingSettings = ktCodeStyleSettings(project) ?: return null
 
-            runWriteAction {
-                ktSettings.restore()
+            if (isProjectSettings && !ktFormattingSettings.hasDefaultLoadScheme()) {
+                return null
             }
+
+            return KotlinCodeStyleChangedNotification(project, isProjectSettings)
         }
     }
 }

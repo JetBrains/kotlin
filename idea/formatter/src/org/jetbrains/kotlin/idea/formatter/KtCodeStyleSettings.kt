@@ -13,11 +13,16 @@ import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 
 data class KtCodeStyleSettings(
     val custom: KotlinCodeStyleSettings,
-    val common: KotlinCommonCodeStyleSettings
+    val common: KotlinCommonCodeStyleSettings,
+    val all: CodeStyleSettings
 )
 
 fun KtCodeStyleSettings.canRestore(): Boolean {
     return custom.canRestore() || common.canRestore()
+}
+
+fun KtCodeStyleSettings.hasDefaultLoadScheme(): Boolean {
+    return custom.CODE_STYLE_DEFAULTS == null || common.CODE_STYLE_DEFAULTS == null
 }
 
 fun KtCodeStyleSettings.restore() {
@@ -32,7 +37,7 @@ fun ktCodeStyleSettings(project: Project): KtCodeStyleSettings? {
     val ktCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE) as KotlinCommonCodeStyleSettings
     val ktCustomSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)
 
-    return KtCodeStyleSettings(ktCustomSettings, ktCommonSettings)
+    return KtCodeStyleSettings(ktCustomSettings, ktCommonSettings, settings)
 }
 
 val CodeStyleSettings.kotlinCommonSettings: KotlinCommonCodeStyleSettings
