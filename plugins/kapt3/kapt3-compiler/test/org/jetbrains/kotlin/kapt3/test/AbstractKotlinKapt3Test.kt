@@ -186,7 +186,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 val actualFile = File(tree.sourceFile.toUri())
 
                 // By default, JavaFileObject.getName() returns the absolute path to the file.
-                // In our test, such a path will be temporary, so the comparision against it will lead to flaky tests.
+                // In our test, such a path will be temporary, so the comparison against it will lead to flaky tests.
                 tree.sourcefile = KaptJavaFileObject(tree, tree.defs.firstIsInstance(), actualFile)
             }
 

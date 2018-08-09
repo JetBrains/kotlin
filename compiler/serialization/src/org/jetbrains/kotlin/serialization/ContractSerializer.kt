@@ -134,7 +134,7 @@ class ContractSerializer {
                 }
 
                 override fun visitIsNullPredicate(isNullPredicate: IsNullPredicate, data: Unit): ProtoBuf.Expression.Builder {
-                    // get builder with variable embeded into it
+                    // get builder with variable embedded into it
                     val builder = visitVariableReference(isNullPredicate.arg, data)
 
                     // set flags

@@ -779,7 +779,7 @@ fun main(args: Array<String>) {
     }
 
     /*
-    // Maven and Gradle are not relevent for AS branch
+    // Maven and Gradle are not relevant for AS branch
 
     testGroup("idea/idea-maven/test", "idea/idea-maven/testData") {
         testClass<AbstractMavenConfigureProjectByChangingFileTest> {
