@@ -8293,6 +8293,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIs.kt");
         }
 
+        @TestMetadata("NotIsNullableType.kt")
+        public void testNotIsNullableType() throws Exception {
+            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsNullableType.kt");
+        }
+
         @TestMetadata("OtherVar1.kt")
         public void testOtherVar1() throws Exception {
             runTest("idea/testData/intentions/foldInitializerAndIfToElvis/OtherVar1.kt");

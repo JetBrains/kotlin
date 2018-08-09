@@ -121,6 +121,7 @@ class FoldInitializerAndIfToElvisIntention : SelfTargetingRangeIntention<KtIfExp
             }
             is KtIsExpression -> {
                 if (!operationExpression.isNegated) return null
+                if (operationExpression.typeReference?.typeElement is KtNullableType) return null
                 operationExpression.leftHandSide
             }
             else -> return null
