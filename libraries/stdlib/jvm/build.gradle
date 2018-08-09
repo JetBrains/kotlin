@@ -261,4 +261,10 @@ compileTestKotlin {
     }
 }
 
+test {
+    if (project.hasProperty("kotlin.stdlib.test.long.sequences")) {
+        systemProperty("kotlin.stdlib.test.long.sequences", "true")
+    }
+}
+
 kotlin.experimental.coroutines 'enable'
