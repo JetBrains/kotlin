@@ -52,6 +52,7 @@ object Elements : TemplateGroupBase() {
             ${if (f == Iterables) "if (this is List) return this.indexOf(element)" else ""}
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (element == item)
                     return index
                 index++
@@ -106,6 +107,7 @@ object Elements : TemplateGroupBase() {
             var lastIndex = -1
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (element == item)
                     lastIndex = index
                 index++
@@ -157,12 +159,13 @@ object Elements : TemplateGroupBase() {
             """
             var index = 0
             for (item in this) {
+                ${if (f != Lists) "checkIndexOverflow(index)" else ""}
                 if (predicate(item))
                     return index
                 index++
             }
             return -1
-            """
+            """.lines().filterNot { it.isBlank() }.joinToString("\n")
         }
 
         body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
@@ -190,6 +193,7 @@ object Elements : TemplateGroupBase() {
             var lastIndex = -1
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (predicate(item))
                     lastIndex = index
                 index++

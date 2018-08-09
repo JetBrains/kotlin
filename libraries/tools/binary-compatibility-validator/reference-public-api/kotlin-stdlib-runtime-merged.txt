@@ -2263,6 +2263,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun takeLast (Ljava/util/List;I)Ljava/util/List;
 	public static final fun takeLastWhile (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun takeWhile (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun throwCountOverflow ()V
+	public static final fun throwIndexOverflow ()V
 	public static final fun toBooleanArray (Ljava/util/Collection;)[Z
 	public static final fun toByteArray (Ljava/util/Collection;)[B
 	public static final fun toCharArray (Ljava/util/Collection;)[C

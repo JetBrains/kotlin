@@ -178,7 +178,7 @@ constructor(private val sequence: Sequence<T>, private val transformer: (Int, T)
         val iterator = sequence.iterator()
         var index = 0
         override fun next(): R {
-            return transformer(index++, iterator.next())
+            return transformer(checkIndexOverflow(index++), iterator.next())
         }
 
         override fun hasNext(): Boolean {
@@ -197,7 +197,7 @@ constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
         val iterator = sequence.iterator()
         var index = 0
         override fun next(): IndexedValue<T> {
-            return IndexedValue(index++, iterator.next())
+            return IndexedValue(checkIndexOverflow(index++), iterator.next())
         }
 
         override fun hasNext(): Boolean {
