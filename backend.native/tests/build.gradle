@@ -2820,7 +2820,7 @@ task jsinterop_math(type: RunStandaloneKonanTest) {
 }
 
 task interop_libiconv(type: RunStandaloneKonanTest) {
-    disabled = (isWindows() || (project.testTarget != null))
+    disabled = (project.testTarget != null)
     source = "interop/libiconv.kt"
     goldValue = "72 72\n101 101\n108 108\n108 108\n111 111\n33 33\n"
 }
