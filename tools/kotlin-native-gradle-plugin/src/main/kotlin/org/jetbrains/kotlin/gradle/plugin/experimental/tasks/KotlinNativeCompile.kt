@@ -16,25 +16,26 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental.tasks
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
+import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
 
-open class KotlinNativeCompile @Inject constructor(internal val binary: AbstractKotlinNativeBinary)
-    : DefaultTask()
+open class KotlinNativeCompile @Inject constructor(internal val binary: AbstractKotlinNativeBinary) : AbstractCompile()
 {
     init {
         super.dependsOn(KonanPlugin.KONAN_DOWNLOAD_TASK_NAME)
@@ -44,6 +45,8 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
 
     val sources: FileCollection
         @InputFiles get() = binary.sources
+
+    override fun getSource(): FileTree = sources.asFileTree
 
     private val commonSources: FileCollection
         get() = with(binary.sourceSet) {
@@ -67,6 +70,10 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
 
     val entryPoint: String?
         @Optional @Input get() = binary.component.entryPoint
+
+    val compilerPluginOptions = CompilerPluginOptions()
+
+    var compilerPluginClasspath: FileCollection? = null
 
     val outputFile: File
         get() = outputLocationProvider.get().asFile
@@ -105,10 +112,18 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
         }
     }
 
+    // initializing AbstractCompile properties
+    init {
+        classpath = libraries
+        destinationDir = if (outputFile.isDirectory) outputFile else outputFile.parentFile
+        sourceCompatibility = "1.6"
+        targetCompatibility = "1.6"
+    }
+
     // Task action
 
     @TaskAction
-    fun compile() {
+    override fun compile() {
         outputFile.parentFile.mkdirs()
 
         val args = mutableListOf<String>().apply {
@@ -123,6 +138,15 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
             add("-Xmulti-platform")
 
             addArgIfNotNull("-entry", entryPoint)
+
+            compilerPluginClasspath?.let { pluginClasspath ->
+                pluginClasspath.map { it.canonicalPath }.sorted().forEach { path ->
+                    add("-Xplugin=$path")
+                }
+                compilerPluginOptions.arguments.forEach {
+                    add("-P$it")
+                }
+            }
 
             addAll(additionalCompilerOptions)
 

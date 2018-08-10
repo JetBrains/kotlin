@@ -23,6 +23,7 @@ import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.HelpTasksPlugin
 import org.gradle.api.tasks.TaskContainer
@@ -30,20 +31,20 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.plugins.NativeBasePlugin
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.CInteropTask
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
-import org.jetbrains.kotlin.gradle.plugin.hasProperty
-import org.jetbrains.kotlin.gradle.plugin.konanCompilerDownloadDir
-import org.jetbrains.kotlin.gradle.plugin.setProperty
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompilerDownloadTask
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
+
+    private val log =  Logging.getLogger(this.javaClass)
 
     private fun TaskContainer.createRunTestTask(
             taskName: String,
@@ -107,6 +108,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
     // TODO: Rework this part: the task should be created in the binary constructor (if it is possible).
     private fun Project.addCompilationTasks() {
+        val kotlinVersion = this@KotlinNativeBasePlugin.loadKotlinVersionFromResource(log)
         val assembleTask = tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
         val typeToAssemble = mutableMapOf<KotlinNativeBuildType, Task>()
         val targetToAssemble = mutableMapOf<KonanTarget, Task>()
@@ -115,6 +117,10 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
             it.group = BasePlugin.BUILD_GROUP
             it.description = description
             assembleTask.dependsOn(it)
+        }
+
+        project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+            isTransitive = false
         }
 
         components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
@@ -126,9 +132,13 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                     names.getCompileTaskName(LANGUAGE_NAME),
                     KotlinNativeCompile::class.java,
                     binary
-            ).apply {
-                group = BasePlugin.BUILD_GROUP
-                description = "Compiles Kotlin/Native source set '${binary.sourceSet.name}' into a ${binary.kind.name.toLowerCase()}"
+            ).also {
+                it.group = BasePlugin.BUILD_GROUP
+                it.description = "Compiles Kotlin/Native source set '${binary.sourceSet.name}' into a ${binary.kind.name.toLowerCase()}"
+
+                SubpluginEnvironment.loadSubplugins(this, kotlinVersion)
+                    .addSubpluginOptions<CommonCompilerArguments>(this, it, it.compilerPluginOptions)
+                it.compilerPluginClasspath = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
 
                 // Register an API header produced for shared/static library as a task output.
                 if (binary.kind == CompilerOutputKind.DYNAMIC || binary.kind == CompilerOutputKind.STATIC) {
@@ -136,10 +146,10 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                         with(binary) {
                             val prefix = kind.prefix(konanTarget)
                             val baseName = getBaseName().get().replace('-', '_')
-                            outputFile.parentFile.resolve("$prefix${baseName}_api.h")
+                            it.outputFile.parentFile.resolve("$prefix${baseName}_api.h")
                         }
                     }
-                    outputs.file(headerFileProvider)
+                    it.outputs.file(headerFileProvider)
                 }
             }
             binary.compileTask.set(compileTask)
