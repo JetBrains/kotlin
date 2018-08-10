@@ -126,7 +126,7 @@ internal object CompletedContinuation : Continuation<Any?> {
 }
 
 @SinceKotlin("1.3")
-// To distinguish suspend function types from ordinary function types all suspend function type shall implement this interface
+// To distinguish suspend function types from ordinary function types all suspend function types shall implement this interface
 internal interface SuspendFunction
 
 @SinceKotlin("1.3")
