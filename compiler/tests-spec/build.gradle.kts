@@ -15,3 +15,5 @@ sourceSets {
 projectTest {
     workingDir = rootDir
 }
+
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerSpecTestsKt")
