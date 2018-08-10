@@ -11331,6 +11331,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/typeMismatch/kt17404.kt");
         }
 
+        @TestMetadata("kt25928.kt")
+        public void testKt25928() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/kt25928.kt");
+        }
+
         @TestMetadata("letClassImplementAdditionalInterface.kt")
         public void testLetClassImplementAdditionalInterface() throws Exception {
             runTest("idea/testData/quickfix/typeMismatch/letClassImplementAdditionalInterface.kt");
