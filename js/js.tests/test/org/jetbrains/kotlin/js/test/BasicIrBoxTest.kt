@@ -125,8 +125,7 @@ abstract class BasicIrBoxTest(
     ) {
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
-        // TODO: cache runtime.js and don't cache kotlin.js for IR BE tests
-        super.runGeneratedCode(listOf(runtimeFile.absolutePath) + jsFiles, null, null, testFunction, expectedResult, false)
+        NashornIrJsTestChecker.check(jsFiles, null, null, testFunction, expectedResult, false)
     }
 }
 
