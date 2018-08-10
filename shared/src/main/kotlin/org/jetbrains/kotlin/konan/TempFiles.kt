@@ -26,7 +26,6 @@ class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
     private val outputName = File(outputPath).name
 
     val nativeBinaryFile    by lazy { File(dir,"${outputName}.kt.bc") }
-    val cAdapterDef         by lazy { File(dir,"${outputName}_symbols.def") }
     val cAdapterCpp         by lazy { File(dir, "api.cpp") }
     val cAdapterBitcode     by lazy { File(dir, "api.bc") }
 

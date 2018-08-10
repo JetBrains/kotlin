@@ -38,6 +38,7 @@ class OutputFiles(outputPath: String?, target: KonanTarget, produce: CompilerOut
      * Header file for dynamic library
      */
     val cAdapterHeader      by lazy { File("${outputName}_api.h") }
+    val cAdapterDef         by lazy { File("${outputName}_symbols.def") }
 
     /**
      * Main compiler's output file
