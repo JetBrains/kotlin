@@ -346,7 +346,8 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    private fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
+    @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
+    fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
         val result = repeatAnalysisIfNeeded(analyze(environment, null), environment, null) ?: return null
 
         if (!result.shouldGenerateCode) return null
