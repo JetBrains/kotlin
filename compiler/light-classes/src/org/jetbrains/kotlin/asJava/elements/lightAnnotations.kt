@@ -134,7 +134,7 @@ class KtLightAnnotationForSourceEntry(
         return KtLightPsiJavaCodeReferenceElement(
             kotlinOrigin.navigationElement,
             reference,
-            { super.getNameReferenceElement()!! })
+            { super.getNameReferenceElement() })
     }
 
 
