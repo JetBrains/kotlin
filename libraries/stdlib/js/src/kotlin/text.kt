@@ -75,5 +75,5 @@ public actual class StringBuilder(content: String = "") : Appendable, CharSequen
  * @sample samples.text.Strings.clearStringBuilder
  */
 @SinceKotlin("1.3")
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-public actual fun StringBuilder.clear(): StringBuilder = this.clear()
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER", "NOTHING_TO_INLINE")
+public actual inline fun StringBuilder.clear(): StringBuilder = this.clear()
