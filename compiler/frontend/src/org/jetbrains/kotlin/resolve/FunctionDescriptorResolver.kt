@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -48,6 +45,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameter
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromModifiers
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
+import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
+import org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -203,6 +202,10 @@ class FunctionDescriptorResolver(
         val userData = mutableMapOf<FunctionDescriptor.UserDataKey<*>, Any>().apply {
             if (contractProvider != null) {
                 put(ContractProviderKey, contractProvider)
+            }
+
+            if (receiverType != null && expectedFunctionType.functionTypeExpected() && !expectedFunctionType.annotations.isEmpty()) {
+                put(DslMarkerUtils.FunctionTypeAnnotationsKey, expectedFunctionType.annotations)
             }
         }
 

@@ -16890,6 +16890,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/dslMarker"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("annotatedFunctionType.kt")
+                public void testAnnotatedFunctionType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/annotatedFunctionType.kt");
+                }
+
+                @TestMetadata("annotatedFunctionType_1_4.kt")
+                public void testAnnotatedFunctionType_1_4() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/annotatedFunctionType_1_4.kt");
+                }
+
                 @TestMetadata("annotatedTypeArgument.kt")
                 public void testAnnotatedTypeArgument() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/annotatedTypeArgument.kt");

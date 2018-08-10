@@ -86,6 +86,7 @@ enum class LanguageFeature(
     StrictJavaNullabilityAssertions(KOTLIN_1_3, kind = BUG_FIX),
     SoundSmartcastForEnumEntries(KOTLIN_1_3, kind = BUG_FIX),
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(KOTLIN_1_3, kind = BUG_FIX),
+    DslMarkerOnFunctionTypeReceiver(KOTLIN_1_4, kind = BUG_FIX),
 
     RestrictReturnStatementTarget(KOTLIN_1_4, kind = BUG_FIX),
     ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED, kind = BUG_FIX),
