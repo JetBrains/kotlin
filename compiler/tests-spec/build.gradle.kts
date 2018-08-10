@@ -17,3 +17,8 @@ projectTest {
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerSpecTestsKt")
+
+val printSpecTestsStatistic by smartJavaExec {
+    classpath = javaPluginConvention().sourceSets.getByName("test").runtimeClasspath
+    main = "org.jetbrains.kotlin.spec.tasks.PrintSpecTestsStatisticKt"
+}
