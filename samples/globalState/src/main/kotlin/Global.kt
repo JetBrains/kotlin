@@ -17,7 +17,7 @@
 import global.*
 import kotlinx.cinterop.*
 import platform.posix.*
-import konan.worker.*
+import kotlin.native.worker.*
 
 inline fun Int.ensureUnixCallResult(op: String, predicate: (Int) -> Boolean = { x -> x == 0} ): Int {
     if (!predicate(this)) {
@@ -49,7 +49,7 @@ fun main(args: Array<String>) {
     sharedData.f = 0.5f
     sharedData.string = "Hello Kotlin!".cstr.getPointer(arena)
     // Here we create detached mutable object, which could be later reattached by another thread.
-    sharedData.kotlinObject = konan.worker.detachObjectGraph {
+    sharedData.kotlinObject = kotlin.native.worker.detachObjectGraph {
         SharedData("A string", 42, SharedDataMember(2.39))
     }
     // Here we create shared frozen object reference,
@@ -66,12 +66,12 @@ fun main(args: Array<String>) {
             argC ->
             initRuntimeIfNeeded()
             dumpShared("thread2")
-            val kotlinObject = konan.worker.attachObjectGraph<SharedData>(sharedData.kotlinObject)
-            val arg = konan.worker.attachObjectGraph<SharedDataMember>(argC)
+            val kotlinObject = kotlin.native.worker.attachObjectGraph<SharedData>(sharedData.kotlinObject)
+            val arg = kotlin.native.worker.attachObjectGraph<SharedDataMember>(argC)
             println("thread arg is $arg Kotlin object is $kotlinObject frozen is $globalObject")
             // Workaround for compiler issue.
             null as COpaquePointer?
-        }, konan.worker.detachObjectGraph { SharedDataMember(3.14)} ).ensureUnixCallResult("pthread_create")
+        }, kotlin.native.worker.detachObjectGraph { SharedDataMember(3.14)} ).ensureUnixCallResult("pthread_create")
         pthread_join(thread.value, null).ensureUnixCallResult("pthread_join")
     }
 

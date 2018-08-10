@@ -1,6 +1,6 @@
 // See KT-14999
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object Obj {
     var key = ""
     var value = ""

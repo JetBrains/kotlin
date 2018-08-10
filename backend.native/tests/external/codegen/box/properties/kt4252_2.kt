@@ -1,5 +1,5 @@
 class Foo() {
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     companion object {
         val bar = "OK";
         var boo = "FAIL";

@@ -18,7 +18,7 @@ open class BaseClass {
         get() = this
 }
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object C: BaseClass(), I<String> {
     fun f(s: Int) = 1
     fun f(s: String) = 2

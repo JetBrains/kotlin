@@ -16,6 +16,8 @@
 
 package kotlin.reflect
 
+import kotlin.native.*
+
 /**
  * Represents a property, such as a named `val` or `var` declaration.
  * Instances of this class are obtainable by the `::` operator.

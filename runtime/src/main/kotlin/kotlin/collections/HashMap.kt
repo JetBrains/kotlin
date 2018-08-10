@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-import konan.worker.isFrozen
+import kotlin.native.worker.isFrozen
 
 actual class HashMap<K, V> private constructor(
         private var keysArray: Array<K>,
@@ -671,7 +671,7 @@ internal class HashMapValues<V> internal constructor(
 
 internal class HashMapEntrySet<K, V> internal constructor(
         val backing: HashMap<K, V>
-) : MutableSet<MutableMap.MutableEntry<K, V>>, konan.internal.KonanSet<MutableMap.MutableEntry<K, V>> {
+) : MutableSet<MutableMap.MutableEntry<K, V>>, kotlin.native.internal.KonanSet<MutableMap.MutableEntry<K, V>> {
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()

@@ -4,7 +4,7 @@
 import kotlin.reflect.KProperty
 import kotlin.test.assertEquals
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object Delegate {
     lateinit var prop: KProperty<*>
 

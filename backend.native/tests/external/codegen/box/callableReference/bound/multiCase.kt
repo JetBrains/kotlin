@@ -10,7 +10,7 @@ var A.w: Int
         v = c + 10
     }
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object F {
     var u = 0
 }

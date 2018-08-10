@@ -131,10 +131,10 @@ OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endInd
 
 OBJ_GETTER0(Kotlin_getCurrentStackTrace);
 
-OBJ_GETTER0(Kotlin_konan_internal_undefined);
+OBJ_GETTER0(Kotlin_native_internal_undefined);
 
-void Kotlin_konan_internal_GC_suspend(KRef);
-void Kotlin_konan_internal_GC_resume(KRef);
+void Kotlin_native_internal_GC_suspend(KRef);
+void Kotlin_native_internal_GC_resume(KRef);
 
 #ifdef __cplusplus
 }

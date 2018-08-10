@@ -24,10 +24,11 @@ internal const val NATIVE_PTR_NAME = "NativePtr"
 
 object KonanFqNames {
 
-    val packageName = FqName("konan.internal")
-    val nativePtr = packageName.child(Name.identifier(NATIVE_PTR_NAME)).toUnsafe()
-    val nonNullNativePtr = FqNameUnsafe("konan.internal.NonNullNativePtr")
-    val throws = FqName("konan.Throws")
+    val packageName = FqName("kotlin.native")
+    val internalPackageName = FqName("kotlin.native.internal")
+    val nativePtr = internalPackageName.child(Name.identifier(NATIVE_PTR_NAME)).toUnsafe()
+    val nonNullNativePtr = FqNameUnsafe("kotlin.native.internal.NonNullNativePtr")
+    val throws = FqName("kotlin.native.Throws")
 }
 
 /**

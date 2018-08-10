@@ -2,7 +2,7 @@ import kotlin.reflect.KProperty
 
 var result: String by Delegate
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object Delegate {
     var value = "lol"
 

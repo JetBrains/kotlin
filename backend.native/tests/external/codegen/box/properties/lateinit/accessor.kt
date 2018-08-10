@@ -8,7 +8,7 @@ public class A {
         return str
     }
 
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     private companion object {
         private lateinit var str: String
     }

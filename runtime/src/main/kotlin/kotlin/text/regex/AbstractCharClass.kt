@@ -33,8 +33,9 @@
 
 package kotlin.text.regex
 
+import kotlin.native.worker.AtomicReference
 import kotlin.collections.associate
-import konan.worker.freeze
+import kotlin.native.worker.freeze
 
 
 /**
@@ -98,7 +99,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
         get() = this
 
 
-    private val surrogates_ = konan.worker.AtomicReference<AbstractCharClass>()
+    private val surrogates_ = AtomicReference<AbstractCharClass>()
     val surrogates: AbstractCharClass
         get() {
             surrogates_.get()?.let {
@@ -120,7 +121,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
         }
 
 
-    private val withoutSurrogates_ = konan.worker.AtomicReference<AbstractCharClass>()
+    private val withoutSurrogates_ = AtomicReference<AbstractCharClass>()
     val withoutSurrogates: AbstractCharClass
         get() {
             withoutSurrogates_.get()?.let {
@@ -572,8 +573,8 @@ internal abstract class AbstractCharClass : SpecialToken() {
             PF("Pf", { CachedCategory(CharCategory.FINAL_QUOTE_PUNCTUATION.value, false)  })
         }
 
-        private val classCache = Array<konan.worker.AtomicReference<CachedCharClass>>(CharClasses.values().size, {
-            konan.worker.AtomicReference<CachedCharClass>()
+        private val classCache = Array<AtomicReference<CachedCharClass>>(CharClasses.values().size, {
+            AtomicReference<CachedCharClass>()
         })
         private val classCacheMap = CharClasses.values().associate { it -> it.regexName to it }
 

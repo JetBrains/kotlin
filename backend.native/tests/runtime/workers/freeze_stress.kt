@@ -2,7 +2,7 @@ package runtime.workers.freeze_stress
 
 import kotlin.test.*
 
-import konan.worker.*
+import kotlin.native.worker.*
 
 class Random(private var seed: Int) {
     fun next(): Int {

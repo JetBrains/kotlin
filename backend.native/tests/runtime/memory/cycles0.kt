@@ -43,7 +43,7 @@ fun createCycles(junk: Node) {
     // Create outer link from cyclic garbage.
     val outer = Node(42, null, null, null)
     createCycles(outer)
-    konan.internal.GC.collect()
+    kotlin.native.internal.GC.collect()
     // Ensure outer is not collected.
     println(outer.data)
 }

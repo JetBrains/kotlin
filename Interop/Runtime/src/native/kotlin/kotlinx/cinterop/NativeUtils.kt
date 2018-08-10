@@ -16,7 +16,7 @@
 
 package kotlinx.cinterop
 
-import konan.internal.Intrinsic
+import kotlin.native.internal.Intrinsic
 
 internal fun decodeFromUtf8(bytes: ByteArray): String = bytes.stringFromUtf8()
 

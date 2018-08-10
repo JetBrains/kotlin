@@ -19,7 +19,7 @@
 
 package kotlin
 
-import konan.internal.InlineConstructor
+import kotlin.native.internal.InlineConstructor
 import kotlin.collections.*
 import kotlin.internal.PureReifiable
 import kotlin.util.sortArrayComparable

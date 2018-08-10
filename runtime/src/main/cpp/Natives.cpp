@@ -44,7 +44,7 @@ OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
 }
 
 // TODO: consider handling it with compiler magic instead.
-OBJ_GETTER0(Kotlin_konan_internal_undefined) {
+OBJ_GETTER0(Kotlin_native_internal_undefined) {
   RETURN_OBJ(nullptr);
 }
 

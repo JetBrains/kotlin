@@ -1,6 +1,6 @@
 import kotlinx.cinterop.*
 import objcSmoke.*
-import konan.ref.*
+import kotlin.native.ref.*
 import kotlin.test.*
 
 fun main(args: Array<String>) {

@@ -135,7 +135,7 @@ private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<Ir
     // TODO: hack over missed parents in deserialized fields/property declarations.
     fields.forEach{it.parent = irClass}
 
-    if (classDescriptor.hasAnnotation(FqName.fromSegments(listOf("konan", "internal", "NoReorderFields"))))
+    if (classDescriptor.hasAnnotation(FqName.fromSegments(listOf("kotlin", "native", "internal", "NoReorderFields"))))
         return fields
 
     return fields.sortedBy {

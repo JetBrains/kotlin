@@ -18,7 +18,7 @@ package kotlin.collections
 
 actual class HashSet<E> internal constructor(
         val backing: HashMap<E, *>
-) : MutableSet<E>, AbstractMutableCollection<E>(), konan.internal.KonanSet<E> {
+) : MutableSet<E>, AbstractMutableCollection<E>(), kotlin.native.internal.KonanSet<E> {
 
     actual constructor() : this(HashMap<E, Nothing>())
 

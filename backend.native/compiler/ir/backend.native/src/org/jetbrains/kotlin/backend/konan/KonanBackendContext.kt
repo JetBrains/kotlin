@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.KonanSharedVariablesManager
-import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
+import org.jetbrains.kotlin.backend.konan.descriptors.kotlinNativeInternal
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -44,10 +44,10 @@ abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBac
     }
 
     override fun getInternalClass(name: String): ClassDescriptor =
-            builtIns.konanInternal.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+            builtIns.kotlinNativeInternal.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
     override fun getInternalFunctions(name: String): List<FunctionDescriptor> =
-            builtIns.konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
+            builtIns.kotlinNativeInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
 
     val messageCollector: MessageCollector
         get() = config.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)

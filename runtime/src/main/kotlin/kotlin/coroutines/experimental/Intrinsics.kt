@@ -19,7 +19,7 @@ package kotlin.coroutines.experimental.intrinsics
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.processBareContinuationResume
-import konan.internal.*
+import kotlin.native.internal.*
 
 
 /**

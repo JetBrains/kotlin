@@ -16,7 +16,7 @@
 
 package kotlin.text
 
-import konan.internal.FloatingPointParser
+import kotlin.native.internal.FloatingPointParser
 
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].

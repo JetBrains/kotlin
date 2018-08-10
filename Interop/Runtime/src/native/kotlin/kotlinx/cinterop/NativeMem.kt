@@ -16,7 +16,8 @@
 
 package kotlinx.cinterop
 
-import konan.internal.Intrinsic
+import kotlin.native.*
+import kotlin.native.internal.Intrinsic
 
 @PublishedApi
 internal inline val pointerSize: Int

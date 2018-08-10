@@ -15,8 +15,8 @@
  */
 
 package kotlin
-import konan.internal.ExportForCompiler
-import konan.internal.InlineConstructor
+import kotlin.native.internal.ExportForCompiler
+import kotlin.native.internal.InlineConstructor
 
 // TODO: remove that, as RTTI shall be per instantiation.
 @ExportTypeInfo("theArrayTypeInfo")

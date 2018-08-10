@@ -285,14 +285,14 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         moduleDescriptor.builtIns as KonanBuiltIns
     }
 
-    private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope }
+    private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.internalPackageName).memberScope }
 
     val nativePtr by lazy { packageScope.getContributedClassifier(NATIVE_PTR_NAME) as ClassDescriptor }
     val nativePtrPlusLong by lazy { nativePtr.unsubstitutedMemberScope.getContributedFunctions("plus").single() }
     val nativePtrToLong   by lazy { nativePtr.unsubstitutedMemberScope.getContributedFunctions("toLong").single() }
     val getNativeNullPtr  by lazy { packageScope.getContributedFunctions("getNativeNullPtr").single() }
     val immutableBinaryBlobOf by lazy {
-        builtIns.builtInsModule.getPackage(FqName("konan")).memberScope.getContributedFunctions("immutableBinaryBlobOf").single()
+        builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBinaryBlobOf").single()
     }
 
     val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
@@ -319,7 +319,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
 
     override val reflectionTypes: ReflectionTypes by lazy(PUBLICATION) {
-        ReflectionTypes(moduleDescriptor, FqName("konan.internal"))
+        ReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
     }
     private val vtableBuilders = mutableMapOf<IrClass, ClassVtablesBuilder>()
 

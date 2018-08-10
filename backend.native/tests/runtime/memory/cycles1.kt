@@ -1,11 +1,11 @@
 package runtime.memory.cycles1
 
 import kotlin.test.*
-import konan.ref.*
+import kotlin.native.ref.*
 
 @Test fun runTest() {
     val weakRefToTrashCycle = createLoop()
-    konan.internal.GC.collect()
+    kotlin.native.internal.GC.collect()
     assertNull(weakRefToTrashCycle.get())
 }
 

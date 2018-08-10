@@ -1,6 +1,6 @@
 class TestObject()
 {
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     companion object {
         var prop: Int = 1
             get() = field++

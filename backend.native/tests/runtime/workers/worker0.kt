@@ -2,7 +2,7 @@ package runtime.workers.worker0
 
 import kotlin.test.*
 
-import konan.worker.*
+import kotlin.native.worker.*
 
 @Test fun runTest() {
     val worker = startWorker()

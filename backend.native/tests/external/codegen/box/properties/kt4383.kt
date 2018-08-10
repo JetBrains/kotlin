@@ -4,7 +4,7 @@ class D {
     operator fun getValue(a: Any, p: KProperty<*>) { }
 }
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object P {
     val u = Unit
     val v by D()

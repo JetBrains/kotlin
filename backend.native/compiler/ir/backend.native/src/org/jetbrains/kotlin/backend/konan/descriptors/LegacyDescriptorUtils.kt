@@ -58,13 +58,13 @@ internal val ClassDescriptor.isArray: Boolean
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
-private val konanInternalPackageName = FqName.fromSegments(listOf("konan", "internal"))
+private val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
 
 /**
  * @return `konan.internal` member scope
  */
-internal val KonanBuiltIns.konanInternal: MemberScope
-    get() = this.builtInsModule.getPackage(konanInternalPackageName).memberScope
+internal val KonanBuiltIns.kotlinNativeInternal: MemberScope
+    get() = this.builtInsModule.getPackage(kotlinNativeInternalPackageName).memberScope
 
 internal val KotlinType.isKFunctionType: Boolean
     get() {
@@ -137,7 +137,7 @@ internal fun DeclarationDescriptor.allContainingDeclarations(): List<Declaration
 // since externals don't have IR bodies.
 // Enforce inlining of constructors annotated with @InlineConstructor.
 
-private val inlineConstructor = FqName("konan.internal.InlineConstructor")
+private val inlineConstructor = FqName("kotlin.native.internal.InlineConstructor")
 
 internal val FunctionDescriptor.needsInlining: Boolean
     get() {

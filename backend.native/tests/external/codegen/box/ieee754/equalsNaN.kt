@@ -2,7 +2,7 @@
 
 import kotlin.test.*
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object O {
     var equalsCalled: Boolean = false
         get(): Boolean {

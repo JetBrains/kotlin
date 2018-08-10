@@ -2,13 +2,13 @@ package runtime.workers.freeze3
 
 import kotlin.test.*
 
-import konan.worker.*
+import kotlin.native.worker.*
 
 object Immutable {
     var x = 1
 }
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object Mutable {
     var x = 2
 }

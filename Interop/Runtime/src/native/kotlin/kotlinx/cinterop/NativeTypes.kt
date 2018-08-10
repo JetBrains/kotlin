@@ -16,12 +16,12 @@
 
 package kotlinx.cinterop
 
-import konan.internal.getNativeNullPtr
-import konan.internal.Intrinsic
-import konan.internal.reinterpret
+import kotlin.native.internal.getNativeNullPtr
+import kotlin.native.internal.Intrinsic
+import kotlin.native.internal.reinterpret
 
-typealias NativePtr = konan.internal.NativePtr
-internal typealias NonNullNativePtr = konan.internal.NonNullNativePtr
+typealias NativePtr = kotlin.native.internal.NativePtr
+internal typealias NonNullNativePtr = kotlin.native.internal.NonNullNativePtr
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun NativePtr.toNonNull() = this.reinterpret<NativePtr, NonNullNativePtr>()

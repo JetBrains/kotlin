@@ -635,7 +635,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
             // Special case: bridge from Objective-C method implementation template to Kotlin method;
             // handled in CodeGeneratorVisitor.callVirtual.
             val useKotlinDispatch = isInteropStubsFile &&
-                    builder.scope.scopeOwner.annotations.hasAnnotation(FqName("konan.internal.ExportForCppRuntime"))
+                    builder.scope.scopeOwner.annotations.hasAnnotation(FqName("kotlin.native.internal.ExportForCppRuntime"))
 
             if (!useKotlinDispatch) {
                 val arguments = descriptor.valueParameters.map { expression.getValueArgument(it)!! }

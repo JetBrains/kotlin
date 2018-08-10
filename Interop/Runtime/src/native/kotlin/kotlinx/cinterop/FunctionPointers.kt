@@ -16,8 +16,8 @@
 
 package kotlinx.cinterop
 
-import konan.internal.Intrinsic
-import konan.internal.ExportForCompiler
+import kotlin.native.internal.Intrinsic
+import kotlin.native.internal.ExportForCompiler
 
 @Intrinsic external operator fun <R> CPointer<CFunction<() -> R>>.invoke(): R
 

@@ -16,13 +16,13 @@
 
 package kotlin
 
-import konan.internal.NumberConverter
+import kotlin.native.internal.NumberConverter
 
 /**
  * Represents a 8-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
-public final class Byte private constructor(private val value: konan.internal.ByteValue) : Number(), Comparable<Byte> {
+public final class Byte private constructor(private val value: kotlin.native.internal.ByteValue) : Number(), Comparable<Byte> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
@@ -219,10 +219,10 @@ public final class Byte private constructor(private val value: konan.internal.By
     }
 
     // Konan-specific.
-    public fun equals(other: Byte): Boolean = konan.internal.areEqualByValue(this, other)
+    public fun equals(other: Byte): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
     public override fun equals(other: Any?): Boolean =
-            other is Byte && konan.internal.areEqualByValue(this, other)
+            other is Byte && kotlin.native.internal.areEqualByValue(this, other)
 
     @SymbolName("Kotlin_Byte_toString")
     external public override fun toString(): String
@@ -236,7 +236,7 @@ public final class Byte private constructor(private val value: konan.internal.By
  * Represents a 16-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
-public final class Short private constructor(private val value: konan.internal.ShortValue) : Number(), Comparable<Short> {
+public final class Short private constructor(private val value: kotlin.native.internal.ShortValue) : Number(), Comparable<Short> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
@@ -433,10 +433,10 @@ public final class Short private constructor(private val value: konan.internal.S
     external public override fun toDouble(): Double
 
     // Konan-specific.
-    public fun equals(other: Short): Boolean = konan.internal.areEqualByValue(this, other)
+    public fun equals(other: Short): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
     public override fun equals(other: Any?): Boolean =
-        other is Short && konan.internal.areEqualByValue(this, other)
+        other is Short && kotlin.native.internal.areEqualByValue(this, other)
 
     @SymbolName("Kotlin_Short_toString")
     external public override fun toString(): String
@@ -450,7 +450,7 @@ public final class Short private constructor(private val value: konan.internal.S
  * Represents a 32-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
-public final class Int private constructor(private val value: konan.internal.IntValue) : Number(), Comparable<Int> {
+public final class Int private constructor(private val value: kotlin.native.internal.IntValue) : Number(), Comparable<Int> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
@@ -669,10 +669,10 @@ public final class Int private constructor(private val value: konan.internal.Int
     external public override fun toDouble(): Double
 
     // Konan-specific.
-    public fun equals(other: Int): Boolean = konan.internal.areEqualByValue(this, other)
+    public fun equals(other: Int): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
     public override fun equals(other: Any?): Boolean =
-         other is Int && konan.internal.areEqualByValue(this, other)
+         other is Int && kotlin.native.internal.areEqualByValue(this, other)
 
     @SymbolName("Kotlin_Int_toString")
     external public override fun toString(): String
@@ -686,7 +686,7 @@ public final class Int private constructor(private val value: konan.internal.Int
  * Represents a 64-bit signed integer.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
-public final class Long private constructor(private val value: konan.internal.LongValue) : Number(), Comparable<Long> {
+public final class Long private constructor(private val value: kotlin.native.internal.LongValue) : Number(), Comparable<Long> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
@@ -905,10 +905,10 @@ public final class Long private constructor(private val value: konan.internal.Lo
     external public override fun toDouble(): Double
 
     // Konan-specific.
-    public fun equals(other: Long): Boolean = konan.internal.areEqualByValue(this, other)
+    public fun equals(other: Long): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
     public override fun equals(other: Any?): Boolean =
-            other is Long && konan.internal.areEqualByValue(this, other)
+            other is Long && kotlin.native.internal.areEqualByValue(this, other)
 
     @SymbolName("Kotlin_Long_toString")
     external public override fun toString(): String
@@ -922,7 +922,7 @@ public final class Long private constructor(private val value: konan.internal.Lo
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
-public final class Float private constructor(private val value: konan.internal.FloatValue) : Number(), Comparable<Float> {
+public final class Float private constructor(private val value: kotlin.native.internal.FloatValue) : Number(), Comparable<Float> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -1141,7 +1141,7 @@ public final class Float private constructor(private val value: konan.internal.F
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
-public final class Double private constructor(private val value: konan.internal.DoubleValue) : Number(), Comparable<Double> {
+public final class Double private constructor(private val value: kotlin.native.internal.DoubleValue) : Number(), Comparable<Double> {
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.

@@ -1384,19 +1384,19 @@ void GarbageCollect() {
 
 #endif // USE_GC
 
-void Kotlin_konan_internal_GC_collect(KRef) {
+void Kotlin_native_internal_GC_collect(KRef) {
 #if USE_GC
   GarbageCollect();
 #endif
 }
 
-void Kotlin_konan_internal_GC_suspend(KRef) {
+void Kotlin_native_internal_GC_suspend(KRef) {
 #if USE_GC
   memoryState->gcSuspendCount++;
 #endif
 }
 
-void Kotlin_konan_internal_GC_resume(KRef) {
+void Kotlin_native_internal_GC_resume(KRef) {
 #if USE_GC
   MemoryState* state = memoryState;
   if (state->gcSuspendCount > 0) {
@@ -1409,7 +1409,7 @@ void Kotlin_konan_internal_GC_resume(KRef) {
 #endif
 }
 
-void Kotlin_konan_internal_GC_stop(KRef) {
+void Kotlin_native_internal_GC_stop(KRef) {
 #if USE_GC
   if (memoryState->toFree != nullptr) {
     GarbageCollect();
@@ -1421,7 +1421,7 @@ void Kotlin_konan_internal_GC_stop(KRef) {
 #endif
 }
 
-void Kotlin_konan_internal_GC_start(KRef) {
+void Kotlin_native_internal_GC_start(KRef) {
 #if USE_GC
   if (memoryState->toFree == nullptr) {
     memoryState->toFree = konanConstructInstance<ContainerHeaderList>();
@@ -1430,7 +1430,7 @@ void Kotlin_konan_internal_GC_start(KRef) {
 #endif
 }
 
-void Kotlin_konan_internal_GC_setThreshold(KRef, KInt value) {
+void Kotlin_native_internal_GC_setThreshold(KRef, KInt value) {
 #if USE_GC
   if (value > 0) {
     initThreshold(memoryState, value);
@@ -1438,7 +1438,7 @@ void Kotlin_konan_internal_GC_setThreshold(KRef, KInt value) {
 #endif
 }
 
-KInt Kotlin_konan_internal_GC_getThreshold(KRef) {
+KInt Kotlin_native_internal_GC_getThreshold(KRef) {
 #if USE_GC
   return memoryState->gcThreshold;
 #else

@@ -30,12 +30,12 @@ private class Controller : NSObject() {
     @ObjCAction
     fun onClick() {
         // Execute some async action on button click.
-        dispatch_async_f(asyncQueue, konan.worker.detachObjectGraph {
+        dispatch_async_f(asyncQueue, kotlin.native.worker.detachObjectGraph {
             Data(clock_gettime_nsec_np(CLOCK_REALTIME))
         }, staticCFunction {
             it ->
             initRuntimeIfNeeded()
-            val data = konan.worker.attachObjectGraph<Data>(it)
+            val data = kotlin.native.worker.attachObjectGraph<Data>(it)
             println("in async: $data")
         })
     }

@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-private val threadLocalAnnotationFqName = FqName("konan.ThreadLocal")
+private val threadLocalAnnotationFqName = FqName("kotlin.native.ThreadLocal")
 
 val IrClassSymbol.objectIsShared get() =
     !descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName)
@@ -2098,7 +2098,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val name = descriptor.fqNameUnsafe.asString()
 
         when (name) {
-            "konan.internal.areEqualByValue" -> {
+            "kotlin.native.internal.areEqualByValue" -> {
                 val arg0 = args[0]
                 val arg1 = args[1]
                 assert (arg0.type == arg1.type,
@@ -2119,7 +2119,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     }
                 }
             }
-            "konan.internal.ieee754Equals" -> {
+            "kotlin.native.internal.ieee754Equals" -> {
                 val arg0 = args[0]
                 val arg1 = args[1]
                 assert (arg0.type == arg1.type,
@@ -2130,7 +2130,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 return functionGenerationContext.fcmpEq(arg0, arg1)
 
             }
-            "konan.internal.getContinuation" -> return getContinuation()
+            "kotlin.native.internal.getContinuation" -> return getContinuation()
         }
 
         val interop = context.interopBuiltIns

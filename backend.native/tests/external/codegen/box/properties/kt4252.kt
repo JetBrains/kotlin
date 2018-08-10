@@ -2,7 +2,7 @@ class CallbackBlock {}
 
 public class Foo
 {
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     companion object {
         private var bar = 0
     }

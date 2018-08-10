@@ -80,7 +80,7 @@ private var decoder: DecoderWorker? = null
 
 private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?, length: Int) {
     // This handler will be invoked in the audio thread, so reinit runtime.
-    konan.initRuntimeIfNeeded()
+    kotlin.native.initRuntimeIfNeeded()
     val decoder = decoder ?:
         DecoderWorker(userdata!!.reinterpret<IntVar>().pointed.value).also { decoder = it }
     var outPosition = 0

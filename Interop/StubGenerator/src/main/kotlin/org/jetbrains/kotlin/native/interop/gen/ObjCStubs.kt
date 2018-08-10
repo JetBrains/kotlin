@@ -121,7 +121,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                 }
 
                 context.addTopLevelDeclaration(
-                        listOf("@konan.internal.ExportForCompiler",
+                        listOf("@kotlin.native.internal.ExportForCompiler",
                                 "@ObjCBridge".applyToStrings(method.selector, method.encoding, implementationTemplate))
                                 + block(bridgeHeader, bodyLines)
                 )

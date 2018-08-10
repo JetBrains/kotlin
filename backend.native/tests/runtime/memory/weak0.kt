@@ -1,7 +1,7 @@
 package runtime.memory.weak0
 
 import kotlin.test.*
-import konan.ref.*
+import kotlin.native.ref.*
 
 data class Data(val s: String)
 

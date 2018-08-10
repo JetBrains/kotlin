@@ -104,7 +104,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
 
     val staticCFunction = packageScope.getContributedFunctions("staticCFunction").toSet()
 
-    val workerPackageScope = builtIns.builtInsModule.getPackage(FqName("konan.worker")).memberScope
+    val workerPackageScope = builtIns.builtInsModule.getPackage(FqName("kotlin.native.worker")).memberScope
 
     val scheduleFunction = workerPackageScope.getContributedClass("Worker")
             .unsubstitutedMemberScope.getContributedFunctions("schedule").single()

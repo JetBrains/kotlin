@@ -1,6 +1,6 @@
 package runtime.basic.worker_random
 
-import konan.worker.*
+import kotlin.native.worker.*
 import kotlin.collections.*
 import kotlin.random.*
 import kotlin.system.*

@@ -109,7 +109,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     val argumentDescriptor = descriptor.valueParameters.singleOrNull {
                         cur.getValueArgument(it.index) == argument
                     }
-                    if (argumentDescriptor != null && argumentDescriptor.annotations.findAnnotation(FqName("konan.VolatileLambda")) != null) {
+                    if (argumentDescriptor != null && argumentDescriptor.annotations.findAnnotation(FqName("kotlin.native.VolatileLambda")) != null) {
                         return expression
                     }
                     break

@@ -1,4 +1,4 @@
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object A {
     var x = 0
 

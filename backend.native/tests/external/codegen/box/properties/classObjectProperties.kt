@@ -1,6 +1,6 @@
 class Test {
 
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     companion object {
 
         public val prop1 : Int = 10

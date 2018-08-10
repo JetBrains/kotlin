@@ -456,7 +456,7 @@ internal object DataFlowIR {
 
         private val NAME_ESCAPES = Name.identifier("Escapes")
         private val NAME_POINTS_TO = Name.identifier("PointsTo")
-        private val FQ_NAME_KONAN = FqName.fromSegments(listOf("konan"))
+        private val FQ_NAME_KONAN = FqName.fromSegments(listOf("kotlin", "native"))
 
         private val FQ_NAME_ESCAPES = FQ_NAME_KONAN.child(NAME_ESCAPES)
         private val FQ_NAME_POINTS_TO = FQ_NAME_KONAN.child(NAME_POINTS_TO)

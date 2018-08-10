@@ -15,8 +15,8 @@
  */
 
 package kotlinx.wasm.jsinterop
-
-import konan.internal.ExportForCppRuntime
+import kotlin.native.*
+import kotlin.native.internal.ExportForCppRuntime
 import kotlinx.cinterop.*
 
 typealias Arena = Int

@@ -18,7 +18,7 @@ package runtime.workers.freeze1
 
 import kotlin.test.*
 
-import konan.worker.*
+import kotlin.native.worker.*
 
 data class Node(var previous: Node?, var data: Int)
 

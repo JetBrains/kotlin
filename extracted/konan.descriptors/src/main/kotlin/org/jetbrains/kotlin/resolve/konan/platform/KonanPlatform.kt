@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 object KonanPlatform : TargetPlatform("Konan") {
 
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
-        result.add(ImportPath.fromString("konan.*"))
+        result.add(ImportPath.fromString("kotlin.native.*"))
     }
 
     override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)

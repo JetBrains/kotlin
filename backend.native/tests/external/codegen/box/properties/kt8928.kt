@@ -2,7 +2,7 @@ class App {
     fun init() {
         s = "OK"
     }
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     companion object {
         var s: String = "Fail"
             private set

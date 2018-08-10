@@ -168,7 +168,7 @@ class SimpleBridgeGeneratorImpl(
         val cReturnType = returnType.nativeType
 
         val symbolName = pkgName.replace(INVALID_CLANG_IDENTIFIER_REGEX, "_") + "_$kotlinFunctionName"
-        kotlinLines.add("@konan.internal.ExportForCppRuntime(${symbolName.quoteAsKotlinLiteral()})")
+        kotlinLines.add("@kotlin.native.internal.ExportForCppRuntime(${symbolName.quoteAsKotlinLiteral()})")
         val cFunctionHeader = "$cReturnType $symbolName($joinedCParameters)"
 
         nativeLines.add("$cFunctionHeader;")

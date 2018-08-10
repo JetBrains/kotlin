@@ -83,8 +83,8 @@ internal fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
     return realSupers.first { it.modality != Modality.ABSTRACT }
 }
 
-private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
-private val frozenAnnotation = FqName("konan.internal.Frozen")
+private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
+private val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
 
 // TODO: don't forget to remove descriptor access here.
 internal val FunctionDescriptor.isIntrinsic: Boolean
@@ -108,7 +108,7 @@ internal val arrayTypes = setOf(
         "kotlin.FloatArray",
         "kotlin.DoubleArray",
         "kotlin.BooleanArray",
-        "konan.ImmutableBinaryBlob"
+        "kotlin.native.ImmutableBinaryBlob"
 )
 
 

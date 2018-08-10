@@ -1,5 +1,5 @@
 class C {
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     companion object {
         private val s: String
         private var s2: String

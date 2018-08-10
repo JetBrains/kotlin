@@ -162,13 +162,13 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
     return true
 }
 
-private val symbolNameAnnotation = FqName("konan.SymbolName")
+private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
 
-private val exportForCppRuntimeAnnotation = FqName("konan.internal.ExportForCppRuntime")
+private val exportForCppRuntimeAnnotation = FqName("kotlin.native.internal.ExportForCppRuntime")
 
-private val cnameAnnotation = FqName("konan.internal.CName")
+private val cnameAnnotation = FqName("kotlin.native.internal.CName")
 
-private val exportForCompilerAnnotation = FqName("konan.internal.ExportForCompiler")
+private val exportForCompilerAnnotation = FqName("kotlin.native.internal.ExportForCompiler")
 
 private val publishedApiAnnotation = FqName("kotlin.PublishedApi")
 

@@ -212,14 +212,14 @@ private val implicitInlineClasses =
 
 private enum class ValueClass(val fqName: FqNameUnsafe, val binaryType: BinaryType.Primitive) {
 
-    BOOLEAN("konan.internal.BooleanValue", PrimitiveBinaryType.BOOLEAN),
-    BYTE("konan.internal.ByteValue", PrimitiveBinaryType.BYTE),
-    SHORT("konan.internal.ShortValue", PrimitiveBinaryType.SHORT),
-    INT("konan.internal.IntValue", PrimitiveBinaryType.INT),
-    LONG("konan.internal.LongValue", PrimitiveBinaryType.LONG),
-    FLOAT("konan.internal.FloatValue", PrimitiveBinaryType.FLOAT),
-    DOUBLE("konan.internal.DoubleValue", PrimitiveBinaryType.DOUBLE),
-    NON_NULL_POINTER("konan.internal.NotNullPointerValue", PrimitiveBinaryType.POINTER)
+    BOOLEAN("kotlin.native.internal.BooleanValue", PrimitiveBinaryType.BOOLEAN),
+    BYTE("kotlin.native.internal.ByteValue", PrimitiveBinaryType.BYTE),
+    SHORT("kotlin.native.internal.ShortValue", PrimitiveBinaryType.SHORT),
+    INT("kotlin.native.internal.IntValue", PrimitiveBinaryType.INT),
+    LONG("kotlin.native.internal.LongValue", PrimitiveBinaryType.LONG),
+    FLOAT("kotlin.native.internal.FloatValue", PrimitiveBinaryType.FLOAT),
+    DOUBLE("kotlin.native.internal.DoubleValue", PrimitiveBinaryType.DOUBLE),
+    NON_NULL_POINTER("kotlin.native.internal.NotNullPointerValue", PrimitiveBinaryType.POINTER)
 
     ;
 

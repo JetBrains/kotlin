@@ -1,5 +1,5 @@
 class A {
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     companion object {
         private var r: Int = 1;
 

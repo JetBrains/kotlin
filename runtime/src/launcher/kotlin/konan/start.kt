@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import konan.internal.ExportForCppRuntime
+import kotlin.native.internal.ExportForCppRuntime
 
 // This function is produced by the code generator given
 // the '-entry foo.bar.main' flag. 

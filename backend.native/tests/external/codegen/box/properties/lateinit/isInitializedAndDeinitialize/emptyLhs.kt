@@ -14,7 +14,7 @@ class Foo {
     }
 }
 
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object Bar {
     lateinit var p: String
 

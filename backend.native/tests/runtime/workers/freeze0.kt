@@ -18,7 +18,7 @@ package runtime.workers.freeze0
 
 import kotlin.test.*
 
-import konan.worker.*
+import kotlin.native.worker.*
 
 data class SharedDataMember(val double: Double)
 

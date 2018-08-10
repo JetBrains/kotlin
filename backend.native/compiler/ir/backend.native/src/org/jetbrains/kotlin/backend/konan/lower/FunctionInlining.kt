@@ -121,7 +121,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
     override fun visitElement(element: IrElement) = element.accept(this, null)
 }
 
-private val inlineConstructor = FqName("konan.internal.InlineConstructor")
+private val inlineConstructor = FqName("kotlin.native.internal.InlineConstructor")
 private val FunctionDescriptor.isInlineConstructor get() = annotations.hasAnnotation(inlineConstructor)
 
 //-----------------------------------------------------------------------------//

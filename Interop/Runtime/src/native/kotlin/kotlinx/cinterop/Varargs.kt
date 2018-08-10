@@ -15,6 +15,7 @@
  */
 
 package kotlinx.cinterop
+import kotlin.native.*
 
 private const val MAX_ARGUMENT_SIZE = 8
 

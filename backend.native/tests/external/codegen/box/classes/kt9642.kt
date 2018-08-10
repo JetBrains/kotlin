@@ -6,7 +6,7 @@ class Outer {
         }
     }
 
-    @konan.ThreadLocal
+    @kotlin.native.ThreadLocal
     companion object {
         public var s = "fail"
             private set

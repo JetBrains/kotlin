@@ -15,6 +15,7 @@
  */
 
 package kotlinx.cinterop
+import kotlin.native.*
 
 data class Pinned<out T : Any> internal constructor(private val stablePtr: COpaquePointer) {
 

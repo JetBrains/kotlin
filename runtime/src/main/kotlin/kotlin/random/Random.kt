@@ -15,7 +15,7 @@
  */
 package kotlin.random
 
-import konan.worker.AtomicLong
+import kotlin.native.worker.AtomicLong
 import kotlin.system.getTimeNanos
 
 abstract class Random {

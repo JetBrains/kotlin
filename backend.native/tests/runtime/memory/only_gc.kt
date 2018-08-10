@@ -1,4 +1,4 @@
 fun main(args: Array<String>) {
-    konan.internal.GC.collect()
+    kotlin.native.internal.GC.collect()
 }
 

@@ -1,4 +1,4 @@
-@konan.ThreadLocal
+@kotlin.native.ThreadLocal
 object Test {
     var z = "0"
     var l = 0L

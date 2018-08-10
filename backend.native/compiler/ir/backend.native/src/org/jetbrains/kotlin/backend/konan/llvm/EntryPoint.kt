@@ -61,7 +61,7 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
 }
 
 private val defaultEntryName = "main"
-private val testEntryName = "konan.test.main"
+private val testEntryName = "kotlin.native.test.main"
 
 private val defaultEntryPackage = FqName.ROOT
 

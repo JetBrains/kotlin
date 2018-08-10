@@ -39,9 +39,9 @@
 #define DEFAULT_WIDTH MAX_ACCURACY_WIDTH
 
 extern "C" {
-KDouble Konan_FloatingPointParser_parseDoubleImpl (KString s, KInt e);
+KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e);
 
-void Konan_NumberConverter_bigIntDigitGeneratorInstImpl (KRef results,
+void Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl (KRef results,
                                                          KRef uArray,
                                                          KLong f,
                                                          KInt e,
@@ -49,16 +49,16 @@ void Konan_NumberConverter_bigIntDigitGeneratorInstImpl (KRef results,
                                                          KBoolean mantissaIsZero,
                                                          KInt p);
 
-KDouble Konan_NumberConverter_ceil(KDouble x) {
+KDouble Kotlin_native_NumberConverter_ceil(KDouble x) {
   return ceil(x);
 }
 
 void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value);
 
-KDouble Konan_long_bits_to_double(KLong x);
+KDouble Kotlin_native_long_bits_to_double(KLong x);
 }
 
-KDouble Konan_long_bits_to_double(KLong x) {
+KDouble Kotlin_native_long_bits_to_double(KLong x) {
   union {
     int64_t x;
     double d;
@@ -638,7 +638,7 @@ OutOfMemory:
 #pragma optimize("",on)         /*restore optimizations */
 #endif
 
-KDouble Konan_FloatingPointParser_parseDoubleImpl (KString s, KInt e)
+KDouble Kotlin_native_FloatingPointParser_parseDoubleImpl (KString s, KInt e)
 {
   const KChar* utf16 = CharArrayAddressOfElementAt(s, 0);
   KStdString utf8;
@@ -691,7 +691,7 @@ KDouble Konan_FloatingPointParser_parseDoubleImpl (KString s, KInt e)
  *           1.2341234124312331E107
  *
  */
-void Konan_NumberConverter_bigIntDigitGeneratorInstImpl (KRef results,
+void Kotlin_native_NumberConverter_bigIntDigitGeneratorInstImpl (KRef results,
                                                          KRef uArray,
                                                          KLong f,
                                                          KInt e,

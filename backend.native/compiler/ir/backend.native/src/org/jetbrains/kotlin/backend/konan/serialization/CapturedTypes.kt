@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-private val konanInternalPackageName = FqName("konan.internal")
+private val konanInternalPackageName = FqName("kotlin.native.internal")
 private val fakeCapturedTypeClassName = Name.identifier("FAKE_CAPTURED_TYPE_CLASS")
 
 internal fun createFakeClass(packageName: FqName, className: Name)

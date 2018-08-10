@@ -15,6 +15,7 @@
  */
 
 package kotlinx.cinterop
+import kotlin.native.*
 
 @SymbolName("Kotlin_Interop_createStablePointer")
 internal external fun createStablePointer(any: Any): COpaquePointer

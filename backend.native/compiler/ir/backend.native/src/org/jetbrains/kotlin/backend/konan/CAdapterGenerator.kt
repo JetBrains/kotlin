@@ -111,7 +111,7 @@ private val cKeywords = setOf(
         "xor_eq"
 )
 
-private val cnameAnnotation = FqName("konan.internal.CName")
+private val cnameAnnotation = FqName("kotlin.native.internal.CName")
 
 private fun org.jetbrains.kotlin.types.KotlinType.isGeneric() =
         constructor.declarationDescriptor is TypeParameterDescriptor

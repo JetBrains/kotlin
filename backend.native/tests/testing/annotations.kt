@@ -1,7 +1,7 @@
 package kotlin.test.tests
 
 import kotlin.test.*
-import konan.test.*
+import kotlin.native.test.*
 
 
 @Ignore

@@ -2,7 +2,7 @@ package runtime.workers.worker3
 
 import kotlin.test.*
 
-import konan.worker.*
+import kotlin.native.worker.*
 
 data class DataParam(var int: Int)
 data class WorkerArgument(val intParam: Int, val dataParam: DataParam)
