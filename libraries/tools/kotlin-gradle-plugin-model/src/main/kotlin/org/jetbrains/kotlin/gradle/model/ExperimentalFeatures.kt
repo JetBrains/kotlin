@@ -11,10 +11,7 @@ package org.jetbrains.kotlin.gradle.model
  */
 interface ExperimentalFeatures {
 
-    /**
-     * Return coroutines string.
-     *
-     * @return coroutines.
-     */
     val coroutines: String?
+
+    val newInference: String?
 }

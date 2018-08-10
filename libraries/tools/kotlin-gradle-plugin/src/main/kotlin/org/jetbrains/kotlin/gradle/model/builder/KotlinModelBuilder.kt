@@ -106,7 +106,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String) : ToolingModel
         }
 
         private fun AbstractKotlinCompile<*>.createExperimentalFeatures(): ExperimentalFeatures {
-            return ExperimentalFeaturesImpl(coroutinesStr)
+            return ExperimentalFeaturesImpl(coroutinesStr, newInferenceStr)
         }
     }
 }

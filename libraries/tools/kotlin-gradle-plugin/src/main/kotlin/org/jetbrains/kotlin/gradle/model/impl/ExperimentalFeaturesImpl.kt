@@ -12,7 +12,8 @@ import java.io.Serializable
  * Implementation of the [ExperimentalFeatures] interface.
  */
 data class ExperimentalFeaturesImpl(
-    override val coroutines: String?
+    override val coroutines: String?,
+    override val newInference: String?
 ) : ExperimentalFeatures, Serializable {
 
     companion object {

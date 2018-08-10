@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import org.jetbrains.kotlin.gradle.dsl.NewInferenceState
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -26,6 +27,7 @@ import java.util.*
 fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
     PropertiesProvider(project).apply {
         coroutines?.let { task.coroutinesFromGradleProperties = it }
+        newInference?.let { task.newInferenceFromGradleProperties = it }
         useFallbackCompilerSearch?.let { task.useFallbackCompilerSearch = it }
 
         if (task is KotlinCompile) {
@@ -55,6 +57,9 @@ internal class PropertiesProvider(private val project: Project) {
 
     val coroutines: Coroutines?
         get() = property("kotlin.coroutines")?.let { Coroutines.byCompilerArgument(it) }
+
+    val newInference: NewInferenceState?
+        get() = property("kotlin.newInference")?.let { NewInferenceState.byCompilerArgument(it) }
 
     val incrementalJvm: Boolean?
         get() = booleanProperty("kotlin.incremental")
