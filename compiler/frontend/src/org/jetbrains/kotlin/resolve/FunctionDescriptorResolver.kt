@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultVisibility
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
@@ -198,7 +198,13 @@ class FunctionDescriptorResolver(
             function, getDefaultModality(container, visibility, function.hasBody()),
             trace.bindingContext, container
         )
+
         val contractProvider = getContractProvider(functionDescriptor, trace, scope, dataFlowInfo, function)
+        val userData = mutableMapOf<FunctionDescriptor.UserDataKey<*>, Any>().apply {
+            if (contractProvider != null) {
+                put(ContractProviderKey, contractProvider)
+            }
+        }
 
         functionDescriptor.initialize(
             receiverType,
@@ -208,8 +214,9 @@ class FunctionDescriptorResolver(
             returnType,
             modality,
             visibility,
-            mapOf(ContractProviderKey to contractProvider)
+            userData.takeIf { it.isNotEmpty() }
         )
+
         functionDescriptor.isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
         functionDescriptor.isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
         functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
@@ -232,17 +239,16 @@ class FunctionDescriptorResolver(
         scope: LexicalScope,
         dataFlowInfo: DataFlowInfo,
         function: KtFunction
-    ): LazyContractProvider {
+    ): LazyContractProvider? {
         val provideByDeferredForceResolve = LazyContractProvider {
             expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
         }
-        val emptyContract = LazyContractProvider.createInitialized(null)
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
                 languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
 
-        if (!isContractsEnabled || !function.isContractPresentPsiCheck()) return emptyContract
+        if (!isContractsEnabled || !function.isContractPresentPsiCheck()) return null
 
         return provideByDeferredForceResolve
     }

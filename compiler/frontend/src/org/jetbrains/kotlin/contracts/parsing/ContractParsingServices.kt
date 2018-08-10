@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -35,7 +35,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
     fun checkContractAndRecordIfPresent(expression: KtExpression, trace: BindingTrace, scope: LexicalScope, isFirstStatement: Boolean) {
         val ownerDescriptor = scope.ownerDescriptor
         if (!expression.isContractDescriptionCallPsiCheck() || ownerDescriptor !is FunctionDescriptor) return
-        val contractProvider = ownerDescriptor.getUserData(ContractProviderKey) ?: return
+        val contractProvider = ownerDescriptor.getUserData(ContractProviderKey)
 
         val isFeatureTurnedOn = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // This condition is here for technical purposes of compiling 1.2-runtime with contracts
@@ -62,7 +62,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
             else -> parseContract(expression, trace, ownerDescriptor)
         }
 
-        contractProvider.setContractDescription(contractDescriptor)
+        contractProvider?.setContractDescription(contractDescriptor)
     }
 
     internal fun isContractDescriptionCall(expression: KtExpression, context: BindingContext): Boolean =
