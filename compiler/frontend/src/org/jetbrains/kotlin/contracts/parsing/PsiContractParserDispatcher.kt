@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
-internal class PsiContractParserDispatcher(val trace: BindingTrace, val contractParsingServices: ContractParsingServices) {
+internal class PsiContractParserDispatcher(val trace: BindingTrace) {
     private val conditionParser = PsiConditionParser(trace, this)
     private val constantParser = PsiConstantParser(trace)
     private val effectsParsers: Map<Name, PsiEffectParser> = mapOf(
@@ -54,9 +54,8 @@ internal class PsiContractParserDispatcher(val trace: BindingTrace, val contract
 
     fun parseContract(expression: KtExpression?, ownerDescriptor: FunctionDescriptor): ContractDescription? {
         if (expression == null) return null
-        if (!contractParsingServices.isContractDescriptionCall(expression, trace.bindingContext)) return null
 
-        // Must be non-null due to 'isContractDescriptionCall' check, but actually is not, see EA-124365
+        // Must be non-null because of checks in 'checkContractAndRecordIfPresent', but actually is not, see EA-124365
         val resolvedCall = expression.getResolvedCall(trace.bindingContext) ?: return null
 
         val lambda = resolvedCall.firstArgumentAsExpressionOrNull() as? KtLambdaExpression ?: return null

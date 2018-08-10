@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.contracts.parsing
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -59,17 +58,11 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
                 null
             }
 
-            else -> parseContract(expression, trace, ownerDescriptor)
+            else -> PsiContractParserDispatcher(trace).parseContract(expression, ownerDescriptor)
         }
 
         contractProvider?.setContractDescription(contractDescriptor)
     }
-
-    internal fun isContractDescriptionCall(expression: KtExpression, context: BindingContext): Boolean =
-        expression.isContractDescriptionCallPsiCheck() && expression.isContractDescriptionCallPreciseCheck(context)
-
-    private fun parseContract(expression: KtExpression?, trace: BindingTrace, ownerDescriptor: FunctionDescriptor): ContractDescription? =
-        PsiContractParserDispatcher(trace, this).parseContract(expression, ownerDescriptor)
 
     private fun isContractAllowedHere(scope: LexicalScope): Boolean =
         scope.kind == LexicalScopeKind.CODE_BLOCK && (scope.parent as? LexicalScope)?.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE
