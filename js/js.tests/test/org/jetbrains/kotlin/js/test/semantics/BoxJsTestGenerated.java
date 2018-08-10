@@ -3830,6 +3830,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inline/extensionWithManyArguments.kt");
         }
 
+        @TestMetadata("faultyRedundantCallElimination.kt")
+        public void testFaultyRedundantCallElimination() throws Exception {
+            runTest("js/js.translator/testData/box/inline/faultyRedundantCallElimination.kt");
+        }
+
         @TestMetadata("identityEquals.kt")
         public void testIdentityEquals() throws Exception {
             runTest("js/js.translator/testData/box/inline/identityEquals.kt");
