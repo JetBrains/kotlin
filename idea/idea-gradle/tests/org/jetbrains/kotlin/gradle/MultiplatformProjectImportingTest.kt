@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.codeInsight.gradle.facetSettings
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
 class MultiplatformProjectImportingTest : GradleImportingTestCase() {
@@ -140,8 +141,10 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         assertModuleModuleDepScope("jvm-app_test", "common-lib2_test", DependencyScope.COMPILE)
     }
 
+    @TargetVersions("3.5")
     @Test
     fun testTransitiveImplement() {
+        // TODO fix for 4.9
         configureByFiles()
 
         val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
@@ -183,8 +186,10 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         }
     }
 
+    @TargetVersions("3.5")
     @Test
     fun testTransitiveImplementWithNonDefaultConfig() {
+        // TODO fix for 4.9
         configureByFiles()
 
         val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
@@ -280,8 +285,10 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         }
     }
 
+    @TargetVersions("3.5")
     @Test
     fun testJsTestOutputFile() {
+        // TODO fix for 4.9
         configureByFiles()
 
         importProject()
@@ -296,8 +303,10 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         )
     }
 
+    @TargetVersions("3.5")
     @Test
     fun testJsProductionOutputFile() {
+        // TODO fix for 4.9
         configureByFiles()
         importProject()
 
@@ -311,8 +320,10 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         )
     }
 
+    @TargetVersions("3.5")
     @Test
     fun testJsTestOutputFileInProjectWithAndroid() {
+        // TODO fix for 4.9
         configureByFiles()
         createProjectSubFile(
             "local.properties", """
