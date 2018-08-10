@@ -126,11 +126,15 @@ internal object CompletedContinuation : Continuation<Any?> {
 }
 
 @SinceKotlin("1.3")
+// To distinguish suspend function types from ordinary function types all suspend function types shall implement this interface
+internal interface SuspendFunction
+
+@SinceKotlin("1.3")
 // Restricted suspension lambdas inherit from this class
 internal abstract class RestrictedSuspendLambda(
     public override val arity: Int,
     completion: Continuation<Any?>?
-) : RestrictedContinuationImpl(completion), FunctionBase<Any?> {
+) : RestrictedContinuationImpl(completion), FunctionBase<Any?>, SuspendFunction {
     constructor(arity: Int) : this(arity, null)
 
     public override fun toString(): String =
@@ -145,7 +149,7 @@ internal abstract class RestrictedSuspendLambda(
 internal abstract class SuspendLambda(
     public override val arity: Int,
     completion: Continuation<Any?>?
-) : ContinuationImpl(completion), FunctionBase<Any?> {
+) : ContinuationImpl(completion), FunctionBase<Any?>, SuspendFunction {
     constructor(arity: Int) : this(arity, null)
 
     public override fun toString(): String =
