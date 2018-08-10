@@ -64,6 +64,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/PlatformType.kt");
     }
 
+    @TestMetadata("Properties.kt")
+    public void testProperties() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/Properties.kt");
+    }
+
     @TestMetadata("SimpleClass.kt")
     public void testSimpleClass() throws Exception {
         runTest("libraries/tools/kotlinp/testData/SimpleClass.kt");

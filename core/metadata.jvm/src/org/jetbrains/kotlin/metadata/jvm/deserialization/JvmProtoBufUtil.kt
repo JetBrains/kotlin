@@ -104,13 +104,12 @@ object JvmProtoBufUtil {
             typeTable: TypeTable
     ): JvmMemberSignature.Field? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return null
-        val field =
-                if (signature.hasField()) signature.field else null
+        val field = if (signature.hasField()) signature.field else return null
 
-        val name = if (field != null && field.hasName()) field.name else proto.name
+        val name = if (field.hasName()) field.name else proto.name
         val desc =
-                if (field != null && field.hasDesc()) nameResolver.getString(field.desc)
-                else mapTypeDefault(proto.returnType(typeTable), nameResolver) ?: return null
+            if (field.hasDesc()) nameResolver.getString(field.desc)
+            else mapTypeDefault(proto.returnType(typeTable), nameResolver) ?: return null
 
         return JvmMemberSignature.Field(nameResolver.getString(name), desc)
     }
