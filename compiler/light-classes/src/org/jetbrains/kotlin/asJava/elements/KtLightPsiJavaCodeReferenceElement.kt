@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 class KtLightPsiJavaCodeReferenceElement(
     private val ktElement: PsiElement,
     private val reference: PsiReference,
-    private val clsDelegateProvider: () -> PsiJavaCodeReferenceElement
+    private val clsDelegateProvider: () -> PsiJavaCodeReferenceElement?
 ) :
     PsiElement by ktElement,
     PsiReference by reference,
@@ -20,23 +20,26 @@ class KtLightPsiJavaCodeReferenceElement(
 
     private val delegate by lazyPub { clsDelegateProvider() }
 
-    override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult = delegate.advancedResolve(incompleteCode)
+    override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult =
+        delegate?.advancedResolve(incompleteCode) ?: JavaResolveResult.EMPTY
 
     override fun getReferenceNameElement(): PsiElement? = ktElement
 
-    override fun getTypeParameters(): Array<PsiType> = delegate.typeParameters
+    override fun getTypeParameters(): Array<PsiType> = delegate?.typeParameters ?: emptyArray()
 
-    override fun getReferenceName(): String? = delegate.referenceName
+    override fun getReferenceName(): String? = delegate?.referenceName
 
-    override fun isQualified(): Boolean = delegate.isQualified
+    override fun isQualified(): Boolean = delegate?.isQualified ?: false
 
-    override fun processVariants(processor: PsiScopeProcessor) = delegate.processVariants(processor)
+    override fun processVariants(processor: PsiScopeProcessor) {
+        delegate?.processVariants(processor)
+    }
 
-    override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = delegate.multiResolve(incompleteCode)
+    override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = delegate?.multiResolve(incompleteCode) ?: emptyArray()
 
-    override fun getQualifiedName(): String = delegate.qualifiedName
+    override fun getQualifiedName(): String? = delegate?.qualifiedName
 
-    override fun getQualifier(): PsiElement? = delegate.qualifier
+    override fun getQualifier(): PsiElement? = delegate?.qualifier
 
-    override fun getParameterList(): PsiReferenceParameterList? = delegate.parameterList
+    override fun getParameterList(): PsiReferenceParameterList? = delegate?.parameterList
 }
