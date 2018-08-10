@@ -24,8 +24,8 @@ package kotlinx.cinterop
  *
  * TODO: the behavior of [equals], [hashCode] and [toString] differs on Native and JVM backends.
  */
-abstract class NativePointed(rawPtr: NativePtr) {
-    var rawPtr = rawPtr
+open class NativePointed internal constructor(rawPtr: NonNullNativePtr) {
+    var rawPtr = rawPtr.toNativePtr()
         internal set
 }
 
@@ -40,7 +40,7 @@ val NativePointed?.rawPtr: NativePtr
  */
 inline fun <reified T : NativePointed> interpretPointed(ptr: NativePtr): T = interpretNullablePointed<T>(ptr)!!
 
-private class OpaqueNativePointed(rawPtr: NativePtr) : NativePointed(rawPtr)
+private class OpaqueNativePointed(rawPtr: NativePtr) : NativePointed(rawPtr.toNonNull())
 
 fun interpretOpaquePointed(ptr: NativePtr): NativePointed = interpretPointed<OpaqueNativePointed>(ptr)
 fun interpretNullableOpaquePointed(ptr: NativePtr): NativePointed? = interpretNullablePointed<OpaqueNativePointed>(ptr)
@@ -53,7 +53,7 @@ inline fun <reified T : NativePointed> NativePointed.reinterpret(): T = interpre
 /**
  * C data or code.
  */
-abstract class CPointed(rawPtr: NativePtr) : NativePointed(rawPtr)
+abstract class CPointed(rawPtr: NativePtr) : NativePointed(rawPtr.toNonNull())
 
 /**
  * Represents a reference to (possibly empty) sequence of C values.
@@ -130,7 +130,11 @@ abstract class CValue<T : CVariable> : CValues<T>()
 /**
  * C pointer.
  */
-class CPointer<T : CPointed> internal constructor(val rawValue: NativePtr) : CValuesRef<T>() {
+class CPointer<T : CPointed> internal constructor(@PublishedApi internal val value: NonNullNativePtr) : CValuesRef<T>() {
+
+    // TODO: replace by [value].
+    @Suppress("NOTHING_TO_INLINE")
+    inline val rawValue: NativePtr get() = value.toNativePtr()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

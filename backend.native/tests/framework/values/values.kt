@@ -193,3 +193,14 @@ fun getNamedObjectInterface(): OpenClassI = WithCompanionAndObject.Named
 
 typealias EE = Enumeration
 fun EE.getAnswer() : EE  = Enumeration.ANSWER
+
+inline class IC1(val value: Int)
+inline class IC2(val value: String)
+inline class IC3(val value: TripleVals<Any?>?)
+
+fun box(ic1: IC1): Any = ic1
+fun box(ic2: IC2): Any = ic2
+fun box(ic3: IC3): Any = ic3
+
+fun concatenateInlineClassValues(ic1: IC1, ic1N: IC1?, ic2: IC2, ic2N: IC2?, ic3: IC3, ic3N: IC3?): String =
+        "${ic1.value} ${ic1N?.value} ${ic2.value} ${ic2N?.value} ${ic3.value} ${ic3N?.value}"

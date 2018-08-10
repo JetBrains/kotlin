@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
@@ -49,6 +50,7 @@ class KonanBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageMana
         val packageName = FqName("konan.internal")
 
         val nativePtr = packageName.child(Name.identifier(nativePtrName)).toUnsafe()
+        val nonNullNativePtr = FqNameUnsafe("konan.internal.NonNullNativePtr")
 
         val throws = FqName("konan.Throws")
     }

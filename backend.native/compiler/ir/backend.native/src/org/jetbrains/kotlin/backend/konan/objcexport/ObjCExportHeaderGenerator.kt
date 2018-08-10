@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -638,7 +639,7 @@ abstract class ObjCExportHeaderGenerator(
 
     internal fun mapReferenceType(kotlinType: KotlinType): ObjCReferenceType =
             mapReferenceTypeIgnoringNullability(kotlinType).let {
-                if (TypeUtils.isNullableType(kotlinType)) {
+                if (kotlinType.unwrapInlinedClasses().isNullable()) {
                     ObjCNullableReferenceType(it)
                 } else {
                     it
@@ -683,7 +684,8 @@ abstract class ObjCExportHeaderGenerator(
 
         // TODO: translate `where T : BaseClass, T : SomeInterface` to `BaseClass* <SomeInterface>`
 
-        if (classDescriptor == builtIns.any || classDescriptor in hiddenTypes) {
+        // TODO: expose custom inline class boxes properly.
+        if (classDescriptor == builtIns.any || classDescriptor in hiddenTypes || classDescriptor.isInlined()) {
             return ObjCIdType
         }
 

@@ -379,6 +379,10 @@ task function_defaults_with_vararg2(type: RunKonanTest) {
     source = "codegen/function/defaultsWithVarArg2.kt"
 }
 
+task function_defaults_with_inline_classes(type: RunKonanTest) {
+    source = "codegen/function/defaultsWithInlineClasses.kt"
+}
+
 task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }

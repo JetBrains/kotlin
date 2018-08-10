@@ -18,7 +18,7 @@ package konan.internal
 
 @Intrinsic external fun getNativeNullPtr(): NativePtr
 
-class NativePtr private constructor() {
+class NativePtr @PublishedApi internal constructor(private val value: NonNullNativePtr?) {
     companion object {
         val NULL = getNativeNullPtr()
     }
@@ -32,4 +32,10 @@ class NativePtr private constructor() {
     override fun hashCode() = this.toLong().hashCode()
 
     override fun toString() = "0x${this.toLong().toString(16)}"
+}
+
+@PublishedApi
+internal inline class NonNullNativePtr(val value: NotNullPointerValue) { // TODO: refactor to use this type widely.
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun toNativePtr() = NativePtr(this)
 }

@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
+import org.jetbrains.kotlin.backend.konan.getInlinedClass
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
-import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.types.KotlinType
@@ -222,7 +222,7 @@ private val FunctionDescriptor.signature: String
         val signatureSuffix =
                 when {
                     this.typeParameters.isNotEmpty() -> "Generic"
-                    returnType.let { it != null && it.isValueType() } -> "ValueType"
+                    returnType?.getInlinedClass() != null -> "ValueType"
                     returnType.let { it != null && !KotlinBuiltIns.isUnitOrNullableUnit(it) } -> typeToHashString(returnType!!)
                     else -> ""
                 }

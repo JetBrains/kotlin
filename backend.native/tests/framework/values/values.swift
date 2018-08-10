@@ -277,6 +277,25 @@ func testCompanionObj() throws {
     try assertEquals(actual: Values.getNamedObjectInterface().iFun(), expected: named.iFun(), "Named object's method")
 }
 
+func testInlineClasses() throws {
+    let ic1: Int32 = 42
+    let ic1N = Values.box(ic1: 17)
+    let ic2 = "foo"
+    let ic2N = "bar"
+    let ic3 = ValuesTripleVals(first: 1, second: 2, third: 3)
+    let ic3N = Values.box(ic3: nil)
+
+    try assertEquals(
+        actual: Values.concatenateInlineClassValues(ic1: ic1, ic1N: ic1N, ic2: ic2, ic2N: ic2N, ic3: ic3, ic3N: ic3N),
+        expected: "42 17 foo bar TripleVals(first=1, second=2, third=3) null"
+    )
+
+    try assertEquals(
+        actual: Values.concatenateInlineClassValues(ic1: ic1, ic1N: nil, ic2: ic2, ic2N: nil, ic3: nil, ic3N: nil),
+        expected: "42 null foo null null null"
+    )
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -307,6 +326,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestEnum", method: withAutorelease(testEnum)),
             TestCase(name: "TestDataClass", method: withAutorelease(testDataClass)),
             TestCase(name: "TestCompanionObj", method: withAutorelease(testCompanionObj)),
+            TestCase(name: "TestInlineClasses", method: withAutorelease(testInlineClasses)),
         ]
     }
 }

@@ -340,14 +340,24 @@ private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LLVMTypeRef
     get() = functionType(int8TypePtr, false, codegen.kObjHeaderPtr)
 
 private fun ObjCExportCodeGenerator.emitBoxConverter(objCValueType: ObjCValueType) {
-    val valueType = objCValueType.kotlinValueType
-
     val symbols = context.ir.symbols
+    val irBuiltIns = context.irBuiltIns
 
-    val name = "${valueType.classFqName.shortName()}To${objCValueType.nsNumberName}"
+    val boxClass = when (objCValueType) {
+        ObjCValueType.BOOL -> irBuiltIns.booleanClass
+        ObjCValueType.UNSIGNED_SHORT -> irBuiltIns.charClass
+        ObjCValueType.CHAR -> irBuiltIns.byteClass
+        ObjCValueType.SHORT -> irBuiltIns.shortClass
+        ObjCValueType.INT -> irBuiltIns.intClass
+        ObjCValueType.LONG_LONG -> irBuiltIns.longClass
+        ObjCValueType.FLOAT -> irBuiltIns.floatClass
+        ObjCValueType.DOUBLE -> irBuiltIns.doubleClass
+    }.owner
+
+    val name = "${boxClass.name}To${objCValueType.nsNumberName}"
 
     val converter = generateFunction(codegen, kotlinToObjCFunctionType, name) {
-        val unboxFunction = symbols.getUnboxFunction(valueType).owner.llvmFunction
+        val unboxFunction = context.getUnboxFunction(boxClass).llvmFunction
         val kotlinValue = callFromBridge(
                 unboxFunction,
                 listOf(param(0)),
@@ -361,8 +371,6 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(objCValueType: ObjCValueTyp
     }
 
     LLVMSetLinkage(converter, LLVMLinkage.LLVMPrivateLinkage)
-
-    val boxClass = symbols.boxClasses[valueType]!!
     setObjCExportTypeInfo(boxClass.descriptor, constPointer(converter))
 }
 

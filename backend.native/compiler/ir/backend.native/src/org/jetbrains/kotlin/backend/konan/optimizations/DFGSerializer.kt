@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import sun.misc.Unsafe
 import kotlin.reflect.KClass
@@ -204,15 +204,15 @@ internal object DFGSerializer {
         }
     }
 
-    class TypeBase(val isFinal: Boolean, val isAbstract: Boolean, val correspondingValueType: ValueType?, val name: String?) {
+    class TypeBase(val isFinal: Boolean, val isAbstract: Boolean, val primitiveBinaryType: PrimitiveBinaryType?, val name: String?) {
 
         constructor(data: ArraySlice) : this(data.readBoolean(), data.readBoolean(),
-                data.readNullableInt()?.let { ValueType.values()[it] }, data.readNullableString())
+                data.readNullableInt()?.let { PrimitiveBinaryType.values()[it] }, data.readNullableString())
 
         fun write(result: ArraySlice) {
             result.writeBoolean(isFinal)
             result.writeBoolean(isAbstract)
-            result.writeNullableInt(correspondingValueType?.ordinal)
+            result.writeNullableInt(primitiveBinaryType?.ordinal)
             result.writeNullableString(name)
         }
     }
@@ -776,7 +776,8 @@ internal object DFGSerializer {
 
     fun serialize(context: Context, moduleDFG: ModuleDFG) {
         val symbolTable = moduleDFG.symbolTable
-        val typeMap = (symbolTable.classMap.values + DataFlowIR.Type.Virtual).distinct().withIndex().associateBy({ it.value }, { it.index })
+        val typeList = symbolTable.classMap.values + symbolTable.primitiveMap.values + DataFlowIR.Type.Virtual
+        val typeMap = typeList.distinct().withIndex().associateBy({ it.value }, { it.index })
         val functionSymbolMap = symbolTable.functionMap.values.distinct().withIndex().associateBy({ it.value }, { it.index })
         DEBUG_OUTPUT(0) {
             println("TYPES: ${typeMap.size}, " +
@@ -790,7 +791,7 @@ internal object DFGSerializer {
                 .map {
 
                     fun buildTypeBase(type: DataFlowIR.Type) =
-                            TypeBase(type.isFinal, type.isAbstract, type.correspondingValueType, type.name)
+                            TypeBase(type.isFinal, type.isAbstract, type.primitiveBinaryType, type.name)
 
                     fun buildTypeIntestines(type: DataFlowIR.Type.Declared) =
                             DeclaredType(
@@ -962,14 +963,14 @@ internal object DFGSerializer {
                         when {
                             external != null ->
                                 DataFlowIR.Type.External(external.hash, external.base.isFinal, external.base.isAbstract,
-                                        external.base.correspondingValueType, external.base.name)
+                                        external.base.primitiveBinaryType, external.base.name)
 
                             public != null -> {
                                 val symbolTableIndex = public.intestines.index
                                 if (symbolTableIndex >= 0)
                                     ++module.numberOfClasses
                                 DataFlowIR.Type.Public(public.hash, public.intestines.base.isFinal,
-                                        public.intestines.base.isAbstract, public.intestines.base.correspondingValueType,
+                                        public.intestines.base.isAbstract, public.intestines.base.primitiveBinaryType,
                                         module, symbolTableIndex, public.intestines.base.name).also {
                                     publicTypesMap.put(it.hash, it)
                                     allTypes += it
@@ -981,7 +982,7 @@ internal object DFGSerializer {
                                 if (symbolTableIndex >= 0)
                                     ++module.numberOfClasses
                                 DataFlowIR.Type.Private(privateTypeIndex++, private.intestines.base.isFinal,
-                                        private.intestines.base.isAbstract, private.intestines.base.correspondingValueType,
+                                        private.intestines.base.isAbstract, private.intestines.base.primitiveBinaryType,
                                         module, symbolTableIndex, private.intestines.base.name).also {
                                     allTypes += it
                                 }

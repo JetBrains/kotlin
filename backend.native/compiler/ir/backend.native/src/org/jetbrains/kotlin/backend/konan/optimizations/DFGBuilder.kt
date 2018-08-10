@@ -21,15 +21,11 @@ import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
-import org.jetbrains.kotlin.backend.konan.correspondingValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.target
-import org.jetbrains.kotlin.backend.konan.getTypeConversion
-import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -38,6 +34,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
@@ -48,43 +45,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-private fun getClassWithBoxingIncluded(type: IrType, ir: KonanIr): ClassDescriptor? {
-    /*
-     *  Some primitive types can be null and some can't. Those that can't must be replaced with the corresponding box.
-     *  Int -> Int
-     *  Int? -> IntBox
-     *  but
-     *  CPointer -> CPointer
-     *  CPointer? -> CPointer
-     */
-    return if (type.correspondingValueType == null && type.makeNotNull().correspondingValueType != null)
-        ir.symbols.getTypeConversion(type.makeNotNull(), type)!!.owner.returnType.getClass()!!
-    else
-        type.getClass()
-}
-
-private fun computeErasure(type: IrType, ir: KonanIr, erasure: MutableList<ClassDescriptor>) {
-    val irClass = getClassWithBoxingIncluded(type, ir)
-    if (irClass != null) {
-        erasure += irClass
-    } else {
-        val classifier = type.classifierOrFail
-        if (classifier is IrTypeParameterSymbol) {
-            classifier.owner.superTypes.forEach {
-                computeErasure(it, ir, erasure)
-            }
-        } else {
-            TODO(classifier.descriptor.toString())
-        }
-    }
-}
-
-internal fun IrType.erasure(context: Context): List<ClassDescriptor> {
-    val result = mutableListOf<ClassDescriptor>()
-    computeErasure(this, context.ir, result)
-    return result
-}
 
 private fun IrClass.getOverridingOf(function: FunctionDescriptor) = (function as? SimpleFunctionDescriptor)?.let {
     it.allOverriddenDescriptors.atMostOne { it.parent == this }
@@ -516,7 +476,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             )
             val throwsNode = DataFlowIR.Node.Variable(
                     values = thrownValues.map { expressionToEdge(it) },
-                    type   = symbolTable.mapClass(context.ir.symbols.throwable.owner),
+                    type   = symbolTable.mapClassReferenceType(context.ir.symbols.throwable.owner),
                     kind   = DataFlowIR.VariableKind.Temporary
             )
             variables.forEach { descriptor, node ->
@@ -535,7 +495,10 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
         private fun expressionToEdge(expression: IrExpression) =
                 if (expression is IrTypeOperatorCall && expression.operator.isCast())
-                    DataFlowIR.Edge(getNode(expression.argument), symbolTable.mapType(expression.typeOperand))
+                    DataFlowIR.Edge(
+                            getNode(expression.argument),
+                            symbolTable.mapClassReferenceType(expression.typeOperand.getClass()!!)
+                    )
                 else DataFlowIR.Edge(getNode(expression), null)
 
         private fun getNode(expression: IrExpression): DataFlowIR.Node {
@@ -595,7 +558,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         expressionToEdge(value.getValueArgument(0)!!), expressionToEdge(value.getValueArgument(1)!!))
 
                                 createUninitializedInstanceSymbol ->
-                                    DataFlowIR.Node.AllocInstance(symbolTable.mapType(value.getTypeArgument(0)!!))
+                                    DataFlowIR.Node.AllocInstance(symbolTable.mapClassReferenceType(
+                                            value.getTypeArgument(0)!!.getClass()!!
+                                    ))
 
                                 initInstanceSymbol -> {
                                     val thiz = expressionToEdge(value.getValueArgument(0)!!)
@@ -605,7 +570,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     DataFlowIR.Node.StaticCall(
                                             symbolTable.mapFunction(callee),
                                             arguments,
-                                            symbolTable.mapClass(callee.constructedClass),
+                                            symbolTable.mapClassReferenceType(callee.constructedClass),
                                             null
                                     )
                                 }
@@ -624,7 +589,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         DataFlowIR.Node.NewObject(
                                                 symbolTable.mapFunction(callee),
                                                 arguments,
-                                                symbolTable.mapClass(callee.constructedClass),
+                                                symbolTable.mapClassReferenceType(callee.constructedClass),
                                                 value
                                         )
                                     } else {
@@ -632,27 +597,22 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         if (callee.isOverridable && value.superQualifier == null) {
                                             val owner = callee.containingDeclaration as ClassDescriptor
                                             val actualReceiverType = value.dispatchReceiver!!.type
+                                            val actualReceiverClassifier = actualReceiverType.classifierOrFail
+
                                             val receiverType =
-                                                    if (actualReceiverType.classifierOrNull is IrTypeParameterSymbol
+                                                    if (actualReceiverClassifier is IrTypeParameterSymbol
                                                             || !callee.isReal /* Could be a bridge. */)
-                                                        symbolTable.mapClass(owner)
+                                                        symbolTable.mapClassReferenceType(owner)
                                                     else {
                                                         val actualClassAtCallsite =
-                                                                actualReceiverType.classifierOrFail.descriptor
-                                                                        as org.jetbrains.kotlin.descriptors.ClassDescriptor
+                                                                (actualReceiverClassifier as IrClassSymbol).descriptor
 //                                                        assert (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
 //                                                            "Expected an inheritor of ${owner.descriptor}, but was $actualClassAtCallsite"
 //                                                        }
                                                         if (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
-                                                            symbolTable.mapType(
-                                                                    actualReceiverType.let {
-                                                                        if (it.isValueType())  // A virtual call on a value type - it must be boxed.
-                                                                            context.ir.symbols.getTypeConversion(it, it.makeNullable())!!.owner.returnType
-                                                                        else it
-                                                                    }
-                                                            )
+                                                            symbolTable.mapClassReferenceType(actualReceiverClassifier.owner) // Box if inline class.
                                                         } else {
-                                                            symbolTable.mapClass(owner)
+                                                            symbolTable.mapClassReferenceType(owner)
                                                         }
                                                     }
                                             if (owner.isInterface) {

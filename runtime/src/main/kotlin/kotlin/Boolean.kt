@@ -20,7 +20,7 @@ package kotlin
  * Represents a value which is either `true` or `false`. On the JVM, non-nullable values of this type are
  * represented as values of the primitive type `boolean`.
  */
-public final class Boolean : Comparable<Boolean> {
+public final class Boolean private constructor(private val value: konan.internal.BooleanValue) : Comparable<Boolean> {
     /**
      * Returns the inverse of this boolean.
      */

@@ -73,9 +73,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val getPointerSize = packageScope.getContributedFunctions("getPointerSize").single()
 
-    val nullableInteropValueTypes = listOf(ValueType.C_POINTER, ValueType.NATIVE_POINTED)
-
-    private val nativePointed = packageScope.getContributedClass(nativePointedName)
+    val nativePointed = packageScope.getContributedClass(nativePointedName)
 
     val cPointer = this.packageScope.getContributedClass(cPointerName)
 

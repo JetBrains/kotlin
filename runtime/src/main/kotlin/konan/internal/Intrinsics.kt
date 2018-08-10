@@ -20,16 +20,20 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.NativePointed
 import kotlinx.cinterop.NativePtr
 
-@Intrinsic external fun areEqualByValue(first: Boolean, second: Boolean): Boolean
-@Intrinsic external fun areEqualByValue(first: Char, second: Char): Boolean
-@Intrinsic external fun areEqualByValue(first: Byte, second: Byte): Boolean
-@Intrinsic external fun areEqualByValue(first: Short, second: Short): Boolean
-@Intrinsic external fun areEqualByValue(first: Int, second: Int): Boolean
-@Intrinsic external fun areEqualByValue(first: Long, second: Long): Boolean
+@Intrinsic @PublishedApi external internal fun areEqualByValue(first: Boolean, second: Boolean): Boolean
+@Intrinsic @PublishedApi external internal fun areEqualByValue(first: Byte, second: Byte): Boolean
+@Intrinsic @PublishedApi external internal fun areEqualByValue(first: Short, second: Short): Boolean
+@Intrinsic @PublishedApi external internal fun areEqualByValue(first: Int, second: Int): Boolean
+@Intrinsic @PublishedApi external internal fun areEqualByValue(first: Long, second: Long): Boolean
+@Intrinsic @PublishedApi external internal fun areEqualByValue(first: NativePtr, second: NativePtr): Boolean
 
-@Intrinsic external fun ieee754Equals(first: Float, second: Float): Boolean
-@Intrinsic external fun ieee754Equals(first: Double, second: Double): Boolean
+// Bitwise equality:
+@Intrinsic @PublishedApi external internal fun areEqualByValue(first: Float, second: Float): Boolean
+@Intrinsic @PublishedApi external internal fun areEqualByValue(first: Double, second: Double): Boolean
 
-@Intrinsic external fun areEqualByValue(first: NativePtr, second: NativePtr): Boolean
-@Intrinsic external fun areEqualByValue(first: NativePointed?, second: NativePointed?): Boolean
-@Intrinsic external fun areEqualByValue(first: CPointer<*>?, second: CPointer<*>?): Boolean
+// IEEE754 equality:
+@Intrinsic @PublishedApi external internal fun ieee754Equals(first: Float, second: Float): Boolean
+@Intrinsic @PublishedApi external internal fun ieee754Equals(first: Double, second: Double): Boolean
+
+// Reinterprets this value from T to R having the same binary representation (e.g. to unwrap inline class).
+@Intrinsic @PublishedApi external internal fun <T, R> T.reinterpret(): R

@@ -116,12 +116,6 @@ private val cnameAnnotation = FqName("konan.internal.CName")
 private fun org.jetbrains.kotlin.types.KotlinType.isGeneric() =
         constructor.declarationDescriptor is TypeParameterDescriptor
 
-private val ClassDescriptor.isString
-    get() = fqNameSafe.asString() == "kotlin.String"
-
-private val ClassDescriptor.isValueType
-    get() = this.defaultType.correspondingValueType != null
-
 
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
     if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal || descriptor.isExpect)
@@ -143,6 +137,8 @@ private fun isExportedClass(descriptor: ClassDescriptor): Boolean {
     // Do not export types with type parameters.
     // TODO: is it correct?
     if (!descriptor.declaredTypeParameters.isEmpty()) return false
+    // Do not export inline classes for now. TODO: add proper support.
+    if (descriptor.isInlined()) return false
 
     return true
 }
@@ -372,7 +368,7 @@ private class ExportedElement(val kind: ElementKind,
     private fun translateArgument(name: String, clazz: ClassDescriptor, direction: Direction,
                                   builder: StringBuilder): String {
         return when {
-            clazz.isString ->
+            owner.isMappedToString(clazz) ->
                 if (direction == Direction.C_TO_KOTLIN) {
                     builder.append("  KObjHolder ${name}_holder;\n")
                     "CreateStringFromCString($name, ${name}_holder.slot())"
@@ -387,7 +383,7 @@ private class ExportedElement(val kind: ElementKind,
                     "((${owner.translateType(clazz)}){ .pinned = CreateStablePointer(${name})})"
                 }
             else -> {
-                assert(clazz.isValueType) {
+                assert(!clazz.defaultType.binaryTypeIsReference()) {
                     println(clazz.toString())
                 }
                 name
@@ -733,7 +729,7 @@ internal class CAdapterGenerator(
         val set = mutableSetOf<ClassDescriptor>()
         defineUsedTypesImpl(scope, set)
         set.forEach {
-            if (isMappedToReference(it)) {
+            if (isMappedToReference(it) && !it.isInlined()) {
                 output("typedef struct {", indent)
                 output("${prefix}_KNativePtr pinned;", indent + 1)
                 output("} ${translateType(it)};", indent)
@@ -884,26 +880,32 @@ internal class CAdapterGenerator(
             "<set-?>" to "set"
     )
 
-    private val primitiveTypeMapping = mapOf(
-            ValueType.BOOLEAN to "${prefix}_KBoolean",
-            ValueType.BYTE to "${prefix}_KByte",
-            ValueType.SHORT to "${prefix}_KShort",
-            ValueType.INT to "${prefix}_KInt",
-            ValueType.LONG to "${prefix}_KLong",
-            ValueType.FLOAT to "${prefix}_KFloat",
-            ValueType.DOUBLE to "${prefix}_KDouble",
-            ValueType.CHAR to "${prefix}_KChar",
-            ValueType.C_POINTER to "void*",
-            ValueType.NATIVE_PTR to "void*",
-            ValueType.NATIVE_POINTED to "void*"
-    )
+    private val primitiveTypeMapping = KonanPrimitiveType.values().associate {
+        it to when (it) {
+            KonanPrimitiveType.BOOLEAN -> "${prefix}_KBoolean"
+            KonanPrimitiveType.CHAR -> "${prefix}_KChar"
+            KonanPrimitiveType.BYTE -> "${prefix}_KByte"
+            KonanPrimitiveType.SHORT -> "${prefix}_KShort"
+            KonanPrimitiveType.INT -> "${prefix}_KInt"
+            KonanPrimitiveType.LONG -> "${prefix}_KLong"
+            KonanPrimitiveType.FLOAT -> "${prefix}_KFloat"
+            KonanPrimitiveType.DOUBLE -> "${prefix}_KDouble"
+            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> "void*"
+        }
+    }
 
-    internal fun isMappedToString(descriptor: ClassDescriptor) =
-            descriptor.fqNameSafe.asString() == "kotlin.String"
+    internal fun isMappedToString(descriptor: ClassDescriptor): Boolean =
+            isMappedToString(descriptor.defaultType.computeBinaryType())
+
+    private fun isMappedToString(binaryType: BinaryType<ClassDescriptor>): Boolean =
+            when (binaryType) {
+                is BinaryType.Primitive -> false
+                is BinaryType.Reference -> binaryType.types.first() == context.builtIns.string
+            }
 
     internal fun isMappedToReference(descriptor: ClassDescriptor) =
-            !descriptor.isUnit() && !isMappedToString(descriptor) &&
-                    !primitiveTypeMapping.contains(descriptor.defaultType.correspondingValueType)
+            !isMappedToVoid(descriptor) && !isMappedToString(descriptor) &&
+                    descriptor.defaultType.binaryTypeIsReference()
 
     internal fun isMappedToVoid(descriptor: ClassDescriptor): Boolean {
         return descriptor.isUnit()
@@ -917,16 +919,28 @@ internal class CAdapterGenerator(
         }
     }
 
-    private fun translateTypeFull(clazz: ClassDescriptor): Pair<String, String> {
-        val fqName = clazz.fqNameSafe.asString()
-        val valueType = clazz.defaultType.correspondingValueType
-        return when {
-            clazz.isUnit() -> "void" to "void"
-            fqName == "kotlin.String" -> "const char*" to "KObjHeader*"
-            valueType != null && primitiveTypeMapping.contains(valueType) -> primitiveTypeMapping[valueType]!! to primitiveTypeMapping[valueType]!!
-            else -> "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
-        }
+    private fun translateTypeFull(clazz: ClassDescriptor): Pair<String, String> = if (isMappedToVoid(clazz)) {
+        "void" to "void"
+    } else {
+        translateNonVoidTypeFull(clazz.defaultType)
     }
+
+    private fun translateNonVoidTypeFull(type: KotlinType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
+            eachInlinedClass = { _, _ ->
+                // unsigned types to be handled.
+            },
+            ifPrimitive = { primitiveType, _ ->
+                primitiveTypeMapping[primitiveType]!!.let { it to it }
+            },
+            ifReference = {
+                val clazz = (it.computeBinaryType() as BinaryType.Reference).types.first()
+                if (clazz == context.builtIns.string) {
+                    "const char*" to "KObjHeader*"
+                } else {
+                    "${prefix}_kref_${translateTypeFqName(clazz.fqNameSafe.asString())}" to "KObjHeader*"
+                }
+            }
+    )
 
     fun translateType(clazz: ClassDescriptor): String = translateTypeFull(clazz).first
 

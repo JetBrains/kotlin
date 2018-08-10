@@ -20,6 +20,9 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.full.companionObjectInstance
 
 typealias NativePtr = Long
+internal typealias NonNullNativePtr = NativePtr
+@PublishedApi internal fun NonNullNativePtr.toNativePtr() = this
+internal fun NativePtr.toNonNull(): NonNullNativePtr = this
 val nativeNullPtr: NativePtr = 0L
 
 // TODO: the functions below should eventually be intrinsified

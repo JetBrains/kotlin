@@ -50,13 +50,14 @@ import org.jetbrains.kotlin.resolve.constants.IntValue
 internal object DataFlowIR {
 
     abstract class Type(val isFinal: Boolean, val isAbstract: Boolean,
-                        val correspondingValueType: ValueType?, val name: String?) {
+                        val primitiveBinaryType: PrimitiveBinaryType?,
+                        val name: String?) {
         // Special marker type forbidding devirtualization on its instances.
         object Virtual : Declared(false, true, null, null, -1, "\$VIRTUAL")
 
         class External(val hash: Long, isFinal: Boolean, isAbstract: Boolean,
-                       correspondingValueType: ValueType?, name: String? = null)
-            : Type(isFinal, isAbstract, correspondingValueType, name) {
+                       primitiveBinaryType: PrimitiveBinaryType?, name: String? = null)
+            : Type(isFinal, isAbstract, primitiveBinaryType, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is External) return false
@@ -73,17 +74,17 @@ internal object DataFlowIR {
             }
         }
 
-        abstract class Declared(isFinal: Boolean, isAbstract: Boolean, correspondingValueType: ValueType?,
+        abstract class Declared(isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
                                 val module: Module?, val symbolTableIndex: Int, name: String?)
-            : Type(isFinal, isAbstract, correspondingValueType, name) {
+            : Type(isFinal, isAbstract, primitiveBinaryType, name) {
             val superTypes = mutableListOf<Type>()
             val vtable = mutableListOf<FunctionSymbol>()
             val itable = mutableMapOf<Long, FunctionSymbol>()
         }
 
-        class Public(val hash: Long, isFinal: Boolean, isAbstract: Boolean, correspondingValueType: ValueType?,
+        class Public(val hash: Long, isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
                      module: Module, symbolTableIndex: Int, name: String? = null)
-            : Declared(isFinal, isAbstract, correspondingValueType, module, symbolTableIndex, name) {
+            : Declared(isFinal, isAbstract, primitiveBinaryType, module, symbolTableIndex, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -100,9 +101,9 @@ internal object DataFlowIR {
             }
         }
 
-        class Private(val index: Int, isFinal: Boolean, isAbstract: Boolean, correspondingValueType: ValueType?,
+        class Private(val index: Int, isFinal: Boolean, isAbstract: Boolean, primitiveBinaryType: PrimitiveBinaryType?,
                       module: Module, symbolTableIndex: Int, name: String? = null)
-            : Declared(isFinal, isAbstract, correspondingValueType, module, symbolTableIndex, name) {
+            : Declared(isFinal, isAbstract, primitiveBinaryType, module, symbolTableIndex, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -450,6 +451,7 @@ internal object DataFlowIR {
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
         val classMap = mutableMapOf<ClassDescriptor, Type>()
+        val primitiveMap = mutableMapOf<PrimitiveBinaryType, Type>()
         val functionMap = mutableMapOf<DeclarationDescriptor, FunctionSymbol>()
 
         private val NAME_ESCAPES = Name.identifier("Escapes")
@@ -490,41 +492,40 @@ internal object DataFlowIR {
                 override fun visitClass(declaration: IrClass) {
                     declaration.acceptChildrenVoid(this)
 
-                    mapClass(declaration)
+                    mapClassReferenceType(declaration)
                 }
             }, data = null)
         }
 
         private fun ClassDescriptor.isFinal() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
 
-        fun mapClass(descriptor: ClassDescriptor): Type {
+        fun mapClassReferenceType(descriptor: ClassDescriptor): Type {
             // Do not try to devirtualize ObjC classes.
             if (descriptor.module.name == Name.special("<forward declarations>") || descriptor.isObjCClass())
                 return Type.Virtual
 
             val isFinal = descriptor.isFinal()
             val isAbstract = descriptor.isAbstract()
-            val correspondingValueType = descriptor.defaultType.correspondingValueType
             val name = descriptor.fqNameSafe.asString()
             if (descriptor.module != irModule.descriptor)
                 return classMap.getOrPut(descriptor) {
-                    Type.External(name.localHash.value, isFinal, isAbstract, correspondingValueType, takeName { name })
+                    Type.External(name.localHash.value, isFinal, isAbstract, null, takeName { name })
                 }
 
             classMap[descriptor]?.let { return it }
 
-            val placeToClassTable = correspondingValueType == null
+            val placeToClassTable = true
             val symbolTableIndex = if (placeToClassTable) module.numberOfClasses++ else -1
             val type = if (descriptor.isExported())
-                           Type.Public(name.localHash.value, isFinal, isAbstract, correspondingValueType,
+                           Type.Public(name.localHash.value, isFinal, isAbstract, null,
                                    module, symbolTableIndex, takeName { name })
                        else
-                           Type.Private(privateTypeIndex++, isFinal, isAbstract, correspondingValueType,
+                           Type.Private(privateTypeIndex++, isFinal, isAbstract, null,
                                    module, symbolTableIndex, takeName { name })
 
             classMap[descriptor] = type
 
-            type.superTypes += descriptor.superTypes.map { mapType(it) }
+            type.superTypes += descriptor.superTypes.map { mapClassReferenceType(it.getClass()!!) }
             if (!isAbstract) {
                 val vtableBuilder = context.getVtableBuilder(descriptor)
                 type.vtable += vtableBuilder.vtableEntries.map { mapFunction(it.getImplementation(context)!!) }
@@ -541,7 +542,26 @@ internal object DataFlowIR {
             return erasure.singleOrNull { !it.isInterface } ?: context.ir.symbols.any.owner
         }
 
-        fun mapType(type: IrType) = mapClass(choosePrimary(type.erasure(context)))
+        fun mapPrimitiveBinaryType(primitiveBinaryType: PrimitiveBinaryType): Type =
+                primitiveMap.getOrPut(primitiveBinaryType) {
+                    Type.Public(
+                            primitiveBinaryType.ordinal.toLong(),
+                            true,
+                            false,
+                            primitiveBinaryType,
+                            module,
+                            -1,
+                            null
+                    )
+                }
+
+        fun mapType(type: IrType): Type {
+            val binaryType = type.computeBinaryType()
+            return when (binaryType) {
+                is BinaryType.Primitive -> mapPrimitiveBinaryType(binaryType.type)
+                is BinaryType.Reference -> mapClassReferenceType(choosePrimary(binaryType.types.toList()))
+            }
+        }
 
         // TODO: use from LlvmDeclarations.
         private fun getFqName(descriptor: DeclarationDescriptor): FqName =
@@ -602,7 +622,7 @@ internal object DataFlowIR {
 
             symbol.parameterTypes =
                     (descriptor.allParameters.map { it.type } + (if (descriptor.isSuspend) listOf(continuationType) else emptyList()))
-                            .map { mapClass(choosePrimary(it.erasure(context))) }
+                            .map { mapType(it) }
                             .toTypedArray()
             symbol.returnType = mapType(if (descriptor.isSuspend)
                                             context.irBuiltIns.anyType
@@ -622,7 +642,7 @@ internal object DataFlowIR {
             functionMap[it] = symbol
 
             symbol.parameterTypes = emptyArray()
-            symbol.returnType = mapClass(context.ir.symbols.unit.owner)
+            symbol.returnType = mapClassReferenceType(context.ir.symbols.unit.owner)
             return symbol
         }
 

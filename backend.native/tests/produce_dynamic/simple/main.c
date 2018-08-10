@@ -40,6 +40,8 @@ int main(void) {
     __ kotlin.root.topLevelFunctionVoid(42, 0);
     printf("topLevel = %d %d\n", topLevelFunctionFromC(780, 3), __ kotlin.root.topLevelFunctionFromCShort(5, 2));
 
+    __ kotlin.root.useInlineClasses(42, "bar", base);
+
     __ DisposeString(string);
     __ DisposeStablePointer(base.pinned);
     __ DisposeStablePointer(child.pinned);

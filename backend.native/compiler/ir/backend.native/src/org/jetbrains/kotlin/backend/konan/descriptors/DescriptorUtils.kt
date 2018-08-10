@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.isValueType
+import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -90,17 +91,12 @@ internal val FunctionDescriptor.isIntrinsic: Boolean
     get() = this.descriptor.annotations.hasAnnotation(intrinsicAnnotation)
 
 internal val org.jetbrains.kotlin.descriptors.DeclarationDescriptor.isFrozen: Boolean
-    get() = this.annotations.hasAnnotation(frozenAnnotation)
+    get() = this.annotations.hasAnnotation(frozenAnnotation) ||
+            // RTTI is used for non-reference type box:
+            this is org.jetbrains.kotlin.descriptors.ClassDescriptor && !this.defaultType.binaryTypeIsReference()
 
 internal val DeclarationDescriptor.isFrozen: Boolean
     get() = this.descriptor.isFrozen
-
-private val intrinsicTypes = setOf(
-        "kotlin.Boolean", "kotlin.Char",
-        "kotlin.Byte", "kotlin.Short",
-        "kotlin.Int", "kotlin.Long",
-        "kotlin.Float", "kotlin.Double"
-)
 
 internal val arrayTypes = setOf(
         "kotlin.Array",
@@ -115,9 +111,6 @@ internal val arrayTypes = setOf(
         "konan.ImmutableBinaryBlob"
 )
 
-internal val ClassDescriptor.isIntrinsic: Boolean
-    get() = this.fqNameSafe.asString() in intrinsicTypes
-
 
 internal val ClassDescriptor.isArray: Boolean
     get() = this.fqNameSafe.asString() in arrayTypes
@@ -131,17 +124,19 @@ fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.moda
 
 internal fun FunctionDescriptor.hasValueTypeAt(index: Int): Boolean {
     when (index) {
-        0 -> return !isSuspend && returnType.let { (it.isValueType() || it.isUnit()) }
-        1 -> return extensionReceiverParameter.let { it != null && it.type.isValueType() }
-        else -> return this.valueParameters[index - 2].type.isValueType()
+        0 -> return !isSuspend && returnType.let { (it.isInlined() || it.isUnit()) }
+        1 -> return dispatchReceiverParameter.let { it != null && it.type.isInlined() }
+        2 -> return extensionReceiverParameter.let { it != null && it.type.isInlined() }
+        else -> return this.valueParameters[index - 3].type.isInlined()
     }
 }
 
 internal fun FunctionDescriptor.hasReferenceAt(index: Int): Boolean {
     when (index) {
-        0 -> return isSuspend || returnType.let { !it.isValueType() && !it.isUnit() }
-        1 -> return extensionReceiverParameter.let { it != null && !it.type.isValueType() }
-        else -> return !this.valueParameters[index - 2].type.isValueType()
+        0 -> return isSuspend || returnType.let { !it.isInlined() && !it.isUnit() }
+        1 -> return dispatchReceiverParameter.let { it != null && !it.type.isInlined() }
+        2 -> return extensionReceiverParameter.let { it != null && !it.type.isInlined() }
+        else -> return !this.valueParameters[index - 3].type.isInlined()
     }
 }
 
@@ -149,7 +144,7 @@ private fun FunctionDescriptor.needBridgeToAt(target: FunctionDescriptor, index:
         = hasValueTypeAt(index) xor target.hasValueTypeAt(index)
 
 internal fun FunctionDescriptor.needBridgeTo(target: FunctionDescriptor)
-        = (0..this.valueParameters.size + 1).any { needBridgeToAt(target, it) }
+        = (0..this.valueParameters.size + 2).any { needBridgeToAt(target, it) }
 
 internal val SimpleFunctionDescriptor.target: SimpleFunctionDescriptor
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
@@ -174,7 +169,7 @@ private fun FunctionDescriptor.bridgeDirectionToAt(target: FunctionDescriptor, i
         }
 
 internal class BridgeDirections(val array: Array<BridgeDirection>) {
-    constructor(parametersCount: Int): this(Array<BridgeDirection>(parametersCount + 2, { BridgeDirection.NOT_NEEDED }))
+    constructor(parametersCount: Int): this(Array<BridgeDirection>(parametersCount + 3, { BridgeDirection.NOT_NEEDED }))
 
     fun allNotNeeded(): Boolean = array.all { it == BridgeDirection.NOT_NEEDED }
 

@@ -736,3 +736,6 @@ val IrTypeArgument.typeOrNull: IrType? get() = (this as? IrTypeProjection)?.type
 
 val IrType.isSimpleTypeWithQuestionMark: Boolean
     get() = this is IrSimpleType && this.hasQuestionMark
+
+fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
+        if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType

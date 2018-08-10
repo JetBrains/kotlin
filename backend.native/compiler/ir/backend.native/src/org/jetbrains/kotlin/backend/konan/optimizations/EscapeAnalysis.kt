@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.ir.util.defaultType
 
 internal object EscapeAnalysis {
 
@@ -106,7 +107,7 @@ internal object EscapeAnalysis {
         }
 
         fun analyze(): Map<DataFlowIR.FunctionSymbol, FunctionAnalysisResult> {
-            val nothing = moduleDFG.symbolTable.mapClass(context.ir.symbols.nothing.owner).resolved()
+            val nothing = moduleDFG.symbolTable.mapClassReferenceType(context.ir.symbols.nothing.owner).resolved()
             return callGraph.nodes.associateBy({ it.symbol }) {
                 val function = functions[it.symbol]!!
                 val body = function.body

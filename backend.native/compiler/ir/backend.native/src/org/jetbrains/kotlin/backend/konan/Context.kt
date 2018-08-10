@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.reflect.KProperty
 
 internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
@@ -140,14 +141,20 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
         }
 
-        val extensionReceiverType = when (bridgeDirections.array[1]) {
+        val dispatchReceiver = when (bridgeDirections.array[1]) {
+            BridgeDirection.TO_VALUE_TYPE   -> function.dispatchReceiverParameter!!
+            BridgeDirection.NOT_NEEDED      -> function.dispatchReceiverParameter
+            BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyClass.owner.thisReceiver!!
+        }
+
+        val extensionReceiverType = when (bridgeDirections.array[2]) {
             BridgeDirection.TO_VALUE_TYPE   -> function.extensionReceiverParameter!!.type
             BridgeDirection.NOT_NEEDED      -> function.extensionReceiverParameter?.type
             BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
         }
 
         val valueParameterTypes = function.valueParameters.mapIndexed { index, valueParameter ->
-            when (bridgeDirections.array[index + 2]) {
+            when (bridgeDirections.array[index + 3]) {
                 BridgeDirection.TO_VALUE_TYPE   -> valueParameter.type
                 BridgeDirection.NOT_NEEDED      -> valueParameter.type
                 BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
@@ -157,6 +164,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                 function,
                 bridgeDirections,
                 returnType,
+                dispatchReceiver,
                 extensionReceiverType,
                 valueParameterTypes
         )
@@ -171,7 +179,17 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             this.parent = function.parent
         }
 
-        bridge.createDispatchReceiverParameter()
+        bridge.dispatchReceiverParameter = dispatchReceiver?.let {
+            IrValueParameterImpl(
+                    it.startOffset,
+                    it.endOffset,
+                    IrDeclarationOrigin.DEFINED,
+                    it.descriptor,
+                    it.type,
+                    null
+            )
+        }
+
         extensionReceiverType?.let {
             val extensionReceiverParameter = function.extensionReceiverParameter!!
             bridge.extensionReceiverParameter = IrValueParameterImpl(
@@ -207,6 +225,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             function: IrFunction,
             bridgeDirections: BridgeDirections,
             returnType: IrType,
+            dispatchReceiverParameter: IrValueParameter?,
             extensionReceiverType: IrType?,
             valueParameterTypes: List<IrType>
     ): SimpleFunctionDescriptor {
@@ -235,7 +254,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
         }
         bridgeDescriptor.initialize(
                 /* receiverParameterType        = */ extensionReceiverType?.toKotlinType(),
-                /* dispatchReceiverParameter    = */ descriptor.dispatchReceiverParameter,
+                /* dispatchReceiverParameter    = */ dispatchReceiverParameter?.descriptor as ReceiverParameterDescriptor?,
                 /* typeParameters               = */ descriptor.typeParameters,
                 /* unsubstitutedValueParameters = */ valueParameters,
                 /* unsubstitutedReturnType      = */ returnType.toKotlinType(),
@@ -262,6 +281,28 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
+
+    class LazyMember<T>(val initializer: Context.() -> T) {
+        operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)
+    }
+
+    companion object {
+        fun <T> lazyMember(initializer: Context.() -> T) = LazyMember<T>(initializer)
+
+        fun <K, V> lazyMapMember(initializer: Context.(K) -> V): LazyMember<(K) -> V> = lazyMember {
+            val storage = mutableMapOf<K, V>()
+            val result: (K) -> V = {
+                storage.getOrPut(it, { initializer(it) })
+            }
+            result
+        }
+    }
+
+    private val lazyValues = mutableMapOf<LazyMember<*>, Any?>()
+
+    fun <T> getValue(member: LazyMember<T>): T =
+            @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
+
     override val reflectionTypes: ReflectionTypes by lazy(PUBLICATION) {
         ReflectionTypes(moduleDescriptor, FqName("konan.internal"))
     }

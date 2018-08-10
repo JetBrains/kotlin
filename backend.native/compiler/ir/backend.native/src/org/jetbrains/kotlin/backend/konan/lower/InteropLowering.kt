@@ -732,10 +732,11 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         expression.transformChildrenVoid(this)
         builder.at(expression)
         val descriptor = expression.descriptor.original
+        val function = expression.symbol.owner
 
-        if (descriptor is ClassConstructorDescriptor) {
-            val type = descriptor.constructedClass.defaultType
-            if (type.isRepresentedAs(ValueType.C_POINTER) || type.isRepresentedAs(ValueType.NATIVE_POINTED)) {
+        if (function is IrConstructor) {
+            val inlinedClass = function.returnType.getInlinedClass()
+            if (inlinedClass?.descriptor == interop.cPointer || inlinedClass?.descriptor == interop.nativePointed) {
                 throw Error("Native interop types constructors must not be called directly")
             }
         }

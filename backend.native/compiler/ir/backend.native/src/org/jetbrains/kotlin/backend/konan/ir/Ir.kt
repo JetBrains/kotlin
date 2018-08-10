@@ -17,12 +17,9 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
-import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
@@ -46,7 +43,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -182,27 +178,15 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
 
     val getNativeNullPtr = symbolTable.referenceSimpleFunction(context.builtIns.getNativeNullPtr)
 
-    val boxFunctions = ValueType.values().associate {
-        val boxFunctionName = "box${it.classFqName.shortName()}"
-        it to symbolTable.referenceSimpleFunction(context.getInternalFunctions(boxFunctionName).single())
+    val boxCachePredicates = BoxCache.values().associate {
+        val name = "in${it.name.toLowerCase().capitalize()}BoxCache"
+        it to symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
     }
 
-    val boxClasses = ValueType.values().associate {
-        it to symbolTable.referenceClass(context.getInternalClass("${it.classFqName.shortName()}Box"))
+    val boxCacheGetters = BoxCache.values().associate {
+        val name = "getCached${it.name.toLowerCase().capitalize()}Box"
+        it to symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
     }
-
-    val valueClassToBox = ValueType.values().associate {
-        val valueClassId = ClassId.topLevel(it.classFqName.toSafe())
-        val valueClassDescriptor = context.builtIns.builtInsModule.findClassAcrossModuleDependencies(valueClassId)!!
-        symbolTable.referenceClass(valueClassDescriptor) to boxClasses[it]!!
-    }
-
-    val unboxFunctions = ValueType.values().mapNotNull {
-        val unboxFunctionName = "unbox${it.classFqName.shortName()}"
-        context.getInternalFunctions(unboxFunctionName).atMostOne()?.let { descriptor ->
-            it to symbolTable.referenceSimpleFunction(descriptor)
-        }
-    }.toMap()
 
     val immutableBinaryBlob = symbolTable.referenceClass(
             builtInsPackage("konan").getContributedClassifier(
@@ -216,7 +200,9 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
 
     val areEqualByValue = context.getInternalFunctions("areEqualByValue").map {
         symbolTable.referenceSimpleFunction(it)
-    }
+    }.associateBy { it.descriptor.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()!! }
+
+    val reinterpret = symbolTable.referenceSimpleFunction(context.getInternalFunctions("reinterpret").single())
 
     val ieee754Equals = context.getInternalFunctions("ieee754Equals").map {
         symbolTable.referenceSimpleFunction(it)

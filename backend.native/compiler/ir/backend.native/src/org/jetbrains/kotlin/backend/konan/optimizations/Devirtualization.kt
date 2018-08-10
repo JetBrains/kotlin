@@ -979,11 +979,13 @@ internal object Devirtualization {
     private fun devirtualize(irModule: IrModuleFragment, context: Context,
                              moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
                              devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
-        val nativePtrType = context.builtIns.nativePtr.defaultType
-        val nativePtrEqualityOperatorSymbol = context.ir.symbols.areEqualByValue.single { it.descriptor.valueParameters[0].type == nativePtrType }
+        val nativePtrType = context.ir.symbols.nativePtrType
+        val nativePtrEqualityOperatorSymbol = context.ir.symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val optimize = context.shouldOptimize()
+        /*
         val boxFunctions = ValueType.values().associate { context.ir.symbols.boxFunctions[it]!! to it }
         val unboxFunctions = ValueType.values().associate { context.ir.symbols.getUnboxFunction(it) to it }
+        */
 
         fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
             if (this is DataFlowIR.Type.Declared) return this
@@ -997,7 +999,11 @@ internal object Devirtualization {
             return this
         }
 
+        /*
         fun IrExpression.isBoxOrUnboxCall() = this is IrCall && (boxFunctions[symbol] != null || unboxFunctions[symbol] != null)
+        */
+
+        fun IrExpression.isBoxOrUnboxCall() = false
 
         fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: IrFunctionSymbol?) =
                 if (coercion == null)
@@ -1023,6 +1029,7 @@ internal object Devirtualization {
                             , coercion.symbol)
                 }
 
+        /*
         fun assertCoercionsMatch(coercion1: IrFunctionSymbol, coercion2: IrFunctionSymbol) {
             boxFunctions[coercion1]?.let { assert (unboxFunctions[coercion2] == it)
                     { "Incosistent coercions: ${coercion1.descriptor}, ${coercion2.descriptor}" }
@@ -1044,6 +1051,7 @@ internal object Devirtualization {
             assertCoercionsMatch(coercion, prevCoercion)
             return irGet(value)
         }
+        */
 
         fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: IrType,
                                                    devirtualizedCallee: DataFlowIR.FunctionSymbol.Declared) =
@@ -1067,7 +1075,7 @@ internal object Devirtualization {
                                                     extensionReceiver: PossiblyCoercedValue?,
                                                     parameters: Map<ValueParameterDescriptor, PossiblyCoercedValue>) =
                 actualCallee.bridgeTarget.let {
-                    if (it == null)
+//                    if (it == null)
                         irDevirtualizedCall(callee, actualType, actualCallee).apply {
                             this.dispatchReceiver = irGet(receiver)
                             this.extensionReceiver = extensionReceiver?.getFullValue(this@irDevirtualizedCall)
@@ -1075,6 +1083,7 @@ internal object Devirtualization {
                                 putValueArgument(it.index, parameters[it]!!.getFullValue(this@irDevirtualizedCall))
                             }
                         }
+                    /*
                     else {
                         val bridgeTarget = it.resolved() as DataFlowIR.FunctionSymbol.Declared
                         val callResult = irDevirtualizedCall(callee, actualType, bridgeTarget).apply {
@@ -1102,6 +1111,7 @@ internal object Devirtualization {
                                 actualCallee.returnType.resolved().correspondingValueType)
                         irCoerce(callResult, returnCoercion)
                     }
+                    */
                 }
 
         irModule.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
@@ -1114,10 +1124,12 @@ internal object Devirtualization {
                                           arg.argument
                                       else arg
                     if (!uncastedArg.isBoxOrUnboxCall()) return expression
+                    /*
                     val argarg = (uncastedArg as IrCall).getArguments().single().second
                     if (boxFunctions[expression.symbol].let { it != null && it == unboxFunctions[uncastedArg.symbol] }
                         || unboxFunctions[expression.symbol].let { it != null && it == boxFunctions[uncastedArg.symbol] })
                         return argarg
+                    */
                     return expression
                 }
 

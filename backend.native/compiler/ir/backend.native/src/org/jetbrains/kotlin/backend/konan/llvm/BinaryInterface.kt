@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.isValueType
+import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -177,7 +177,7 @@ private val FunctionDescriptor.signature: String
         val signatureSuffix =
                 when {
                     this.typeParameters.isNotEmpty() -> "Generic"
-                    returnType.isValueType() -> "ValueType"
+                    returnType.isInlined() -> "ValueType"
                     !returnType.isUnitOrNullableUnit() -> typeToHashString(returnType)
                     else -> ""
                 }

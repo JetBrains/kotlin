@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.constants.StringValue
 
 
 internal class RTTIGenerator(override val context: Context) : ContextUtils {
@@ -371,19 +370,14 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     data class ReflectionInfo(val packageName: String?, val relativeName: String?)
 
     private fun getReflectionInfo(descriptor: ClassDescriptor): ReflectionInfo {
-        // Use data from value class in type info for box class:
-        val descriptorForReflection = context.ir.symbols.valueClassToBox.entries
-                .firstOrNull { it.value.owner == descriptor }
-                ?.key?.owner ?: descriptor
-
-        return if (descriptorForReflection.isAnonymousObject) {
+        return if (descriptor.isAnonymousObject) {
             ReflectionInfo(packageName = null, relativeName = null)
-        } else if (descriptorForReflection.isLocal) {
-            ReflectionInfo(packageName = null, relativeName = descriptorForReflection.name.asString())
+        } else if (descriptor.isLocal) {
+            ReflectionInfo(packageName = null, relativeName = descriptor.name.asString())
         } else {
             ReflectionInfo(
-                    packageName = descriptorForReflection.findPackage().fqName.asString(),
-                    relativeName = generateSequence(descriptorForReflection, { it.parent as? ClassDescriptor })
+                    packageName = descriptor.findPackage().fqName.asString(),
+                    relativeName = generateSequence(descriptor, { it.parent as? ClassDescriptor })
                             .toList().reversed()
                             .joinToString(".") { it.name.asString() }
             )

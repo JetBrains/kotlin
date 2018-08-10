@@ -71,3 +71,13 @@ class Impl2 : Impl1() {
         println("Impl2.I: $arg0 $arg1 ${arg2::class.qualifiedName}")
     }
 }
+
+inline class IC1(val value: Int)
+inline class IC2(val value: String)
+inline class IC3(val value: Base?)
+
+fun useInlineClasses(ic1: IC1, ic2: IC2, ic3: IC3) {
+    assert(ic1.value == 42)
+    assert(ic2.value == "bar")
+    assert(ic3.value is Base)
+}

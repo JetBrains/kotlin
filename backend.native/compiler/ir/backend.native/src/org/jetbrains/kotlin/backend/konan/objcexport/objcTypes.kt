@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.ValueType
-
 sealed class ObjCType {
     final override fun toString(): String = this.render()
 
@@ -114,18 +112,17 @@ object ObjCVoidType : ObjCType() {
 }
 
 internal enum class ObjCValueType(
-        val kotlinValueType: ValueType, // It is here for simplicity.
         val encoding: String
 ) {
 
-    BOOL(ValueType.BOOLEAN, "c"),
-    CHAR(ValueType.BYTE, "c"),
-    UNSIGNED_SHORT(ValueType.CHAR, "S"),
-    SHORT(ValueType.SHORT, "s"),
-    INT(ValueType.INT, "i"),
-    LONG_LONG(ValueType.LONG, "q"),
-    FLOAT(ValueType.FLOAT, "f"),
-    DOUBLE(ValueType.DOUBLE, "d")
+    BOOL("c"),
+    CHAR("c"),
+    SHORT("s"),
+    UNSIGNED_SHORT("S"),
+    INT("i"),
+    LONG_LONG("q"),
+    FLOAT("f"),
+    DOUBLE("d")
 
     ;
 

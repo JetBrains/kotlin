@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -67,7 +67,7 @@ internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Bool
         descriptor.isEffectivelyPublicApi && !descriptor.defaultType.isObjCObjectType() && when (descriptor.kind) {
             ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
             ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
-        } && !descriptor.isExpect && !isSpecialMapped(descriptor)
+        } && !descriptor.isExpect && !isSpecialMapped(descriptor) && !descriptor.isInlined()
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }
@@ -110,15 +110,28 @@ internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = m
     it.overriddenDescriptors.isEmpty() && it.annotations.hasAnnotation(KonanBuiltIns.FqNames.throws)
 }
 
-private fun ObjCExportMapper.bridgeType(kotlinType: KotlinType): TypeBridge {
-    val valueType = kotlinType.correspondingValueType
-            ?: return ReferenceBridge
-
-    val objCValueType = ObjCValueType.values().singleOrNull { it.kotlinValueType == valueType }
-            ?: error("Can't produce $kotlinType to framework API")
-
-    return ValueTypeBridge(objCValueType)
-}
+private fun ObjCExportMapper.bridgeType(kotlinType: KotlinType): TypeBridge = kotlinType.unwrapToPrimitiveOrReference(
+        eachInlinedClass = { _, _ ->
+            // unsigned types to be handled.
+        },
+        ifPrimitive = { primitiveType, _ ->
+            val objCValueType = when (primitiveType) {
+                KonanPrimitiveType.BOOLEAN -> ObjCValueType.BOOL
+                KonanPrimitiveType.CHAR -> ObjCValueType.UNSIGNED_SHORT
+                KonanPrimitiveType.BYTE -> ObjCValueType.CHAR
+                KonanPrimitiveType.SHORT -> ObjCValueType.SHORT
+                KonanPrimitiveType.INT -> ObjCValueType.INT
+                KonanPrimitiveType.LONG -> ObjCValueType.LONG_LONG
+                KonanPrimitiveType.FLOAT -> ObjCValueType.FLOAT
+                KonanPrimitiveType.DOUBLE -> ObjCValueType.DOUBLE
+                KonanPrimitiveType.NON_NULL_NATIVE_PTR -> error("Can't produce pointer type to framework API") // TODO
+            }
+            ValueTypeBridge(objCValueType)
+        },
+        ifReference = {
+            ReferenceBridge
+        }
+)
 
 private fun ObjCExportMapper.bridgeParameter(parameter: ParameterDescriptor): MethodBridgeValueParameter =
         MethodBridgeValueParameter.Mapped(bridgeType(parameter.type))
