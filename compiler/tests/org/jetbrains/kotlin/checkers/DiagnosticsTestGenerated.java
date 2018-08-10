@@ -10857,9 +10857,19 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclarationDisabled.kt");
             }
 
+            @TestMetadata("delegatedPropertyInInlineClass.kt")
+            public void testDelegatedPropertyInInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/delegatedPropertyInInlineClass.kt");
+            }
+
             @TestMetadata("identityComparisonWithInlineClasses.kt")
             public void testIdentityComparisonWithInlineClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/identityComparisonWithInlineClasses.kt");
+            }
+
+            @TestMetadata("inlineClassCannotImplementInterfaceByDelegation.kt")
+            public void testInlineClassCannotImplementInterfaceByDelegation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCannotImplementInterfaceByDelegation.kt");
             }
 
             @TestMetadata("inlineClassDeclarationCheck.kt")
