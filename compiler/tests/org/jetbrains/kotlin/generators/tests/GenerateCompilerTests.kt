@@ -169,7 +169,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCustomScriptCodegenTest> {
-            model("codegen/customScript", extension = "kts")
+            model("codegen/customScript", pattern = "^(.*)$")
         }
 
         testClass<AbstractBytecodeTextTest> {

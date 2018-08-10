@@ -138,3 +138,7 @@ object TestScriptWithSimpleEnvVarsConfiguration : ScriptCompilationConfiguration
 @Suppress("unused")
 @KotlinScript(compilationConfiguration = TestScriptWithSimpleEnvVarsConfiguration::class)
 abstract class TestScriptWithSimpleEnvVars
+
+@Suppress("unused")
+@KotlinScript(extension = "customext")
+abstract class TestScriptWithNonKtsExtension(val name: String)
