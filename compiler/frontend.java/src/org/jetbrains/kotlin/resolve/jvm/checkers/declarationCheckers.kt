@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.findSynchronizedAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.findVolatileAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
@@ -154,7 +156,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
 
 class VolatileAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val volatileAnnotation = DescriptorUtils.getVolatileAnnotation(descriptor)
+        val volatileAnnotation = descriptor.findVolatileAnnotation()
         if (volatileAnnotation != null) {
             if (descriptor is PropertyDescriptor && !descriptor.isVar) {
                 val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
@@ -170,7 +172,7 @@ class VolatileAnnotationChecker : DeclarationChecker {
 
 class SynchronizedAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val synchronizedAnnotation = DescriptorUtils.getSynchronizedAnnotation(descriptor)
+        val synchronizedAnnotation = descriptor.findSynchronizedAnnotation()
         if (synchronizedAnnotation != null && descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(synchronizedAnnotation) ?: return
             context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT.on(annotationEntry))
