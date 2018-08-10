@@ -32,7 +32,7 @@ fun box(): String {
     }
 
     val superInterfaces = Arrays.toString((Class.forName("_1Kt\$box$1")).genericInterfaces)
-    if (superInterfaces != "[Custom.Custom\$MBiConsumer<java.lang.String, java.lang.String>]") {
+    if (superInterfaces != "[Custom\$MBiConsumer<java.lang.String, java.lang.String>]") {
         return "fail: $superInterfaces"
     }
 
