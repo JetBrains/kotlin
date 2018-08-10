@@ -15,6 +15,7 @@ dependencies {
     compileOnly("com.jcabi:jcabi-aether:0.10.1")
     compileOnly("org.sonatype.aether:aether-api:1.13.1")
     compileOnly("org.apache.maven:maven-core:3.0.3")
+    compileOnly("org.apache.ivy:ivy:2.4.0")
     testCompileOnly(project(":compiler:cli"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testRuntime(project(":kotlin-reflect"))
@@ -23,6 +24,7 @@ dependencies {
     testRuntime("com.jcabi:jcabi-aether:0.10.1")
     testRuntime("org.sonatype.aether:aether-api:1.13.1")
     testRuntime("org.apache.maven:maven-core:3.0.3")
+    testRuntime("org.apache.ivy:ivy:2.4.0")
     compileOnly(intellijDep()) { includeJars("openapi", "util") }
     testCompile(intellijDep()) { includeJars("openapi", "util") }
 }

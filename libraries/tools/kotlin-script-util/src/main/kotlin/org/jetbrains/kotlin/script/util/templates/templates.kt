@@ -18,6 +18,7 @@
 
 package org.jetbrains.kotlin.script.util.templates
 
+import org.jetbrains.kotlin.script.util.FilesAndIvyResolver
 import org.jetbrains.kotlin.script.util.FilesAndMavenResolver
 import org.jetbrains.kotlin.script.util.LocalFilesResolver
 import kotlin.script.templates.ScriptTemplateDefinition
@@ -27,6 +28,9 @@ abstract class StandardArgsScriptTemplateWithLocalResolving(val args: Array<Stri
 
 @ScriptTemplateDefinition(resolver = FilesAndMavenResolver::class, scriptFilePattern = ".*\\.kts")
 abstract class StandardArgsScriptTemplateWithMavenResolving(val args: Array<String>)
+
+@ScriptTemplateDefinition(resolver = FilesAndIvyResolver::class, scriptFilePattern = ".*\\.kts")
+abstract class StandardArgsScriptTemplateWithIvyResolving(val args: Array<String>)
 
 @ScriptTemplateDefinition(resolver = LocalFilesResolver::class, scriptFilePattern = ".*\\.kts")
 abstract class BindingsScriptTemplateWithLocalResolving(val bindings: Map<String, Any?>)
