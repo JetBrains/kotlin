@@ -13,223 +13,204 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.kotlin.idea.codeInsight.gradle;
+package org.jetbrains.kotlin.idea.codeInsight.gradle
 
-import com.intellij.compiler.server.BuildManager;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.externalSystem.model.ProjectSystemId;
-import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
-import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListenerAdapter;
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.TestDialog;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.IdeaTestUtil;
-import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
-import org.gradle.util.GradleVersion;
-import org.gradle.wrapper.GradleWrapperMain;
-import org.intellij.lang.annotations.Language;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.gradle.settings.DistributionType;
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
-import org.jetbrains.plugins.gradle.settings.GradleSettings;
-import org.jetbrains.plugins.gradle.util.GradleConstants;
-import org.jetbrains.plugins.groovy.GroovyFileType;
-import org.junit.Rule;
-import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
-
-import static org.junit.Assume.assumeThat;
+import com.intellij.compiler.server.BuildManager
+import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.application.Result
+import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
+import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
+import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListenerAdapter
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.TestDialog
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.util.PathUtil
+import com.intellij.util.containers.ContainerUtil
+import junit.framework.TestCase
+import org.gradle.util.GradleVersion
+import org.gradle.wrapper.GradleWrapperMain
+import org.intellij.lang.annotations.Language
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.plugins.gradle.settings.DistributionType
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
+import org.jetbrains.plugins.gradle.settings.GradleSettings
+import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.plugins.groovy.GroovyFileType
+import org.junit.Assume.assumeThat
+import org.junit.Rule
+import org.junit.rules.TestName
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import java.io.File
+import java.io.IOException
+import java.io.StringWriter
+import java.net.URISyntaxException
+import java.util.*
 
 // part of org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
-@RunWith(value = Parameterized.class)
-public abstract class GradleImportingTestCase extends ExternalSystemImportingTestCase {
-    private static final String GRADLE_JDK_NAME = "Gradle JDK";
-    private static final int GRADLE_DAEMON_TTL_MS = 10000;
+@RunWith(value = Parameterized::class)
+abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
-    @Rule public TestName name = new TestName();
+    @JvmField
+    @Rule
+    var name = TestName()
 
-    @Rule public VersionMatcherRule versionMatcherRule = new VersionMatcherRule();
+    @JvmField
+    @Rule
+    var versionMatcherRule = VersionMatcherRule()
 
-    @SuppressWarnings({"NullableProblems", "WeakerAccess"}) @NotNull
-    @Parameterized.Parameter() public String gradleVersion;
+    @JvmField
+    @Parameterized.Parameter
+    var gradleVersion: String = ""
 
-    private GradleProjectSettings myProjectSettings;
-    private String myJdkHome;
+    private lateinit var myProjectSettings: GradleProjectSettings
+    private lateinit var myJdkHome: String
 
-    @Override
-    public void setUp() throws Exception {
-        myJdkHome = IdeaTestUtil.requireRealJdkHome();
-        super.setUp();
-        assumeThat(gradleVersion, versionMatcherRule.getMatcher());
-        new WriteAction() {
-            @Override
-            protected void run(@NotNull Result result) throws Throwable {
-                Sdk oldJdk = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME);
-                if (oldJdk != null) {
-                    ProjectJdkTable.getInstance().removeJdk(oldJdk);
-                }
-                VirtualFile jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(myJdkHome));
-                assert jdkHomeDir != null;
-                Sdk jdk = SdkConfigurationUtil.setupSdk(new Sdk[0], jdkHomeDir, JavaSdk.getInstance(), true, null, GRADLE_JDK_NAME);
-                assertNotNull("Cannot create JDK for " + myJdkHome, jdk);
-                ProjectJdkTable.getInstance().addJdk(jdk);
-                FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle");
+    override fun setUp() {
+        myJdkHome = IdeaTestUtil.requireRealJdkHome()
+        super.setUp()
+        assumeThat(gradleVersion, versionMatcherRule.matcher)
+        runWrite {
+            ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME)?.let {
+                ProjectJdkTable.getInstance().removeJdk(it)
             }
-        }.execute();
-        myProjectSettings = new GradleProjectSettings();
-        GradleSettings.getInstance(myProject).setGradleVmOptions("-Xmx128m -XX:MaxPermSize=64m");
-        System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, String.valueOf(GRADLE_DAEMON_TTL_MS));
-        configureWrapper();
+            val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
+            val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, GRADLE_JDK_NAME)
+            TestCase.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
+            ProjectJdkTable.getInstance().addJdk(jdk!!)
+            FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
+
+        }
+        myProjectSettings = GradleProjectSettings()
+        GradleSettings.getInstance(myProject).gradleVmOptions = "-Xmx128m -XX:MaxPermSize=64m"
+        System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, GRADLE_DAEMON_TTL_MS.toString())
+        configureWrapper()
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        if (myJdkHome == null) {
-            //super.setUp() wasn't called
-            return;
-        }
-
+    override fun tearDown() {
         try {
-            new WriteAction() {
-                @Override
-                protected void run(@NotNull Result result) throws Throwable {
-                    Sdk old = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME);
-                    if (old != null) {
-                        SdkConfigurationUtil.removeSdk(old);
+            runWrite {
+                val old = ProjectJdkTable.getInstance().findJdk(GRADLE_JDK_NAME)
+                if (old != null) {
+                    SdkConfigurationUtil.removeSdk(old)
+                }
+            }
+
+            Messages.setTestDialog(TestDialog.DEFAULT)
+            FileUtil.delete(BuildManager.getInstance().buildSystemDirectory.toFile())
+        } finally {
+            super.tearDown()
+        }
+    }
+
+    override fun collectAllowedRoots(roots: MutableList<String>) {
+        roots.add(myJdkHome)
+        roots.addAll(ExternalSystemTestCase.collectRootsInside(myJdkHome))
+        roots.add(PathManager.getConfigPath())
+    }
+
+    override fun getName(): String {
+        return if (name.methodName == null) super.getName() else FileUtil.sanitizeFileName(name.methodName)
+    }
+
+    override fun getTestsTempDir(): String = "gradleImportTests"
+
+    override fun getExternalSystemConfigFileName(): String = "build.gradle"
+
+    protected fun importProjectUsingSingeModulePerGradleProject() {
+        myProjectSettings.isResolveModulePerSourceSet = false
+        importProject()
+    }
+
+    override fun importProject() {
+        ExternalSystemApiUtil.subscribe(
+            myProject,
+            GradleConstants.SYSTEM_ID,
+            object : ExternalSystemSettingsListenerAdapter<ExternalProjectSettings>() {
+                override fun onProjectsLinked(settings: Collection<ExternalProjectSettings>) {
+                    val item = ContainerUtil.getFirstItem<Any>(settings)
+                    if (item is GradleProjectSettings) {
+                        item.gradleJvm = GRADLE_JDK_NAME
                     }
                 }
-            }.execute();
-            Messages.setTestDialog(TestDialog.DEFAULT);
-            FileUtil.delete(BuildManager.getInstance().getBuildSystemDirectory().toFile());
-        }
-        finally {
-            super.tearDown();
-        }
+            })
+        super.importProject()
     }
 
-    @Override
-    protected void collectAllowedRoots(List<String> roots) throws IOException {
-        roots.add(myJdkHome);
-        roots.addAll(collectRootsInside(myJdkHome));
-        roots.add(PathManager.getConfigPath());
-    }
-
-    @Override
-    public String getName() {
-        return name.getMethodName() == null ? super.getName() : FileUtil.sanitizeFileName(name.getMethodName());
-    }
-
-    @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
-    public static Collection<Object[]> data() throws Throwable {
-        return Arrays.asList(AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS);
-    }
-
-    @Override
-    protected String getTestsTempDir() {
-        return "gradleImportTests";
-    }
-
-    @Override
-    protected String getExternalSystemConfigFileName() {
-        return "build.gradle";
-    }
-
-    protected void importProjectUsingSingeModulePerGradleProject() {
-        getCurrentExternalProjectSettings().setResolveModulePerSourceSet(false);
-        importProject();
-    }
-
-    @Override
-    protected void importProject() {
-        ExternalSystemApiUtil.subscribe(myProject, GradleConstants.SYSTEM_ID, new ExternalSystemSettingsListenerAdapter() {
-            @Override
-            public void onProjectsLinked(@NotNull Collection settings) {
-                Object item = ContainerUtil.getFirstItem(settings);
-                if (item instanceof GradleProjectSettings) {
-                    ((GradleProjectSettings) item).setGradleJvm(GRADLE_JDK_NAME);
+    override fun importProject(@NonNls @Language("Groovy") config: String) {
+        super.importProject(
+            """
+                allprojects {
+                    repositories {
+                        maven {
+                            url 'http://maven.labs.intellij.net/repo1'
+                        }
+                    }
                 }
+
+                $config
+                """.trimIndent()
+        )
+    }
+
+    override fun getCurrentExternalProjectSettings(): GradleProjectSettings = myProjectSettings
+
+    override fun getExternalSystemId(): ProjectSystemId = GradleConstants.SYSTEM_ID
+
+    @Throws(IOException::class, URISyntaxException::class)
+    private fun configureWrapper() {
+        val distributionUri = AbstractModelBuilderTest.DistributionLocator().getDistributionFor(GradleVersion.version(gradleVersion))
+
+        myProjectSettings.distributionType = DistributionType.DEFAULT_WRAPPED
+        val wrapperJarFrom = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(wrapperJar())!!
+
+        val wrapperJarFromTo = createProjectSubFile("gradle/wrapper/gradle-wrapper.jar")
+        runWrite {
+            wrapperJarFromTo.setBinaryContent(wrapperJarFrom.contentsToByteArray())
+        }
+
+        val properties = Properties()
+        properties.setProperty("distributionBase", "GRADLE_USER_HOME")
+        properties.setProperty("distributionPath", "wrapper/dists")
+        properties.setProperty("zipStoreBase", "GRADLE_USER_HOME")
+        properties.setProperty("zipStorePath", "wrapper/dists")
+        properties.setProperty("distributionUrl", distributionUri.toString())
+
+        val writer = StringWriter()
+        properties.store(writer, null)
+
+        createProjectSubFile("gradle/wrapper/gradle-wrapper.properties", writer.toString())
+    }
+
+    private fun runWrite(f: () -> Unit) {
+        object : WriteAction<Any>() {
+            override fun run(result: Result<Any>) {
+                f()
             }
-        });
-        super.importProject();
+        }.execute()
     }
 
-    @Override
-    protected void importProject(@NonNls @Language("Groovy") String config) throws IOException {
-        config = "allprojects {\n" +
-                 "  repositories {\n" +
-                 "    maven {\n" +
-                 "        url 'http://maven.labs.intellij.net/repo1'\n" +
-                 "    }\n" +
-                 "  }" +
-                 "}\n" + config;
-        super.importProject(config);
-    }
+    companion object {
+        private const val GRADLE_JDK_NAME = "Gradle JDK"
+        private const val GRADLE_DAEMON_TTL_MS = 10000
 
-    @Override
-    protected GradleProjectSettings getCurrentExternalProjectSettings() {
-        return myProjectSettings;
-    }
+        @JvmStatic
+        @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
+        fun data(): Collection<Array<Any>> {
+            return Arrays.asList(*AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS)
+        }
 
-    @Override
-    protected ProjectSystemId getExternalSystemId() {
-        return GradleConstants.SYSTEM_ID;
-    }
-
-    private void configureWrapper() throws IOException, URISyntaxException {
-        URI distributionUri = new AbstractModelBuilderTest.DistributionLocator().getDistributionFor(GradleVersion.version(gradleVersion));
-
-        myProjectSettings.setDistributionType(DistributionType.DEFAULT_WRAPPED);
-        final VirtualFile wrapperJarFrom = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(wrapperJar());
-        assert wrapperJarFrom != null;
-
-        final VirtualFile wrapperJarFromTo = createProjectSubFile("gradle/wrapper/gradle-wrapper.jar");
-        new WriteAction() {
-            @Override
-            protected void run(@NotNull Result result) throws Throwable {
-                wrapperJarFromTo.setBinaryContent(wrapperJarFrom.contentsToByteArray());
-            }
-        }.execute().throwException();
-
-
-        Properties properties = new Properties();
-        properties.setProperty("distributionBase", "GRADLE_USER_HOME");
-        properties.setProperty("distributionPath", "wrapper/dists");
-        properties.setProperty("zipStoreBase", "GRADLE_USER_HOME");
-        properties.setProperty("zipStorePath", "wrapper/dists");
-        properties.setProperty("distributionUrl", distributionUri.toString());
-
-        StringWriter writer = new StringWriter();
-        properties.store(writer, null);
-
-        createProjectSubFile("gradle/wrapper/gradle-wrapper.properties", writer.toString());
-    }
-
-    @NotNull
-    private static File wrapperJar() {
-        return new File(PathUtil.getJarPathForClass(GradleWrapperMain.class));
+        private fun wrapperJar(): File {
+            return File(PathUtil.getJarPathForClass(GradleWrapperMain::class.java))
+        }
     }
 }
