@@ -53,7 +53,8 @@ class RemoteLookupTrackerClient(val facade: CompilerCallbackServicesFacade, even
         if (isDoNothing || lookups.isEmpty()) return
 
         profiler.withMeasure(this) {
-            facade.lookupTracker_record(lookups)
+            // Converting to list is intentional because THashSet may lead to serialization-related problems
+            facade.lookupTracker_record(lookups.toList())
         }
 
         lookups.clear()
