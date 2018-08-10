@@ -65,3 +65,10 @@ annotation class InlineConstructor
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class Frozen
+
+/**
+ * Fields of annotated class won't be sorted.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class NoReorderFields

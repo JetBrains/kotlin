@@ -17,6 +17,7 @@
 package konan.worker
 
 import konan.internal.Frozen
+import konan.internal.NoReorderFields
 import konan.SymbolName
 import kotlinx.cinterop.NativePtr
 
@@ -123,6 +124,7 @@ external private fun checkIfFrozen(ref: Any?)
  * Otherwise memory leak could happen.
  */
 @Frozen
+@NoReorderFields
 class AtomicReference<T>(private var value: T? = null) {
     // A spinlock to fix potential ARC race. Not an AtomicInt just for the effeciency sake.
     private var lock: Int = 0

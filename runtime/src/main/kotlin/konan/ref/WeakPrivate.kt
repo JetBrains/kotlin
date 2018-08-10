@@ -18,6 +18,7 @@ package konan.ref
 
 import kotlinx.cinterop.COpaquePointer
 import konan.internal.ExportForCppRuntime
+import konan.internal.NoReorderFields
 
 /**
  *   Theory of operations:
@@ -42,6 +43,7 @@ import konan.internal.ExportForCppRuntime
  */
 
 // Clear holding the counter object, which refers to the actual object.
+@NoReorderFields
 internal class WeakReferenceCounter(var referred: COpaquePointer?) : WeakReferenceImpl() {
     // Spinlock, potentially taken when materializing or removing 'referred' object.
     var lock: Int = 0
