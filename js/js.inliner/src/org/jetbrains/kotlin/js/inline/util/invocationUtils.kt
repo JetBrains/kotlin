@@ -70,7 +70,7 @@ fun isCallInvocation(invocation: JsInvocation): Boolean {
 
     if (qualifier.name?.descriptor != null) return false
 
-    return qualifier?.ident == Namer.CALL_FUNCTION && arguments.isNotEmpty()
+    return qualifier?.ident == Namer.CALL_FUNCTION && arguments.isNotEmpty() && qualifier.qualifier != null
 }
 
 /**
