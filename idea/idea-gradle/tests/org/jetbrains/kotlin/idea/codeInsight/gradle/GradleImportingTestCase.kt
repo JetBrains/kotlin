@@ -32,6 +32,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
@@ -40,6 +41,7 @@ import org.gradle.util.GradleVersion
 import org.gradle.wrapper.GradleWrapperMain
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -191,6 +193,28 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         createProjectSubFile("gradle/wrapper/gradle-wrapper.properties", writer.toString())
     }
 
+    protected open fun testDataDirName(): String = ""
+
+    protected fun testDataDirectory(): File {
+        val baseDir = "${PluginTestCaseBase.getTestDataPathBase()}/gradle/${testDataDirName()}/"
+        return File(baseDir, getTestName(true).substringBefore("_"))
+    }
+
+    protected fun configureByFiles(): List<VirtualFile> {
+        val rootDir = testDataDirectory()
+        assert(rootDir.exists()) { "Directory ${rootDir.path} doesn't exist" }
+
+        return rootDir.walk().mapNotNull {
+            when {
+                it.isDirectory -> null
+                !it.name.endsWith(SUFFIX) -> {
+                    createProjectSubFile(it.path.substringAfter(rootDir.path + File.separator), it.readText())
+                }
+                else -> null
+            }
+        }.toList()
+    }
+
     private fun runWrite(f: () -> Unit) {
         object : WriteAction<Any>() {
             override fun run(result: Result<Any>) {
@@ -202,6 +226,9 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     companion object {
         private const val GRADLE_JDK_NAME = "Gradle JDK"
         private const val GRADLE_DAEMON_TTL_MS = 10000
+
+        @JvmStatic
+        protected val SUFFIX = ".after"
 
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
