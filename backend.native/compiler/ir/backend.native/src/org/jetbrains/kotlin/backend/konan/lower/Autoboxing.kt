@@ -72,8 +72,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         return if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ||
                    operator == IrTypeOperator.IMPLICIT_INTEGER_COERCION) {
             this
-        } else if (operator == IrTypeOperator.IMPLICIT_CAST) {
-            this.useAs(typeOperand)
         } else {
             // Codegen expects the argument of type-checking operator to be an object reference:
             this.useAs(context.irBuiltIns.anyNType)
@@ -124,7 +122,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                     // TODO: is it a workaround for inconsistent IR?
                     this.typeOperand
 
-                IrTypeOperator.CAST -> context.irBuiltIns.anyNType
+                IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> context.irBuiltIns.anyNType
 
                 else -> this.type
             }
