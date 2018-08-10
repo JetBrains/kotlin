@@ -286,11 +286,11 @@ private object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType
         }
     }
 
-    override fun getFqName(clazz: IrClass): FqNameUnsafe = clazz.fqNameSafe.toUnsafe()
+    override fun getFqName(clazz: IrClass): FqNameUnsafe = clazz.descriptor.fqNameUnsafe
     override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.descriptor.isInline
 
     override fun getNativePointedSuperclass(clazz: IrClass): IrClass? = clazz.getAllSuperClassifiers()
-            .firstOrNull { it.fqNameSafe.toUnsafe() == InteropBuiltIns.FqNames.nativePointed }
+            .firstOrNull { it.descriptor.fqNameUnsafe == InteropBuiltIns.FqNames.nativePointed }
 
     override fun getInlinedClassUnderlyingType(clazz: IrClass): IrType =
             clazz.constructors.first { it.isPrimary }.valueParameters.single().type
