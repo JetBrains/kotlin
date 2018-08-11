@@ -5227,6 +5227,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/setterBackingFieldAssignment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SetterBackingFieldAssignment extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSetterBackingFieldAssignment() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/setterBackingFieldAssignment"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("assigned.kt")
+        public void testAssigned() throws Exception {
+            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/assigned.kt");
+        }
+
+        @TestMetadata("lowerVisibility.kt")
+        public void testLowerVisibility() throws Exception {
+            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/lowerVisibility.kt");
+        }
+
+        @TestMetadata("notAssigned.kt")
+        public void testNotAssigned() throws Exception {
+            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/notAssigned.kt");
+        }
+
+        @TestMetadata("notAssigned2.kt")
+        public void testNotAssigned2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/notAssigned2.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/simplifyAssertNotNull")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
