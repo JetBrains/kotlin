@@ -30,10 +30,12 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
                 ":lib:compileReleaseKotlinAndroidLib",
                 ":lib:compileKotlinJvmLib",
                 ":lib:compileKotlinJsLib",
+                ":lib:compileKotlinMetadata",
                 ":app:compileDebugKotlinAndroidApp",
                 ":app:compileReleaseKotlinAndroidApp",
                 ":app:compileKotlinJvmApp",
                 ":app:compileKotlinJsApp",
+                ":app:compileKotlinMetadata",
                 ":lib:compileDebugUnitTestJavaWithJavac",
                 ":app:compileDebugUnitTestJavaWithJavac"
             )

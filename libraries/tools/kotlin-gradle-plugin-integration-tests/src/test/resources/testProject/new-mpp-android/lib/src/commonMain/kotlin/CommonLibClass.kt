@@ -2,4 +2,4 @@ package com.example.lib
 
 class CommonLibClass
 
-expect class ExpectedLibClass
+expect class ExpectedLibClass()

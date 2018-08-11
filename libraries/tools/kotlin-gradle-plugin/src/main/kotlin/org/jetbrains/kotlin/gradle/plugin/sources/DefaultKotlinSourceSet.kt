@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.lang.reflect.Constructor
 import java.util.*
 
+const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
+
 class DefaultKotlinSourceSet(
     private val project: Project,
     val displayName: String,
@@ -37,6 +39,18 @@ class DefaultKotlinSourceSet(
 
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName("runtimeOnly")
+
+    override val apiMetadataConfigurationName: String
+        get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
+
+    override val implementationMetadataConfigurationName: String
+        get() = lowerCamelCaseName(implementationConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
+
+    override val compileOnlyMetadataConfigurationName: String
+        get() = lowerCamelCaseName(compileOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
+
+    override val runtimeOnlyMetadataConfigurationName: String
+        get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(name + " Kotlin source", fileResolver).apply {
         filter.include("**/*.java", "**/*.kt", "**/*.kts")
