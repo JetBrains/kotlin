@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension? =
     project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
-internal class KotlinMultiplatformPlugin(
+class KotlinMultiplatformPlugin(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val fileResolver: FileResolver,
     private val instantiator: Instantiator,
@@ -72,11 +72,16 @@ internal class KotlinMultiplatformPlugin(
 
         setUpConfigurationAttributes(project)
         configurePublishingWithMavenPublish(project)
+
+        // set up metadata publishing
+        targetsFromPreset.fromPreset(
+            KotlinMetadataTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion),
+            METADATA_TARGET_NAME
+        )
     }
 
     fun setupDefaultPresets(project: Project) {
         with((project.kotlinExtension as KotlinMultiplatformExtension).presets) {
-            add(KotlinUniversalTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
             add(KotlinJvmTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
             add(KotlinJsTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
@@ -154,5 +159,9 @@ internal class KotlinMultiplatformPlugin(
                 }
             }
         }
+    }
+
+    companion object {
+        const val METADATA_TARGET_NAME = "metadata"
     }
 }

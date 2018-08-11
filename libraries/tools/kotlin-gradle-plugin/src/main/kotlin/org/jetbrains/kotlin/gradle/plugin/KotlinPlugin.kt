@@ -433,15 +433,18 @@ internal abstract class AbstractKotlinPlugin(
         ) {
             val project = kotlinTarget.project
 
+            // Setup the consuming configurations:
+            project.dependencies.attributesSchema.attribute(KotlinPlatformType.attribute)
+            kotlinTarget.compilations.all { compilation ->
+                KotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, kotlinTarget, project.configurations)
+            }
+
+            // Setup the published configurations:
             // Don't set the attributes for common module; otherwise their 'common' platform won't be compatible with the one in
             // platform-specific modules
             if (kotlinTarget.platformType != KotlinPlatformType.common) {
-                project.dependencies.attributesSchema.attribute(KotlinPlatformType.attribute)
                 project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).usesPlatformOf(kotlinTarget)
                 project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).usesPlatformOf(kotlinTarget)
-                kotlinTarget.compilations.all { compilation ->
-                    KotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, kotlinTarget, project.configurations)
-                }
             }
         }
 
