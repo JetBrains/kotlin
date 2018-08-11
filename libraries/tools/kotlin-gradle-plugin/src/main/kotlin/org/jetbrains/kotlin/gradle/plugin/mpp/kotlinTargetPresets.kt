@@ -45,7 +45,7 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
     internal abstract fun buildCompilationProcessor(compilation: T): KotlinSourceSetProcessor<*>
 }
 
-class KotlinUniversalTargetPreset(
+class KotlinMetadataTargetPreset(
     project: Project,
     instantiator: Instantiator,
     fileResolver: FileResolver,
@@ -77,7 +77,7 @@ class KotlinUniversalTargetPreset(
         )
 
     companion object {
-        const val PRESET_NAME = "universal"
+        const val PRESET_NAME = "metadata"
     }
 }
 

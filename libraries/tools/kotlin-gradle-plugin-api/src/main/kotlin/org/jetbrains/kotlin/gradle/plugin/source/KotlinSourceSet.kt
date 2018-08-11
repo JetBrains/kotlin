@@ -23,6 +23,20 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
     fun dependsOn(other: KotlinSourceSet)
     val dependsOn: Set<KotlinSourceSet>
 
+    val apiMetadataConfigurationName: String
+    val implementationMetadataConfigurationName: String
+    val compileOnlyMetadataConfigurationName: String
+    val runtimeOnlyMetadataConfigurationName: String
+
+    override val relatedConfigurationNames: List<String>
+        get() = super.relatedConfigurationNames +
+                listOf(
+                    apiMetadataConfigurationName,
+                    implementationMetadataConfigurationName,
+                    compileOnlyMetadataConfigurationName,
+                    runtimeOnlyMetadataConfigurationName
+                )
+
     companion object {
         const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
         const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
