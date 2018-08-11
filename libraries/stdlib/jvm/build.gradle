@@ -150,11 +150,6 @@ dist {
         from(it) {
             rename('dist-', '')
         }
-        // legacy
-        from(it) {
-            rename('dist-', '')
-            rename('kotlin-stdlib', 'kotlin-runtime')
-        }
     }
     from (configurations.compile) {
         include 'annotations*.jar'
