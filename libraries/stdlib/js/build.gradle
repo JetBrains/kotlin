@@ -352,10 +352,6 @@ dist {
     [mergedJar, distSourcesJar].forEach {
         rename("dist-", "")
         from(it)
-        // legacy
-        from(it) {
-            rename("kotlin-stdlib-js", 'kotlin-jslib')
-        }
     }
 }
 
