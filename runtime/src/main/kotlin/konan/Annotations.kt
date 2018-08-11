@@ -24,15 +24,15 @@ import kotlin.reflect.KClass
  * TODO: changing symbol name breaks the binary compatibility,
  * so it should probably be allowed on `internal` and `private` functions only.
  */
-//@Target(AnnotationTarget.FUNCTION)
-//@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION)
+// @Retention(AnnotationRetention.SOURCE)
 annotation class SymbolName(val name: String)
 
 /**
  * Exports the TypeInfo of this class by given name to use it from runtime.
  */
-//@Target(AnnotationTarget.CLASS)
-//@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
 annotation class ExportTypeInfo(val name: String)
 
 /**
@@ -72,21 +72,10 @@ public annotation class FixmeReflection
 public annotation class FixmeConcurrency
 
 /**
- * Need to be fixed because of header/impl notation
- */
-public annotation class FixmeMultiplatform
-
-/**
- * Need to be fixed because of random support.
- */
-public annotation class FixmeRandom
-
-/**
  * Escape analysis annotations.
  */
-public annotation class Escapes(val who: Int)
-
-public annotation class PointsTo(vararg val onWhom: Int)
+internal annotation class Escapes(val who: Int)
+internal annotation class PointsTo(vararg val onWhom: Int)
 
 /**
  * Top level variable or object is thread local, and so could be mutable.
@@ -96,4 +85,4 @@ public annotation class PointsTo(vararg val onWhom: Int)
  */
 @Target(AnnotationTarget.FIELD, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class ThreadLocal
+public annotation class ThreadLocal
