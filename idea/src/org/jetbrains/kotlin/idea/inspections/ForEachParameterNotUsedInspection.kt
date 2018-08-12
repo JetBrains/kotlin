@@ -9,18 +9,15 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl.WithDestructuringDeclaration
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtVisitorVoid
-import org.jetbrains.kotlin.psi.callExpressionVisitor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
 class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
@@ -60,15 +57,20 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
         acceptChildren(object : KtVisitorVoid() {
             override fun visitKtElement(element: KtElement) {
                 if (!used) {
-                    if (element.children.isNotEmpty()) {
+                    if (element is KtNameReferenceExpression) {
+                        used = element.isUsed()
+                    } else if (element.children.isNotEmpty()) {
                         element.acceptChildren(this)
-                    } else {
-                        val bindingContext = element.analyze()
-                        val resolvedCall = element.getResolvedCall(bindingContext) ?: return
-
-                        used = resolvedCall.candidateDescriptor == descriptor
                     }
                 }
+            }
+
+            private fun KtNameReferenceExpression.isUsed(): Boolean {
+                val bindingContext = analyze()
+                val resolvedCall = getResolvedCall(bindingContext) ?: return false
+
+                return (resolvedCall is VariableAsFunctionResolvedCall && resolvedCall.variableCall.candidateDescriptor == descriptor) ||
+                        (resolvedCall.candidateDescriptor == descriptor)
             }
         })
         return used
