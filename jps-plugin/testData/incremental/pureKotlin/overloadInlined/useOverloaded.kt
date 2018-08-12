@@ -1,0 +1,3 @@
+fun useOverloaded() {
+    overloaded("useOverloadedInline")
+}

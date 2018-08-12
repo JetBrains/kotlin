@@ -909,6 +909,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             runTest("jps-plugin/testData/incremental/pureKotlin/ourClassReferenced/");
         }
 
+        @TestMetadata("overloadInlined")
+        public void testOverloadInlined() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/overloadInlined/");
+        }
+
         @TestMetadata("packageConstantChanged")
         public void testPackageConstantChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/packageConstantChanged/");
@@ -1097,6 +1102,11 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestMetadata("returnTypeChanged")
         public void testReturnTypeChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/returnTypeChanged/");
+        }
+
+        @TestMetadata("secondaryConstructorInlined")
+        public void testSecondaryConstructorInlined() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/secondaryConstructorInlined/");
         }
 
         @TestMetadata("simpleClassDependency")
