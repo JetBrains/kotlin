@@ -466,5 +466,5 @@ public actual fun CharSequence.repeat(n: Int): String {
  * Note that this Comparator does not take locale into account,
  * and will result in an unsatisfactory ordering for certain locales.
  */
-public val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
+public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
     get() = java.lang.String.CASE_INSENSITIVE_ORDER

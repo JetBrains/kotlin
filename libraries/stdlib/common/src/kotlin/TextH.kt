@@ -188,6 +188,16 @@ expect fun CharSequence.regionMatches(
 
 
 /**
+ * A Comparator that orders strings ignoring character case.
+ *
+ * Note that this Comparator does not take locale into account,
+ * and will result in an unsatisfactory ordering for certain locales.
+ */
+@SinceKotlin("1.2")
+public expect val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
+
+
+/**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
 expect fun String.toBoolean(): Boolean

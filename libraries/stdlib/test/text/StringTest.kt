@@ -804,6 +804,12 @@ class StringTest {
     }
 
 
+    @Test fun orderIgnoringCase() {
+        val list = listOf("Beast", "Ast", "asterisk", "[]")
+        assertEquals(listOf("Ast", "Beast", "[]", "asterisk"), list.sorted())
+        assertEquals(listOf("[]", "Ast", "asterisk", "Beast"), list.sortedWith(String.CASE_INSENSITIVE_ORDER))
+    }
+
     @Test fun replace() {
         val input = "abbAb"
         assertEquals("abb${'$'}b", input.replace('A', '$'))
