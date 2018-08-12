@@ -42,7 +42,7 @@ class BuiltInsInitializer<out T : KotlinBuiltIns>(
             }
             catch (e: Throwable) {
                 initializationFailed = e
-                throw IllegalStateException("Built-in library initialization failed. " + "Please ensure you have kotlin-runtime.jar in the classpath: " + e, e)
+                throw IllegalStateException("Built-in library initialization failed. " + "Please ensure you have kotlin-stdlib.jar in the classpath: " + e, e)
             }
             finally {
                 initializing = false

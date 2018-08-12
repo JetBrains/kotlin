@@ -174,7 +174,7 @@ class GenericReplTest : KtUsefulTestCase() {
 
 
 internal class TestRepl(
-        templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
+        templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar")),
         templateClassName: String = "kotlin.script.templates.standard.ScriptTemplateWithArgs",
         repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE
 ) : Closeable {
