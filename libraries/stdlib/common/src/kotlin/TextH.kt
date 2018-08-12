@@ -158,6 +158,13 @@ expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
  */
 expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
 
+/**
+ * Compares two strings lexicographically, optionally ignoring case differences.
+ */
+@SinceKotlin("1.2")
+expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
+
+
 // From stringsCode.kt
 
 internal inline expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
@@ -289,11 +296,6 @@ expect fun Int.toString(radix: Int): String
  */
 @SinceKotlin("1.2")
 expect fun Long.toString(radix: Int): String
-
-/**
- * Compares two strings lexicographically, optionally ignoring case differences.
- */
-expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
 
 @PublishedApi
 internal expect fun checkRadix(radix: Int): Int

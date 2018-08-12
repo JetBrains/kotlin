@@ -317,7 +317,8 @@ public inline fun String.codePointCount(beginIndex: Int, endIndex: Int): Int =
 /**
  * Compares two strings lexicographically, optionally ignoring case differences.
  */
-public actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
     if (ignoreCase)
         return (this as java.lang.String).compareToIgnoreCase(other)
     else

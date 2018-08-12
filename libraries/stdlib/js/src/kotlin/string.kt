@@ -74,7 +74,9 @@ public inline val CharSequence.size: Int get() = length
 @kotlin.internal.InlineOnly
 internal inline fun String.nativeReplace(pattern: RegExp, replacement: String): String = asDynamic().replace(pattern, replacement)
 
-public actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
+@SinceKotlin("1.2")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
     if (ignoreCase) {
         val n1 = this.length
         val n2 = other.length
