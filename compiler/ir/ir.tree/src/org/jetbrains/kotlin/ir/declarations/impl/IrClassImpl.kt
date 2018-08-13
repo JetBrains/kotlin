@@ -43,7 +43,8 @@ class IrClassImpl(
     override val isCompanion: Boolean,
     override val isInner: Boolean,
     override val isData: Boolean,
-    override val isExternal: Boolean
+    override val isExternal: Boolean,
+    override val isInline: Boolean
 ) :
     IrDeclarationBase(startOffset, endOffset, origin),
     IrClass {
@@ -61,7 +62,8 @@ class IrClassImpl(
                 isCompanion = symbol.descriptor.isCompanionObject,
                 isInner = symbol.descriptor.isInner,
                 isData = symbol.descriptor.isData,
-                isExternal = symbol.descriptor.isEffectivelyExternal()
+                isExternal = symbol.descriptor.isEffectivelyExternal(),
+                isInline = symbol.descriptor.isInline
             )
 
     constructor(

@@ -35,6 +35,7 @@ interface IrClass : IrSymbolDeclaration<IrClassSymbol>, IrDeclarationContainer, 
     val isInner: Boolean
     val isData: Boolean
     val isExternal: Boolean
+    val isInline: Boolean
 
     val superTypes: MutableList<IrType>
 

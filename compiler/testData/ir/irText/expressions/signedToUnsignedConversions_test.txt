@@ -99,35 +99,35 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
     BLOCK_BODY
       CALL 'takeUByte(UByte): Unit' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.UByte>]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UByte>]
           CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
       CALL 'takeUByte(UByte): Unit' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.UByte>]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UByte>]
           CALL '<get-EXPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
       CALL 'takeUShort(UShort): Unit' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UShort origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UShort
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UShort modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.UShort>]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UShort modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UShort>]
           CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
       CALL 'takeUShort(UShort): Unit' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UShort origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UShort
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UShort modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.UShort>]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UShort modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UShort>]
           CALL '<get-BIGGER_THAN_UBYTE>(): Int' type=kotlin.Int origin=GET_PROPERTY
       CALL 'takeUInt(UInt): Unit' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.UInt origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UInt
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UInt modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.UInt>]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UInt modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UInt>]
           CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
       CALL 'takeULong(ULong): Unit' type=kotlin.Unit origin=null
         u: TYPE_OP type=kotlin.ULong origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.ULong
-          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:ULong modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.ULong>]
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:ULong modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.ULong>]
           CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
       CALL 'takeUBytes(vararg UByte): Unit' type=kotlin.Unit origin=null
         u: VARARG type=kotlin.UByteArray varargElementType=kotlin.UByte
           TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.UByte>]
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UByte>]
             CALL '<get-IMPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
           TYPE_OP type=kotlin.UByte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.UByte
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.UByte>]
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:UByte modality:FINAL visibility:public flags:inline superTypes:[kotlin.Comparable<kotlin.UByte>]
             CALL '<get-EXPLICIT_INT>(): Int' type=kotlin.Int origin=GET_PROPERTY
           CONST Byte type=kotlin.UByte value=42
       CALL 'takeLong(Long): Unit' type=kotlin.Unit origin=null
