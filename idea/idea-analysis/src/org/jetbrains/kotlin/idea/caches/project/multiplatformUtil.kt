@@ -30,7 +30,7 @@ val Module.implementingModules: List<Module>
         val moduleManager = ModuleManager.getInstance(project)
         CachedValueProvider.Result(
             if (isNewMPPModule) {
-                moduleManager.getModuleDependentModules(this)
+                moduleManager.getModuleDependentModules(this).filter { it.isNewMPPModule }
             } else {
                 moduleManager.modules.filter { name in it.findOldFashionedImplementedModuleNames() }
             },
@@ -43,7 +43,7 @@ val Module.implementedModules: List<Module>
         CachedValueProvider {
             CachedValueProvider.Result(
                 if (isNewMPPModule) {
-                    rootManager.dependencies.toList()
+                    rootManager.dependencies.filter { it.isNewMPPModule }
                 } else {
                     val modelsProvider = IdeModelsProviderImpl(project)
                     findOldFashionedImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) }
