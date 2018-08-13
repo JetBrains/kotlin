@@ -86,7 +86,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                 val descriptor = expression.descriptor
                 if (descriptor.isInlineCall(context.state)) {
                     //TODO: more wise filtering
-                    descriptor.valueParameters.map { valueParameter ->
+                    descriptor.valueParameters.forEach { valueParameter ->
                         if (InlineUtil.isInlineParameter(valueParameter)) {
                             expression.getValueArgument(valueParameter.index)?.let {
                                 if (isInlineIrExpression(it)) {
