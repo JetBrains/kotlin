@@ -58,12 +58,16 @@ abstract class AbstractKotlinCompilation(
 
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
+    open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet) {
+        (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(sourceSet.kotlin)
+    }
+
     override fun source(sourceSet: KotlinSourceSet) {
         if (kotlinSourceSets.add(sourceSet)) {
             with(target.project) {
                 whenEvaluated {
                     sourceSet.getSourceSetHierarchy().forEach { sourceSet ->
-                        (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(sourceSet.kotlin)
+                        addSourcesToCompileTask(sourceSet)
 
                         // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
                         // old Java & Android projects:
@@ -240,6 +244,12 @@ class KotlinNativeCompilation(
     override val output: SourceSetOutput
 ) : AbstractKotlinCompilation(target, name) {
 
+    // A FileCollection containing source files from all source sets used by this compilation
+    // (taking into account dependencies between source sets). Used by both compilation
+    // and linking tasks.
+    // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
+    internal var allSources: FileCollection = target.project.files()
+
     val linkAllTaskName: String
         get() = lowerCamelCaseName(
             "link",
@@ -276,20 +286,8 @@ class KotlinNativeCompilation(
             "klibrary"
         )
 
-
-    // TODO: Integrate with Big Kotlin tasks and runners and remove this method.
-    override fun source(sourceSet: KotlinSourceSet) {
-        if (kotlinSourceSets.add(sourceSet)) {
-            with(target.project) {
-                addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName, forced = false)
-                addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName, forced = false)
-
-                addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName)
-                if (this is KotlinCompilationToRunnableFiles) {
-                    addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName)
-                }
-            }
-        }
+    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet) {
+        allSources += sourceSet.kotlin
     }
 
     // TODO: Can we do it better?
