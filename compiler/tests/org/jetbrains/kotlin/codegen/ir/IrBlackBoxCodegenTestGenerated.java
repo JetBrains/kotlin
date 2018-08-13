@@ -11333,6 +11333,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
+        public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");
+        }
+
+        @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
+        public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt");
+        }
+
         @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
         public void testBoxUnboxInlineClassesWithOperatorsGetSet() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt");
@@ -11468,6 +11478,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
         }
 
+        @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClass.kt")
+        public void testEqualityForBoxesOfNullableValuesOfInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClass.kt");
+        }
+
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");
@@ -11571,6 +11586,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("UIntArraySortExample.kt")
         public void testUIntArraySortExample() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt");
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
+        public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
+        public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt");
         }
 
         @TestMetadata("unboxReceiverOnCallingMethodFromInlineClass.kt")
