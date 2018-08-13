@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.android.configure
 
+import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootManager
@@ -63,6 +65,13 @@ class KotlinAndroidGradleModuleConfigurator internal constructor() : KotlinWithG
         }
 
         return super.getStdlibArtifactName(sdk, version)
+    }
+
+    @JvmSuppressWildcards
+    override fun configure(project: Project, excludeModules: Collection<Module>) {
+        super.configure(project, excludeModules)
+        // Sync after changing build scripts
+        GradleSyncInvoker.getInstance().requestProjectSync(project, GradleSyncInvoker.Request.projectModified())
     }
 
     companion object {
