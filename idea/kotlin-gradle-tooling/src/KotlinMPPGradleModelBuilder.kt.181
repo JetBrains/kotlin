@@ -276,10 +276,15 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             }
         }
         for (sourceSet in sourceSets) {
-            val compilations = sourceSetToCompilations[sourceSet] ?: continue
-            sourceSet.platform = compilations.map { it.platform }.distinct().singleOrNull() ?: KotlinPlatform.COMMON
-            sourceSet.isTestModule = compilations.all { it.isTestModule }
-            sourceSet.isAndroid = compilations.all { it.isAndroid }
+            val compilations = sourceSetToCompilations[sourceSet]
+            if (compilations != null) {
+                sourceSet.platform = compilations.map { it.platform }.distinct().singleOrNull() ?: KotlinPlatform.COMMON
+                sourceSet.isTestModule = compilations.all { it.isTestModule }
+                sourceSet.isAndroid = compilations.all { it.isAndroid }
+            } else {
+                // TODO: change me after design about it
+                sourceSet.isTestModule = "Test" in sourceSet.name
+            }
         }
     }
 
