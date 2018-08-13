@@ -97,6 +97,7 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment) {
     moduleFragment.files.forEach(EnumClassLowering(this)::runOnFilePostfix)
     moduleFragment.files.forEach(EnumUsageLowering(this)::lower)
     moduleFragment.files.forEach(ReturnableBlockLowering(this)::lower)
+    moduleFragment.files.forEach(LocalDelegatedPropertiesLowering()::lower)
     moduleFragment.files.forEach(LocalDeclarationsLowering(this)::runOnFilePostfix)
     moduleFragment.files.forEach(InnerClassesLowering(this)::runOnFilePostfix)
     moduleFragment.files.forEach(InnerClassConstructorCallsLowering(this)::runOnFilePostfix)

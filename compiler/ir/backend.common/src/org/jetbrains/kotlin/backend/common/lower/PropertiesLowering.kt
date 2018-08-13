@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -47,4 +44,26 @@ class PropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
             }
         else
             null
+}
+
+class LocalDelegatedPropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        irFile.accept(this, null)
+    }
+
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
+        declaration.transformChildrenVoid(this)
+
+        val initializer = declaration.delegate.initializer!!
+        declaration.delegate.initializer = IrBlockImpl(
+            initializer.startOffset, initializer.endOffset, initializer.type, null,
+            listOfNotNull(
+                declaration.getter,
+                declaration.setter,
+                initializer
+            )
+        )
+
+        return declaration.delegate
+    }
 }
