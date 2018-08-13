@@ -16,6 +16,8 @@
 
 package kotlin.collections
 
+import konan.worker.isFrozen
+
 actual class HashMap<K, V> private constructor(
         private var keysArray: Array<K>,
         private var valuesArray: Array<V>?, // allocated only when actually used, always null in pure HashSet
@@ -113,7 +115,8 @@ actual class HashMap<K, V> private constructor(
         val cur = keysView
         return if (cur == null) {
             val new = HashSet(this)
-            keysView = new
+            if (!isFrozen)
+                keysView = new
             new
         } else cur
     }
@@ -122,7 +125,8 @@ actual class HashMap<K, V> private constructor(
         val cur = valuesView
         return if (cur == null) {
             val new = HashMapValues(this)
-            valuesView = new
+            if (!isFrozen)
+                valuesView = new
             new
         } else cur
     }
@@ -131,7 +135,8 @@ actual class HashMap<K, V> private constructor(
         val cur = entriesView
         return if (cur == null) {
             val new = HashMapEntrySet(this)
-            entriesView = new
+            if (!isFrozen)
+                entriesView = new
             return new
         } else cur
     }
