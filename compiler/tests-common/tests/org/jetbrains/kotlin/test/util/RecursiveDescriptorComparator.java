@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
@@ -366,7 +367,7 @@ public class RecursiveDescriptorComparator {
             this.checkFunctionContracts = checkFunctionContracts;
             this.recursiveFilter = recursiveFilter;
             this.validationStrategy = validationStrategy;
-            this.renderer = renderer;
+            this.renderer = rendererWithPropertyAccessors(renderer, checkPropertyAccessors);
         }
 
         public Configuration filterRecursion(@NotNull Predicate<DeclarationDescriptor> stepIntoFilter) {
@@ -381,8 +382,11 @@ public class RecursiveDescriptorComparator {
         }
 
         public Configuration checkPropertyAccessors(boolean checkPropertyAccessors) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
-                                     renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy, renderer);
+            return new Configuration(
+                    checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny, renderDeclarationsFromOtherModules,
+                    checkFunctionContracts, recursiveFilter, validationStrategy,
+                    rendererWithPropertyAccessors(renderer, checkPropertyAccessors)
+            );
         }
 
         public Configuration checkFunctionContracts(boolean checkFunctionContracts) {
@@ -408,6 +412,27 @@ public class RecursiveDescriptorComparator {
         public Configuration withRenderer(@NotNull DescriptorRenderer renderer) {
             return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
                                      renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy, renderer);
+        }
+
+        @NotNull
+        private static DescriptorRenderer rendererWithPropertyAccessors(
+                @NotNull DescriptorRenderer renderer, boolean checkPropertyAccessors
+        ) {
+            return newRenderer(renderer, options ->
+                    options.setPropertyAccessorRenderingPolicy(
+                            checkPropertyAccessors ? PropertyAccessorRenderingPolicy.DEBUG : PropertyAccessorRenderingPolicy.NONE
+                    )
+            );
+        }
+
+        @NotNull
+        private static DescriptorRenderer newRenderer(
+                @NotNull DescriptorRenderer renderer, @NotNull Consumer<DescriptorRendererOptions> configure
+        ) {
+            return renderer.withOptions(options -> {
+                configure.accept(options);
+                return Unit.INSTANCE;
+            });
         }
     }
 }

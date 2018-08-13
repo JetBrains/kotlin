@@ -94,7 +94,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var parameterNameRenderingPolicy by property(ParameterNameRenderingPolicy.ALL)
     override var receiverAfterName by property(false)
     override var renderCompanionObjectName by property(false)
-    override var renderAccessors by property(false)
+    override var propertyAccessorRenderingPolicy by property(PropertyAccessorRenderingPolicy.DEBUG)
     override var renderDefaultAnnotationArguments by property(false)
 
     override var eachAnnotationOnNewLine: Boolean by property(false)
