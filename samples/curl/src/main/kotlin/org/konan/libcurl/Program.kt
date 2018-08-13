@@ -15,8 +15,6 @@ fun main(args: Array<String>) {
 
     curl.fetch()
     curl.close()
-
-
 }
 
 fun help() {
