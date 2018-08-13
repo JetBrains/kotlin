@@ -21,10 +21,11 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 /** Copied from Kotlin/Native repository. */
 
+//  TODO: Rename to FQ names
 internal enum class KotlinNativeProjectProperty(val propertyName: String) {
     KONAN_HOME                     ("konan.home"),
     KONAN_JVM_ARGS                 ("konan.jvmArgs"),
@@ -147,7 +148,7 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
     init {
         if (HostManager.host == KonanTarget.MINGW_X64) {
             //TODO: Oh-ho-ho fix it in more convinient way.
-            environment.put("PATH", DependencyProcessor.defaultDependenciesRoot.absolutePath +
+            environment.put("PATH", DependencyDirectories.defaultDependenciesRoot.absolutePath +
                             "\\msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64" +
                             "\\bin;${environment.get("PATH")}")
         }

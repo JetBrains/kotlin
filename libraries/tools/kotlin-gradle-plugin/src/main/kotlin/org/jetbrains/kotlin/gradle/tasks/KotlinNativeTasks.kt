@@ -1,24 +1,25 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleScriptException
+import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.KonanVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
-import org.jetbrains.kotlin.konan.util.DependencySource
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
-import java.io.IOException
 
-// TODO: It's just a temporary task used while KN isn't integrated with Big Kotlin compilation infrastructure.
+// TODO: It's just temporary tasks used while KN isn't integrated with Big Kotlin compilation infrastructure.
 
-open class KotlinNativeCompile: DefaultTask() {
+open class KotlinNativeCompile : DefaultTask() {
 
     init {
         super.dependsOn(KonanCompilerDownloadTask.KONAN_DOWNLOAD_TASK_NAME)
@@ -43,8 +44,10 @@ open class KotlinNativeCompile: DefaultTask() {
             it.extension == "klib"
         }
 
-    @Input var optimized = false
-    @Input var debuggable = true
+    @Input
+    var optimized = false
+    @Input
+    var debuggable = true
 
     val processTests
         @Input get() = compilation.isTestCompilation
@@ -122,7 +125,7 @@ open class KotlinNativeCompile: DefaultTask() {
 
             addAll(additionalCompilerOptions)
 
-            libraries.files.forEach {library ->
+            libraries.files.forEach { library ->
                 library.parent?.let { addArg("-r", it) }
                 addArg("-l", library.nameWithoutExtension)
             }
@@ -135,52 +138,101 @@ open class KotlinNativeCompile: DefaultTask() {
     }
 }
 
-/** Copied from Kotlin/Native repo. */
-
 open class KonanCompilerDownloadTask : DefaultTask() {
 
     internal companion object {
 
         val simpleOsName: String = HostManager.simpleOsName()
 
-        val konanCompilerName: String =
-            "kotlin-native-$simpleOsName-${KonanVersion.CURRENT}"
+        val compilerDirectory: File
+            get() = DependencyDirectories.localKonanDir.resolve("kotlin-native-$simpleOsName-$compilerVersion")
 
-        val konanCompilerDownloadDir: String =
-            DependencyProcessor.localKonanDir.resolve(KonanCompilerDownloadTask.konanCompilerName).absolutePath
+        // TODO: Support project property for Kotlin/Native compiler version
+        val compilerVersion: KonanVersion = KonanVersionImpl(MetaVersion.RELEASE, 0, 8, 2)
 
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
-        const val KONAN_DOWNLOAD_TASK_NAME = "checkKonanCompiler"
+        const val KONAN_DOWNLOAD_TASK_NAME = "checkNativeCompiler"
     }
 
+    private val useZip = HostManager.hostIsMingw
+
+    private val archiveExtension
+        get() = if (useZip) {
+            "zip"
+        } else {
+            "tar.gz"
+        }
+
+    private fun archiveFileTree(archive: File): FileTree =
+        if (useZip) {
+            project.zipTree(archive)
+        } else {
+            project.tarTree(archive)
+        }
+
+    private fun setupRepo(url: String): ArtifactRepository {
+        return project.repositories.ivy { repo ->
+            repo.setUrl(url)
+            repo.layout("pattern") {
+                val layout = it as IvyPatternRepositoryLayout
+                layout.artifact("[artifact]-[revision].[ext]")
+            }
+            repo.metadataSources {
+                it.artifact()
+            }
+        }
+    }
+
+    private fun removeRepo(repo: ArtifactRepository) {
+        project.repositories.remove(repo)
+    }
+
+    private fun downloadAndExtract() {
+        val versionString = compilerVersion.toString()
+
+        val url = buildString {
+            append("$BASE_DOWNLOAD_URL/")
+            append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
+            append("$versionString/")
+            append(simpleOsName)
+        }
+
+        val repo = setupRepo(url)
+
+        val compilerDependency = project.dependencies.create(
+            mapOf(
+                "name" to "kotlin-native-$simpleOsName",
+                "version" to versionString,
+                "ext" to archiveExtension
+            )
+        )
+
+        val configuration = project.configurations.detachedConfiguration(compilerDependency)
+        val archive = configuration.files.single()
+
+        logger.info("Use Kotlin/Native compiler archive: ${archive.absolutePath}")
+        logger.lifecycle("Unpack Kotlin/Native compiler (version $versionString)...")
+        project.copy {
+            it.from(archiveFileTree(archive))
+            it.into(DependencyDirectories.localKonanDir)
+        }
+
+        removeRepo(repo)
+
+    }
+
+
     @TaskAction
-    fun downloadAndExtract() {
+    fun checkCompiler() {
         if (!project.hasProperty(KotlinNativeProjectProperty.DOWNLOAD_COMPILER)) {
             val konanHome = project.getProperty(KotlinNativeProjectProperty.KONAN_HOME)
             logger.info("Use a user-defined compiler path: $konanHome")
         } else {
-            try {
-                val downloadUrlDirectory = buildString {
-                    append("$BASE_DOWNLOAD_URL/")
-                    val version = KonanVersion.CURRENT
-                    when (version.meta) {
-                        MetaVersion.DEV -> append("dev/")
-                        else -> append("releases/")
-                    }
-                    append("$version/")
-                    append(simpleOsName)
-                }
-                val konanCompiler = konanCompilerName
-                val parentDir = DependencyProcessor.localKonanDir
-                logger.info("Downloading Kotlin/Native compiler from $downloadUrlDirectory/$konanCompiler into $parentDir")
-                DependencyProcessor(
-                    parentDir,
-                    downloadUrlDirectory,
-                    mapOf(konanCompiler to listOf(DependencySource.Remote.Public))
-                ).run()
-            } catch (e: IOException) {
-                throw GradleScriptException("Cannot download Kotlin/Native compiler", e)
+            if (!compilerDirectory.exists()) {
+                downloadAndExtract()
             }
+            logger.info("Use Kotlin/Native distribution: $compilerDirectory")
         }
     }
+
 }
