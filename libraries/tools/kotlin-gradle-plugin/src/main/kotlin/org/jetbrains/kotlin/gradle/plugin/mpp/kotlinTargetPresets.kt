@@ -217,7 +217,7 @@ class KotlinNativeTargetPreset(
 
     private fun createCompilerDownloadingTask() = with(project) {
         if (!hasProperty(KotlinNativeProjectProperty.KONAN_HOME)) {
-            setProperty(KotlinNativeProjectProperty.KONAN_HOME, KonanCompilerDownloadTask.konanCompilerDownloadDir)
+            setProperty(KotlinNativeProjectProperty.KONAN_HOME, KonanCompilerDownloadTask.compilerDirectory)
             setProperty(KotlinNativeProjectProperty.DOWNLOAD_COMPILER, true)
         }
         tasks.maybeCreate(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
