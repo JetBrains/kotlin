@@ -14,15 +14,15 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl.WithDestructuringDeclaration
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.SpecifyExplicitLambdaSignatureIntention
-import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     companion object {
@@ -37,12 +37,15 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
             if (calleeExpression?.getReferencedName() != FOREACH_NAME) return@callExpressionVisitor
             val lambda = it.lambdaArguments.singleOrNull()?.getLambdaExpression()
             if (lambda == null || lambda.functionLiteral.arrow != null) return@callExpressionVisitor
-            when (it.getCallableDescriptor()?.fqNameOrNull()) {
+            val context = it.analyze()
+            when (it.getResolvedCall(context)?.resultingDescriptor?.fqNameOrNull()) {
                 COLLECTIONS_FOREACH_FQNAME, SEQUENCES_FOREACH_FQNAME -> {
-                    val descriptor = lambda.analyze()[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
+                    val descriptor = context[BindingContext.FUNCTION, lambda.functionLiteral] ?: return@callExpressionVisitor
                     val iterableParameter = descriptor.valueParameters.singleOrNull() ?: return@callExpressionVisitor
 
-                    if (iterableParameter !is WithDestructuringDeclaration && !lambda.bodyExpression.usesDescriptor(iterableParameter)) {
+                    if (iterableParameter !is WithDestructuringDeclaration &&
+                        !lambda.bodyExpression.usesDescriptor(iterableParameter, context)
+                    ) {
                         holder.registerProblem(
                             calleeExpression,
                             "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
@@ -69,7 +72,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
         }
     }
 
-    private fun KtBlockExpression?.usesDescriptor(descriptor: VariableDescriptor): Boolean {
+    private fun KtBlockExpression?.usesDescriptor(descriptor: VariableDescriptor, context: BindingContext): Boolean {
         if (this == null) return false
         var used = false
         acceptChildren(object : KtVisitorVoid() {
@@ -78,7 +81,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                     if (element.children.isNotEmpty()) {
                         element.acceptChildren(this)
                     } else {
-                        val resolvedCall = element.resolveToCall() ?: return
+                        val resolvedCall = element.getResolvedCall(context) ?: return
 
                         used = descriptor == when (resolvedCall) {
                             is VariableAsFunctionResolvedCall -> resolvedCall.variableCall.candidateDescriptor
