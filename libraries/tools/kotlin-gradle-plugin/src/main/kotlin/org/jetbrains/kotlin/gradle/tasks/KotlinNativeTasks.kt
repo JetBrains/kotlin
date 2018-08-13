@@ -34,10 +34,10 @@ open class KotlinNativeCompile : DefaultTask() {
 
     // Inputs and outputs
 
-    val sources: Collection<FileCollection>
+    val sources: FileCollection
         @InputFiles
         @SkipWhenEmpty
-        get() = compilation.kotlinSourceSets.map { it.kotlin }
+        get() = compilation.allSources
 
     val libraries: FileCollection
         @InputFiles get() = compilation.compileDependencyFiles.filter {
@@ -131,7 +131,7 @@ open class KotlinNativeCompile : DefaultTask() {
             }
 
             // TODO: Filter only kt files?
-            addAll(sources.flatMap { it.files }.map { it.absolutePath })
+            addAll(sources.files.map { it.absolutePath })
         }
 
         KonanCompilerRunner(project).run(args)
