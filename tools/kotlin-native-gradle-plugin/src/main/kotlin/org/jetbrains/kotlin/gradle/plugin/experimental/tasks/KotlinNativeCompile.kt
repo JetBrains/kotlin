@@ -56,6 +56,12 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
     val libraries: Configuration
         @InputFiles get() = binary.klibraries
 
+    override fun getClasspath(): FileCollection = libraries
+
+    override fun setClasspath(configuration: FileCollection?) {
+        throw UnsupportedOperationException("Use klibraries to set compile classpath in Kotlin/Native")
+    }
+
     val optimized:  Boolean @Input get() = binary.optimized
     val debuggable: Boolean @Input get() = binary.debuggable
 
@@ -114,8 +120,10 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
 
     // initializing AbstractCompile properties
     init {
-        classpath = libraries
-        destinationDir = if (outputFile.isDirectory) outputFile else outputFile.parentFile
+        @Suppress("LeakingThis")
+        setDestinationDir(project.provider {
+            if (outputFile.isDirectory) outputFile else outputFile.parentFile
+        })
         sourceCompatibility = "1.6"
         targetCompatibility = "1.6"
     }

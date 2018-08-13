@@ -34,6 +34,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.*
+import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.CInteropTask
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
