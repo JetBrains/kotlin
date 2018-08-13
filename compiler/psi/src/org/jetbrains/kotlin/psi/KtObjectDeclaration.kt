@@ -67,7 +67,5 @@ class KtObjectDeclaration : KtClassOrObject {
 
     fun getObjectKeyword(): PsiElement? = findChildByType(KtTokens.OBJECT_KEYWORD)
 
-    override fun getIdentifyingElement(): PsiElement? = getObjectKeyword()
-
     override fun getCompanionObjects(): List<KtObjectDeclaration> = emptyList()
 }

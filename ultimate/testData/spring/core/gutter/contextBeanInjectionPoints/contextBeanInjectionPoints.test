@@ -1,0 +1,8 @@
+{
+    springConfig: [],
+    file: "ContextBeanInjectionPoints.kt",
+    icon: "ShowAutowiredDependencies",
+    tooltip: "Navigate to the autowired dependencies",
+    naming: "generic",
+    targets: ["foo()", "foo2()"]
+}

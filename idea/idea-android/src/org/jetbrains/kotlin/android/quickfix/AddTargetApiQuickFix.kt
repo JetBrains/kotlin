@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.psi.*
 
 class AddTargetApiQuickFix(
         val api: Int,
-        val useRequiresApi: Boolean
+        val useRequiresApi: Boolean,
+        val useNewName: Boolean = false
 ) : AndroidLintQuickFix {
 
     private companion object {
         val FQNAME_TARGET_API = FqName(SdkConstants.FQCN_TARGET_API)
-        val FQNAME_REQUIRES_API = FqName(REQUIRES_API_ANNOTATION)
     }
 
     override fun isApplicable(startElement: PsiElement, endElement: PsiElement, contextType: AndroidQuickfixContexts.ContextType): Boolean =
@@ -61,9 +61,12 @@ class AddTargetApiQuickFix(
 
         if (annotationContainer is KtModifierListOwner) {
              annotationContainer.addAnnotation(
-                    if (useRequiresApi) FQNAME_REQUIRES_API else FQNAME_TARGET_API,
-                    getAnnotationValue(true),
-                    whiteSpaceText = if (annotationContainer.isNewLineNeededForAnnotation()) "\n" else " ")
+                     if (useRequiresApi)
+                         if (useNewName) FqName(REQUIRES_API_ANNOTATION.newName())
+                         else FqName(REQUIRES_API_ANNOTATION.oldName())
+                     else FQNAME_TARGET_API,
+                     getAnnotationValue(true),
+                     whiteSpaceText = if (annotationContainer.isNewLineNeededForAnnotation()) "\n" else " ")
         }
     }
 

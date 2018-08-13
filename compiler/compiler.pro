@@ -47,27 +47,13 @@ messages/**)
 -dontwarn javax.crypto.**
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn org.jline.builtins.Nano$Buffer
+-dontwarn net.jpountz.lz4.LZ4Factory
 -dontwarn org.jetbrains.annotations.ReadOnly
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
--dontwarn com.intellij.util.io.Compressor$Tar
-
-# Nullability annotations used in Guava
--dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
--dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
--dontwarn org.checkerframework.checker.nullness.qual.Nullable
--dontwarn org.checkerframework.checker.nullness.qual.MonotonicNonNull
 
 # Depends on apache batick which has lots of dependencies
 -dontwarn com.intellij.util.SVGLoader*
--dontwarn org.apache.batik.script.rhino.RhinoInterpreter
--dontwarn org.apache.batik.script.rhino.RhinoInterpreterFactory
-
--dontwarn org.jdom.xpath.jaxen.*
--dontwarn com.intellij.util.io.Decompressor*
--dontwarn org.w3c.dom.Location
--dontwarn org.w3c.dom.Window
-
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
@@ -140,8 +126,6 @@ messages/**)
 # This is needed so that the platform code which parses XML wouldn't fail, see KT-16968
 # This API is used from org.jdom.input.SAXBuilder via reflection.
 -keep class org.jdom.input.JAXPParserFactory { public ** createParser(...); }
-# Without this class PluginManagerCore.loadDescriptorFromJar fails
--keep class org.jdom.output.XMLOutputter { *; }
 
 # for kdoc & dokka
 -keep class com.intellij.openapi.util.TextRange { *; }
@@ -239,5 +223,3 @@ messages/**)
 
 # remove when KT-18563 would be fixed
 -keep class org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt { *; }
-
--keep class net.jpountz.lz4.* { *; }

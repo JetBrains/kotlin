@@ -70,9 +70,9 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-noarg-compiler-plugin"))
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
+    testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
     testRuntime(project(":kotlin-scripting-compiler"))
-    testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
@@ -89,13 +89,13 @@ dependencies {
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     testCompileOnly(intellijPluginDep("gradle"))
     testCompileOnly(intellijPluginDep("Groovy"))
-    testCompileOnly(intellijPluginDep("maven"))
+    //testCompileOnly(intellijPluginDep("maven"))
 
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage"))
-    testRuntime(intellijPluginDep("maven"))
+    //testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
@@ -130,6 +130,7 @@ val performanceTestRuntime by configurations.creating {
 }
 
 val performanceTest by run {
+    val sourceSets = javaPluginConvention().sourceSets
     sourceSets.creating {
         compileClasspath += sourceSets["test"].output
         compileClasspath += sourceSets["main"].output

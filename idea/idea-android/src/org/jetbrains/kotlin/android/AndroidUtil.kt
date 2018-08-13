@@ -22,9 +22,9 @@ import com.android.SdkConstants.R_CLASS
 import com.android.resources.ResourceType
 import com.android.tools.idea.AndroidPsiUtils
 import com.android.tools.idea.AndroidPsiUtils.ResourceReferenceType.*
+import com.android.tools.idea.res.AndroidInternalRClassFinder
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import org.jetbrains.android.augment.AndroidPsiElementFinder
 import org.jetbrains.android.dom.AndroidAttributeValue
 import org.jetbrains.android.dom.manifest.Manifest
 import org.jetbrains.android.facet.AndroidFacet
@@ -122,7 +122,7 @@ internal fun getReferredResourceOrManifestField(facet: AndroidFacet, expression:
     if (!localOnly) {
         val qName = rClassDescriptor.fqNameSafe.asString()
 
-        if (SdkConstants.CLASS_R == qName || AndroidPsiElementFinder.INTERNAL_R_CLASS_QNAME == qName) {
+        if (SdkConstants.CLASS_R == qName || AndroidInternalRClassFinder.INTERNAL_R_CLASS_QNAME == qName) {
             return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, facet.module, true, false)
         }
     }

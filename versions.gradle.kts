@@ -1,8 +1,9 @@
-extra["versions.intellijSdk"] = "182.3684.101"
+
+extra["versions.intellijSdk"] = "181.5281.24"
 extra["versions.androidBuildTools"] = "r23.0.1"
-extra["versions.idea.NodeJS"] = "181.3494.12"
-//extra["versions.androidStudioRelease"] = "3.1.0.5"
-//extra["versions.androidStudioBuild"] = "173.4506631"
+extra["versions.idea.NodeJS"] = "181.2784.17"
+extra["versions.androidStudioRelease"] = "3.2.0.22"
+extra["versions.androidStudioBuild"] = "181.4913314"
 
 val gradleJars = listOf(
     "gradle-api",
@@ -46,7 +47,7 @@ when (platform) {
     }
     "182" -> {
         extra["versions.jar.guava"] = "23.6-jre"
-        extra["versions.jar.groovy-all"] = "2.4.15"
+        extra["versions.jar.groovy-all"] = "2.4.12"
         extra["versions.jar.lombok-ast"] = "0.2.3"
         extra["versions.jar.swingx-core"] = "1.6.2-2"
         extra["versions.jar.kxml2"] = "2.3.0"

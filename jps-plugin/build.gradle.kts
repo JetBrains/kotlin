@@ -28,7 +28,6 @@ dependencies {
     testCompile(projectTests(":kotlin-build-common"))
     testCompileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "platform-api", "log4j") }
-    testCompile(intellijDep("devkit"))
     testCompile(intellijDep("jps-build-test"))
     compilerModules.forEach {
         testRuntime(project(it))
@@ -41,7 +40,7 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        java.srcDirs("jps-tests/test")
+        // No JPS in AS
     }
 }
 
