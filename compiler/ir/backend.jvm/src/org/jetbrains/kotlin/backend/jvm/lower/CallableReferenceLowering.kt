@@ -151,7 +151,9 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
         private lateinit var functionReferenceThis: IrValueParameterSymbol
         private lateinit var argumentToPropertiesMap: Map<ParameterDescriptor, IrFieldSymbol>
 
-        private val functionReference = context.ir.symbols.functionReference
+        private val isLambda = irFunctionReference.origin == IrStatementOrigin.LAMBDA
+
+        private val functionReferenceOrLambda = if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference
 
         fun build(): BuiltFunctionReference {
             val startOffset = irFunctionReference.startOffset
@@ -159,7 +161,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
 
             val returnType = functionDescriptor.returnType!!
             val superTypes: MutableList<KotlinType> = mutableListOf(
-                functionReference.descriptor.defaultType
+                functionReferenceOrLambda.descriptor.defaultType
             )
 
             val numberOfParameters = unboundFunctionParameters.size
@@ -210,29 +212,6 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val invokeFunctionDescriptor = functionClassDescriptor.getFunction("invoke", functionClassTypeParameters)
 
             val invokeMethodBuilder = createInvokeMethodBuilder(invokeFunctionDescriptor)
-            val getSignatureBuilder =
-                createGetSignatureMethodBuilder(functionReference.owner.descriptor.getFunction("getSignature", emptyList()))
-            val getNameBuilder = createGetNameMethodBuilder(functionReference.owner.descriptor.getProperty("name", emptyList()))
-            val getOwnerBuilder = createGetOwnerMethodBuilder(functionReference.owner.descriptor.getFunction("getOwner", emptyList()))
-
-            val suspendInvokeMethodBuilder =
-                if (suspendFunctionClassDescriptor != null) {
-                    val suspendInvokeFunctionDescriptor =
-                        suspendFunctionClassDescriptor.getFunction("invoke", suspendFunctionClassTypeParameters!!)
-                    createInvokeMethodBuilder(suspendInvokeFunctionDescriptor)
-                } else null
-
-            val inheritedScope = functionReference.descriptor.unsubstitutedMemberScope
-                .getContributedDescriptors().mapNotNull { it.createFakeOverrideDescriptor(functionReferenceClassDescriptor) }
-                .filterNot { it.name.asString() == "getSignature" || it.name.asString() == "name" || it.name.asString() == "getOwner" }
-
-            contributedDescriptors.addAll(
-                (
-                        inheritedScope + invokeMethodBuilder.symbol.descriptor +
-                                suspendInvokeMethodBuilder?.symbol?.descriptor + getSignatureBuilder.symbol.descriptor
-                        ).filterNotNull()
-            )
-
 
             constructorBuilder.initialize()
             functionReferenceClass.declarations.add(constructorBuilder.ir)
@@ -240,18 +219,46 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             invokeMethodBuilder.initialize()
             functionReferenceClass.declarations.add(invokeMethodBuilder.ir)
 
-            getSignatureBuilder.initialize()
-            functionReferenceClass.declarations.add(getSignatureBuilder.ir)
 
-            getNameBuilder.initialize()
-            functionReferenceClass.declarations.add(getNameBuilder.ir)
+            if (!isLambda) {
+                val getSignatureBuilder =
+                    createGetSignatureMethodBuilder(functionReferenceOrLambda.owner.descriptor.getFunction("getSignature", emptyList()))
+                val getNameBuilder = createGetNameMethodBuilder(functionReferenceOrLambda.owner.descriptor.getProperty("name", emptyList()))
+                val getOwnerBuilder =
+                    createGetOwnerMethodBuilder(functionReferenceOrLambda.owner.descriptor.getFunction("getOwner", emptyList()))
 
-            getOwnerBuilder.initialize()
-            functionReferenceClass.declarations.add(getOwnerBuilder.ir)
+                val suspendInvokeMethodBuilder =
+                    if (suspendFunctionClassDescriptor != null) {
+                        val suspendInvokeFunctionDescriptor =
+                            suspendFunctionClassDescriptor.getFunction("invoke", suspendFunctionClassTypeParameters!!)
+                        createInvokeMethodBuilder(suspendInvokeFunctionDescriptor)
+                    } else null
 
-            suspendInvokeMethodBuilder?.let {
-                it.initialize()
-                functionReferenceClass.declarations.add(it.ir)
+                val inheritedScope = functionReferenceOrLambda.descriptor.unsubstitutedMemberScope
+                    .getContributedDescriptors().mapNotNull { it.createFakeOverrideDescriptor(functionReferenceClassDescriptor) }
+                    .filterNot { !isLambda && (it.name.asString() == "getSignature" || it.name.asString() == "name" || it.name.asString() == "getOwner") }
+
+                contributedDescriptors.addAll(
+                    (
+                            inheritedScope + invokeMethodBuilder.symbol.descriptor +
+                                    suspendInvokeMethodBuilder?.symbol?.descriptor + getSignatureBuilder.symbol.descriptor
+                            ).filterNotNull()
+                )
+
+
+                getSignatureBuilder.initialize()
+                functionReferenceClass.declarations.add(getSignatureBuilder.ir)
+
+                getNameBuilder.initialize()
+                functionReferenceClass.declarations.add(getNameBuilder.ir)
+
+                getOwnerBuilder.initialize()
+                functionReferenceClass.declarations.add(getOwnerBuilder.ir)
+
+                suspendInvokeMethodBuilder?.let {
+                    it.initialize()
+                    functionReferenceClass.declarations.add(it.ir)
+                }
             }
 
             return BuiltFunctionReference(functionReferenceClass, constructorBuilder.ir)
@@ -260,7 +267,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
         private fun createConstructorBuilder() = object : SymbolWithIrBuilder<IrConstructorSymbol, IrConstructor>() {
 
             private val kFunctionRefConstructorSymbol =
-                functionReference.constructors.filter { it.descriptor.valueParameters.size == 2 }.single()
+                functionReferenceOrLambda.constructors.filter { it.descriptor.valueParameters.size == if (isLambda) 1 else 2 }.single()
 
             override fun buildSymbol() = IrConstructorSymbolImpl(
                 ClassConstructorDescriptorImpl.create(
@@ -308,13 +315,15 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                                 IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, unboundFunctionParameters.size)
                             putValueArgument(0, const)
 
-                            val irReceiver = valueParameters.firstOrNull()
-                            val receiver = boundFunctionParameters.singleOrNull()
-                            //TODO pass proper receiver
-                            val receiverValue = receiver?.let {
-                                irGet(irReceiver!!.symbol.owner)
-                            } ?: irNull()
-                            putValueArgument(1, receiverValue)
+                            if (!isLambda) {
+                                val irReceiver = valueParameters.firstOrNull()
+                                val receiver = boundFunctionParameters.singleOrNull()
+                                //TODO pass proper receiver
+                                val receiverValue = receiver?.let {
+                                    irGet(irReceiver!!.symbol.owner)
+                                } ?: irNull()
+                                putValueArgument(1, receiverValue)
+                            }
                         }
 
                         //TODO don't write receiver again: use it from base class
