@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
-import java.lang.AssertionError
 
 class ClassGenerator(
     declarationGenerator: DeclarationGenerator
@@ -85,6 +84,10 @@ class ClassGenerator(
             generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
 
             generateFakeOverrideMemberDeclarations(irClass, ktClassOrObject)
+
+            if (irClass.isInline && ktClassOrObject is KtClassOrObject) {
+                generateAdditionalMembersForInlineClasses(irClass, ktClassOrObject)
+            }
 
             if (irClass.isData && ktClassOrObject is KtClassOrObject) {
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
@@ -316,8 +319,12 @@ class ClassGenerator(
         return typeArguments
     }
 
+    private fun generateAdditionalMembersForInlineClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
+        DataClassMembersGenerator(declarationGenerator).generateInlineClassMembers(ktClassOrObject, irClass)
+    }
+
     private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator).generate(ktClassOrObject, irClass)
+        DataClassMembersGenerator(declarationGenerator).generateDataClassMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForEnumClass(irClass: IrClass) {

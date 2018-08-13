@@ -29,6 +29,7 @@ interface IrDeclarationOrigin {
     object DELEGATED_MEMBER : IrDeclarationOriginImpl("DELEGATED_MEMBER")
     object ENUM_CLASS_SPECIAL_MEMBER : IrDeclarationOriginImpl("ENUM_CLASS_SPECIAL_MEMBER")
     object GENERATED_DATA_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_DATA_CLASS_MEMBER")
+    object GENERATED_INLINE_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_INLINE_CLASS_MEMBER")
     object LOCAL_FUNCTION_FOR_LAMBDA : IrDeclarationOriginImpl("LOCAL_FUNCTION_FOR_LAMBDA")
     object CATCH_PARAMETER : IrDeclarationOriginImpl("CATCH_PARAMETER")
     object INSTANCE_RECEIVER : IrDeclarationOriginImpl("INSTANCE_RECEIVER")
