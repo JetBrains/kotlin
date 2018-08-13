@@ -76,15 +76,16 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
 
         val project = psiElement.getProject()
 
-        val injectionAnnotation = findAnnotationInjection(psiElement)
-        val injectionComment = findInjectionComment(psiElement)
-
-        val injectInstructions = listOf(injectionAnnotation, injectionComment).filterNotNull()
-
-        val configuration = Configuration.getProjectInstance(project)
+        val injectInstructions = listOfNotNull(
+            findAnnotationInjection(psiElement),
+            findInjectionComment(psiElement)
+        )
 
         TemporaryPlacesRegistry.getInstance(project).removeHostWithUndo(project, psiElement)
-        configuration.replaceInjectionsWithUndo(project, listOf(), listOf(), injectInstructions)
+
+        project.executeWriteCommand("remove injection in-code instructions") {
+            injectInstructions.forEach(PsiElement::delete)
+        }
 
         return true
     }
