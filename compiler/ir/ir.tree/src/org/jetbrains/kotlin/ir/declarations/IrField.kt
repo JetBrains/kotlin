@@ -23,4 +23,5 @@ interface IrField : IrSymbolDeclaration<IrFieldSymbol> {
     val isStatic: Boolean
 
     var initializer: IrExpressionBody?
+    var correspondingProperty: IrProperty?
 }

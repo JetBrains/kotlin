@@ -56,6 +56,7 @@ class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
     override fun visitProperty(declaration: IrProperty) {
         declaration.getter?.let { it.correspondingProperty = declaration }
         declaration.setter?.let { it.correspondingProperty = declaration }
+        declaration.backingField?.let { it.correspondingProperty = declaration }
 
         super.visitProperty(declaration)
     }
