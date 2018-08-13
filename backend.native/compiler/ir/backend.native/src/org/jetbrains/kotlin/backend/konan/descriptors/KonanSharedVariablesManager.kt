@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.types.*
 

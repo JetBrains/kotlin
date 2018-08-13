@@ -575,19 +575,6 @@ internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrFunction, ty
             }
         }
 
-fun IrBuilderWithScope.irCall(
-        irFunction: IrFunctionSymbol,
-        type: IrType,
-        typeArguments: List<IrType> = emptyList()
-): IrCall = IrCallImpl(
-        startOffset, endOffset, type,
-        irFunction, irFunction.descriptor.substitute(typeArguments), typeArguments.size
-).apply {
-    typeArguments.forEachIndexed { index, irType ->
-        this.putTypeArgument(index, irType)
-    }
-}
-
 fun IrBuilderWithScope.irCallOp(
         callee: IrFunction,
         dispatchReceiver: IrExpression,
@@ -600,16 +587,6 @@ fun IrBuilderWithScope.irCallOp(
 
 fun IrBuilderWithScope.irSetVar(variable: IrVariable, value: IrExpression) =
         irSetVar(variable.symbol, value)
-
-fun IrBuilderWithScope.irSetField(receiver: IrExpression, irField: IrField, value: IrExpression): IrExpression =
-        IrSetFieldImpl(
-                startOffset,
-                endOffset,
-                irField.symbol,
-                receiver = receiver,
-                value = value,
-                type = context.irBuiltIns.unitType
-        )
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.

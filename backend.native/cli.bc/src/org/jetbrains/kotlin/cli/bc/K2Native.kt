@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles

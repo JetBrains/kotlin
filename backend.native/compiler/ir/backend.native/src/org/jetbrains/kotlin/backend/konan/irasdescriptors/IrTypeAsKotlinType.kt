@@ -19,16 +19,13 @@ package org.jetbrains.kotlin.backend.konan.irasdescriptors
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 val IrClassifierSymbol.typeWithoutArguments: IrType
@@ -57,30 +54,8 @@ val IrTypeParameterSymbol.defaultType: IrType get() =  IrSimpleTypeImpl(
         emptyList(),
         emptyList()
 )
-val IrTypeParameter.defaultType: IrType get() = this.symbol.defaultType
-
-fun IrClassifierSymbol.typeWith(vararg arguments: IrType): IrSimpleType = typeWith(arguments.toList())
-
-fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
-        IrSimpleTypeImpl(
-                this,
-                false,
-                arguments.map { makeTypeProjection(it, Variance.INVARIANT) },
-                emptyList()
-        )
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
-
-fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArgument>): IrSimpleType =
-        IrSimpleTypeImpl(
-                this,
-                hasQuestionMark,
-                arguments,
-                emptyList()
-        )
-
-fun IrType.getClass(): IrClass? =
-        (this.classifierOrNull as? IrClassSymbol)?.owner
 
 fun IrType.makeNullableAsSpecified(nullable: Boolean): IrType =
         if (nullable) this.makeNullable() else this.makeNotNull()

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -339,6 +339,9 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
                     .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND)
                     .filterNot { it.isExpect }.single().getter!!
     )
+
+    // removed in Big Kotlin @c62e4b4fcf50e99800e6d5c3a220101b691e1d43
+    val refClass = symbolTable.referenceClass(context.getInternalClass("Ref"))
 
 
     val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)

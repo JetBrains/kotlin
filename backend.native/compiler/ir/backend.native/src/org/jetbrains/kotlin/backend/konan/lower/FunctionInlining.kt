@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.needsInlining
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.getClass
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -47,7 +46,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
