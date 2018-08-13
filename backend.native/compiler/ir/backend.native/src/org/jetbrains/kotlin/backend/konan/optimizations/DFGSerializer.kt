@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import sun.misc.Unsafe
 import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.jvmName
 
 internal class ExternalModulesDFG(val allTypes: List<DataFlowIR.Type.Declared>,
@@ -760,14 +760,16 @@ internal object DFGSerializer {
         }
         if (kClass.java.isArray)
             return mergeHashes("array".hash, computeDataLayoutHash(kClass.java.componentType.kotlin))
-        val propertiesHashes = kClass.primaryConstructor!!.parameters
-                .map {
-                    val propHash = computeDataLayoutHash(it.type.classifier!! as KClass<*>)
-                    if (it.type.isMarkedNullable)
+        val properties = kClass.memberProperties.sortedBy { it.name }
+        val propertyTypeHashes =
+                properties.map {
+                    val propHash = computeDataLayoutHash(it.returnType.classifier!! as KClass<*>)
+                    if (it.returnType.isMarkedNullable)
                         mergeHashes("nullable".hash, propHash)
                     else propHash
                 }
-        return mergeHashes(propertiesHashes)
+        val propertyNameHashes = properties.map { it.name.hash }
+        return mergeHashes(propertyTypeHashes + propertyNameHashes)
     }
 
     private val DEBUG = 0
