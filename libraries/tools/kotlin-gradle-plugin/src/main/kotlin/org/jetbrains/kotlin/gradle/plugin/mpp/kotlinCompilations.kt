@@ -49,9 +49,14 @@ internal class DefaultKotlinDependencyHandler(
 }
 
 abstract class AbstractKotlinCompilation(
-    override val target: KotlinTarget,
+    target: KotlinTarget,
     override val compilationName: String
 ) : KotlinCompilation, HasKotlinDependencies {
+
+    // Don't declare this property in the constructor to avoid NPE
+    // when an overriding property of a subclass is accessed instead.
+    override val target: KotlinTarget = target
+
     private val attributeContainer = HierarchyAttributeContainer(target.attributes)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
