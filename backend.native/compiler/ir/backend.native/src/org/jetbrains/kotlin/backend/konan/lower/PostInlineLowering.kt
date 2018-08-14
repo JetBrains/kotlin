@@ -74,7 +74,10 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                if (expression.symbol == context.ir.symbols.immutableBinaryBlobOf) {
+                // Function inlining is changing function symbol at callsite
+                // and unbound symbol replacement is happening later.
+                // So we compare descriptors for now.
+                if (expression.descriptor == context.immutableBinaryBlobOf) {
                     // Convert arguments of the binary blob to special IrConst<String> structure, so that
                     // vararg lowering will not affect it.
                     val args = expression.getValueArgument(0) as? IrVararg

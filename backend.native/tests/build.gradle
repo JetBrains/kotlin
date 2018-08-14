@@ -1462,6 +1462,11 @@ task if_else(type: RunKonanTest) {
     source = "codegen/branching/if_else.kt"
 }
 
+task immutable_binary_blob_in_lambda(type: RunKonanTest) {
+    source = "lower/immutable_binary_blob_in_lambda.kt"
+    goldValue = "123\n"
+}
+
 task when2(type: RunKonanTest) {
     source = "codegen/branching/when2.kt"
 }
