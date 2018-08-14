@@ -15,6 +15,8 @@ interface KonanVersion : Serializable {
     val build: Int
 
     fun toString(showMeta: Boolean, showBuild: Boolean): String
+
+    companion object
 }
 
 data class KonanVersionImpl(
