@@ -50,10 +50,13 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val annotation = descriptor.findJvmFieldAnnotation() ?: return
+        if (descriptor !is PropertyDescriptor) return
+
+        val annotation = descriptor.findJvmFieldAnnotation()
+            ?: descriptor.delegateField?.annotations?.findAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
+            ?: return
 
         val problem = when {
-            descriptor !is PropertyDescriptor -> return
             declaration is KtProperty && declaration.hasDelegate() -> DELEGATE
             !descriptor.hasBackingField(context.trace.bindingContext) -> return
             descriptor.isOverridable -> NOT_FINAL

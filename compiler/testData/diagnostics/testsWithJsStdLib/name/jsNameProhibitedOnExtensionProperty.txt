@@ -2,7 +2,7 @@ package
 
 package foo {
     @kotlin.js.JsName(name = "xx") public val foo.A.x: kotlin.Int
-    @property:kotlin.js.JsName(name = "yy") public val foo.A.y: kotlin.Int
+    @kotlin.js.JsName(name = "yy") public val foo.A.y: kotlin.Int
 
     public final class A {
         public constructor A()

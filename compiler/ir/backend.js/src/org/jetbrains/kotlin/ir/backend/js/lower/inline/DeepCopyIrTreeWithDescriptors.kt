@@ -366,7 +366,9 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
                 initialize(
                     /* getter = */ oldDescriptor.getter?.let { copyPropertyGetterDescriptor(it, this) },
-                    /* setter = */ oldDescriptor.setter?.let { copyPropertySetterDescriptor(it, this) })
+                    /* setter = */ oldDescriptor.setter?.let { copyPropertySetterDescriptor(it, this) },
+                    oldDescriptor.backingField, oldDescriptor.delegateField
+                )
 
                 overriddenDescriptors += oldDescriptor.overriddenDescriptors
             }

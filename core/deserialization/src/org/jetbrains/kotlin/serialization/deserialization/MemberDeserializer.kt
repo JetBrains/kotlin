@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -29,9 +31,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
     fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
+        val propertyAnnotations = getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY)
+
         val property = DeserializedPropertyDescriptor(
             c.containingDeclaration, null,
-            getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
+            propertyAnnotations,
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
             Flags.IS_VAR.get(flags),
@@ -134,7 +138,19 @@ class MemberDeserializer(private val c: DeserializationContext) {
             )
         }
 
-        property.initialize(getter, setter, property.checkExperimentalCoroutine(local.typeDeserializer))
+        // TODO: add needed methods to AnnotationAndConstantLoader
+        val fieldAnnotations = DeserializedAnnotations(c.storageManager) {
+            propertyAnnotations.getUseSiteTargetedAnnotations()
+                .filter { it.target == AnnotationUseSiteTarget.FIELD }.map { it.annotation }
+        }
+        val delegateAnnotations = DeserializedAnnotations(c.storageManager) {
+            propertyAnnotations.getUseSiteTargetedAnnotations()
+                .filter { it.target == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD }.map { it.annotation }
+        }
+        property.initialize(
+            getter, setter, FieldDescriptorImpl(fieldAnnotations, property), FieldDescriptorImpl(delegateAnnotations, property),
+            property.checkExperimentalCoroutine(local.typeDeserializer)
+        )
 
         return property
     }

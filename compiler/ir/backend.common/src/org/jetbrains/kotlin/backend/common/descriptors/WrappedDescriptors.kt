@@ -578,4 +578,12 @@ open class WrappedPropertyDescriptor(
     }
 
     override val isDelegated get() = false
+
+    override fun getBackingField(): FieldDescriptor? {
+        TODO("not implemented")
+    }
+
+    override fun getDelegateField(): FieldDescriptor? {
+        TODO("not implemented")
+    }
 }

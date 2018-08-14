@@ -348,14 +348,6 @@ public class JvmCodegenUtil {
                !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 
-    public static boolean hasBackingField(
-            @NotNull PropertyDescriptor descriptor, @NotNull OwnerKind kind, @NotNull BindingContext bindingContext
-    ) {
-        return !isJvmInterface(descriptor.getContainingDeclaration()) &&
-               kind != OwnerKind.DEFAULT_IMPLS &&
-               !Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor));
-    }
-
     public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {
         return descriptor instanceof FunctionInvokeDescriptor && ((FunctionInvokeDescriptor) descriptor).hasBigArity();
     }

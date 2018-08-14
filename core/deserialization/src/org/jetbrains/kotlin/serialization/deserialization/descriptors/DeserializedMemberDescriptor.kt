@@ -146,9 +146,11 @@ class DeserializedPropertyDescriptor(
     fun initialize(
         getter: PropertyGetterDescriptorImpl?,
         setter: PropertySetterDescriptor?,
+        backingField: FieldDescriptor?,
+        delegateField: FieldDescriptor?,
         isExperimentalCoroutineInReleaseEnvironment: DeserializedMemberDescriptor.CoroutinesCompatibilityMode
     ) {
-        super.initialize(getter, setter)
+        super.initialize(getter, setter, backingField, delegateField)
             .also { this.coroutinesExperimentalCompatibilityMode = isExperimentalCoroutineInReleaseEnvironment }
     }
 

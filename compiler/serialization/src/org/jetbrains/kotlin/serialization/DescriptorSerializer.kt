@@ -164,7 +164,10 @@ class DescriptorSerializer private constructor(
         val compileTimeConstant = descriptor.compileTimeInitializer
         val hasConstant = compileTimeConstant != null && compileTimeConstant !is NullValue
 
-        val hasAnnotations = descriptor.annotations.getAllAnnotations().isNotEmpty()
+        val hasAnnotations =
+            !descriptor.annotations.isEmpty() ||
+                    descriptor.backingField?.annotations?.isEmpty() == false ||
+                    descriptor.delegateField?.annotations?.isEmpty() == false
 
         val propertyFlags = Flags.getAccessorFlags(
             hasAnnotations,

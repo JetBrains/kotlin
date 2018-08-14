@@ -53,6 +53,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     private PropertyGetterDescriptorImpl getter;
     private PropertySetterDescriptor setter;
     private boolean setterProjectedOut;
+    private FieldDescriptor backingField;
+    private FieldDescriptor delegateField;
 
     protected PropertyDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -120,9 +122,23 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.dispatchReceiverParameter = dispatchReceiverParameter;
     }
 
-    public void initialize(@Nullable PropertyGetterDescriptorImpl getter, @Nullable PropertySetterDescriptor setter) {
+    public void initialize(
+            @Nullable PropertyGetterDescriptorImpl getter,
+            @Nullable PropertySetterDescriptor setter
+    ) {
+        initialize(getter, setter, null, null);
+    }
+
+    public void initialize(
+            @Nullable PropertyGetterDescriptorImpl getter,
+            @Nullable PropertySetterDescriptor setter,
+            @Nullable FieldDescriptor backingField,
+            @Nullable FieldDescriptor delegateField
+    ) {
         this.getter = getter;
         this.setter = setter;
+        this.backingField = backingField;
+        this.delegateField = delegateField;
     }
 
     public void setSetterProjectedOut(boolean setterProjectedOut) {
@@ -413,7 +429,12 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             newSetter.initialize(substitutedValueParameters.get(0));
         }
 
-        substitutedDescriptor.initialize(newGetter, newSetter);
+        substitutedDescriptor.initialize(
+                newGetter,
+                newSetter,
+                backingField == null ? null : new FieldDescriptorImpl(backingField.getAnnotations(), substitutedDescriptor),
+                delegateField == null ? null : new FieldDescriptorImpl(delegateField.getAnnotations(), substitutedDescriptor)
+        );
 
         if (copyConfiguration.copyOverrides) {
             Collection<CallableMemberDescriptor> overridden = SmartSet.create();
@@ -486,6 +507,18 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     @Override
     public boolean isActual() {
         return isActual;
+    }
+
+    @Override
+    @Nullable
+    public FieldDescriptor getBackingField() {
+        return backingField;
+    }
+
+    @Override
+    @Nullable
+    public FieldDescriptor getDelegateField() {
+        return delegateField;
     }
 
     @Override

@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithCorres
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.findSynchronizedAnnotation
-import org.jetbrains.kotlin.resolve.jvm.annotations.findVolatileAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
@@ -156,16 +156,18 @@ class JvmNameAnnotationChecker : DeclarationChecker {
 
 class VolatileAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val volatileAnnotation = descriptor.findVolatileAnnotation()
-        if (volatileAnnotation != null) {
-            if (descriptor is PropertyDescriptor && !descriptor.isVar) {
-                val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
-                context.trace.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
-            }
-            if (declaration is KtProperty && declaration.hasDelegate()) {
-                val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
-                context.trace.report(ErrorsJvm.VOLATILE_ON_DELEGATE.on(annotationEntry))
-            }
+        if (descriptor !is PropertyDescriptor) return
+
+        val fieldAnnotation = descriptor.backingField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
+        if (fieldAnnotation != null && !descriptor.isVar) {
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(fieldAnnotation) ?: return
+            context.trace.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
+        }
+
+        val delegateAnnotation = descriptor.delegateField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
+        if (delegateAnnotation != null) {
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(delegateAnnotation) ?: return
+            context.trace.report(ErrorsJvm.VOLATILE_ON_DELEGATE.on(annotationEntry))
         }
     }
 }
