@@ -28,7 +28,7 @@ import kotlin.reflect.KProperty
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
 @FixmeConcurrency
-public actual fun <T> lazy(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)//SynchronizedLazyImpl(initializer)
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> = kotlin.native.worker.FreezeAwareLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]

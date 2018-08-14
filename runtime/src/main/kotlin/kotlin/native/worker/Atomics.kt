@@ -179,7 +179,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
                 result = value_.get()
             } while (result === INITIALIZING)
 
-            assert(result !== UNINITIALIZED && result != INITIALIZING)
+            assert(result !== UNINITIALIZED && result !== INITIALIZING)
             @Suppress("UNCHECKED_CAST")
             return result as T
         }
