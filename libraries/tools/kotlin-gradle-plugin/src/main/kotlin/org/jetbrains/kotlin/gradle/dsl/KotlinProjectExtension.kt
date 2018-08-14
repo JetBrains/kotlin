@@ -63,12 +63,11 @@ open class ExperimentalExtension {
 enum class Coroutines {
     ENABLE,
     WARN,
-    ERROR;
+    ERROR,
+    DEFAULT;
 
     companion object {
-        val DEFAULT = WARN
-
         fun byCompilerArgument(argument: String): Coroutines? =
-                Coroutines.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+            Coroutines.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }
