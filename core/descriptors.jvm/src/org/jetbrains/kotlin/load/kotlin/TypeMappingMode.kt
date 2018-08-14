@@ -103,6 +103,13 @@ class TypeMappingMode private constructor(
         ): TypeMappingMode {
             if (type.arguments.isEmpty()) return DEFAULT
 
+            if (type.isInlineClassType() && shouldUseUnderlyingType(type)) {
+                val underlyingType = computeUnderlyingType(type)
+                if (underlyingType != null) {
+                    return getOptimalModeForSignaturePart(underlyingType, isForAnnotationParameter, canBeUsedInSupertypePosition)
+                }
+            }
+
             val contravariantArgumentMode =
                 if (!canBeUsedInSupertypePosition)
                     TypeMappingMode(

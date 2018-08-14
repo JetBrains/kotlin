@@ -240,7 +240,7 @@ private fun <T : Any> mapBuiltInType(
     return null
 }
 
-private fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
+internal fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
     if (!shouldUseUnderlyingType(inlineClassType)) return null
 
     val descriptor = inlineClassType.unsubstitutedUnderlyingType()?.constructor?.declarationDescriptor ?: return null
@@ -250,7 +250,7 @@ private fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
         inlineClassType.substitutedUnderlyingType()
 }
 
-private fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
+internal fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
     val underlyingType = inlineClassType.unsubstitutedUnderlyingType() ?: return false
 
     return !inlineClassType.isMarkedNullable ||
