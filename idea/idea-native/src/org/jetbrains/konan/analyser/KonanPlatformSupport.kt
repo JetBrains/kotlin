@@ -4,7 +4,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.util.io.exists
 import org.jetbrains.konan.analyser.index.KonanDescriptorManager
 import org.jetbrains.konan.settings.KonanPaths
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
@@ -36,20 +35,17 @@ class KonanPlatformSupport : IdePlatformSupport() {
         val builtIns = KonanBuiltIns(sdkContext.storageManager)
 
         //todo: it depends on a random project's stdlib, propagate the actual project here
-        val stdlibPath = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
-            val stdlibPath = KonanPaths.getInstance(it).konanStdlib()
-            if (stdlibPath != null && stdlibPath.exists()) stdlibPath else null
+        val stdlibFile = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
+            val stdlibPath = KonanPaths.getInstance(it).konanStdlib()?.toFile()
+            if (stdlibPath != null) LocalFileSystem.getInstance().refreshAndFindFileByIoFile(stdlibPath) else null
         }.firstOrNull()
 
-        if (stdlibPath != null) {
-            val stdlib = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(stdlibPath.toFile())
-            if (stdlib != null) {
-                val builtInsModule: ModuleDescriptorImpl =
-                    KonanDescriptorManager.getInstance().getCachedLibraryDescriptor(stdlib, LanguageVersionSettingsImpl.DEFAULT)
-                builtInsModule.setField("dependencies") { null }
-                builtInsModule.setDependencies(builtInsModule)
-                builtIns.builtInsModule = builtInsModule
-            }
+        if (stdlibFile != null) {
+            val builtInsModule: ModuleDescriptorImpl =
+                KonanDescriptorManager.getInstance().getCachedLibraryDescriptor(stdlibFile, LanguageVersionSettingsImpl.DEFAULT)
+            builtInsModule.setField("dependencies") { null }
+            builtInsModule.setDependencies(builtInsModule)
+            builtIns.builtInsModule = builtInsModule
         }
 
         return builtIns
