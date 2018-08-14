@@ -37,6 +37,7 @@ object ConversionsRunner {
         LiteralConversion(),
         InnerClassConversion(),
         ModifiersConversion(context),
+        StaticsToCompanionExtractConversion(),
         PolyadicExpressionConversion(),
         BinaryExpressionConversion()
     )
