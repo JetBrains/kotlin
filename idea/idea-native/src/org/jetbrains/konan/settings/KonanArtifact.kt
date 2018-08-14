@@ -6,13 +6,13 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.nio.file.Path
 
 data class KonanArtifact(
-  val targetName: String,
-  val moduleName: String,
-  val type: CompilerOutputKind,
-  val target: KonanTarget?,
-  val libraryDependencies: List<String>,
-  val sources: List<Path>,
-  val output: Path
+    val targetName: String,
+    val moduleName: String,
+    val type: CompilerOutputKind,
+    val target: KonanTarget?,
+    val libraryDependencies: List<String>,
+    val sources: List<Path>,
+    val output: Path
 )
 
 val CompilerOutputKind.isLibrary: Boolean get() = this == LIBRARY || this == DYNAMIC || this == STATIC || this == FRAMEWORK

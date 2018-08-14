@@ -10,19 +10,19 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 //todo: Fix in Kotlin plugin
 class KonanProtoBasedClassDataFinder(
-  proto: KonanLinkData.LinkDataPackageFragment,
-  private val nameResolver: NameResolver,
-  private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
+    proto: KonanLinkData.LinkDataPackageFragment,
+    private val nameResolver: NameResolver,
+    private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
 ) : ClassDataFinder {
-  private val classIdToProto =
-    proto.classes.classesList.associateBy { klass ->
-      nameResolver.getClassId(klass.fqName)
+    private val classIdToProto =
+        proto.classes.classesList.associateBy { klass ->
+            nameResolver.getClassId(klass.fqName)
+        }
+
+    internal val allClassIds: Collection<ClassId> get() = classIdToProto.keys
+
+    override fun findClassData(classId: ClassId): ClassData? {
+        val classProto = classIdToProto[classId] ?: return null
+        return ClassData(nameResolver, classProto, KonanMetadataVersion.DEFAULT_INSTANCE, classSource(classId))
     }
-
-  internal val allClassIds: Collection<ClassId> get() = classIdToProto.keys
-
-  override fun findClassData(classId: ClassId): ClassData? {
-    val classProto = classIdToProto[classId] ?: return null
-    return ClassData(nameResolver, classProto, KonanMetadataVersion.DEFAULT_INSTANCE, classSource(classId))
-  }
 }

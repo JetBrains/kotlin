@@ -29,49 +29,51 @@ import java.util.Collection;
 
 public class KotlinWorkaroundUtil {
 
-  @NotNull
-  public static PsiFileStub createFileStub(@NotNull Project project, @NotNull String text) {
-    final LightVirtualFile virtualFile = new LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, text);
-    virtualFile.setLanguage(KotlinLanguage.INSTANCE);
-    SingleRootFileViewProvider.doNotCheckFileSizeLimit(virtualFile);
+    @NotNull
+    public static PsiFileStub createFileStub(@NotNull Project project, @NotNull String text) {
+        final LightVirtualFile virtualFile = new LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, text);
+        virtualFile.setLanguage(KotlinLanguage.INSTANCE);
+        SingleRootFileViewProvider.doNotCheckFileSizeLimit(virtualFile);
 
-    PsiFileFactoryImpl psiFileFactory = (PsiFileFactoryImpl)PsiFileFactory.getInstance(project);
-    PsiFile file = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, false, false);
-    assert file != null;
-    return (PsiFileStub)KtStubElementTypes.FILE.getBuilder().buildStubTree(file);
-  }
+        PsiFileFactoryImpl psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
+        PsiFile file = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, false, false);
+        assert file != null;
+        return (PsiFileStub) KtStubElementTypes.FILE.getBuilder().buildStubTree(file);
+    }
 
-  @NotNull
-  public static LoggingErrorReporter createLoggingErrorReporter(@NotNull Logger log) {
-    return new LoggingErrorReporter(log);
-  }
+    @NotNull
+    public static LoggingErrorReporter createLoggingErrorReporter(@NotNull Logger log) {
+        return new LoggingErrorReporter(log);
+    }
 
-  @NotNull
-  public static Project getProject(@NotNull ModuleContext moduleContext) {
-    return moduleContext.getProject();
-  }
+    @NotNull
+    public static Project getProject(@NotNull ModuleContext moduleContext) {
+        return moduleContext.getProject();
+    }
 
-  @NotNull
-  public static <M extends ModuleInfo> Pair<Collection<KtFile>, GlobalSearchScope> destructModuleContent(@NotNull ModuleContent<M> moduleContent) {
-    return new Pair<>(moduleContent.component2(), moduleContent.component3());
-  }
+    @NotNull
+    public static <M extends ModuleInfo> Pair<Collection<KtFile>, GlobalSearchScope> destructModuleContent(@NotNull ModuleContent<M> moduleContent) {
+        return new Pair<>(moduleContent.component2(), moduleContent.component3());
+    }
 
-  @NotNull
-  public static <M extends ModuleInfo> DeclarationProviderFactory createDeclarationProviderFactory(@NotNull Project project,
-                                                                                                   @NotNull ModuleContext moduleContext,
-                                                                                                   @NotNull Collection<KtFile> syntheticFiles,
-                                                                                                   @NotNull M moduleInfo,
-                                                                                                   @Nullable GlobalSearchScope globalSearchScope) {
-    return DeclarationProviderFactoryService.createDeclarationProviderFactory(
-      project,
-      moduleContext.getStorageManager(),
-      syntheticFiles,
-      globalSearchScope,
-      moduleInfo);
-  }
+    @NotNull
+    public static <M extends ModuleInfo> DeclarationProviderFactory createDeclarationProviderFactory(
+            @NotNull Project project,
+            @NotNull ModuleContext moduleContext,
+            @NotNull Collection<KtFile> syntheticFiles,
+            @NotNull M moduleInfo,
+            @Nullable GlobalSearchScope globalSearchScope
+    ) {
+        return DeclarationProviderFactoryService.createDeclarationProviderFactory(
+                project,
+                moduleContext.getStorageManager(),
+                syntheticFiles,
+                globalSearchScope,
+                moduleInfo);
+    }
 
-  @NotNull
-  public static Module getModule(@NotNull ModuleProductionSourceInfo sourceInfo) {
-    return sourceInfo.getModule();
-  }
+    @NotNull
+    public static Module getModule(@NotNull ModuleProductionSourceInfo sourceInfo) {
+        return sourceInfo.getModule();
+    }
 }

@@ -43,89 +43,90 @@ import java.io.IOException
 
 //todo: Fix in Kotlin plugin
 abstract class KonanMetadataDecompilerBase<out V : BinaryVersion>(
-  private val fileType: FileType,
-  private val targetPlatform: TargetPlatform,
-  private val serializerProtocol: SerializerExtensionProtocol,
-  private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-  private val expectedBinaryVersion: V,
-  private val invalidBinaryVersion: V,
-  stubVersion: Int
+    private val fileType: FileType,
+    private val targetPlatform: TargetPlatform,
+    private val serializerProtocol: SerializerExtensionProtocol,
+    private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    private val expectedBinaryVersion: V,
+    private val invalidBinaryVersion: V,
+    stubVersion: Int
 ) : ClassFileDecompilers.Full() {
 
-  private val stubBuilder = KonanMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
+    private val stubBuilder = KonanMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
 
-  private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+    private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
-  protected abstract fun doReadFile(file: VirtualFile): FileWithMetadata?
+    protected abstract fun doReadFile(file: VirtualFile): FileWithMetadata?
 
-  override fun accepts(file: VirtualFile) = file.fileType == fileType
+    override fun accepts(file: VirtualFile) = file.fileType == fileType
 
-  override fun getStubBuilder() = stubBuilder
+    override fun getStubBuilder() = stubBuilder
 
-  override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean) =
-    KotlinDecompiledFileViewProvider(manager, file, physical) { provider -> KonanDecompiledFile(provider, ::buildDecompiledText) }
+    override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean) =
+        KotlinDecompiledFileViewProvider(manager, file, physical) { provider -> KonanDecompiledFile(provider, ::buildDecompiledText) }
 
-  private fun readFileSafely(file: VirtualFile): FileWithMetadata? {
-    if (!file.isValid) return null
+    private fun readFileSafely(file: VirtualFile): FileWithMetadata? {
+        if (!file.isValid) return null
 
-    return try {
-      doReadFile(file)
+        return try {
+            doReadFile(file)
+        } catch (e: IOException) {
+            // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
+            // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
+            // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
+            // it's not always allowed and also is likely to degrade performance
+            null
+        }
     }
-    catch (e: IOException) {
-      // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
-      // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
-      // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
-      // it's not always allowed and also is likely to degrade performance
-      null
+
+    private fun buildDecompiledText(virtualFile: VirtualFile): DecompiledText {
+        assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
+
+        val file = readFileSafely(virtualFile)
+
+        return when (file) {
+            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
+            is FileWithMetadata.Compatible -> decompiledText(file, targetPlatform, serializerProtocol, flexibleTypeDeserializer, renderer)
+            null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, invalidBinaryVersion)
+        }
     }
-  }
-
-  private fun buildDecompiledText(virtualFile: VirtualFile): DecompiledText {
-    assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
-
-    val file = readFileSafely(virtualFile)
-
-    return when (file) {
-      is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
-      is FileWithMetadata.Compatible -> decompiledText(file, targetPlatform, serializerProtocol, flexibleTypeDeserializer, renderer)
-      null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, invalidBinaryVersion)
-    }
-  }
 }
 
 sealed class FileWithMetadata {
-  class Incompatible(val version: BinaryVersion) : FileWithMetadata()
+    class Incompatible(val version: BinaryVersion) : FileWithMetadata()
 
-  open class Compatible(
-    val proto: KonanLinkData.LinkDataPackageFragment,
-    serializerProtocol: SerializerExtensionProtocol
-  ) : FileWithMetadata() {
-    val nameResolver = NameResolverImpl(proto.stringTable, proto.nameTable)
-    val packageFqName = FqName(nameResolver.getPackageFqName(proto.`package`.getExtension(serializerProtocol.packageFqName)))
+    open class Compatible(
+        val proto: KonanLinkData.LinkDataPackageFragment,
+        serializerProtocol: SerializerExtensionProtocol
+    ) : FileWithMetadata() {
+        val nameResolver = NameResolverImpl(proto.stringTable, proto.nameTable)
+        val packageFqName = FqName(nameResolver.getPackageFqName(proto.`package`.getExtension(serializerProtocol.packageFqName)))
 
-    open val classesToDecompile: List<ProtoBuf.Class> =
-      proto.classes.classesList.filter { proto ->
-        val classId = nameResolver.getClassId(proto.fqName)
-        !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
-      }
-  }
+        open val classesToDecompile: List<ProtoBuf.Class> =
+            proto.classes.classesList.filter { proto ->
+                val classId = nameResolver.getClassId(proto.fqName)
+                !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
+            }
+    }
 }
 
 //todo: this function is extracted for KonanMetadataStubBuilder, that's the difference from Big Kotlin.
-fun decompiledText(file: FileWithMetadata.Compatible, targetPlatform: TargetPlatform,
-                   serializerProtocol: SerializerExtensionProtocol,
-                   flexibleTypeDeserializer: FlexibleTypeDeserializer,
-                   renderer: DescriptorRenderer): DecompiledText {
-  val packageFqName = file.packageFqName
-  val resolver = KonanMetadataDeserializerForDecompiler(
-    packageFqName, file.proto, file.nameResolver,
-    targetPlatform, serializerProtocol, flexibleTypeDeserializer
-  )
-  val declarations = arrayListOf<DeclarationDescriptor>()
-  declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
-  for (classProto in file.classesToDecompile) {
-    val classId = file.nameResolver.getClassId(classProto.fqName)
-    declarations.addIfNotNull(resolver.resolveTopLevelClass(classId))
-  }
-  return buildDecompiledText(packageFqName, declarations, renderer)
+fun decompiledText(
+    file: FileWithMetadata.Compatible, targetPlatform: TargetPlatform,
+    serializerProtocol: SerializerExtensionProtocol,
+    flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    renderer: DescriptorRenderer
+): DecompiledText {
+    val packageFqName = file.packageFqName
+    val resolver = KonanMetadataDeserializerForDecompiler(
+        packageFqName, file.proto, file.nameResolver,
+        targetPlatform, serializerProtocol, flexibleTypeDeserializer
+    )
+    val declarations = arrayListOf<DeclarationDescriptor>()
+    declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
+    for (classProto in file.classesToDecompile) {
+        val classId = file.nameResolver.getClassId(classProto.fqName)
+        declarations.addIfNotNull(resolver.resolveTopLevelClass(classId))
+    }
+    return buildDecompiledText(packageFqName, declarations, renderer)
 }

@@ -32,27 +32,27 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 //todo: Fix in Kotlin plugin
 open class KonanMetadataStubBuilder(
-  private val version: Int,
-  private val fileType: FileType,
-  private val serializerProtocol: SerializerExtensionProtocol,
-  private val readFile: (VirtualFile) -> FileWithMetadata?
+    private val version: Int,
+    private val fileType: FileType,
+    private val serializerProtocol: SerializerExtensionProtocol,
+    private val readFile: (VirtualFile) -> FileWithMetadata?
 ) : ClsStubBuilder() {
 
-  override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
+    override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
 
-  override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
-    val virtualFile = content.file
-    assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
+    override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
+        val virtualFile = content.file
+        assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
 
-    val file = readFile(virtualFile) ?: return null
+        val file = readFile(virtualFile) ?: return null
 
-    return when (file) {
-      is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub()
-      is FileWithMetadata.Compatible -> { //todo: this part is implemented in our own way
-        val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
-        val ktFileText = decompiledText(file, KonanPlatform, serializerProtocol, NullFlexibleTypeDeserializer, renderer)
-        createFileStub(content.project, ktFileText.text)
-      }
+        return when (file) {
+            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub()
+            is FileWithMetadata.Compatible -> { //todo: this part is implemented in our own way
+                val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+                val ktFileText = decompiledText(file, KonanPlatform, serializerProtocol, NullFlexibleTypeDeserializer, renderer)
+                createFileStub(content.project, ktFileText.text)
+            }
+        }
     }
-  }
 }

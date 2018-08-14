@@ -35,44 +35,48 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 //todo: Fix in Kotlin plugin
 class KonanMetadataDeserializerForDecompiler(
-  packageFqName: FqName,
-  private val proto: KonanLinkData.LinkDataPackageFragment,
-  private val nameResolver: NameResolver,
-  override val targetPlatform: TargetPlatform,
-  serializerProtocol: SerializerExtensionProtocol,
-  flexibleTypeDeserializer: FlexibleTypeDeserializer
+    packageFqName: FqName,
+    private val proto: KonanLinkData.LinkDataPackageFragment,
+    private val nameResolver: NameResolver,
+    override val targetPlatform: TargetPlatform,
+    serializerProtocol: SerializerExtensionProtocol,
+    flexibleTypeDeserializer: FlexibleTypeDeserializer
 ) : DeserializerForDecompilerBase(packageFqName) {
-  override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
+    override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 
-  override val deserializationComponents: DeserializationComponents
+    override val deserializationComponents: DeserializationComponents
 
-  init {
-    val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
+    init {
+        val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
-    deserializationComponents = DeserializationComponents(
-      storageManager, moduleDescriptor, DeserializationConfiguration.Default, KonanProtoBasedClassDataFinder(proto, nameResolver),
-      AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
-      ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), createLoggingErrorReporter(LOG),
-      LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses, ContractDeserializer.DEFAULT,
-      extensionRegistryLite = serializerProtocol.extensionRegistry
-    )
-  }
-
-  override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> {
-    assert(facadeFqName == directoryPackageFqName) {
-      "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
+        deserializationComponents = DeserializationComponents(
+            storageManager, moduleDescriptor, DeserializationConfiguration.Default, KonanProtoBasedClassDataFinder(proto, nameResolver),
+            AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
+            ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), createLoggingErrorReporter(LOG),
+            LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses, ContractDeserializer.DEFAULT,
+            extensionRegistryLite = serializerProtocol.extensionRegistry
+        )
     }
 
-    val membersScope = DeserializedPackageMemberScope(
-      createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, KonanMetadataVersion.DEFAULT_INSTANCE, containerSource = null,
-      components = deserializationComponents
-    ) { emptyList() }
+    override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> {
+        assert(facadeFqName == directoryPackageFqName) {
+            "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
+        }
 
-    return membersScope.getContributedDescriptors().toList()
-  }
+        val membersScope = DeserializedPackageMemberScope(
+            createDummyPackageFragment(facadeFqName),
+            proto.`package`,
+            nameResolver,
+            KonanMetadataVersion.DEFAULT_INSTANCE,
+            containerSource = null,
+            components = deserializationComponents
+        ) { emptyList() }
 
-  companion object {
-    private val LOG = Logger.getInstance(KonanMetadataDeserializerForDecompiler::class.java)
-  }
+        return membersScope.getContributedDescriptors().toList()
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(KonanMetadataDeserializerForDecompiler::class.java)
+    }
 }
 

@@ -9,16 +9,16 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import org.jetbrains.kotlin.psi.KtElement
 
 class KonanApplicationComponent : ApplicationComponent {
-  override fun getComponentName(): String = "KonanApplicationComponent"
+    override fun getComponentName(): String = "KonanApplicationComponent"
 
-  override fun initComponent() {
-    FileTypeManager.getInstance().associateExtension(ArchiveFileType.INSTANCE, "klib")
+    override fun initComponent() {
+        FileTypeManager.getInstance().associateExtension(ArchiveFileType.INSTANCE, "klib")
 
-    val extensionPoint = Extensions.getRootArea().getExtensionPoint(TipAndTrickBean.EP_NAME)
-    for (name in arrayOf("Kotlin.html", "Kotlin_project.html", "Kotlin_mix.html", "Kotlin_Java_convert.html")) {
-      TipAndTrickBean.findByFileName(name)?.let {
-        extensionPoint.unregisterExtension(it)
-      }
+        val extensionPoint = Extensions.getRootArea().getExtensionPoint(TipAndTrickBean.EP_NAME)
+        for (name in arrayOf("Kotlin.html", "Kotlin_project.html", "Kotlin_mix.html", "Kotlin_Java_convert.html")) {
+            TipAndTrickBean.findByFileName(name)?.let {
+                extensionPoint.unregisterExtension(it)
+            }
+        }
     }
-  }
 }

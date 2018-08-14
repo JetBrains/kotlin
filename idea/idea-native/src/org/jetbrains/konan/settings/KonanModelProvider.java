@@ -12,15 +12,15 @@ import java.util.Collection;
 
 @ApiStatus.Experimental
 public interface KonanModelProvider {
-  Topic<Runnable> RELOAD_TOPIC = new Topic<>("Konan Project Model Updater", Runnable.class);
+    Topic<Runnable> RELOAD_TOPIC = new Topic<>("Konan Project Model Updater", Runnable.class);
 
-  ExtensionPointName<KonanModelProvider> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.native.konanModelProvider");
+    ExtensionPointName<KonanModelProvider> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.native.konanModelProvider");
 
-  @NotNull
-  Collection<KonanArtifact> getArtifacts(@NotNull Project project);
+    @NotNull
+    Collection<KonanArtifact> getArtifacts(@NotNull Project project);
 
-  @Nullable
-  Path getKonanHome(@NotNull Project project);
+    @Nullable
+    Path getKonanHome(@NotNull Project project);
 
-  boolean reloadLibraries(@NotNull Project project, @NotNull Collection<Path> libraryPaths);
+    boolean reloadLibraries(@NotNull Project project, @NotNull Collection<Path> libraryPaths);
 }
