@@ -82,7 +82,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                 setOneLineMode(true)
             }
             regexField.document.addDocumentListener(object : DocumentListener {
-                override fun documentChanged(e: DocumentEvent?) {
+                override fun documentChanged(e: DocumentEvent) {
                     owner.namePattern = regexField.text
                 }
             })

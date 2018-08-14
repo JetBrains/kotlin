@@ -227,7 +227,7 @@ class KotlinChangeSignatureDialog(
                     if (editor != null) {
                         editor.addDocumentListener(
                                 object : DocumentAdapter() {
-                                    override fun documentChanged(e: DocumentEvent?) {
+                                    override fun documentChanged(e: DocumentEvent) {
                                         fireDocumentChanged(e, columnFinal)
                                     }
                                 }
