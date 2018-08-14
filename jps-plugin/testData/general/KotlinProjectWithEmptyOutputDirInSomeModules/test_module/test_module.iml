@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="jdk" jdkName="IDEA_JDK" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="produciton_module" />
+    <orderEntry type="module" module-name="production_module" />
   </component>
 </module>
 

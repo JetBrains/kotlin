@@ -7,7 +7,7 @@ fun bar() {
 fun f(){}
 fun f(i: Int){}
 
-// currently not supported for generic funcitons
+// currently not supported for generic functions
 fun<T> genericF(t: T){}
 
 // EXIST: ::f

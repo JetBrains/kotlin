@@ -8,7 +8,7 @@ class My {
 
     fun getMyValue(): String {
         // INVOKESTATIC My$Companion.access$setMy$p
-        my = "Overriden value"
+        my = "Overridden value"
         // GETSTATIC My.my
         return my
     }

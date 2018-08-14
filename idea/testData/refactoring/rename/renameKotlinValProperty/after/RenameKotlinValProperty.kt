@@ -9,7 +9,7 @@ public open class BP: AP {
 }
 
 class CP: BP() {
-    override val second = 2 // <--- Rename overriden here
+    override val second = 2 // <--- Rename overridden here
 }
 
 class CPOther {

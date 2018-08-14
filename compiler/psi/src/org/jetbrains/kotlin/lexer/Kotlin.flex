@@ -83,7 +83,7 @@ LETTER = [:letter:]|_
 IDENTIFIER_PART=[:digit:]|{LETTER}
 PLAIN_IDENTIFIER={LETTER} {IDENTIFIER_PART}*
 // TODO: this one MUST allow everything accepted by the runtime
-// TODO: Replace backticks by one backslash in the begining
+// TODO: Replace backticks by one backslash in the beginning
 ESCAPED_IDENTIFIER = `[^`\n]+`
 IDENTIFIER = {PLAIN_IDENTIFIER}|{ESCAPED_IDENTIFIER}
 FIELD_IDENTIFIER = \${IDENTIFIER}

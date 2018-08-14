@@ -23,7 +23,7 @@ class Outer {
         // Return type is `X<R!>?`.
         // The reason is that we do not treat it as equal to return type of A.bar because they are base on different type parameters,
         // so type enhancing happens only for outermost type.
-        // TODO: We should properly compare equality with specific local equality axioms (as when calculating overriden descriptors)
+        // TODO: We should properly compare equality with specific local equality axioms (as when calculating overridden descriptors)
         @Override
         @Nullable
         <R> X<@Nullable R> bar(@NonNull Y<@NonNull R> x) { return null; }

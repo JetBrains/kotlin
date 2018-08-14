@@ -602,7 +602,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             //remap only inline functions (and maybe non primitives)
             //TODO - clean asserion and remapping logic
             if (isPrimitive(type) != isPrimitive(stackValue.type)) {
-                //don't remap boxing/unboxing primitives - lost identity and perfomance
+                //don't remap boxing/unboxing primitives - lost identity and performance
                 return true
             }
 

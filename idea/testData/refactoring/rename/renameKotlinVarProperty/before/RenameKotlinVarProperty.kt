@@ -5,7 +5,7 @@ interface AP {
 }
 
 public open class BP: AP {
-    override var first = 1 // <--- Rename overriden here
+    override var first = 1 // <--- Rename overridden here
 }
 
 class CP: BP() {
