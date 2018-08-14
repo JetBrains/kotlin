@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class Request(val path: String) {
 
 }

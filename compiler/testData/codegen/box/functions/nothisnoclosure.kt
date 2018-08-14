@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun foo(x: Int) {}
 
 fun loop(times : Int) {

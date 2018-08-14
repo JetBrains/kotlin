@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 public inline fun Int.times(body : () -> Unit) {
     var count = this;
