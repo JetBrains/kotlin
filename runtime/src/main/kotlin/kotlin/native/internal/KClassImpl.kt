@@ -47,6 +47,10 @@ internal class KClassImpl<T : Any>(private val typeInfo: NativePtr) : KClass<T> 
             other is KClassImpl<*> && this.typeInfo == other.typeInfo
 
     override fun hashCode(): Int = typeInfo.hashCode()
+
+    override fun toString(): String {
+        return "class " + (qualifiedName ?: simpleName ?: "<anonymous>")
+    }
 }
 
 @ExportForCompiler

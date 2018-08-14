@@ -17,9 +17,11 @@
 package kotlin.native.internal
 
 import kotlin.reflect.KFunction
+import kotlin.reflect.KType
 
 @FixmeReflection
-open class KFunctionImpl<out R>(override val name: String, val fqName: String, val bound: Boolean, val receiver: Any?): KFunction<R> {
+open class KFunctionImpl<out R>(override val name: String, val fqName: String, val bound: Boolean, val receiver: Any?,
+                                override val returnType: KType): KFunction<R> {
     override fun equals(other: Any?): Boolean {
         if (other !is KFunctionImpl<*>) return false
         return fqName == other.fqName && bound == other.bound && receiver == other.receiver

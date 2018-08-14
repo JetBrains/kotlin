@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -271,10 +274,11 @@ internal class PropertyDelegationLowering(val context: KonanBackendContext) : Fi
                     isMutable     = setterCallableReference != null)
             val initializer = irCall(symbol.owner, constructorTypeArguments).apply {
                 putValueArgument(0, irString(propertyDescriptor.name.asString()))
+                putValueArgument(1, irKType(this@PropertyDelegationLowering.context, returnType))
                 if (getterCallableReference != null)
-                    putValueArgument(1, getterCallableReference)
+                    putValueArgument(2, getterCallableReference)
                 if (setterCallableReference != null)
-                    putValueArgument(2, setterCallableReference)
+                    putValueArgument(3, setterCallableReference)
             }
             +initializer
         }
@@ -291,6 +295,7 @@ internal class PropertyDelegationLowering(val context: KonanBackendContext) : Fi
                     isMutable = false)
             val initializer = irCall(symbol.owner, constructorTypeArguments).apply {
                 putValueArgument(0, irString(propertyDescriptor.name.asString()))
+                putValueArgument(1, irKType(this@PropertyDelegationLowering.context, propertyType))
             }
             return initializer
         }
@@ -323,3 +328,26 @@ internal class PropertyDelegationLowering(val context: KonanBackendContext) : Fi
     }
 }
 
+internal fun IrBuilderWithScope.irKType(context: KonanBackendContext, type: IrType): IrExpression {
+    val kTypeImplSymbol = context.ir.symbols.kTypeImpl
+    val kTypeImplForGenericsSymbol = context.ir.symbols.kTypeImplForGenerics
+
+    val kClassImplConstructorSymbol = context.ir.symbols.kClassImplConstructor
+    val kTypeImplConstructorSymbol = kTypeImplSymbol.constructors.single()
+    val kTypeImplForGenericsConstructorSymbol = kTypeImplForGenericsSymbol.constructors.single()
+
+    val getClassTypeInfoSymbol = context.ir.symbols.getClassTypeInfo
+
+    return if (type.classifierOrNull !is IrClassSymbol) {
+        // IrTypeParameterSymbol
+        irCall(kTypeImplForGenericsConstructorSymbol)
+    } else {
+        val returnKClass = irCall(kClassImplConstructorSymbol).apply {
+            putValueArgument(0, irCall(getClassTypeInfoSymbol, listOf(type)))
+        }
+        irCall(kTypeImplConstructorSymbol).apply {
+            putValueArgument(0, returnKClass)
+            putValueArgument(1, irBoolean(type.isMarkedNullable()))
+        }
+    }
+}

@@ -39,12 +39,12 @@ public interface KCallable<out R> : KAnnotatedElement {
 //     * they come first in the list in that order.
 //     */
 //    public val parameters: List<KParameter>
-//
-//    /**
-//     * The type of values returned by this callable.
-//     */
-//    public val returnType: KType
-//
+
+    /**
+     * The type of values returned by this callable.
+     */
+    public val returnType: KType
+
 //    /**
 //     * The list of type parameters of this callable.
 //     */

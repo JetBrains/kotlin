@@ -43,9 +43,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -169,18 +167,19 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
 
         private val kFunctionImplSymbol = context.ir.symbols.kFunctionImpl
 
+        private val kFunctionImplConstructorSymbol = kFunctionImplSymbol.constructors.single()
+
         fun build(): BuiltFunctionReference {
             val startOffset = functionReference.startOffset
             val endOffset = functionReference.endOffset
 
-            val returnType = irFunction.returnType
-            val superTypes = mutableListOf(kFunctionImplSymbol.typeWith(returnType))
+            val superTypes = mutableListOf(kFunctionImplSymbol.typeWith(irFunction.returnType))
 
             val numberOfParameters = unboundFunctionParameters.size
 
             val functionIrClass = context.ir.symbols.kFunctions[numberOfParameters].owner
             val functionParameterTypes = unboundFunctionParameters.map { it.type }
-            val functionClassTypeParameters = functionParameterTypes + returnType
+            val functionClassTypeParameters = functionParameterTypes + irFunction.returnType
             superTypes += functionIrClass.symbol.typeWith(functionClassTypeParameters)
 
             var suspendFunctionIrClass: IrClass? = null
@@ -256,8 +255,6 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
         private fun createConstructorBuilder()
                 = object : SymbolWithIrBuilder<IrConstructorSymbol, IrConstructor>() {
 
-            private val kFunctionImplConstructorSymbol = kFunctionImplSymbol.constructors.single()
-
             override fun buildSymbol() = IrConstructorSymbolImpl(
                     ClassConstructorDescriptorImpl.create(
                             /* containingDeclaration = */ functionReferenceClassDescriptor,
@@ -278,7 +275,6 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
 
             override fun buildIr(): IrConstructor {
 
-                val symbols = this@CallableReferenceLowering.context.ir.symbols
                 val irBuiltIns = context.irBuiltIns
 
                 argumentToPropertiesMap = boundFunctionParameters.associate {
@@ -318,6 +314,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                             val needReceiver = boundFunctionParameters.singleOrNull()?.descriptor is ReceiverParameterDescriptor
                             val receiver = if (needReceiver) irGet(valueParameters.single()) else irNull()
                             putValueArgument(3, receiver)
+                            putValueArgument(4, irKType(this@CallableReferenceLowering.context, irFunction.returnType))
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, irBuiltIns.unitType)
                         // Save all arguments to fields.
