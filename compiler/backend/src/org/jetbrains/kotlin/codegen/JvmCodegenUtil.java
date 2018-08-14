@@ -11,12 +11,14 @@ import kotlin.collections.CollectionsKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FacadePartWithSourceFile;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
+import org.jetbrains.kotlin.psi.KtSuperTypeListEntry;
 import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -362,5 +365,18 @@ public class JvmCodegenUtil {
                        DescriptorUtils.getAllOverriddenDeclarations((FunctionDescriptor) descriptor),
                        JvmCodegenUtil::isDeclarationOfBigArityFunctionInvoke
                );
+    }
+
+    @Nullable
+    public static ClassDescriptor getSuperClass(
+            @NotNull KtSuperTypeListEntry specifier,
+            @NotNull GenerationState state,
+            @NotNull BindingContext bindingContext
+    ) {
+        ClassDescriptor superClass = CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext);
+
+        assert superClass != null || state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES
+                : "ClassDescriptor should not be null:" + specifier.getText();
+        return superClass;
     }
 }

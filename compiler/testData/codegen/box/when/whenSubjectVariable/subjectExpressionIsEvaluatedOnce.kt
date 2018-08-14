@@ -1,5 +1,4 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// IGNORE_BACKEND: JS
 
 var effectCount = 0
 

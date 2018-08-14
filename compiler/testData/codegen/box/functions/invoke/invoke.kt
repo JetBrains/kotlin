@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 package invoke
 
 fun test1(predicate: (Int) -> Int, i: Int) = predicate(i)

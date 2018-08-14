@@ -149,6 +149,3 @@ package p {
 package
 
 public fun test(/*0*/ m1: p.M1): kotlin.Unit
-
-package p {
-}

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.repl.messages
 import com.intellij.openapi.util.text.StringUtil
 
 // using '#' to avoid collisions with xml escaping
-internal val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
+internal val SOURCE_CHARS: Array<String> = arrayOf("\n", "#")
 internal val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
 
 fun unescapeLineBreaks(s: String) = StringUtil.replace(s, XML_REPLACEMENTS, SOURCE_CHARS)

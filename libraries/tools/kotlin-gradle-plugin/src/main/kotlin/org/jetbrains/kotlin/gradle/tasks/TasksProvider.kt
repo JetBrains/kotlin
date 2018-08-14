@@ -17,56 +17,57 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.RegexTaskToFriendTaskMapper
-import org.jetbrains.kotlin.gradle.plugin.TaskToFriendTaskMapper
-import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
+import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 
-internal open class KotlinTasksProvider {
-    open fun createKotlinJVMTask(project: Project, name: String, sourceSetName: String): KotlinCompile =
+internal open class KotlinTasksProvider(val targetName: String) {
+    open fun createKotlinJVMTask(
+        project: Project,
+        name: String,
+        compilation: KotlinCompilation
+    ): KotlinCompile =
         project.tasks.create(name, KotlinCompile::class.java).apply {
-            configure(this, project, sourceSetName)
+            configure(this, project, compilation)
         }
 
-    fun createKotlinJSTask(project: Project, name: String, sourceSetName: String): Kotlin2JsCompile =
+    fun createKotlinJSTask(project: Project, name: String, compilation: KotlinCompilation): Kotlin2JsCompile =
         project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
-            configure(this, project, sourceSetName)
+            configure(this, project, compilation)
         }
 
-    fun createKotlinCommonTask(project: Project, name: String, sourceSetName: String): KotlinCompileCommon =
+    fun createKotlinCommonTask(project: Project, name: String, compilation: KotlinCompilation): KotlinCompileCommon =
         project.tasks.create(name, KotlinCompileCommon::class.java).apply {
-            configure(this, project, sourceSetName)
+            configure(this, project, compilation)
         }
 
     open fun configure(
         kotlinTask: AbstractKotlinCompile<*>,
         project: Project,
-        sourceSetName: String
+        compilation: KotlinCompilation
     ) {
-        kotlinTask.sourceSetName = sourceSetName
+        kotlinTask.sourceSetName = compilation.name
         kotlinTask.friendTaskName = taskToFriendTaskMapper[kotlinTask]
         mapKotlinTaskProperties(project, kotlinTask)
+
+        project.whenEvaluated {
+            val languageSettings = project.kotlinExtension.sourceSets.getByName(compilation.defaultSourceSetName).languageSettings
+            kotlinTask as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>
+            applyLanguageSettingsToKotlinTask(languageSettings, kotlinTask)
+        }
     }
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-        RegexTaskToFriendTaskMapper.Default()
+        RegexTaskToFriendTaskMapper.Default(targetName)
 }
 
-internal class KotlinCommonTasksProvider : KotlinTasksProvider() {
+internal class AndroidTasksProvider(targetName: String) : KotlinTasksProvider(targetName) {
     override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-        RegexTaskToFriendTaskMapper.Common()
-}
+        RegexTaskToFriendTaskMapper.Android(targetName)
 
-internal class Kotlin2JsTasksProvider : KotlinTasksProvider() {
-    override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-        RegexTaskToFriendTaskMapper.JavaScript()
-}
-
-internal class AndroidTasksProvider : KotlinTasksProvider() {
-    override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-        RegexTaskToFriendTaskMapper.Android()
-
-    override fun configure(kotlinTask: AbstractKotlinCompile<*>, project: Project, sourceSetName: String) {
-        super.configure(kotlinTask, project, sourceSetName)
+    override fun configure(kotlinTask: AbstractKotlinCompile<*>, project: Project, compilation: KotlinCompilation) {
+        super.configure(kotlinTask, project, compilation)
         kotlinTask.useModuleDetection = true
     }
 }

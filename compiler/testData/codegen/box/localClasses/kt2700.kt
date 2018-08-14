@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 package a.b
 
 interface Test {

@@ -38,9 +38,6 @@ package some {
 // -- Module: <m3> --
 package
 
-package a {
-}
-
 package other {
     public fun test(/*0*/ a_: [ERROR : a.b]): kotlin.Unit
 

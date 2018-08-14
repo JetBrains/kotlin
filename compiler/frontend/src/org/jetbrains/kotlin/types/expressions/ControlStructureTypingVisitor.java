@@ -286,9 +286,16 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo(),
                                                                                                    components.languageVersionSettings));
         }
+
+        DataFlowInfo conservativeInfoAfterLoop =
+                components.languageVersionSettings.supportsFeature(LanguageFeature.SoundSmartcastFromLoopConditionForLoopAssignedVariables)
+                ? loopVisitor.clearDataFlowInfoForAssignedLocalVariables(dataFlowInfo, components.languageVersionSettings)
+                : dataFlowInfo;
+
+
         return components.dataFlowAnalyzer
                 .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
-                .replaceDataFlowInfo(dataFlowInfo);
+                .replaceDataFlowInfo(conservativeInfoAfterLoop);
     }
 
     private boolean containsJumpOutOfLoop(@NotNull KtExpression expression, ExpressionTypingContext context) {
@@ -459,9 +466,14 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             bodyTypeInfo = loopRangeInfo;
         }
 
+        DataFlowInfo conservativeInfoAfterLoop =
+                components.languageVersionSettings.supportsFeature(LanguageFeature.SoundSmartcastFromLoopConditionForLoopAssignedVariables)
+                ? loopVisitor.clearDataFlowInfoForAssignedLocalVariables(loopRangeInfo.getDataFlowInfo(), components.languageVersionSettings)
+                : loopRangeInfo.getDataFlowInfo();
+
         return components.dataFlowAnalyzer
                 .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
-                .replaceDataFlowInfo(loopRangeInfo.getDataFlowInfo());
+                .replaceDataFlowInfo(conservativeInfoAfterLoop);
     }
 
     private VariableDescriptor createLoopParameterDescriptor(

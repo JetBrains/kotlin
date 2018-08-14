@@ -67,7 +67,7 @@ abstract class KtClassOrObject :
 
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
-    fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
+    override fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
 
     inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
         val body = getOrCreateBody()

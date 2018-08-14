@@ -226,7 +226,7 @@ fun loadDefinitionsFromTemplates(
         } catch (e: ClassNotFoundException) {
             // Assuming that direct ClassNotFoundException is the result of versions mismatch and missing subsystems, e.g. gradle
             // so, it only results in warning, while other errors are severe misconfigurations, resulting it user-visible error
-            LOG.warn("[kts] cannot load script definition class $templateClassName", e)
+            LOG.warn("[kts] cannot load script definition class $templateClassName")
             null
         } catch (e: Throwable) {
             LOG.error("[kts] cannot load script definition class $templateClassName", e)

@@ -1,6 +1,10 @@
 // !LANGUAGE: +InlineClasses
 
+// FILE: utils.kt
+
 inline class UInt(private val u: Int)
+
+// FILE: test.kt
 
 fun test(x: UInt?, y: UInt) {
     val a = run {
@@ -12,6 +16,7 @@ fun test(x: UInt?, y: UInt) {
     }
 }
 
+// @TestKt.class:
 // 0 INVOKESTATIC UInt\$Erased.box
 // 1 INVOKEVIRTUAL UInt.unbox
 

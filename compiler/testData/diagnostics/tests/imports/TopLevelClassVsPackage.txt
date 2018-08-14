@@ -50,6 +50,3 @@ package
 public fun test(/*0*/ a_b: a.b): kotlin.Unit
 public fun test2(/*0*/ _a: a): kotlin.Unit
 public fun test3(/*0*/ _a: a): kotlin.Unit
-
-package a {
-}

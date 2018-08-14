@@ -280,20 +280,28 @@ open class OverloadingConflictResolver<C : Any>(
             val _double = builtIns.doubleType
             val _float = builtIns.floatType
 
-            if (UnsignedTypes.isUnsignedType(specific) && UnsignedTypes.isUnsignedType(general)) {
-                val uLong = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uLong)?.defaultType ?: return false
-                val uInt = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt)?.defaultType ?: return false
-                val uByte = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uByte)?.defaultType ?: return false
-                val uShort = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uShort)?.defaultType ?: return false
+            val isSpecificUnsigned = UnsignedTypes.isUnsignedType(specific)
+            val isGeneralUnsigned = UnsignedTypes.isUnsignedType(general)
+            return when {
+                isSpecificUnsigned && isGeneralUnsigned -> {
+                    val uLong = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uLong)?.defaultType ?: return false
+                    val uInt = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt)?.defaultType ?: return false
+                    val uByte = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uByte)?.defaultType ?: return false
+                    val uShort = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uShort)?.defaultType ?: return false
 
-                return isNonSubtypeNotLessSpecific(specific, general, _double, _float, uLong, uInt, uByte, uShort)
-            } else {
-                val _long = builtIns.longType
-                val _int = builtIns.intType
-                val _byte = builtIns.byteType
-                val _short = builtIns.shortType
+                    isNonSubtypeNotLessSpecific(specific, general, _double, _float, uLong, uInt, uByte, uShort)
+                }
 
-                return isNonSubtypeNotLessSpecific(specific, general, _double, _float, _long, _int, _byte, _short)
+                !isSpecificUnsigned && isGeneralUnsigned -> true
+
+                else -> {
+                    val _long = builtIns.longType
+                    val _int = builtIns.intType
+                    val _byte = builtIns.byteType
+                    val _short = builtIns.shortType
+
+                    isNonSubtypeNotLessSpecific(specific, general, _double, _float, _long, _int, _byte, _short)
+                }
             }
 
         }

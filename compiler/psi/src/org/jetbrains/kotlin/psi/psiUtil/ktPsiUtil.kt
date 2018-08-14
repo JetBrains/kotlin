@@ -625,3 +625,5 @@ fun KtModifierKeywordToken.toVisibility(): Visibility {
         else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
     }
 }
+
+fun KtFile.getFileOrScriptDeclarations() = if (isScript()) script!!.declarations else declarations

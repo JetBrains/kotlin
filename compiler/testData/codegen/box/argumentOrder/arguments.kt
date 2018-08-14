@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 
 fun test(a: String, b: String): String {
     return a + b;

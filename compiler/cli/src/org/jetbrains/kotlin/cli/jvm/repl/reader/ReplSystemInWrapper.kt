@@ -26,8 +26,8 @@ import java.io.InputStream
 import javax.xml.parsers.DocumentBuilderFactory
 
 class ReplSystemInWrapper(
-        private val stdin: InputStream,
-        private val replWriter: ReplWriter
+    private val stdin: InputStream,
+    private val replWriter: ReplWriter
 ) : InputStream() {
     private var isXmlIncomplete = true
     private var isLastByteProcessed = false
@@ -39,7 +39,8 @@ class ReplSystemInWrapper(
     private val isAtBufferEnd: Boolean
         get() = curBytePos == inputByteArray.size
 
-    @Volatile var isReplScriptExecuting = false
+    @Volatile
+    var isReplScriptExecuting = false
 
     override fun read(): Int {
         if (isLastByteProcessed) {

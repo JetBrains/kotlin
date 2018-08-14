@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun foo(o: Int, k: Int) = o + k
 
 class A {

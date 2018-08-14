@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.internal.contracts.*
+
 
 @Deprecated("Use Synchronized annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Synchronized"), level = DeprecationLevel.WARNING)
 public typealias Synchronized = kotlin.jvm.Synchronized
@@ -13,4 +15,9 @@ public typealias Synchronized = kotlin.jvm.Synchronized
 public typealias Volatile = kotlin.jvm.Volatile
 
 @kotlin.internal.InlineOnly
-public actual inline fun <R> synchronized(lock: Any, block: () -> R): R = block()
+public actual inline fun <R> synchronized(lock: Any, block: () -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}

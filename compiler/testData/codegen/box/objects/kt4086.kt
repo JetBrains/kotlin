@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface N
 
 open class Base(n: N)

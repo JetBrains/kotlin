@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 inline fun go(f: () -> String) = f()
 
 fun String.id(): String = this

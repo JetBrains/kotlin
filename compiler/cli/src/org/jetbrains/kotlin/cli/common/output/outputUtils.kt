@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.output.outputUtils
+package org.jetbrains.kotlin.cli.common.output
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile

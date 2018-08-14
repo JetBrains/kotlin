@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JS_IR, JVM_IR
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 class Foo

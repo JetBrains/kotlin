@@ -26,10 +26,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object DataClassDescriptorResolver {
-    val EQUALS_METHOD_NAME = OperatorNameConventions.EQUALS
-    val HASH_CODE_METHOD_NAME = Name.identifier("hashCode")
-    val TO_STRING_METHOD_NAME = Name.identifier("toString")
-
     val COPY_METHOD_NAME = Name.identifier("copy")
 
     private val COMPONENT_FUNCTION_NAME_PREFIX = "component"
@@ -50,36 +46,6 @@ object DataClassDescriptorResolver {
         }
 
         return true
-    }
-
-    fun createEqualsFunctionDescriptor(classDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
-        doCreateFunctionFromAny(classDescriptor, EQUALS_METHOD_NAME)
-
-    fun createHashCodeFunctionDescriptor(classDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
-        doCreateFunctionFromAny(classDescriptor, HASH_CODE_METHOD_NAME)
-
-    fun createToStringFunctionDescriptor(classDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
-        doCreateFunctionFromAny(classDescriptor, TO_STRING_METHOD_NAME)
-
-    private fun doCreateFunctionFromAny(classDescriptor: ClassDescriptor, name: Name): SimpleFunctionDescriptor {
-        val functionDescriptor = SimpleFunctionDescriptorImpl.create(
-            classDescriptor, Annotations.EMPTY, name, CallableMemberDescriptor.Kind.SYNTHESIZED, classDescriptor.source
-        )
-
-        val functionFromAny = classDescriptor.builtIns.any.getMemberScope(emptyList())
-            .getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS).single()
-
-        functionDescriptor.initialize(
-            null,
-            classDescriptor.thisAsReceiverParameter,
-            functionFromAny.typeParameters,
-            functionFromAny.valueParameters.map { it.copy(functionDescriptor, it.name, it.index) },
-            functionFromAny.returnType,
-            Modality.OPEN,
-            Visibilities.PUBLIC
-        )
-
-        return functionDescriptor
     }
 
     fun createComponentFunctionDescriptor(

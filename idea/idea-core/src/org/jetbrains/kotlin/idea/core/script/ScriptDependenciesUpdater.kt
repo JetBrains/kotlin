@@ -75,6 +75,8 @@ class ScriptDependenciesUpdater(
                 if (file.fileType != KotlinFileType.INSTANCE) return
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
 
+                if (ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true) return
+
                 val scriptDef = findScriptDefinition(ktFile) ?: return
 
                 if (!ScriptDefinitionsManager.getInstance(project).isInExpectedLocation(ktFile, scriptDef)) return

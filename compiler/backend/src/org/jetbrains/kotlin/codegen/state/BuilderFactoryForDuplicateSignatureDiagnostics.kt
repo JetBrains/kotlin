@@ -48,12 +48,14 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     private val diagnostics: DiagnosticSink,
     moduleName: String,
     isReleaseCoroutines: Boolean,
-    shouldGenerate: (JvmDeclarationOrigin) -> Boolean
+    shouldGenerate: (JvmDeclarationOrigin) -> Boolean,
+    isIrBackend: Boolean
 ) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
 
     // Avoid errors when some classes are not loaded for some reason
     private val typeMapper = KotlinTypeMapper(
-        bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, moduleName, false, isReleaseCoroutines
+        bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, moduleName, false, isReleaseCoroutines,
+        isIrBackend
     )
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 

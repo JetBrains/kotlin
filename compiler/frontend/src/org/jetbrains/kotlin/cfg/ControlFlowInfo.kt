@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.cfg
 
-import javaslang.Tuple2
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-
-typealias ImmutableMap<K, V> = javaslang.collection.Map<K, V>
-typealias ImmutableHashMap<K, V> = javaslang.collection.HashMap<K, V>
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
+import org.jetbrains.kotlin.util.javaslang.component1
+import org.jetbrains.kotlin.util.javaslang.component2
 
 abstract class ControlFlowInfo<S : ControlFlowInfo<S, D>, D : Any>
 internal constructor(
@@ -52,9 +52,6 @@ internal constructor(
 
     override fun toString() = map.toString()
 }
-
-operator fun <T> Tuple2<T, *>.component1(): T = _1()
-operator fun <T> Tuple2<*, T>.component2(): T = _2()
 
 interface ReadOnlyControlFlowInfo<D : Any> {
     fun getOrNull(variableDescriptor: VariableDescriptor): D?

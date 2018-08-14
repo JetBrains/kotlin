@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
-import com.google.common.collect.SetMultimap
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
+import org.jetbrains.kotlin.util.javaslang.ImmutableSet
 
 /**
  * This interface is intended to provide and edit information about value nullabilities and possible types.
@@ -26,9 +27,9 @@ import org.jetbrains.kotlin.types.KotlinType
  */
 interface DataFlowInfo {
 
-    val completeNullabilityInfo: Map<DataFlowValue, Nullability>
+    val completeNullabilityInfo: ImmutableMap<DataFlowValue, Nullability>
 
-    val completeTypeInfo: SetMultimap<DataFlowValue, KotlinType>
+    val completeTypeInfo: ImmutableMap<DataFlowValue, ImmutableSet<KotlinType>>
 
     /**
      * Returns collected nullability for the given value, NOT taking its stability into account.
@@ -100,5 +101,5 @@ interface DataFlowInfo {
 
 object DataFlowInfoFactory {
     @JvmField
-    val EMPTY: DataFlowInfo = DelegatingDataFlowInfo()
+    val EMPTY: DataFlowInfo = DataFlowInfoImpl()
 }

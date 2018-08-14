@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class A {
     class Nested {
         val o = 111

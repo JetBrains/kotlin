@@ -23,7 +23,6 @@ dependencies {
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijDep())
 
-    testCompile(project(":compiler:tests-common"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }

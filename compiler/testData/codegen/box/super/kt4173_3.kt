@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class C(s: Int) {
     fun test() {
 

@@ -28,7 +28,7 @@ fun test() {
 fun takeUInt(u: UInt) {}
 
 // 1 INVOKESTATIC UInt\$Erased.box
-// 0 INVOKEVIRTUAL UInt.unbox
+// 1 INVOKEVIRTUAL UInt.unbox
 
 // 0 INVOKEVIRTUAL UIntIterator.iterator
 // 1 INVOKESTATIC kotlin/jvm/internal/ArrayIteratorsKt.iterator

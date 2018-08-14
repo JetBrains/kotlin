@@ -64,6 +64,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/builtins/hashCode.kt");
         }
 
+        @TestMetadata("superCallsToAnyMethods.kt")
+        public void testSuperCallsToAnyMethods() throws Exception {
+            runTest("js/js.translator/testData/box/builtins/superCallsToAnyMethods.kt");
+        }
+
         @TestMetadata("toString.kt")
         public void testToString() throws Exception {
             runTest("js/js.translator/testData/box/builtins/toString.kt");

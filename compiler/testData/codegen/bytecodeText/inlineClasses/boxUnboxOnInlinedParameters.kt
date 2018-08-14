@@ -1,6 +1,10 @@
 // !LANGUAGE: +InlineClasses
 
+// FILE: utils.kt
+
 inline class Foo(val a: Int)
+
+// FILE: test.kt
 
 fun <T> id(x: T): T = x
 inline fun <T> inlinedId(x: T): T = x
@@ -18,8 +22,8 @@ fun test(f: Foo) {
     val b = inlinedId(f).inlinedIdExtension()
 }
 
+// @TestKt.class:
 // 2 INVOKESTATIC Foo\$Erased.box
 // 1 INVOKEVIRTUAL Foo.unbox
-
 // 0 valueOf
 // 0 intValue

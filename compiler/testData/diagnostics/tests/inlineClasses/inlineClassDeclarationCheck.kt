@@ -29,3 +29,5 @@ final inline class D0(val x: Int)
 <!INLINE_CLASS_NOT_FINAL!>open<!> inline class D1(val x: Int)
 <!INLINE_CLASS_NOT_FINAL!>abstract<!> inline class D2(val x: Int)
 <!INLINE_CLASS_NOT_FINAL!>sealed<!> inline class D3(val x: Int)
+
+<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class <!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>D4(val x: String)<!>

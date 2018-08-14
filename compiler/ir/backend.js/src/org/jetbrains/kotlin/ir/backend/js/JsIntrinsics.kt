@@ -99,7 +99,6 @@ class JsIntrinsics(
     val jsInstanceOf = binOpBool("jsInstanceOf")
     val jsTypeOf = unOp("jsTypeOf", irBuiltIns.string)
 
-
     // Number conversions:
 
     val jsNumberToByte = getInternalFunction("numberToByte")
@@ -126,10 +125,20 @@ class JsIntrinsics(
     val jsToJsType = defineToJsType() // creates name reference to KotlinType
     val jsCode = getInternalFunction("js") // js("<code>")
     val jsHashCode = getInternalFunction("hashCode")
+    val jsGetObjectHashCode = getInternalFunction("getObjectHashCode")
     val jsToString = getInternalFunction("toString")
+    val jsAnyToString = getInternalFunction("anyToString")
     val jsCompareTo = getInternalFunction("compareTo")
     val jsEquals = getInternalFunction("equals")
 
+    // Coroutines
+
+    val jsCoroutineContext = context.symbolTable.referenceSimpleFunction(context.coroutineContextProperty.getter!!)
+
+    val jsGetContinuation = context.run {
+        val f = getInternalFunctions("getContinuation")
+        symbolTable.referenceSimpleFunction(f.single())
+    }
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
 

@@ -54,7 +54,7 @@ class KtArrayAccessReference(
 
     override fun canRename() = true
 
-    override fun handleElementRename(newElementName: String?): PsiElement? {
+    override fun handleElementRename(newElementName: String): PsiElement? {
         val arrayAccessExpression = expression
         if (OperatorNameConventions.INVOKE.asString() == newElementName) {
             val replacement = KtPsiFactory(arrayAccessExpression.project).buildExpression {

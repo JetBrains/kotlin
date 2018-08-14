@@ -452,5 +452,5 @@ var K2JVMCompilerArguments.destinationAsFile: File
         set(value) { destination = value.path }
 
 var K2JVMCompilerArguments.classpathAsList: List<File>
-    get() = classpath!!.split(File.pathSeparator).map(::File)
+    get() = classpath.orEmpty().split(File.pathSeparator).map(::File)
     set(value) { classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path }) }

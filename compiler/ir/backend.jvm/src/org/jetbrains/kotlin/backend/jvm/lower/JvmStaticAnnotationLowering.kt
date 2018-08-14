@@ -56,7 +56,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
 
         companion?.declarations?.filter(::isJvmStaticFunction)?.forEach {
             val jvmStaticFunction = it as IrSimpleFunction
-            val newName = Name.identifier(context.state.typeMapper.mapFunctionName(jvmStaticFunction.symbol.descriptor))
+            val newName = Name.identifier(context.state.typeMapper.mapFunctionName(jvmStaticFunction.symbol.descriptor, null))
             if (AsmUtil.getVisibilityAccessFlag(jvmStaticFunction.descriptor) != Opcodes.ACC_PUBLIC) {
                 // TODO: Synthetic accessor creation logic should be supported in SyntheticAccessorLowering in the future.
                 val accessorName = Name.identifier("access\$$newName")

@@ -6,8 +6,14 @@
 package org.jetbrains.kotlin.idea.util
 
 import com.intellij.formatting.ASTBlock
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 
 /*
  * ASTBlock is nullable since 182, this extension was introduced to minimize changes between bunches
  */
 fun ASTBlock.requireNode() = node ?: error("ASTBlock.getNode() returned null")
+
+/**
+ * Can be removed with all usages after moving master to 1.3 with new default code style settings.
+ */
+val isDefaultOfficialCodeStyle by lazy { !KotlinCodeStyleSettings.DEFAULT.CONTINUATION_INDENT_FOR_CHAINED_CALLS }

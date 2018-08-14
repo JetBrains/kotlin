@@ -27,7 +27,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.startup.StartupManager
-import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.idea.configuration.checkHideNonConfiguredNotifications
+import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
+import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
+import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
 import org.jetbrains.kotlin.idea.versions.findOutdatedKotlinLibraries
@@ -68,6 +72,8 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
             notifyOutdatedBundledCompilerIfNecessary(project)
         })
+
+        notifyKotlinStyleUpdateIfNeeded(project)
     }
 
     override fun projectOpened() {

@@ -206,6 +206,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/experimentalUnresolved.args");
         }
 
+        @TestMetadata("explicitlyDisableSamConversionsWithOldFlag.args")
+        public void testExplicitlyDisableSamConversionsWithOldFlag() throws Exception {
+            runTest("compiler/testData/cli/jvm/explicitlyDisableSamConversionsWithOldFlag.args");
+        }
+
+        @TestMetadata("explicitlyDisabledSamConversions.args")
+        public void testExplicitlyDisabledSamConversions() throws Exception {
+            runTest("compiler/testData/cli/jvm/explicitlyDisabledSamConversions.args");
+        }
+
         @TestMetadata("extraArgumentPassedInObsoleteForm.args")
         public void testExtraArgumentPassedInObsoleteForm() throws Exception {
             runTest("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
@@ -414,6 +424,16 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
+        }
+
+        @TestMetadata("newInferenceImpliesSamConversions.args")
+        public void testNewInferenceImpliesSamConversions() throws Exception {
+            runTest("compiler/testData/cli/jvm/newInferenceImpliesSamConversions.args");
+        }
+
+        @TestMetadata("newInferenceWithOldFlagImpliesSamConversions.args")
+        public void testNewInferenceWithOldFlagImpliesSamConversions() throws Exception {
+            runTest("compiler/testData/cli/jvm/newInferenceWithOldFlagImpliesSamConversions.args");
         }
 
         @TestMetadata("noReflect.args")

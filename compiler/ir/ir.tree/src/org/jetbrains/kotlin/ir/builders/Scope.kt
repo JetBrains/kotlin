@@ -60,9 +60,10 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         irExpression: IrExpression,
         nameHint: String? = null,
         isMutable: Boolean = false,
+        type: KotlinType? = null,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
     ): IrVariable {
-        val originalKotlinType = irExpression.type.originalKotlinType ?: irExpression.type.toKotlinType()
+        val originalKotlinType = type ?: (irExpression.type.originalKotlinType ?: irExpression.type.toKotlinType())
         return IrVariableImpl(
             irExpression.startOffset, irExpression.endOffset, origin,
             createDescriptorForTemporaryVariable(

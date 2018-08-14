@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 abstract class Your {
     abstract val your: String
 

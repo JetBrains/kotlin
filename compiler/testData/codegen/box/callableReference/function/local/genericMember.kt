@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     class Id<T> {
         fun invoke(t: T) = t
