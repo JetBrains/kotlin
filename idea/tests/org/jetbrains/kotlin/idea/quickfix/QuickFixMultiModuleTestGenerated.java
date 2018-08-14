@@ -144,6 +144,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/convertExpectSealedClassToEnum/");
     }
 
+    @TestMetadata("convertPropertyGetterToInitializer")
+    public void testConvertPropertyGetterToInitializer() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/convertPropertyGetterToInitializer/");
+    }
+
     @TestMetadata("createFunInExpectClass")
     public void testCreateFunInExpectClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/createFunInExpectClass/");
