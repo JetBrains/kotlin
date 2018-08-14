@@ -78,7 +78,12 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
 #ifdef KONAN_ZEPHYR
   return 0;
 #else
-  char* result = ::fgets(reinterpret_cast<char*>(utf8), maxSizeBytes - 1, stdin);
+#ifdef KONAN_WASM
+  FILE* file = nullptr;
+#else
+  FILE* file = stdin;
+#endif
+  char* result = ::fgets(reinterpret_cast<char*>(utf8), maxSizeBytes - 1, file);
   if (result == nullptr) return -1;
   int32_t length = ::strlen(result);
   // fgets reads until EOF or newline so we need to remove linefeeds.
@@ -275,44 +280,49 @@ uint64_t getTimeMicros() {
 
 #if KONAN_WASM
 
-// This one is an interface to query module.env.memory.buffer.byteLength
-extern "C" unsigned long Konan_heap_upper();
-extern "C" unsigned long Konan_heap_lower();
-extern "C" unsigned long Konan_heap_grow(unsigned long);
+namespace {
 
-#define MFAIL ((void*) ~(size_t)0)
-#define WASM_PAGESIZE_EXPONENT 16
-#define WASM_PAGESIZE  (1u << WASM_PAGESIZE_EXPONENT)
-#define WASM_PAGEMASK ((WASM_PAGESIZE-(size_t)1))
-#define PAGE_ALIGN(value) ((value + WASM_PAGEMASK) & ~(WASM_PAGEMASK))
-#define IN_PAGES(value) (value >> WASM_PAGESIZE_EXPONENT)
+constexpr uint32_t MFAIL = ~(uint32_t)0;
+constexpr uint32_t WASM_PAGESIZE_EXPONENT = 16;
+constexpr uint32_t WASM_PAGESIZE = 1u << WASM_PAGESIZE_EXPONENT;
+constexpr uint32_t WASM_PAGEMASK = WASM_PAGESIZE-1;
 
-void* moreCore(int size) {
-    static int initialized = 0;
-    static void* sbrk_top = MFAIL;
-    static void* upperHeapLimit = MFAIL;
+uint32_t pageAlign(int32_t value) {
+  return (value + WASM_PAGEMASK) & ~ (WASM_PAGEMASK);
+}
 
-    if (!initialized) {
-        sbrk_top = (void*)PAGE_ALIGN(Konan_heap_lower());
-        initialized = 1;
+uint32_t inBytes(uint32_t pageCount) {
+  return pageCount << WASM_PAGESIZE_EXPONENT;
+}
+
+uint32_t inPages(uint32_t value) {
+  return value >> WASM_PAGESIZE_EXPONENT;
+}
+
+extern "C" void Konan_notify_memory_grow();
+
+uint32_t memorySize() {
+  return __builtin_wasm_current_memory();
+}
+
+int32_t growMemory(uint32_t delta) {
+  int32_t oldLength = __builtin_wasm_grow_memory(delta);
+  Konan_notify_memory_grow();
+  return oldLength;
+}
+
+}
+
+void* moreCore(int32_t delta) {
+  uint32_t top = inBytes(memorySize());
+  if (delta > 0) {
+    if (growMemory(inPages(pageAlign(delta))) == 0) {
+      return (void *) MFAIL;
     }
-
-    if (size == 0) {
-        return sbrk_top;
-    } else if (size < 0) {
-        return MFAIL;
-    }
-
-    size = PAGE_ALIGN(size);
-
-    void* old_sbrk_top = sbrk_top;
-    long excess = (char*)sbrk_top + size - (char*)Konan_heap_upper();
-    if (excess > 0) {
-        Konan_heap_grow(IN_PAGES(PAGE_ALIGN(excess)));
-    }
-    sbrk_top = (char*)sbrk_top + size;
-
-    return old_sbrk_top;
+  } else if (delta < 0) {
+    return (void *) MFAIL;
+  }
+  return (void *) top;
 }
 
 // dlmalloc wants to know the page size.

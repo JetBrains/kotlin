@@ -33,7 +33,7 @@
 #endif
 #endif // OMIT_BACKTRACE
 
-#include "Assert.h"
+#include "KAssert.h"
 #include "Exceptions.h"
 #include "ExecFormat.h"
 #include "Memory.h"

@@ -20,7 +20,7 @@
 #include <cstddef> // for offsetof
 
 #include "Alloc.h"
-#include "Assert.h"
+#include "KAssert.h"
 #include "Atomic.h"
 #include "Exceptions.h"
 #include "Memory.h"
@@ -912,7 +912,7 @@ void ObjectContainer::Init(const TypeInfo* typeInfo) {
      // header->refCount_ is zero initialized by AllocContainer().
     SetHeader(GetPlace(), typeInfo);
     MEMORY_LOG("object at %p\n", GetPlace())
-    OBJECT_ALLOC_EVENT(memoryState, type_info->instanceSize_, GetPlace())
+    OBJECT_ALLOC_EVENT(memoryState, typeInfo->instanceSize_, GetPlace())
   }
 }
 

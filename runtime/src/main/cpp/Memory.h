@@ -17,7 +17,7 @@
 #ifndef RUNTIME_MEMORY_H
 #define RUNTIME_MEMORY_H
 
-#include "Assert.h"
+#include "KAssert.h"
 #include "Common.h"
 #include "TypeInfo.h"
 

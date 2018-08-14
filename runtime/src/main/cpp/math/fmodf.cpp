@@ -1,6 +1,13 @@
 #include <math.h>
 #include <stdint.h>
 
+#ifdef KONAN_WASM
+#include "Common.h"
+#endif
+
+#ifdef KONAN_WASM
+RUNTIME_USED
+#endif
 float fmodf(float x, float y)
 {
 	union {float f; uint32_t i;} ux = {x}, uy = {y};

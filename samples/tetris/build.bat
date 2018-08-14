@@ -2,7 +2,7 @@
 setlocal
 set DIR=.
 if "%KONAN_DATA_DIR%"=="" (set "KONAN_DATA_DIR=%userprofile%\.konan")
-set "PATH=..\..\dist\bin;..\..\bin;%KONAN_DATA_DIR%\dependencies\msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64\bin;%PATH%"
+set "PATH=..\..\dist\bin;..\..\bin;%KONAN_DATA_DIR%\dependencies\msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1\bin;%PATH%"
 if "%TARGET%" == "" set TARGET=mingw
 rem Requires default mingw64 install path yet.
 set MINGW=\msys64\mingw64

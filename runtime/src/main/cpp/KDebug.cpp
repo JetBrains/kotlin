@@ -18,7 +18,7 @@
 
 #include <string.h>
 
-#include "Assert.h"
+#include "KAssert.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "Porting.h"

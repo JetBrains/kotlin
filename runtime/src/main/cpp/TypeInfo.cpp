@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "Assert.h"
+#include "KAssert.h"
 #include "TypeInfo.h"
 
 // If one shall use binary search when looking up methods and fields.

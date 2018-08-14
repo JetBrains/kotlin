@@ -39,7 +39,9 @@ model {
                 }
             }
             binaries.withType(StaticLibraryBinarySpec) { binary ->
-                cppCompiler.args "--std=c++11", "-g", "-fPIC", "-I${llvmDir}/include"
+                if (!project.parent.convention.plugins.platformInfo.isWindows())
+                    cppCompiler.args "-fPIC"
+                cppCompiler.args "--std=c++11", "-g", "-I${llvmDir}/include"
                 if (isEnabled) {
                     cppCompiler.args '-DLIBCLANGEXT_ENABLE=1'
                 }

@@ -15,7 +15,7 @@
  */
 
 #include <cstdint>
-#include "Assert.h"
+#include "KAssert.h"
 
 class SimpleMutex {
  private:

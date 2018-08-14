@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "Assert.h"
+#include "KAssert.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "KString.h"

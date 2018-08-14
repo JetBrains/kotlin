@@ -113,7 +113,7 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
         if (HostManager.host == KonanTarget.MINGW_X64) {
 	    //TODO: Oh-ho-ho fix it in more convinient way.
             environment.put("PATH", DependencyProcessor.defaultDependenciesRoot.absolutePath +
-                    "\\msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64" +
+                    "\\msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1" +
                     "\\bin;${environment.get("PATH")}")
         }
     }

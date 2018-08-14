@@ -76,7 +76,6 @@ interface RaspberryPiConfigurables : LinuxBasedConfigurables
 interface AndroidConfigurables : NonAppleConfigurables
 
 interface WasmConfigurables : NonAppleConfigurables {
-    val s2wasmFlags get()   = targetList("s2wasmFlags")
 
     val llcFlags get()      = targetList("llcFlags")
     val llcNooptFlags get() = targetList("llcNooptFlags")
@@ -87,6 +86,8 @@ interface WasmConfigurables : NonAppleConfigurables {
     val optNooptFlags get() = targetList("optNooptFlags")
     val optOptFlags get()   = targetList("optOptFlags")
     val optDebugFlags get() = targetList("optDebugFlags")
+
+    val lldFlags get()      = targetList("lld")
 }
 
 interface ZephyrConfigurables : NonAppleConfigurables {

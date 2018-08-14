@@ -31,7 +31,7 @@
 
 #include <vector>
 
-#include "Assert.h"
+#include "KAssert.h"
 
 namespace {
 
@@ -148,7 +148,7 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
 #include <stdlib.h>
 #include <string.h>
 
-#include "Assert.h"
+#include "KAssert.h"
 
 namespace {
 

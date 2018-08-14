@@ -51,7 +51,7 @@ konanArtifacts {
         }
 
         target 'mingw', {
-            linkerOpts "$resFile -L${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/lib -lSDL2 -mwindows"
+            linkerOpts "$resFile -L${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/lib -Wl,-Bstatic -lstdc++ -static -lSDL2 -limm32 -lole32 -loleaut32 -lversion -lwinmm -mwindows"
             dependsOn 'windowsResources'
             inputs.file resFile
         }
@@ -62,7 +62,7 @@ task windowsResources (type: Exec) {
     def rcFile = file('Tetris.rc')
     def path = System.getenv("PATH")
 
-    def windresDir = "$konanUserDir/dependencies/msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64/bin"
+    def windresDir = "$konanUserDir/dependencies/msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1/bin"
 
     commandLine "$windresDir/windres", rcFile, '-O', 'coff', '-o', resFile
     environment 'PATH', "$windresDir;$path"

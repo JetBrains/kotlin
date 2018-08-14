@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "Assert.h"
+#include "KAssert.h"
 #include "Porting.h"
 #include "Common.h"
 

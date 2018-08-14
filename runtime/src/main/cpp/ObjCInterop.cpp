@@ -218,7 +218,7 @@ Class Kotlin_objc_lookUpClass(const char* name) {
 
 #else  // KONAN_OBJC_INTEROP
 
-#include "Assert.h"
+#include "KAssert.h"
 
 extern "C" {
 

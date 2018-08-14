@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "KAssert.h"
 #include "Porting.h"
 
 void RuntimeAssertFailed(const char* location, const char* message) {

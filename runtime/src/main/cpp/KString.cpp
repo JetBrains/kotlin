@@ -15,7 +15,7 @@
  */
 #include <string.h>
 
-#include "Assert.h"
+#include "KAssert.h"
 #include "City.h"
 #include "Exceptions.h"
 #include "Memory.h"

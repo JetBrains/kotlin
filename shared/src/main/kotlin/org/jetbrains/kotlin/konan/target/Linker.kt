@@ -44,8 +44,6 @@ abstract class LinkerFlags(val configurables: Configurables)
         else -> error("Don't know libLTO location for this platform.")
     }
 
-    val libLTO = "$libLTODir/${System.mapLibraryName("LTO")}"
-
     val targetLibffi = configurables.libffiDir?.let { listOf("${configurables.absoluteLibffiDir}/lib/libffi.a") }
             ?: emptyList()
 
@@ -145,7 +143,6 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         return listOf(Command(linker).apply {
             +"-demangle"
-            +listOf("-object_path_lto", "temporary.o", "-lto_library", libLTO)
             +listOf("-dynamic", "-arch", arch)
             +osVersionMinFlags
             +listOf("-syslibroot", absoluteTargetSysRoot, "-o", executable)
@@ -250,11 +247,6 @@ open class LinuxBasedLinker(targetProperties: LinuxBasedConfigurables)
             if (!isMips) +"--hash-style=gnu" // MIPS doesn't support hash-style=gnu
             +specificLibs
             +listOf("-L$absoluteTargetSysRoot/../lib", "-L$absoluteTargetSysRoot/lib", "-L$absoluteTargetSysRoot/usr/lib")
-            if (optimize) {
-                +"-plugin"
-                +"$llvmLib/LLVMgold.so"
-                +pluginOptimizationFlags
-            }
             if (optimize) +linkerOptimizationFlags
             if (!debug) +linkerNoDebugFlags
             if (dynamic) +linkerDynamicFlags

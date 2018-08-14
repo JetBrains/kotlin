@@ -28,7 +28,7 @@
 #endif
 
 #include "Alloc.h"
-#include "Assert.h"
+#include "KAssert.h"
 #include "Memory.h"
 #include "Runtime.h"
 #include "Types.h"

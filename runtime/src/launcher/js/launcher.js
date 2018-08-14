@@ -14,38 +14,30 @@
  * limitations under the License.
  */
 
-var instance;
-var heap;
-var memory;
-var global_arguments;
-var globalBase = 0; // TODO: Is there any way to obtain global_base from JavaScript?
-
-var konanStackTop;
+let instance;
+let heap;
+let global_arguments;
 
 function isBrowser() {
-    if (typeof window === 'undefined') {
-        return false;
-    } else {
-        return true;
-    };
+    return typeof window !== 'undefined';
 }
 
-var runtime;
+let runtime;
 if (isBrowser()) {
     runtime = {
         print: console.log,
         stdout: '',
         write: function (message) {
-           this.stdout += message;
-           var lastNewlineIndex = this.stdout.lastIndexOf('\n');
-           if (lastNewlineIndex == -1) return;
-           this.print(this.stdout.substring(0, lastNewlineIndex));
-           this.stdout = this.stdout.substring(lastNewlineIndex + 1)
+            this.stdout += message;
+            const lastNewlineIndex = this.stdout.lastIndexOf('\n');
+            if (lastNewlineIndex == -1) return;
+            this.print(this.stdout.substring(0, lastNewlineIndex));
+            this.stdout = this.stdout.substring(lastNewlineIndex + 1)
         },
         flush: function () {
             this.print(this.stdout);
         },
-        exit: function(status) {
+        exit: function (status) {
             throw Error("Kotlin process called exit (" + status + ")");
         }
     };
@@ -53,7 +45,8 @@ if (isBrowser()) {
     runtime = {
         write: write,
         print: print,
-        flush: function() {},
+        flush: function () {
+        },
         exit: quit
     };
 }
@@ -73,131 +66,110 @@ function utf8decode(s) {
 }
 
 function fromString(string, pointer) {
-    for (i = 0; i < string.length; i++) {
+    for (let i = 0; i < string.length; i++) {
         heap[pointer + i] = string.charCodeAt(i);
     }
     heap[pointer + string.length] = 0;
 }
 
 function toString(pointer) {
-    var string = '';
-    for (var i = pointer; heap[i] != 0; i++) {
+    let string = '';
+    for (let i = pointer; heap[i] != 0; i++) {
         string += String.fromCharCode(heap[i]);
     }
     return string;
 }
 
 function toUTF16String(pointer, size) {
-    var string = '';
-    for (var i = pointer; i < pointer + size; i+=2) {
-        string += String.fromCharCode(heap[i] + heap[i+1]*256);
+    let string = '';
+    for (let i = pointer; i < pointer + size; i += 2) {
+        string += String.fromCharCode(heap[i] + heap[i + 1] * 256);
     }
     return string;
 }
 
 function twoIntsToDouble(upper, lower) {
-    var buffer = new ArrayBuffer(8);
-    var ints = new Int32Array(buffer);
-    var doubles = new Float64Array(buffer);
+    const buffer = new ArrayBuffer(8);
+    const ints = new Int32Array(buffer);
+    const doubles = new Float64Array(buffer);
     ints[1] = upper;
     ints[0] = lower;
     return doubles[0];
 }
 
 function doubleToTwoInts(value) {
-    var buffer = new ArrayBuffer(8);
-    var ints = new Int32Array(buffer);
-    var doubles = new Float64Array(buffer);
+    const buffer = new ArrayBuffer(8);
+    const ints = new Int32Array(buffer);
+    const doubles = new Float64Array(buffer);
     doubles[0] = value;
-    var twoInts = {upper: ints[1], lower: ints[0]};
-    return twoInts
+    return {upper: ints[1], lower: ints[0]}
 }
 
 function int32ToHeap(value, pointer) {
-    heap[pointer]   = value & 0xff;
-    heap[pointer+1] = (value & 0xff00) >>> 8;
-    heap[pointer+2] = (value & 0xff0000) >>> 16;
-    heap[pointer+3] = (value & 0xff000000) >>> 24;
+    heap[pointer] = value & 0xff;
+    heap[pointer + 1] = (value & 0xff00) >>> 8;
+    heap[pointer + 2] = (value & 0xff0000) >>> 16;
+    heap[pointer + 3] = (value & 0xff000000) >>> 24;
 }
 
 function doubleToReturnSlot(value) {
-    var twoInts = doubleToTwoInts(value);
+    const twoInts = doubleToTwoInts(value);
     instance.exports.ReturnSlot_setDouble(twoInts.upper, twoInts.lower);
 }
 
-function stackTop() {
-    // Read the value module's `__stack_pointer` is initialized with.
-    // It is the very first static in .data section.
-    var addr = (globalBase == 0 ? 4 : globalBase);
-    var fourBytes = heap.buffer.slice(addr, addr+4);
-    return new Uint32Array(fourBytes)[0];
-}
-
-var konan_dependencies = {
+let konan_dependencies = {
     env: {
-        abort: function() {
+        abort: function () {
             throw new Error("abort()");
         },
         // TODO: Account for file and size.
-        fgets: function(str, size, file) {
+        fgets: function (str, size, file) {
             // TODO: readline can't read lines without a newline.
             // Browsers cant read from console at all.
             fromString(utf8encode(readline() + '\n'), str);
             return str;
         },
-        Konan_heap_upper: function() {
-            return memory.buffer.byteLength;
+        Konan_notify_memory_grow: function() {
+            heap = new Uint8Array(instance.exports.memory.buffer);
         },
-        Konan_heap_lower: function() {
-            return konanStackTop;
-        },
-        Konan_heap_grow: function(pages) {
-            // The buffer is allocated anew on calls to grow(),
-            // so renew the heap array.
-            var oldLength = memory.grow(pages);
-            heap = new Uint8Array(konan_dependencies.env.memory.buffer);
-            return oldLength;
-        },
-        Konan_abort: function(pointer) {
+        Konan_abort: function (pointer) {
             throw new Error("Konan_abort(" + utf8decode(toString(pointer)) + ")");
         },
-        Konan_exit: function(status) {
+        Konan_exit: function (status) {
             runtime.exit(status);
         },
-        Konan_js_arg_size: function(index) {
+        Konan_js_arg_size: function (index) {
             if (index >= global_arguments.length) return -1;
             return global_arguments[index].length + 1; // + 1 for trailing zero.
         },
-        Konan_js_fetch_arg: function(index, ptr) {
-            var arg = utf8encode(global_arguments[index]);
+        Konan_js_fetch_arg: function (index, ptr) {
+            let arg = utf8encode(global_arguments[index]);
             fromString(arg, ptr);
         },
-        Konan_date_now: function(pointer) {
-            var now = Date.now();
-            var high = Math.floor(now / 0xffffffff);
-            var low = Math.floor(now % 0xffffffff);
+        Konan_date_now: function (pointer) {
+            let now = Date.now();
+            let high = Math.floor(now / 0xffffffff);
+            let low = Math.floor(now % 0xffffffff);
             int32ToHeap(low, pointer);
-            int32ToHeap(high, pointer+4);
+            int32ToHeap(high, pointer + 4);
         },
-        stdin: 0, // This is for fgets(,,stdin) to resolve. It is ignored.
         // TODO: Account for fd and size.
-        write: function(fd, str, size) {
+        write: function (fd, str, size) {
             if (fd != 1 && fd != 2) throw ("write(" + fd + ", ...)");
-            // TODO: There is no writeErr() in d8. 
+            // TODO: There is no writeErr() in d8.
             // Approximate it with write() to stdout for now.
             runtime.write(utf8decode(toString(str)));
-        },
-        memory: new WebAssembly.Memory({ initial: 256, maximum: 16384 })
+        }
     }
 };
 
 function linkJavaScriptLibraries() {
-    konan.libraries.forEach ( function (library) {
-        for (var property in library) {
+    konan.libraries.forEach(function (library) {
+        for (const property in library) {
             konan_dependencies.env[property] = library[property];
-        };
+        }
     });
-};
+}
 
 function invokeModule(inst, args) {
     if (args.length < 1) print_usage();
@@ -205,11 +177,9 @@ function invokeModule(inst, args) {
 
     instance = inst;
 
-    memory = konan_dependencies.env.memory
-    heap = new Uint8Array(konan_dependencies.env.memory.buffer);
-    konanStackTop = stackTop();
+    heap = new Uint8Array(instance.exports.memory.buffer);
 
-    var exit_status = 0;
+    let exit_status = 0;
 
     try {
         exit_status = instance.exports.Konan_js_main(args.length, isBrowser() ? 0 : 1);
@@ -223,48 +193,37 @@ function invokeModule(inst, args) {
     return exit_status;
 }
 
-function setupModule(module) {
-    module.env = {};
-    module.env.memoryBase = 0;
-    module.env.tablebase = 0;
-    linkJavaScriptLibraries();
-}
-
 // Instantiate module in Browser in a sequence of promises.
 function instantiateAndRun(arraybuffer, args) {
     WebAssembly.compile(arraybuffer)
-    .then(function(module) {
-        setupModule(module);
-        return WebAssembly.instantiate(module, konan_dependencies);
-    }).then(function(instance) {
-        return invokeModule(instance, args);
-    });
+        .then(module => {
+            linkJavaScriptLibraries();
+            return WebAssembly.instantiate(module, konan_dependencies);
+        }).then(instance => invokeModule(instance, args));
 }
 
 // Instantiate module in d8 synchronously.
 function instantiateAndRunSync(arraybuffer, args) {
-    var module = WebAssembly.Module(arraybuffer)
-    setupModule(module);
-    var instance = WebAssembly.Instance(module, konan_dependencies);
+    const module = new WebAssembly.Module(arraybuffer);
+    linkJavaScriptLibraries();
+    const instance = new WebAssembly.Instance(module, konan_dependencies);
     return invokeModule(instance, args)
 }
 
 konan.moduleEntry = function (args) {
     if (isBrowser()) {
         if (!document.currentScript.hasAttribute("wasm")) {
-            throw new Error('Could not find the wasm attribute pointing to the WebAssembly binary.') ;
+            throw new Error('Could not find the wasm attribute pointing to the WebAssembly binary.');
         }
-        var filename = document.currentScript.getAttribute("wasm");
-        fetch(filename).then( function(response) {
-            return response.arrayBuffer();
-        }).then(function(arraybuffer) { 
-            instantiateAndRun(arraybuffer, [filename]); 
-        });
+        const filename = document.currentScript.getAttribute("wasm");
+        fetch(filename)
+            .then(response => response.arrayBuffer())
+            .then(arraybuffer => instantiateAndRun(arraybuffer, [filename]));
     } else {
         // Invoke from d8.
-        var arrayBuffer = readbuffer(args[0]);
-        var exitStatus = instantiateAndRunSync(arrayBuffer, args);
+        const arrayBuffer = readbuffer(args[0]);
+        const exitStatus = instantiateAndRunSync(arrayBuffer, args);
         quit(exitStatus);
     }
-}
+};
 

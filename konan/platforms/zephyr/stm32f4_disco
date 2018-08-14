@@ -25,18 +25,18 @@ boardSpecificClangFlags.zephyr_stm32f4_disco = -mabi=aapcs -mthumb -mcpu=cortex-
 
 targetToolchain.linux_x64-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-linux/arm-none-eabi
 dependencies.linux_x64-zephyr_stm32f4_disco = \
-    clang-llvm-5.0.0-linux-x86-64 \
+    clang-llvm-6.0.1-linux-x86-64 \
     gcc-arm-none-eabi-7-2017-q4-major-linux \
     target-sysroot-2-wasm
 
 targetToolchain.macos_x64-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-mac/arm-none-eabi
 dependencies.macos_x64-zephyr_stm32f4_disco = \
     gcc-arm-none-eabi-7-2017-q4-major-mac \
-    clang-llvm-5.0.0-darwin-macos \
+    clang-llvm-6.0.1-darwin-macos \
     target-sysroot-2-wasm
 
 targetToolchain.mingw_x64-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-win32/arm-none-eabi
 dependencies.mingw_x64-zephyr_stm32f4_disco = \
-    msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64 \
+    msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1 \
     gcc-arm-none-eabi-7-2017-q4-major-win32 \
     target-sysroot-2-wasm
