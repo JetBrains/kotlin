@@ -2734,6 +2734,12 @@ task interop4(type: RunInteropKonanTest) {
     interop = 'cstdio'
 }
 
+task interop5(type: RunStandaloneKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    goldValue = "Hello!\n"
+    source = "interop/basics/5.kt"
+}
+
 task interop_bitfields(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     expectedFail = (project.testTarget == 'linux_mips32') // fails because of big-endiannes
