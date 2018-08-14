@@ -83,7 +83,7 @@ fun <T : Any> mapType(
 
     val descriptor =
         constructor.declarationDescriptor
-                ?: throw UnsupportedOperationException("no descriptor for type constructor of " + kotlinType)
+            ?: throw UnsupportedOperationException("no descriptor for type constructor of $kotlinType")
 
     when {
         ErrorUtils.isError(descriptor) -> {
@@ -148,19 +148,21 @@ fun <T : Any> mapType(
                     factory.javaLangClassType
                 } else {
                     typeMappingConfiguration.getPredefinedTypeForClass(descriptor.original)
-                            ?: run {
-                                // refer to enum entries by enum type in bytecode unless ASM_TYPE is written
-                                val enumClassIfEnumEntry = if (descriptor.kind == ClassKind.ENUM_ENTRY)
+                        ?: run {
+                            // refer to enum entries by enum type in bytecode unless ASM_TYPE is written
+                            val enumClassIfEnumEntry =
+                                if (descriptor.kind == ClassKind.ENUM_ENTRY)
                                     descriptor.containingDeclaration as ClassDescriptor
-                                else descriptor
-                                factory.createObjectType(
-                                    computeInternalName(
-                                        enumClassIfEnumEntry.original,
-                                        typeMappingConfiguration,
-                                        isIrBackend
-                                    )
+                                else
+                                    descriptor
+                            factory.createObjectType(
+                                computeInternalName(
+                                    enumClassIfEnumEntry.original,
+                                    typeMappingConfiguration,
+                                    isIrBackend
                                 )
-                            }
+                            )
+                        }
                 }
 
             writeGenericType(kotlinType, jvmType, mode)
@@ -182,7 +184,7 @@ fun <T : Any> mapType(
             return type
         }
 
-        else -> throw UnsupportedOperationException("Unknown type " + kotlinType)
+        else -> throw UnsupportedOperationException("Unknown type $kotlinType")
     }
 }
 
@@ -229,7 +231,8 @@ private fun <T : Any> mapBuiltInType(
         val classId = JavaToKotlinClassMap.mapKotlinToJava(descriptor.fqNameUnsafe)
         if (classId != null) {
             if (!mode.kotlinCollectionsToJavaCollections &&
-                JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }) return null
+                JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }
+            ) return null
 
             return typeFactory.createObjectType(JvmClassName.byClassId(classId).internalName)
         }
@@ -269,7 +272,7 @@ fun computeInternalName(
     }
 
     val containerClass = container as? ClassDescriptor
-            ?: throw IllegalArgumentException("Unexpected container: $container for $klass")
+        ?: throw IllegalArgumentException("Unexpected container: $container for $klass")
 
     val containerInternalName =
         typeMappingConfiguration.getPredefinedInternalNameForClass(containerClass) ?: computeInternalName(
@@ -277,16 +280,15 @@ fun computeInternalName(
             typeMappingConfiguration,
             isIrBackend
         )
-    return containerInternalName + "$" + name
+    return "$containerInternalName$$name"
 }
 
 private fun getContainer(container: DeclarationDescriptor?): DeclarationDescriptor? =
-        container as? ClassDescriptor ?: container as? PackageFragmentDescriptor ?:
-        container?.let { getContainer(it.containingDeclaration) }
+    container as? ClassDescriptor ?: container as? PackageFragmentDescriptor ?: container?.let { getContainer(it.containingDeclaration) }
 
 private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
     val upperBounds = descriptor.upperBounds
-    assert(!upperBounds.isEmpty()) { "Upper bounds should not be empty: " + descriptor }
+    assert(!upperBounds.isEmpty()) { "Upper bounds should not be empty: $descriptor" }
 
     return upperBounds.firstOrNull {
         val classDescriptor = it.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstOrNull false
