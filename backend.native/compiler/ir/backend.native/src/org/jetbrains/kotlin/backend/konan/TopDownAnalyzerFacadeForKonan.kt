@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.konan.descriptors.createKonanModuleDescriptor
-import org.jetbrains.kotlin.backend.konan.descriptors.CurrentKonanModule
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.createKonanModuleDescriptor
+import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,10 +36,10 @@ object TopDownAnalyzerFacadeForKonan {
 
         val projectContext = ProjectContext(config.project)
 
-        val module = createKonanModuleDescriptor(moduleName, projectContext.storageManager, origin = CurrentKonanModule)
+        val module = createKonanModuleDescriptor(moduleName, projectContext.storageManager, origin = CurrentKonanModuleOrigin)
         val context = MutableModuleContextImpl(module, projectContext)
 
-        if (!module.isStdlib()) {
+        if (!module.isKonanStdlib()) {
             val dependencies = listOf(module) + config.moduleDescriptors +
                     config.getOrCreateForwardDeclarationsModule(module.builtIns, projectContext.storageManager)
             module.setDependencies(dependencies, config.friends)

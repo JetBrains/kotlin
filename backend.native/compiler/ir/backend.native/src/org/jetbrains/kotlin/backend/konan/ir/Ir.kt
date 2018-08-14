@@ -131,7 +131,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val throwable = symbolTable.referenceClass(builtIns.throwable)
     val string = symbolTable.referenceClass(builtIns.string)
     val enum = symbolTable.referenceClass(builtIns.enum)
-    val nativePtr = symbolTable.referenceClass(context.builtIns.nativePtr)
+    val nativePtr = symbolTable.referenceClass(context.nativePtr)
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
 
     val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
@@ -178,7 +178,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
                     NoLookupLocation.FROM_BACKEND
             ).single())
 
-    val getNativeNullPtr = symbolTable.referenceSimpleFunction(context.builtIns.getNativeNullPtr)
+    val getNativeNullPtr = symbolTable.referenceSimpleFunction(context.getNativeNullPtr)
 
     val boxCachePredicates = BoxCache.values().associate {
         val name = "in${it.name.toLowerCase().capitalize()}BoxCache"
@@ -196,7 +196,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             ) as ClassDescriptor
     )
 
-    val immutableBinaryBlobOf = symbolTable.referenceSimpleFunction(context.builtIns.immutableBinaryBlobOf)
+    val immutableBinaryBlobOf = symbolTable.referenceSimpleFunction(context.immutableBinaryBlobOf)
 
     val scheduleImpl = symbolTable.referenceSimpleFunction(context.interopBuiltIns.scheduleImplFunction)
 

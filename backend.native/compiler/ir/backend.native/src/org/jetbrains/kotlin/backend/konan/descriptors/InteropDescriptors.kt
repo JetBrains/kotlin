@@ -16,23 +16,15 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPackageFragment
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -100,81 +92,4 @@ class ClassifierAliasingPackageFragmentDescriptor(
     }
 
     override fun getMemberScope(): MemberScope = memberScope
-}
-
-/**
- * Package fragment which creates descriptors for forward declarations on demand.
- */
-private class ForwardDeclarationsPackageFragmentDescriptor(
-        storageManager: StorageManager,
-        module: ModuleDescriptor, fqName: FqName, supertypeName: Name, classKind: ClassKind
-) : PackageFragmentDescriptorImpl(module, fqName) {
-
-    private val memberScope = object : MemberScopeImpl() {
-
-        private val declarations = storageManager.createMemoizedFunction(this::createDeclaration)
-
-        private val supertype by storageManager.createLazyValue {
-            val descriptor = builtIns.builtInsModule.getPackage(InteropBuiltIns.FqNames.packageName)
-                    .memberScope
-                    .getContributedClassifier(supertypeName, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-
-            descriptor.defaultType
-        }
-
-        private fun createDeclaration(name: Name): ClassDescriptor {
-            return ClassDescriptorImpl(
-                    this@ForwardDeclarationsPackageFragmentDescriptor,
-                    name, Modality.FINAL, classKind,
-                    listOf(supertype), SourceElement.NO_SOURCE, false, LockBasedStorageManager.NO_LOCKS
-            ).apply {
-                this.initialize(MemberScope.Empty, emptySet(), null)
-            }
-        }
-
-        override fun getContributedClassifier(name: Name, location: LookupLocation) = declarations(name)
-
-        override fun printScopeStructure(p: Printer) {
-            p.println(this::class.java.simpleName, "{}")
-        }
-    }
-
-    override fun getMemberScope(): MemberScope = memberScope
-}
-
-/**
- * Creates module which "contains" forward declarations.
- * Note: this module should be unique per compilation and should always be the last dependency of any module.
- */
-fun createForwardDeclarationsModule(builtIns: KotlinBuiltIns, storageManager: StorageManager): ModuleDescriptorImpl {
-    val module = createKonanModuleDescriptor(
-            Name.special("<forward declarations>"),
-            storageManager,
-            builtIns,
-            origin = SyntheticModules
-    )
-
-    fun createPackage(fqName: FqName, supertypeName: String, classKind: ClassKind = ClassKind.CLASS) =
-            ForwardDeclarationsPackageFragmentDescriptor(
-                    storageManager,
-                    module,
-                    fqName,
-                    Name.identifier(supertypeName),
-                    classKind
-            )
-
-    val fqNames = InteropBuiltIns.FqNames
-
-    val packageFragmentProvider = PackageFragmentProviderImpl(
-            listOf(
-                    createPackage(fqNames.cNamesStructs, "COpaque"),
-                    createPackage(fqNames.objCNamesClasses, "ObjCObjectBase"),
-                    createPackage(fqNames.objCNamesProtocols, "ObjCObject", ClassKind.INTERFACE)
-            )
-    )
-
-    module.initialize(packageFragmentProvider)
-    module.setDependencies(module)
-
-    return module
 }

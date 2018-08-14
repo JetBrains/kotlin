@@ -251,6 +251,18 @@ task distCompiler(type: Copy) {
         into('konan/lib')
     }
 
+    from(file("${gradle.includedBuild('konan.descriptors').projectDir}/build/libs")) {
+        into('konan/lib')
+    }
+
+    from(file("${gradle.includedBuild('konan.metadata').projectDir}/build/libs")) {
+        into('konan/lib')
+    }
+
+    from(file("${gradle.includedBuild('konan.metadata.serializer').projectDir}/build/libs")) {
+        into('konan/lib')
+    }
+
     from(file('cmd')) {
         fileMode(0755)
         into('bin')

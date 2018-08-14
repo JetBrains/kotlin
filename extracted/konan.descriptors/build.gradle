@@ -1,0 +1,34 @@
+buildscript {
+    ext.rootBuildDirectory = file('../..')
+
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+}
+
+apply plugin: 'kotlin'
+
+group = 'org.jetbrains.kotlin'
+version = konanVersion
+
+repositories {
+    mavenCentral()
+    maven {
+        url kotlinCompilerRepo
+    }
+}
+
+sourceSets {
+    main.kotlin {
+        srcDir 'src/main/kotlin'
+    }
+}
+
+jar {
+    archiveName = "${project.name}.jar"
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    compile "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion"
+}

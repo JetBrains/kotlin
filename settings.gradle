@@ -33,6 +33,9 @@ include ':performance'
 include ':platformLibs'
 
 includeBuild 'shared'
+includeBuild 'extracted/konan.descriptors'
+includeBuild 'extracted/konan.metadata'
+includeBuild 'extracted/konan.metadata.serializer'
 includeBuild 'tools/kotlin-native-gradle-plugin'
 
 if (hasProperty("kotlinProjectPath")) {

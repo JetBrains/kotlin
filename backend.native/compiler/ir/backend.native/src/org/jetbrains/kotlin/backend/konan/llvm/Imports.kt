@@ -17,24 +17,27 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.SyntheticModulesOrigin
+import org.jetbrains.kotlin.descriptors.konan.konanModuleOrigin
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal interface LlvmImports {
-    fun add(origin: LlvmSymbolOrigin)
+    fun add(origin: CompiledKonanModuleOrigin)
 }
 
-internal val DeclarationDescriptor.llvmSymbolOrigin: LlvmSymbolOrigin
+internal val DeclarationDescriptor.llvmSymbolOrigin: CompiledKonanModuleOrigin
     get() {
         assert(!this.isExpectMember) { this }
 
         val module = this.module
-        val moduleOrigin = module.origin
+        val moduleOrigin = module.konanModuleOrigin
         when (moduleOrigin) {
-            is LlvmSymbolOrigin -> return moduleOrigin
-            SyntheticModules -> error("Declaration is synthetic and can't be an origin of LLVM symbol:\n${this}")
+            is CompiledKonanModuleOrigin -> return moduleOrigin
+            SyntheticModulesOrigin -> error("Declaration is synthetic and can't be an origin of LLVM symbol:\n${this}")
         }
     }
 
-internal val Context.standardLlvmSymbolsOrigin: LlvmSymbolOrigin get() = this.stdlibModule.llvmSymbolOrigin
+internal val Context.standardLlvmSymbolsOrigin: CompiledKonanModuleOrigin get() = this.stdlibModule.llvmSymbolOrigin

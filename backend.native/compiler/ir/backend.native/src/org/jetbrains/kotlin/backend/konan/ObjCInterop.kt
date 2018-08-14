@@ -18,12 +18,11 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.getExternalObjCMethodInfo
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.isReal
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.konan.interop.InteropFqNames
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -32,12 +31,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-private val interopPackageName = InteropBuiltIns.FqNames.packageName
+private val interopPackageName = InteropFqNames.packageName
 private val objCObjectFqName = interopPackageName.child(Name.identifier("ObjCObject"))
 private val objCClassFqName = interopPackageName.child(Name.identifier("ObjCClass"))
 internal val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))

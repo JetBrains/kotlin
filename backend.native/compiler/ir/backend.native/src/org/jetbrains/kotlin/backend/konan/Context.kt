@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
@@ -49,10 +50,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -280,6 +285,16 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         moduleDescriptor.builtIns as KonanBuiltIns
     }
 
+    private val packageScope by lazy { builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope }
+
+    val nativePtr by lazy { packageScope.getContributedClassifier(NATIVE_PTR_NAME) as ClassDescriptor }
+    val nativePtrPlusLong by lazy { nativePtr.unsubstitutedMemberScope.getContributedFunctions("plus").single() }
+    val nativePtrToLong   by lazy { nativePtr.unsubstitutedMemberScope.getContributedFunctions("toLong").single() }
+    val getNativeNullPtr  by lazy { packageScope.getContributedFunctions("getNativeNullPtr").single() }
+    val immutableBinaryBlobOf by lazy {
+        builtIns.builtInsModule.getPackage(FqName("konan")).memberScope.getContributedFunctions("immutableBinaryBlobOf").single()
+    }
+
     val specialDeclarationsFactory = SpecialDeclarationsFactory(this)
 
     class LazyMember<T>(val initializer: Context.() -> T) {
@@ -350,7 +365,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         get() = ir.irModule.irBuiltins
 
     val interopBuiltIns by lazy {
-        InteropBuiltIns(this.builtIns)
+        InteropBuiltIns(this.builtIns, nativePtr)
     }
 
     var llvmModule: LLVMModuleRef? = null
@@ -509,5 +524,13 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         val kind = config.configuration.get(KonanConfigKeys.PRODUCE)
         kind == CompilerOutputKind.DYNAMIC || kind == CompilerOutputKind.STATIC
     }
+
+    internal val stdlibModule
+        get() = this.builtIns.any.module
 }
 
+private fun MemberScope.getContributedClassifier(name: String) =
+        this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
+
+private fun MemberScope.getContributedFunctions(name: String) =
+        this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)

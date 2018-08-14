@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.backend.konan.llvm.objc
 
 import llvm.LLVMTypeRef
 import llvm.LLVMValueRef
-import org.jetbrains.kotlin.backend.konan.descriptors.stdlibModule
 import org.jetbrains.kotlin.backend.konan.llvm.*
 
 internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {

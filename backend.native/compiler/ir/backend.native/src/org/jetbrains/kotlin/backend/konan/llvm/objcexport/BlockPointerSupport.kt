@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
-import llvm.*
-import org.jetbrains.kotlin.backend.konan.descriptors.CurrentKonanModule
+import llvm.LLVMLinkage
+import llvm.LLVMSetLinkage
+import llvm.LLVMStoreSizeOfType
+import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -184,7 +187,7 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
             val isa = codegen.importGlobal(
                     "_NSConcreteStackBlock",
                     int8TypePtr,
-                    CurrentKonanModule
+                    CurrentKonanModuleOrigin
             )
 
             val flags = Int32((1 shl 25) or (1 shl 30) or (1 shl 31)).llvm
@@ -208,7 +211,7 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
             val retainBlock = context.llvm.externalFunction(
                     "objc_retainBlock",
                     functionType(int8TypePtr, false, int8TypePtr),
-                    CurrentKonanModule
+                    CurrentKonanModuleOrigin
             )
 
             val copiedBlock = callFromBridge(retainBlock, listOf(bitcast(int8TypePtr, blockOnStack)))
@@ -216,7 +219,7 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
             val autoreleaseReturnValue = context.llvm.externalFunction(
                     "objc_autoreleaseReturnValue",
                     functionType(int8TypePtr, false, int8TypePtr),
-                    CurrentKonanModule
+                    CurrentKonanModuleOrigin
             )
 
             ret(callFromBridge(autoreleaseReturnValue, listOf(copiedBlock)))

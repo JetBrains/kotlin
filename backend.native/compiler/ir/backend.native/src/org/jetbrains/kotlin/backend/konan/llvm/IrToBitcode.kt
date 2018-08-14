@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
@@ -1701,7 +1702,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     return receiver
                 }
 
-                context.builtIns.immutableBinaryBlobOf -> {
+                context.immutableBinaryBlobOf -> {
                     @Suppress("UNCHECKED_CAST")
                     val arg = expression.getValueArgument(0) as IrConst<String>
                     return context.llvm.staticData.createImmutableBinaryBlob(arg)
@@ -2152,10 +2153,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 functionGenerationContext.store(args[2], pointer)
                 codegen.theUnitInstanceRef.llvm
             }
-            context.builtIns.nativePtrPlusLong -> functionGenerationContext.gep(args[0], args[1])
-            context.builtIns.getNativeNullPtr -> kNullInt8Ptr
+            context.nativePtrPlusLong -> functionGenerationContext.gep(args[0], args[1])
+            context.getNativeNullPtr -> kNullInt8Ptr
             interop.getPointerSize -> Int32(LLVMPointerSize(codegen.llvmTargetData)).llvm
-            context.builtIns.nativePtrToLong -> {
+            context.nativePtrToLong -> {
                 val intPtrValue = functionGenerationContext.ptrToInt(args.single(), codegen.intPtrType)
                 val resultType = functionGenerationContext.getLLVMType(function.returnType)
 
@@ -2626,7 +2627,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 if (context.config.produce.isNativeBinary) {
                     context.llvm.librariesToLink.forEach {
                         val dependencyCtorFunction = context.llvm.externalFunction(
-                                it.moduleConstructorName, kVoidFuncType, CurrentKonanModule)
+                                it.moduleConstructorName, kVoidFuncType, CurrentKonanModuleOrigin)
                         call(dependencyCtorFunction, emptyList(), Lifetime.IRRELEVANT,
                                 exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                     }

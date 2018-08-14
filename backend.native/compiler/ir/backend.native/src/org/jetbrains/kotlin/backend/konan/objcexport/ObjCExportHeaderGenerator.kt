@@ -564,10 +564,10 @@ abstract class ObjCExportHeaderGenerator(
 
     private fun exportThrown(method: FunctionDescriptor) {
         if (!method.kind.isReal) return
-        val throwsAnnotation = method.annotations.findAnnotation(KonanBuiltIns.FqNames.throws) ?: return
+        val throwsAnnotation = method.annotations.findAnnotation(KonanFqNames.throws) ?: return
 
         if (!mapper.doesThrow(method)) {
-            reportWarning(method, "@${KonanBuiltIns.FqNames.throws.shortName()} annotation should also be added to a base method")
+            reportWarning(method, "@${KonanFqNames.throws.shortName()} annotation should also be added to a base method")
         }
 
         if (method in methodsWithThrowAnnotationConsidered) return

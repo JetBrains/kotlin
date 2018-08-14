@@ -20,10 +20,13 @@ import org.jetbrains.kotlin.backend.konan.irasdescriptors.containsNull
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.fqNameSafe
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.konan.interop.InteropFqNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.ClassId
@@ -81,7 +84,7 @@ enum class KonanPrimitiveType(val classId: ClassId) {
     LONG(PrimitiveType.LONG),
     FLOAT(PrimitiveType.FLOAT),
     DOUBLE(PrimitiveType.DOUBLE),
-    NON_NULL_NATIVE_PTR(ClassId.topLevel(KonanBuiltIns.FqNames.nonNullNativePtr.toSafe()))
+    NON_NULL_NATIVE_PTR(ClassId.topLevel(KonanFqNames.nonNullNativePtr.toSafe()))
 
     ;
 
@@ -204,8 +207,8 @@ internal abstract class InlineClassesSupport<Class : Any, Type : Any> {
 
 private val implicitInlineClasses =
         (KonanPrimitiveType.values().map { it.fqName } +
-                KonanBuiltIns.FqNames.nativePtr +
-                InteropBuiltIns.FqNames.cPointer).toSet()
+                KonanFqNames.nativePtr +
+                InteropFqNames.cPointer).toSet()
 
 private enum class ValueClass(val fqName: FqNameUnsafe, val binaryType: BinaryType.Primitive) {
 
@@ -256,7 +259,7 @@ internal object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescr
     override fun hasInlineModifier(clazz: ClassDescriptor): Boolean = clazz.isInline
 
     override fun getNativePointedSuperclass(clazz: ClassDescriptor): ClassDescriptor? = clazz.getAllSuperClassifiers()
-            .firstOrNull { it.fqNameUnsafe == InteropBuiltIns.FqNames.nativePointed } as ClassDescriptor?
+            .firstOrNull { it.fqNameUnsafe == InteropFqNames.nativePointed } as ClassDescriptor?
 
     override fun getInlinedClassUnderlyingType(clazz: ClassDescriptor): KotlinType =
             clazz.unsubstitutedPrimaryConstructor!!.valueParameters.single().type
@@ -290,7 +293,7 @@ private object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrType
     override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.descriptor.isInline
 
     override fun getNativePointedSuperclass(clazz: IrClass): IrClass? = clazz.getAllSuperClassifiers()
-            .firstOrNull { it.descriptor.fqNameUnsafe == InteropBuiltIns.FqNames.nativePointed }
+            .firstOrNull { it.fqNameSafe.toUnsafe() == InteropFqNames.nativePointed }
 
     override fun getInlinedClassUnderlyingType(clazz: IrClass): IrType =
             clazz.constructors.first { it.isPrimary }.valueParameters.single().type

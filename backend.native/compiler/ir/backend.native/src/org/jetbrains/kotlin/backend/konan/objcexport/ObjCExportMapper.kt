@@ -107,7 +107,7 @@ internal fun ObjCExportMapper.isObjCProperty(property: PropertyDescriptor): Bool
         property.extensionReceiverParameter == null || getClassIfCategory(property) != null
 
 internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = method.allOverriddenDescriptors.any {
-    it.overriddenDescriptors.isEmpty() && it.annotations.hasAnnotation(KonanBuiltIns.FqNames.throws)
+    it.overriddenDescriptors.isEmpty() && it.annotations.hasAnnotation(KonanFqNames.throws)
 }
 
 private fun ObjCExportMapper.bridgeType(kotlinType: KotlinType): TypeBridge = kotlinType.unwrapToPrimitiveOrReference(

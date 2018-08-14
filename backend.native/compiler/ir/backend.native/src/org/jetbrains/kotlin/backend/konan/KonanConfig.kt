@@ -17,18 +17,22 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.konan.descriptors.createForwardDeclarationsModule
-import org.jetbrains.kotlin.backend.konan.library.*
-import org.jetbrains.kotlin.backend.konan.library.impl.*
+import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
+import org.jetbrains.kotlin.backend.konan.library.impl.purgeUnneeded
+import org.jetbrains.kotlin.backend.konan.library.resolveImmediateLibraries
+import org.jetbrains.kotlin.backend.konan.library.resolveLibrariesRecursive
+import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.konan.interop.createForwardDeclarationsModule
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -50,7 +51,7 @@ internal class ObjCExportCodeGenerator(
         context.llvm.externalFunction(
                 "objc_terminate",
                 functionType(voidType, false),
-                CurrentKonanModule
+                CurrentKonanModuleOrigin
         ).also {
             setFunctionNoUnwind(it)
         }
