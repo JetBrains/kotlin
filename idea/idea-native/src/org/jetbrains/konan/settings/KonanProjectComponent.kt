@@ -60,15 +60,15 @@ abstract class KonanProjectComponent(val project: Project) : ProjectComponent {
     val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
     val jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)
 
-    for (path: Path in libraryPaths) {
+    for (path in libraryPaths) {
 
-      fun createLibrary(vfs: VirtualFileSystem, linkDataPath: String) {
-        val linkData = vfs.refreshAndFindFileByPath(linkDataPath) ?: return
+      fun createLibrary(vfs: VirtualFileSystem, rootPath: String) {
+        val root = vfs.refreshAndFindFileByPath(rootPath) ?: return
 
         val library = libraryTable.createLibrary(path.fileName.toString())
         val libraryModifiableModel = library.modifiableModel
 
-        libraryModifiableModel.addRoot(linkData, OrderRootType.CLASSES)
+        libraryModifiableModel.addRoot(root, OrderRootType.CLASSES)
 
         runWriteAction {
           libraryModifiableModel.commit()

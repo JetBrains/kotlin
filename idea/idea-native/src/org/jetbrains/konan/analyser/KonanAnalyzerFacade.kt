@@ -1,7 +1,6 @@
 package org.jetbrains.konan.analyser
 
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.konan.KotlinWorkaroundUtil.*
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.io.File
-import java.net.URI
 
 /**
  * @author Alefas
@@ -52,7 +50,7 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
       moduleContext,
       declarationProviderFactory,
       BindingTraceContext(),
-      KonanPlatform,
+      targetPlatform,
       TargetPlatformVersion.NoVersion,
       targetEnvironment,
       languageVersionSettings
@@ -65,13 +63,10 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
 
     fun createLibraryDescriptor(library: Library): ModuleDescriptorImpl? {
 
-      val libraryPath = library.getUrls(OrderRootType.CLASSES).map {
-        // cut off the schema ("jar:///" for ZIP files or "file:///" for directories)
-        // if this is a .klib file, then remove the rightmost part of the path that goes after the name of the file: "!/..."
-        File(URI(it).path.replaceAfterLast(".klib", ""))
-      }.first() // first() because a library should have one location
+      val libraryInfo = LibraryInfo(project, library)
+      val libraryPath = libraryInfo.getLibraryRoots().single() // single() because any KLIB should have just one root
 
-      val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(libraryPath)
+      val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(libraryPath))
 
       return if (virtualFile != null && virtualFile.exists()) {
         val libraryDescriptor = KonanDescriptorManager.getInstance().getCachedLibraryDescriptor(virtualFile, languageVersionSettings)
