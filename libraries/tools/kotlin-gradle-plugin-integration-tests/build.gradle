@@ -28,7 +28,7 @@ dependencies {
     testRuntime (project(path: ':kotlin-gradle-plugin-test-utils-embeddable', configuration: 'runtimeJar'))
 
     testCompile project(path: ':examples:annotation-processor-example')
-    testCompile project(':kotlin-stdlib-jre8')
+    testCompile project(':kotlin-stdlib-jdk8')
     testCompile project(':kotlin-reflect')
     testCompile project(':kotlin-android-extensions')
 
@@ -55,7 +55,7 @@ test.dependsOn(":kotlin-allopen:install",
                ":kotlin-annotation-processing-gradle:install",
                ":kotlin-test:kotlin-test-jvm:install",
                ":kotlin-gradle-subplugin-example:install",
-               ":kotlin-stdlib-jre8:install",
+               ":kotlin-stdlib-jdk8:install",
                ":examples:annotation-processor-example:install",
                ":kotlin-scripting-common:install",
                ":kotlin-scripting-jvm:install",
