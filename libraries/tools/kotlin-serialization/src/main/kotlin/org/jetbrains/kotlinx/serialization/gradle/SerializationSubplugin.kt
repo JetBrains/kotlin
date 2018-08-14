@@ -25,6 +25,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.io.FileNotFoundException
 import java.util.*
 
@@ -42,12 +43,19 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
     companion object {
         const val SERIALIZATION_GROUP_NAME = "org.jetbrains.kotlinx"
         const val SERIALIZATION_ARTIFACT_NAME = "kotlinx-gradle-serialization-plugin"
+        const val SERIALIZATION_ARTIFACT_UNSHADED_NAME = "kotlinx-gradle-serialization-plugin-unshaded"
     }
 
     private val log = Logging.getLogger(this.javaClass)
     private val pluginVersion = "0.7.1-SNAPSHOT"
+    private var useUnshaded = false
 
-    override fun isApplicable(project: Project, task: AbstractCompile) = SerializationGradleSubplugin.isEnabled(project)
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
+        if (!SerializationGradleSubplugin.isEnabled(project)) return false
+        // Kotlin/Native task is not an AbstractKotlinCompile and uses unshaded compiler
+        if (task !is AbstractKotlinCompile<*>) useUnshaded = true
+        return true
+    }
 
     override fun apply(
         project: Project,
@@ -63,7 +71,8 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
 
 
     override fun getPluginArtifact(): SubpluginArtifact {
-        return SubpluginArtifact(SERIALIZATION_GROUP_NAME, SERIALIZATION_ARTIFACT_NAME, pluginVersion)
+        val artifact = if (useUnshaded) SERIALIZATION_ARTIFACT_UNSHADED_NAME else SERIALIZATION_ARTIFACT_NAME
+        return SubpluginArtifact(SERIALIZATION_GROUP_NAME, artifact, pluginVersion)
     }
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlinx.serialization"

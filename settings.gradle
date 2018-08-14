@@ -183,7 +183,8 @@ include ":kotlin-build-common",
         ":test-instrumenter",
 
         ":kotlinx-serialization-compiler-plugin",
-        ":kotlinx-gradle-serialization-plugin"
+        ":kotlinx-gradle-serialization-plugin",
+        ":kotlinx-gradle-serialization-plugin-unshaded"
 
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 def includeUltimate = hasProperty("intellijUltimateEnabled") && intellijUltimateEnabled != 'false'
@@ -300,3 +301,4 @@ project(':kotlin-noarg:plugin-marker').projectDir = file("$rootDir/libraries/too
 
 project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-compiler")
 project(':kotlinx-gradle-serialization-plugin').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
+project(':kotlinx-gradle-serialization-plugin-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")

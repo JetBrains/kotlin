@@ -26,11 +26,11 @@ repositories {
 }
 
 dependencies {
+    compileOnly project(':kotlin-gradle-plugin')
     compileOnly project(':kotlin-gradle-plugin-api')
 
     compileOnly project(':kotlin-stdlib')
     compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
-    compileOnly project(':kotlin-allopen-compiler-plugin')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
 }
@@ -47,7 +47,7 @@ jar {
     manifestAttributes(manifest, project)
 }
 
-//ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
 
 artifacts {
     archives sourcesJar
