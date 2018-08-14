@@ -264,6 +264,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
             Coroutines.WARN -> CommonCompilerArguments.WARN
             Coroutines.ERROR -> CommonCompilerArguments.ERROR
+            Coroutines.DEFAULT -> CommonCompilerArguments.DEFAULT
         }
 
         logger.kotlinDebug { "args.coroutinesState=${args.coroutinesState}" }
