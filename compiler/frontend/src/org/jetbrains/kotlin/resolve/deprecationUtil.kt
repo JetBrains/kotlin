@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -321,22 +319,7 @@ class DeprecationResolver(
             getDeprecationByCoroutinesVersion(target)?.let(result::add)
         }
 
-        fun addUseSiteTargetedDeprecationIfPresent(annotatedDescriptor: DeclarationDescriptor, useSiteTarget: AnnotationUseSiteTarget?) {
-            if (useSiteTarget != null) {
-                val annotation = Annotations.findUseSiteTargetedAnnotation(
-                    annotatedDescriptor.annotations,
-                    useSiteTarget,
-                    KotlinBuiltIns.FQ_NAMES.deprecated
-                )
-                    ?: Annotations.findUseSiteTargetedAnnotation(annotatedDescriptor.annotations, useSiteTarget, JAVA_DEPRECATED)
-                if (annotation != null) {
-                    result.add(DeprecatedByAnnotation(annotation, this))
-                }
-            }
-        }
-
         addDeprecationIfPresent(this)
-        addUseSiteTargetedDeprecationIfPresent(this, AnnotationUseSiteTarget.getAssociatedUseSiteTarget(this))
 
         when (this) {
             is TypeAliasDescriptor -> {
@@ -347,11 +330,6 @@ class DeprecationResolver(
             }
             is PropertyAccessorDescriptor -> {
                 addDeprecationIfPresent(correspondingProperty)
-
-                addUseSiteTargetedDeprecationIfPresent(
-                    correspondingProperty,
-                    if (this is PropertyGetterDescriptor) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
-                )
             }
         }
 

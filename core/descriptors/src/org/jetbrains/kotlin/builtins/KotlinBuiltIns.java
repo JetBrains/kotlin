@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory;
@@ -1154,7 +1153,7 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
-        if (containsAnnotation(declarationDescriptor, FQ_NAMES.deprecated)) return true;
+        if (declarationDescriptor.getOriginal().getAnnotations().hasAnnotation(FQ_NAMES.deprecated)) return true;
 
         if (declarationDescriptor instanceof PropertyDescriptor) {
             boolean isVar = ((PropertyDescriptor) declarationDescriptor).isVar();
@@ -1172,21 +1171,5 @@ public abstract class KotlinBuiltIns {
 
     public static FqName getPrimitiveFqName(@NotNull PrimitiveType primitiveType) {
         return BUILT_INS_PACKAGE_FQ_NAME.child(primitiveType.getTypeName());
-    }
-
-    private static boolean containsAnnotation(DeclarationDescriptor descriptor, FqName annotationClassFqName) {
-        DeclarationDescriptor original = descriptor.getOriginal();
-        Annotations annotations = original.getAnnotations();
-
-        if (annotations.findAnnotation(annotationClassFqName) != null) return true;
-
-        AnnotationUseSiteTarget associatedUseSiteTarget = AnnotationUseSiteTarget.Companion.getAssociatedUseSiteTarget(descriptor);
-        if (associatedUseSiteTarget != null) {
-            if (Annotations.Companion.findUseSiteTargetedAnnotation(annotations, associatedUseSiteTarget, annotationClassFqName) != null) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
