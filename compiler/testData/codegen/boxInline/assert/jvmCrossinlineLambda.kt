@@ -4,13 +4,17 @@
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
 
-inline fun call(crossinline c: () -> Unit) {
-    val l = { c() }
-    l()
+object CrossinlineLambdaContainer {
+    inline fun call(crossinline c: () -> Unit) {
+        val l = { c() }
+        l()
+    }
 }
 
 // FILE: inlineSite.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
+
+import CrossinlineLambdaContainer.call
 
 interface Checker {
     fun checkTrue(): Boolean
@@ -99,6 +103,7 @@ fun setDesiredAssertionStatus(v: Boolean): Checker {
     val loader = Checker::class.java.classLoader
     loader.setClassAssertionStatus("ShouldBeEnabled", true)
     loader.setClassAssertionStatus("ShouldBeDisabled", false)
+    loader.setClassAssertionStatus("CrossinlineLambdaContainer", v)
     val c = loader.loadClass(if (v) "ShouldBeEnabled" else "ShouldBeDisabled")
     return c.newInstance() as Checker
 }
