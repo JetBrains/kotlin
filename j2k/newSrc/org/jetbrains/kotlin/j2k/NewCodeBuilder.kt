@@ -37,6 +37,8 @@ class NewCodeBuilder {
         JKClass.ClassKind.CLASS -> "class"
         JKClass.ClassKind.ENUM -> "enum class"
         JKClass.ClassKind.INTERFACE -> "interface"
+        JKClass.ClassKind.OBJECT -> "object"
+        JKClass.ClassKind.COMPANION -> "companion object"
     }
 
     inner class Visitor : JKVisitorVoid {
