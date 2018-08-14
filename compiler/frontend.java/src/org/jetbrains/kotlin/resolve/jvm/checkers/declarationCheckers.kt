@@ -122,9 +122,9 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
 
 class JvmNameAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val platformNameAnnotation = DescriptorUtils.getJvmNameAnnotation(descriptor)
-        if (platformNameAnnotation != null) {
-            checkDeclaration(descriptor, platformNameAnnotation, context.trace)
+        val jvmNameAnnotation = DescriptorUtils.findJvmNameAnnotation(descriptor)
+        if (jvmNameAnnotation != null) {
+            checkDeclaration(descriptor, jvmNameAnnotation, context.trace)
         }
     }
 

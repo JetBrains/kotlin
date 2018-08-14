@@ -56,12 +56,8 @@ public abstract class AnnotationCodegen {
             this.jvmFlag = jvmFlag;
         }
 
-        public boolean hasAnnotation(@NotNull Annotated annotated) {
-            return Annotations.Companion.findAnyAnnotation(annotated.getAnnotations(), fqName) != null;
-        }
-
-        public int getJvmFlag() {
-            return jvmFlag;
+        public int getJvmFlag(@Nullable Annotated annotated) {
+            return annotated != null && annotated.getAnnotations().hasAnnotation(fqName) ? jvmFlag : 0;
         }
     }
 

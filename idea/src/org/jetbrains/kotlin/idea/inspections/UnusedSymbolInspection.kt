@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -300,9 +299,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         )
         val referenceUsed: Boolean by lazy { !ReferencesSearch.search(searchParameters).forEach(::checkReference) }
 
-        if (descriptor is FunctionDescriptor &&
-            DescriptorUtils.getAnnotationByFqName(descriptor.annotations, JvmFileClassUtil.JVM_NAME) != null
-        ) {
+        if (descriptor is FunctionDescriptor && DescriptorUtils.findJvmNameAnnotation(descriptor) != null) {
             if (referenceUsed) return true
         }
 

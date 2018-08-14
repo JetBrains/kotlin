@@ -58,10 +58,6 @@ interface Annotations : Iterable<AnnotationDescriptor> {
             override fun toString() = "EMPTY"
         }
 
-        fun findAnyAnnotation(annotations: Annotations, fqName: FqName): AnnotationWithTarget? {
-            return annotations.getAllAnnotations().firstOrNull { it.annotation.fqName == fqName }
-        }
-
         fun findUseSiteTargetedAnnotation(annotations: Annotations, target: AnnotationUseSiteTarget, fqName: FqName): AnnotationDescriptor? {
             return getUseSiteTargetedAnnotations(annotations, target).firstOrNull { it.fqName == fqName }
         }

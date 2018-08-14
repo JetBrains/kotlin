@@ -43,14 +43,14 @@ fun CallableMemberDescriptor.hasJvmDefaultAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
 
 private fun Annotated.findJvmSyntheticAnnotation(): AnnotationDescriptor? =
-    DescriptorUtils.getAnnotationByFqName(annotations, JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
+    annotations.findAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
         ?: (this as? PropertyDescriptor)?.backingField?.annotations?.findAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
 
 fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean =
     findJvmSyntheticAnnotation() != null
 
 fun DeclarationDescriptor.findStrictfpAnnotation(): AnnotationDescriptor? =
-    DescriptorUtils.getAnnotationByFqName(annotations, STRICTFP_ANNOTATION_FQ_NAME)
+    annotations.findAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
 
 fun DeclarationDescriptor.findSynchronizedAnnotation(): AnnotationDescriptor? =
-    DescriptorUtils.getAnnotationByFqName(annotations, SYNCHRONIZED_ANNOTATION_FQ_NAME)
+    annotations.findAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)

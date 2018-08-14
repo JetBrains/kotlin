@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
@@ -538,7 +536,7 @@ public class DescriptorUtils {
 
     @Nullable
     public static String getJvmName(@NotNull Annotated annotated) {
-        return getJvmName(getJvmNameAnnotation(annotated));
+        return getJvmName(findJvmNameAnnotation(annotated));
     }
 
     @Nullable
@@ -555,14 +553,8 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static AnnotationDescriptor getAnnotationByFqName(@NotNull Annotations annotations, @NotNull FqName name) {
-        AnnotationWithTarget annotationWithTarget = Annotations.Companion.findAnyAnnotation(annotations, name);
-        return annotationWithTarget == null ? null : annotationWithTarget.getAnnotation();
-    }
-
-    @Nullable
-    public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated annotated) {
-        return getAnnotationByFqName(annotated.getAnnotations(), JVM_NAME);
+    public static AnnotationDescriptor findJvmNameAnnotation(@NotNull Annotated annotated) {
+        return annotated.getAnnotations().findAnnotation(JVM_NAME);
     }
 
     @NotNull

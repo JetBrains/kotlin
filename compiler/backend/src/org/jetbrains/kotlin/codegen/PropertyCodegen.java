@@ -370,9 +370,7 @@ public class PropertyCodegen {
         int modifiers = getDeprecatedAccessFlag(propertyDescriptor);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.FIELD_FLAGS) {
-            if (annotatedField != null && flagAnnotation.hasAnnotation(annotatedField)) {
-                modifiers |= flagAnnotation.getJvmFlag();
-            }
+            modifiers |= flagAnnotation.getJvmFlag(annotatedField);
         }
 
         if (kind == OwnerKind.PACKAGE) {

@@ -225,9 +225,7 @@ public class AsmUtil {
         int flags = getCommonCallableFlags(functionDescriptor, state);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
-            if (flagAnnotation.hasAnnotation(functionDescriptor.getOriginal())) {
-                flags |= flagAnnotation.getJvmFlag();
-            }
+            flags |= flagAnnotation.getJvmFlag(functionDescriptor.getOriginal());
         }
 
         if (functionDescriptor.getOriginal().isExternal()) {
