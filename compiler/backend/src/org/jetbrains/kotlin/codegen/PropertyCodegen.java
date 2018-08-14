@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtilKt;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -261,7 +260,7 @@ public class PropertyCodegen {
         PropertyGetterDescriptor getter = descriptor.getGetter();
         assert getter != null : "Annotation property should have a getter: " + descriptor;
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, getter, asmMethod);
-        FunctionCodegen.generateMethodAnnotations(getter, asmMethod, mv, memberCodegen, typeMapper);
+        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(getter, asmMethod.getReturnType());
 
         KtExpression defaultValue = loadAnnotationArgumentDefaultValue(parameter, descriptor, expectedAnnotationConstructor);
         if (defaultValue != null) {
@@ -338,7 +337,7 @@ public class PropertyCodegen {
         if (isBackingFieldOwner) {
             if (!isInterface(context.getContextDescriptor()) ||
                 processInterfaceMethod(descriptor, kind, false, true, state.getJvmDefaultMode())) {
-                memberCodegen.generateSyntheticAnnotationsMethod(descriptor, signature, annotations, AnnotationUseSiteTarget.PROPERTY);
+                memberCodegen.generateSyntheticAnnotationsMethod(descriptor, signature, annotations);
             }
         }
     }

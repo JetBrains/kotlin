@@ -99,28 +99,13 @@ public abstract class AnnotationCodegen {
      * @param returnType can be null if not applicable (e.g. {@code annotated} is a class)
      */
     public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType) {
-        genAnnotations(annotated, returnType, null);
-    }
-
-    public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType, @Nullable AnnotationUseSiteTarget allowedTarget) {
-        if (annotated == null) {
-            return;
-        }
+        if (annotated == null) return;
 
         Set<String> annotationDescriptorsAlreadyPresent = new HashSet<>();
 
         Annotations annotations = annotated.getAnnotations();
 
-        for (AnnotationWithTarget annotationWithTarget : annotations.getAllAnnotations()) {
-            AnnotationDescriptor annotation = annotationWithTarget.getAnnotation();
-            AnnotationUseSiteTarget annotationTarget = annotationWithTarget.getTarget();
-
-            // Skip targeted annotations by default
-            if (allowedTarget == null && annotationTarget != null) continue;
-
-            // Skip if the target is not the same
-            if (allowedTarget != null && annotationTarget != null && allowedTarget != annotationTarget) continue;
-
+        for (AnnotationDescriptor annotation : annotations) {
             Set<KotlinTarget> applicableTargets = AnnotationChecker.applicableTargetSet(annotation);
             if (annotated instanceof AnonymousFunctionDescriptor
                 && !applicableTargets.contains(KotlinTarget.FUNCTION)

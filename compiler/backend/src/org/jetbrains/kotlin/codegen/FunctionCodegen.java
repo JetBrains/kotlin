@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
@@ -72,8 +71,6 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
-import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_GETTER;
-import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.PROPERTY_SETTER;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -232,9 +229,9 @@ public class FunctionCodegen {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, CodegenUtilKt.unwrapFrontendVersion(functionDescriptor), asmMethod);
         }
 
-        generateMethodAnnotations(functionDescriptor, asmMethod, mv, memberCodegen, typeMapper);
+        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, asmMethod.getReturnType());
 
-        generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
+        generateParameterAnnotations(functionDescriptor, mv, jvmSignature, memberCodegen, state);
         GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
 
         if (contextKind != OwnerKind.ERASED_INLINE_CLASS) {
@@ -472,32 +469,6 @@ public class FunctionCodegen {
                     return null;
                 }
         );
-    }
-
-    public static void generateMethodAnnotations(
-            @NotNull FunctionDescriptor functionDescriptor,
-            Method asmMethod,
-            MethodVisitor mv,
-            @NotNull InnerClassConsumer consumer,
-            @NotNull KotlinTypeMapper typeMapper
-    ) {
-        AnnotationCodegen annotationCodegen = AnnotationCodegen.forMethod(mv, consumer, typeMapper);
-
-        if (functionDescriptor instanceof PropertyAccessorDescriptor) {
-            AnnotationUseSiteTarget target = functionDescriptor instanceof PropertySetterDescriptor ? PROPERTY_SETTER : PROPERTY_GETTER;
-            annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType(), target);
-        }
-        else {
-            annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType());
-        }
-    }
-
-    private void generateParameterAnnotations(
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull MethodVisitor mv,
-            @NotNull JvmMethodSignature jvmSignature
-    ) {
-        generateParameterAnnotations(functionDescriptor, mv, jvmSignature, memberCodegen, state);
     }
 
     public static void generateParameterAnnotations(

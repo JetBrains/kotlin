@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
@@ -249,19 +248,18 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         if (!isAnnotationsMethodOwner || annotations.getAllAnnotations().isEmpty()) return;
 
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedTypeAlias(typeAliasDescriptor.getName());
-        generateSyntheticAnnotationsMethod(typeAliasDescriptor, new Method(name, "()V"), annotations, null);
+        generateSyntheticAnnotationsMethod(typeAliasDescriptor, new Method(name, "()V"), annotations);
     }
 
     protected void generateSyntheticAnnotationsMethod(
             @NotNull MemberDescriptor descriptor,
             @NotNull Method syntheticMethod,
-            @NotNull Annotations annotations,
-            @Nullable AnnotationUseSiteTarget allowedTarget
+            @NotNull Annotations annotations
     ) {
         int flags = ACC_DEPRECATED | ACC_STATIC | ACC_SYNTHETIC | AsmUtil.getVisibilityAccessFlag(descriptor);
         MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                        syntheticMethod.getDescriptor(), null, null);
-        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE, allowedTarget);
+        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE);
         mv.visitCode();
         mv.visitInsn(Opcodes.RETURN);
         mv.visitEnd();
