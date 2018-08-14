@@ -2920,6 +2920,7 @@ task buildKonanRegexTests(type: BuildKonanTest) {
 }
 
 task runKonanRegexTests(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
     dependsOn('buildKonanRegexTests')
     outputSourceSetName = "testOutputStdlib"
     // runs all tests and hence source name should be not null
