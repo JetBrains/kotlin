@@ -203,9 +203,9 @@ open class KotlinTargetConfigurator(
         val testImplementationConfiguration = configurations.maybeCreate(testCompilation.implementationConfigurationName)
         val testRuntimeOnlyConfiguration = configurations.maybeCreate(testCompilation.runtimeOnlyConfigurationName)
 
-        compileTestsConfiguration.extendsFrom(compileConfiguration).usesPlatformOf(target)
-        testImplementationConfiguration.extendsFrom(implementationConfiguration).usesPlatformOf(target)
-        testRuntimeOnlyConfiguration.extendsFrom(runtimeOnlyConfiguration).usesPlatformOf(target)
+        compileTestsConfiguration.extendsFrom(compileConfiguration)
+        testImplementationConfiguration.extendsFrom(implementationConfiguration)
+        testRuntimeOnlyConfiguration.extendsFrom(runtimeOnlyConfiguration)
 
         configurations.maybeCreate(target.apiElementsConfigurationName).apply {
             description = "API elements for main."
@@ -237,7 +237,7 @@ open class KotlinTargetConfigurator(
         if (mainCompilation is KotlinCompilationToRunnableFiles && testCompilation is KotlinCompilationToRunnableFiles) {
             val runtimeConfiguration = configurations.maybeCreate(mainCompilation.deprecatedRuntimeConfigurationName)
             val testRuntimeConfiguration = configurations.maybeCreate(testCompilation.deprecatedRuntimeConfigurationName)
-            testRuntimeConfiguration.extendsFrom(runtimeConfiguration).usesPlatformOf(target)
+            testRuntimeConfiguration.extendsFrom(runtimeConfiguration)
         }
 
         defaultConfiguration.extendsFrom(runtimeElementsConfiguration).usesPlatformOf(target)
@@ -299,17 +299,13 @@ open class KotlinTargetConfigurator(
             configurations: ConfigurationContainer
         ) {
             val compileConfiguration = configurations.maybeCreate(compilation.deprecatedCompileConfigurationName).apply {
-                usesPlatformOf(target)
                 isVisible = false
-                isCanBeConsumed = false
                 isCanBeResolved = true // Needed for IDE import
-                attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(Usage.JAVA_API)) // API usage for IDE import
                 description = "Dependencies for $compilation (deprecated, use '${compilation.implementationConfigurationName} ' instead)."
             }
 
             val apiConfiguration = configurations.maybeCreate(compilation.apiConfigurationName).apply {
                 extendsFrom(compileConfiguration)
-                usesPlatformOf(target)
                 isVisible = false
                 isCanBeConsumed = false
                 isCanBeResolved = false
@@ -318,7 +314,6 @@ open class KotlinTargetConfigurator(
 
             val implementationConfiguration = configurations.maybeCreate(compilation.implementationConfigurationName).apply {
                 extendsFrom(compileConfiguration, apiConfiguration)
-                usesPlatformOf(target)
                 isVisible = false
                 isCanBeConsumed = false
                 isCanBeResolved = false
@@ -326,11 +321,8 @@ open class KotlinTargetConfigurator(
             }
 
             val compileOnlyConfiguration = configurations.maybeCreate(compilation.compileOnlyConfigurationName).apply {
-                usesPlatformOf(target)
                 isVisible = false
-                isCanBeConsumed = false
                 isCanBeResolved = true // Needed for IDE import
-                attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(Usage.JAVA_API)) // API usage for IDE import
                 description = "Compile only dependencies for $compilation."
             }
 
@@ -346,16 +338,13 @@ open class KotlinTargetConfigurator(
             if (compilation is KotlinCompilationToRunnableFiles) {
                 val runtimeConfiguration = configurations.maybeCreate(compilation.deprecatedRuntimeConfigurationName).apply {
                     extendsFrom(compileConfiguration)
-                    usesPlatformOf(target)
                     isVisible = false
-                    isCanBeConsumed = false
-                    isCanBeResolved = false
+                    isCanBeResolved = true // Needed for IDE import
                     description =
                             "Runtime dependencies for $compilation (deprecated, use '${compilation.runtimeOnlyConfigurationName} ' instead)."
                 }
 
                 val runtimeOnlyConfiguration = configurations.maybeCreate(compilation.runtimeOnlyConfigurationName).apply {
-                    usesPlatformOf(target)
                     isVisible = false
                     isCanBeConsumed = false
                     isCanBeResolved = false
