@@ -92,6 +92,14 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             if (supertypeEntry is KtDelegatedSuperTypeEntry) {
                 trace.report(Errors.INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION.on(supertypeEntry))
                 return
+            } else {
+                val typeReference = supertypeEntry.typeReference ?: continue
+                val type = trace[BindingContext.TYPE, typeReference] ?: continue
+                val typeDescriptor = type.constructor.declarationDescriptor ?: continue
+                if (!DescriptorUtils.isInterface(typeDescriptor)) {
+                    trace.report(Errors.INLINE_CLASS_CANNOT_EXTEND_CLASSES.on(typeReference))
+                    return
+                }
             }
         }
     }

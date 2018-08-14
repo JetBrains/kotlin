@@ -10867,6 +10867,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/identityComparisonWithInlineClasses.kt");
             }
 
+            @TestMetadata("inlineClassCanOnlyImplementInterfaces.kt")
+            public void testInlineClassCanOnlyImplementInterfaces() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCanOnlyImplementInterfaces.kt");
+            }
+
             @TestMetadata("inlineClassCannotImplementInterfaceByDelegation.kt")
             public void testInlineClassCannotImplementInterfaceByDelegation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCannotImplementInterfaceByDelegation.kt");
