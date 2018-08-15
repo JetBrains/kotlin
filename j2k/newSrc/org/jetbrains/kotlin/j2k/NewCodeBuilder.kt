@@ -329,17 +329,17 @@ class NewCodeBuilder {
                     printer.printWithNoIndent(type.name)
                 else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
             }
-            when (type.nullability) {
-                Nullability.Nullable -> printer.printWithNoIndent("?")
-                Nullability.Default -> printer.printWithNoIndent("?")// /* TODO: Default */")
-                else -> {
-                }
-            }
             if (type is JKParametrizedType && type.parameters.isNotEmpty()) {
                 printer.par(ANGLE) {
                     renderList(type.parameters) {
                         renderType(it)
                     }
+                }
+            }
+            when (type.nullability) {
+                Nullability.Nullable -> printer.printWithNoIndent("?")
+                Nullability.Default -> printer.printWithNoIndent("?")// /* TODO: Default */")
+                else -> {
                 }
             }
         }

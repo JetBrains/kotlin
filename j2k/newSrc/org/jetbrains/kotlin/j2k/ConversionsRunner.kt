@@ -38,6 +38,7 @@ object ConversionsRunner {
         InnerClassConversion(),
         ModifiersConversion(context),
         StaticsToCompanionExtractConversion(),
+        ClassToObjectPromotionConversion(),
         PolyadicExpressionConversion(),
         BinaryExpressionConversion()
     )
