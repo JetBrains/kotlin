@@ -4135,6 +4135,21 @@ public final class kotlin/ranges/ULongRange$Companion {
 	public final fun getEMPTY ()Lkotlin/ranges/ULongRange;
 }
 
+public final class kotlin/ranges/URangesKt {
+	public static final fun downTo (BB)Lkotlin/ranges/UIntProgression;
+	public static final fun downTo (II)Lkotlin/ranges/UIntProgression;
+	public static final fun downTo (JJ)Lkotlin/ranges/ULongProgression;
+	public static final fun downTo (SS)Lkotlin/ranges/UIntProgression;
+	public static final fun reversed (Lkotlin/ranges/UIntProgression;)Lkotlin/ranges/UIntProgression;
+	public static final fun reversed (Lkotlin/ranges/ULongProgression;)Lkotlin/ranges/ULongProgression;
+	public static final fun step (Lkotlin/ranges/UIntProgression;I)Lkotlin/ranges/UIntProgression;
+	public static final fun step (Lkotlin/ranges/ULongProgression;J)Lkotlin/ranges/ULongProgression;
+	public static final fun until (BB)Lkotlin/ranges/UIntRange;
+	public static final fun until (II)Lkotlin/ranges/UIntRange;
+	public static final fun until (JJ)Lkotlin/ranges/ULongRange;
+	public static final fun until (SS)Lkotlin/ranges/UIntRange;
+}
+
 public abstract interface class kotlin/reflect/KAnnotatedElement {
 	public abstract fun getAnnotations ()Ljava/util/List;
 }
