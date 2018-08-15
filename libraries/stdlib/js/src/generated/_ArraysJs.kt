@@ -1126,6 +1126,6 @@ public actual fun BooleanArray.toTypedArray(): Array<Boolean> {
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public actual fun CharArray.toTypedArray(): Array<Char> {
-    return Array<Char>(size, { i -> this[i] })
+    return Array(size) { index -> this[index] }
 }
 
