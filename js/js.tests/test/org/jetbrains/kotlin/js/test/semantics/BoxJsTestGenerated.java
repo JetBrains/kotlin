@@ -3004,6 +3004,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/try/exceptionToString.kt");
             }
 
+            @TestMetadata("kt22053.kt")
+            public void testKt22053() throws Exception {
+                runTest("js/js.translator/testData/box/expression/try/kt22053.kt");
+            }
+
             @TestMetadata("multipleCatchBlocks.kt")
             public void testMultipleCatchBlocks() throws Exception {
                 runTest("js/js.translator/testData/box/expression/try/multipleCatchBlocks.kt");
