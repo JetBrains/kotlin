@@ -40,7 +40,7 @@ class AddWhenRemainingBranchesFix(
 
     override fun getFamilyName() = text
 
-    override fun getText() = "Add remaining branches" + if (withImport) " with import" else ""
+    override fun getText() = "Add remaining branches" + if (withImport) " with * import" else ""
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         return isAvailable(element)
