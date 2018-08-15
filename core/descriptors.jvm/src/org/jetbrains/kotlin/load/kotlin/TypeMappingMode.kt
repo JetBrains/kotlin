@@ -107,7 +107,9 @@ class TypeMappingMode private constructor(
             if (type.isInlineClassType() && shouldUseUnderlyingType(type)) {
                 val underlyingType = computeUnderlyingType(type)
                 if (underlyingType != null) {
-                    return getOptimalModeForSignaturePart(underlyingType, isForAnnotationParameter, canBeUsedInSupertypePosition)
+                    return getOptimalModeForSignaturePart(
+                        underlyingType, isForAnnotationParameter, canBeUsedInSupertypePosition
+                    ).dontWrapInlineClassesMode()
                 }
             }
 
@@ -159,6 +161,12 @@ class TypeMappingMode private constructor(
     fun wrapInlineClassesMode(): TypeMappingMode =
         TypeMappingMode(
             needPrimitiveBoxing, true, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
+            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
+        )
+
+    fun dontWrapInlineClassesMode(): TypeMappingMode =
+        TypeMappingMode(
+            needPrimitiveBoxing, false, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
             genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
         )
 }
