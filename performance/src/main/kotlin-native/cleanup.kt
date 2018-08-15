@@ -1,5 +1,5 @@
 package org.jetbrains.ring
 
-import konan.internal.GC
+import kotlin.native.internal.GC
 
 fun cleanup() { GC.collect() }
