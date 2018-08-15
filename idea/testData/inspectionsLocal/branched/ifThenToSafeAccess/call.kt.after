@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// HIGHLIGHT: INFORMATION
 fun convert(x: String, y: String) = ""
 
 fun foo(a: String?, b: String) {

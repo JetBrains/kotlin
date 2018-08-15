@@ -167,40 +167,4 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Foldable if-then</description>
   </problem>
-  <problem>
-    <file>call4.kt</file>
-    <line>10</line>
-    <module>light_idea_test_case</module>
-    <package>&lt;default&gt;</package>
-    <entry_point TYPE="file" FQNAME="temp:///src/call4.kt" />
-    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
-  <problem>
-    <file>call3.kt</file>
-    <line>5</line>
-    <module>light_idea_test_case</module>
-    <package>&lt;default&gt;</package>
-    <entry_point TYPE="file" FQNAME="temp:///src/call3.kt" />
-    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
-  <problem>
-    <file>call2.kt</file>
-    <line>5</line>
-    <module>light_idea_test_case</module>
-    <package>&lt;default&gt;</package>
-    <entry_point TYPE="file" FQNAME="temp:///src/call2.kt" />
-    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
-  <problem>
-    <file>call.kt</file>
-    <line>5</line>
-    <module>light_idea_test_case</module>
-    <package>&lt;default&gt;</package>
-    <entry_point TYPE="file" FQNAME="temp:///src/call.kt" />
-    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
 </problems>

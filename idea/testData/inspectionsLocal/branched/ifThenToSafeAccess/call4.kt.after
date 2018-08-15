@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// HIGHLIGHT: INFORMATION
 fun maybeFoo(): String? {
     return "foo"
 }

@@ -289,15 +289,22 @@ internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData?
     return IfThenToSelectData(context, condition, receiverExpression, baseClause, negatedClause)
 }
 
+internal fun KtExpression?.isClauseTransformableToLetOnly() =
+    this is KtCallExpression && resolveToCall()?.getImplicitReceiverValue() == null
+
 internal fun KtIfExpression.shouldBeTransformed(): Boolean {
     val condition = condition
     return when (condition) {
-        is KtBinaryExpression -> true
+        is KtBinaryExpression -> {
+            val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
+            !baseClause.isClauseTransformableToLetOnly()
+        }
         is KtIsExpression -> {
-            if (!isMultiLine()) true
-            else {
-                val baseClause = (if (condition.isNegated) `else` else then)?.unwrapBlockOrParenthesis()
-                baseClause !is KtDotQualifiedExpression
+            val baseClause = (if (condition.isNegated) `else` else then)?.unwrapBlockOrParenthesis()
+            when {
+                baseClause.isClauseTransformableToLetOnly() -> false
+                !isMultiLine() -> true
+                else -> baseClause !is KtDotQualifiedExpression
             }
         }
         else -> false
