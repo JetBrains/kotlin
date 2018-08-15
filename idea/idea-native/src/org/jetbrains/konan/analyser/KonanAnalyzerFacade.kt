@@ -2,9 +2,9 @@ package org.jetbrains.konan.analyser
 
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.konan.KotlinWorkaroundUtil.*
 import org.jetbrains.konan.analyser.index.KonanDescriptorManager
+import org.jetbrains.konan.getVirtualFileNoSizeLimit
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.backend.konan.descriptors.createForwardDeclarationsModule
@@ -69,7 +69,7 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
             val libraryInfo = LibraryInfo(project, library)
             val libraryPath = libraryInfo.getLibraryRoots().single() // single() because any KLIB should have just one root
 
-            val virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(libraryPath))
+            val virtualFile = getVirtualFileNoSizeLimit(File(libraryPath))
 
             return if (virtualFile != null && virtualFile.exists()) {
                 val libraryDescriptor =
