@@ -1,5 +1,4 @@
 // "Create local variable 'defaultPreferencesName'" "false"
-// ACTION: Create abstract property 'defaultPreferencesName'
 // ACTION: Create parameter 'defaultPreferencesName'
 // ACTION: Create property 'defaultPreferencesName'
 // ACTION: Rename reference

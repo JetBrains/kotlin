@@ -149,10 +149,9 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             if (originalReceiverTypeInfo !is TypeInfo.ByType) return null
             receiverTypeInfo = originalReceiverTypeInfo
             receiverType = receiverTypeInfo.theType
-        }
-        else {
+        } else {
             val containingClass = originalExpression.getStrictParentOfType<KtClassOrObject>() as? KtClass ?: return null
-            if (containingClass is KtEnumEntry) return null
+            if (containingClass is KtEnumEntry || containingClass.isAnnotation()) return null
             receiverType = (containingClass.unsafeResolveToDescriptor() as ClassDescriptor).defaultType
             receiverTypeInfo = TypeInfo(receiverType, Variance.IN_VARIANCE).ofThis()
         }
