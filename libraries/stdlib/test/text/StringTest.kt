@@ -1336,4 +1336,29 @@ ${"    "}
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
     }
+
+    @Test fun testCompareToIgnoreCase() {
+        assertTrue("ABC".compareTo("ABC", ignoreCase = false) == 0)
+        assertTrue("ABC".compareTo("ABc", ignoreCase = false) < 0)
+        assertTrue("ABc".compareTo("ABC", ignoreCase = false) > 0)
+        assertTrue("ABC".compareTo("ABx", ignoreCase = false) < 0)
+        assertTrue("ABx".compareTo("ABC", ignoreCase = false) > 0)
+        assertTrue("[".compareTo("aa", ignoreCase = false) < 0)
+        assertTrue("".compareTo("", ignoreCase = false) == 0)
+        assertTrue("".compareTo("A", ignoreCase = false) < 0)
+        assertTrue("A".compareTo("", ignoreCase = false) > 0)
+        assertTrue(("A".repeat(16) + "B").compareTo("A".repeat(16) + "b", ignoreCase = false) < 0)
+
+        assertTrue("ABC".compareTo("ABC", ignoreCase = true) == 0)
+        assertTrue("ABC".compareTo("ABc", ignoreCase = true) == 0)
+        assertTrue("ABc".compareTo("ABC", ignoreCase = true) == 0)
+        assertTrue("ABC".compareTo("ABx", ignoreCase = true) < 0)
+        assertTrue("ABx".compareTo("ABC", ignoreCase = true) > 0)
+        assertTrue("[".compareTo("aa", ignoreCase = true) < 0)
+        assertTrue("".compareTo("", ignoreCase = false) == 0)
+        assertTrue("".compareTo("A", ignoreCase = false) < 0)
+        assertTrue("A".compareTo("", ignoreCase = false) > 0)
+        assertTrue(("A".repeat(16) + "B").compareTo("A".repeat(16) + "b", ignoreCase = false) < 0)
+    }
+
 }
