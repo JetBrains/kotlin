@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderFromCache
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
+import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJsCache
+import org.jetbrains.kotlin.jps.incremental.JsCacheVersionProvider
 import org.jetbrains.kotlin.jps.model.k2JsCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.jps.model.productionOutputFilePath
@@ -47,6 +49,9 @@ class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTa
 
     override val isIncrementalCompilationEnabled: Boolean
         get() = IncrementalCompilation.isEnabledForJs()
+
+    override fun cacheVersionsProvider(): CacheVersionProvider =
+        JsCacheVersionProvider(context.projectDescriptor.dataManager.dataPaths, isIncrementalCompilationEnabled)
 
     override val buildMetaInfoFactory
         get() = JsBuildMetaInfo

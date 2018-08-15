@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
+import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 
@@ -29,6 +30,8 @@ class KotlinCommonModuleBuildTarget(context: CompileContext, jpsModuleBuildTarge
 
     override val isIncrementalCompilationEnabled: Boolean
         get() = false
+
+    override fun cacheVersionsProvider(): CacheVersionProvider? = null
 
     override val buildMetaInfoFactory
         get() = CommonBuildMetaInfo
