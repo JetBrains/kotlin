@@ -147,7 +147,11 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
 
 
 private fun defaultPrimitives(f: Family): Set<PrimitiveType> =
-        if (f.isPrimitiveSpecialization) PrimitiveType.defaultPrimitives else emptySet()
+    when {
+        f == Family.Unsigned || f == Family.ArraysOfUnsigned -> PrimitiveType.unsignedPrimitives
+        f.isPrimitiveSpecialization -> PrimitiveType.defaultPrimitives
+        else -> emptySet()
+    }
 
 @TemplateDsl
 class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>() {
