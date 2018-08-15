@@ -145,4 +145,3 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
         CALL 'invoke(): String' type=kotlin.String origin=INVOKE
           $this: CALL '<get-value>(): () -> String' type=() -> kotlin.String origin=GET_PROPERTY
             $this: GET_ENUM 'B' type=X
-

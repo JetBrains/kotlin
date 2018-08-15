@@ -88,6 +88,7 @@ class IrFieldImpl(
 
     override var initializer: IrExpressionBody? = null
     override var correspondingProperty: IrProperty? = null
+    override val overriddenSymbols: MutableList<IrFieldSymbol> = mutableListOf()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitField(this, data)
