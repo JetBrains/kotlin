@@ -26,56 +26,76 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class ConstantConditionIfInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return ifExpressionVisitor(fun(expression) {
-            val condition = expression.condition ?: return
+        return ifExpressionVisitor { expression -> registerProblem(expression, holder) }
+    }
 
-            val context = condition.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-            val constantValue = condition.constantBooleanValue(context) ?: return
+    private fun registerProblem(expression: KtIfExpression, holder: ProblemsHolder?): List<ConstantConditionIfFix> {
+        val condition = expression.condition ?: return emptyList()
 
-            val fixes = mutableListOf<LocalQuickFix>()
+        val context = condition.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
+        val constantValue = condition.constantBooleanValue(context) ?: return emptyList()
 
-            if (expression.branch(constantValue) != null) {
-                val keepBraces = expression.isElseIf() && expression.branch(constantValue) is KtBlockExpression
-                fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context), keepBraces)
-            }
+        val fixes = mutableListOf<ConstantConditionIfFix>()
 
-            if (!constantValue && expression.`else` == null) {
-                fixes += RemoveFix()
-            }
+        if (expression.branch(constantValue) != null) {
+            val keepBraces = expression.isElseIf() && expression.branch(constantValue) is KtBlockExpression
+            fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context), keepBraces)
+        }
 
-            holder.registerProblem(condition,
-                                   "Condition is always '$constantValue'",
-                                   *fixes.toTypedArray())
-        })
+        if (!constantValue && expression.`else` == null) {
+            fixes += RemoveFix()
+        }
+
+        holder?.registerProblem(
+            condition,
+            "Condition is always '$constantValue'",
+            *fixes.toTypedArray()
+        )
+
+        return fixes
+    }
+
+    fun applyFixIfNeed(ifExpression: KtIfExpression) {
+        registerProblem(ifExpression, null).singleOrNull()?.applyFix(ifExpression)
+    }
+
+    private interface ConstantConditionIfFix : LocalQuickFix {
+        fun applyFix(ifExpression: KtIfExpression)
     }
 
     private class SimplifyFix(
-            private val conditionValue: Boolean,
-            private val isUsedAsExpression: Boolean,
-            private val keepBraces: Boolean
-    ) : LocalQuickFix {
+        private val conditionValue: Boolean,
+        private val isUsedAsExpression: Boolean,
+        private val keepBraces: Boolean
+    ) : ConstantConditionIfFix {
         override fun getFamilyName() = name
 
         override fun getName() = "Simplify expression"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val ifExpression = descriptor.psiElement.getParentOfType<KtIfExpression>(strict = true) ?: return
+            applyFix(ifExpression)
+        }
 
+        override fun applyFix(ifExpression: KtIfExpression) {
             val branch = ifExpression.branch(conditionValue)?.let {
                 if (keepBraces) it else it.unwrapBlockOrParenthesis()
             } ?: return
-
             ifExpression.replaceWithBranch(branch, isUsedAsExpression, keepBraces)
         }
     }
 
-    private class RemoveFix : LocalQuickFix {
+    private class RemoveFix : ConstantConditionIfFix {
         override fun getFamilyName() = name
 
         override fun getName() = "Delete expression"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val ifExpression = descriptor.psiElement.getParentOfType<KtIfExpression>(strict = true) ?: return
+            applyFix(ifExpression)
+        }
+
+        override fun applyFix(ifExpression: KtIfExpression) {
             ifExpression.delete()
         }
     }
@@ -103,8 +123,7 @@ fun KtExpression.replaceWithBranch(branch: KtExpression, isUsedAsExpression: Boo
             if (firstChildSibling != lastChild) {
                 if (keepBraces) {
                     parent.addAfter(branch, this)
-                }
-                else {
+                } else {
                     parent.addRangeAfter(firstChildSibling, lastChild.prevSibling, this)
                 }
             }
