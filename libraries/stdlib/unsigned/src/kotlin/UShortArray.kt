@@ -12,7 +12,7 @@ package kotlin
 public inline class UShortArray
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @PublishedApi
-internal constructor(private val storage: ShortArray) : Collection<UShort> {
+internal constructor(@PublishedApi internal val storage: ShortArray) : Collection<UShort> {
 
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(ShortArray(size))

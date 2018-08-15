@@ -12,7 +12,7 @@ package kotlin
 public inline class UIntArray
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @PublishedApi
-internal constructor(private val storage: IntArray) : Collection<UInt> {
+internal constructor(@PublishedApi internal val storage: IntArray) : Collection<UInt> {
 
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(IntArray(size))
