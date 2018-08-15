@@ -216,12 +216,12 @@ data class IfThenToSelectData(
                         hasImplicitReceiver() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
                             factory
                         )
-                        baseClause is KtCallExpression -> replacedBaseClause(baseClause, newReceiver!!, factory)
+                        baseClause is KtCallExpression -> replacedBaseClauseWithLet(baseClause, newReceiver!!, factory)
                         else -> error("Illegal state")
                     }
                 }
                 hasImplicitReceiver() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
-                baseClause is KtCallExpression -> replacedBaseClause(baseClause, receiverExpression, factory)
+                baseClause is KtCallExpression -> replacedBaseClauseWithLet(baseClause, receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
         }
@@ -231,7 +231,7 @@ data class IfThenToSelectData(
 
     internal fun hasImplicitReceiver(): Boolean = getImplicitReceiver() != null
 
-    private fun replacedBaseClause(baseClause: KtCallExpression, receiver: KtExpression, factory: KtPsiFactory): KtExpression {
+    private fun replacedBaseClauseWithLet(baseClause: KtCallExpression, receiver: KtExpression, factory: KtPsiFactory): KtExpression {
         val needExplicitParameter = baseClause.valueArguments.any { it.getArgumentExpression()?.text == "it" }
         val parameterName = if (needExplicitParameter) {
             val scope = baseClause.getResolutionScope()
