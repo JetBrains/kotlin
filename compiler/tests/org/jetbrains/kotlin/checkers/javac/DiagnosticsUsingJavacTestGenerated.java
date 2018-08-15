@@ -10877,6 +10877,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/delegatedPropertyInInlineClass.kt");
             }
 
+            @TestMetadata("functionsJvmSignaturesClash.kt")
+            public void testFunctionsJvmSignaturesClash() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/functionsJvmSignaturesClash.kt");
+            }
+
+            @TestMetadata("functionsJvmSignaturesConflictOnInheritance.kt")
+            public void testFunctionsJvmSignaturesConflictOnInheritance() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/functionsJvmSignaturesConflictOnInheritance.kt");
+            }
+
             @TestMetadata("identityComparisonWithInlineClasses.kt")
             public void testIdentityComparisonWithInlineClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/identityComparisonWithInlineClasses.kt");
