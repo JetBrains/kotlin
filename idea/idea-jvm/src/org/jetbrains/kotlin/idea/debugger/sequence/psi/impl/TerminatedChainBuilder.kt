@@ -7,9 +7,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.psi.previousCall
 import org.jetbrains.kotlin.psi.KtCallExpression
 import java.util.*
 
-/**
- * @author Vitaliy.Bibaev
- */
 open class TerminatedChainBuilder(
     transformer: ChainTransformer<KtCallExpression>,
     private val callChecker: StreamCallChecker

@@ -21,9 +21,6 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinChainTransformerImpl(private val typeExtractor: CallTypeExtractor) : ChainTransformer<KtCallExpression> {
     override fun transform(callChain: List<KtCallExpression>, context: PsiElement): StreamChain {
         val intermediateCalls = mutableListOf<IntermediateStreamCall>()

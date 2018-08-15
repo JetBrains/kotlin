@@ -6,9 +6,6 @@ import com.intellij.debugger.streams.wrapper.impl.IntermediateStreamCallImpl
 import com.intellij.debugger.streams.wrapper.impl.TerminatorStreamCallImpl
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 
-/**
- * @author Vitaliy.Bibaev
- */
 fun IntermediateStreamCall.withArgs(args: List<CallArgument>) =
     IntermediateStreamCallImpl(name, args, typeBefore, typeAfter, textRange)
 

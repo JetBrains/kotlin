@@ -12,9 +12,6 @@ import com.intellij.debugger.streams.wrapper.impl.CallArgumentImpl
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.typeBefore
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.withArgs
 
-/**
- * @author Vitaliy.Bibaev
- */
 class FilterCallHandler : BothSemanticsHandler {
     private companion object {
         const val VALUES_ARRAY_NAME = "objectsInPredicate"

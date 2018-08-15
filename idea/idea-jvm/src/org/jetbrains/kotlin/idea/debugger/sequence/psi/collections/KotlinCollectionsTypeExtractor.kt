@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.NULLABL
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinCollectionsTypeExtractor : CallTypeExtractor.Base() {
     private companion object {
         val LOG = Logger.getInstance(KotlinCollectionsTypeExtractor::class.java)

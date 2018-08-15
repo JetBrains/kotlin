@@ -9,9 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
 
-/**
- * @author Vitaliy.Bibaev
- */
 abstract class KotlinChainBuilderBase(private val transformer: ChainTransformer<KtCallExpression>) : StreamChainBuilder {
     protected abstract val existenceChecker: ExistenceChecker
 

@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.JavaPeekCallFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpressionBuilder
 
-/**
- * @author Vitaliy.Bibaev
- */
 class JavaStandardLibrarySupportProvider : LibrarySupportProvider {
     private companion object {
         val builder = TerminatedChainBuilder(

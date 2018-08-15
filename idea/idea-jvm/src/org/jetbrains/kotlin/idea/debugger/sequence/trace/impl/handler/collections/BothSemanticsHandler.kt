@@ -6,9 +6,6 @@ import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.StreamCall
 import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
 
-/**
- * @author Vitaliy.Bibaev
- */
 interface BothSemanticsHandler {
     fun variablesDeclaration(call: StreamCall, order: Int, dsl: Dsl): List<VariableDeclaration>
 

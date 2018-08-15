@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.types.KotlinType
 
-/**
- * @author Vitaliy.Bibaev
- */
 class CollectionChainTransformer : ChainTransformer<KtCallExpression> {
     private val transformer = KotlinChainTransformerImpl(KotlinCollectionsTypeExtractor())
 

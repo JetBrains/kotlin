@@ -6,9 +6,6 @@ import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.trace.dsl.ForLoopBody
 import com.intellij.debugger.streams.trace.dsl.Variable
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinForEachLoop(
     private val iterateVariable: Variable,
     private val collection: Expression,

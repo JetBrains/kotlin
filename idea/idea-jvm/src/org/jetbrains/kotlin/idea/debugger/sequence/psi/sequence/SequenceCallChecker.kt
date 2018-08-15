@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-/**
- * @author Vitaliy.Bibaev
- */
 class SequenceCallChecker : StreamCallChecker {
     override fun isIntermediateCall(expression: KtCallExpression): Boolean {
         val receiverType = expression.receiverType() ?: return false

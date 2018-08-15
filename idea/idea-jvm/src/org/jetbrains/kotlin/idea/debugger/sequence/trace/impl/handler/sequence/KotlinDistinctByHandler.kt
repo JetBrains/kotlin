@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 
 /**
  * Based on com.intellij.debugger.streams.trace.impl.handler.unified.DistinctByKeyHandler
- * @author Vitaliy.Bibaev
  */
 class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStreamCall, dsl: Dsl) : HandlerBase.Intermediate(dsl) {
     private companion object {

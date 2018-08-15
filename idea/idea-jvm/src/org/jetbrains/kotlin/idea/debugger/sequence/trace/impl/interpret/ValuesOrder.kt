@@ -5,9 +5,6 @@ import com.intellij.debugger.streams.trace.TraceElement
 import com.intellij.debugger.streams.trace.TraceInfo
 import com.intellij.debugger.streams.wrapper.StreamCall
 
-/**
- * @author Vitaliy.Bibaev
- */
 class ValuesOrder(
     private val call: StreamCall,
     private val before: Map<Int, TraceElement>,

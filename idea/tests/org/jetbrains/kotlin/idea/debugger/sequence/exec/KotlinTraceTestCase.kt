@@ -29,9 +29,6 @@ import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicBoolean
 
-/**
- * @author Vitaliy.Bibaev
- */
 abstract class KotlinTraceTestCase : KotlinDebuggerTestBase() {
     private companion object {
         val DEFAULT_CHAIN_SELECTOR = ChainSelector.byIndex(0)

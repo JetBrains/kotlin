@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.sequence.exec
 import com.intellij.debugger.streams.lib.LibrarySupportProvider
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.java.JavaStandardLibrarySupportProvider
 
-/**
- * @author Vitaliy.Bibaev
- */
 @Suppress("unused")
 abstract class AbstractJavaStreamTraceTestCase : KotlinTraceTestCase() {
     override val librarySupportProvider: LibrarySupportProvider = JavaStandardLibrarySupportProvider()

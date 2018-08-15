@@ -4,9 +4,6 @@ package org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl
 import com.intellij.debugger.streams.trace.dsl.Variable
 import com.intellij.debugger.streams.trace.dsl.VariableDeclaration
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinVariableDeclaration(
     override val variable: Variable,
     override val isMutable: Boolean,

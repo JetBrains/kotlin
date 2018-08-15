@@ -9,9 +9,6 @@ import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
 
-/**
- * @author Vitaliy.Bibaev
- */
 class CollectionTerminatorHandler(
     private val call: TerminatorStreamCall,
     private val resultExpression: String,

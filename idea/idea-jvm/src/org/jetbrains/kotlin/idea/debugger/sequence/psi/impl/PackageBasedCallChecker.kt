@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.types.KotlinType
 
-/**
- * @author Vitaliy.Bibaev
- */
 class PackageBasedCallChecker(private val supportedPackage: String) : StreamCallChecker {
     override fun isIntermediateCall(expression: KtCallExpression): Boolean {
         return checkReceiverSupported(expression) && checkResultSupported(expression, true)

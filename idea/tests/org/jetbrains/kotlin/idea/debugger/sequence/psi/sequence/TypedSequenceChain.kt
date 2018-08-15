@@ -6,9 +6,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.lib.sequence.KotlinSequenceSu
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.TypedChainTestCase
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 
-/**
- * @author Vitaliy.Bibaev
- */
 class TypedSequenceChain : TypedChainTestCase("sequence/positive/types") {
     override val kotlinChainBuilder: StreamChainBuilder = KotlinSequenceSupportProvider().chainBuilder
 

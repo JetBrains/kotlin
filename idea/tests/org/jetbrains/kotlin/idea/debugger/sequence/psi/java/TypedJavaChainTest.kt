@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.INT
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.LONG
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.NULLABLE_ANY
 
-/**
- * @author Vitaliy.Bibaev
- */
 class TypedJavaChainTest : TypedChainTestCase("streams/positive/types") {
     override val kotlinChainBuilder: StreamChainBuilder = JavaStandardLibrarySupportProvider().chainBuilder
 

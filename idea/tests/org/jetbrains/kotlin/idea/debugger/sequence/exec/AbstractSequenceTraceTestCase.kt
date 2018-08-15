@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.sequence.exec
 import com.intellij.debugger.streams.lib.LibrarySupportProvider
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.sequence.KotlinSequenceSupportProvider
 
-/**
- * @author Vitaliy.Bibaev
- */
 abstract class AbstractSequenceTraceTestCase : KotlinTraceTestCase() {
     override val librarySupportProvider: LibrarySupportProvider = KotlinSequenceSupportProvider()
 }

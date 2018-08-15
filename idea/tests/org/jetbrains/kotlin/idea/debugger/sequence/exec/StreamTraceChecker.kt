@@ -15,9 +15,6 @@ import junit.framework.TestCase
 import one.util.streamex.StreamEx
 import java.util.*
 
-/**
- * @author Vitaliy.Bibaev
- */
 class StreamTraceChecker(private val testCase: ExecutionTestCase) {
     fun checkChain(trace: List<TraceInfo>) {
         for (info in trace) {

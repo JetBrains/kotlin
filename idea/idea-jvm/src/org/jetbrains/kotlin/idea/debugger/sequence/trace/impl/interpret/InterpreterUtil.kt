@@ -6,9 +6,6 @@ import com.intellij.debugger.streams.trace.impl.interpret.ex.UnexpectedValueExce
 import com.sun.jdi.ArrayReference
 import com.sun.jdi.Value
 
-/**
- * @author Vitaliy.Bibaev
- */
 object InterpreterUtil {
 
     fun extractMap(value: Value): MapRepresentation {

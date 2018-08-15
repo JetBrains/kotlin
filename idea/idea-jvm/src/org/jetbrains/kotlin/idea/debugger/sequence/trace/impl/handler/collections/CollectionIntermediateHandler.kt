@@ -7,9 +7,6 @@ import com.intellij.debugger.streams.trace.dsl.Dsl
 import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 
-/**
- * @author Vitaliy.Bibaev
- */
 class CollectionIntermediateHandler(
     order: Int,
     private val call: IntermediateStreamCall,

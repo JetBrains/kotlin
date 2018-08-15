@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.resolve.WindowedResolver
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.sequence.FilterIsInstanceHandler
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.sequence.KotlinDistinctByHandler
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinSequencesSupport : LibrarySupportBase() {
     init {
         addIntermediateOperationsSupport(

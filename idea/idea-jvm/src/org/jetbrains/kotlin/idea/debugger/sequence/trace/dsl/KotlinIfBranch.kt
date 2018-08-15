@@ -6,9 +6,6 @@ import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.trace.dsl.StatementFactory
 import com.intellij.debugger.streams.trace.dsl.impl.common.IfBranchBase
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinIfBranch(condition: Expression, thenBlock: CodeBlock, statementFactory: StatementFactory) :
     IfBranchBase(condition, thenBlock, statementFactory) {
     override fun toCode(indent: Int): String {
