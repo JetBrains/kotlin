@@ -337,13 +337,14 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     }
                 }
             }
-            val sourceSetGraph = GraphBuilder.directed().build<KotlinSourceSet>()
+            val sourceSetGraph = GraphBuilder.directed().build<KotlinModule>()
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
-                dataNode.data.productionModuleId?.let {
-                    val productionModuleDataNode = ideModule.findChildModuleByInternalName(it)
-                    if (productionModuleDataNode != null) {
-                        addDependency(dataNode, productionModuleDataNode)
-                    }
+                val productionSourceSet = dataNode.data.productionModuleId
+                    ?.let { ideModule.findChildModuleByInternalName(it) }
+                    ?.kotlinSourceSet
+                    ?.kotlinModule
+                if (productionSourceSet != null) {
+                    sourceSetGraph.putEdge(sourceSet, productionSourceSet!!)
                 }
                 for (targetSourceSetName in sourceSet.dependsOnSourceSets) {
                     val targetSourceSet = mppModel.sourceSets[targetSourceSetName] ?: continue
@@ -358,6 +359,16 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         preprocessDependencies(sourceSet, ideProject),
                         ideProject
                     )
+                    if (productionSourceSet != null) {
+                        buildDependencies(
+                            resolverCtx,
+                            sourceSetMap,
+                            artifactsMap,
+                            dataNode,
+                            preprocessDependencies(productionSourceSet, ideProject),
+                            ideProject
+                        )
+                    }
                 }
             }
             for (edge in Graphs.transitiveClosure(sourceSetGraph).edges()) {

@@ -14,4 +14,4 @@ fun DataNode<*>.findChildModuleById(id: String) =
 
 @Suppress("UNCHECKED_CAST")
 fun DataNode<*>.findChildModuleByInternalName(name: String) =
-    children.firstOrNull { (it.data as? ModuleData)?.internalName == name }
+    children.firstOrNull { (it.data as? ModuleData)?.internalName == name } as? DataNode<out ModuleData>
