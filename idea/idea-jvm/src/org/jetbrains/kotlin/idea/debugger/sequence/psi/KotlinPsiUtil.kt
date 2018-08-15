@@ -14,14 +14,12 @@ import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 
 object KotlinPsiUtil {
-    private val WITH_TYPES_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES
-
     fun getTypeName(type: KotlinType): String {
         if (type is FlexibleType) {
-            return WITH_TYPES_RENDERER.renderType(type.approximateFlexibleTypes())
+            return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type.approximateFlexibleTypes())
         }
 
-        return WITH_TYPES_RENDERER.renderType(type)
+        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
     }
 
     fun getTypeWithoutTypeParameters(type: KotlinType): String {
