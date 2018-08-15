@@ -12,7 +12,7 @@ package kotlin
 public inline class ULongArray
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @PublishedApi
-internal constructor(private val storage: LongArray) : Collection<ULong> {
+internal constructor(@PublishedApi internal val storage: LongArray) : Collection<ULong> {
 
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(LongArray(size))

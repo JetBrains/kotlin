@@ -12,7 +12,7 @@ package kotlin
 public inline class UByteArray
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @PublishedApi
-internal constructor(private val storage: ByteArray) : Collection<UByte> {
+internal constructor(@PublishedApi internal val storage: ByteArray) : Collection<UByte> {
 
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(ByteArray(size))

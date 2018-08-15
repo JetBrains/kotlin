@@ -278,7 +278,7 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         out.println("public inline class $arrayType")
         out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("@PublishedApi")
-        out.println("internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
+        out.println("internal constructor(@PublishedApi internal val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
             """
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
