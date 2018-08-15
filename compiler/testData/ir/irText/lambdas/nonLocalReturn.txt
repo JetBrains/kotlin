@@ -1,51 +1,61 @@
 FILE fqName:<root> fileName:/nonLocalReturn.kt
   FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
-      CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing origin=null
-        <R>: kotlin.Nothing
-        block: BLOCK type=() -> kotlin.Nothing origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing flags:
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='test0(): Unit'
-                GET_OBJECT 'Unit' type=kotlin.Unit
-          FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+        CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing origin=null
+          <R>: kotlin.Nothing
+          block: BLOCK type=() -> kotlin.Nothing origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='test0(): Unit'
+                  GET_OBJECT 'Unit' type=kotlin.Unit
+            FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
-      CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
-        <R>: kotlin.Unit
-        block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
-                GET_OBJECT 'Unit' type=kotlin.Unit
-          FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+        CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
+          <R>: kotlin.Unit
+          block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                  GET_OBJECT 'Unit' type=kotlin.Unit
+            FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
-      CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
-        <R>: kotlin.Unit
-        block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
-                GET_OBJECT 'Unit' type=kotlin.Unit
-          FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+        CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
+          <R>: kotlin.Unit
+          block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                  GET_OBJECT 'Unit' type=kotlin.Unit
+            FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
-      CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
-        <R>: kotlin.Unit
-        block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
-                CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing origin=null
-                  <R>: kotlin.Nothing
-                  block: BLOCK type=() -> kotlin.Nothing origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing flags:
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
-                          GET_OBJECT 'Unit' type=kotlin.Unit
-                    FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
-          FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+        CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
+          <R>: kotlin.Unit
+          block: BLOCK type=() -> kotlin.Unit origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+                    CALL 'run(() -> Nothing): Nothing' type=kotlin.Nothing origin=null
+                      <R>: kotlin.Nothing
+                      block: BLOCK type=() -> kotlin.Nothing origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing flags:
+                          BLOCK_BODY
+                            RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
+                              GET_OBJECT 'Unit' type=kotlin.Unit
+                        FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
+            FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int> flags:
     BLOCK_BODY

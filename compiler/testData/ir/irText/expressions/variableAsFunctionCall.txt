@@ -13,15 +13,19 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
     VALUE_PARAMETER name:f index:0 type:() -> kotlin.Unit flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(() -> Unit): Unit'
-        CALL 'invoke(): Unit' type=kotlin.Unit origin=INVOKE
-          $this: GET_VAR 'value-parameter f: () -> Unit' type=() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+          CALL 'invoke(): Unit' type=kotlin.Unit origin=INVOKE
+            $this: GET_VAR 'value-parameter f: () -> Unit' type=() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
   FUN name:test2 visibility:public modality:FINAL <> (f:kotlin.String.() -> kotlin.Unit) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:f index:0 type:kotlin.String.() -> kotlin.Unit flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String.() -> Unit): Unit'
-        CALL 'invoke(String): Unit' type=kotlin.Unit origin=INVOKE
-          $this: GET_VAR 'value-parameter f: String.() -> Unit' type=kotlin.String.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-          p1: CONST String type=kotlin.String value=hello
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+          CALL 'invoke(String): Unit' type=kotlin.Unit origin=INVOKE
+            $this: GET_VAR 'value-parameter f: String.() -> Unit' type=kotlin.String.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
+            p1: CONST String type=kotlin.String value=hello
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(): String'

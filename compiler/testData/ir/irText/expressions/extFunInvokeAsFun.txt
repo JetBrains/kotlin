@@ -4,15 +4,19 @@ FILE fqName:<root> fileName:/extFunInvokeAsFun.kt
     VALUE_PARAMETER name:block index:1 type:kotlin.Any?.() -> kotlin.Unit flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='with1(Any?, Any?.() -> Unit): Unit'
-        CALL 'invoke(Any?): Unit' type=kotlin.Unit origin=INVOKE
-          $this: GET_VAR 'value-parameter block: Any?.() -> Unit' type=kotlin.Any?.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-          p1: GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+          CALL 'invoke(Any?): Unit' type=kotlin.Unit origin=INVOKE
+            $this: GET_VAR 'value-parameter block: Any?.() -> Unit' type=kotlin.Any?.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
+            p1: GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
   FUN name:with2 visibility:public modality:FINAL <> (receiver:kotlin.Any?, block:kotlin.Any?.() -> kotlin.Unit) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? flags:
     VALUE_PARAMETER name:block index:1 type:kotlin.Any?.() -> kotlin.Unit flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='with2(Any?, Any?.() -> Unit): Unit'
-        CALL 'invoke(Any?): Unit' type=kotlin.Unit origin=INVOKE
-          $this: GET_VAR 'value-parameter block: Any?.() -> Unit' type=kotlin.Any?.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-          p1: GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+          CALL 'invoke(Any?): Unit' type=kotlin.Unit origin=INVOKE
+            $this: GET_VAR 'value-parameter block: Any?.() -> Unit' type=kotlin.Any?.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
+            p1: GET_VAR 'value-parameter receiver: Any?' type=kotlin.Any? origin=null
 

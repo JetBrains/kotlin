@@ -74,7 +74,9 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: GET_VAR 'value-parameter x: T' type=T origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
-          then: CALL 'invoke(S): Unit' type=kotlin.Unit origin=INVOKE
-            $this: GET_VAR 'value-parameter fn: (S) -> Unit' type=(S) -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-            p1: GET_VAR 'value-parameter x: T' type=T origin=null
+          then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+            CALL 'invoke(S): Unit' type=kotlin.Unit origin=INVOKE
+              $this: GET_VAR 'value-parameter fn: (S) -> Unit' type=(S) -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
+              p1: GET_VAR 'value-parameter x: T' type=T origin=null
 
