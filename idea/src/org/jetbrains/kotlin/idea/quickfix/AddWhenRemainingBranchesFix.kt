@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.intentions.ImportAllMembersIntention
+import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class AddWhenRemainingBranchesFix(
@@ -77,16 +80,20 @@ class AddWhenRemainingBranchesFix(
             val elseBranch = element.entries.find { it.isElse }
             val psiFactory = KtPsiFactory(element)
 
+            if (missingCases.isNotEmpty() && !element.isMultiLine()) {
+                element.addBefore(psiFactory.createNewLine(), whenCloseBrace)
+            }
+
             for (case in missingCases) {
                 val branchConditionText = when (case) {
                     UnknownMissingCase, NullMissingCase, is BooleanMissingCase ->
                         case.branchConditionText
                     is ClassMissingCase ->
                         if (case.classIsSingleton) {
-                            case.classFqName.quoteIfNeeded().asString()
+                            ""
                         } else {
-                            "is " + case.classFqName.quoteIfNeeded().asString()
-                        }
+                            "is "
+                        } + case.descriptor.fqNameSafe.quoteIfNeeded().asString()
                 }
                 val entry = psiFactory.createWhenEntry("$branchConditionText -> TODO()")
                 if (elseBranch != null) {
@@ -95,6 +102,8 @@ class AddWhenRemainingBranchesFix(
                     element.addBefore(entry, whenCloseBrace)
                 }
             }
+
+            ShortenReferences.DEFAULT.process(element)
 
             if (withImport) {
                 importAllEntries(element)
