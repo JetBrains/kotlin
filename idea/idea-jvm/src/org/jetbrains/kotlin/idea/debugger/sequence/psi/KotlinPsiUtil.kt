@@ -13,10 +13,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 
-/**
- * @author Vitaliy.Bibaev
- */
-
 object KotlinPsiUtil {
     private val WITH_TYPES_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES
 

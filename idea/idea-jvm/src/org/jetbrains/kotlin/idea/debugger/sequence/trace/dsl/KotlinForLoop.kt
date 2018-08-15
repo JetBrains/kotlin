@@ -6,9 +6,6 @@ import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.trace.dsl.ForLoopBody
 import com.intellij.debugger.streams.trace.dsl.VariableDeclaration
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinForLoop(
     private val initialization: VariableDeclaration,
     private val condition: Expression,

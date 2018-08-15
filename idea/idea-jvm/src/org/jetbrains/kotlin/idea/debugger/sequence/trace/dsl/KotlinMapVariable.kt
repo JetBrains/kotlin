@@ -8,9 +8,6 @@ import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.trace.dsl.impl.common.MapVariableBase
 import com.intellij.debugger.streams.trace.impl.handler.type.MapType
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinMapVariable(type: MapType, name: String) : MapVariableBase(type, name) {
     override fun get(key: Expression): Expression = this.call("getValue", key)
 

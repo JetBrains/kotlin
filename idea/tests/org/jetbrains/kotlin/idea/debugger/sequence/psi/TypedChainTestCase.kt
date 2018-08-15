@@ -4,9 +4,6 @@ package org.jetbrains.kotlin.idea.debugger.sequence.psi
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import org.jetbrains.kotlin.idea.debugger.sequence.KotlinPsiChainBuilderTestCase
 
-/**
- * @author Vitaliy.Bibaev
- */
 abstract class TypedChainTestCase(relativePath: String) : KotlinPsiChainBuilderTestCase(relativePath) {
 
     protected fun doTest(

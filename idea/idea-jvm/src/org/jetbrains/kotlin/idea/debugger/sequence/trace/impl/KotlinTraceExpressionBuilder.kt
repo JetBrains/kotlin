@@ -7,9 +7,6 @@ import com.intellij.debugger.streams.trace.impl.TraceExpressionBuilderBase
 import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.openapi.diagnostic.Logger
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinTraceExpressionBuilder(dsl: Dsl, handlerFactory: HandlerFactory) : TraceExpressionBuilderBase(dsl, handlerFactory) {
     private companion object {
         private val LOG = Logger.getInstance(KotlinTraceExpressionBuilder::class.java)

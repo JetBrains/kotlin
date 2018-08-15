@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-/**
- * @author Vitaliy.Bibaev
- */
 class SequenceTypeExtractor : CallTypeExtractor.Base() {
     private companion object {
         val LOG = Logger.getInstance(SequenceTypeExtractor::class.java)

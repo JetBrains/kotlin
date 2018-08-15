@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinCollectionsPe
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpressionBuilder
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinCollectionSupportProvider : LibrarySupportProvider {
     private companion object {
         val builder: StreamChainBuilder = KotlinCollectionChainBuilder()

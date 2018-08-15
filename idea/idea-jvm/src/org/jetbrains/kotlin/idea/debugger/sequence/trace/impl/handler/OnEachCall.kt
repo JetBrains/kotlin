@@ -9,9 +9,6 @@ import com.intellij.debugger.streams.wrapper.impl.CallArgumentImpl
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 
-/**
- * @author Vitaliy.Bibaev
- */
 class OnEachCall(private val elementsType: GenericType, lambda: String) : IntermediateStreamCall {
     private val args: List<CallArgument>
 

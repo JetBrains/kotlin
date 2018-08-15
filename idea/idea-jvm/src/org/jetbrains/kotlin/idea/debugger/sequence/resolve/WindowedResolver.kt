@@ -5,9 +5,6 @@ import com.intellij.debugger.streams.resolve.ValuesOrderResolver
 import com.intellij.debugger.streams.trace.TraceElement
 import com.intellij.debugger.streams.trace.TraceInfo
 
-/**
- * @author Vitaliy.Bibaev
- */
 class WindowedResolver : ValuesOrderResolver {
     override fun resolve(info: TraceInfo): ValuesOrderResolver.Result {
         val indexBefore = info.valuesOrderBefore

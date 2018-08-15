@@ -4,9 +4,6 @@ package org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl
 import com.intellij.debugger.streams.trace.dsl.Types
 import com.intellij.debugger.streams.trace.impl.handler.type.*
 
-/**
- * @author Vitaliy.Bibaev
- */
 object KotlinTypes : Types {
     override val ANY: GenericType = ClassTypeImpl("kotlin.Any", "kotlin.Any()")
 

@@ -8,9 +8,6 @@ import com.intellij.debugger.streams.trace.dsl.Variable
 import com.intellij.debugger.streams.trace.dsl.VariableDeclaration
 import com.intellij.debugger.streams.wrapper.StreamCall
 
-/**
- * @author Vitaliy.Bibaev
- */
 abstract class CollectionHandlerBase(
     order: Int, private val dsl: Dsl,
     private val call: StreamCall, private val internalHandler: BothSemanticsHandler

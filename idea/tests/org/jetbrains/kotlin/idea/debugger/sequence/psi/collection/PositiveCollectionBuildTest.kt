@@ -5,9 +5,6 @@ import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.KotlinPsiChainBuilderTestCase
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.collections.KotlinCollectionSupportProvider
 
-/**
- * @author Vitaliy.Bibaev
- */
 class PositiveCollectionBuildTest : KotlinPsiChainBuilderTestCase.Positive("collection/positive") {
     override val kotlinChainBuilder: StreamChainBuilder = KotlinCollectionSupportProvider().chainBuilder
 

@@ -5,9 +5,6 @@ import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.types.KotlinType
 
-/**
- * @author Vitaliy.Bibaev
- */
 interface CallTypeExtractor {
     fun extractIntermediateCallTypes(call: KtCallExpression): IntermediateCallTypes
     fun extractTerminalCallTypes(call: KtCallExpression): TerminatorCallTypes

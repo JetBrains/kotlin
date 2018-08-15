@@ -8,9 +8,6 @@ import com.intellij.debugger.streams.trace.dsl.impl.VariableImpl
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinStatementFactory(private val peekCallFactory: PeekCallFactory) : StatementFactory {
     override fun createNewListExpression(elementType: GenericType, vararg args: Expression): Expression =
         TextExpression("kotlin.collections.mutableListOf<${elementType.genericTypeName}>(${StatementFactory.commaSeparate(*args)})")

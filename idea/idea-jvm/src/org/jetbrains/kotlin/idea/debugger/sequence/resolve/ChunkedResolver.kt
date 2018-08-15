@@ -5,9 +5,6 @@ import com.intellij.debugger.streams.resolve.ValuesOrderResolver
 import com.intellij.debugger.streams.trace.TraceElement
 import com.intellij.debugger.streams.trace.TraceInfo
 
-/**
- * @author Vitaliy.Bibaev
- */
 class ChunkedResolver : ValuesOrderResolver {
     override fun resolve(info: TraceInfo): ValuesOrderResolver.Result {
         val beforeIndex = info.valuesOrderBefore

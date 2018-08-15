@@ -14,9 +14,6 @@ import com.intellij.debugger.streams.wrapper.impl.IntermediateStreamCallImpl
 import com.intellij.openapi.util.TextRange.EMPTY_RANGE
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 
-/**
- * @author Vitaliy.Bibaev
- */
 class FilterIsInstanceHandler(num: Int, call: IntermediateStreamCall, dsl: Dsl) : HandlerBase.Intermediate(dsl) {
     private companion object {
         fun createHandler(num: Int, call: IntermediateStreamCall, dsl: Dsl): HandlerBase.Intermediate =

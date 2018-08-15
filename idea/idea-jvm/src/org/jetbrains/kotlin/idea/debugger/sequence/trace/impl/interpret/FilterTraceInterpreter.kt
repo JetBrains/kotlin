@@ -12,9 +12,6 @@ import com.sun.jdi.BooleanValue
 import com.sun.jdi.IntegerValue
 import com.sun.jdi.Value
 
-/**
- * @author Vitaliy.Bibaev
- */
 class FilterTraceInterpreter(private val predicateValueToAccept: Boolean) : CallTraceInterpreter {
     override fun resolve(call: StreamCall, value: Value): TraceInfo {
         if (value !is ArrayReference) throw UnexpectedValueTypeException("array reference excepted, but actual: ${value.type().name()}")

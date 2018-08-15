@@ -25,9 +25,6 @@ import java.io.File
 import java.nio.file.Paths
 import java.util.*
 
-/**
- * @author Vitaliy.Bibaev
- */
 abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) : StreamChainBuilderTestCase() {
     override fun getTestDataPath(): String =
         Paths.get(File("").absolutePath, "idea/testData/debugger/sequence/psi/$relativeTestPath/").toString()

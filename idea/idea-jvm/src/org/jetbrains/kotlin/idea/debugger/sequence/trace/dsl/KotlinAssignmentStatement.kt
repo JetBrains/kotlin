@@ -5,9 +5,6 @@ import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.trace.dsl.Variable
 import com.intellij.debugger.streams.trace.dsl.impl.AssignmentStatement
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinAssignmentStatement(override val variable: Variable, override val expression: Expression) : AssignmentStatement {
     override fun toCode(indent: Int): String = "${variable.toCode()} = ${expression.toCode()}".withIndent(indent)
 }

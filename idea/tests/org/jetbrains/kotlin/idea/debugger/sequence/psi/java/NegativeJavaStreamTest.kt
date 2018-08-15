@@ -5,9 +5,6 @@ import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.KotlinPsiChainBuilderTestCase
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.java.JavaStandardLibrarySupportProvider
 
-/**
- * @author Vitaliy.Bibaev
- */
 class NegativeJavaStreamTest : KotlinPsiChainBuilderTestCase.Negative("streams/negative") {
     override val kotlinChainBuilder: StreamChainBuilder = JavaStandardLibrarySupportProvider().chainBuilder
 

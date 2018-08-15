@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 
-/**
- * @author Vitaliy.Bibaev
- */
 class JavaStreamChainTypeExtractor : CallTypeExtractor.Base() {
     override fun extractItemsType(type: KotlinType?): GenericType {
         if (type == null) {

@@ -6,9 +6,6 @@ import com.intellij.debugger.streams.trace.dsl.impl.DslImpl
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinCollectionsPeekCallFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinDslTest : DslTestCase(DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))) {
     override fun getTestDataPath(): String {
         return "idea/testData/debugger/sequence/dsl"

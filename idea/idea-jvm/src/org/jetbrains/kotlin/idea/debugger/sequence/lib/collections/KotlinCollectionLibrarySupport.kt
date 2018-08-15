@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collection
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections.FilterCallHandler
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.interpret.FilterTraceInterpreter
 
-/**
- * @author Vitaliy.Bibaev
- */
 class KotlinCollectionLibrarySupport : LibrarySupportBase() {
     init {
         addOperation(FilterOperation("filter", FilterCallHandler(), true))
