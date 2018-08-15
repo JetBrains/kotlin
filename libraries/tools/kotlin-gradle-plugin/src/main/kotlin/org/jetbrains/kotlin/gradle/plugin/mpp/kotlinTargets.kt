@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class AbstractKotlinTarget (
     override val project: Project
@@ -118,3 +120,25 @@ open class KotlinOnlyTarget<T : KotlinCompilation>(
     override var disambiguationClassifier: String? = null
         internal set
 }
+
+class KotlinNativeTarget(
+    project: Project,
+    val konanTarget: KonanTarget
+) : KotlinOnlyTarget<KotlinNativeCompilation>(project, KotlinPlatformType.native) {
+
+    init {
+        attributes.attribute(konanTargetAttribute, konanTarget.name)
+    }
+
+    // TODO: Should binary files be output of a target or a compilation?
+    override val artifactsTaskName: String
+        get() = disambiguateName("link")
+
+    companion object {
+        val konanTargetAttribute = Attribute.of(
+            "org.jetbrains.kotlin.native.target",
+            String::class.java
+        )
+    }
+}
+
