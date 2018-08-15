@@ -1399,7 +1399,11 @@ compileTestKotlin {
         }
 
         val rootManager = ModuleRootManager.getInstance(getModule("js-module"))
-        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library!!
+        val stdlib = rootManager
+            .orderEntries
+            .filterIsInstance<LibraryOrderEntry>()
+            .first { it.libraryName?.startsWith("Gradle: kotlin-stdlib-js-") ?: false }
+            .library!!
         assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
     }
@@ -2262,7 +2266,7 @@ compileTestKotlin {
         importProject()
 
         Assert.assertEquals(
-            "-Xdump-declarations-to=tmpTest",
+            "-version",
             testFacetSettings.compilerSettings!!.additionalArguments
         )
 
