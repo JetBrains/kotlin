@@ -7,7 +7,7 @@ import com.intellij.debugger.streams.trace.TraceExpressionBuilder
 import com.intellij.debugger.streams.trace.dsl.impl.DslImpl
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.debugger.sequence.lib.LibraryUtil
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.KotlinChainTransformerImpl
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.TerminatedChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.sequence.SequenceCallChecker
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpress
  * @author Vitaliy.Bibaev
  */
 class KotlinSequenceSupportProvider : LibrarySupportProvider {
-    override fun getLanguageId(): String = LibraryUtil.KOTLIN_LANGUAGE_ID
+    override fun getLanguageId(): String = KotlinLanguage.INSTANCE.id
 
     private companion object {
         val builder: StreamChainBuilder = TerminatedChainBuilder(

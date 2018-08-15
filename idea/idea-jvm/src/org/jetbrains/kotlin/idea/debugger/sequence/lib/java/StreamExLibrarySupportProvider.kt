@@ -8,7 +8,7 @@ import com.intellij.debugger.streams.trace.TraceExpressionBuilder
 import com.intellij.debugger.streams.trace.dsl.impl.DslImpl
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.debugger.sequence.lib.LibraryUtil
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.KotlinChainTransformerImpl
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.PackageBasedCallChecker
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.TerminatedChainBuilder
@@ -31,7 +31,7 @@ class StreamExLibrarySupportProvider : LibrarySupportProvider {
         val expressionBuilder = KotlinTraceExpressionBuilder(dsl, support.createHandlerFactory(dsl))
     }
 
-    override fun getLanguageId(): String = LibraryUtil.KOTLIN_LANGUAGE_ID
+    override fun getLanguageId(): String = KotlinLanguage.INSTANCE.id
 
     override fun getChainBuilder(): StreamChainBuilder = streamChainBuilder
 

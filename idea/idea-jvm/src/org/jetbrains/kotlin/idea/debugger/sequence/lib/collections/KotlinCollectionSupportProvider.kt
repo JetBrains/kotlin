@@ -7,7 +7,7 @@ import com.intellij.debugger.streams.trace.TraceExpressionBuilder
 import com.intellij.debugger.streams.trace.dsl.impl.DslImpl
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.debugger.sequence.lib.LibraryUtil
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.collections.KotlinCollectionChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinCollectionsPeekCallFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
@@ -23,7 +23,7 @@ class KotlinCollectionSupportProvider : LibrarySupportProvider {
         val dsl = DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))
     }
 
-    override fun getLanguageId(): String = LibraryUtil.KOTLIN_LANGUAGE_ID
+    override fun getLanguageId(): String = KotlinLanguage.INSTANCE.id
 
     override fun getChainBuilder(): StreamChainBuilder = builder
 
