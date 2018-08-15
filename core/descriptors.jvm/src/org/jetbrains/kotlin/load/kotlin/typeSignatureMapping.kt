@@ -286,7 +286,7 @@ fun computeInternalName(
 private fun getContainer(container: DeclarationDescriptor?): DeclarationDescriptor? =
     container as? ClassDescriptor ?: container as? PackageFragmentDescriptor ?: container?.let { getContainer(it.containingDeclaration) }
 
-private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
+fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
     val upperBounds = descriptor.upperBounds
     assert(!upperBounds.isEmpty()) { "Upper bounds should not be empty: $descriptor" }
 

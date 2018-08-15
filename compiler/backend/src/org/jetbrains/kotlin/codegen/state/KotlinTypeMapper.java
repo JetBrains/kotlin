@@ -1082,6 +1082,11 @@ public class KotlinTypeMapper {
             return name;
         }
 
+        String manglingSuffix = InlineClassManglingUtilsKt.getInlineClassValueParametersManglingSuffix(descriptor);
+        if (manglingSuffix != null) {
+            name += "$" + manglingSuffix;
+        }
+
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             if (Visibilities.isPrivate(descriptor.getVisibility()) && !(descriptor instanceof ConstructorDescriptor) && !"<clinit>".equals(name)) {
                 String partName = getPartSimpleNameForMangling(descriptor);
