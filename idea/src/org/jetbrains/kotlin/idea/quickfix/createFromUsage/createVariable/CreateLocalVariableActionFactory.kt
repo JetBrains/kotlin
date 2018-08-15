@@ -44,7 +44,7 @@ object CreateLocalVariableActionFactory : KotlinSingleIntentionActionFactory() {
         val propertyName = refExpr.getReferencedName()
 
         val container = refExpr.parents
-            .filter { it is KtBlockExpression || it is KtDeclarationWithBody }
+            .filter { it is KtBlockExpression || it is KtDeclarationWithBody && it.bodyExpression != null }
             .firstOrNull() as? KtElement ?: return null
 
         return object : CreateFromUsageFixBase<KtSimpleNameExpression>(refExpr) {

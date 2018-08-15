@@ -4204,6 +4204,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inAccessorWithExpressionBody.kt");
                 }
 
+                @TestMetadata("inAnnotation.kt")
+                public void testInAnnotation() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inAnnotation.kt");
+                }
+
                 @TestMetadata("inBinaryOperation.kt")
                 public void testInBinaryOperation() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inBinaryOperation.kt");
