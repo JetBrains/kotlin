@@ -24,6 +24,10 @@ const val MaxUI = UInt.MAX_VALUE
 const val MinUI = UInt.MIN_VALUE
 const val MaxUL = ULong.MAX_VALUE
 const val MinUL = ULong.MIN_VALUE
+const val MaxUB = UByte.MAX_VALUE
+const val MinUB = UByte.MIN_VALUE
+const val MaxUS = UShort.MAX_VALUE
+const val MinUS = UShort.MIN_VALUE
 
 // Test data for codegen is generated from this class. If you change it, rerun generateTests task
 public open class RangeIterationTestBase {
@@ -146,6 +150,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((1L + 2L)..(10L - 1L), 3L, 9L, 1L, listOf<Long>(3, 4, 5, 6, 7, 8, 9))
 
         doTest(("ace"[1])..("age"[1]), 'c', 'g', 1, listOf('c', 'd', 'e', 'f', 'g'))
+
+        doTest((1u + 2u)..(6u - 1u), 3u, 5u, 1, listOf(3u, 4u, 5u))
+        doTest((1u.toUByte() + 2u.toUByte()).toUByte()..(6u.toUByte() - 1u.toUByte()).toUByte(), 3u, 5u, 1, listOf(3u, 4u, 5u))
+        doTest((1u.toUShort() + 2u.toUShort()).toUShort()..(6u.toUShort() - 1u.toUShort()).toUShort(), 3u, 5u, 1, listOf(3u, 4u, 5u))
+        doTest((1uL + 2uL)..(6uL - 1uL), 3uL, 5uL, 1L, listOf<ULong>(3u, 4u, 5u))
     }
 
     @Test fun openRange() {
@@ -155,7 +164,10 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(1L until 5L, 1L, 4L, 1L, listOf<Long>(1, 2, 3, 4))
         doTest('a' until 'd', 'a', 'c', 1, listOf('a', 'b', 'c'))
 
-        // TODO: Unsigned until
+        doTest(1u until 5u, 1u, 4u, 1, listOf(1u, 2u, 3u, 4u))
+        doTest(1u.toUByte() until 5u.toUByte(), 1u, 4u, 1, listOf(1u, 2u, 3u, 4u))
+        doTest(1u.toUShort() until 5u.toUShort(), 1u, 4u, 1, listOf(1u, 2u, 3u, 4u))
+        doTest(1uL until 5uL, 1uL, 4uL, 1L, listOf<ULong>(1u, 2u, 3u, 4u))
     }
 
 
@@ -167,7 +179,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
 
         doTest('a' downTo 'z', 'a', 'z', -1, listOf())
 
-        // TODO: Unsigned downTo
+        doTest(5u downTo 10u, 5u, 10u, -1, listOf())
+        doTest(5u.toUByte() downTo 10u.toUByte(), 5u, 10u, -1, listOf())
+        doTest(5u.toUShort() downTo 10u.toUShort(), 5u, 10u, -1, listOf())
+        doTest(5uL downTo 10uL, 5uL, 10uL, -1L, listOf())
+
     }
 
     @Test fun oneElementDownTo() {
@@ -177,7 +193,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(5L downTo 5L, 5L, 5L, -1L, listOf(5L))
 
         doTest('k' downTo 'k', 'k', 'k', -1, listOf('k'))
-        // TODO: Unsigned downTo
+
+        doTest(5u downTo 5u, 5u, 5u, -1, listOf(5u))
+        doTest(5u.toUByte() downTo 5u.toUByte(), 5u, 5u, -1, listOf(5u))
+        doTest(5u.toUShort() downTo 5u.toUShort(), 5u, 5u, -1, listOf(5u))
+        doTest(5uL downTo 5uL, 5uL, 5uL, -1L, listOf(5uL))
     }
 
     @Test fun simpleDownTo() {
@@ -187,7 +207,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(9L downTo 3L, 9L, 3L, -1L, listOf<Long>(9, 8, 7, 6, 5, 4, 3))
 
         doTest('g' downTo 'c', 'g', 'c', -1, listOf('g', 'f', 'e', 'd', 'c'))
-        // TODO: Unsigned downTo
+
+        doTest(5u downTo 3u, 5u, 3u, -1, listOf(5u, 4u, 3u))
+        doTest(5u.toUByte() downTo 3u.toUByte(), 5u, 3u, -1, listOf(5u, 4u, 3u))
+        doTest(5u.toUShort() downTo 3u.toUShort(), 5u, 3u, -1, listOf(5u, 4u, 3u))
+        doTest(5uL downTo 3uL, 5uL, 3uL, -1L, listOf<ULong>(5u, 4u, 3u))
     }
 
 
@@ -198,7 +222,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(3L..9L step 2L, 3L, 9L, 2L, listOf<Long>(3, 5, 7, 9))
 
         doTest('c'..'g' step 2, 'c', 'g', 2, listOf('c', 'e', 'g'))
-        // TODO: Unsigned step
+
+        doTest(3u..9u step 2, 3u, 9u, 2, listOf(3u, 5u, 7u, 9u))
+        doTest(3u.toUByte()..9u.toUByte() step 2, 3u, 9u, 2, listOf(3u, 5u, 7u, 9u))
+        doTest(3u.toUShort()..9u.toUShort() step 2, 3u, 9u, 2, listOf(3u, 5u, 7u, 9u))
+        doTest(3uL..9uL step 2L, 3uL, 9uL, 2L, listOf<ULong>(3u, 5u, 7u, 9u))
     }
 
     @Test fun simpleSteppedDownTo() {
@@ -208,7 +236,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(9L downTo 3L step 2L, 9L, 3L, -2L, listOf<Long>(9, 7, 5, 3))
 
         doTest('g' downTo 'c' step 2, 'g', 'c', -2, listOf('g', 'e', 'c'))
-        // TODO: Unsigned step
+
+        doTest(9u downTo 3u step 2, 9u, 3u, -2, listOf(9u, 7u, 5u, 3u))
+        doTest(9u.toUByte() downTo 3u.toUByte() step 2, 9u, 3u, -2, listOf(9u, 7u, 5u, 3u))
+        doTest(9u.toUShort() downTo 3u.toUShort() step 2, 9u, 3u, -2, listOf(9u, 7u, 5u, 3u))
+        doTest(9uL downTo 3uL step 2L, 9uL, 3uL, -2L, listOf<ULong>(9u, 7u, 5u, 3u))
     }
 
 
@@ -220,7 +252,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(3L..8L step 2L, 3L, 7L, 2L, listOf<Long>(3, 5, 7))
 
         doTest('a'..'d' step 2, 'a', 'c', 2, listOf('a', 'c'))
-        // TODO: Unsigned step
+
+        doTest(3u..8u step 2, 3u, 7u, 2, listOf(3u, 5u, 7u))
+        doTest(3u.toUByte()..8u.toUByte() step 2, 3u, 7u, 2, listOf(3u, 5u, 7u))
+        doTest(3u.toUShort()..8u.toUShort() step 2, 3u, 7u, 2, listOf(3u, 5u, 7u))
+        doTest(3uL..8uL step 2L, 3uL, 7uL, 2L, listOf<ULong>(3u, 5u, 7u))
     }
 
     // 'inexact' means last element is not equal to sequence end
@@ -231,7 +267,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(8L downTo 3L step 2L, 8L, 4L, -2L, listOf<Long>(8, 6, 4))
 
         doTest('d' downTo 'a' step 2, 'd', 'b', -2, listOf('d', 'b'))
-        // TODO: Unsigned step
+
+        doTest(8u downTo 3u step 2, 8u, 4u, -2, listOf(8u, 6u, 4u))
+        doTest(8u.toUByte() downTo 3u.toUByte() step 2, 8u, 4u, -2, listOf(8u, 6u, 4u))
+        doTest(8u.toUShort() downTo 3u.toUShort() step 2, 8u, 4u, -2, listOf(8u, 6u, 4u))
+        doTest(8uL downTo 3uL step 2L, 8uL, 4uL, -2L, listOf<ULong>(8u, 6u, 4u))
     }
 
 
@@ -242,7 +282,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((5L..3L).reversed(), 3L, 5L, -1L, listOf())
 
         doTest(('c'..'a').reversed(), 'a', 'c', -1, listOf())
-        // TODO: Unsigned reversed
+
+        doTest((5u..3u).reversed(), 3u, 5u, -1, listOf())
+        doTest((5u.toUByte()..3u.toUByte()).reversed(), 3u, 5u, -1, listOf())
+        doTest((5u.toUShort()..3u.toUShort()).reversed(), 3u, 5u, -1, listOf())
+        doTest((5uL..3uL).reversed(), 3uL, 5uL, -1L, listOf())
     }
 
     @Test fun reversedEmptyBackSequence() {
@@ -252,7 +296,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((3L downTo 5L).reversed(), 5L, 3L, 1L, listOf())
 
         doTest(('a' downTo 'c').reversed(), 'c', 'a', 1, listOf())
-        // TODO: Unsigned reversed
+
+        doTest((3u downTo 5u).reversed(), 5u, 3u, 1, listOf())
+        doTest((3u.toUByte() downTo 5u.toUByte()).reversed(), 5u, 3u, 1, listOf())
+        doTest((3u.toUShort() downTo 5u.toUShort()).reversed(), 5u, 3u, 1, listOf())
+        doTest((3uL downTo 5uL).reversed(), 5uL, 3uL, 1L, listOf())
     }
 
     @Test fun reversedRange() {
@@ -262,7 +310,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((3L..5L).reversed(), 5L, 3L, -1L, listOf<Long>(5, 4, 3))
 
         doTest(('a'..'c').reversed(), 'c', 'a', -1, listOf('c', 'b', 'a'))
-        // TODO: Unsigned reversed
+
+        doTest((3u..5u).reversed(), 5u, 3u, -1, listOf(5u, 4u, 3u))
+        doTest((3u.toUByte()..5u.toUByte()).reversed(),5u, 3u, -1, listOf(5u, 4u, 3u))
+        doTest((3u.toUShort()..5u.toUShort()).reversed(), 5u, 3u, -1, listOf(5u, 4u, 3u))
+        doTest((3uL..5uL).reversed(), 5uL, 3uL, -1L, listOf<ULong>(5u, 4u, 3u))
     }
 
     @Test fun reversedBackSequence() {
@@ -272,7 +324,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((5L downTo 3L).reversed(), 3L, 5L, 1L, listOf<Long>(3, 4, 5))
 
         doTest(('c' downTo 'a').reversed(), 'a', 'c', 1, listOf('a', 'b', 'c'))
-        // TODO: Unsigned reversed
+
+        doTest((5u downTo 3u).reversed(), 3u, 5u, 1, listOf(3u, 4u, 5u))
+        doTest((5u.toUByte() downTo 3u.toUByte()).reversed(), 3u, 5u, 1, listOf(3u, 4u, 5u))
+        doTest((5u.toUShort() downTo 3u.toUShort()).reversed(), 3u, 5u, 1, listOf(3u, 4u, 5u))
+        doTest((5uL downTo 3uL).reversed(), 3uL, 5uL, 1L, listOf<ULong>(3u, 4u, 5u))
      }
 
     @Test fun reversedSimpleSteppedRange() {
@@ -282,7 +338,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((3L..9L step 2L).reversed(), 9L, 3L, -2L, listOf<Long>(9, 7, 5, 3))
 
         doTest(('c'..'g' step 2).reversed(), 'g', 'c', -2, listOf('g', 'e', 'c'))
-        // TODO: Unsigned reversed
+
+        doTest((3u..9u step 2).reversed(), 9u, 3u, -2, listOf(9u, 7u, 5u, 3u))
+        doTest((3u.toUByte()..9u.toUByte() step 2).reversed(), 9u, 3u, -2, listOf(9u, 7u, 5u, 3u))
+        doTest((3u.toUShort()..9u.toUShort() step 2).reversed(), 9u, 3u, -2, listOf(9u, 7u, 5u, 3u))
+        doTest((3uL..9uL step 2L).reversed(), 9uL, 3uL, -2L, listOf<ULong>(9u, 7u, 5u, 3u))
     }
 
     // invariant progression.reversed().toList() == progression.toList().reversed() is preserved
@@ -294,7 +354,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((8L downTo 3L step 2L).reversed(), 4L, 8L, 2L, listOf<Long>(4, 6, 8))
 
         doTest(('d' downTo 'a' step 2).reversed(), 'b', 'd', 2, listOf('b', 'd'))
-        // TODO: Unsigned reversed
+
+        doTest((8u downTo 3u step 2).reversed(), 4u, 8u, 2, listOf(4u, 6u, 8u))
+        doTest((8u.toUByte() downTo 3u.toUByte() step 2).reversed(), 4u, 8u, 2, listOf(4u, 6u, 8u))
+        doTest((8u.toUShort() downTo 3u.toUShort() step 2).reversed(), 4u, 8u, 2, listOf(4u, 6u, 8u))
+        doTest((8uL downTo 3uL step 2L).reversed(), 4uL, 8uL, 2L, listOf<ULong>(4u, 6u, 8u))
     }
 
 
@@ -341,7 +405,9 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(MaxL..MaxL step 1, MaxL, MaxL, 1L, listOf(MaxL))
 
         doTest(MaxC..MaxC step 1, MaxC, MaxC, 1, listOf(MaxC))
-        // TODO: Unsigned step
+
+        doTest(MaxUI..MaxUI step 1, MaxUI, MaxUI, 1, listOf(MaxUI))
+        doTest(MaxUL..MaxUL step 1, MaxUL, MaxUL, 1L, listOf(MaxUL))
     }
 
     @Test fun progressionMaxValueMinusTwoToMaxValue() {
@@ -351,7 +417,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((MaxL - 2).toLong()..MaxL step 2, (MaxL - 2).toLong(), MaxL, 2L, listOf((MaxL - 2).toLong(), MaxL))
 
         doTest((MaxC - 2)..MaxC step 2, (MaxC - 2), MaxC, 2, listOf((MaxC - 2), MaxC))
-        // TODO: Unsigned step
+
+        doTest((MaxUI - 2u)..MaxUI step 2, MaxUI - 2u, MaxUI, 2, listOf(MaxUI - 2u, MaxUI))
+        doTest((MaxUB - 2u).toUByte()..MaxUB step 2, (MaxUB - 2u).toUInt(), MaxUB.toUInt(), 2, listOf((MaxUB - 2u).toUInt(), MaxUB.toUInt()))
+        doTest((MaxUS - 2u).toUShort()..MaxUS step 2, (MaxUS - 2u).toUInt(), MaxUS.toUInt(), 2, listOf((MaxUS - 2u).toUInt(), MaxUS.toUInt()))
+        doTest(MaxUL - 2u..MaxUL step 2, MaxUL - 2u, MaxUL, 2L, listOf(MaxUL - 2u, MaxUL))
     }
 
     @Test fun progressionMaxValueToMinValue() {
@@ -361,7 +431,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(MaxL..MinL step 1, MaxL, MinL, 1L, listOf())
 
         doTest(MaxC..MinC step 1, MaxC, MinC, 1, listOf())
-        // TODO: Unsigned step
+
+        doTest(MaxUI..MinUI step 1, MaxUI, MinUI, 1, listOf())
+        doTest(MaxUB..MinUB step 1, MaxUB.toUInt(), MinUB.toUInt(), 1, listOf())
+        doTest(MaxUS..MinUS step 1, MaxUS.toUInt(), MinUS.toUInt(), 1, listOf())
+        doTest(MaxUL..MinUL step 1, MaxUL, MinUL, 1L, listOf())
     }
 
     @Test fun progressionMinValueToMinValue() {
@@ -371,7 +445,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest(MinL..MinL step 1, MinL, MinL, 1L, listOf(MinL))
 
         doTest(MinC..MinC step 1, MinC, MinC, 1, listOf(MinC))
-        // TODO: Unsigned step
+
+        doTest(MinUI..MinUI step 1, MinUI, MinUI, 1, listOf(MinUI))
+        doTest(MinUB..MinUB step 1, MinUB.toUInt(), MinUB.toUInt(), 1, listOf(MinUB.toUInt()))
+        doTest(MinUS..MinUS step 1, MinUS.toUInt(), MinUS.toUInt(), 1, listOf(MinUS.toUInt()))
+        doTest(MinUL..MinUL step 1, MinUL, MinUL, 1L, listOf(MinUL))
     }
 
     @Test fun inexactToMaxValue() {
@@ -381,13 +459,20 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((MaxL - 5).toLong()..MaxL step 3, (MaxL - 5).toLong(), (MaxL - 2).toLong(), 3L, listOf((MaxL - 5).toLong(), (MaxL - 2).toLong()))
 
         doTest((MaxC - 5)..MaxC step 3, (MaxC - 5), (MaxC - 2), 3, listOf((MaxC - 5), (MaxC - 2)))
-        // TODO: Unsigned step
+
+        doTest((MaxUI - 5u)..MaxUI step 3, MaxUI - 5u, MaxUI - 2u, 3, listOf(MaxUI - 5u, MaxUI - 2u))
+        doTest((MaxUB - 5u).toUByte()..MaxUB step 3, (MaxUB - 5u).toUInt(), (MaxUB - 2u).toUInt(), 3, listOf((MaxUB - 5u).toUInt(), (MaxUB - 2u).toUInt()))
+        doTest((MaxUS - 5u).toUShort()..MaxUS step 3, (MaxUS - 5u).toUInt(), (MaxUS - 2u).toUInt(), 3, listOf((MaxUS - 5u).toUInt(), (MaxUS - 2u).toUInt()))
+        doTest((MaxUL - 5u)..MaxUL step 3, (MaxUL - 5u), (MaxUL - 2u), 3L, listOf((MaxUL - 5u), (MaxUL - 2u)))
     }
 
     @Test fun overflowZeroToMinValue() {
         doTest(0..MinI step 3, 0, MinI, 3, listOf())
         doTest(0L..MinL step 3, 0, MinL, 3L, listOf())
-        // TODO: Unsigned step
+
+        // 1u as used as a start since min value is 0u for unsigned types
+        doTest(1u..MinUI step 3, 1u, MinUI, 3, listOf())
+        doTest(1uL..MinUL step 3, 1u, MinUL, 3L, listOf())
     }
 
     @Test fun progressionDownToMinValue() {
@@ -397,7 +482,11 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((MinL + 2).toLong() downTo MinL step 1, (MinL + 2).toLong(), MinL, -1L, listOf((MinL + 2).toLong(), (MinL + 1).toLong(), MinL))
 
         doTest((MinC + 2) downTo MinC step 1, (MinC + 2), MinC, -1, listOf((MinC + 2), (MinC + 1), MinC))
-        // TODO: Unsigned step
+
+        doTest((MinUI + 2u) downTo MinUI step 1, MinUI + 2u, MinUI, -1, listOf(MinUI + 2u, MinUI + 1u, MinUI))
+        doTest((MinUB + 2u).toUByte() downTo MinUB step 1, (MinUB + 2u).toUInt(), MinUB.toUInt(), -1, listOf((MinUB + 2u).toUInt(), (MinUB + 1u).toUInt(), MinUB.toUInt()))
+        doTest((MinUS + 2u).toUShort() downTo MinUS step 1, (MinUS + 2u).toUInt(), MinUS.toUInt(), -1, listOf((MinUS + 2u).toUInt(), (MinUS + 1u).toUInt(), MinUS.toUInt()))
+        doTest((MinUL + 2u) downTo MinUL step 1, (MinUL + 2u), MinUL, -1L, listOf((MinUL + 2u), (MinUL + 1u), MinUL))
     }
 
     @Test fun inexactDownToMinValue() {
@@ -407,12 +496,18 @@ public class RangeIterationTest : RangeIterationTestBase() {
         doTest((MinL + 5).toLong() downTo MinL step 3, (MinL + 5).toLong(), (MinL + 2).toLong(), -3L, listOf((MinL + 5).toLong(), (MinL + 2).toLong()))
 
         doTest((MinC + 5) downTo MinC step 3, (MinC + 5), (MinC + 2), -3, listOf((MinC + 5), (MinC + 2)))
-        // TODO: Unsigned step
+
+        doTest((MinUI + 5u) downTo MinUI step 3, MinUI + 5u, MinUI + 2u, -3, listOf(MinUI + 5u, MinUI + 2u))
+        doTest((MinUB + 5u).toUByte() downTo MinUB step 3, (MinUB + 5u).toUInt(), (MinUB + 2u).toUInt(), -3, listOf((MinUB + 5u).toUInt(), (MinUB + 2u).toUInt()))
+        doTest((MinUS + 5u).toUShort() downTo MinUS step 3, (MinUS + 5u).toUInt(), (MinUS + 2u).toUInt(), -3, listOf((MinUS + 5u).toUInt(), (MinUS + 2u).toUInt()))
+        doTest(MinUL + 5u downTo MinUL step 3, (MinUL + 5u), (MinUL + 2u), -3L, listOf((MinUL + 5u), (MinUL + 2u)))
     }
 
     @Test fun overflowZeroDownToMaxValue() {
         doTest(0 downTo MaxI step 3, 0, MaxI, -3, listOf())
         doTest(0 downTo MaxL step 3, 0, MaxL, -3L, listOf())
-        // TODO: Unsigned step
+
+        doTest(0u downTo MaxUI step 3, 0u, MaxUI, -3, listOf())
+        doTest(0uL downTo MaxUL step 3, 0u, MaxUL, -3L, listOf())
     }
 }
