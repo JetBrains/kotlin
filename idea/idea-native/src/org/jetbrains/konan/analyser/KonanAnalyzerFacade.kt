@@ -67,9 +67,11 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
         fun createLibraryDescriptor(library: Library): ModuleDescriptorImpl? {
 
             val libraryInfo = LibraryInfo(project, library)
-            val libraryPath = libraryInfo.getLibraryRoots().single() // single() because any KLIB should have just one root
 
-            val virtualFile = getVirtualFileNoSizeLimit(File(libraryPath))
+            // "single" because any KLIB should have just one root
+            // "null" just for the case when KLIB accidentally disappeared from the expected location
+            val libraryPath = libraryInfo.getLibraryRoots().singleOrNull()
+            val virtualFile = libraryPath?.let { getVirtualFileNoSizeLimit(File(it)) }
 
             return if (virtualFile != null && virtualFile.exists()) {
                 val libraryDescriptor =
