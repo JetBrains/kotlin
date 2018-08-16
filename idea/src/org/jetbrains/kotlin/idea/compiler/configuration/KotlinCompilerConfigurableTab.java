@@ -162,6 +162,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         if (compilerWorkspaceSettings == null) {
             keepAliveCheckBox.setVisible(false);
             k2jvmPanel.setVisible(false);
+            enableIncrementalCompilationForJsCheckBox.setVisible(false);
         }
 
         reportWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
