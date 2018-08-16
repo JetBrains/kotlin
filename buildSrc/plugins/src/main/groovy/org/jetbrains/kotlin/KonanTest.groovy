@@ -709,6 +709,17 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         }
     }
 
+    static String markMutableObjects(String text) {
+        def idx = text.indexOf("object ")
+        // FIXME: find only those who has vars inside
+        if (idx != -1) {
+            def lineBeforeIdx = text.substring(0, idx).lastIndexOf("\n")
+            text = text.substring(0, lineBeforeIdx) + "\n@kotlin.native.ThreadLocal" + text.substring(lineBeforeIdx)
+        }
+
+        return text
+    }
+
     List<String> createTestFiles() {
         def identifier = /[a-zA-Z_][a-zA-Z0-9_]/
         def fullQualified = /[a-zA-Z_][a-zA-Z0-9_.]/
@@ -741,6 +752,10 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
             if (text =~ boxPattern) {
                 imports.add("${pkg}.*")
             }
+
+            // Find mutable objects that should be marked as ThreadLocal
+            text = markMutableObjects(text)
+
             createFile(filePath, text)
         }
         // TODO: optimize files writes
