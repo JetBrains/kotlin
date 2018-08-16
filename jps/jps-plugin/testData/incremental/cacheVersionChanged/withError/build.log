@@ -1,7 +1,10 @@
 ================ Step #1 =================
 
 Building module1
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
+Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module1' production) are INVALID: actual=CacheVersion(version=777) -> expected=CacheVersion(version=9011001)
+Marked as dirty by Kotlin:
+  module1/src/a.kt
+  module1/src/f.kt
 Cleaning output files:
   out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/module1/A.class
@@ -27,7 +30,9 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module2
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
+Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module2' production) are INVALID: actual=CacheVersion(version=777) -> expected=CacheVersion(version=9011001)
+Marked as dirty by Kotlin:
+  module2/src/b.kt
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/module2/BKt.class
@@ -38,7 +43,9 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module3
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
+Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module3' production) are INVALID: actual=CacheVersion(version=777) -> expected=CacheVersion(version=9011001)
+Marked as dirty by Kotlin:
+  module3/src/c.kt
 Cleaning output files:
   out/production/module3/META-INF/module3.kotlin_module
   out/production/module3/module3/CKt.class
@@ -49,7 +56,9 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module4
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
+Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module4' production) are INVALID: actual=CacheVersion(version=777) -> expected=CacheVersion(version=9011001)
+Marked as dirty by Kotlin:
+  module4/src/d.kt
 Cleaning output files:
   out/production/module4/META-INF/module4.kotlin_module
   out/production/module4/module4/D.class

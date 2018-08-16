@@ -1,7 +1,13 @@
 ================ Step #1 =================
 
+Lookups cache are INVALID: actual=(777, [jvm]) -> expected=(3011001, [jvm])
+Marked as dirty by Kotlin:
+  module1/src/a.kt
+  module1/src/f.kt
+  module2/src/b.kt
+  module3/src/c.kt
+  module4/src/d.kt
 Building module1
-Actions after cache changed: [REBUILD_ALL_KOTLIN, DO_NOTHING]
 Cleaning output files:
   out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/module1/A.class
@@ -12,12 +18,6 @@ Compiling files:
   module1/src/a.kt
   module1/src/f.kt
 End of files
-Marked as dirty by Kotlin:
-  module1/src/a.kt
-  module1/src/f.kt
-  module2/src/b.kt
-  module3/src/c.kt
-  module4/src/d.kt
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
@@ -26,21 +26,13 @@ Name expected
 ================ Step #2 =================
 
 Building module1
-Actions after cache changed: [REBUILD_ALL_KOTLIN, REBUILD_CHUNK]
 Compiling files:
   module1/src/a.kt
   module1/src/f.kt
 End of files
-Marked as dirty by Kotlin:
-  module1/src/a.kt
-  module1/src/f.kt
-  module2/src/b.kt
-  module3/src/c.kt
-  module4/src/d.kt
 Exit code: OK
 ------------------------------------------
 Building module2
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/module2/BKt.class
@@ -51,7 +43,6 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module3
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module3/META-INF/module3.kotlin_module
   out/production/module3/module3/CKt.class
@@ -62,7 +53,6 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module4
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module4/META-INF/module4.kotlin_module
   out/production/module4/module4/D.class
