@@ -659,6 +659,11 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inline.kt");
         }
 
+        @TestMetadata("inlineClass.kt")
+        public void testInlineClass() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineClass.kt");
+        }
+
         @TestMetadata("inlineExtensionToNative.kt")
         public void testInlineExtensionToNative() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/native/inlineExtensionToNative.kt");
