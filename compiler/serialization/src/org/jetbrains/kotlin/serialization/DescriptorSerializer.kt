@@ -164,9 +164,7 @@ class DescriptorSerializer private constructor(
         val hasConstant = compileTimeConstant != null && compileTimeConstant !is NullValue
 
         val hasAnnotations =
-            !descriptor.annotations.isEmpty() ||
-                    descriptor.backingField?.annotations?.isEmpty() == false ||
-                    descriptor.delegateField?.annotations?.isEmpty() == false
+            hasAnnotations(descriptor) || hasAnnotations(descriptor.backingField) || hasAnnotations(descriptor.delegateField)
 
         val propertyFlags = Flags.getAccessorFlags(
             hasAnnotations,
@@ -751,8 +749,8 @@ class DescriptorSerializer private constructor(
             Variance.OUT_VARIANCE -> ProtoBuf.Type.Argument.Projection.OUT
         }
 
-        private fun hasAnnotations(descriptor: Annotated): Boolean =
-            descriptor.nonSourceAnnotations.isNotEmpty()
+        private fun hasAnnotations(descriptor: Annotated?): Boolean =
+            descriptor != null && descriptor.nonSourceAnnotations.isNotEmpty()
 
         fun <T : DeclarationDescriptor> sort(descriptors: Collection<T>): List<T> =
                 ArrayList(descriptors).apply {
