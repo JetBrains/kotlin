@@ -41,13 +41,18 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.or;
 class JsDataClassGenerator extends DataClassMethodGenerator {
     private final TranslationContext context;
 
-    JsDataClassGenerator(KtClassOrObject klass, TranslationContext context) {
+    private final boolean isInline;
+
+    JsDataClassGenerator(KtClassOrObject klass, TranslationContext context, boolean isInline) {
         super(klass, context.bindingContext());
         this.context = context;
+        this.isInline = isInline;
     }
 
     @Override
     public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
+        if (isInline) return;
+
         PropertyDescriptor propertyDescriptor = context.bindingContext().get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
         assert propertyDescriptor != null : "Property descriptor is expected to be non-null";
 
@@ -60,6 +65,8 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
     @Override
     public void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<? extends KtParameter> constructorParameters) {
+        if (isInline) return;
+
         JsFunction functionObj = generateJsMethod(function);
 
         assert function.getValueParameters().size() == constructorParameters.size();
