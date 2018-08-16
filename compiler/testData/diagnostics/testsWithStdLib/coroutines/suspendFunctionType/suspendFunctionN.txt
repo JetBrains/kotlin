@@ -1,5 +1,5 @@
 package
 
-public typealias Test1 = suspend () -> kotlin.Unit
-public typealias Test2 = suspend () -> kotlin.Unit
-public typealias Test3 = [ERROR : kotlin.coroutines.SuspendFunction0<Unit>]<kotlin.Unit>
+public typealias Test1 = [ERROR : SuspendFunction0<Unit>]<kotlin.Unit>
+public typealias Test2 = [ERROR : kotlin.SuspendFunction0<Unit>]<kotlin.Unit>
+public typealias Test3 = suspend () -> kotlin.Unit

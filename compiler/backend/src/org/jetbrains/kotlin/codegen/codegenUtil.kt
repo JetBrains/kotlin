@@ -59,12 +59,11 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
 
-@JvmOverloads
 fun generateIsCheck(
     v: InstructionAdapter,
     kotlinType: KotlinType,
     asmType: Type,
-    isReleaseCoroutines: Boolean = false
+    isReleaseCoroutines: Boolean
 ) {
     if (TypeUtils.isNullableType(kotlinType)) {
         val nope = Label()
@@ -90,13 +89,12 @@ fun generateIsCheck(
     }
 }
 
-@JvmOverloads
 fun generateAsCast(
     v: InstructionAdapter,
     kotlinType: KotlinType,
     asmType: Type,
     isSafe: Boolean,
-    isReleaseCoroutines: Boolean = false
+    isReleaseCoroutines: Boolean
 ) {
     if (!isSafe) {
         if (!TypeUtils.isNullableType(kotlinType)) {

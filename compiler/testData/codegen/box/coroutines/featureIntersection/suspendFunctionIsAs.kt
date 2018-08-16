@@ -21,6 +21,10 @@ class A {
     suspend fun suspendFoo() {}
 }
 
+inline fun <reified T : suspend () -> Unit> checkReified(noinline x: (Any?) -> Unit) {
+    if(x is T) throw IllegalStateException("x is T")
+}
+
 fun box(): String {
     val f1 = ::fn1 as Any
     val sf0 = ::suspendFn0 as Any
@@ -56,6 +60,8 @@ fun box(): String {
     assert(afoo !is SuspendFunction1<*, *>) { "afoo !is SuspendFunction1<*, *>" }
     assert(safoo is Function2<*, *, *>) { "safoo is Function2<*, *, *>" }
     assert(safoo is SuspendFunction1<*, *>) { "asfoo is SuspendFunction1<*, *>" }
+
+    checkReified<suspend () -> Unit> {}
 
     return "OK"
 }
