@@ -187,7 +187,12 @@ private fun StringBuilder.appendElement(element: PsiElement) {
     if (moduleInfo != null) {
         info("moduleInfo.platform", moduleInfo.platform?.toString())
     }
-    info("ideaModule", ifIndexReady { ModuleUtil.findModuleForFile(element.containingFile)?.name ?: "null" } ?: "<index not ready>")
+    val virtualFile = element.containingFile?.virtualFile
+    if (virtualFile != null) {
+        info(
+            "ideaModule",
+            ifIndexReady { ModuleUtil.findModuleForFile(virtualFile, element.project)?.name ?: "null" } ?: "<index not ready>")
+    }
 }
 
 private fun <T : Any> ifIndexReady(body: () -> T): T? = try {
