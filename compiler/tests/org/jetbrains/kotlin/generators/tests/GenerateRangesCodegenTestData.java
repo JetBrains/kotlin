@@ -90,11 +90,11 @@ public class GenerateRangesCodegenTestData {
                 return getResultingType(ELEMENT_TYPE_KNOWN_SUBSTRINGS.get(substring));
             }
         }
-        if (Pattern.compile("\\dL").matcher(rangeExpression).find()) {
-            return "Long";
-        }
         if (Pattern.compile("\\duL", Pattern.CASE_INSENSITIVE).matcher(rangeExpression).find()) {
             return "ULong";
+        }
+        if (Pattern.compile("\\dL").matcher(rangeExpression).find()) {
+            return "Long";
         }
         if (Pattern.compile("\\du", Pattern.CASE_INSENSITIVE).matcher(rangeExpression).find()) {
             return "UInt";

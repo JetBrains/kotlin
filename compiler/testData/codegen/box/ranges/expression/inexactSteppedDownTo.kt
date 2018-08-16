@@ -57,5 +57,45 @@ fun box(): String {
         return "Wrong elements for 'd' downTo 'a' step 2: $list5"
     }
 
+    val list6 = ArrayList<UInt>()
+    val range6 = 8u downTo 3u step 2
+    for (i in range6) {
+        list6.add(i)
+        if (list6.size > 23) break
+    }
+    if (list6 != listOf<UInt>(8u, 6u, 4u)) {
+        return "Wrong elements for 8u downTo 3u step 2: $list6"
+    }
+
+    val list7 = ArrayList<UInt>()
+    val range7 = 8u.toUByte() downTo 3u.toUByte() step 2
+    for (i in range7) {
+        list7.add(i)
+        if (list7.size > 23) break
+    }
+    if (list7 != listOf<UInt>(8u, 6u, 4u)) {
+        return "Wrong elements for 8u.toUByte() downTo 3u.toUByte() step 2: $list7"
+    }
+
+    val list8 = ArrayList<UInt>()
+    val range8 = 8u.toUShort() downTo 3u.toUShort() step 2
+    for (i in range8) {
+        list8.add(i)
+        if (list8.size > 23) break
+    }
+    if (list8 != listOf<UInt>(8u, 6u, 4u)) {
+        return "Wrong elements for 8u.toUShort() downTo 3u.toUShort() step 2: $list8"
+    }
+
+    val list9 = ArrayList<ULong>()
+    val range9 = 8uL downTo 3uL step 2L
+    for (i in range9) {
+        list9.add(i)
+        if (list9.size > 23) break
+    }
+    if (list9 != listOf<ULong>(8u, 6u, 4u)) {
+        return "Wrong elements for 8uL downTo 3uL step 2L: $list9"
+    }
+
     return "OK"
 }

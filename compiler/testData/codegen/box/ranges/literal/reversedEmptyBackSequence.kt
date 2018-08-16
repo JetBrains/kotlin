@@ -52,5 +52,41 @@ fun box(): String {
         return "Wrong elements for ('a' downTo 'c').reversed(): $list5"
     }
 
+    val list6 = ArrayList<UInt>()
+    for (i in (3u downTo 5u).reversed()) {
+        list6.add(i)
+        if (list6.size > 23) break
+    }
+    if (list6 != listOf<UInt>()) {
+        return "Wrong elements for (3u downTo 5u).reversed(): $list6"
+    }
+
+    val list7 = ArrayList<UInt>()
+    for (i in (3u.toUByte() downTo 5u.toUByte()).reversed()) {
+        list7.add(i)
+        if (list7.size > 23) break
+    }
+    if (list7 != listOf<UInt>()) {
+        return "Wrong elements for (3u.toUByte() downTo 5u.toUByte()).reversed(): $list7"
+    }
+
+    val list8 = ArrayList<UInt>()
+    for (i in (3u.toUShort() downTo 5u.toUShort()).reversed()) {
+        list8.add(i)
+        if (list8.size > 23) break
+    }
+    if (list8 != listOf<UInt>()) {
+        return "Wrong elements for (3u.toUShort() downTo 5u.toUShort()).reversed(): $list8"
+    }
+
+    val list9 = ArrayList<ULong>()
+    for (i in (3uL downTo 5uL).reversed()) {
+        list9.add(i)
+        if (list9.size > 23) break
+    }
+    if (list9 != listOf<ULong>()) {
+        return "Wrong elements for (3uL downTo 5uL).reversed(): $list9"
+    }
+
     return "OK"
 }
