@@ -1,14 +1,20 @@
-apply plugin: 'konan'
-
 buildscript {
     repositories {
-        mavenCentral()
+        maven {
+            url 'https://cache-redirector.jetbrains.com/maven-central'
+        }
+        maven {
+            url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+        }
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
     }
 }
+
+apply plugin: 'konan'
+
 konan.targets = ['macbook', 'linux']
 
 def localMavenRepo="file://${new File(System.properties['user.home'] as String)}/.m2-kotlin-native"
@@ -19,10 +25,8 @@ repositories {
     }
 }
 
-
 konanArtifacts {
     program('Curl') {
-        dependsOn ':libcurl:publish'
         dependencies {
             artifactCurl 'org.jetbrains.kotlin.native:libcurl:1.0'
         }

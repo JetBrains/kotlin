@@ -1,11 +1,12 @@
 # HTTP client
 
- This example shows how to communicate with libcurl, HTTP/HTTPS/FTP/etc client library.
- Debian-like distros may need to `apt-get install libcurl4-openssl-dev`.
+This example shows how to communicate with libcurl, HTTP/HTTPS/FTP/etc client library and how to
+depend on an artifact published in a maven repository. The sample depends on a library
+built by [libcurl sample](../libcurl) so you need to run it first.
+ 
+To build use `../gradlew build`.
 
-To build use `../gradlew build` or `./build.sh`.
-
-To run use `../gradlew run`
+To run use `../gradlew run`.
 
 To change run arguments, change property runArgs in gradle.propeties file 
 or pass `-PrunArgs="https://www.jetbrains.com"` to gradle run. 
