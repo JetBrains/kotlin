@@ -80,5 +80,6 @@
         <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor" order="first"/>
 
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
     </extensions>
 </idea-plugin>

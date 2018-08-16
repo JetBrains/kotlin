@@ -88,6 +88,7 @@
         <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor" order="first"/>
 
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
 
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
     </extensions>

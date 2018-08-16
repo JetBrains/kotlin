@@ -198,6 +198,24 @@ open class GradleKotlinMPPCommonFrameworkSupportProvider :
     override fun getDescription() = "Shared code for a Kotlin multiplatform project (targeting JVM and JS)"
 }
 
+class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
+    "KOTLIN_MPP", "Kotlin (Multiplatform - Experimental)", KotlinIcons.MPP
+) {
+    override fun getPluginId() = "kotlin-multiplatform"
+    override fun getPluginExpression() = "id 'kotlin-multiplatform'"
+
+    override fun getDependencies(sdk: Sdk?): List<String> = listOf()
+    override fun getTestDependencies(): List<String> = listOf()
+
+    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
+        if (specifyPluginVersionIfNeeded) {
+            settingsBuilder.addResolutionStrategy("kotlin-multiplatform")
+        }
+    }
+
+    override fun getDescription() = "Kotlin multiplatform code"
+}
+
 class GradleKotlinMPPJavaFrameworkSupportProvider
     : GradleKotlinJavaFrameworkSupportProvider("KOTLIN_MPP_JVM", "Kotlin (Multiplatform JVM - Experimental)") {
 
