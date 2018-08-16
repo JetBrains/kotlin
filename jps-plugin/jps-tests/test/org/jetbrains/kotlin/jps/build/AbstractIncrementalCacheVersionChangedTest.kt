@@ -20,7 +20,6 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
 import org.jetbrains.kotlin.incremental.testingUtils.ModifyContent
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
-import org.jetbrains.kotlin.jps.incremental.JvmCacheVersionProvider
 
 abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     override fun performAdditionalModifications(modifications: List<Modification>) {
@@ -34,7 +33,7 @@ abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJ
         }
 
         if (modifiedFiles.none { it.endsWith("do-not-change-cache-versions") }) {
-            val cacheVersionProvider = JvmCacheVersionProvider(paths, isIncrementalCompilationEnabled = true)
+            val cacheVersionProvider = CacheVersionProvider(paths, isIncrementalCompilationEnabled = true)
             val versions = getVersions(cacheVersionProvider, targets)
             val versionFiles = versions.map { it.formatVersionFile }.filter { it.exists() }
             versionFiles.forEach { it.writeText("777") }

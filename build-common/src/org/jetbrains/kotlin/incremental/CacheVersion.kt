@@ -28,7 +28,6 @@ private val DATA_CONTAINER_VERSION = 3
 
 private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
 private val DATA_CONTAINER_VERSION_FILE_NAME = "data-container-format-version.txt"
-private val DATA_CONTAINER_JS_VERSION_FILE_NAME = "data-container-js-format-version.txt"
 
 class CacheVersion(
         private val ownVersion: Int,
@@ -103,19 +102,10 @@ fun normalCacheVersion(dataRoot: File, enabled: Boolean): CacheVersion =
                      whenTurnedOff = CacheVersion.Action.CLEAN_NORMAL_CACHES,
                      isEnabled = enabled)
 
-private fun dataContainerVersion(versionFile: File, enabled: Boolean): CacheVersion =
-    CacheVersion(
-        ownVersion = DATA_CONTAINER_VERSION,
-        versionFile = versionFile,
-        whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
-        whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
-        whenTurnedOff = CacheVersion.Action.CLEAN_DATA_CONTAINER,
-        isEnabled = enabled
-    )
-
 fun dataContainerCacheVersion(dataRoot: File, enabled: Boolean): CacheVersion =
-    dataContainerVersion(dataRoot.resolve(DATA_CONTAINER_VERSION_FILE_NAME), enabled)
-
-fun dataContainerJsCacheVersion(dataRoot: File, enabled: Boolean): CacheVersion =
-    dataContainerVersion(dataRoot.resolve(DATA_CONTAINER_JS_VERSION_FILE_NAME), enabled)
-
+        CacheVersion(ownVersion = DATA_CONTAINER_VERSION,
+                     versionFile = File(dataRoot, DATA_CONTAINER_VERSION_FILE_NAME),
+                     whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
+                     whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
+                     whenTurnedOff = CacheVersion.Action.CLEAN_DATA_CONTAINER,
+                     isEnabled = enabled)

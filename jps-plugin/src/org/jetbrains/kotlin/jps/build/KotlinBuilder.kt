@@ -140,12 +140,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.warn("Unable to find Kotlin build target for JPS target ${jpsRepresentativeTarget.presentableName}")
         }
         if (System.getProperty(SKIP_CACHE_VERSION_CHECK_PROPERTY) == null && representativeTarget != null) {
-            val actions = representativeTarget.cacheVersionsProvider()?.let { cacheVersionsProvider ->
-                val actions = checkCachesVersions(context, cacheVersionsProvider, chunk)
-                applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
-                actions
-            } ?: emptySet()
-
+            val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths, representativeTarget.isIncrementalCompilationEnabled)
+            val actions = checkCachesVersions(context, cacheVersionsProvider, chunk)
+            applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
             if (CacheVersion.Action.REBUILD_ALL_KOTLIN in actions) {
                 return
             }

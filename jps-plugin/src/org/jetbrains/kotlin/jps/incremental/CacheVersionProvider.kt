@@ -21,29 +21,24 @@ import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.dataContainerCacheVersion
-import org.jetbrains.kotlin.incremental.dataContainerJsCacheVersion
 import org.jetbrains.kotlin.incremental.normalCacheVersion
 import java.io.File
 
-interface CacheVersionProvider {
-    fun normalVersion(target: ModuleBuildTarget): CacheVersion
-    fun dataContainerVersion(): CacheVersion
-    fun allVersions(targets: Iterable<ModuleBuildTarget>): Iterable<CacheVersion>
-}
 
-abstract class CacheVersionProviderBase(
+class CacheVersionProvider(
     private val paths: BuildDataPaths,
-    protected val isIncrementalCompilationEnabled: Boolean
-) : CacheVersionProvider {
-    protected val BuildTarget<*>.dataRoot: File
+    private val isIncrementalCompilationEnabled: Boolean
+) {
+    private val BuildTarget<*>.dataRoot: File
         get() = paths.getTargetDataRoot(this)
 
-    override fun normalVersion(target: ModuleBuildTarget): CacheVersion =
-        normalCacheVersion(target.dataRoot, isIncrementalCompilationEnabled)
+    fun normalVersion(target: ModuleBuildTarget): CacheVersion = normalCacheVersion(target.dataRoot, isIncrementalCompilationEnabled)
 
-    override fun allVersions(targets: Iterable<ModuleBuildTarget>): Iterable<CacheVersion> {
+    fun dataContainerVersion(): CacheVersion = dataContainerCacheVersion(KotlinDataContainerTarget.dataRoot, isIncrementalCompilationEnabled)
+
+    fun allVersions(targets: Iterable<ModuleBuildTarget>): Iterable<CacheVersion> {
         val versions = arrayListOf<CacheVersion>()
-        versions.add(dataContainerVersion())
+        versions.add(dataContainerCacheVersion(KotlinDataContainerTarget.dataRoot, isIncrementalCompilationEnabled))
 
         for (dataRoot in targets.map { it.dataRoot }) {
             versions.add(normalCacheVersion(dataRoot, isIncrementalCompilationEnabled))
@@ -51,20 +46,4 @@ abstract class CacheVersionProviderBase(
 
         return versions
     }
-}
-
-open class JvmCacheVersionProvider(
-    paths: BuildDataPaths, isIncrementalCompilationEnabled: Boolean
-) : CacheVersionProviderBase(paths, isIncrementalCompilationEnabled) {
-
-    override fun dataContainerVersion(): CacheVersion =
-        dataContainerCacheVersion(KotlinDataContainerTarget.dataRoot, isIncrementalCompilationEnabled)
-}
-
-class JsCacheVersionProvider(
-    paths: BuildDataPaths, isIncrementalCompilationEnabled: Boolean
-) : CacheVersionProviderBase(paths, isIncrementalCompilationEnabled) {
-
-    override fun dataContainerVersion(): CacheVersion =
-        dataContainerJsCacheVersion(KotlinDataContainerTarget.dataRoot, isIncrementalCompilationEnabled)
 }

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
 import org.jetbrains.kotlin.incremental.testingUtils.ModifyContent
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
-import org.jetbrains.kotlin.jps.incremental.JvmCacheVersionProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.platforms.kotlinBuildTargets
 import org.jetbrains.kotlin.utils.Printer
@@ -90,7 +89,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         val targets = projectDescriptor.allModuleTargets
         val dataManager = projectDescriptor.dataManager
         val paths = dataManager.dataPaths
-        val versions = JvmCacheVersionProvider(paths, isIncrementalCompilationEnabled = true)
+        val versions = CacheVersionProvider(paths, isIncrementalCompilationEnabled = true)
 
         dumpCachesForTarget(p, paths, KotlinDataContainerTarget, versions.dataContainerVersion().formatVersionFile)
 

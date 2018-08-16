@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
+import org.jetbrains.kotlin.incremental.LookupTrackerImpl
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
@@ -52,7 +54,6 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo>(
     val jpsModuleBuildTarget: ModuleBuildTarget
 ) {
     abstract val isIncrementalCompilationEnabled: Boolean
-    abstract fun cacheVersionsProvider(): CacheVersionProvider?
 
     val module: JpsModule
         get() = jpsModuleBuildTarget.module
@@ -282,7 +283,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo>(
     fun saveVersions(context: CompileContext, chunk: ModuleChunk, commonArguments: CommonCompilerArguments) {
         val dataManager = context.projectDescriptor.dataManager
         val targets = chunk.targets
-        val cacheVersionsProvider = this.cacheVersionsProvider() ?: return
+        val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths, isIncrementalCompilationEnabled)
         cacheVersionsProvider.allVersions(targets).forEach { it.saveIfNeeded() }
 
         val buildMetaInfo = buildMetaInfoFactory.create(commonArguments)
