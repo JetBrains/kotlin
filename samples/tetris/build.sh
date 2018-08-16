@@ -44,7 +44,7 @@ mkdir -p $DIR/build/bin/
 
 cinterop -def $DIR/src/main/c_interop/sdl.def -compilerOpts "$CFLAGS" -target $TARGET -o $DIR/build/c_interop/sdl || exit 1
 
-konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin/Tetris.kt \
+konanc $COMPILER_ARGS -target $TARGET $DIR/src/main/kotlin \
        -library $DIR/build/c_interop/sdl -linkerOpts "$LINKER_ARGS" \
        -o $DIR/build/bin/Tetris || exit 1
 

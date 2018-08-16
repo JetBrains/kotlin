@@ -9,12 +9,11 @@ set MINGW=\msys64\mingw64
 
 set "CFLAGS=-I%MINGW%\include\SDL2"
 rem Add -Wl,--subsystem,windows for making GUI subsystem application.
-set "LFLAGS=%DIR%\Tetris.res -L%MINGW%\lib -lSDL2"
+set "LFLAGS=%DIR%\Tetris.res -L%MINGW%\lib -Wl,-Bstatic -lstdc++ -static -lSDL2 -limm32 -lole32 -loleaut32 -lversion -lwinmm -mwindows"
 
 call cinterop -def "%DIR%\src\main\c_interop\sdl.def" -compilerOpts "%CFLAGS%" -target "%TARGET%" -o sdl || exit /b
 rem Windows build requires Windows Resource Compiler in paths.
 call windres "%DIR%\Tetris.rc" -O coff -o "%DIR%\Tetris.res" || exit /b
-call konanc -target "%TARGET%" "%DIR%\src\main\kotlin\Tetris.kt" -library sdl -linkerOpts "%LFLAGS%" -opt -o Tetris || exit /b
+call konanc -target "%TARGET%" "%DIR%\src\main\kotlin" -library sdl -linkerOpts "%LFLAGS%" -opt -o Tetris || exit /b
 
-copy %MINGW%\bin\SDL2.dll SDL2.dll
 copy src\main\resources\tetris_all.bmp tetris_all.bmp

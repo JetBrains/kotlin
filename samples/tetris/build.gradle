@@ -78,12 +78,6 @@ compileKonan {
                 from 'src/main/resources'
                 into task.artifact.parentFile
             }
-            if (task.name.endsWith('Mingw_x64')) {
-                copy {
-                    from "${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/bin/SDL2.dll"
-                    into task.artifact.parentFile
-                }
-            }
         }
     }
 }
