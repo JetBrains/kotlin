@@ -94,7 +94,14 @@ fun InstructionAdapter.genKOutputMethodCall(property: SerializableProperty, clas
     val sti = getSerialTypeInfo(property, propertyType)
     val useSerializer = if (fromClassStartVar == null) stackValueSerializerInstanceFromSerializer(classCodegen, sti)
     else stackValueSerializerInstanceFromClass(classCodegen, sti, fromClassStartVar)
-    if (!sti.unit) classCodegen.genPropertyOnStack(this, expressionCodegen.context, property.descriptor, propertyOwnerType, ownerVar)
+    if (!sti.unit) ImplementationBodyCodegen.genPropertyOnStack(
+        this,
+        expressionCodegen.context,
+        property.descriptor,
+        propertyOwnerType,
+        ownerVar,
+        classCodegen.state
+    )
     invokeinterface(kOutputType.internalName,
         CallingConventions.encode + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
                   "(" + descType.descriptor + "I" +

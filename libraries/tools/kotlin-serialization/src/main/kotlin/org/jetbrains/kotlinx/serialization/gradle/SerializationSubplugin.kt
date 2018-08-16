@@ -22,6 +22,7 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
@@ -63,7 +64,7 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        javaSourceSet: SourceSet?
+        kotlinCompilation: KotlinCompilation?
     )
             : List<SubpluginOption> {
         return emptyList()
