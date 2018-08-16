@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -81,6 +82,8 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
             ResultWithDiagnostics.Failure(*messageCollector.diagnostics.toTypedArray(), *diagnostics)
 
         try {
+            setIdeaIoUseFallback()
+
             val scriptCompileConfiguration = configurator?.defaultConfiguration?.let { additionalConfiguration.cloneWithNewParent(it) }
                 ?: additionalConfiguration
             var environment: KotlinCoreEnvironment? = null
