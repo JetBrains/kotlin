@@ -17,6 +17,9 @@ class KonanMetaFileIndex
         FqName(fragment.fqName)
     }
 
+    // this is to express intention to index all Kotlin/Native metadata files irrespectively to file size
+    override fun getFileTypesWithSizeLimitNotApplicable() = listOf(KonanMetaFileType)
+
     override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KonanMetaFileType }
 
     override fun getIndexer() = dataIndexer
