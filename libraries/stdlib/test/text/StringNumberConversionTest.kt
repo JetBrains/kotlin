@@ -190,6 +190,54 @@ class StringNumberConversionTest {
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37L.toString(radix = 37) }
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1L.toString(radix = 1) }
     }
+
+    @Test fun ubyteToStringWithRadix() {
+        assertEquals("7a", 0x7a.toUByte().toString(16))
+        assertEquals("80", Byte.MIN_VALUE.toUByte().toString(radix = 16))
+        assertEquals("ff", UByte.MAX_VALUE.toString(radix = 16))
+
+        assertEquals("40", Byte.MIN_VALUE.toUByte().toString(radix = 32))
+        assertEquals("7v", UByte.MAX_VALUE.toString(radix = 32))
+
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37.toUByte().toString(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toUByte().toString(radix = 1) }
+    }
+
+    @Test fun ushortToStringWithRadix() {
+        assertEquals("7FFF", 0x7FFF.toUShort().toString(radix = 16).toUpperCase())
+        assertEquals("8000", 0x8000.toUShort().toString(radix = 16))
+        assertEquals("ffff", UShort.MAX_VALUE.toString(radix = 16))
+
+        assertEquals("1ekf", UShort.MAX_VALUE.toString(radix = 36))
+
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37.toUShort().toString(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toUShort().toString(radix = 1) }
+    }
+
+    @Test fun uintToStringWithRadix() {
+        assertEquals("ffffff01", (-255).toUInt().toString(radix = 16))
+        assertEquals("ffffffff", UInt.MAX_VALUE.toString(radix = 16))
+
+        assertEquals("1100110", 102u.toString(radix = 2))
+        assertEquals("kona", 411787u.toString(radix = 27))
+        assertEquals("3vvvvvv", UInt.MAX_VALUE.toString(radix = 32))
+
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37u.toString(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1u.toString(radix = 1) }
+
+    }
+
+    @Test fun ulongToStringWithRadix() {
+        assertEquals("7f11223344556677", 0x7F11223344556677u.toString(radix = 16))
+        assertEquals("89aabbccddeeff11", 0x89AABBCCDDEEFF11u.toString(radix = 16))
+        assertEquals("8000000000000000", Long.MIN_VALUE.toULong().toString(radix = 16))
+        assertEquals("ffffffffffffffff", ULong.MAX_VALUE.toString(radix = 16))
+
+        assertEquals("hazelnut", 1356099454469uL.toString(radix = 36))
+
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { 37uL.toString(radix = 37) }
+        assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1uL.toString(radix = 1) }
+    }
 }
 
 internal fun doubleTotalOrderEquals(a: Double?, b: Double?): Boolean = (a as Any?) == b

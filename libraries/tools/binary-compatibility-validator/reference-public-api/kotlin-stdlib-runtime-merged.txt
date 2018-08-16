@@ -5059,3 +5059,10 @@ public final class kotlin/text/Typography {
 	public static final field tm C
 }
 
+public final class kotlin/text/UStringNumberConversionsKt {
+	public static final fun toString (BI)Ljava/lang/String;
+	public static final fun toString (II)Ljava/lang/String;
+	public static final fun toString (JI)Ljava/lang/String;
+	public static final fun toString (SI)Ljava/lang/String;
+}
+
