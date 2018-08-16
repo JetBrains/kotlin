@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import org.jetbrains.kotlin.incremental.CacheVersion
-import org.jetbrains.kotlin.incremental.customCacheVersion
+import org.jetbrains.kotlin.incremental.customCacheVersionManager
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import java.io.File
 
 internal const val GRADLE_CACHE_VERSION = 4
 internal const val GRADLE_CACHE_VERSION_FILE_NAME = "gradle-format-version.txt"
 
-internal fun gradleCacheVersion(dataRoot: File, enabled: Boolean): CacheVersion =
-    customCacheVersion(
+internal fun gradleCacheVersionManager(dataRoot: File, enabled: Boolean): CacheVersionManager =
+    customCacheVersionManager(
         GRADLE_CACHE_VERSION,
         GRADLE_CACHE_VERSION_FILE_NAME,
         dataRoot,

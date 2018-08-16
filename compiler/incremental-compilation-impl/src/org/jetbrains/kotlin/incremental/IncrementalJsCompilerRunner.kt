@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.*
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import java.io.File
@@ -38,7 +39,7 @@ fun makeJsIncrementally(
         reporter: ICReporter = EmptyICReporter
 ) {
     val isIncremental = IncrementalCompilation.isEnabledForJs()
-    val versions = commonCacheVersions(cachesDir, isIncremental) + standaloneCacheVersion(cachesDir, isIncremental)
+    val versions = commonCacheVersionsManagers(cachesDir, isIncremental) + standaloneCacheVersionManager(cachesDir, isIncremental)
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
             .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
@@ -64,16 +65,16 @@ inline fun <R> withJsIC(fn: () -> R): R {
 }
 
 class IncrementalJsCompilerRunner(
-        workingDir: File,
-        cacheVersions: List<CacheVersion>,
-        reporter: ICReporter,
+    workingDir: File,
+    cachesVersionManagers: List<CacheVersionManager>,
+    reporter: ICReporter,
         buildHistoryFile: File,
         private val modulesApiHistory: ModulesApiHistory
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
-        workingDir,
-        "caches-js",
-        cacheVersions,
-        reporter,
+    workingDir,
+    "caches-js",
+    cachesVersionManagers,
+    reporter,
         buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
