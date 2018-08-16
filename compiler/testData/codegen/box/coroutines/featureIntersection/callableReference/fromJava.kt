@@ -7,6 +7,7 @@
 
 // FILE: test.kt
 import kotlin.reflect.KSuspendFunction0
+import kotlin.coroutines.SuspendFunction0
 
 class Test {
     suspend fun o() = "O"
