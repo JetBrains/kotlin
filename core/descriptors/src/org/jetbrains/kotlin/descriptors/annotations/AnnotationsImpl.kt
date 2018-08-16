@@ -42,8 +42,6 @@ class AnnotationsImpl : Annotations {
                 .map { AnnotationWithTarget(it.annotation, it.target!!) }
     }
 
-    override fun getAllAnnotations() = targetedAnnotations
-
     override fun iterator() = annotations.iterator()
 
     override fun toString() = annotations.toString()

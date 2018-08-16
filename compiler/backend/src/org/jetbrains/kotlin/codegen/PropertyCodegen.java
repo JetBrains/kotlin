@@ -335,7 +335,7 @@ public class PropertyCodegen {
     // accessible via reflection, and 'deprecated' and 'synthetic' flags prevent this method from being called accidentally
     private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor, boolean isBackingFieldOwner) {
         Annotations annotations = descriptor.getAnnotations();
-        if (annotations.getAllAnnotations().isEmpty()) return;
+        if (annotations.isEmpty()) return;
 
         Method signature = getSyntheticMethodSignature(descriptor);
         if (kind != OwnerKind.DEFAULT_IMPLS && CodegenContextUtil.isImplClassOwner(context)) {

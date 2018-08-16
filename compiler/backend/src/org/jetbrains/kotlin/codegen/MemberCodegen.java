@@ -245,7 +245,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     private void genTypeAliasAnnotationsMethodIfRequired(TypeAliasDescriptor typeAliasDescriptor) {
         boolean isAnnotationsMethodOwner = CodegenContextUtil.isImplClassOwner(context);
         Annotations annotations = typeAliasDescriptor.getAnnotations();
-        if (!isAnnotationsMethodOwner || annotations.getAllAnnotations().isEmpty()) return;
+        if (!isAnnotationsMethodOwner || annotations.isEmpty()) return;
 
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedTypeAlias(typeAliasDescriptor.getName());
         generateSyntheticAnnotationsMethod(typeAliasDescriptor, new Method(name, "()V"), annotations);

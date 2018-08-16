@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
@@ -259,10 +258,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
             parameter
                 .annotations
-                .getAllAnnotations()
-                .filterNot { it.annotation.fqName in NULLABILITY_ANNOTATIONS }
+                .filterNot { it.fqName in NULLABILITY_ANNOTATIONS }
                 .forEach {
-                    it.annotation.fqName?.let { append("@${it.shortName().asString()} ") }
+                    it.fqName?.let { fqName -> append("@${fqName.shortName().asString()} ") }
                 }
 
             if (parameter.varargElementType != null) {

@@ -50,6 +50,4 @@ private class AnnotationsWithOnly(val presentAnnotation: FqName): Annotations {
     override fun hasAnnotation(fqName: FqName): Boolean = fqName == this.presentAnnotation
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
-
-    override fun getAllAnnotations(): List<AnnotationWithTarget> = emptyList()
 }

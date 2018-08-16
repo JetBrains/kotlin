@@ -1,8 +1,8 @@
 package
 
 public final class A {
-    public constructor A(/*0*/ @Ann @Ann x: kotlin.Int, /*1*/ @RepeatableAnn @Ann y: kotlin.Int)
-    @Ann @RepeatableAnn @RepeatableAnn @field:Ann public final val a: kotlin.Int = 0
+    public constructor A(/*0*/ @Ann @Ann x: kotlin.Int, /*1*/ @Ann @RepeatableAnn y: kotlin.Int)
+    @RepeatableAnn @Ann @RepeatableAnn @field:Ann public final val a: kotlin.Int = 0
     @Ann @Ann @field:Ann public final val b: kotlin.Int = 0
     @field:RepeatableAnn @field:RepeatableAnn public final val c: kotlin.Int = 0
     @RepeatableAnn @RepeatableAnn public final val d: kotlin.Int = 0

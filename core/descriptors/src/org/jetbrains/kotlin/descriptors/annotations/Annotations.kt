@@ -28,7 +28,6 @@ interface Annotations : Iterable<AnnotationDescriptor> {
      * there may be use-site-targeted annotations applicable to the declaration!
      *
      * @see getUseSiteTargetedAnnotations
-     * @see getAllAnnotations
      */
     fun isEmpty(): Boolean
 
@@ -38,11 +37,6 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
     fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
 
-    /**
-     * @return both targeted and annotations without target. Annotation order is preserved.
-     */
-    fun getAllAnnotations(): List<AnnotationWithTarget>
-
     companion object {
         val EMPTY: Annotations = object : Annotations {
             override fun isEmpty() = true
@@ -50,8 +44,6 @@ interface Annotations : Iterable<AnnotationDescriptor> {
             override fun findAnnotation(fqName: FqName) = null
 
             override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
-
-            override fun getAllAnnotations() = emptyList<AnnotationWithTarget>()
 
             override fun iterator() = emptyList<AnnotationDescriptor>().iterator()
 
@@ -77,10 +69,6 @@ class FilteredAnnotations(
         return delegate.getUseSiteTargetedAnnotations().filter { shouldBeReturned(it.annotation) }
     }
 
-    override fun getAllAnnotations(): List<AnnotationWithTarget> {
-        return delegate.getAllAnnotations().filter { shouldBeReturned(it.annotation) }
-    }
-
     override fun iterator() = delegate.filter(this::shouldBeReturned).iterator()
 
     override fun isEmpty() = delegate.any(this::shouldBeReturned)
@@ -103,8 +91,6 @@ class CompositeAnnotations(
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findAnnotation(fqName) }.firstOrNull()
 
     override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
-
-    override fun getAllAnnotations() = delegates.flatMap { it.getAllAnnotations() }
 
     override fun iterator() = delegates.asSequence().flatMap { it.asSequence() }.iterator()
 }

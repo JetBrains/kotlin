@@ -33,8 +33,6 @@ open class DeserializedAnnotations(
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
-    override fun getAllAnnotations(): List<AnnotationWithTarget> = annotations.map { AnnotationWithTarget(it, null) }
-
     override fun iterator(): Iterator<AnnotationDescriptor> = annotations.iterator()
 }
 
@@ -57,8 +55,6 @@ open class DeserializedAnnotationsWithPossibleTargets(
         annotations.firstOrNull { (annotation, target) -> target == null && annotation.fqName == fqName }?.annotation
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = annotations.filter { it.target != null }
-
-    override fun getAllAnnotations(): List<AnnotationWithTarget> = annotations
 
     override fun iterator(): Iterator<AnnotationDescriptor> {
         return annotations.asSequence().filter { it.target == null }.map { it.annotation }.iterator()

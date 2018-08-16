@@ -38,8 +38,6 @@ class LazyJavaAnnotations(
 
     override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
 
-    override fun getAllAnnotations() = this.map { AnnotationWithTarget(it, null) }
-
     override fun iterator() =
             (annotationOwner.annotations.asSequence().map(annotationDescriptors)
              + JavaAnnotationMapper.findMappedJavaAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated, annotationOwner, c)).filterNotNull().iterator()
