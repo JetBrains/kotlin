@@ -209,8 +209,10 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
                 if (dispatchReceiverTarget == lambdaDescriptor || extensionReceiverTarget == lambdaDescriptor) {
                     val parent = expression.parent
                     if (parent is KtCallExpression && expression == parent.calleeExpression) {
-                        replacements.add(parent) { element ->
-                            factory.createExpressionByPattern("$0.$1", parameterName, element)
+                        if ((parent.parent as? KtQualifiedExpression)?.receiverExpression !is KtThisExpression) {
+                            replacements.add(parent) { element ->
+                                factory.createExpressionByPattern("$0.$1", parameterName, element)
+                            }
                         }
                     } else if (parent is KtQualifiedExpression && parent.receiverExpression is KtThisExpression) {
                         // do nothing

@@ -5175,6 +5175,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/method.kt");
             }
 
+            @TestMetadata("methodWithThis.kt")
+            public void testMethodWithThis() throws Exception {
+                runTest("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/methodWithThis.kt");
+            }
+
             @TestMetadata("outerLambda.kt")
             public void testOuterLambda() throws Exception {
                 runTest("idea/testData/inspectionsLocal/scopeFunctions/applyToAlso/outerLambda.kt");
