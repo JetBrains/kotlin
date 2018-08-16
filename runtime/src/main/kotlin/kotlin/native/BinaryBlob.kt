@@ -61,7 +61,8 @@ public fun ImmutableBinaryBlob.toByteArray() = toByteArray(0, size)
 
 // Returns stable C pointer to data at certain offset, useful as a way to pass resource
 // to C API.
-public fun ImmutableBinaryBlob.asCPointer(offset: Int) = interpretCPointer<ByteVar>(asCPointerImpl(offset))
+public fun ImmutableBinaryBlob.asCPointer(offset: Int = 0) =
+        interpretCPointer<ByteVar>(asCPointerImpl(offset))!!
 @SymbolName("Kotlin_ImmutableBinaryBlob_asCPointerImpl")
 private external fun ImmutableBinaryBlob.asCPointerImpl(offset: Int): kotlin.native.internal.NativePtr
 
