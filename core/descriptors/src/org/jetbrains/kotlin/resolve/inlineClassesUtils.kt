@@ -34,6 +34,17 @@ fun KotlinType.substitutedUnderlyingType(): KotlinType? {
     return memberScope.getContributedVariables(parameter.name, NoLookupLocation.FOR_ALREADY_TRACKED).singleOrNull()?.type
 }
 
+fun KotlinType.isRecursiveInlineClassType() =
+    isRecursiveInlineClassTypeInner(hashSetOf())
+
+private fun KotlinType.isRecursiveInlineClassTypeInner(visited: HashSet<ClassDescriptor>): Boolean {
+    val descriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return false
+    if (visited.contains(descriptor)) return true
+    if (!descriptor.isInlineClass()) return false
+    visited.add(descriptor)
+    return unsubstitutedUnderlyingType()?.isRecursiveInlineClassTypeInner(visited) ?: false
+}
+
 fun KotlinType.isNullableUnderlyingType(): Boolean {
     if (!isInlineClassType()) return false
     val underlyingType = unsubstitutedUnderlyingType() ?: return false

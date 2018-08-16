@@ -12,13 +12,10 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
-import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
@@ -129,7 +126,8 @@ fun <T : Any> mapType(
         }
 
         descriptor is ClassDescriptor -> {
-            if (descriptor.isInline && !mode.needInlineClassWrapping) {
+            // NB if inline class is recursive, it's ok to map it as wrapped
+            if (descriptor.isInline && !mode.needInlineClassWrapping && !kotlinType.isRecursiveInlineClassType()) {
                 val typeForMapping = computeUnderlyingType(kotlinType)
                 if (typeForMapping != null) {
                     val newMode = if (typeForMapping.isInlineClassType()) mode else mode.wrapInlineClassesMode()

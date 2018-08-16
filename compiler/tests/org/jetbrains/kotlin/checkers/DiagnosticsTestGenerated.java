@@ -10917,6 +10917,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/propertiesWithBackingFieldsInsideInlineClass.kt");
             }
 
+            @TestMetadata("recursiveInlineClasses.kt")
+            public void testRecursiveInlineClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/recursiveInlineClasses.kt");
+            }
+
             @TestMetadata("unsignedLiteralsWithoutArtifactOnClasspath.kt")
             public void testUnsignedLiteralsWithoutArtifactOnClasspath() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/unsignedLiteralsWithoutArtifactOnClasspath.kt");
