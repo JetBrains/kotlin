@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.core.implicitVisibility
+import org.jetbrains.kotlin.idea.core.toKeywordToken
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.declarationVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
@@ -18,7 +23,18 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return declarationVisitor { declaration ->
             val visibilityModifier = declaration.visibilityModifier() ?: return@declarationVisitor
-            val implicitVisibility = declaration.implicitVisibility()
+            val implicitVisibility = when {
+                declaration is KtPropertyAccessor && declaration.isSetter -> {
+                    val property = declaration.parent as? KtProperty
+                    val superPropertySetterDescriptor = if (property?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true)
+                        (property.descriptor as? PropertyDescriptor)?.overriddenDescriptors?.firstOrNull()?.setter
+                    else
+                        null
+                    superPropertySetterDescriptor?.visibility?.toKeywordToken() ?: declaration.implicitVisibility()
+                }
+                else ->
+                    declaration.implicitVisibility()
+            }
             val redundantVisibility = when {
                 visibilityModifier.node.elementType == implicitVisibility ->
                     implicitVisibility
