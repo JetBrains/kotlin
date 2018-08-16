@@ -10,6 +10,10 @@ const val MinB = Byte.MIN_VALUE
 const val MinS = Short.MIN_VALUE
 const val MinL = Long.MIN_VALUE
 const val MinC = Char.MIN_VALUE
+const val MinUI = UInt.MIN_VALUE
+const val MinUB = UByte.MIN_VALUE
+const val MinUS = UShort.MIN_VALUE
+const val MinUL = ULong.MIN_VALUE
 
 fun box(): String {
     val list1 = ArrayList<Int>()
@@ -60,6 +64,46 @@ fun box(): String {
     }
     if (list5 != listOf<Char>(MinC)) {
         return "Wrong elements for MinC..MinC step 1: $list5"
+    }
+
+    val list6 = ArrayList<UInt>()
+    val range6 = MinUI..MinUI step 1
+    for (i in range6) {
+        list6.add(i)
+        if (list6.size > 23) break
+    }
+    if (list6 != listOf<UInt>(MinUI)) {
+        return "Wrong elements for MinUI..MinUI step 1: $list6"
+    }
+
+    val list7 = ArrayList<UInt>()
+    val range7 = MinUB..MinUB step 1
+    for (i in range7) {
+        list7.add(i)
+        if (list7.size > 23) break
+    }
+    if (list7 != listOf<UInt>(MinUB.toUInt())) {
+        return "Wrong elements for MinUB..MinUB step 1: $list7"
+    }
+
+    val list8 = ArrayList<UInt>()
+    val range8 = MinUS..MinUS step 1
+    for (i in range8) {
+        list8.add(i)
+        if (list8.size > 23) break
+    }
+    if (list8 != listOf<UInt>(MinUS.toUInt())) {
+        return "Wrong elements for MinUS..MinUS step 1: $list8"
+    }
+
+    val list9 = ArrayList<ULong>()
+    val range9 = MinUL..MinUL step 1
+    for (i in range9) {
+        list9.add(i)
+        if (list9.size > 23) break
+    }
+    if (list9 != listOf<ULong>(MinUL)) {
+        return "Wrong elements for MinUL..MinUL step 1: $list9"
     }
 
     return "OK"

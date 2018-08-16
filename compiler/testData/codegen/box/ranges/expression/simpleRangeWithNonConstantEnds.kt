@@ -57,5 +57,45 @@ fun box(): String {
         return "Wrong elements for (\"ace\"[1])..(\"age\"[1]): $list5"
     }
 
+    val list6 = ArrayList<UInt>()
+    val range6 = (1u + 2u)..(6u - 1u)
+    for (i in range6) {
+        list6.add(i)
+        if (list6.size > 23) break
+    }
+    if (list6 != listOf<UInt>(3u, 4u, 5u)) {
+        return "Wrong elements for (1u + 2u)..(6u - 1u): $list6"
+    }
+
+    val list7 = ArrayList<UInt>()
+    val range7 = (1u.toUByte() + 2u.toUByte()).toUByte()..(6u.toUByte() - 1u.toUByte()).toUByte()
+    for (i in range7) {
+        list7.add(i)
+        if (list7.size > 23) break
+    }
+    if (list7 != listOf<UInt>(3u, 4u, 5u)) {
+        return "Wrong elements for (1u.toUByte() + 2u.toUByte()).toUByte()..(6u.toUByte() - 1u.toUByte()).toUByte(): $list7"
+    }
+
+    val list8 = ArrayList<UInt>()
+    val range8 = (1u.toUShort() + 2u.toUShort()).toUShort()..(6u.toUShort() - 1u.toUShort()).toUShort()
+    for (i in range8) {
+        list8.add(i)
+        if (list8.size > 23) break
+    }
+    if (list8 != listOf<UInt>(3u, 4u, 5u)) {
+        return "Wrong elements for (1u.toUShort() + 2u.toUShort()).toUShort()..(6u.toUShort() - 1u.toUShort()).toUShort(): $list8"
+    }
+
+    val list9 = ArrayList<ULong>()
+    val range9 = (1uL + 2uL)..(6uL - 1uL)
+    for (i in range9) {
+        list9.add(i)
+        if (list9.size > 23) break
+    }
+    if (list9 != listOf<ULong>(3u, 4u, 5u)) {
+        return "Wrong elements for (1uL + 2uL)..(6uL - 1uL): $list9"
+    }
+
     return "OK"
 }

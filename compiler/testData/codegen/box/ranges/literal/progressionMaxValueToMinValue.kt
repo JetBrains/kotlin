@@ -15,6 +15,14 @@ const val MaxL = Long.MAX_VALUE
 const val MinL = Long.MIN_VALUE
 const val MaxC = Char.MAX_VALUE
 const val MinC = Char.MIN_VALUE
+const val MaxUI = UInt.MAX_VALUE
+const val MinUI = UInt.MIN_VALUE
+const val MaxUB = UByte.MAX_VALUE
+const val MinUB = UByte.MIN_VALUE
+const val MaxUS = UShort.MAX_VALUE
+const val MinUS = UShort.MIN_VALUE
+const val MaxUL = ULong.MAX_VALUE
+const val MinUL = ULong.MIN_VALUE
 
 fun box(): String {
     val list1 = ArrayList<Int>()
@@ -60,6 +68,42 @@ fun box(): String {
     }
     if (list5 != listOf<Char>()) {
         return "Wrong elements for MaxC..MinC step 1: $list5"
+    }
+
+    val list6 = ArrayList<UInt>()
+    for (i in MaxUI..MinUI step 1) {
+        list6.add(i)
+        if (list6.size > 23) break
+    }
+    if (list6 != listOf<UInt>()) {
+        return "Wrong elements for MaxUI..MinUI step 1: $list6"
+    }
+
+    val list7 = ArrayList<UInt>()
+    for (i in MaxUB..MinUB step 1) {
+        list7.add(i)
+        if (list7.size > 23) break
+    }
+    if (list7 != listOf<UInt>()) {
+        return "Wrong elements for MaxUB..MinUB step 1: $list7"
+    }
+
+    val list8 = ArrayList<UInt>()
+    for (i in MaxUS..MinUS step 1) {
+        list8.add(i)
+        if (list8.size > 23) break
+    }
+    if (list8 != listOf<UInt>()) {
+        return "Wrong elements for MaxUS..MinUS step 1: $list8"
+    }
+
+    val list9 = ArrayList<ULong>()
+    for (i in MaxUL..MinUL step 1) {
+        list9.add(i)
+        if (list9.size > 23) break
+    }
+    if (list9 != listOf<ULong>()) {
+        return "Wrong elements for MaxUL..MinUL step 1: $list9"
     }
 
     return "OK"
