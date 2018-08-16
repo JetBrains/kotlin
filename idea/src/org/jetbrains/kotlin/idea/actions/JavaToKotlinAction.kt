@@ -31,7 +31,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ex.MessagesEx
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -52,12 +51,9 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.UserDataProperty
 import java.io.File
 import java.io.IOException
 import java.util.*
-
-var VirtualFile.pathBeforeJ2K: String? by UserDataProperty(Key.create<String>("PATH_BEFORE_J2K_CONVERSION"))
 
 class JavaToKotlinAction : AnAction() {
     companion object {
@@ -93,7 +89,6 @@ class JavaToKotlinAction : AnAction() {
                     }
                     else {
                         val fileName = uniqueKotlinFileName(virtualFile)
-                        virtualFile.pathBeforeJ2K = virtualFile.path
                         virtualFile.rename(this, fileName)
                     }
                 }

@@ -51,7 +51,7 @@ dependencies {
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("java-decompiler"))
-    testRuntime(intellijPluginDep("maven"))
+    //testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
 }

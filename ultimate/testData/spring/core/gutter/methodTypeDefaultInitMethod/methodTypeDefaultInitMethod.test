@@ -1,0 +1,8 @@
+{
+    springConfig: ["config.xml"],
+    file: "Bean.kt",
+    icon: "SpringBeanMethod",
+    tooltip: "Navigate to the spring bean init method declaration",
+    naming: "generic",
+    targets: ["default-init-method"]
+}

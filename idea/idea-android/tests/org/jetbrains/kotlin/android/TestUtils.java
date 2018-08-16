@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.android;
 
 
-import org.jetbrains.annotations.NotNull;
+import com.android.annotations.NonNull;
+import com.intellij.openapi.application.PathManager;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -27,12 +28,12 @@ import java.io.File;
  * stabbed to minimize changes in AndroidTestBase
  */
 public class TestUtils {
-    @NotNull
+    @NonNull
     public static File getSdk() {
         return KotlinTestUtils.findAndroidSdk();
     }
 
-    @NotNull
+    @NonNull
     public static String getLatestAndroidPlatform() {
         return "android-26";
     }

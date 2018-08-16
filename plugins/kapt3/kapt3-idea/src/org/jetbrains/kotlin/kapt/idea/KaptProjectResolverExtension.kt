@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt.idea
 
+import com.android.ide.common.gradle.model.IdeBaseArtifact
 import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
@@ -66,6 +67,8 @@ class KaptGradleModelImpl(
         override val sourceSets: List<KaptSourceSetModel>
 ) : KaptGradleModel
 
+internal typealias AndroidGradleModel = AndroidModuleModel
+
 @Suppress("unused")
 class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
     private companion object {
@@ -115,15 +118,9 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
             val androidModel = androidModelAny.data as? AndroidModuleModel ?: return
             val variant = androidModel.findVariantByName(sourceSet.sourceSetName) ?: return
 
-            androidModel.registerExtraGeneratedSourceFolder(generatedKotlinSources)
-
-            // TODO remove this when IDEA eventually migrate to the newer Android plugin
-            try {
-                variant.mainArtifact.generatedSourceFolders += generatedKotlinSources
-            } catch (e: Throwable) {
-                // There was an error being thrown here, but the code above doesn't work for the newer versions of Android Studio 3
-                // (generatedSourceFolders returns a wrapped unmodifiable list), and the thrown exception breaks the import.
-                // The error will be moved back when I find a work-around for AS3.
+            val mainArtifact = variant.mainArtifact
+            if (mainArtifact is IdeBaseArtifact) {
+                mainArtifact.addGeneratedSourceFolder(generatedKotlinSources)
             }
         }
     }

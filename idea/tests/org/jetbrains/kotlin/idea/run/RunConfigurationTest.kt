@@ -29,6 +29,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
+import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -239,11 +240,11 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = module): CreateModuleResult {
         val srcPath = moduleDir + "/src"
-        val srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, myFilesToDelete, true)
+        val srcDir = PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
 
         val testPath = moduleDir + "/test"
         if (File(testPath).exists()) {
-            val testDir = PsiTestUtil.createTestProjectStructure(project, configModule, testPath, myFilesToDelete, false)
+            val testDir = PsiTestUtil.createTestProjectStructure(project, configModule, testPath, PlatformTestCase.myFilesToDelete, false)
             PsiTestUtil.addSourceRoot(module, testDir, true)
         }
 

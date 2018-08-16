@@ -1,0 +1,10 @@
+// ACTION_CLASS: org.jetbrains.kotlin.idea.spring.generate.GenerateKotlinSpringBeanXmlDependencyAction$Constructor
+// CONFIG_FILE: secondaryConstructor-config.xml
+// CHOOSE_BEAN: barBean
+package a
+
+open class FooBean(n: Int) {
+    <caret>
+}
+
+open class BarBean

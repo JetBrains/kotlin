@@ -26,12 +26,12 @@
 
         <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.android.KotlinAndroidLineMarkerProvider"/>
 
-        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinGradleAndroidModuleModelProjectDataService"/>
-
         <intentionAction>
             <className>org.jetbrains.kotlin.android.intention.KotlinAndroidAddStringResource</className>
             <category>Kotlin Android</category>
         </intentionAction>
+
+        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinGradleAndroidModuleModelProjectDataService"/>
 
         <intentionAction>
             <className>org.jetbrains.kotlin.android.intention.AddActivityToManifest</className>
@@ -104,8 +104,16 @@
         <highlighterExtension implementation="org.jetbrains.kotlin.android.AndroidHighlighterExtension"/>
     </extensions>
 
+    <extensions defaultExtensionNs="com.android.tools.idea">
+        <npw.template.convertJavaToKotlinProvider implementation="org.jetbrains.kotlin.android.ConvertJavaToKotlinProviderImpl"/>
+    </extensions>
+
     <extensions defaultExtensionNs="org.jetbrains.android">
         <androidLintQuickFixProvider implementation="org.jetbrains.kotlin.android.quickfix.KotlinAndroidQuickFixProvider" />
+    </extensions>
+
+    <extensions defaultExtensionNs="com.android.gradle.sync">
+        <postSyncModuleSetupStep implementation="org.jetbrains.kotlin.android.configure.KotlinAndroidModuleSetupStep"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">

@@ -167,7 +167,7 @@ abstract class KtCodeFragment(
 
     override fun getExceptionHandler() = exceptionHandler
 
-    override fun importClass(aClass: PsiClass): Boolean {
+    override fun importClass(aClass: PsiClass?): Boolean {
         return true
     }
 

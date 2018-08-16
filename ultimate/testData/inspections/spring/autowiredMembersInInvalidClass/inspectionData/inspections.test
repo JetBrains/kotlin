@@ -1,2 +1,2 @@
-// INSPECTION_CLASS: com.intellij.spring.model.highlighting.autowire.SpringUastAutowiredMembersInspection
+// INSPECTION_CLASS: org.jetbrains.kotlin.idea.spring.inspections.SpringKotlinAutowiredMembersInspection
 // FIXTURE_CLASS: org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
