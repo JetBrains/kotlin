@@ -12,7 +12,6 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 import kotlin.script.experimental.jvmhost.impl.KJvmCompilerImpl
 import kotlin.script.experimental.jvmhost.impl.mergeConfigurations
 import kotlin.script.experimental.jvmhost.impl.withDefaults
-import kotlin.script.experimental.util.getOrNull
 
 interface CompiledJvmScriptsCache {
     fun get(script: ScriptSource, scriptDefinition: ScriptDefinition, configuration: ScriptCompileConfiguration?): CompiledScript<*>?
@@ -41,9 +40,9 @@ open class JvmScriptCompiler(
         scriptDefinition: ScriptDefinition,
         additionalConfiguration: ScriptCompileConfiguration?
     ): ResultWithDiagnostics<CompiledScript<*>> {
-        val refineConfigurationFn = scriptDefinition.getOrNull(ScriptDefinition.refineConfigurationHandler)
+        val refineConfigurationFn = scriptDefinition[ScriptDefinition.refineConfigurationHandler]
         val refinedConfiguration =
-            if (scriptDefinition.getOrNull(ScriptDefinition.refineConfigurationBeforeParsing) == true) {
+            if (scriptDefinition[ScriptDefinition.refineConfigurationBeforeParsing] == true) {
                 if (refineConfigurationFn == null) {
                     return ResultWithDiagnostics.Failure("Non-null configurator expected".asErrorDiagnostics())
                 }

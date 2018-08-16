@@ -7,37 +7,42 @@ package kotlin.script.experimental.api
 
 import kotlin.reflect.KClass
 import kotlin.script.experimental.util.PropertiesCollection
-import kotlin.script.experimental.util.getOrNull
 
-interface ScriptingEnvironment : PropertiesCollection {
+interface ScriptingEnvironmentKeys
 
-    companion object : ScriptingEnvironment {
+class ScriptingEnvironment(baseScriptingEnvironments: Iterable<ScriptingEnvironment>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseScriptingEnvironments).apply(body).data) {
 
-        class Builder internal constructor() : PropertiesCollection.Builder(), ScriptingEnvironment {
-            override val properties = data
-        }
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+    constructor(
+        vararg baseScriptingEnvironments: ScriptingEnvironment, body: Builder.() -> Unit = {}
+    ) : this(baseScriptingEnvironments.asIterable(), body)
 
-        fun create(body: Builder.() -> Unit): ScriptingEnvironment = Builder().apply(body)
-    }
+    class Builder internal constructor(baseScriptingEnvironments: Iterable<ScriptingEnvironment>) : 
+        ScriptingEnvironmentKeys, 
+        PropertiesCollection.Builder(baseScriptingEnvironments)
+    
+    companion object : ScriptingEnvironmentKeys
 }
 
 // should contain all dependencies needed for baseClass and compilationConfigurator
-val ScriptingEnvironment.configurationDependencies by PropertiesCollection.key<List<ScriptDependency>>()
+val ScriptingEnvironmentKeys.configurationDependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
 // do not use configurationDependencies as script dependencies, so only the dependencies defined by compilationConfigurator will be used
 // (NOTE: in this case they should include the dependencies for the base class anyway, since this class is needed for script
 // compilation and instantiation, but compilationConfigurator could be excluded)
-val ScriptingEnvironment.isolatedDependencies by PropertiesCollection.key<Boolean>(false)
+val ScriptingEnvironmentKeys.isolatedDependencies by PropertiesCollection.key<Boolean>(false)
 
 // a "class loader" for KotlinTypes
-val ScriptingEnvironment.getScriptingClass by PropertiesCollection.key<GetScriptingClass>()
+val ScriptingEnvironmentKeys.getScriptingClass by PropertiesCollection.key<GetScriptingClass>()
+
 
 interface GetScriptingClass {
     operator fun invoke(classType: KotlinType, contextClass: KClass<*>, environment: ScriptingEnvironment): KClass<*>
 }
 
 fun ScriptingEnvironment.getScriptingClass(type: KotlinType, contextClass: KClass<*>): KClass<*> {
-    val getClass = getOrNull(ScriptingEnvironment.getScriptingClass)
+    val getClass = get(ScriptingEnvironment.getScriptingClass)
         ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment: unable to load scripting class $type")
     return getClass(type, contextClass, this)
 }

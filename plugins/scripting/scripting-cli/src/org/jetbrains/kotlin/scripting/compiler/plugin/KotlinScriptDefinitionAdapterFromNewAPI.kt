@@ -19,7 +19,6 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.experimental.util.getOrError
-import kotlin.script.experimental.util.getOrNull
 
 // temporary trick with passing Any as a template and overwriting it below, TODO: fix after introducing new script definitions hierarchy
 abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinition(Any::class) {
@@ -37,7 +36,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     override val template: KClass<*> get() = baseClass
 
     override val name: String
-        get() = scriptDefinition.getOrNull(ScriptDefinition.name) ?: "Kotlin Script"
+        get() = scriptDefinition[ScriptDefinition.name] ?: "Kotlin Script"
 
     override val fileType: LanguageFileType = KotlinFileType.INSTANCE
 
@@ -57,24 +56,24 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     }
 
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scriptDefinition.getOrNull(ScriptDefinition.refineConfigurationOnAnnotations)
+        scriptDefinition[ScriptDefinition.refineConfigurationOnAnnotations]
             .orEmpty()
             .map { getScriptingClass(it) as KClass<out Annotation> }
     }
 
     override val implicitReceivers: List<KType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scriptDefinition.getOrNull(ScriptDefinition.scriptImplicitReceivers)
+        scriptDefinition[ScriptDefinition.scriptImplicitReceivers]
             .orEmpty()
             .map { getScriptingClass(it).starProjectedType }
     }
 
     override val environmentVariables: List<Pair<String, KType>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scriptDefinition.getOrNull(ScriptDefinition.contextVariables)
+        scriptDefinition[ScriptDefinition.contextVariables]
             ?.map { (k, v) -> k to getScriptingClass(v).starProjectedType }.orEmpty()
     }
 
     override val additionalCompilerArguments: List<String>
-        get() = scriptDefinition.getOrNull(ScriptDefinition.compilerOptions)
+        get() = scriptDefinition[ScriptDefinition.compilerOptions]
             .orEmpty()
 
     override val scriptExpectedLocations: List<ScriptExpectedLocation> =
@@ -84,15 +83,15 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         )
 
     override val targetClassAnnotations: List<Annotation>
-        get() = scriptDefinition.getOrNull(ScriptDefinition.generatedClassAnnotations)
+        get() = scriptDefinition[ScriptDefinition.generatedClassAnnotations]
             .orEmpty()
 
     override val targetMethodAnnotations: List<Annotation>
-        get() = scriptDefinition.getOrNull(ScriptDefinition.generatedMethodAnnotations)
+        get() = scriptDefinition[ScriptDefinition.generatedMethodAnnotations]
             .orEmpty()
 
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        hostEnvironment.getOrNull(ScriptingEnvironment.getScriptingClass)
+        hostEnvironment[ScriptingEnvironment.getScriptingClass]
             ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment")
     }
 
@@ -110,8 +109,8 @@ class KotlinScriptDefinitionAdapterFromNewAPI(
     override val hostEnvironment: ScriptingEnvironment
 ) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
 
-    override val name: String get() = scriptDefinition.getOrNull(ScriptDefinition.name) ?: super.name
+    override val name: String get() = scriptDefinition[ScriptDefinition.name] ?: super.name
 
     override val scriptFileExtensionWithDot =
-        "." + (scriptDefinition.getOrNull(ScriptDefinition.fileExtension) ?: "kts")
+        "." + (scriptDefinition[ScriptDefinition.fileExtension] ?: "kts")
 }

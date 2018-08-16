@@ -10,9 +10,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.KotlinType
 
-interface PropertiesCollection {
-
-    val properties: Map<Key<*>, Any> get() = emptyMap()
+open class PropertiesCollection(val properties: Map<Key<*>, Any> = emptyMap()) {
 
     data class Key<T>(val name: String, val defaultValue: T? = null)
 
@@ -25,22 +23,27 @@ interface PropertiesCollection {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Key<T> = source
     }
 
+    @Suppress("UNCHECKED_CAST")
+    operator fun <T> get(key: PropertiesCollection.Key<T>): T? =
+        properties[key]?.let { it as T } ?: key.defaultValue
+
+
     companion object {
         fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)
         fun <T> keyCopy(source: Key<T>) = PropertyKeyCopyDelegate(source)
     }
 
-    fun properties(body: Builder.() -> Unit): Map<Key<*>, Any> = Builder().apply(body).data
-
     // properties builder base class (DSL for building properties collection)
 
-    open class Builder {
+    open class Builder(baseProperties: Iterable<PropertiesCollection> = emptyList()) {
 
-        val data: MutableMap<PropertiesCollection.Key<*>, Any> = LinkedHashMap()
+        val data: MutableMap<PropertiesCollection.Key<*>, Any> = LinkedHashMap<PropertiesCollection.Key<*>, Any>().apply {
+            baseProperties.forEach { putAll(it.properties) }
+        }
 
         // generic builder for all properties
         operator fun <T : Any> PropertiesCollection.Key<T>.invoke(v: T) {
-            set(this, v)
+            data[this] = v
         }
 
         // generic for lists
@@ -59,28 +62,28 @@ interface PropertiesCollection {
 
         @JvmName("invoke_string_fqn_from_generic")
         inline operator fun <reified K> PropertiesCollection.Key<String>.invoke() {
-            set(this, K::class.qualifiedName!!)
+            data[this] = K::class.java.name
         }
 
         @JvmName("invoke_string_fqn_from_reflected_class")
         operator fun PropertiesCollection.Key<String>.invoke(kclass: KClass<*>) {
-            set(this, kclass.qualifiedName!!)
+            data[this] = kclass.java.name
         }
 
         @JvmName("invoke_string_list_fqn_from_generic")
         inline operator fun <reified K> PropertiesCollection.Key<in List<String>>.invoke() {
-            append(K::class.qualifiedName!!)
+            append(K::class.java.name)
         }
 
         @JvmName("invoke_string_list_fqn_from_reflected_class")
         operator fun PropertiesCollection.Key<in List<String>>.invoke(vararg kclasses: KClass<*>) {
-            append(kclasses.map { it.qualifiedName!! })
+            append(kclasses.map { it.java.name })
         }
 
         // for KotlinType:
 
         inline operator fun <reified K> PropertiesCollection.Key<KotlinType>.invoke() {
-            set(this, KotlinType(K::class))
+            data[this] = KotlinType(K::class)
         }
 
         operator fun PropertiesCollection.Key<KotlinType>.invoke(kclass: KClass<*>) {
@@ -138,7 +141,7 @@ interface PropertiesCollection {
         }
 
         @Suppress("UNCHECKED_CAST")
-        operator fun <T : Any> get(key: PropertiesCollection.Key<in T>): T? = data[key]?.let { it as T }
+        private operator fun <T : Any> get(key: PropertiesCollection.Key<in T>): T? = data[key]?.let { it as T }
 
         // appenders to list and map properties
 
@@ -174,15 +177,22 @@ interface PropertiesCollection {
             this.body()
             this@Builder.data.putAll(this.data)
         }
+
+        // a class for extending properties
+        interface BuilderExtension<T : Builder> {
+            fun get(): T
+        }
+
+        // include another builder extension
+        operator fun <T : Builder> BuilderExtension<T>.invoke(body: T.() -> Unit) {
+            val builder = this.get().apply(body)
+            this@Builder.data.putAll(builder.data)
+        }
     }
 }
 
-@Suppress("UNCHECKED_CAST")
-fun <T> PropertiesCollection.getOrNull(key: PropertiesCollection.Key<T>): T? =
-    properties[key]?.let { it as T } ?: key.defaultValue
-
-fun <T> PropertiesCollection.getOrError(key: PropertiesCollection.Key<T>): T = 
-    getOrNull(key) ?: throw IllegalArgumentException("Unknown key $key")
+fun <T> PropertiesCollection.getOrError(key: PropertiesCollection.Key<T>): T =
+    get(key) ?: throw IllegalArgumentException("Unknown key $key")
 
 @Suppress("UNCHECKED_CAST")
 fun <T> getFirstFromChainOrNull(key: PropertiesCollection.Key<T>, vararg propertyCollections: PropertiesCollection?): T? {
@@ -193,16 +203,3 @@ fun <T> getFirstFromChainOrNull(key: PropertiesCollection.Key<T>, vararg propert
     return key.defaultValue
 }
 
-@Suppress("UNCHECKED_CAST")
-fun <T> getMergedFromChainOrNull(key: PropertiesCollection.Key<List<T>>, vararg propertyCollections: PropertiesCollection?): List<T>? {
-    var found = false
-    val res = ArrayList<T>()
-    for (collection in propertyCollections) {
-        val value = collection?.properties?.get(key)
-        if (value != null) {
-            found = true
-            res.addAll(value as List<T>)
-        }
-    }
-    return if (found) res else key.defaultValue
-}

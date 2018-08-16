@@ -9,16 +9,21 @@ import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.util.PropertiesCollection
 
-interface ReplEvaluationEnvironment : PropertiesCollection {
+interface ReplEvaluationEnvironmentKeys
 
-    companion object : ReplEvaluationEnvironment {
+class ReplEvaluationEnvironment(baseEvaluationEnvironments: Iterable<ReplEvaluationEnvironment>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseEvaluationEnvironments).apply(body).data) {
 
-        class Builder internal constructor() : PropertiesCollection.Builder(), ReplEvaluationEnvironment {
-            override val properties = data
-        }
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+    constructor(
+        vararg baseEvaluationEnvironments: ReplEvaluationEnvironment, body: Builder.() -> Unit = {}
+    ) : this(baseEvaluationEnvironments.asIterable(), body)
 
-        fun create(body: Builder.() -> Unit): ReplEvaluationEnvironment = Builder().apply(body)
-    }
+    class Builder internal constructor(baseEvaluationEnvironments: Iterable<ReplEvaluationEnvironment>) :
+        ReplEvaluationEnvironmentKeys,
+        PropertiesCollection.Builder(baseEvaluationEnvironments)
+
+    companion object : ReplEvaluationEnvironmentKeys
 }
 
 interface ReplSnippetEvaluator {

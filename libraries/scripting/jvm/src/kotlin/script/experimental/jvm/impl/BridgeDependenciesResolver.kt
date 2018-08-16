@@ -19,7 +19,6 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportPosition
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
 import kotlin.script.experimental.util.getFirstFromChainOrNull
-import kotlin.script.experimental.util.getOrNull
 
 class BridgeDependenciesResolver(
     val scriptDefinition: ScriptDefinition,
@@ -36,13 +35,13 @@ class BridgeDependenciesResolver(
         return try {
 
             val diagnostics = arrayListOf<ScriptReport>()
-            val processedScriptData = object : ProcessedScriptData {
-                override val properties = properties {
-                    foundAnnotations.append(scriptContents.annotations)
-                }
-            }
+            val processedScriptData = ProcessedScriptData(
+                mapOf(
+                    ProcessedScriptData.foundAnnotations to scriptContents.annotations
+                )
+            )
 
-            val refineFn = scriptDefinition.getOrNull(ScriptDefinition.refineConfigurationHandler)
+            val refineFn = scriptDefinition[ScriptDefinition.refineConfigurationHandler]
             val refinedConfiguration =
                 if (refineFn == null) null
                 else {
@@ -59,7 +58,7 @@ class BridgeDependenciesResolver(
                     }
                 }
 
-            val newClasspath = refinedConfiguration?.getOrNull(ScriptDefinition.dependencies)
+            val newClasspath = refinedConfiguration?.get(ScriptDefinition.dependencies)
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
             if (newClasspath.isNotEmpty()) {
                 val oldClasspath =

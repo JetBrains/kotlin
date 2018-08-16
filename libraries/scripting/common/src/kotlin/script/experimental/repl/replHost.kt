@@ -22,19 +22,24 @@ interface ReplCommandProcessor {
 
 data class ReplCommand(val commandName: String, val processor: ReplCommandProcessor)
 
-interface ReplHostEnvironment : PropertiesCollection {
+interface ReplHostEnvironmentKeys
 
-    companion object : ReplHostEnvironment {
+class ReplHostEnvironment(baseReplHostEnvironments: Iterable<ReplHostEnvironment>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseReplHostEnvironments).apply(body).data) {
 
-        class Builder internal constructor() : PropertiesCollection.Builder(), ReplHostEnvironment {
-            override val properties = data
-        }
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+    constructor(
+        vararg baseReplHostEnvironments: ReplHostEnvironment, body: Builder.() -> Unit = {}
+    ) : this(baseReplHostEnvironments.asIterable(), body)
 
-        fun create(body: Builder.() -> Unit): ReplHostEnvironment = Builder().apply(body)
-    }
+    class Builder internal constructor(baseReplHostEnvironments: Iterable<ReplHostEnvironment>) :
+        ReplHostEnvironmentKeys,
+        PropertiesCollection.Builder(baseReplHostEnvironments)
+
+    companion object : ReplHostEnvironmentKeys
 }
 
-val ReplHostEnvironment.replCommands by PropertiesCollection.key<List<ReplCommand>>()
+val ReplHostEnvironmentKeys.replCommands by PropertiesCollection.key<List<ReplCommand>>()
 
 abstract class ReplHost(
     val environment: ReplHostEnvironment,

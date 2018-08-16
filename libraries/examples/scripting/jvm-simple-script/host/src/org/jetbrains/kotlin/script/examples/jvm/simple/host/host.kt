@@ -17,7 +17,7 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.makeBasicHostFromAnnotatedScriptBaseClass
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val additionalCompilationProperties = ScriptCompileConfiguration.create {
+    val additionalCompilationProperties = ScriptCompileConfiguration {
         jvm {
             dependenciesFromCurrentContext(
                 "scripting-jvm-simple-script" /* script library jar name */

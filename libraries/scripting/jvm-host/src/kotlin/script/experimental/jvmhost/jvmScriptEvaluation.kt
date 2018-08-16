@@ -9,7 +9,6 @@ package kotlin.script.experimental.jvmhost
 
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
-import kotlin.script.experimental.util.getOrNull
 
 open class JvmScriptEvaluationEnvironment : PropertiesCollection.Builder() {
 
@@ -38,7 +37,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                     if (scriptObject !is Class<*>)
                         ResultWithDiagnostics.Failure(ScriptDiagnostic("expecting class in this implementation, got ${scriptObject?.javaClass}"))
                     else {
-                        val receivers = scriptEvaluationEnvironment?.getOrNull(ScriptEvaluationEnvironment.implicitReceivers)
+                        val receivers = scriptEvaluationEnvironment?.get(ScriptEvaluationEnvironment.implicitReceivers)
                         val instance = if (receivers == null) {
                             scriptObject.getConstructor().newInstance()
                         } else {

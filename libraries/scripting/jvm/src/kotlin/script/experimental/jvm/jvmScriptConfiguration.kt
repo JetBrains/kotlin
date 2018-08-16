@@ -7,14 +7,22 @@
 
 package kotlin.script.experimental.jvm
 
-import kotlin.script.experimental.api.ScriptCompileConfiguration
+import kotlin.script.experimental.api.ScriptCompileConfigurationKeys
+import kotlin.script.experimental.api.ScriptingEnvironment
 import kotlin.script.experimental.util.PropertiesCollection
 
-open class JvmScriptCompilationConfiguration : JvmScriptDefinition() {
+interface JvmScriptCompilationConfigurationKeys
 
-    companion object : JvmScriptCompilationConfiguration()
+open class JvmScriptCompilationConfigurationBuilder : JvmScriptCompilationConfigurationKeys, JvmScriptDefinition() {
+
+    companion object :
+        PropertiesCollection.Builder.BuilderExtension<JvmScriptCompilationConfigurationBuilder>,
+        JvmScriptCompilationConfigurationKeys {
+
+        override fun get() = JvmScriptCompilationConfigurationBuilder()
+    }
 }
 
-val JvmScriptCompilationConfiguration.javaHome by PropertiesCollection.keyCopy(JvmScriptingEnvironment.javaHome)
+val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCopy(ScriptingEnvironment.jvm.javaHome)
 
-val ScriptCompileConfiguration.jvm get() = JvmScriptCompilationConfiguration()
+val ScriptCompileConfigurationKeys.jvm get() = JvmScriptCompilationConfigurationBuilder()

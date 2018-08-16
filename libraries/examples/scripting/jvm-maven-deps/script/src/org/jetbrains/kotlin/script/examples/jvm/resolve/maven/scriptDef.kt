@@ -18,7 +18,6 @@ import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
-import kotlin.script.experimental.util.getOrNull
 
 @KotlinScript(
     extension = "scriptwithdeps.kts",
@@ -28,8 +27,8 @@ abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-object MyScriptDefinition : ScriptDefinition {
-    override val properties = properties {
+object MyScriptDefinition : ScriptDefinition(
+    {
         defaultImports<DependsOn>()
         defaultImports(Repository::class)
         jvm {
@@ -47,7 +46,7 @@ object MyScriptDefinition : ScriptDefinition {
             // other triggers: beforeParsing, onSections
         }
     }
-}
+)
 
 class MyConfigurator : RefineScriptCompilationConfigurationHandler {
 
@@ -59,7 +58,7 @@ class MyConfigurator : RefineScriptCompilationConfigurationHandler {
         configuration: ScriptCompileConfiguration?,
         processedScriptData: ProcessedScriptData?
     ): ResultWithDiagnostics<ScriptCompileConfiguration?> {
-        val annotations = processedScriptData?.getOrNull(ProcessedScriptData.foundAnnotations)?.takeIf { it.isNotEmpty() }
+        val annotations = processedScriptData?.get(ProcessedScriptData.foundAnnotations)?.takeIf { it.isNotEmpty() }
             ?: return configuration.asSuccess()
         val scriptContents = object : ScriptContents {
             override val annotations: Iterable<Annotation> = annotations
@@ -75,7 +74,7 @@ class MyConfigurator : RefineScriptCompilationConfigurationHandler {
                 ?: return configuration.asSuccess(diagnostics)
             val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
                 ?: return configuration.asSuccess(diagnostics)
-            ScriptCompileConfiguration.create {
+            ScriptCompileConfiguration {
                 dependencies(JvmDependency(resolvedClasspath))
             }.asSuccess(diagnostics)
         } catch (e: Throwable) {

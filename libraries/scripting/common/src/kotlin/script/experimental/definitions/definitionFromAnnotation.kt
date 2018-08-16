@@ -12,7 +12,6 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.annotations.KotlinScriptProperties
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.util.getOrNull
 
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 
@@ -25,7 +24,7 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
     contextClass: KClass<*> = ScriptDefinition::class
 ): ScriptDefinition {
 
-    val getScriptingClass = environment.getOrNull(ScriptingEnvironment.getScriptingClass)
+    val getScriptingClass = environment[ScriptingEnvironment.getScriptingClass]
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting environment")
 
     val baseClass: KClass<*> =
@@ -44,17 +43,15 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
         throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
     }
 
-    return object : ScriptDefinition {
-        override val properties = properties {
-            baseClass(baseClassType)
-            fileExtension(baseClass.findAnnotation<KotlinScriptFileExtension>()?.extension ?: mainAnnotation.extension)
-            name(mainAnnotation.name)
+    return ScriptDefinition {
+        baseClass(baseClassType)
+        fileExtension(baseClass.findAnnotation<KotlinScriptFileExtension>()?.extension ?: mainAnnotation.extension)
+        name(mainAnnotation.name)
 
-            include(scriptingPropsInstance(mainAnnotation.definition))
+        include(scriptingPropsInstance(mainAnnotation.definition))
 
-            baseClass.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
-                include(scriptingPropsInstance(ann.definition))
-            }
+        baseClass.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
+            include(scriptingPropsInstance(ann.definition))
         }
     }
 }

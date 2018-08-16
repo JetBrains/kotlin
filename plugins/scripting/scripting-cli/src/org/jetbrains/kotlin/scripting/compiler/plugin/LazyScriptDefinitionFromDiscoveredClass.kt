@@ -19,7 +19,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
-import kotlin.script.experimental.util.getOrNull
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val annotationsFromAsm: ArrayList<BinAnnData>,
@@ -36,7 +35,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
     override val hostEnvironment: ScriptingEnvironment by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ScriptingEnvironment.create {
+        ScriptingEnvironment {
             include(defaultJvmScriptingEnvironment)
             configurationDependencies(JvmDependency(classpath))
         }
@@ -70,7 +69,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
             // TODO: check whether it actually works
             ?: annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args?.get(1)
             ?: scriptDefinition.let {
-                it.getOrNull(ScriptDefinition.fileExtension) ?: "kts"
+                it[ScriptDefinition.fileExtension] ?: "kts"
             }
         ".$ext"
     }
@@ -81,4 +80,4 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 }
 
-object InvalidScriptDefinition : ScriptDefinition
+val InvalidScriptDefinition = ScriptDefinition()

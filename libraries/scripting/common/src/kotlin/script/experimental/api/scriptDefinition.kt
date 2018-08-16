@@ -10,57 +10,62 @@ package kotlin.script.experimental.api
 import kotlin.reflect.KClass
 import kotlin.script.experimental.util.PropertiesCollection
 
-interface ScriptDefinition : PropertiesCollection {
+interface ScriptDefinitionKeys
 
-    companion object : ScriptDefinition {
+open class ScriptDefinition(baseDefinitions: Iterable<ScriptDefinition>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseDefinitions).apply(body).data) {
 
-        class Builder internal constructor() : PropertiesCollection.Builder(), ScriptDefinition {
-            override val properties = data
-        }
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+    constructor(vararg baseDefinitions: ScriptDefinition, body: Builder.() -> Unit = {}) : this(baseDefinitions.asIterable(), body)
 
-        fun create(body: Builder.() -> Unit): ScriptDefinition = Builder().apply(body)
+    class Builder internal constructor(baseDefinitions: Iterable<ScriptDefinition>) :
+        ScriptDefinitionKeys,
+        PropertiesCollection.Builder(baseDefinitions)
+
+    // inherited from script definition for using as a keys anchor
+    companion object : ScriptDefinitionKeys {
+
+        val Default = ScriptDefinition()
     }
-
-    object Default : ScriptDefinition
 }
 
-val ScriptDefinition.name by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
+val ScriptDefinitionKeys.name by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
 
-val ScriptDefinition.fileExtension by PropertiesCollection.key<String>("kts") // file extension
+val ScriptDefinitionKeys.fileExtension by PropertiesCollection.key<String>("kts") // file extension
 
-val ScriptDefinition.baseClass by PropertiesCollection.key<KotlinType>() // script base class
+val ScriptDefinitionKeys.baseClass by PropertiesCollection.key<KotlinType>() // script base class
 
-val ScriptDefinition.scriptBodyTarget by PropertiesCollection.key<ScriptBodyTarget>(ScriptBodyTarget.Constructor)
+val ScriptDefinitionKeys.scriptBodyTarget by PropertiesCollection.key<ScriptBodyTarget>(ScriptBodyTarget.Constructor)
 
-val ScriptDefinition.scriptImplicitReceivers by PropertiesCollection.key<List<KotlinType>>() // in the order from outer to inner scope
+val ScriptDefinitionKeys.scriptImplicitReceivers by PropertiesCollection.key<List<KotlinType>>() // in the order from outer to inner scope
 
-val ScriptDefinition.contextVariables by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
+val ScriptDefinitionKeys.contextVariables by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
 
-val ScriptDefinition.defaultImports by PropertiesCollection.key<List<String>>()
+val ScriptDefinitionKeys.defaultImports by PropertiesCollection.key<List<String>>()
 
-val ScriptDefinition.restrictions by PropertiesCollection.key<List<ResolvingRestrictionRule>>()
+val ScriptDefinitionKeys.restrictions by PropertiesCollection.key<List<ResolvingRestrictionRule>>()
 
-val ScriptDefinition.importedScripts by PropertiesCollection.key<List<ScriptSource>>()
+val ScriptDefinitionKeys.importedScripts by PropertiesCollection.key<List<ScriptSource>>()
 
-val ScriptDefinition.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
+val ScriptDefinitionKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
-val ScriptDefinition.generatedClassAnnotations by PropertiesCollection.key<List<Annotation>>()
+val ScriptDefinitionKeys.generatedClassAnnotations by PropertiesCollection.key<List<Annotation>>()
 
-val ScriptDefinition.generatedMethodAnnotations by PropertiesCollection.key<List<Annotation>>()
+val ScriptDefinitionKeys.generatedMethodAnnotations by PropertiesCollection.key<List<Annotation>>()
 
-val ScriptDefinition.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
+val ScriptDefinitionKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
 
-val ScriptDefinition.refineConfigurationHandler by PropertiesCollection.key<RefineScriptCompilationConfigurationHandler>() // dynamic configurator
+val ScriptDefinitionKeys.refineConfigurationHandler by PropertiesCollection.key<RefineScriptCompilationConfigurationHandler>() // dynamic configurator
 
-val ScriptDefinition.refineConfigurationBeforeParsing by PropertiesCollection.key<Boolean>() // default: false
+val ScriptDefinitionKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<Boolean>() // default: false
 
-val ScriptDefinition.refineConfigurationOnAnnotations by PropertiesCollection.key<List<KotlinType>>()
+val ScriptDefinitionKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<List<KotlinType>>()
 
-val ScriptDefinition.refineConfigurationOnSections by PropertiesCollection.key<List<String>>()
+val ScriptDefinitionKeys.refineConfigurationOnSections by PropertiesCollection.key<List<String>>()
 
 // DSL:
 
-val ScriptDefinition.refineConfiguration get() = RefineConfigurationBuilder()
+val ScriptDefinition.Builder.refineConfiguration get() = RefineConfigurationBuilder()
 
 
 class RefineConfigurationBuilder : PropertiesCollection.Builder() {

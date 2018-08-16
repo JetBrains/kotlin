@@ -9,25 +9,30 @@ package kotlin.script.experimental.api
 
 import kotlin.script.experimental.util.PropertiesCollection
 
-interface ScriptEvaluationEnvironment : PropertiesCollection {
+interface ScriptEvaluationEnvironmentKeys
 
-    companion object : ScriptEvaluationEnvironment {
+class ScriptEvaluationEnvironment(baseEvaluationEnvironments: Iterable<ScriptEvaluationEnvironment>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseEvaluationEnvironments).apply(body).data) {
 
-        class Builder internal constructor() : PropertiesCollection.Builder(), ScriptEvaluationEnvironment {
-            override val properties = data
-        }
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+    constructor(
+        vararg baseEvaluationEnvironments: ScriptEvaluationEnvironment, body: Builder.() -> Unit = {}
+    ) : this(baseEvaluationEnvironments.asIterable(), body)
 
-        fun create(body: Builder.() -> Unit): ScriptEvaluationEnvironment = Builder().apply(body)
-    }
+    class Builder internal constructor(baseEvaluationEnvironments: Iterable<ScriptEvaluationEnvironment>) :
+        ScriptDefinitionKeys,
+        PropertiesCollection.Builder(baseEvaluationEnvironments)
+
+    companion object : ScriptEvaluationEnvironmentKeys
 }
 
-val ScriptEvaluationEnvironment.implicitReceivers by PropertiesCollection.key<List<Any>>()
+val ScriptEvaluationEnvironmentKeys.implicitReceivers by PropertiesCollection.key<List<Any>>()
 
-val ScriptEvaluationEnvironment.contextVariables by PropertiesCollection.key<Map<String, Any?>>() // external variables
+val ScriptEvaluationEnvironmentKeys.contextVariables by PropertiesCollection.key<Map<String, Any?>>() // external variables
 
-val ScriptEvaluationEnvironment.constructorArgs by PropertiesCollection.key<List<Any?>>()
+val ScriptEvaluationEnvironmentKeys.constructorArgs by PropertiesCollection.key<List<Any?>>()
 
-val ScriptEvaluationEnvironment.runArgs by PropertiesCollection.key<List<Any?>>()
+val ScriptEvaluationEnvironmentKeys.runArgs by PropertiesCollection.key<List<Any?>>()
 
 sealed class ResultValue {
     class Value(val name: String, val value: Any?, val type: String) : ResultValue() {

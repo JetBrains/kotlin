@@ -8,16 +8,14 @@ package kotlin.script.experimental.jvm
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
 import kotlin.script.experimental.api.ScriptDefinition
+import kotlin.script.experimental.api.ScriptDefinitionKeys
 import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.util.PropertiesCollection
 
-open class JvmScriptDefinition : PropertiesCollection.Builder() {
+open class JvmScriptDefinition : PropertiesCollection.Builder()
 
-    companion object : JvmScriptDefinition()
-}
-
-val ScriptDefinition.jvm get() = JvmScriptDefinition()
+val ScriptDefinitionKeys.jvm get() = JvmScriptDefinition()
 
 
 class JvmDependency(val classpath: List<File>) : ScriptDependency {

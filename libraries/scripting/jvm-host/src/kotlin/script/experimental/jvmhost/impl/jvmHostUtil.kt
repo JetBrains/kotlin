@@ -14,7 +14,7 @@ internal fun mergeConfigurations(vararg configurations: ScriptCompileConfigurati
     return when {
         nonEmptyConfigurations.isEmpty() -> null
         nonEmptyConfigurations.size == 1 -> nonEmptyConfigurations.first()!!
-        else -> ScriptCompileConfiguration.create {
+        else -> ScriptCompileConfiguration {
             for (configuration in nonEmptyConfigurations) {
                 include(configuration!!)
             }
@@ -28,8 +28,5 @@ fun ScriptingEnvironment.withDefaults(): ScriptingEnvironment =
         }) {
         this
     } else {
-        ScriptingEnvironment.create {
-            include(defaultJvmScriptingEnvironment)
-            include(this)
-        }
+        ScriptingEnvironment(defaultJvmScriptingEnvironment, this)
     }

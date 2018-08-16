@@ -208,7 +208,7 @@ fun loadDefinitionsFromTemplates(
                     )
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
-                    val hostEnvironment = ScriptingEnvironment.create {
+                    val hostEnvironment = ScriptingEnvironment {
                         include(defaultJvmScriptingEnvironment)
                         configurationDependencies(JvmDependency(classpath))
                     }

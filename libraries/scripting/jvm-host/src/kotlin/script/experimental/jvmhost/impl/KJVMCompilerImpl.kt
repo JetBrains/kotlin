@@ -40,16 +40,15 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.JvmScriptCompilationConfiguration
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.jvm.javaHome
+import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.JvmScriptEvaluationEnvironment
 import kotlin.script.experimental.jvmhost.KJvmCompilerProxy
 import kotlin.script.experimental.jvmhost.baseClassLoader
 import kotlin.script.experimental.util.getFirstFromChainOrNull
 import kotlin.script.experimental.util.getMergedFromChainOrNull
 import kotlin.script.experimental.util.getOrError
-import kotlin.script.experimental.util.getOrNull
 
 class KJvmCompiledScript<out ScriptBase : Any>(
     override val definition: ScriptDefinition,
@@ -59,9 +58,9 @@ class KJvmCompiledScript<out ScriptBase : Any>(
 ) : CompiledScript<ScriptBase> {
 
     override suspend fun instantiate(scriptEvaluationEnvironment: ScriptEvaluationEnvironment?): ResultWithDiagnostics<ScriptBase> = try {
-        val baseClassLoader = scriptEvaluationEnvironment?.getOrNull(JvmScriptEvaluationEnvironment.baseClassLoader)
+        val baseClassLoader = scriptEvaluationEnvironment?.get(JvmScriptEvaluationEnvironment.baseClassLoader)
             ?: Thread.currentThread().contextClassLoader
-        val dependencies = additionalConfiguration?.getOrNull(ScriptDefinition.dependencies)
+        val dependencies = additionalConfiguration?.get(ScriptDefinition.dependencies)
             ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }
         // TODO: previous dependencies and classloaders should be taken into account here
         val classLoaderWithDeps =
@@ -98,7 +97,7 @@ class KJvmCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJvmCompiler
             fun updateClasspath(classpath: List<File>) {
                 environment!!.updateClasspath(classpath.map(::JvmClasspathRoot))
                 if (classpath.isNotEmpty()) {
-                    updatedScriptCompileConfiguration = ScriptCompileConfiguration.create {
+                    updatedScriptCompileConfiguration = ScriptCompileConfiguration {
                         include(updatedScriptCompileConfiguration)
                         dependencies.append(JvmDependency(classpath))
                     }
@@ -115,7 +114,7 @@ class KJvmCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJvmCompiler
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 var isModularJava = false
-                getFirstFromChainOrNull(JvmScriptCompilationConfiguration.javaHome, updatedScriptCompileConfiguration, hostEnvironment)?.let {
+                getFirstFromChainOrNull(ScriptCompileConfiguration.jvm.javaHome, updatedScriptCompileConfiguration, hostEnvironment)?.let {
                     put(JVMConfigurationKeys.JDK_HOME, it)
                     isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }
@@ -254,7 +253,7 @@ internal class BridgeScriptDefinition(
 ) {
     override val acceptedAnnotations = run {
         val cl = this::class.java.classLoader
-        additionalCompilationConfiguration?.getOrNull(ScriptDefinition.refineConfigurationOnAnnotations)
+        additionalCompilationConfiguration?.get(ScriptDefinition.refineConfigurationOnAnnotations)
             ?.map { (cl.loadClass(it.typeName) as Class<out Annotation>).kotlin }
             ?: emptyList()
     }

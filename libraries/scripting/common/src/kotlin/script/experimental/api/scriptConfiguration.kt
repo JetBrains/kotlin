@@ -9,45 +9,52 @@ package kotlin.script.experimental.api
 
 import kotlin.script.experimental.util.PropertiesCollection
 
-interface ScriptCompileConfiguration : PropertiesCollection {
+interface ScriptCompileConfigurationKeys
+
+class ScriptCompileConfiguration(baseConfigurations: Iterable<ScriptCompileConfiguration>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseConfigurations).apply(body).data) {
+
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+    constructor(
+        vararg baseConfigurations: ScriptCompileConfiguration, body: Builder.() -> Unit = {}
+    ) : this(baseConfigurations.asIterable(), body)
+
+    class Builder internal constructor(baseConfigurations: Iterable<ScriptCompileConfiguration>) :
+        ScriptCompileConfigurationKeys,
+        PropertiesCollection.Builder(baseConfigurations)
     
-    companion object : ScriptCompileConfiguration {
-
-        class Builder internal constructor() : PropertiesCollection.Builder(), ScriptCompileConfiguration {
-            override val properties = data
-        }
-
-        fun create(body: Builder.() -> Unit): ScriptCompileConfiguration = Builder().apply(body)
-    }
+    companion object : ScriptCompileConfigurationKeys
 }
 
-val ScriptCompileConfiguration.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
+val ScriptCompileConfigurationKeys.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
 
-val ScriptCompileConfiguration.scriptBodyTarget by PropertiesCollection.keyCopy(ScriptDefinition.scriptBodyTarget)
+val ScriptCompileConfigurationKeys.scriptBodyTarget by PropertiesCollection.keyCopy(ScriptDefinition.scriptBodyTarget)
 
-val ScriptCompileConfiguration.scriptImplicitReceivers by PropertiesCollection.keyCopy(ScriptDefinition.scriptImplicitReceivers)
+val ScriptCompileConfigurationKeys.scriptImplicitReceivers by PropertiesCollection.keyCopy(ScriptDefinition.scriptImplicitReceivers)
 
-val ScriptCompileConfiguration.contextVariables by PropertiesCollection.keyCopy(ScriptDefinition.contextVariables)
+val ScriptCompileConfigurationKeys.contextVariables by PropertiesCollection.keyCopy(ScriptDefinition.contextVariables)
 
-val ScriptCompileConfiguration.defaultImports by PropertiesCollection.keyCopy(ScriptDefinition.defaultImports)
+val ScriptCompileConfigurationKeys.defaultImports by PropertiesCollection.keyCopy(ScriptDefinition.defaultImports)
 
-val ScriptCompileConfiguration.restrictions by PropertiesCollection.keyCopy(ScriptDefinition.restrictions)
+val ScriptCompileConfigurationKeys.restrictions by PropertiesCollection.keyCopy(ScriptDefinition.restrictions)
 
-val ScriptCompileConfiguration.importedScripts by PropertiesCollection.keyCopy(ScriptDefinition.importedScripts)
+val ScriptCompileConfigurationKeys.importedScripts by PropertiesCollection.keyCopy(ScriptDefinition.importedScripts)
 
-val ScriptCompileConfiguration.dependencies by PropertiesCollection.keyCopy(ScriptDefinition.dependencies)
+val ScriptCompileConfigurationKeys.dependencies by PropertiesCollection.keyCopy(ScriptDefinition.dependencies)
 
-val ScriptCompileConfiguration.compilerOptions by PropertiesCollection.keyCopy(ScriptDefinition.compilerOptions)
+val ScriptCompileConfigurationKeys.compilerOptions by PropertiesCollection.keyCopy(ScriptDefinition.compilerOptions)
 
 
-interface ProcessedScriptData : PropertiesCollection {
+interface ProcessedScriptDataKeys
 
-    companion object : ProcessedScriptData
+class ProcessedScriptData(properties: Map<PropertiesCollection.Key<*>, Any>) : PropertiesCollection(properties) {
+
+    companion object : ProcessedScriptDataKeys
 }
 
-val ProcessedScriptData.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
+val ProcessedScriptDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
 
-val ProcessedScriptData.foundFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
+val ProcessedScriptDataKeys.foundFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
 
 
 interface RefineScriptCompilationConfigurationHandler {

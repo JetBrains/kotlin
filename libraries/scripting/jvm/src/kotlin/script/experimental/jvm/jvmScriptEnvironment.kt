@@ -10,17 +10,23 @@ import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
-import kotlin.script.experimental.util.getOrNull
 
-open class JvmScriptingEnvironment : PropertiesCollection.Builder() {
-    companion object : JvmScriptingEnvironment()
+interface JvmScriptingEnvironmentKeys
+
+open class JvmScriptingEnvironmentBuilder : JvmScriptingEnvironmentKeys, PropertiesCollection.Builder() {
+
+    companion object : PropertiesCollection.Builder.BuilderExtension<JvmScriptingEnvironmentBuilder>, JvmScriptingEnvironmentKeys {
+        override fun get() = JvmScriptingEnvironmentBuilder()
+    }
 }
 
-val JvmScriptingEnvironment.javaHome by PropertiesCollection.key<File>(File(System.getProperty("java.home")))
+val JvmScriptingEnvironmentKeys.javaHome by PropertiesCollection.key<File>(File(System.getProperty("java.home")))
 
-val ScriptingEnvironment.jvm get() = JvmScriptingEnvironment()
+@Suppress("unused")
+val ScriptingEnvironmentKeys.jvm
+    get() = JvmScriptingEnvironmentBuilder
 
-val defaultJvmScriptingEnvironment = ScriptingEnvironment.create {
+val defaultJvmScriptingEnvironment = ScriptingEnvironment {
     getScriptingClass(JvmGetScriptingClass())
 }
 
@@ -43,7 +49,7 @@ class JvmGetScriptingClass : GetScriptingClass {
             if (actualClassLoadersChain.any { it == fromClass.java.classLoader }) return fromClass
         }
 
-        val newDeps = environment.getOrNull(ScriptingEnvironment.configurationDependencies)
+        val newDeps = environment[ScriptingEnvironment.configurationDependencies]
         if (dependencies == null) {
             dependencies = newDeps
         } else {
@@ -62,7 +68,7 @@ class JvmGetScriptingClass : GetScriptingClass {
 
         if (classLoader == null) {
             val classpath = dependencies?.flatMap { dependency ->
-                when(dependency) {
+                when (dependency) {
                     is JvmDependency -> dependency.classpath.map { it.toURI().toURL() }
                     else -> throw IllegalArgumentException("unknown dependency type $dependency")
                 }

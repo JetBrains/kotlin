@@ -11,7 +11,6 @@ import kotlin.script.experimental.api.ScriptCompileConfiguration
 import kotlin.script.experimental.api.ScriptSource
 import kotlin.script.experimental.api.ScriptSourceNamedFragment
 import kotlin.script.experimental.api.sourceFragments
-import kotlin.script.experimental.util.getOrNull
 
 fun ScriptSource.getScriptText(): String = when {
     text != null -> text!!
@@ -22,7 +21,7 @@ fun ScriptSource.getScriptText(): String = when {
 
 fun getMergedScriptText(script: ScriptSource, configuration: ScriptCompileConfiguration?): String {
     val originalScriptText = script.getScriptText()
-    val sourceFragments = configuration?.getOrNull(ScriptCompileConfiguration.sourceFragments)
+    val sourceFragments = configuration?.get(ScriptCompileConfiguration.sourceFragments)
     return if (sourceFragments == null || sourceFragments.isEmpty()) {
         originalScriptText
     } else {
