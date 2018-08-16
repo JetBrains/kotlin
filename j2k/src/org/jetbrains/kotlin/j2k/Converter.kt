@@ -103,7 +103,10 @@ class Converter private constructor(
     private fun convertTopElement(element: PsiElement): Element? = when (element) {
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
-        is PsiMethod -> convertMethod(element, null, null, null, ClassKind.FINAL_CLASS)
+        is PsiMethod -> {
+            val classKind = if ((element.parent as? PsiClass)?.isInterface == true) ClassKind.INTERFACE else ClassKind.FINAL_CLASS
+            convertMethod(element, null, null, null, classKind)
+        }
         is PsiField -> convertProperty(PropertyInfo.fromFieldWithNoAccessors(element, this), ClassKind.FINAL_CLASS)
         is PsiStatement -> createDefaultCodeConverter().convertStatement(element)
         is PsiExpression -> createDefaultCodeConverter().convertExpression(element)
