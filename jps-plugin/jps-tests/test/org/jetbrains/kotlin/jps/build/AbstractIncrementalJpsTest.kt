@@ -44,13 +44,15 @@ import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.isJavaFile
+import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesDiff
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import org.jetbrains.kotlin.incremental.testingUtils.*
+import org.jetbrains.kotlin.jps.incremental.CompositeLookupsCacheAttributesManager
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.incremental.withLookupStorage
-import org.jetbrains.kotlin.jps.platforms.kotlinBuildTargets
+import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
@@ -81,6 +83,8 @@ abstract class AbstractIncrementalJpsTest(
     private var isICEnabledBackup: Boolean = false
 
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
+
+    lateinit var kotlinCompileContext: KotlinCompileContext
 
     protected open val buildLogFinder: BuildLogFinder
         get() = BuildLogFinder()
@@ -145,19 +149,21 @@ abstract class AbstractIncrementalJpsTest(
         projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
 
         val lookupTracker = TestLookupTracker()
-        projectDescriptor.project.setTestingContext(TestingContext(lookupTracker, logger))
+        val testingContext = TestingContext(lookupTracker, logger)
+        projectDescriptor.project.setTestingContext(testingContext)
 
         try {
             val builder = IncProjectBuilder(projectDescriptor, BuilderRegistry.getInstance(), myBuildParams, CanceledStatus.NULL, mockConstantSearch, true)
             val buildResult = BuildResult()
             builder.addMessageHandler(buildResult)
             val finalScope = scope.build()
+
             builder.build(finalScope, false)
 
-            lookupTracker.lookups.mapTo(lookupsDuringTest) { LookupSymbol(it.name, it.scopeFqName) }
+            // testingContext.kotlinCompileContext is initialized in KotlinBuilder.initializeKotlinContext
+            kotlinCompileContext = testingContext.kotlinCompileContext!!
 
-            // for getting kotlin platform only
-            val dummyCompileContext = CompileContextImpl.createContextForTests(finalScope, projectDescriptor)
+            lookupTracker.lookups.mapTo(lookupsDuringTest) { LookupSymbol(it.name, it.scopeFqName) }
 
             if (!buildResult.isSuccessful) {
                 val errorMessages =
@@ -169,7 +175,7 @@ abstract class AbstractIncrementalJpsTest(
                 return MakeResult(logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n", true, null)
             }
             else {
-                return MakeResult(logger.log, false, createMappingsDump(projectDescriptor, dummyCompileContext))
+                return MakeResult(logger.log, false, createMappingsDump(projectDescriptor))
             }
         }
         finally {
@@ -287,20 +293,18 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun createMappingsDump(
-        project: ProjectDescriptor,
-        dummyCompileContext: CompileContext
-    ) = createKotlinIncrementalCacheDump(project, dummyCompileContext) + "\n\n\n" +
+        project: ProjectDescriptor
+    ) = createKotlinIncrementalCacheDump(project) + "\n\n\n" +
                 createLookupCacheDump(project) + "\n\n\n" +
                 createCommonMappingsDump(project) + "\n\n\n" +
                 createJavaMappingsDump(project)
 
     private fun createKotlinIncrementalCacheDump(
-        project: ProjectDescriptor,
-        dummyCompileContext: CompileContext
+        project: ProjectDescriptor
     ): String {
         return buildString {
             for (target in project.allModuleTargets.sortedBy { it.presentableName }) {
-                val kotlinCache = project.dataManager.getKotlinCache(dummyCompileContext.kotlinBuildTargets[target])
+                val kotlinCache = project.dataManager.getKotlinCache(kotlinCompileContext.targetsBinding[target])
                 if (kotlinCache != null) {
                     append("<target $target>\n")
                     append(kotlinCache.dump())
@@ -443,14 +447,23 @@ abstract class AbstractIncrementalJpsTest(
 
     override fun doGetProjectDir(): File? = workDir
 
-    private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase(), BuildLogger {
+    private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase(), TestingBuildLogger {
         private val markedDirtyBeforeRound = ArrayList<File>()
         private val markedDirtyAfterRound = ArrayList<File>()
 
-        override fun actionsOnCacheVersionChanged(actions: List<CacheVersion.Action>) {
-            if (actions.size > 1 && actions.any { it != CacheVersion.Action.DO_NOTHING }) {
-                logLine("Actions after cache changed: $actions")
+        override fun invalidOrUnusedCache(
+            chunk: KotlinChunk?,
+            target: KotlinModuleBuildTarget<*>?,
+            attributesDiff: CacheAttributesDiff<*>
+        ) {
+            val cacheManager = attributesDiff.manager
+            val cacheTitle = when (cacheManager) {
+                is CacheVersionManager -> "Local cache for ${chunk ?: target}"
+                is CompositeLookupsCacheAttributesManager -> "Lookups cache"
+                else -> error("Unknown cache manager $cacheManager")
             }
+
+            logLine("$cacheTitle are $attributesDiff")
         }
 
         override fun markedAsDirtyBeforeRound(files: Iterable<File>) {
@@ -461,13 +474,15 @@ abstract class AbstractIncrementalJpsTest(
             markedDirtyAfterRound.addAll(files)
         }
 
-        override fun buildStarted(context: CompileContext, chunk: ModuleChunk) {
+        override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
+            logDirtyFiles(markedDirtyBeforeRound) // files can be marked as dirty during build start (KotlinCompileContext initialization)
+
             if (!chunk.isDummy(context) && context.projectDescriptor.project.modules.size > 1) {
                 logLine("Building ${chunk.modules.sortedBy { it.name }.joinToString { it.name }}")
             }
         }
 
-        override fun afterBuildStarted(context: CompileContext, chunk: ModuleChunk) {
+        override fun afterChunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
             logDirtyFiles(markedDirtyBeforeRound)
         }
 

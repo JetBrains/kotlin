@@ -16,16 +16,19 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleLevelBuilder
-import org.jetbrains.kotlin.incremental.CacheVersion
+import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesDiff
+import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import java.io.File
 
-interface BuildLogger {
-    fun actionsOnCacheVersionChanged(actions: List<CacheVersion.Action>)
-    fun buildStarted(context: CompileContext, chunk: ModuleChunk)
-    fun afterBuildStarted(context: CompileContext, chunk: ModuleChunk)
+/**
+ * Used for assertions in tests.
+ */
+interface TestingBuildLogger {
+    fun invalidOrUnusedCache(chunk: KotlinChunk?, target: KotlinModuleBuildTarget<*>?, attributesDiff: CacheAttributesDiff<*>)
+    fun chunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk)
+    fun afterChunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk)
     fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode)
     fun markedAsDirtyBeforeRound(files: Iterable<File>)
     fun markedAsDirtyAfterRound(files: Iterable<File>)

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.incremental.IncrementalCacheCommon
 import org.jetbrains.kotlin.incremental.IncrementalJsCache
 import org.jetbrains.kotlin.incremental.IncrementalJvmCache
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
-import org.jetbrains.kotlin.jps.platforms.KotlinModuleBuildTarget
+import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import java.io.File
 
 interface JpsIncrementalCache : IncrementalCacheCommon, StorageOwner {

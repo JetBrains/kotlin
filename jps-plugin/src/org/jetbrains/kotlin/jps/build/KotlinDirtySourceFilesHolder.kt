@@ -48,7 +48,7 @@ class KotlinDirtySourceFilesHolder(
          * and during KotlinDirtySourceFilesHolder initialization.
          */
         internal fun _markDirty(file: File) {
-            _dirty.add(file)
+            _dirty.add(file.canonicalFile)
         }
     }
 

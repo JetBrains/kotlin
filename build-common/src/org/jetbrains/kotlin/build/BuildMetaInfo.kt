@@ -64,6 +64,9 @@ abstract class BuildMetaInfoFactory<T : BuildMetaInfo>(private val metaInfoClass
         )
     }
 
+    fun serializeToString(args: CommonCompilerArguments): String =
+        serializeToString(create(args))
+
     fun serializeToString(info: T): String =
         serializeToPlainText(info, metaInfoClass)
 

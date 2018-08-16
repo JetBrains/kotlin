@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -57,7 +58,7 @@ fun makeIncrementally(
         reporter: ICReporter = EmptyICReporter
 ) {
     val isIncremental = IncrementalCompilation.isEnabledForJvm()
-    val versions = commonCacheVersions(cachesDir, isIncremental) + standaloneCacheVersion(cachesDir, isIncremental)
+    val versions = commonCacheVersionsManagers(cachesDir, isIncremental) + standaloneCacheVersionManager(cachesDir, isIncremental)
 
     val kotlinExtensions = listOf("kt", "kts")
     val allExtensions = kotlinExtensions + listOf("java")
@@ -99,20 +100,20 @@ inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
 }
 
 class IncrementalJvmCompilerRunner(
-        workingDir: File,
-        private val javaSourceRoots: Set<JvmSourceRoot>,
-        cacheVersions: List<CacheVersion>,
-        reporter: ICReporter,
-        private val usePreciseJavaTracking: Boolean,
-        buildHistoryFile: File,
-        localStateDirs: Collection<File>,
-        private val modulesApiHistory: ModulesApiHistory
+    workingDir: File,
+    private val javaSourceRoots: Set<JvmSourceRoot>,
+    cachesVersionManagers: List<CacheVersionManager>,
+    reporter: ICReporter,
+    private val usePreciseJavaTracking: Boolean,
+     buildHistoryFile: File,
+    localStateDirs: Collection<File>,
+    private val modulesApiHistory: ModulesApiHistory
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
-        workingDir,
-        "caches-jvm",
-        cacheVersions,
-        reporter,
-        localStateDirs = localStateDirs,
+    workingDir,
+    "caches-jvm",
+    cachesVersionManagers,
+    reporter,
+    localStateDirs = localStateDirs,
         buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
