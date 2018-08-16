@@ -2841,6 +2841,12 @@ task interop_libiconv(type: RunStandaloneKonanTest) {
     goldValue = "72 72\n101 101\n108 108\n108 108\n111 111\n33 33\n"
 }
 
+task interop_zlib(type: RunStandaloneKonanTest) {
+    disabled = (project.testTarget != null)
+    source = "interop/platform_zlib.kt"
+    goldValue = "Hello!\nHello!\n"
+}
+
 task produce_dynamic(type: DynamicKonanTest) {
     disabled = (project.testTarget != null && project.testTarget != project.hostName)
     source = "produce_dynamic/simple/hello.kt"
