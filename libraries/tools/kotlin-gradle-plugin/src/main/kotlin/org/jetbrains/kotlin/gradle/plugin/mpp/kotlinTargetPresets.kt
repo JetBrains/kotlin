@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask
 import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask.Companion.KONAN_DOWNLOAD_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
@@ -237,3 +238,10 @@ class KotlinNativeTargetPreset(
         return result
     }
 }
+
+internal val KonanTarget.presetName: String
+    get() = when(this) {
+        KonanTarget.ANDROID_ARM32 -> "androidNativeArm32"
+        KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
+        else -> lowerCamelCaseName(*this.name.split('_').toTypedArray())
+    }

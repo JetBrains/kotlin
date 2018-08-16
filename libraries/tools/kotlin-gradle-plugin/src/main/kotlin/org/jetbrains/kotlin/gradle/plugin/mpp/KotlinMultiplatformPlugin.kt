@@ -87,8 +87,8 @@ class KotlinMultiplatformPlugin(
             add(KotlinJsTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
-            HostManager().targets.forEach { name, target ->
-                add(KotlinNativeTargetPreset(name, project, target, buildOutputCleanupRegistry))
+            HostManager().targets.forEach { _, target ->
+                add(KotlinNativeTargetPreset(target.presetName, project, target, buildOutputCleanupRegistry))
             }
         }
     }
