@@ -21,7 +21,7 @@ sealed class JvmMemberSignature {
     }
 
     data class Field(override val name: String, override val desc: String) : JvmMemberSignature() {
-        override fun asString() = name + ":" + desc
+        override fun asString() = "$name:$desc"
     }
 
     final override fun toString() = asString()

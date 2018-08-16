@@ -21,8 +21,7 @@ class ModuleMapping private constructor(
     override fun toString() = debugName
 
     companion object {
-        @JvmField
-        val MAPPING_FILE_EXT: String = "kotlin_module"
+        const val MAPPING_FILE_EXT: String = "kotlin_module"
 
         @JvmField
         val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "EMPTY")
@@ -44,8 +43,7 @@ class ModuleMapping private constructor(
 
             val versionNumber = try {
                 IntArray(stream.readInt()) { stream.readInt() }
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 return CORRUPTED
             }
 
@@ -67,8 +65,8 @@ class ModuleMapping private constructor(
                     if (isJvmPackageNameSupported) {
                         for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
                             val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
-                                            ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
-                                            ?: continue
+                                ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
+                                ?: continue
                             val jvmPackageName = moduleProto.jvmPackageNameList.getOrNull(packageId) ?: continue
                             packageParts.addPart(internalNameOf(jvmPackageName, partShortName), null)
                         }
@@ -161,8 +159,8 @@ class PackageParts(val packageFqName: String) {
 
     // Writes information about package parts which have a different JVM package from the Kotlin package (with the help of @JvmPackageName)
     private fun JvmModuleProtoBuf.PackageParts.Builder.writePartsOutsidePackage(
-            parts: List<String>,
-            packageTableBuilder: JvmModuleProtoBuf.Module.Builder
+        parts: List<String>,
+        packageTableBuilder: JvmModuleProtoBuf.Module.Builder
     ) {
         val packageIds = mutableListOf<Int>()
         for ((packageInternalName, partsInPackage) in parts.groupBy { it.packageName }.toSortedMap()) {
@@ -198,14 +196,14 @@ class PackageParts(val packageFqName: String) {
     }
 
     override fun equals(other: Any?) =
-            other is PackageParts &&
-            other.packageFqName == packageFqName && other.packageParts == packageParts && other.metadataParts == metadataParts
+        other is PackageParts &&
+                other.packageFqName == packageFqName && other.packageParts == packageParts && other.metadataParts == metadataParts
 
     override fun hashCode() =
-            (packageFqName.hashCode() * 31 + packageParts.hashCode()) * 31 + metadataParts.hashCode()
+        (packageFqName.hashCode() * 31 + packageParts.hashCode()) * 31 + metadataParts.hashCode()
 
     override fun toString() =
-            (parts + metadataParts).toString()
+        (parts + metadataParts).toString()
 }
 
 fun JvmModuleProtoBuf.Module.serializeToByteArray(versionArray: IntArray): ByteArray {

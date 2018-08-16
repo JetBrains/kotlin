@@ -61,16 +61,15 @@ object JvmProtoBufUtil {
 
     // returns JVM signature in the format: "equals(Ljava/lang/Object;)Z"
     fun getJvmMethodSignature(
-            proto: ProtoBuf.Function,
-            nameResolver: NameResolver,
-            typeTable: TypeTable
+        proto: ProtoBuf.Function,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
     ): JvmMemberSignature.Method? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.methodSignature)
         val name = if (signature != null && signature.hasName()) signature.name else proto.name
         val desc = if (signature != null && signature.hasDesc()) {
             nameResolver.getString(signature.desc)
-        }
-        else {
+        } else {
             val parameterTypes = listOfNotNull(proto.receiverType(typeTable)) + proto.valueParameterList.map { it.type(typeTable) }
 
             val parametersDesc = parameterTypes.map { mapTypeDefault(it, nameResolver) ?: return null }
@@ -82,15 +81,14 @@ object JvmProtoBufUtil {
     }
 
     fun getJvmConstructorSignature(
-            proto: ProtoBuf.Constructor,
-            nameResolver: NameResolver,
-            typeTable: TypeTable
+        proto: ProtoBuf.Constructor,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
     ): JvmMemberSignature.Method? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.constructorSignature)
         val desc = if (signature != null && signature.hasDesc()) {
             nameResolver.getString(signature.desc)
-        }
-        else {
+        } else {
             proto.valueParameterList.map {
                 mapTypeDefault(it.type(typeTable), nameResolver) ?: return null
             }.joinToString(separator = "", prefix = "(", postfix = ")V")
@@ -99,9 +97,9 @@ object JvmProtoBufUtil {
     }
 
     fun getJvmFieldSignature(
-            proto: ProtoBuf.Property,
-            nameResolver: NameResolver,
-            typeTable: TypeTable
+        proto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
     ): JvmMemberSignature.Field? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return null
         val field = if (signature.hasField()) signature.field else return null

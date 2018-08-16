@@ -26,11 +26,9 @@ class TypeTable(typeTable: ProtoBuf.TypeTable) {
             typeTable.typeList.mapIndexed { i, type ->
                 if (i >= firstNullable) {
                     type.toBuilder().setNullable(true).build()
-                }
-                else type
+                } else type
             }
-        }
-        else originalTypes
+        } else originalTypes
     }
 
     operator fun get(index: Int) = types[index]
