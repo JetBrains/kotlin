@@ -33,6 +33,8 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerialize
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.STRUCTURE_ENCODER_CLASS
@@ -168,13 +170,14 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
             IrGetValueImpl(startOffset, endOffset, saveFunc.dispatchReceiverParameter!!.symbol)
 
         val kOutputClass = serializerDescriptor.getClassFromSerializationPackage(STRUCTURE_ENCODER_CLASS)
+        val kOutputSmallClass = serializerDescriptor.getClassFromSerializationPackage(ENCODER_CLASS)
 
         val descriptorGetterSymbol = compilerContext.localSymbolTable.referenceFunction(anySerialDescProperty?.getter!!) //???
 
         val localSerialDesc = irTemporary(irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol), "desc")
 
         //  fun beginStructure(desc: SerialDescriptor, vararg typeParams: KSerializer<*>): StructureEncoder
-        val beginFunc = kOutputClass.referenceMethod(CallingConventions.begin) // todo: retrieve from actual encoder instead
+        val beginFunc = kOutputSmallClass.referenceMethod(CallingConventions.begin) // todo: retrieve from actual encoder instead
 
         val call = irCall(beginFunc).mapValueParametersIndexed { i, parameterDescriptor ->
             if (i == 0) irGet(localSerialDesc) else IrVarargImpl(
@@ -257,6 +260,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         fun IrVariable.get() = irGet(this)
 
         val inputClass = serializerDescriptor.getClassFromSerializationPackage(STRUCTURE_DECODER_CLASS)
+        val inputSmallClass = serializerDescriptor.getClassFromSerializationPackage(DECODER_CLASS)
         val descriptorGetterSymbol = compilerContext.localSymbolTable.referenceFunction(anySerialDescProperty?.getter!!) //???
         val localSerialDesc = irTemporary(irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol), "desc")
 
@@ -283,7 +287,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         }
 
         //input = input.beginStructure(...)
-        val beginFunc = inputClass.referenceMethod(CallingConventions.begin)
+        val beginFunc = inputSmallClass.referenceMethod(CallingConventions.begin)
         val call = irInvoke(
             irGet(loadFunc.valueParameters[0]),
             beginFunc,

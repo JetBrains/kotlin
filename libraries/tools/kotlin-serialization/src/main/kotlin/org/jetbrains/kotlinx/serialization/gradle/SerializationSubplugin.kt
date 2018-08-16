@@ -48,7 +48,7 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
     }
 
     private val log = Logging.getLogger(this.javaClass)
-    private val pluginVersion = "0.7.1-SNAPSHOT"
+    private val pluginVersion = "0.7.0-eap-1"
     private var useUnshaded = false
 
     override fun isApplicable(project: Project, task: AbstractCompile): Boolean {

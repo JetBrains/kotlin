@@ -8,9 +8,9 @@ configureJvmProject(project)
 configurePublishing(project)
 
 group = 'org.jetbrains.kotlinx'
-version = '0.7.1'
+version = '0.7.0'
 if (!project.hasProperty("deploy")) {
-    version = "$version-SNAPSHOT"
+    version = "$version-eap-1"
 }
 
 compileJava {
