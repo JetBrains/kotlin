@@ -73,9 +73,9 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
 
             val libraryInfo = LibraryInfo(project, library)
 
-            // "single" because any KLIB should have just one root
+            // "first" because normally any KLIB should have just one root
             // "null" just for the case when KLIB accidentally disappeared from the expected location
-            val libraryPath = libraryInfo.getLibraryRoots().singleOrNull()
+            val libraryPath = libraryInfo.getLibraryRoots().firstOrNull()
             val virtualFile = libraryPath?.let { LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(it)) }
 
             return if (virtualFile != null && virtualFile.exists()) {
