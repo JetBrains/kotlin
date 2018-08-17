@@ -99,6 +99,16 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/javaUsesPlatformFacade/");
     }
 
+    @TestMetadata("jvmKotlinReferencesCommonKotlinThroughJava")
+    public void testJvmKotlinReferencesCommonKotlinThroughJava() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmKotlinReferencesCommonKotlinThroughJava/");
+    }
+
+    @TestMetadata("jvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls")
+    public void testJvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls/");
+    }
+
     @TestMetadata("multifileFacade")
     public void testMultifileFacade() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/multifileFacade/");
