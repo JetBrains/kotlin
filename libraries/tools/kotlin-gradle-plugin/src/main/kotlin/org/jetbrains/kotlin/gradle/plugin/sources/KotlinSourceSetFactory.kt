@@ -28,8 +28,13 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
         project.file("src/$sourceSetName")
 
     protected open fun setUpSourceSetDefaults(sourceSet: T) {
-        with(sourceSet) {
-            sourceSet.kotlin.srcDir(File(defaultSourceLocation(sourceSet.name), "kotlin"))
+        sourceSet.kotlin.srcDir(File(defaultSourceLocation(sourceSet.name), "kotlin"))
+        defineSourceSetConfigurations(project, sourceSet)
+    }
+
+    private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with (project.configurations) {
+        sourceSet.relatedConfigurationNames.forEach { configurationName ->
+            maybeCreate(configurationName)
         }
     }
 

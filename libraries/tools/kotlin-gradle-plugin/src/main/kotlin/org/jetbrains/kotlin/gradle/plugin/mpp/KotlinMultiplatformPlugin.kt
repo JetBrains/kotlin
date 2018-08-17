@@ -103,7 +103,6 @@ internal class KotlinMultiplatformPlugin(
     }
 
     private fun configureSourceSets(project: Project) = with (project.kotlinExtension as KotlinMultiplatformExtension) {
-        sourceSets.all { defineSourceSetConfigurations(project, it) }
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
@@ -154,12 +153,6 @@ internal class KotlinMultiplatformPlugin(
                         }
                 }
             }
-        }
-    }
-
-    private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with (project.configurations) {
-        sourceSet.relatedConfigurationNames.forEach { configurationName ->
-            maybeCreate(configurationName)
         }
     }
 }
