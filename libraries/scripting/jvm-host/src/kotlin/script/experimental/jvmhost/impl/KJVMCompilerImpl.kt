@@ -253,7 +253,7 @@ internal class BridgeScriptDefinition(
 ) {
     override val acceptedAnnotations = run {
         val cl = this::class.java.classLoader
-        additionalCompilationConfiguration?.get(ScriptDefinition.refineConfigurationOnAnnotations)
+        getMergedFromChainOrNull(ScriptDefinition.refineConfigurationOnAnnotations, scriptDefinition, additionalCompilationConfiguration)
             ?.map { (cl.loadClass(it.typeName) as Class<out Annotation>).kotlin }
             ?: emptyList()
     }
