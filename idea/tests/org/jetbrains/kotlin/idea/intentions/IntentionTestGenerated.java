@@ -2564,6 +2564,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/ifWithoutElse.kt");
                 }
 
+                @TestMetadata("lambdaExpression.kt")
+                public void testLambdaExpression() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/lambdaExpression.kt");
+                }
+
+                @TestMetadata("lambdaExpression2.kt")
+                public void testLambdaExpression2() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/lambdaExpression2.kt");
+                }
+
                 @TestMetadata("multipleIfFake.kt")
                 public void testMultipleIfFake() throws Exception {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/multipleIfFake.kt");
