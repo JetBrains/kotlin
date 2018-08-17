@@ -307,7 +307,7 @@ class KotlinCoreEnvironment private constructor(
 
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
-            addRoots(initialRoots)
+            addRoots(initialRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
             packagePartProviders += this
             (ModuleAnnotationsResolver.getInstance(project) as CliModuleAnnotationsResolver).addPackagePartProvider(this)
         }
@@ -365,7 +365,7 @@ class KotlinCoreEnvironment private constructor(
         val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots
 
         for (packagePartProvider in packagePartProviders) {
-            packagePartProvider.addRoots(newRoots)
+            packagePartProvider.addRoots(newRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
         }
 
         return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
