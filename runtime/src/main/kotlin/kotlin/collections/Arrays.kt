@@ -517,6 +517,94 @@ public actual fun LongArray.contentToString(): String {
 /**
  * Returns a string representation of the contents of the specified array as if it is [List].
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.contentToString(): String {
+    if (size == 0)
+        return "[]"
+    val iMax = size - 1
+
+    val b = StringBuilder()
+    b.append('[')
+    var i = 0
+    while (true) {
+        b.append(this[i])
+        if (i == iMax)
+            return b.append(']').toString()
+        b.append(", ")
+        i++
+    }
+}
+
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
 @SinceKotlin("1.1")
 public actual fun FloatArray.contentToString(): String {
     if (size == 0)
@@ -966,6 +1054,54 @@ public actual fun IntArray.contentHashCode(): Int {
  */
 @SinceKotlin("1.1")
 public actual fun LongArray.contentHashCode(): Int {
+    var result = 1
+    for (element in this)
+        result = 31 * result  + element.hashCode()
+    return result
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.contentHashCode(): Int {
+    var result = 1
+    for (element in this)
+        result = 31 * result  + element.hashCode()
+    return result
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.contentHashCode(): Int {
+    var result = 1
+    for (element in this)
+        result = 31 * result  + element.hashCode()
+    return result
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.contentHashCode(): Int {
+    var result = 1
+    for (element in this)
+        result = 31 * result  + element.hashCode()
+    return result
+}
+
+/**
+ * Returns a hash code based on the contents of this array as if it is [List].
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.contentHashCode(): Int {
     var result = 1
     for (element in this)
         result = 31 * result  + element.hashCode()

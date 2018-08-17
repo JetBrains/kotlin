@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -111,13 +112,18 @@ internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = m
 }
 
 private fun ObjCExportMapper.bridgeType(kotlinType: KotlinType): TypeBridge = kotlinType.unwrapToPrimitiveOrReference(
-        eachInlinedClass = { _, _ ->
-            // unsigned types to be handled.
+        eachInlinedClass = { inlinedClass, _ ->
+            when (inlinedClass.classId) {
+                UnsignedType.UBYTE.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_CHAR)
+                UnsignedType.USHORT.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_SHORT)
+                UnsignedType.UINT.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_INT)
+                UnsignedType.ULONG.classId -> return ValueTypeBridge(ObjCValueType.UNSIGNED_LONG_LONG)
+            }
         },
         ifPrimitive = { primitiveType, _ ->
             val objCValueType = when (primitiveType) {
                 KonanPrimitiveType.BOOLEAN -> ObjCValueType.BOOL
-                KonanPrimitiveType.CHAR -> ObjCValueType.UNSIGNED_SHORT
+                KonanPrimitiveType.CHAR -> ObjCValueType.UNICHAR
                 KonanPrimitiveType.BYTE -> ObjCValueType.CHAR
                 KonanPrimitiveType.SHORT -> ObjCValueType.SHORT
                 KonanPrimitiveType.INT -> ObjCValueType.INT

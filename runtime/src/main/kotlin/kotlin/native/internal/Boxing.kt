@@ -61,6 +61,22 @@ fun boxInt(value: Int): Int? = value
 @ExportForCppRuntime("Kotlin_boxLong")
 fun boxLong(value: Long): Long? = value
 
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_boxUByte")
+fun boxUByte(value: UByte): UByte? = value
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_boxUShort")
+fun boxUShort(value: UShort): UShort? = value
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_boxUInt")
+fun boxUInt(value: UInt): UInt? = value
+
+@ExperimentalUnsignedTypes
+@ExportForCppRuntime("Kotlin_boxULong")
+fun boxULong(value: ULong): ULong? = value
+
 @ExportForCppRuntime("Kotlin_boxFloat")
 fun boxFloat(value: Float): Float? = value
 

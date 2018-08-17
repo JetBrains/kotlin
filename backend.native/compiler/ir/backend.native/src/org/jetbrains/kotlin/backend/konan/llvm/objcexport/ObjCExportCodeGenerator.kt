@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
@@ -95,8 +96,11 @@ internal class ObjCExportCodeGenerator(
     ): LLVMValueRef = when (valueType) {
         ObjCValueType.BOOL -> zext(value, int8Type) // TODO: zext behaviour may be strange on bit types.
 
-        ObjCValueType.CHAR, ObjCValueType.UNSIGNED_SHORT, ObjCValueType.SHORT,
-        ObjCValueType.INT, ObjCValueType.LONG_LONG, ObjCValueType.FLOAT, ObjCValueType.DOUBLE -> value
+        ObjCValueType.UNICHAR,
+        ObjCValueType.CHAR, ObjCValueType.SHORT, ObjCValueType.INT, ObjCValueType.LONG_LONG,
+        ObjCValueType.UNSIGNED_CHAR, ObjCValueType.UNSIGNED_SHORT, ObjCValueType.UNSIGNED_INT,
+        ObjCValueType.UNSIGNED_LONG_LONG,
+        ObjCValueType.FLOAT, ObjCValueType.DOUBLE -> value
     }
 
     private fun FunctionGenerationContext.objCToKotlin(
@@ -105,8 +109,11 @@ internal class ObjCExportCodeGenerator(
     ): LLVMValueRef = when (valueType) {
         ObjCValueType.BOOL -> icmpNe(value, Int8(0).llvm)
 
-        ObjCValueType.CHAR, ObjCValueType.UNSIGNED_SHORT, ObjCValueType.SHORT,
-        ObjCValueType.INT, ObjCValueType.LONG_LONG, ObjCValueType.FLOAT, ObjCValueType.DOUBLE -> value
+        ObjCValueType.UNICHAR,
+        ObjCValueType.CHAR, ObjCValueType.SHORT, ObjCValueType.INT, ObjCValueType.LONG_LONG,
+        ObjCValueType.UNSIGNED_CHAR, ObjCValueType.UNSIGNED_SHORT, ObjCValueType.UNSIGNED_INT,
+        ObjCValueType.UNSIGNED_LONG_LONG,
+        ObjCValueType.FLOAT, ObjCValueType.DOUBLE -> value
     }
 
     fun FunctionGenerationContext.kotlinReferenceToObjC(value: LLVMValueRef) =
@@ -340,22 +347,30 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
 private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LLVMTypeRef
     get() = functionType(int8TypePtr, false, codegen.kObjHeaderPtr)
 
-private fun ObjCExportCodeGenerator.emitBoxConverter(objCValueType: ObjCValueType) {
-    val symbols = context.ir.symbols
+private fun ObjCExportCodeGenerator.emitBoxConverters() {
     val irBuiltIns = context.irBuiltIns
+    val symbols = context.ir.symbols
 
-    val boxClass = when (objCValueType) {
-        ObjCValueType.BOOL -> irBuiltIns.booleanClass
-        ObjCValueType.UNSIGNED_SHORT -> irBuiltIns.charClass
-        ObjCValueType.CHAR -> irBuiltIns.byteClass
-        ObjCValueType.SHORT -> irBuiltIns.shortClass
-        ObjCValueType.INT -> irBuiltIns.intClass
-        ObjCValueType.LONG_LONG -> irBuiltIns.longClass
-        ObjCValueType.FLOAT -> irBuiltIns.floatClass
-        ObjCValueType.DOUBLE -> irBuiltIns.doubleClass
-    }.owner
+    emitBoxConverter(irBuiltIns.booleanClass, ObjCValueType.BOOL, "numberWithBool:")
+    emitBoxConverter(irBuiltIns.byteClass, ObjCValueType.CHAR, "numberWithChar:")
+    emitBoxConverter(irBuiltIns.shortClass, ObjCValueType.SHORT, "numberWithShort:")
+    emitBoxConverter(irBuiltIns.intClass, ObjCValueType.INT, "numberWithInt:")
+    emitBoxConverter(irBuiltIns.longClass, ObjCValueType.LONG_LONG, "numberWithLongLong:")
+    emitBoxConverter(symbols.uByte, ObjCValueType.UNSIGNED_CHAR, "numberWithUnsignedChar")
+    emitBoxConverter(symbols.uShort, ObjCValueType.UNSIGNED_SHORT, "numberWithUnsignedShort:")
+    emitBoxConverter(symbols.uInt, ObjCValueType.UNSIGNED_INT, "numberWithUnsignedInt:")
+    emitBoxConverter(symbols.uLong, ObjCValueType.UNSIGNED_LONG_LONG, "numberWithUnsignedLongLong:")
+    emitBoxConverter(irBuiltIns.floatClass, ObjCValueType.FLOAT, "numberWithFloat:")
+    emitBoxConverter(irBuiltIns.doubleClass, ObjCValueType.DOUBLE, "numberWithDouble:")
+}
 
-    val name = "${boxClass.name}To${objCValueType.nsNumberName}"
+private fun ObjCExportCodeGenerator.emitBoxConverter(
+        boxClassSymbol: IrClassSymbol,
+        objCValueType: ObjCValueType,
+        nsNumberFactorySelector: String
+) {
+    val boxClass = boxClassSymbol.owner
+    val name = "${boxClass.name}ToNSNumber"
 
     val converter = generateFunction(codegen, kotlinToObjCFunctionType, name) {
         val unboxFunction = context.getUnboxFunction(boxClass).llvmFunction
@@ -368,7 +383,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(objCValueType: ObjCValueTyp
         val value = kotlinToObjC(kotlinValue, objCValueType)
 
         val nsNumber = genGetSystemClass("NSNumber")
-        ret(genSendMessage(int8TypePtr, nsNumber, objCValueType.nsNumberFactorySelector, value))
+        ret(genSendMessage(int8TypePtr, nsNumber, nsNumberFactorySelector, value))
     }
 
     LLVMSetLinkage(converter, LLVMLinkage.LLVMPrivateLinkage)
@@ -446,9 +461,7 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
             constPointer(context.llvm.Kotlin_Interop_CreateKotlinMutableDictonaryFromKMap)
     )
 
-    ObjCValueType.values().forEach {
-        emitBoxConverter(it)
-    }
+    emitBoxConverters()
 
     emitFunctionConverters()
 
@@ -1091,11 +1104,15 @@ private fun objCFunctionType(context: Context, methodBridge: MethodBridge): LLVM
 
 private val ObjCValueType.llvmType: LLVMTypeRef get() = when (this) {
     ObjCValueType.BOOL -> int8Type
+    ObjCValueType.UNICHAR -> int16Type
     ObjCValueType.CHAR -> int8Type
-    ObjCValueType.UNSIGNED_SHORT -> int16Type
     ObjCValueType.SHORT -> int16Type
     ObjCValueType.INT -> int32Type
     ObjCValueType.LONG_LONG -> int64Type
+    ObjCValueType.UNSIGNED_CHAR -> int8Type
+    ObjCValueType.UNSIGNED_SHORT -> int16Type
+    ObjCValueType.UNSIGNED_INT -> int32Type
+    ObjCValueType.UNSIGNED_LONG_LONG -> int64Type
     ObjCValueType.FLOAT -> LLVMFloatType()!!
     ObjCValueType.DOUBLE -> LLVMDoubleType()!!
 }

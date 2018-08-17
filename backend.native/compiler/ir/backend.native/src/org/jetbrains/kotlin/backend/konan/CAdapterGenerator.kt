@@ -25,18 +25,16 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.annotations.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.isChildOf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
@@ -760,14 +758,18 @@ internal class CAdapterGenerator(
         typedef _Bool           ${prefix}_KBoolean;
         #endif
         """.trimIndent())
-        output("typedef char            ${prefix}_KByte;")
-        output("typedef unsigned short  ${prefix}_KChar;")
-        output("typedef short           ${prefix}_KShort;")
-        output("typedef int             ${prefix}_KInt;")
-        output("typedef long long       ${prefix}_KLong;")
-        output("typedef float           ${prefix}_KFloat;")
-        output("typedef double          ${prefix}_KDouble;")
-        output("typedef void*           ${prefix}_KNativePtr;")
+        output("typedef unsigned short     ${prefix}_KChar;")
+        output("typedef signed char        ${prefix}_KByte;")
+        output("typedef short              ${prefix}_KShort;")
+        output("typedef int                ${prefix}_KInt;")
+        output("typedef long long          ${prefix}_KLong;")
+        output("typedef unsigned char      ${prefix}_KUByte;")
+        output("typedef unsigned short     ${prefix}_KUShort;")
+        output("typedef unsigned int       ${prefix}_KUInt;")
+        output("typedef unsigned long long ${prefix}_KULong;")
+        output("typedef float              ${prefix}_KFloat;")
+        output("typedef double             ${prefix}_KDouble;")
+        output("typedef void*              ${prefix}_KNativePtr;")
         output("struct ${prefix}_KType;")
         output("typedef struct ${prefix}_KType ${prefix}_KType;")
 
@@ -894,6 +896,15 @@ internal class CAdapterGenerator(
         }
     }
 
+    private val unsignedTypeMapping = UnsignedType.values().associate {
+        it.classId to when (it) {
+            UnsignedType.UBYTE -> "${prefix}_KUByte"
+            UnsignedType.USHORT -> "${prefix}_KUShort"
+            UnsignedType.UINT -> "${prefix}_KUInt"
+            UnsignedType.ULONG -> "${prefix}_KULong"
+        }
+    }
+
     internal fun isMappedToString(descriptor: ClassDescriptor): Boolean =
             isMappedToString(descriptor.defaultType.computeBinaryType())
 
@@ -926,8 +937,10 @@ internal class CAdapterGenerator(
     }
 
     private fun translateNonVoidTypeFull(type: KotlinType): Pair<String, String> = type.unwrapToPrimitiveOrReference(
-            eachInlinedClass = { _, _ ->
-                // unsigned types to be handled.
+            eachInlinedClass = { inlinedClass, _ ->
+                unsignedTypeMapping[inlinedClass.classId]?.let {
+                    return it to it
+                }
             },
             ifPrimitive = { primitiveType, _ ->
                 primitiveTypeMapping[primitiveType]!!.let { it to it }

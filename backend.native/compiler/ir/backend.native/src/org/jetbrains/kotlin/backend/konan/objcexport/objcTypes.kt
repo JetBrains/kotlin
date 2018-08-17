@@ -111,27 +111,17 @@ object ObjCVoidType : ObjCType() {
     override fun render(attrsAndName: String) = "void".withAttrsAndName(attrsAndName)
 }
 
-internal enum class ObjCValueType(
-        val encoding: String
-) {
-
+internal enum class ObjCValueType(val encoding: String) {
     BOOL("c"),
+    UNICHAR("S"),
     CHAR("c"),
     SHORT("s"),
-    UNSIGNED_SHORT("S"),
     INT("i"),
     LONG_LONG("q"),
+    UNSIGNED_CHAR("C"),
+    UNSIGNED_SHORT("S"),
+    UNSIGNED_INT("I"),
+    UNSIGNED_LONG_LONG("Q"),
     FLOAT("f"),
     DOUBLE("d")
-
-    ;
-
-    // UNSIGNED_SHORT -> unsignedShort
-    val nsNumberName = this.name.split('_').mapIndexed { index, s ->
-        val lower = s.toLowerCase()
-        if (index > 0) lower.capitalize() else lower
-    }.joinToString("")
-
-    val nsNumberValueSelector get() = "${nsNumberName}Value"
-    val nsNumberFactorySelector get() = "numberWith${nsNumberName.capitalize()}:"
 }

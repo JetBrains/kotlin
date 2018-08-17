@@ -259,6 +259,7 @@ internal fun IrBuiltIns.getKotlinClass(cache: BoxCache): IrClass = when (cache) 
     BoxCache.LONG -> longClass
 }.owner
 
+// TODO: consider adding box caches for unsigned types.
 enum class BoxCache {
     BOOLEAN, BYTE, SHORT, CHAR, INT, LONG
 }

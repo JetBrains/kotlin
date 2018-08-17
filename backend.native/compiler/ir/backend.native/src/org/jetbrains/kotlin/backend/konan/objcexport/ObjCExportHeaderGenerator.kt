@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -66,10 +67,15 @@ abstract class ObjCExportHeaderGenerator(
         result += CustomTypeMapper.Collection(generator, map, "NSDictionary")
         result += CustomTypeMapper.Collection(generator, mutableMap, namer.mutableMapName)
 
-        for (descriptor in listOf(boolean, char, byte, short, int, long, float, double)) {
+        for (descriptor in listOf(boolean, byte, short, int, long, float, double)) {
             // TODO: Kotlin code doesn't have any checkcasts on unboxing,
             // so it is possible that it expects boxed number of other type and unboxes it incorrectly.
             // TODO: NSNumber seem to have different equality semantics.
+            result += CustomTypeMapper.Simple(descriptor, "NSNumber")
+        }
+
+        for (unsignedType in UnsignedType.values()) {
+            val descriptor = moduleDescriptor.findClassAcrossModuleDependencies(unsignedType.classId)!!
             result += CustomTypeMapper.Simple(descriptor, "NSNumber")
         }
 
@@ -737,11 +743,15 @@ abstract class ObjCExportHeaderGenerator(
         is ValueTypeBridge -> {
             val cName = when (typeBridge.objCValueType) {
                 ObjCValueType.BOOL -> "BOOL"
+                ObjCValueType.UNICHAR -> "unichar"
                 ObjCValueType.CHAR -> "int8_t"
-                ObjCValueType.UNSIGNED_SHORT -> "unichar"
                 ObjCValueType.SHORT -> "int16_t"
                 ObjCValueType.INT -> "int32_t"
                 ObjCValueType.LONG_LONG -> "int64_t"
+                ObjCValueType.UNSIGNED_CHAR -> "uint8_t"
+                ObjCValueType.UNSIGNED_SHORT -> "uint16_t"
+                ObjCValueType.UNSIGNED_INT -> "uint32_t"
+                ObjCValueType.UNSIGNED_LONG_LONG -> "uint64_t"
                 ObjCValueType.FLOAT -> "float"
                 ObjCValueType.DOUBLE -> "double"
             }

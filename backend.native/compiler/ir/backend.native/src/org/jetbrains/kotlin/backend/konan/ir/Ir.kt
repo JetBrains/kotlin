@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.kotlinNativeInternal
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
 import org.jetbrains.kotlin.config.coroutinesPackageFqName
@@ -133,6 +134,14 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val enum = symbolTable.referenceClass(builtIns.enum)
     val nativePtr = symbolTable.referenceClass(context.nativePtr)
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
+
+    private fun unsignedClass(unsignedType: UnsignedType): IrClassSymbol =
+            symbolTable.referenceClass(builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.classId)!!)
+
+    val uByte = unsignedClass(UnsignedType.UBYTE)
+    val uShort = unsignedClass(UnsignedType.USHORT)
+    val uInt = unsignedClass(UnsignedType.UINT)
+    val uLong = unsignedClass(UnsignedType.ULONG)
 
     val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
 

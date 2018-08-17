@@ -433,11 +433,14 @@ static void initializeObjCExport() {
 extern "C" {
 
 OBJ_GETTER(Kotlin_boxBoolean, KBoolean value);
-OBJ_GETTER(Kotlin_boxChar, KChar value);
 OBJ_GETTER(Kotlin_boxByte, KByte value);
 OBJ_GETTER(Kotlin_boxShort, KShort value);
 OBJ_GETTER(Kotlin_boxInt, KInt value);
 OBJ_GETTER(Kotlin_boxLong, KLong value);
+OBJ_GETTER(Kotlin_boxUByte, KUByte value);
+OBJ_GETTER(Kotlin_boxUShort, KUShort value);
+OBJ_GETTER(Kotlin_boxUInt, KUInt value);
+OBJ_GETTER(Kotlin_boxULong, KULong value);
 OBJ_GETTER(Kotlin_boxFloat, KFloat value);
 OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 
@@ -457,11 +460,14 @@ static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd) {
   // TODO: the code below makes some assumption on char, short, int and long sizes.
 
   switch (type[0]) {
-    case 'S': RETURN_RESULT_OF(Kotlin_boxChar, self.unsignedShortValue);
     case 'c': RETURN_RESULT_OF(Kotlin_boxByte, self.charValue);
     case 's': RETURN_RESULT_OF(Kotlin_boxShort, self.shortValue);
     case 'i': RETURN_RESULT_OF(Kotlin_boxInt, self.intValue);
     case 'q': RETURN_RESULT_OF(Kotlin_boxLong, self.longLongValue);
+    case 'C': RETURN_RESULT_OF(Kotlin_boxUByte, self.unsignedCharValue);
+    case 'S': RETURN_RESULT_OF(Kotlin_boxUShort, self.unsignedShortValue);
+    case 'I': RETURN_RESULT_OF(Kotlin_boxUInt, self.unsignedIntValue);
+    case 'Q': RETURN_RESULT_OF(Kotlin_boxULong, self.unsignedLongLongValue);
     case 'f': RETURN_RESULT_OF(Kotlin_boxFloat, self.floatValue);
     case 'd': RETURN_RESULT_OF(Kotlin_boxDouble, self.doubleValue);
 
