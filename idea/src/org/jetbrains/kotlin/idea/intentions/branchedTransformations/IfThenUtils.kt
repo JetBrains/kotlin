@@ -69,7 +69,9 @@ fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
     val innerExpression = KtPsiUtil.safeDeparenthesize(this, true)
     if (innerExpression is KtBlockExpression) {
         val statement = innerExpression.statements.singleOrNull() ?: return this
-        return KtPsiUtil.safeDeparenthesize(statement, true)
+        val deparenthesized = KtPsiUtil.safeDeparenthesize(statement, true)
+        if (deparenthesized is KtLambdaExpression) return this
+        return deparenthesized
     }
     return innerExpression
 }
