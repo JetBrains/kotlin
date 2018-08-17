@@ -25,6 +25,14 @@ fun fromUtf8Array(array: ByteArray, start: Int, size: Int) = array.stringFromUtf
 fun toUtf8Array(string: String, start: Int, size: Int) : ByteArray = string.toUtf8(start, size)
 
 /**
+ * Clears the content of this string builder making it empty.
+ *
+ * @sample samples.text.Strings.clearStringBuilder
+ */
+@SinceKotlin("1.3")
+public actual fun StringBuilder.clear(): StringBuilder = apply { setLength(0) }
+
+/**
  * Converts an UTF-8 array into a [String]. Replaces invalid input sequences with a default character.
  */
 fun ByteArray.stringFromUtf8(start: Int = 0, size: Int = this.size) : String =

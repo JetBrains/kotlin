@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionTy
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
@@ -160,9 +161,9 @@ class KonanDescriptorSerializer private constructor(
             builder.typeTable = typeTableProto
         }
 
-        val requirement = serializeVersionRequirement(classDescriptor)
+        val requirement = serializeVersionRequirements(classDescriptor)
         if (requirement != null) {
-            builder.versionRequirement = requirement
+            builder.addAllVersionRequirement(requirement)
         }
 
         val versionRequirementTableProto = versionRequirementTable.serialize()
@@ -254,12 +255,12 @@ class KonanDescriptorSerializer private constructor(
             }
         }
 
-        val requirement = serializeVersionRequirement(descriptor)
+        val requirement = serializeVersionRequirements(descriptor)
         if (requirement != null) {
-            builder.versionRequirement = requirement
+            builder.addAllVersionRequirement(requirement)
         }
         else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
+            builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
         extension.serializeProperty(descriptor, builder, versionRequirementTable)
@@ -337,12 +338,12 @@ class KonanDescriptorSerializer private constructor(
             }
         }
 
-        val requirement = serializeVersionRequirement(descriptor)
+        val requirement = serializeVersionRequirements(descriptor)
         if (requirement != null) {
-            builder.versionRequirement = requirement
+            builder.addAllVersionRequirement(requirement)
         }
         else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
+            builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
         // TODO: K/N & Contracts???
@@ -375,12 +376,12 @@ class KonanDescriptorSerializer private constructor(
             builder.addValueParameter(local.valueParameter(valueParameterDescriptor))
         }
 
-        val requirement = serializeVersionRequirement(descriptor)
+        val requirement = serializeVersionRequirements(descriptor)
         if (requirement != null) {
-            builder.versionRequirement = requirement
+            builder.addAllVersionRequirement(requirement)
         }
         else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-            builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
+            builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
         extension.serializeConstructor(descriptor, builder)
@@ -435,9 +436,9 @@ class KonanDescriptorSerializer private constructor(
             builder.setExpandedType(local.type(expandedType))
         }
 
-        val requirement = serializeVersionRequirement(descriptor)
+        val requirement = serializeVersionRequirements(descriptor)
         if (requirement != null) {
-            builder.versionRequirement = requirement
+            builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
         builder.addAllAnnotation(descriptor.annotations.map { extension.annotationSerializer.serializeAnnotation(it) })
@@ -521,7 +522,7 @@ class KonanDescriptorSerializer private constructor(
     }
 
     /* Konan needs public modifier */
-    public fun typeId(type: KotlinType) = typeTable[type(type)]
+    fun typeId(type: KotlinType) = typeTable[type(type)]
 
     internal fun type(type: KotlinType): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
@@ -674,9 +675,29 @@ class KonanDescriptorSerializer private constructor(
         return versionRequirementTable[requirement]
     }
 
-    // Returns index into versionRequirementTable, or null if there's no @RequireKotlin on the descriptor
-    private fun serializeVersionRequirement(descriptor: DeclarationDescriptor): Int? {
-        val annotation = descriptor.annotations.findAnnotation(RequireKotlinNames.FQ_NAME) ?: return null
+    private fun getClassifierId(descriptor: ClassifierDescriptorWithTypeParameters): Int =
+            stringTable.getFqNameIndex(descriptor)
+
+    private fun getSimpleNameIndex(name: Name): Int =
+            stringTable.getStringIndex(name.asString())
+
+    private fun getTypeParameterId(descriptor: TypeParameterDescriptor): Int =
+            typeParameters.intern(descriptor)
+
+    private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int = Flags.getAccessorFlags(
+        hasAnnotations(accessor),
+        ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
+        ProtoEnumFlags.modality(accessor.modality),
+        !accessor.isDefault,
+        accessor.isExternal,
+        accessor.isInline
+    )
+    private fun serializeVersionRequirements(descriptor: DeclarationDescriptor): List<Int> =
+            descriptor.annotations
+                    .filter { it.fqName == RequireKotlinNames.FQ_NAME }
+                    .mapNotNull(::serializeVersionRequirementFromRequireKotlin)
+
+    private fun serializeVersionRequirementFromRequireKotlin(annotation: AnnotationDescriptor): Int? {
         val args = annotation.allValueArguments
 
         val versionString = (args[RequireKotlinNames.VERSION] as? StringValue)?.value ?: return null
@@ -721,23 +742,8 @@ class KonanDescriptorSerializer private constructor(
         return versionRequirementTable[proto]
     }
 
-    private fun getClassifierId(descriptor: ClassifierDescriptorWithTypeParameters): Int =
-            stringTable.getFqNameIndex(descriptor)
-
-    private fun getSimpleNameIndex(name: Name): Int =
-            stringTable.getStringIndex(name.asString())
-
-    private fun getTypeParameterId(descriptor: TypeParameterDescriptor): Int =
-            typeParameters.intern(descriptor)
-
-    private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int = Flags.getAccessorFlags(
-        hasAnnotations(accessor),
-        ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
-        ProtoEnumFlags.modality(accessor.modality),
-        !accessor.isDefault,
-        accessor.isExternal,
-        accessor.isInline
-    )
+    private fun writeVersionRequirementDependingOnCoroutinesVersion(): Int =
+            writeVersionRequirement(if (this.extension.releaseCoroutines()) LanguageFeature.ReleaseCoroutines else LanguageFeature.Coroutines)
 
     companion object {
         @JvmStatic

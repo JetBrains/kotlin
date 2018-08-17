@@ -152,6 +152,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     override fun configureLanguageFeatures(collector: MessageCollector) = super.configureLanguageFeatures(collector).also {
         it[LanguageFeature.InlineClasses] = LanguageFeature.State.ENABLED // TODO: remove after updating to 1.3.
+        it[LanguageFeature.ReleaseCoroutines] = LanguageFeature.State.DISABLED
     }
 }
 

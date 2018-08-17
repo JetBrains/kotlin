@@ -22,9 +22,13 @@ import java.nio.file.Paths
 class MultiplatformSpecification extends BaseKonanSpecification {
 
     public static final String KOTLIN_VERSION = System.getProperty("kotlin.version")
+    public static final String KOTLIN_REPO = System.getProperty("kotlin.repo")
     public static final String DEFAULT_COMMON_BUILD_FILE_CONTENT = """\
         buildscript {
             repositories {
+                maven {
+                  url = '$KOTLIN_REPO'
+                }
                 maven {
                    url = 'https://cache-redirector.jetbrains.com/jcenter'
                 }
@@ -37,6 +41,9 @@ class MultiplatformSpecification extends BaseKonanSpecification {
         apply plugin: 'kotlin-platform-common'
         
         repositories {
+            maven {
+               url = '$KOTLIN_REPO'
+            }
             maven {
                url = 'https://cache-redirector.jetbrains.com/jcenter'
             }

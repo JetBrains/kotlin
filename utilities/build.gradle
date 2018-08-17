@@ -20,6 +20,12 @@ buildscript {
 
 apply plugin: 'kotlin'
 
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile project(':backend.native')

@@ -27,6 +27,12 @@ jar {
     archiveName = "${project.name}.jar"
 }
 
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:konan.descriptors:$konanVersion"
     compile "org.jetbrains.kotlin:konan.metadata:$konanVersion"

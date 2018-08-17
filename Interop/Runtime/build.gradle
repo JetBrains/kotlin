@@ -59,6 +59,12 @@ model {
    }
 }
 
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-reflect:$buildKotlinVersion"

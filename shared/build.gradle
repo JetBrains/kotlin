@@ -30,7 +30,7 @@ version = konanVersion
 repositories {
     mavenCentral()
     maven {
-        url kotlinCompilerRepo
+        url buildKotlinCompilerRepo
     }
 }
 

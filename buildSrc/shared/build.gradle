@@ -19,6 +19,8 @@ buildscript {
         gradleProperties = new Properties()
         gradleProperties.load(new FileInputStream("$projectDir/../../gradle.properties"))
         buildKotlinVersion = gradleProperties."buildKotlinVersion"
+        buildKotlinCompilerRepo = gradleProperties."buildKotlinCompilerRepo"
+
     }
 
     apply from: '../../gradle/kotlinGradlePlugin.gradle'
@@ -29,6 +31,11 @@ apply plugin: 'kotlin'
 // We reuse the source code from the Project in buildSrc.
 sourceSets.main.kotlin.srcDirs = ["$projectDir/../../shared/src/main/kotlin"]
 
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
 }

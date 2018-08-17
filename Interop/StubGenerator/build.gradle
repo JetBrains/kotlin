@@ -23,6 +23,13 @@ apply plugin: 'application'
 
 mainClassName = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
 
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-compiler:$buildKotlinVersion"

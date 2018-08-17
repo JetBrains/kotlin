@@ -57,7 +57,7 @@ version = KonanVersion.Companion.CURRENT.toString()
 repositories {
     mavenCentral()
     maven {
-        url kotlinCompilerRepo
+        url buildKotlinCompilerRepo
     }
 }
 
@@ -104,6 +104,7 @@ pluginUnderTestMetadata {
 
 test {
     systemProperty("kotlin.version", buildKotlinVersion)
+    systemProperty("kotlin.repo", buildKotlinCompilerRepo)
     if (project.hasProperty("konan.home")) {
         systemProperty("konan.home", project.property("konan.home"))
     } else {

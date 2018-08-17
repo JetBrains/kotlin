@@ -26,6 +26,9 @@ apply plugin: 'kotlin'
 
 repositories {
     maven {
+        url buildKotlinCompilerRepo
+    }
+    maven {
         url 'https://cache-redirector.jetbrains.com/maven-central'
     }
 }

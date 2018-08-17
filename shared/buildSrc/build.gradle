@@ -24,6 +24,9 @@ buildscript {
 apply plugin: 'kotlin'
 
 repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
     mavenCentral()
 }
 

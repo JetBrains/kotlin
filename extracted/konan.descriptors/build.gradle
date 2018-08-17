@@ -27,6 +27,12 @@ jar {
     archiveName = "${project.name}.jar"
 }
 
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"

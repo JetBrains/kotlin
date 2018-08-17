@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.ir.addSimpleDelegatingConstructor
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*

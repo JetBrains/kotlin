@@ -18,12 +18,7 @@ package kotlin.random
 import kotlin.native.worker.AtomicLong
 import kotlin.system.getTimeNanos
 
-abstract class Random {
-    abstract fun nextInt(): Int
-    abstract fun nextInt(bound: Int): Int
-
-    abstract fun nextLong(): Long
-
+abstract class NativeRandom {
     /**
      * A default pseudo-random linear congruential generator.
      */
@@ -74,5 +69,17 @@ abstract class Random {
          * Returns a pseudo-random Long number.
          */
         override fun nextLong(): Long = (nextInt().toLong() shl 32) + nextInt().toLong()
+
+        override fun nextBits(bitCount: Int): Int = TODO("unimplemented")
     }
 }
+
+
+internal actual fun defaultPlatformRandom(): Random = NativeRandom
+internal actual fun fastLog2(value: Int): Int  = TODO("unimplemented")
+internal actual fun doubleFromParts(hi26: Int, low27: Int): Double  = TODO("unimplemented")
+
+// TODO: common stdlib Random hasn't got seed, this is workaround for running K/N tests.
+var Random.seed:Long
+  get() = NativeRandom.seed
+  set(value) { NativeRandom.seed = value }
