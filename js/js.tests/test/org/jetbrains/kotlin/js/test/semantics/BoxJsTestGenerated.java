@@ -3434,6 +3434,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         public void testSimplePropertyWithGetter() throws Exception {
             runTest("js/js.translator/testData/box/extensionProperty/simplePropertyWithGetter.kt");
         }
+
+        @TestMetadata("withSameNameAndDiffReceiverType.kt")
+        public void testWithSameNameAndDiffReceiverType() throws Exception {
+            runTest("js/js.translator/testData/box/extensionProperty/withSameNameAndDiffReceiverType.kt");
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/incremental")
