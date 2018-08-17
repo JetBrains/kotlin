@@ -10,8 +10,9 @@ include ':nonBlockingEchoServer'
 include ':opengl'
 include ':socket'
 include ':tetris'
-include ':tensorflow'
-include ':torch'
+// ML samples have non-trivial deps, disable from here.
+// include ':tensorflow'
+// include ':torch'
 // Android native activity build requires Android SDK.
 // So temporary switching off for now, as it breaks the build
 // of other samples if SDK is not present.
