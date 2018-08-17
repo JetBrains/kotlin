@@ -151,7 +151,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
         platformProject.whenEvaluated { // At the point when the source set in the platform module is created, the task does not exist
             val platformTask = platformProject.tasks
-                .filterIsInstance<AbstractKotlinCompile<*>>()
+                .withType(AbstractKotlinCompile::class.java)
                 .single { it.sourceSetName == commonSourceSet.name }
 
             platformTask.source(getKotlinSourceDirectorySetSafe(commonSourceSet))

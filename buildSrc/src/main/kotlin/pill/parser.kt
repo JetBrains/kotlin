@@ -15,6 +15,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.pill.POrderRoot.*
 import org.jetbrains.kotlin.pill.PSourceRoot.*
 import org.jetbrains.kotlin.pill.PillExtension.*
@@ -232,8 +233,9 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
         return emptyList()
     }
 
-    val kotlinTasksBySourceSet = project.tasks
-            .filter { it.name.startsWith("compile") && it.name.endsWith("Kotlin") }
+    val kotlinTasksBySourceSet = project.tasks.names
+            .filter { it.startsWith("compile") && it.endsWith("Kotlin") }
+            .map { project.tasks.getByName(it) }
             .associateBy { it.invokeInternal("getSourceSetName") }
 
     val sourceRoots = mutableListOf<PSourceRoot>()

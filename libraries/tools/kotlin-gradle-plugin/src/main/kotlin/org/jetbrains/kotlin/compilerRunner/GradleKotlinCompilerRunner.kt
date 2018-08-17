@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -27,20 +28,20 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.IncrementalModuleEntry
-import org.jetbrains.kotlin.daemon.common.IncrementalModuleInfo
 import org.jetbrains.kotlin.gradle.incremental.GRADLE_CACHE_VERSION
 import org.jetbrains.kotlin.gradle.incremental.GRADLE_CACHE_VERSION_FILE_NAME
-import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.gradle.utils.relativeToRoot
+import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.classpathAsList
+import org.jetbrains.kotlin.incremental.destinationAsFile
+import org.jetbrains.kotlin.incremental.makeModuleFile
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -365,18 +366,14 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             val jarToClassListFile = HashMap<File, File>()
 
             for (project in gradle.rootProject.allprojects) {
-                for (task in project.tasks) {
-                    when (task) {
-                        is KotlinCompile -> {
-                            val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
-                            dirToModule[task.destinationDir] = module
-                            task.javaOutputDir?.let { dirToModule[it] = module }
-                            nameToModules.getOrPut(module.name) { HashSet() }.add(module)
-                        }
-                        is InspectClassesForMultiModuleIC -> {
-                            jarToClassListFile[File(task.archivePath)] = task.classesListFile
-                        }
-                    }
+                project.tasks.withType(KotlinCompile::class.java).forEach {
+                    val module = IncrementalModuleEntry(project.path, it.moduleName, project.buildDir, it.buildHistoryFile)
+                    dirToModule[it.destinationDir] = module
+                    it.javaOutputDir?.let { dirToModule[it] = module }
+                    nameToModules.getOrPut(module.name) { HashSet() }.add(module)
+                }
+                project.tasks.withType(InspectClassesForMultiModuleIC::class.java).forEach {
+                    jarToClassListFile[File(it.archivePath)] = it.classesListFile
                 }
             }
 

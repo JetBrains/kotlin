@@ -28,14 +28,16 @@ import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.incremental.GradleICReporter
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
+import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.classpathAsList
+import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
@@ -404,12 +406,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private fun disableMultiModuleICIfNeeded() {
         if (!incremental || javaOutputDir == null) return
 
-        val illegalTask = project.tasks.firstOrNull {
+        val illegalTask = project.tasks.matching {
             it is AbstractCompile &&
                     it !is JavaCompile &&
                     it !is AbstractKotlinCompile<*> &&
                     javaOutputDir!!.isParentOf(it.destinationDir)
-        } as? AbstractCompile
+        }.firstOrNull() as? AbstractCompile
 
         if (illegalTask != null) {
             project.logger.info(
