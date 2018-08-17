@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## 1.2.61
+
+### IDE
+
+- [`KT-25622`](https://youtrack.jetbrains.com/issue/KT-25622) IDE support for RecentlyNullable/RecentlyNonNull
+- [`KT-26036`](https://youtrack.jetbrains.com/issue/KT-26036) Kotlin 1.2.60 LightAnnotations and Lombok
+
+### IDE. Gradle
+
+- [`KT-20363`](https://youtrack.jetbrains.com/issue/KT-20363) No "Run" icon on the left for tests in common part of a multi-platform project
+
+### Tools. Android Extensions
+
+- [`KT-25839`](https://youtrack.jetbrains.com/issue/KT-25839) Parcelize generates infinite recursive loop
+
+### Tools. JPS
+
+- [`KT-26095`](https://youtrack.jetbrains.com/issue/KT-26095) Kotlin facet UI, JS:  "Enable incremental compilation (experimental)" should be visible only in project setting
+
+### Tools. kapt
+
+- [`KT-24714`](https://youtrack.jetbrains.com/issue/KT-24714) java.lang.IllegalStateException: The provided plugin org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar is not compatible with this version of compiler
+
 ## 1.2.60
 
 ### Compiler
