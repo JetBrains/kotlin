@@ -25,6 +25,7 @@ import org.gradle.tooling.model.UnsupportedMethodException
 import org.gradle.tooling.model.idea.IdeaContentRoot
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -575,12 +576,21 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             gradleModule: IdeaModule,
             resolverCtx: ProjectResolverContext
         ): KotlinSourceSetInfo {
-            return KotlinSourceSetInfo(sourceSet).also {
-                it.moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
-                it.platform = sourceSet.platform
-                it.isTestModule = sourceSet.isTestModule
-                it.compilerArguments = createCompilerArguments(emptyList(), sourceSet.platform).also {
+            return KotlinSourceSetInfo(sourceSet).also { info ->
+                val languageSettings = sourceSet.languageSettings
+                info.moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
+                info.platform = sourceSet.platform
+                info.isTestModule = sourceSet.isTestModule
+                info.compilerArguments = createCompilerArguments(emptyList(), sourceSet.platform).also {
                     it.multiPlatform = true
+                    it.languageVersion = languageSettings.languageVersion
+                    it.apiVersion = languageSettings.apiVersion
+                    it.progressiveMode = languageSettings.isProgressiveMode
+                    it.internalArguments = languageSettings.enabledLanguageFeatures.mapNotNull {
+                        val feature = LanguageFeature.fromString(it) ?: return@mapNotNull null
+                        val arg = "-XXLanguage:+$it"
+                        ManualLanguageFeatureSetting(feature, LanguageFeature.State.ENABLED, arg)
+                    }
                 }
             }
         }

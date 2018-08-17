@@ -75,15 +75,32 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         project: Project
     ): KotlinSourceSetImpl? {
         val sourceSetClass = gradleSourceSet.javaClass
+        val getLanguageSettings = sourceSetClass.getMethodOrNull("getLanguageSettings") ?: return null
         val getSourceDirSet = sourceSetClass.getMethodOrNull("getKotlin") ?: return null
         val getResourceDirSet = sourceSetClass.getMethodOrNull("getResources") ?: return null
         val getDependsOn = sourceSetClass.getMethodOrNull("getDependsOn") ?: return null
+        val languageSettings = getLanguageSettings(gradleSourceSet)?.let { buildLanguageSettings(it) } ?: return null
         val sourceDirs = (getSourceDirSet(gradleSourceSet) as? SourceDirectorySet)?.srcDirs ?: emptySet()
         val resourceDirs = (getResourceDirSet(gradleSourceSet) as? SourceDirectorySet)?.srcDirs ?: emptySet()
         val dependencies = buildSourceSetDependencies(gradleSourceSet, dependencyResolver, project)
         @Suppress("UNCHECKED_CAST")
         val dependsOnSourceSets = (getDependsOn(gradleSourceSet) as? Set<Named>)?.mapTo(LinkedHashSet()) { it.name } ?: emptySet<String>()
-        return KotlinSourceSetImpl(gradleSourceSet.name, sourceDirs, resourceDirs, dependencies, dependsOnSourceSets)
+        return KotlinSourceSetImpl(gradleSourceSet.name, languageSettings, sourceDirs, resourceDirs, dependencies, dependsOnSourceSets)
+    }
+
+    private fun buildLanguageSettings(gradleLanguageSettings: Any): KotlinLanguageSettings? {
+        val languageSettingsClass = gradleLanguageSettings.javaClass
+        val getLanguageVersion = languageSettingsClass.getMethodOrNull("getLanguageVersion") ?: return null
+        val getApiVersion = languageSettingsClass.getMethodOrNull("getApiVersion") ?: return null
+        val getProgressiveMode = languageSettingsClass.getMethodOrNull("getProgressiveMode") ?: return null
+        val getEnabledLanguageFeatures = languageSettingsClass.getMethodOrNull("getEnabledLanguageFeatures") ?: return null
+        @Suppress("UNCHECKED_CAST")
+        return KotlinLanguageSettingsImpl(
+            getLanguageVersion(gradleLanguageSettings) as? String,
+            getApiVersion(gradleLanguageSettings) as? String,
+            getProgressiveMode(gradleLanguageSettings) as? Boolean ?: false,
+            getEnabledLanguageFeatures(gradleLanguageSettings) as? Set<String> ?: emptySet()
+        )
     }
 
     private fun buildDependencies(

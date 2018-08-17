@@ -19,9 +19,17 @@ interface KotlinModule : Serializable {
 }
 
 interface KotlinSourceSet : KotlinModule {
+    val languageSettings: KotlinLanguageSettings
     val sourceDirs: Set<File>
     val resourceDirs: Set<File>
     val dependsOnSourceSets: Set<String>
+}
+
+interface KotlinLanguageSettings : Serializable {
+    val languageVersion: String?
+    val apiVersion: String?
+    val isProgressiveMode: Boolean
+    val enabledLanguageFeatures: Set<String>
 }
 
 interface KotlinCompilationOutput : Serializable {
