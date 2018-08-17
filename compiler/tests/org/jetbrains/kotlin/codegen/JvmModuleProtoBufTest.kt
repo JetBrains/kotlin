@@ -50,7 +50,8 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                 File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",
                 CompilerDeserializationConfiguration(
                         LanguageVersionSettingsImpl(loadWith, ApiVersion.createByLanguageVersion(loadWith))
-                )
+                ),
+                ::error
         )
         val result = buildString {
             for (annotationClassId in mapping.moduleData.annotations) {

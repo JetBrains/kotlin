@@ -33,7 +33,8 @@ class ModuleMapping private constructor(
             bytes: ByteArray?,
             debugName: String,
             skipMetadataVersionCheck: Boolean,
-            isJvmPackageNameSupported: Boolean
+            isJvmPackageNameSupported: Boolean,
+            reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit
         ): ModuleMapping {
             if (bytes == null) {
                 return EMPTY
@@ -47,47 +48,47 @@ class ModuleMapping private constructor(
                 return CORRUPTED
             }
 
-            if (skipMetadataVersionCheck || JvmMetadataVersion(*versionNumber).isCompatible()) {
-                val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream) ?: return EMPTY
-                val result = linkedMapOf<String, PackageParts>()
-
-                for (proto in moduleProto.packagePartsList) {
-                    val packageFqName = proto.packageFqName
-                    val packageParts = result.getOrPut(packageFqName) { PackageParts(packageFqName) }
-
-                    for ((index, partShortName) in proto.shortClassNameList.withIndex()) {
-                        val multifileFacadeId = proto.multifileFacadeShortNameIdList.getOrNull(index)?.minus(1)
-                        val facadeShortName = multifileFacadeId?.let(proto.multifileFacadeShortNameList::getOrNull)
-                        val facadeInternalName = facadeShortName?.let { internalNameOf(packageFqName, it) }
-                        packageParts.addPart(internalNameOf(packageFqName, partShortName), facadeInternalName)
-                    }
-
-                    if (isJvmPackageNameSupported) {
-                        for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
-                            val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
-                                ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
-                                ?: continue
-                            val jvmPackageName = moduleProto.jvmPackageNameList.getOrNull(packageId) ?: continue
-                            packageParts.addPart(internalNameOf(jvmPackageName, partShortName), null)
-                        }
-                    }
-                }
-
-                for (proto in moduleProto.metadataPartsList) {
-                    val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
-                    proto.shortClassNameList.forEach(packageParts::addMetadataPart)
-                }
-
-                // TODO: read arguments of module annotations
-                val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
-                val annotations = moduleProto.annotationList.map { proto -> nameResolver.getQualifiedClassName(proto.id) }
-
-                return ModuleMapping(result, BinaryModuleData(annotations), debugName)
-            } else {
-                // TODO: consider reporting "incompatible ABI version" error for package parts
+            val version = JvmMetadataVersion(*versionNumber)
+            if (!skipMetadataVersionCheck && !version.isCompatible()) {
+                reportIncompatibleVersionError(version)
+                return EMPTY
             }
 
-            return EMPTY
+            val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream) ?: return EMPTY
+            val result = linkedMapOf<String, PackageParts>()
+
+            for (proto in moduleProto.packagePartsList) {
+                val packageFqName = proto.packageFqName
+                val packageParts = result.getOrPut(packageFqName) { PackageParts(packageFqName) }
+
+                for ((index, partShortName) in proto.shortClassNameList.withIndex()) {
+                    val multifileFacadeId = proto.multifileFacadeShortNameIdList.getOrNull(index)?.minus(1)
+                    val facadeShortName = multifileFacadeId?.let(proto.multifileFacadeShortNameList::getOrNull)
+                    val facadeInternalName = facadeShortName?.let { internalNameOf(packageFqName, it) }
+                    packageParts.addPart(internalNameOf(packageFqName, partShortName), facadeInternalName)
+                }
+
+                if (isJvmPackageNameSupported) {
+                    for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
+                        val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
+                            ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
+                            ?: continue
+                        val jvmPackageName = moduleProto.jvmPackageNameList.getOrNull(packageId) ?: continue
+                        packageParts.addPart(internalNameOf(jvmPackageName, partShortName), null)
+                    }
+                }
+            }
+
+            for (proto in moduleProto.metadataPartsList) {
+                val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
+                proto.shortClassNameList.forEach(packageParts::addMetadataPart)
+            }
+
+            // TODO: read arguments of module annotations
+            val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
+            val annotations = moduleProto.annotationList.map { proto -> nameResolver.getQualifiedClassName(proto.id) }
+
+            return ModuleMapping(result, BinaryModuleData(annotations), debugName)
         }
     }
 }

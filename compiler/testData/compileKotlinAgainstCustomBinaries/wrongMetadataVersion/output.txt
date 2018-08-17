@@ -1,4 +1,5 @@
 error: incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
+$TMP_DIR$/library-after.jar!/META-INF/main.kotlin_module: error: module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
 compiler/testData/compileKotlinAgainstCustomBinaries/wrongMetadataVersion/source.kt:5:16: error: class 'a.A' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 42.0.0, expected version is $ABI_VERSION$.
 The class is loaded from $TMP_DIR$/library-after.jar!/a/A.class
 fun baz(param: A, nested: A.Nested) {
