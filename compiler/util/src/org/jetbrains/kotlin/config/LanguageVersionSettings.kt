@@ -214,6 +214,9 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         @JvmField
+        val FIRST_SUPPORTED = KOTLIN_1_2
+
+        @JvmField
         val LATEST_STABLE = KOTLIN_1_3
     }
 }

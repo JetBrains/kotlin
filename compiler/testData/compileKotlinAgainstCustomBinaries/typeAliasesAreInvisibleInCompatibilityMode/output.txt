@@ -1,3 +1,4 @@
+warning: language version 1.0 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/compileKotlinAgainstCustomBinaries/typeAliasesAreInvisibleInCompatibilityMode/main.kt:2:13: error: unresolved reference: Str
 import test.Str
             ^

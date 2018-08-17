@@ -251,7 +251,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     fun testPreReleaseCompilerAgainstPreReleaseLibraryStableLanguageVersion() {
         withPreRelease(true) {
             val library = compileLibrary("library")
-            val someStableReleasedVersion = LanguageVersion.values().first().also { assert(it.isStable) }
+            val someStableReleasedVersion = LanguageVersion.values().first { it.isStable && it >= LanguageVersion.FIRST_SUPPORTED }
             compileKotlin(
                 "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
                 listOf("-language-version", someStableReleasedVersion.versionString)

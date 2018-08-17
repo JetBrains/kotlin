@@ -304,6 +304,18 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             )
         }
 
+        val deprecatedVersion = when {
+            languageVersion < LanguageVersion.FIRST_SUPPORTED -> "Language version ${languageVersion.versionString}"
+            apiVersion < LanguageVersion.FIRST_SUPPORTED -> "API version ${apiVersion.versionString}"
+            else -> null
+        }
+        if (deprecatedVersion != null) {
+            collector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "$deprecatedVersion is deprecated and its support will be removed in a future version of Kotlin"
+            )
+        }
+
         if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE) {
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
