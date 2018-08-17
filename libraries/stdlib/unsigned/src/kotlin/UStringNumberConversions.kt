@@ -186,14 +186,20 @@ public fun String.toUIntOrNull(radix: Int): UInt? {
     if (length == 0) return null
 
     val limit: UInt = UInt.MAX_VALUE
+    val start: Int
 
     val firstChar = this[0]
-    if (firstChar < '0') return null
+    if (firstChar < '0') {
+        if (length == 1 || firstChar != '+') return null
+        start = 1
+    } else {
+        start = 0
+    }
 
     val uradix = radix.toUInt()
     val limitBeforeMul = limit / uradix
     var result = 0u
-    for (i in 0 until length) {
+    for (i in start until length) {
         val digit = digitOf(this[i], radix)
 
         if (digit < 0) return null
@@ -232,15 +238,21 @@ public fun String.toULongOrNull(radix: Int): ULong? {
     if (length == 0) return null
 
     val limit: ULong = ULong.MAX_VALUE
+    val start: Int
 
     val firstChar = this[0]
-    if (firstChar < '0') return null
+    if (firstChar < '0') {
+        if (length == 1 || firstChar != '+') return null
+        start = 1
+    } else {
+        start = 0
+    }
 
 
     val uradix = radix.toUInt()
     val limitBeforeMul = limit / uradix
     var result = 0uL
-    for (i in 0 until length) {
+    for (i in start until length) {
         val digit = digitOf(this[i], radix)
 
         if (digit < 0) return null

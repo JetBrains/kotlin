@@ -159,7 +159,7 @@ class StringNumberConversionTest {
     @Test fun toUByte() {
         compareConversion({it.toUByte()}, {it.toUByteOrNull()}) {
             assertProduces("255", UByte.MAX_VALUE)
-//            assertProduces("+77", 77.toUByte())
+            assertProduces("+77", 77.toUByte())
             assertProduces("128", 128u.toUByte())
             assertFailsOrNull("-1")
             assertFailsOrNull("256")
@@ -169,7 +169,7 @@ class StringNumberConversionTest {
 
         compareConversionWithRadix(String::toUByte, String::toUByteOrNull) {
             assertProduces(16, "7a", 0x7a.toUByte())
-//            assertProduces(16, "+7F", 127.toByte())
+            assertProduces(16, "+8F", 0x8Fu.toUByte())
             assertProduces(16, "80", 128u.toUByte())
             assertProduces(16, "Ff", 255u.toUByte())
             assertFailsOrNull(2, "100000000")
@@ -180,7 +180,7 @@ class StringNumberConversionTest {
 
     @Test fun toUShort() {
         compareConversion({it.toUShort()}, {it.toUShortOrNull()}) {
-//            assertProduces("+77", 77.toUShort())
+            assertProduces("+77", 77.toUShort())
             assertProduces("65535", UShort.MAX_VALUE)
             assertFailsOrNull("+65536")
             assertFailsOrNull("-32768")
@@ -189,7 +189,7 @@ class StringNumberConversionTest {
         }
 
         compareConversionWithRadix(String::toUShort, String::toUShortOrNull) {
-            assertProduces(16, "7FFF", 0x7FFF.toUShort())
+            assertProduces(16, "+7FFF", 0x7FFF.toUShort())
             assertProduces(16, "FfFf", UShort.MAX_VALUE)
             assertFailsOrNull(16, "-8000")
             assertFailsOrNull(5, "10000000")
@@ -200,7 +200,7 @@ class StringNumberConversionTest {
 
     @Test fun toUInt() {
         compareConversion({it.toUInt()}, {it.toUIntOrNull()}) {
-            assertProduces("77", 77u)
+            assertProduces("+77", 77u)
             assertProduces("4294967295", UInt.MAX_VALUE)
 
             assertFailsOrNull("-1")
@@ -215,7 +215,7 @@ class StringNumberConversionTest {
         compareConversionWithRadix(String::toUInt, String::toUIntOrNull) {
             assertProduces(10, "0", 0u)
             assertProduces(10, "473", 473u)
-//            assertProduces(10, "+42", 42u)
+            assertProduces(10, "+42", 42u)
             assertProduces(10, "2147483647", 2147483647u)
 
             assertProduces(16, "FF", 255)
@@ -239,7 +239,7 @@ class StringNumberConversionTest {
     @Test fun toULong() {
         compareConversion({it.toULong()}, {it.toULongOrNull()}) {
             assertProduces("77", 77uL)
-            assertProduces("18446744073709551615", ULong.MAX_VALUE)
+            assertProduces("+18446744073709551615", ULong.MAX_VALUE)
 
             assertFailsOrNull("-1")
             assertFailsOrNull("18446744073709551616")
@@ -254,10 +254,10 @@ class StringNumberConversionTest {
         compareConversionWithRadix(String::toULong, String::toULongOrNull) {
             assertProduces(10, "0", 0uL)
             assertProduces(10, "473", 473uL)
-//            assertProduces(10, "+42", 42uL)
+            assertProduces(10, "+42", 42uL)
 
             assertProduces(16, "7F11223344556677", 0x7F11223344556677uL)
-//            assertProduces(16, "+7faabbccddeeff00", 0x7faabbccddeeff00uL)
+            assertProduces(16, "+7faabbccddeeff00", 0x7faabbccddeeff00uL)
             assertProduces(16, "8000000000000000", Long.MIN_VALUE.toULong())
             assertProduces(16, "FFFFffffFFFFffff", ULong.MAX_VALUE)
             assertProduces(2, "1100110", 102uL)
