@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
+import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 object ArrayFIF : CompositeFIF() {
@@ -64,14 +66,38 @@ object ArrayFIF : CompositeFIF() {
     @JvmStatic
     fun typedArraysEnabled(config: JsConfig) = config.configuration.get(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true)
 
-    fun castOrCreatePrimitiveArray(ctx: TranslationContext, type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
-        if (type == null || !typedArraysEnabled(ctx.config)) return arg
+    fun unsignedPrimitiveToSigned(type: KotlinType): PrimitiveType? {
+        // short-circuit
+        if (!type.isInlineClassType() || type.isMarkedNullable) return null
 
-        return if (type in TYPED_ARRAY_MAP) {
-            createTypedArray(type, arg)
+        return when {
+            KotlinBuiltIns.isUByte(type) -> BYTE
+            KotlinBuiltIns.isUShort(type) -> SHORT
+            KotlinBuiltIns.isUInt(type) -> INT
+            KotlinBuiltIns.isULong(type) -> LONG
+            else -> null
+        }
+    }
+
+    fun castOrCreatePrimitiveArray(ctx: TranslationContext, type: KotlinType, arg: JsArrayLiteral): JsExpression {
+        if (type.isMarkedNullable) return arg
+
+        val unsignedPrimitiveType = unsignedPrimitiveToSigned(type)
+
+        if (unsignedPrimitiveType != null) {
+            val conversionFunction = "to${unsignedPrimitiveType.typeName}"
+            arg.expressions.replaceAll { JsInvocation(JsNameRef(conversionFunction, it)) }
+        }
+
+        val primitiveType = unsignedPrimitiveType ?: KotlinBuiltIns.getPrimitiveType(type)?.takeUnless { type.isMarkedNullable}
+
+        if (primitiveType == null || !typedArraysEnabled(ctx.config)) return arg
+
+        return if (primitiveType in TYPED_ARRAY_MAP) {
+            createTypedArray(primitiveType, arg)
         }
         else {
-            JsAstUtils.invokeKotlinFunction(type.lowerCaseName + "ArrayOf", *arg.expressions.toTypedArray())
+            JsAstUtils.invokeKotlinFunction(primitiveType.lowerCaseName + "ArrayOf", *arg.expressions.toTypedArray())
         }
     }
 
