@@ -5,7 +5,6 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.konan.analyser.index.KonanDescriptorManager
-import org.jetbrains.konan.getVirtualFileNoSizeLimit
 import org.jetbrains.konan.settings.KonanPaths
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
@@ -38,7 +37,7 @@ class KonanPlatformSupport : IdePlatformSupport() {
         //todo: it depends on a random project's stdlib, propagate the actual project here
         val stdlibFile = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
             val stdlibPath = KonanPaths.getInstance(it).konanStdlib()?.toFile()
-            if (stdlibPath != null) getVirtualFileNoSizeLimit(stdlibPath) else null
+            if (stdlibPath != null) LocalFileSystem.getInstance().refreshAndFindFileByIoFile(stdlibPath) else null
         }.firstOrNull()
 
         if (stdlibFile != null) {
