@@ -18,15 +18,29 @@ package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.*
 // TODO: implement them right.
+
+public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
+        completion: Continuation<T>
+): Any? {
+    TODO("Unimplemented")
+}
+
+public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
+        receiver: R,
+        completion: Continuation<T>
+): Any? {
+    TODO("Unimplemented")
+}
+
 @SinceKotlin("1.3")
-public /* actual */ fun <T> (suspend () -> T).createCoroutineUnintercepted(
+public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
         completion: Continuation<T>
 ): Continuation<Unit> {
     TODO("Unimplemented")
 }
 
 @SinceKotlin("1.3")
-public /* actual */ fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
+public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
         receiver: R,
         completion: Continuation<T>
 ): Continuation<Unit> {
@@ -34,4 +48,4 @@ public /* actual */ fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
 }
 
 @SinceKotlin("1.3")
-public /* actual */ fun <T> Continuation<T>.intercepted(): Continuation<T> = TODO("unimplemented")
+public actual fun <T> Continuation<T>.intercepted(): Continuation<T> = TODO("unimplemented")

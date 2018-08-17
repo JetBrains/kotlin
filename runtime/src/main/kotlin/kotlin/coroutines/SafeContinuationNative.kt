@@ -17,20 +17,21 @@
 package kotlin.coroutines
 
 // TODO: implement them right.
-//@PublishedApi
+@PublishedApi
 @SinceKotlin("1.3")
-/* actual */ class SafeContinuation<in T>
-/* actual */ constructor(
+internal actual class SafeContinuation<in T>
+internal actual constructor(
         private val delegate: Continuation<T>,
         initialResult: Any?
 ) : Continuation<T> {
 
-    override val context: CoroutineContext
+    actual override val context: CoroutineContext
     get() = TODO("unimplemented")
-    /* actual */ constructor(delegate: Continuation<T>) : this(delegate, /*UNDECIDED*/ null)
+    @PublishedApi
+    internal actual constructor(delegate: Continuation<T>) : this(delegate, /*UNDECIDED*/ null)
 
     @PublishedApi
-    internal fun getOrThrow(): Any? = TODO("unimplemented")
+    internal actual fun getOrThrow(): Any? = TODO("unimplemented")
 
-    override fun resumeWith(result: SuccessOrFailure<T>):Unit = TODO("unimplemented")
+    actual override fun resumeWith(result: SuccessOrFailure<T>):Unit = TODO("unimplemented")
 }
