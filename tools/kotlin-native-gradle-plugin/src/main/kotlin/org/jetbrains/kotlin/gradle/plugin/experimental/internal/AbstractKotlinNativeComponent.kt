@@ -89,8 +89,8 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
         poms.add(action)
     }
 
-    override val publishJavadoc: Boolean = true
-    override val publishSources: Boolean = true
+    override var publishJavadoc: Boolean = true
+    override var publishSources: Boolean = true
 
     // endregion
 }

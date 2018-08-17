@@ -195,6 +195,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
 
     private fun KotlinNativeSourceSetImpl.createSourcesJarTask(target: KonanTarget): Jar =
             createJarTask("sourcesJar${name.capitalize()}${target.name.capitalize()}") {
+                it.destinationDir = project.buildDir.resolve("libs")
                 it.appendix = "$name-${target.name}"
                 it.classifier = "sources"
                 it.from(getAllSources(target))
@@ -202,6 +203,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
 
     private fun KotlinNativeSourceSetImpl.createEmptyJarTask(namePrefix: String, classifier: String): Jar =
             createJarTask("$namePrefix${name.capitalize()}") {
+                it.destinationDir = project.buildDir.resolve("libs")
                 it.appendix = name
                 it.classifier = classifier
             }
