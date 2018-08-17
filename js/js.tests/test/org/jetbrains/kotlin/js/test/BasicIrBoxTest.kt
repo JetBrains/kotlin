@@ -25,6 +25,8 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/annotationsJVM.kt",
 
     "libraries/stdlib/src/kotlin/internal",
+    "libraries/stdlib/src/kotlin/contracts",
+    "libraries/stdlib/src/kotlin/annotations/Experimental.kt",
     "libraries/stdlib/src/kotlin/util/Standard.kt",
     "core/builtins/native/kotlin/Annotation.kt",
     "core/builtins/native/kotlin/Number.kt",
@@ -97,6 +99,9 @@ abstract class BasicIrBoxTest(
             specificFeatures = mapOf(
                 LanguageFeature.AllowContractsForCustomFunctions to LanguageFeature.State.ENABLED,
                 LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
+            ),
+            analysisFlags = mapOf(
+                AnalysisFlag.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental")
             )
         )
 
