@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.utils.Printer
 
@@ -24,20 +24,24 @@ private class DebugTreePrinter : JKVisitorVoid {
     internal val stringBuilder = StringBuilder()
     private val printer = Printer(stringBuilder)
 
-    override fun visitTreeElement(element: JKTreeElement) {
-        printer.println(element.classNameWithoutJK(), " [")
+    override fun visitTreeElement(treeElement: JKTreeElement) {
+        printer.println(treeElement.describe(), " [")
         printer.indented {
-            element.acceptChildren(this, null)
+            treeElement.acceptChildren(this, null)
         }
         printer.println("]")
     }
 
+    override fun visitNameIdentifier(nameIdentifier: JKNameIdentifier) {
+        printer.println(nameIdentifier.describe(), "(\"", nameIdentifier.value, "\")")
+    }
+
     override fun visitJavaModifier(javaModifier: JKJavaModifier) {
-        printer.println(javaModifier.classNameWithoutJK(), "(", javaModifier.type, ")")
+        printer.println(javaModifier.describe(), "(", javaModifier.type, ")")
     }
 
     override fun visitJavaMethod(javaMethod: JKJavaMethod) {
-        printer.println(javaMethod.classNameWithoutJK(), " [")
+        printer.println(javaMethod.describe(), " [")
         printer.indented {
             javaMethod.block.accept(this, null)
             javaMethod.modifierList.accept(this, null)
@@ -47,7 +51,7 @@ private class DebugTreePrinter : JKVisitorVoid {
     }
 
     override fun visitExpressionStatement(expressionStatement: JKExpressionStatement) {
-        printer.println(expressionStatement.classNameWithoutJK(), " [")
+        printer.println(expressionStatement.describe(), " [")
         printer.indented {
             expressionStatement.acceptChildren(this, null)
         }
@@ -55,7 +59,7 @@ private class DebugTreePrinter : JKVisitorVoid {
     }
 
     override fun visitQualifiedExpression(qualifiedExpression: JKQualifiedExpression) {
-        printer.println(qualifiedExpression.classNameWithoutJK(), " [")
+        printer.println(qualifiedExpression.describe(), " [")
         printer.indented {
             qualifiedExpression.acceptChildren(this, null)
         }
@@ -63,7 +67,7 @@ private class DebugTreePrinter : JKVisitorVoid {
     }
 
     override fun visitBlock(block: JKBlock) {
-        printer.println(block.classNameWithoutJK(), " [")
+        printer.println(block.describe(), " [")
         printer.indented {
             block.acceptChildren(this, null)
         }
@@ -83,9 +87,25 @@ private class DebugTreePrinter : JKVisitorVoid {
         }
         printer.println("\"")
     }
+
+    override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) {
+        printer.print(fieldAccessExpression.describe(), "(")
+        printSymbol(fieldAccessExpression.identifier)
+        printer.printlnWithNoIndent(")")
+    }
+
+    fun printSymbol(symbol: JKSymbol) {
+        if (symbol is JKUniverseSymbol<*>) {
+            printer.printWithNoIndent(symbol.target.describe())
+        } else {
+            printer.printWithNoIndent("Psi")
+        }
+    }
 }
 
-private fun Any.classNameWithoutJK(): String = this.javaClass.simpleName.removePrefix("JK")
+private fun JKTreeElement.describe(): String = this.classNameWithoutJK() + "@${this.hashCode().toString(16)}"
+private fun JKTreeElement.classNameWithoutJK(): String = this.javaClass.simpleName.removePrefix("JK")
+private fun JKType.classNameWithoutJK(): String = this.javaClass.simpleName.removePrefix("JK")
 
 private inline fun Printer.indented(block: () -> Unit) {
     this.pushIndent()
