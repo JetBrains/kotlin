@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.idea.debugger.sequence.psi.sequence
 
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallCheckerWithNameHeuristics
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.StreamCallChecker
-import org.jetbrains.kotlin.psi.KtCallExpression
 
-class SequenceCallCheckerWithNameHeuristics(private val nestedChecker: StreamCallChecker) : StreamCallChecker {
+class SequenceCallCheckerWithNameHeuristics(nestedChecker: StreamCallChecker) : CallCheckerWithNameHeuristics(nestedChecker) {
     private companion object {
+
         val TERMINATION_CALLS: Set<String> = setOf(
             "all", "any", "associate", "associateBy", "associateByTo", "associateTo", "average", "chunked", "contains", "count", "distinct",
             "distinctBy", "elementAt", "elementAtOrElse", "elementAtOrNull", "find", "findLast", "first", "firstOrNull", "fold",
@@ -20,16 +21,5 @@ class SequenceCallCheckerWithNameHeuristics(private val nestedChecker: StreamCal
         )
     }
 
-    override fun isIntermediateCall(expression: KtCallExpression): Boolean {
-        return nestedChecker.isIntermediateCall(expression)
-    }
-
-    override fun isTerminationCall(expression: KtCallExpression): Boolean {
-        val name = expression.calleeExpression?.text
-        if (name != null) {
-            return TERMINATION_CALLS.contains(name) && nestedChecker.isTerminationCall(expression)
-        }
-
-        return nestedChecker.isTerminationCall(expression)
-    }
+    override fun isTerminalCallName(callName: String): Boolean = TERMINATION_CALLS.contains(callName)
 }
