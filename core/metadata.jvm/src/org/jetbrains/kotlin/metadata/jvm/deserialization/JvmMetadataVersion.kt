@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
  * This version includes the version of the core protobuf messages (metadata.proto) as well as JVM extensions (jvm_metadata.proto).
  */
 class JvmMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
-    // NOTE: 1.1 is incompatible with 1.0 and hence with any other version except 1.1.*
+    // NOTE: 1.1 is incompatible with 1.0
     override fun isCompatible() =
-        this.major == 1 && this.minor == 1
+        isMetadataVersionCompatible() && minor != 0
 
     companion object {
         @JvmField
