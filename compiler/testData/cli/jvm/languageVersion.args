@@ -2,4 +2,4 @@ $TESTDATA_DIR$/languageVersion.kt
 -d
 $TEMP_DIR$
 -language-version
-1.0
+1.2

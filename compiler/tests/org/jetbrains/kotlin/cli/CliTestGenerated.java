@@ -151,6 +151,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/coroutinesWarn.args");
         }
 
+        @TestMetadata("deprecatedApiVersion.args")
+        public void testDeprecatedApiVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/deprecatedApiVersion.args");
+        }
+
+        @TestMetadata("deprecatedLanguageVersion.args")
+        public void testDeprecatedLanguageVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/deprecatedLanguageVersion.args");
+        }
+
         @TestMetadata("diagnosticsOrder.args")
         public void testDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/diagnosticsOrder.args");

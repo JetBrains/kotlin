@@ -7,6 +7,7 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
+warning: language version 1.1 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:9: error: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type String?
     some.length
         ^
