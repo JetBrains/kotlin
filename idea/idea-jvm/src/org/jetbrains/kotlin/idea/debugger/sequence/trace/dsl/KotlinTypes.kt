@@ -3,21 +3,22 @@ package org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl
 
 import com.intellij.debugger.streams.trace.dsl.Types
 import com.intellij.debugger.streams.trace.impl.handler.type.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 
 object KotlinTypes : Types {
-    override val ANY: GenericType = ClassTypeImpl("kotlin.Any", "kotlin.Any()")
+    override val ANY: GenericType = ClassTypeImpl(FQ_NAMES.any.asString(), "kotlin.Any()")
 
-    override val BOOLEAN: GenericType = ClassTypeImpl("kotlin.Boolean", "false")
-    val BYTE: GenericType = ClassTypeImpl("kotlin.Byte", "0")
-    val SHORT: GenericType = ClassTypeImpl("kotlin.Short", "0")
-    val CHAR: GenericType = ClassTypeImpl("kotlin.Char", "0.toChar()")
-    override val INT: GenericType = ClassTypeImpl("kotlin.Int", "0")
-    override val LONG: GenericType = ClassTypeImpl("kotlin.Long", "0L")
-    val FLOAT: GenericType = ClassTypeImpl("kotlin.Float", "0.0f")
-    override val DOUBLE: GenericType = ClassTypeImpl("kotlin.Double", "0.0")
-    override val STRING: GenericType = ClassTypeImpl("kotlin.String", "\"\"")
-    override val EXCEPTION: GenericType = ClassTypeImpl("kotlin.Throwable", "kotlin.Throwable()")
-    override val VOID: GenericType = ClassTypeImpl("kotlin.Unit", "Unit")
+    override val BOOLEAN: GenericType = ClassTypeImpl(FQ_NAMES._boolean.asString(), "false")
+    val BYTE: GenericType = ClassTypeImpl(FQ_NAMES._byte.asString(), "0")
+    val SHORT: GenericType = ClassTypeImpl(FQ_NAMES._short.asString(), "0")
+    val CHAR: GenericType = ClassTypeImpl(FQ_NAMES._char.asString(), "0.toChar()")
+    override val INT: GenericType = ClassTypeImpl(FQ_NAMES._int.asString(), "0")
+    override val LONG: GenericType = ClassTypeImpl(FQ_NAMES._long.asString(), "0L")
+    val FLOAT: GenericType = ClassTypeImpl(FQ_NAMES._float.asString(), "0.0f")
+    override val DOUBLE: GenericType = ClassTypeImpl(FQ_NAMES._double.asString(), "0.0")
+    override val STRING: GenericType = ClassTypeImpl(FQ_NAMES.string.asString(), "\"\"")
+    override val EXCEPTION: GenericType = ClassTypeImpl(FQ_NAMES.throwable.asString(), "kotlin.Throwable()")
+    override val VOID: GenericType = ClassTypeImpl(FQ_NAMES.unit.asString(), "Unit")
 
     val NULLABLE_ANY: GenericType = nullable { ANY }
 
