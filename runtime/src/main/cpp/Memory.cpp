@@ -447,6 +447,7 @@ namespace {
 
 template<typename func>
 inline void traverseContainerObjectFields(ContainerHeader* container, func process) {
+  RuntimeAssert(!isAggregatingFrozenContainer(container), "Must not be called on such containers");
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
   for (int object = 0; object < container->objectCount(); object++) {
     const TypeInfo* typeInfo = obj->type_info();
@@ -1753,12 +1754,53 @@ OBJ_GETTER(ReadRefLocked, ObjHeader** location, int32_t* spinlock) {
   return value;
 }
 
-void EnsureNeverFrozen(KRef object) {
+void EnsureNeverFrozen(ObjHeader* object) {
    if (object->container()->frozen())
       ThrowFreezingException(object, object);
    // TODO: note, that this API could not not be called on frozen objects, so no need to care much about concurrency,
    // although there's subtle race with case, where other thread freezes the same object after check.
    object->meta_object()->flags_ |= MF_NEVER_FROZEN;
+}
+
+KBoolean Konan_ensureAcyclicAndSet(ObjHeader* where, KInt index, ObjHeader* what) {
+    RuntimeAssert(where->container()->frozen(), "Must be used on frozen objects only");
+    RuntimeAssert(what == nullptr || what->container()->permanentOrFrozen(),
+        "Must be used with an immutable value");
+    if (what != nullptr) {
+        // Now we check that `where` is not reachable from `what`.
+        // As we cannot modify objects while traversing, instead we remember all seen objects in a set.
+        KStdUnorderedSet<ContainerHeader*> seen;
+        KStdDeque<ContainerHeader*> queue;
+        queue.push_back(what->container());
+        bool acyclic = true;
+        while (!queue.empty() && acyclic) {
+            ContainerHeader* current = queue.front();
+            queue.pop_front();
+            seen.insert(current);
+            if (isAggregatingFrozenContainer(current)) {
+                ContainerHeader** subContainer = reinterpret_cast<ContainerHeader**>(current + 1);
+                for (int i = 0; i < current->objectCount(); ++i) {
+                    if (seen.count(*subContainer) == 0)
+                        queue.push_back(*subContainer++);
+                }
+            } else {
+              traverseContainerReferredObjects(current, [where, &queue, &acyclic, &seen](ObjHeader* obj) {
+                if (obj == where) {
+                    acyclic = false;
+                } else {
+                    auto* objContainer = obj->container();
+                    if (seen.count(objContainer) == 0)
+                        queue.push_back(objContainer);
+                }
+              });
+            }
+          }
+        if (!acyclic) return false;
+    }
+    UpdateRef(reinterpret_cast<ObjHeader**>(
+            reinterpret_cast<uintptr_t>(where + 1) + where->type_info()->objOffsets_[index]), what);
+    // Fence on updated location?
+    return true;
 }
 
 } // extern "C"

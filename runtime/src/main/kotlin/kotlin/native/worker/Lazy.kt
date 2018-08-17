@@ -16,49 +16,47 @@
 
 package kotlin.native.worker
 
+import kotlin.native.internal.NoReorderFields
+
+@SymbolName("Konan_ensureAcyclicAndSet")
+private external fun ensureAcyclicAndSet(where: Any, index: Int, what: Any?): Boolean
+
+@NoReorderFields
 internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
-    private var initializer_: (() -> T)? = initializer
+    // IMPORTANT: due to simplified ensureAcyclicAndSet() semantics fields here must be ordered like this,
+    // as an ordinal is used to refer a field.
     private var value_: Any? = UNINITIALIZED
-    // Objects are not frozen by default on single-threaded targets, shall they?
-    private val valueFrozen_ = AtomicReference<Any?>(UNINITIALIZED.freeze())
+    private var initializer_: (() -> T)? = initializer
+    private val lock_ = Lock()
 
     override val value: T
         get() {
-            var result: Any? = value_
             if (isFrozen) {
-                if (result !== UNINITIALIZED) {
-                    assert(result !== INITIALIZING)
-                    @Suppress("UNCHECKED_CAST")
-                    return result as T
-                }
-                // Barrier.
-                // Note that recursive lazy initializers will hang here.
-                do {
-                    result = valueFrozen_.get()
-                } while (result === INITIALIZING)
-
-                if (result !== UNINITIALIZED) {
-                    @Suppress("UNCHECKED_CAST")
-                    return result as T
-                }
-                // TODO: maybe release initializer in frozen case.
-                if (valueFrozen_.compareAndSwap(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
+                locked(lock_) {
+                    var result: Any? = value_
+                    if (result !== UNINITIALIZED) {
+                        assert(result !== INITIALIZING)
+                        @Suppress("UNCHECKED_CAST")
+                        return result as T
+                    }
+                    // Set value_ to INITIALIZING.
+                    ensureAcyclicAndSet(this, 0, INITIALIZING)
                     result = initializer_!!().freeze()
-                    val old = valueFrozen_.compareAndSwap(INITIALIZING, result)
-                    assert(old === INITIALIZING)
-                } else {
-                    do {
-                        result = valueFrozen_.get()
-                    } while (result === INITIALIZING)
+                    // Set value_.
+                    if (!ensureAcyclicAndSet(this, 0, result)) {
+                        throw InvalidMutabilityException("Setting cyclic data via lazy in $this: $result")
+                    }
+                    // Clear initializer_ reference.
+                    ensureAcyclicAndSet(this, 1, null)
+                    @Suppress("UNCHECKED_CAST")
+                    return result as T
                 }
-                assert(result !== UNINITIALIZED && result !== INITIALIZING)
-                @Suppress("UNCHECKED_CAST")
-                return result as T
             } else {
+                var result: Any? = value_
                 if (result === UNINITIALIZED) {
                     result = initializer_!!()
                     if (isFrozen)
-                        throw InvalidMutabilityException(this)
+                        throw InvalidMutabilityException("$this got frozen during lazy evaluation" )
                     value_ = result
                     initializer_ = null
                 }
@@ -68,7 +66,7 @@ internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
         }
 
     // Racy!
-    override fun isInitialized(): Boolean = (value_ !== UNINITIALIZED) ||  (valueFrozen_.get() !== UNINITIALIZED)
+    override fun isInitialized(): Boolean = (value_ !== UNINITIALIZED) && (value_ !== INITIALIZING)
 
     override fun toString(): String = if (isInitialized())
         value.toString() else "Lazy value not initialized yet."
