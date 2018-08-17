@@ -4586,6 +4586,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testProperty() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/property.kt");
         }
+
+        @TestMetadata("yield.kt")
+        public void testYield() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/yield.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/removeRedundantSpreadOperator")
