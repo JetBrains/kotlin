@@ -37,6 +37,8 @@ abstract class ConstantValue<out T>(open val value: T) {
     override fun hashCode(): Int = value?.hashCode() ?: 0
 
     override fun toString(): String = value.toString()
+
+    open fun stringTemplateValue(): String = value.toString()
 }
 
 abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
@@ -200,6 +202,8 @@ class UByteValue(byteValue: Byte) : UnsignedValueConstant<Byte>(byteValue) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitUByteValue(this, data)
 
     override fun toString() = "$value.toUByte()"
+
+    override fun stringTemplateValue(): String = (value.toInt() and 0xFF).toString()
 }
 
 class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) {
@@ -211,6 +215,8 @@ class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitUShortValue(this, data)
 
     override fun toString() = "$value.toUShort()"
+
+    override fun stringTemplateValue(): String = (value.toInt() and 0xFFFF).toString()
 }
 
 class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
@@ -222,6 +228,8 @@ class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitUIntValue(this, data)
 
     override fun toString() = "$value.toUInt()"
+
+    override fun stringTemplateValue(): String = (value.toLong() and 0xFFFFFFFFL).toString()
 }
 
 class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
@@ -233,4 +241,13 @@ class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitULongValue(this, data)
 
     override fun toString() = "$value.toULong()"
+
+    override fun stringTemplateValue(): String {
+        if (value >= 0) return value.toString()
+
+        val div10 = (value ushr 1) / 5
+        val mod10 = value - 10 * div10
+
+        return "$div10$mod10"
+    }
 }
