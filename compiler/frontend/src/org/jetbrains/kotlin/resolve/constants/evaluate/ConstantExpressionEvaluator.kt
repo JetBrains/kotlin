@@ -365,7 +365,7 @@ private class ConstantExpressionEvaluatorVisitor(
             return when (constantValue) {
                 is ErrorValue, is EnumValue -> return null
                 is NullValue -> StringValue("null")
-                else -> StringValue(constantValue.value.toString())
+                else -> StringValue(constantValue.stringTemplateValue())
             }.wrap(compileTimeConstant.parameters)
         }
 
