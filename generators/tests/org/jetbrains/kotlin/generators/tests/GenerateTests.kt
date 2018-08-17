@@ -78,8 +78,6 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPas
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
-import org.jetbrains.kotlin.idea.debugger.sequence.exec.AbstractCollectionTraceTestCase
-import org.jetbrains.kotlin.idea.debugger.sequence.exec.AbstractJavaStreamTraceTestCase
 import org.jetbrains.kotlin.idea.debugger.sequence.exec.AbstractSequenceTraceTestCase
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
@@ -647,15 +645,6 @@ fun main(args: Array<String>) {
         testClass<AbstractFileRankingTest> {
             model("debugger/fileRanking")
         }
-
-        // Not supported yet
-//        testClass<AbstractJavaStreamTraceTestCase> {
-//                        model("debugger/tinyApp/src/streams/java")
-//        }
-
-//        testClass<AbstractCollectionTraceTestCase> {
-//                        model("debugger/tinyApp/src/streams/collection")
-//        }
 
         testClass<AbstractSequenceTraceTestCase> {
             // We need to implement mapping logic for terminal operations
