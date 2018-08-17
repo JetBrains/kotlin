@@ -292,4 +292,38 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
         }
     }
+
+    @Test
+    fun testResourceFilteringAndSourceTrackingWithJava() = with(Project("simpleProject")) {
+        setupWorkingDir()
+        gradleBuildScript().appendText(
+            "\n" + """
+            // Test 1 -- check that Kotlin sources are correctly filtered out of resources, even those added late at configuration time:
+            sourceSets.main.resources.srcDir('src/main/kotlin')
+            sourceSets.main.resources.srcDir('src/foo/kotlin')
+            kotlin.target.compilations.main.source(kotlin.sourceSets.create('foo'))
+
+            // Test 2 -- check that Java sources from the Kotlin source directories are correctly tracked under `allJava` in the source set:
+            sourceSets.main.allJava.files.each { println "allJava:${'$'}{it.name}" }
+            """.trimIndent()
+        )
+        listOf("src/foo/kotlin/foo.kt", "src/main/resources/foo.txt", "src/foo/kotlin/foo.java").forEach { path ->
+            projectDir.resolve(path).apply { parentFile.mkdirs(); writeText("foo") }
+        }
+
+        build("processResources") {
+            assertSuccessful()
+
+            // Test 1 (see above)
+            assertTasksExecuted(":processResources")
+            assertFileExists("build/resources/main/foo.txt")
+            assertNoSuchFile("build/resources/main/helloWorld.kt")
+            assertNoSuchFile("build/resources/main/foo.kt")
+
+            // Test 2 (see above)
+            assertContains("allJava:Greeter.java")
+            assertContains("allJava:HelloWorld.java")
+            assertContains("allJava:foo.java")
+        }
+    }
 }
