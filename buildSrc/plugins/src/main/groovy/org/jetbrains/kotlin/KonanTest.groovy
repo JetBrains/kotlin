@@ -710,14 +710,18 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
     }
 
     static String markMutableObjects(String text) {
-        def idx = text.indexOf("object ")
-        // FIXME: find only those who has vars inside
-        if (idx != -1) {
-            def lineBeforeIdx = text.substring(0, idx).lastIndexOf("\n")
-            text = text.substring(0, lineBeforeIdx) + "\n@kotlin.native.ThreadLocal" + text.substring(lineBeforeIdx)
+        def lines = text.readLines()
+        def result = new ArrayList<String>(lines.size())
+        lines.forEach { line ->
+            // FIXME: find only those who has vars inside
+            // Find object declarations and companion objects
+            if (line.matches("(?m)^\\s*object [a-zA-Z_][a-zA-Z0-9_]*\\s*.*")
+                    || line.matches("(?m)^\\s*companion object.*")) {
+                result += "@kotlin.native.ThreadLocal"
+            }
+            result += line
         }
-
-        return text
+        return result.join(System.lineSeparator())
     }
 
     List<String> createTestFiles() {
