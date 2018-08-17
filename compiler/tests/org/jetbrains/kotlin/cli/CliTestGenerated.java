@@ -586,11 +586,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/wrongAbiVersion.args");
         }
 
-        @TestMetadata("wrongAbiVersionNoErrors.args")
-        public void testWrongAbiVersionNoErrors() throws Exception {
-            runTest("compiler/testData/cli/jvm/wrongAbiVersionNoErrors.args");
-        }
-
         @TestMetadata("wrongArgument.args")
         public void testWrongArgument() throws Exception {
             runTest("compiler/testData/cli/jvm/wrongArgument.args");

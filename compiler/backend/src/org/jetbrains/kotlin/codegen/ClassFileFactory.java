@@ -201,7 +201,9 @@ public class ClassFileFactory implements OutputFileCollection {
                 case "kotlin_module": {
                     ModuleMapping mapping = ModuleMappingUtilKt.loadModuleMapping(
                             ModuleMapping.Companion, file.asByteArray(), relativePath.getPath(),
-                            CompilerDeserializationConfiguration.Default.INSTANCE
+                            CompilerDeserializationConfiguration.Default.INSTANCE, version -> {
+                                throw new IllegalStateException("Version of the generated module cannot be incompatible: " + version);
+                            }
                     );
                     for (Map.Entry<String, PackageParts> entry : mapping.getPackageFqName2Parts().entrySet()) {
                         FqName packageFqName = new FqName(entry.getKey());

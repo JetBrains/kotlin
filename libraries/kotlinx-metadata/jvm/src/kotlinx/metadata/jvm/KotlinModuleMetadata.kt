@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate") val bytes: ByteArray) {
     internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
         bytes, javaClass.name, skipMetadataVersionCheck = false, isJvmPackageNameSupported = true
-    )
+    ) {
+        // TODO: report incorrect versions of modules
+    }
 
     /**
      * A [KmModuleVisitor] that generates the metadata of a Kotlin JVM module file.

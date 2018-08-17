@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
@@ -94,7 +96,14 @@ class JvmPackagePartProvider(
                 try {
                     val mapping = ModuleMapping.loadModuleMapping(
                         moduleFile.contentsToByteArray(), moduleFile.toString(), deserializationConfiguration
-                    )
+                    ) { incompatibleVersion ->
+                        messageCollector.report(
+                            ERROR,
+                            "Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is " +
+                                    "$incompatibleVersion, expected version is ${JvmMetadataVersion.INSTANCE}.",
+                            CompilerMessageLocation.create(moduleFile.path)
+                        )
+                    }
                     loadedModules.add(ModuleMappingInfo(root, mapping, moduleFile.nameWithoutExtension))
                 } catch (e: EOFException) {
                     messageCollector.report(
