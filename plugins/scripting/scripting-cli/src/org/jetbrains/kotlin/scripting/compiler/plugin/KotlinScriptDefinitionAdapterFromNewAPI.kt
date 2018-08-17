@@ -52,7 +52,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         get() = emptyList()
 
     override val dependencyResolver: DependenciesResolver by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        BridgeDependenciesResolver(scriptDefinition, null)
+        BridgeDependenciesResolver(scriptDefinition)
     }
 
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy(LazyThreadSafetyMode.PUBLICATION) {

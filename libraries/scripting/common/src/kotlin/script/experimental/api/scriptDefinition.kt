@@ -45,17 +45,17 @@ val ScriptDefinitionKeys.defaultImports by PropertiesCollection.key<List<String>
 
 val ScriptDefinitionKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
-val ScriptDefinitionKeys.generatedClassAnnotations by PropertiesCollection.key<List<Annotation>>()
-
 val ScriptDefinitionKeys.copyAnnotationsFrom by PropertiesCollection.key<List<KotlinType>>()
 
 val ScriptDefinitionKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
 
-val ScriptDefinitionKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<RefineScriptCompilationConfigurationHandler>() // default: false
+val ScriptDefinitionKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<RefineConfigurationBeforeParsingData>()
 
 val ScriptDefinitionKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<RefineConfigurationOnAnnotationsData>()
 
 val ScriptDefinitionKeys.refineConfigurationOnSections by PropertiesCollection.key<RefineConfigurationOnSectionsData>()
+
+val ScriptDefinitionKeys.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
 
 // DSL:
 
@@ -65,7 +65,7 @@ val ScriptDefinition.Builder.refineConfiguration get() = RefineConfigurationBuil
 class RefineConfigurationBuilder : PropertiesCollection.Builder() {
 
     fun beforeParsing(handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptDefinition.refineConfigurationBeforeParsing, handler)
+        set(ScriptDefinition.refineConfigurationBeforeParsing, RefineConfigurationBeforeParsingData(handler))
     }
 
     fun onAnnotations(annotations: List<KotlinType>, handler: RefineScriptCompilationConfigurationHandler) {

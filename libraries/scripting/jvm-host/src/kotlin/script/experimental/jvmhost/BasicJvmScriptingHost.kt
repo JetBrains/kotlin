@@ -14,17 +14,13 @@ import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 
 open class BasicJvmScriptingHost(
-    scriptDefinition: ScriptDefinition,
     hostEnvironment: ScriptingEnvironment = defaultJvmScriptingEnvironment,
     compiler: JvmScriptCompiler = JvmScriptCompiler(hostEnvironment),
     evaluator: ScriptEvaluator = BasicJvmScriptEvaluator()
-) : BasicScriptingHost(scriptDefinition, compiler, evaluator)
+) : BasicScriptingHost(compiler, evaluator)
 
 
-inline fun <reified T : Any> makeBasicHostFromAnnotatedScriptBaseClass(
-    hostEnvironment: ScriptingEnvironment = defaultJvmScriptingEnvironment
-) =
-    BasicJvmScriptingHost(
-        createScriptDefinitionFromAnnotatedBaseClass(KotlinType(T::class), hostEnvironment),
-        hostEnvironment
-    )
+inline fun <reified T : Any> createBasicScriptDefinitionFromAnnotatedBaseClass(
+    hostEnvironment: ScriptingEnvironment = defaultJvmScriptingEnvironment,
+    noinline body: ScriptDefinition.Builder.() -> Unit = {}
+): ScriptDefinition = createScriptDefinitionFromAnnotatedBaseClass(KotlinType(T::class), hostEnvironment, ScriptDefinition::class, body)

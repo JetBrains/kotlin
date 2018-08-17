@@ -18,11 +18,9 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportPosition
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
-import kotlin.script.experimental.util.getFirstFromChainOrNull
 
 class BridgeDependenciesResolver(
     val scriptDefinition: ScriptDefinition,
-    private val additionalConfiguration: ScriptCompileConfiguration?,
     val onClasspathUpdated: (List<File>) -> Unit = {}
 ) : AsyncDependenciesResolver {
 
@@ -46,7 +44,7 @@ class BridgeDependenciesResolver(
                 if (refineFn == null) null
                 else {
                     val res = refineFn(
-                        ScriptDataFacade(scriptContents.toScriptSource(), scriptDefinition, additionalConfiguration, processedScriptData)
+                        ScriptDataFacade(scriptContents.toScriptSource(), scriptDefinition, processedScriptData)
                     )
                     when (res) {
                         is ResultWithDiagnostics.Failure ->
@@ -62,7 +60,7 @@ class BridgeDependenciesResolver(
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
             if (newClasspath.isNotEmpty()) {
                 val oldClasspath =
-                    getFirstFromChainOrNull(ScriptDefinition.dependencies, additionalConfiguration, scriptDefinition)
+                    scriptDefinition[ScriptDefinition.dependencies]
                         ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
                 if (newClasspath != oldClasspath) {
                     onClasspathUpdated(newClasspath)
@@ -71,9 +69,7 @@ class BridgeDependenciesResolver(
             DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
-                    imports = getFirstFromChainOrNull(
-                        ScriptDefinition.defaultImports, refinedConfiguration, additionalConfiguration, scriptDefinition
-                    )?.toList() ?: emptyList()
+                    imports = scriptDefinition[ScriptDefinition.defaultImports]?.toList() ?: emptyList()
                 ),
                 diagnostics
             )

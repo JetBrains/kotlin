@@ -12,8 +12,7 @@ interface ReplSnippetChecker {
     suspend operator fun invoke(
         snippet: ReplSnippetSource,
         state: ReplStageState<*>,
-        scriptDefinition: ScriptDefinition,
-        additionalConfiguration: ScriptCompileConfiguration? = null // overrides properties from definition
+        scriptDefinition: ScriptDefinition
     ): ResultWithDiagnostics<Unit>
 }
 
@@ -22,8 +21,7 @@ interface ReplSnippetCompiler {
     suspend operator fun invoke(
         snippet: ReplSnippetSource,
         state: ReplStageState<*>,
-        scriptDefinition: ScriptDefinition,
-        additionalConfiguration: ScriptCompileConfiguration? = null // overrides properties from definition
+        scriptDefinition: ScriptDefinition
     ): ResultWithDiagnostics<CompiledReplSnippet<*>>
 }
 

@@ -9,8 +9,7 @@ interface ScriptCompiler {
 
     suspend operator fun invoke(
         script: ScriptSource,
-        scriptDefinition: ScriptDefinition,
-        additionalConfiguration: ScriptCompileConfiguration? = null // overrides properties from definition and configurator.defaultConfiguration
+        scriptDefinition: ScriptDefinition
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 
@@ -18,7 +17,6 @@ interface ScriptCompiler {
 interface CompiledScript<out ScriptBase : Any> {
 
     val definition: ScriptDefinition
-    val additionalConfiguration: ScriptCompileConfiguration?
 
     suspend fun instantiate(scriptEvaluationEnvironment: ScriptEvaluationEnvironment?): ResultWithDiagnostics<ScriptBase>
 }

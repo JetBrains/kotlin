@@ -9,7 +9,6 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptCompileConfiguration
 import kotlin.script.experimental.api.ScriptDefinition
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -53,7 +52,6 @@ abstract class ReplHost(
         snippet: ReplSnippetSource,
         state: ReplStageState<*>,
         scriptDefinition: ScriptDefinition,
-        additionalConfiguration: ScriptCompileConfiguration? = null, // overrides properties from definition
         replEvaluationEnvironment: ReplEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult>
 }

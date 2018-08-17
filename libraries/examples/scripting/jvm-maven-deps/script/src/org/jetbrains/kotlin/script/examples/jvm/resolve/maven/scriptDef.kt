@@ -49,9 +49,9 @@ object MyScriptDefinition : ScriptDefinition(
 
 private val resolver = FilesAndMavenResolver()
 
-fun myConfigureOnAnnotations(script: ScriptDataFacade): ResultWithDiagnostics<ScriptCompileConfiguration?> {
+fun myConfigureOnAnnotations(script: ScriptDataFacade): ResultWithDiagnostics<ScriptDefinition?> {
     val annotations = script.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
-        ?: return script.configuration.asSuccess()
+        ?: return null.asSuccess()
     val scriptContents = object : ScriptContents {
         override val annotations: Iterable<Annotation> = annotations
         override val file: File? = null
@@ -63,11 +63,11 @@ fun myConfigureOnAnnotations(script: ScriptDataFacade): ResultWithDiagnostics<Sc
     }
     return try {
         val newDepsFromResolver = resolver.resolve(scriptContents, emptyMap(), ::report, null).get()
-            ?: return script.configuration.asSuccess(diagnostics)
+            ?: return null.asSuccess(diagnostics)
         val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
-            ?: return script.configuration.asSuccess(diagnostics)
-        ScriptCompileConfiguration {
-            dependencies(JvmDependency(resolvedClasspath))
+            ?: return null.asSuccess(diagnostics)
+        ScriptDefinition(script.definition) {
+            dependencies.append(JvmDependency(resolvedClasspath))
         }.asSuccess(diagnostics)
     } catch (e: Throwable) {
         ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())

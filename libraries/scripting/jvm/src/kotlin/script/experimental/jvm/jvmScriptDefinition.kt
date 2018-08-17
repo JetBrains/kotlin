@@ -7,26 +7,27 @@ package kotlin.script.experimental.jvm
 
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
-import kotlin.script.experimental.api.ScriptDefinition
-import kotlin.script.experimental.api.ScriptDefinitionKeys
-import kotlin.script.experimental.api.ScriptDependency
-import kotlin.script.experimental.api.dependencies
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
 
-open class JvmScriptDefinition : PropertiesCollection.Builder()
-
-val ScriptDefinitionKeys.jvm get() = JvmScriptDefinition()
-
-
-class JvmDependency(val classpath: List<File>) : ScriptDependency {
+data class JvmDependency(val classpath: List<File>) : ScriptDependency {
+    @Suppress("unused")
     constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
 }
 
-fun JvmScriptDefinition.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
+interface JvmScriptDefinitionKeys
+
+open class JvmScriptDefinitionBuilder : PropertiesCollection.Builder(), JvmScriptDefinitionKeys {
+    companion object : PropertiesCollection.Builder.BuilderExtension<JvmScriptDefinitionBuilder>, JvmScriptDefinitionKeys {
+        override fun get() = JvmScriptDefinitionBuilder()
+    }
+}
+
+fun JvmScriptDefinitionBuilder.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
     dependenciesFromClassloader(*libraries, wholeClasspath = wholeClasspath)
 }
 
-fun JvmScriptDefinition.dependenciesFromClassloader(
+fun JvmScriptDefinitionBuilder.dependenciesFromClassloader(
     vararg libraries: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false
@@ -35,3 +36,10 @@ fun JvmScriptDefinition.dependenciesFromClassloader(
         JvmDependency(scriptCompilationClasspathFromContext(*libraries, classLoader = classLoader, wholeClasspath = wholeClasspath))
     )
 }
+
+val JvmScriptDefinitionKeys.javaHome by PropertiesCollection.keyCopy(ScriptingEnvironment.jvm.javaHome)
+
+@Suppress("unused")
+val ScriptDefinitionKeys.jvm
+    get() = JvmScriptDefinitionBuilder
+

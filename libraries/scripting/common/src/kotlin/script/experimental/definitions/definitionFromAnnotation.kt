@@ -19,7 +19,8 @@ private const val ILLEGAL_CONFIG_ANN_ARG =
 fun createScriptDefinitionFromAnnotatedBaseClass(
     baseClassType: KotlinType,
     environment: ScriptingEnvironment,
-    contextClass: KClass<*> = ScriptDefinition::class
+    contextClass: KClass<*> = ScriptDefinition::class,
+    body: ScriptDefinition.Builder.() -> Unit = {}
 ): ScriptDefinition {
 
     val getScriptingClass = environment[ScriptingEnvironment.getScriptingClass]
@@ -51,6 +52,7 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
         baseClass.java.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
             include(scriptingPropsInstance(ann.definition))
         }
+        body()
     }
 }
 
