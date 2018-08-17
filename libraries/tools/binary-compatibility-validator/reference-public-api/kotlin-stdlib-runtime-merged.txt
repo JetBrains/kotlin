@@ -314,11 +314,6 @@ public final class kotlin/UByteArray$Erased {
 	public static fun toString ([B)Ljava/lang/String;
 }
 
-public final class kotlin/UByteArrayKt {
-	public static final fun UByteArray (ILkotlin/jvm/functions/Function1;)[B
-	public static final fun ubyteArrayOf ([B)[B
-}
-
 public final class kotlin/UByteKt {
 	public static final fun toUByte (B)B
 	public static final fun toUByte (I)B
@@ -432,11 +427,6 @@ public final class kotlin/UIntArray$Erased {
 	public static fun iterator ([I)Lkotlin/collections/UIntIterator;
 	public static final fun set ([III)V
 	public static fun toString ([I)Ljava/lang/String;
-}
-
-public final class kotlin/UIntArrayKt {
-	public static final fun UIntArray (ILkotlin/jvm/functions/Function1;)[I
-	public static final fun uintArrayOf ([I)[I
 }
 
 public final class kotlin/UIntKt {
@@ -554,11 +544,6 @@ public final class kotlin/ULongArray$Erased {
 	public static fun toString ([J)Ljava/lang/String;
 }
 
-public final class kotlin/ULongArrayKt {
-	public static final fun ULongArray (ILkotlin/jvm/functions/Function1;)[J
-	public static final fun ulongArrayOf ([J)[J
-}
-
 public final class kotlin/ULongKt {
 	public static final fun toULong (B)J
 	public static final fun toULong (I)J
@@ -670,11 +655,6 @@ public final class kotlin/UShortArray$Erased {
 	public static fun iterator ([S)Lkotlin/collections/UShortIterator;
 	public static final fun set ([SIS)V
 	public static fun toString ([S)Ljava/lang/String;
-}
-
-public final class kotlin/UShortArrayKt {
-	public static final fun UShortArray (ILkotlin/jvm/functions/Function1;)[S
-	public static final fun ushortArrayOf ([S)[S
 }
 
 public final class kotlin/UShortKt {

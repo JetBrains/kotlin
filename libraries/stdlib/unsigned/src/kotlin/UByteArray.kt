@@ -46,11 +46,12 @@ internal constructor(private val storage: ByteArray) : Collection<UByte> {
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
 public inline fun UByteArray(size: Int, init: (Int) -> UByte): UByteArray {
     return UByteArray(ByteArray(size) { index -> init(index).toByte() })
 }
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-// TODO: @kotlin.internal.InlineOnly
+@kotlin.internal.InlineOnly
 public inline fun ubyteArrayOf(vararg elements: UByte): UByteArray = elements

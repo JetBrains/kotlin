@@ -328,13 +328,14 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         out.println("""
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
 public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
     return $arrayType($storageArrayType(size) { index -> init(index).to$storageElementType() })
 }
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-// TODO: @kotlin.internal.InlineOnly
+@kotlin.internal.InlineOnly
 public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elements"""
         )
     }
