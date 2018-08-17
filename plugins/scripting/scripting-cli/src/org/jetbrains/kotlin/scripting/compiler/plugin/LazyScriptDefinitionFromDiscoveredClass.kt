@@ -65,9 +65,11 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 
     override val scriptFileExtensionWithDot: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val ext = annotationsFromAsm.find { it.name == KotlinScriptFileExtension::class.simpleName!! }?.args?.first()
-            // TODO: check whether it actually works
-            ?: annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args?.get(1)
+        val extFromAnn = (
+                annotationsFromAsm.find { it.name == KotlinScriptFileExtension::class.simpleName!! }?.args
+                    ?: annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
+                )?.find { it.name == "extension" }?.value
+        val ext = extFromAnn
             ?: scriptDefinition.let {
                 it[ScriptDefinition.fileExtension] ?: "kts"
             }
@@ -75,7 +77,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 
     override val name: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        annotationsFromAsm.find { it.name == KotlinScript::class.simpleName!! }?.args?.first()
+        annotationsFromAsm.find { it.name == KotlinScript::class.simpleName!! }?.args?.find { it.name == "name" }?.value
             ?: super.name
     }
 }
