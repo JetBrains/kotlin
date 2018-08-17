@@ -9,6 +9,7 @@ import org.jetbrains.konan.settings.KonanPaths
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformSupport
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -25,33 +26,34 @@ class KonanPlatformSupport : IdePlatformSupport() {
     override val resolverForModuleFactory: ResolverForModuleFactory
         get() = KonanAnalyzerFacade()
 
-    override val libraryKind: PersistentLibraryKind<*>?
-        get() = null
+    override val libraryKind: PersistentLibraryKind<*>? = null
 
     override val platform: TargetPlatform
         get() = KonanPlatform
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
+    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl) = createKonanBuiltIns(sdkContext)
+
+    override fun isModuleForPlatform(module: Module) = true
+}
+
+private fun createKonanBuiltIns(sdkContext: GlobalContextImpl): KotlinBuiltIns {
+
+    //todo: it depends on a random project's stdlib, propagate the actual project here
+    val stdlibFile = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
+        val stdlibPath = KonanPaths.getInstance(it).konanStdlib()?.toFile()
+        if (stdlibPath != null) LocalFileSystem.getInstance().refreshAndFindFileByIoFile(stdlibPath) else null
+    }.firstOrNull()
+
+    if (stdlibFile != null) {
+        val builtInsModule: ModuleDescriptorImpl =
+            KonanDescriptorManager.getInstance().getCachedLibraryDescriptor(stdlibFile, LanguageVersionSettingsImpl.DEFAULT)
+
         val builtIns: KotlinBuiltIns = KonanBuiltIns(sdkContext.storageManager)
-
-        //todo: it depends on a random project's stdlib, propagate the actual project here
-        val stdlibFile = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
-            val stdlibPath = KonanPaths.getInstance(it).konanStdlib()?.toFile()
-            if (stdlibPath != null) LocalFileSystem.getInstance().refreshAndFindFileByIoFile(stdlibPath) else null
-        }.firstOrNull()
-
-        if (stdlibFile != null) {
-            val builtInsModule: ModuleDescriptorImpl =
-                KonanDescriptorManager.getInstance().getCachedLibraryDescriptor(stdlibFile, LanguageVersionSettingsImpl.DEFAULT)
-            builtInsModule.setField("dependencies") { null }
-            builtInsModule.setDependencies(builtInsModule)
-            builtIns.builtInsModule = builtInsModule
-        }
-
+        builtInsModule.setField("dependencies") { null }
+        builtInsModule.setDependencies(builtInsModule)
+        builtIns.builtInsModule = builtInsModule
         return builtIns
     }
 
-    override fun isModuleForPlatform(module: Module): Boolean {
-        return true
-    }
+    return DefaultBuiltIns.Instance
 }
