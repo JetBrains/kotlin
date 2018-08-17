@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.KotlinChainTransformerImpl
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.TerminatedChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.sequence.SequenceCallChecker
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.sequence.SequenceCallCheckerWithNameHeuristics
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.sequence.SequenceTypeExtractor
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinCollectionsPeekCallFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
@@ -22,7 +23,7 @@ class KotlinSequenceSupportProvider : LibrarySupportProvider {
     private companion object {
         val builder: StreamChainBuilder = TerminatedChainBuilder(
             KotlinChainTransformerImpl(SequenceTypeExtractor()),
-            SequenceCallChecker()
+            SequenceCallCheckerWithNameHeuristics(SequenceCallChecker())
         )
         val support = KotlinSequencesSupport()
         val dsl = DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))
