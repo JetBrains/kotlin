@@ -7390,6 +7390,34 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/coroutines/reflect")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Reflect extends AbstractBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInReflect() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/reflect"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("callSuspend.kt")
+            public void testCallSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/reflect/callSuspend.kt");
+            }
+
+            @TestMetadata("callSuspendBy.kt")
+            public void testCallSuspendBy() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/reflect/callSuspendBy.kt");
+            }
+
+            @TestMetadata("isSuspend12.kt")
+            public void testIsSuspend12() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/reflect/isSuspend12.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/coroutines/stackUnwinding")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
