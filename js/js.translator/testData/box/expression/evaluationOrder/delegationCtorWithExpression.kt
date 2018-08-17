@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1124
+// EXPECTED_REACHABLE_NODES: 1237
 package foo
 
 var c: String = "fail3"
