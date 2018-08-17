@@ -758,19 +758,27 @@ const char* byteArrayAsCString(KConstRef thiz, KInt start, KInt size) {
 }
 
 OBJ_GETTER(Kotlin_ByteArray_stringFromUtf8OrThrow, KConstRef thiz, KInt start, KInt size) {
-  const char* rawString = byteArrayAsCString(thiz, start, size);
   if (size == 0) {
     RETURN_RESULT_OF0(TheEmptyString);
   }
-  RETURN_RESULT_OF(utf8ToUtf16OrThrow, rawString, size);
+  const char* rawString = byteArrayAsCString(thiz, start, size);
+  KInt realSize = 0;
+  while (rawString[realSize] != 0 && realSize < size) {
+     realSize++;
+  }
+  RETURN_RESULT_OF(utf8ToUtf16OrThrow, rawString, realSize);
 }
 
 OBJ_GETTER(Kotlin_ByteArray_stringFromUtf8, KConstRef thiz, KInt start, KInt size) {
-  const char* rawString = byteArrayAsCString(thiz, start, size);
   if (size == 0) {
     RETURN_RESULT_OF0(TheEmptyString);
   }
-  RETURN_RESULT_OF(utf8ToUtf16, rawString, size);
+  const char* rawString = byteArrayAsCString(thiz, start, size);
+  KInt realSize = 0;
+  while (rawString[realSize] != 0 && realSize < size) {
+     realSize++;
+  }
+  RETURN_RESULT_OF(utf8ToUtf16, rawString, realSize);
 }
 
 OBJ_GETTER(Kotlin_String_toUtf8, KString thiz, KInt start, KInt size) {
