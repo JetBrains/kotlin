@@ -1,5 +1,5 @@
 // WITH_UNSIGNED
-// IGNORE_BACKEND: JS_IR, JVM_IR, JS
+// IGNORE_BACKEND: JS_IR, JVM_IR
 
 fun takeUByte(u: UByte) = u.toByte()
 fun takeUShort(u: UShort) = u.toShort()
