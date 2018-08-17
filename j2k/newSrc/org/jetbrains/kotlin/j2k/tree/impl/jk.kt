@@ -44,7 +44,9 @@ class JKClassImpl(
     override val inheritance by child(inheritance)
 }
 
-class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase() {}
+class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitNameIdentifier(this, data)
+}
 
 class JKModifierListImpl(
     modifiers: List<JKModifier> = emptyList()
