@@ -6,8 +6,6 @@
 package kotlin.script.experimental.definitions
 
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.findAnnotation
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.annotations.KotlinScriptProperties
@@ -50,9 +48,21 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
 
         include(scriptingPropsInstance(mainAnnotation.definition))
 
-        baseClass.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
+        baseClass.java.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
             include(scriptingPropsInstance(ann.definition))
         }
     }
 }
 
+private inline fun <reified T : Annotation> KClass<*>.findAnnotation(): T? =
+    @Suppress("UNCHECKED_CAST")
+    this.java.annotations.firstOrNull { it is T } as T?
+
+private fun <T : Any> KClass<T>.createInstance(): T {
+    // TODO: throw a meaningful exception
+    val noArgsConstructor = java.constructors.singleOrNull { it.parameters.isEmpty() }
+        ?: throw IllegalArgumentException("Class should have a single no-arg constructor: $this")
+
+    @Suppress("UNCHECKED_CAST")
+    return noArgsConstructor.newInstance() as T
+}
