@@ -20,12 +20,9 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
 
         checkMethod@ for (method in methods) {
             val block = method.block as? JKBlock ?: continue
-            val singleStatement = block.statements.singleOrNull()
+            val singleStatement = block.statements.singleOrNull() ?: continue
 
-            val call =
-                singleStatement.safeAs<JKExpressionStatement>()?.expression?.safeAs<JKMethodCallExpression>()
-                        ?: singleStatement.safeAs<JKReturnStatement>()?.expression?.safeAs()
-                        ?: continue
+            val call = lookupCall(singleStatement) ?: continue
             val callee = call.identifier as? JKUniverseMethodSymbol ?: continue
             val calledMethod = callee.target
             if (calledMethod.parent != method.parent
@@ -78,5 +75,21 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
 
     }
 
+
+    private fun lookupCall(statement: JKStatement): JKMethodCallExpression? {
+        val expression = when (statement) {
+            is JKExpressionStatement -> statement.expression
+            is JKReturnStatement -> statement.expression
+            else -> null
+        }
+        return when (expression) {
+            is JKMethodCallExpression -> expression
+            is JKQualifiedExpression -> {
+                if (expression.receiver !is JKThisExpression) return null
+                expression.selector.safeAs()
+            }
+            else -> null
+        }
+    }
 
 }
