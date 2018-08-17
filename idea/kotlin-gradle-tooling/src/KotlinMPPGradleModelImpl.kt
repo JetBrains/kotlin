@@ -14,9 +14,6 @@ class KotlinSourceSetImpl(
     override val dependencies: Set<KotlinDependency>,
     override val dependsOnSourceSets: Set<String>
 ) : KotlinSourceSet {
-    override var isAndroid: Boolean = false
-        internal set
-
     override var platform: KotlinPlatform = KotlinPlatform.COMMON
         internal set
 
@@ -38,7 +35,6 @@ class KotlinCompilationArgumentsImpl(
 ) : KotlinCompilationArguments
 
 class KotlinCompilationImpl(
-    override val isAndroid: Boolean,
     override val name: String,
     override val sourceSets: Collection<KotlinSourceSet>,
     override val dependencies: Set<KotlinDependency>,
@@ -63,7 +59,6 @@ class KotlinTargetJarImpl(
 ) : KotlinTargetJar
 
 class KotlinTargetImpl(
-    override val isAndroid: Boolean,
     override val name: String,
     override val disambiguationClassifier: String?,
     override val platform: KotlinPlatform,

@@ -19,6 +19,7 @@ import com.intellij.openapi.util.Key
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder
+import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver
 import org.jetbrains.kotlin.idea.configuration.KotlinSourceSetInfo
 import org.jetbrains.kotlin.idea.configuration.kotlinSourceSet
@@ -88,7 +89,7 @@ class KotlinAndroidMPPGradleProjectResolver : AbstractProjectResolverExtension()
             .targets
             .asSequence()
             .flatMap { it.compilations.asSequence() }
-            .filter { it.isAndroid }
+            .filter { it.platform == KotlinPlatform.ANDROID }
             .map { KotlinMPPGradleProjectResolver.createSourceSetInfo(it, gradleModule, resolverCtx) }
             .toList()
     }

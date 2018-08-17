@@ -166,7 +166,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val sourceSetToCompilationData = LinkedHashMap<KotlinSourceSet, MutableSet<GradleSourceSetData>>()
             for (target in mppModel.targets) {
-                if (target.isAndroid) continue
+                if (target.platform == KotlinPlatform.ANDROID) continue
                 val targetData = KotlinTargetData(target.name).also {
                     it.archiveFile = target.jar?.archiveFile
                 }
@@ -210,7 +210,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
                     val kotlinSourceSet = createSourceSetInfo(compilation, gradleModule, resolverCtx)
 
-                    if (compilation.platform == KotlinPlatform.JVM) {
+                    if (compilation.platform == KotlinPlatform.JVM || compilation.platform == KotlinPlatform.ANDROID) {
                         compilationData.targetCompatibility = (kotlinSourceSet.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget
                     }
 
@@ -232,7 +232,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
 
             for (sourceSet in mppModel.sourceSets.values) {
-                if (sourceSet.isAndroid) continue
+                if (sourceSet.platform == KotlinPlatform.ANDROID) continue
                 val moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 val existingSourceSetDataNode = sourceSetMap[moduleId]?.first
                 if (existingSourceSetDataNode?.kotlinSourceSet != null) continue
@@ -455,7 +455,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 }
             }
             for (sourceSet in mppModel.sourceSets.values) {
-                if (sourceSet.isAndroid) continue
+                if (sourceSet.platform == KotlinPlatform.ANDROID) continue
                 val moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 val moduleDataNode = sourceSetsMap[moduleId] ?: continue
                 processor(moduleDataNode, sourceSet)
@@ -476,7 +476,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 }
             }
             for (target in mppModel.targets) {
-                if (target.isAndroid) continue
+                if (target.platform == KotlinPlatform.ANDROID) continue
                 for (compilation in target.compilations) {
                     val moduleId = getKotlinModuleId(gradleModule, compilation, resolverCtx)
                     val moduleDataNode = sourceSetsMap[moduleId] ?: continue
@@ -610,7 +610,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         private fun createCompilerArguments(args: List<String>, platform: KotlinPlatform): CommonCompilerArguments {
             return when (platform) {
                 KotlinPlatform.COMMON -> K2MetadataCompilerArguments()
-                KotlinPlatform.JVM -> K2JVMCompilerArguments()
+                KotlinPlatform.JVM, KotlinPlatform.ANDROID -> K2JVMCompilerArguments()
                 KotlinPlatform.JS -> K2JSCompilerArguments()
             }.also {
                 parseCommandLineArguments(args, it)

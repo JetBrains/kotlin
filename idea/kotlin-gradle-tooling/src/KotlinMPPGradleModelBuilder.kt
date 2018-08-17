@@ -144,13 +144,12 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val platformId = (getPlatformType.invoke(gradleTarget) as? Named)?.name ?: return null
         val platform = KotlinPlatform.byId(platformId) ?: return null
         val disambiguationClassifier = getDisambiguationClassifier(gradleTarget) as? String
-        val isAndroid = targetClass.name == KOTLIN_ANDROID_TARGET_CLASS_NAME
         @Suppress("UNCHECKED_CAST")
         val gradleCompilations =
             (getCompilations.invoke(gradleTarget) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
-        val compilations = gradleCompilations.mapNotNull { buildCompilation(it, sourceSetMap, dependencyResolver, isAndroid, project) }
+        val compilations = gradleCompilations.mapNotNull { buildCompilation(it, sourceSetMap, dependencyResolver, project) }
         val jar = buildTargetJar(gradleTarget, project)
-        val target = KotlinTargetImpl(isAndroid, gradleTarget.name, disambiguationClassifier, platform, compilations, jar)
+        val target = KotlinTargetImpl(gradleTarget.name, disambiguationClassifier, platform, compilations, jar)
         compilations.forEach { it.target = target }
         return target
     }
@@ -170,7 +169,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         gradleCompilation: Named,
         sourceSetMap: Map<String, KotlinSourceSet>,
         dependencyResolver: DependencyResolver,
-        isAndroid: Boolean,
         project: Project
     ): KotlinCompilationImpl? {
         val compilationClass = gradleCompilation.javaClass
@@ -186,7 +184,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val arguments = buildCompilationArguments(compileKotlinTask) ?: return null
         val dependencyClasspath = buildDependencyClasspath(compileKotlinTask)
         val dependencies = buildCompilationDependencies(gradleCompilation, dependencyResolver, project)
-        return KotlinCompilationImpl(isAndroid, gradleCompilation.name, kotlinSourceSets, dependencies, output, arguments, dependencyClasspath)
+        return KotlinCompilationImpl(gradleCompilation.name, kotlinSourceSets, dependencies, output, arguments, dependencyClasspath)
     }
 
     private fun buildCompilationDependencies(
@@ -280,15 +278,10 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             if (compilations != null) {
                 sourceSet.platform = compilations.map { it.platform }.distinct().singleOrNull() ?: KotlinPlatform.COMMON
                 sourceSet.isTestModule = compilations.all { it.isTestModule }
-                sourceSet.isAndroid = compilations.all { it.isAndroid }
             } else {
                 // TODO: change me after design about it
                 sourceSet.isTestModule = "Test" in sourceSet.name
             }
         }
-    }
-
-    companion object {
-        private val KOTLIN_ANDROID_TARGET_CLASS_NAME = "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget"
     }
 }
