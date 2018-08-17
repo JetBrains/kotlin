@@ -34,7 +34,7 @@ fun KtExpression.resolveType(): KotlinType =
 
 fun KtCallExpression.callName(): String = this.calleeExpression!!.text
 
-fun KtCallExpression.receiver(): ReceiverValue? {
+fun KtCallExpression.receiverValue(): ReceiverValue? {
     val resolvedCall = getResolvedCall(analyze(BodyResolveMode.PARTIAL)) ?: return null
     return resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
 }
@@ -47,4 +47,4 @@ fun KtCallExpression.previousCall(): KtCallExpression? {
     return null
 }
 
-fun KtCallExpression.receiverType(): KotlinType? = receiver()?.type
+fun KtCallExpression.receiverType(): KotlinType? = receiverValue()?.type
