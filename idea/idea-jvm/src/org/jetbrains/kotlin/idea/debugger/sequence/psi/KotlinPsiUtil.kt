@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
@@ -29,12 +30,12 @@ object KotlinPsiUtil {
 }
 
 fun KtExpression.resolveType(): KotlinType =
-    this.analyze().getType(this)!!
+    this.analyze(BodyResolveMode.PARTIAL).getType(this)!!
 
 fun KtCallExpression.callName(): String = this.calleeExpression!!.text
 
 fun KtCallExpression.receiver(): ReceiverValue? {
-    val resolvedCall = getResolvedCall(analyze()) ?: return null
+    val resolvedCall = getResolvedCall(analyze(BodyResolveMode.PARTIAL)) ?: return null
     return resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
 }
 
