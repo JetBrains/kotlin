@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.KotlinChainTransform
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.PackageBasedCallChecker
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.TerminatedChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.java.JavaStreamChainTypeExtractor
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.java.StandardLibraryCallChecker
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.JavaPeekCallFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpressionBuilder
@@ -21,7 +22,7 @@ class JavaStandardLibrarySupportProvider : LibrarySupportProvider {
     private companion object {
         val builder = TerminatedChainBuilder(
             KotlinChainTransformerImpl(JavaStreamChainTypeExtractor()),
-            PackageBasedCallChecker("java.util.stream")
+            StandardLibraryCallChecker(PackageBasedCallChecker("java.util.stream"))
         )
         val support = StandardLibrarySupport()
         val dsl = DslImpl(KotlinStatementFactory(JavaPeekCallFactory()))

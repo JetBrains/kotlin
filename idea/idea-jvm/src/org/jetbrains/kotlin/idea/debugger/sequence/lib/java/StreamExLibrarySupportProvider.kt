@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.KotlinChainTransform
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.PackageBasedCallChecker
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.TerminatedChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.java.JavaStreamChainTypeExtractor
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.java.StreamExCallChecker
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.JavaPeekCallFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFactory
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpressionBuilder
@@ -21,7 +22,7 @@ class StreamExLibrarySupportProvider : LibrarySupportProvider {
     private companion object {
         val streamChainBuilder = TerminatedChainBuilder(
             KotlinChainTransformerImpl(JavaStreamChainTypeExtractor()),
-            PackageBasedCallChecker("one.util.streamex")
+            StreamExCallChecker(PackageBasedCallChecker("one.util.streamex"))
         )
         val support = StreamExLibrarySupport()
         val dsl = DslImpl(KotlinStatementFactory(JavaPeekCallFactory()))
