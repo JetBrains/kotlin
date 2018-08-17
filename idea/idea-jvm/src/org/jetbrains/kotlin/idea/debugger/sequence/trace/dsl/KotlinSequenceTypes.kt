@@ -5,7 +5,7 @@ import com.intellij.debugger.streams.trace.dsl.Types
 import com.intellij.debugger.streams.trace.impl.handler.type.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 
-object KotlinTypes : Types {
+object KotlinSequenceTypes : Types {
     override val ANY: GenericType = ClassTypeImpl(FQ_NAMES.any.asString(), "kotlin.Any()")
 
     override val BOOLEAN: GenericType = ClassTypeImpl(FQ_NAMES._boolean.asString(), "false")

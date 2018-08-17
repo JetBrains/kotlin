@@ -4,10 +4,10 @@ package org.jetbrains.kotlin.idea.debugger.sequence.psi.java
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.java.JavaStandardLibrarySupportProvider
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.TypedChainTestCase
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.DOUBLE
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.INT
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.LONG
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.NULLABLE_ANY
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes.DOUBLE
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes.INT
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes.LONG
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes.NULLABLE_ANY
 
 class TypedJavaChainTest : TypedChainTestCase("streams/positive/types") {
     override val kotlinChainBuilder: StreamChainBuilder = JavaStandardLibrarySupportProvider().chainBuilder

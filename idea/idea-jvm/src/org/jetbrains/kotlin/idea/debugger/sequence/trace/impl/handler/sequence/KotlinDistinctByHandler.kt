@@ -10,7 +10,7 @@ import com.intellij.debugger.streams.wrapper.CallArgument
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.impl.CallArgumentImpl
 import com.intellij.debugger.streams.wrapper.impl.IntermediateStreamCallImpl
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
 
 /**
  * Based on com.intellij.debugger.streams.trace.impl.handler.unified.DistinctByKeyHandler
@@ -26,7 +26,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
     private val extractorVariable: Variable
     private val beforeTimes = dsl.list(dsl.types.INT, call.name + callNumber + "BeforeTimes")
     private val beforeValues = dsl.list(call.typeBefore, call.name + callNumber + "BeforeValues")
-    private val keys = dsl.list(KotlinTypes.NULLABLE_ANY, call.name + callNumber + "Keys")
+    private val keys = dsl.list(KotlinSequenceTypes.NULLABLE_ANY, call.name + callNumber + "Keys")
     private val time2ValueAfter = dsl.linkedMap(dsl.types.INT, call.typeAfter, call.name + callNumber + "after")
 
     init {
@@ -50,7 +50,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
 
     override fun transformCall(call: IntermediateStreamCall): IntermediateStreamCall {
         val newKeyExtractor = dsl.lambda("x") {
-            val key = dsl.variable(KotlinTypes.NULLABLE_ANY, "key")
+            val key = dsl.variable(KotlinSequenceTypes.NULLABLE_ANY, "key")
             declare(key, extractorVariable.call("invoke", lambdaArg), false)
             statement { beforeTimes.add(dsl.currentTime()) }
             statement { beforeValues.add(lambdaArg) }
@@ -61,7 +61,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
     }
 
     override fun prepareResult(): CodeBlock {
-        val keys2TimesBefore = dsl.map(KotlinTypes.NULLABLE_ANY, dsl.types.list(dsl.types.INT), "keys2Times")
+        val keys2TimesBefore = dsl.map(KotlinSequenceTypes.NULLABLE_ANY, dsl.types.list(dsl.types.INT), "keys2Times")
         val transitions = dsl.map(dsl.types.INT, dsl.types.INT, "transitionsMap")
         return dsl.block {
             add(peekHandler.prepareResult())
@@ -69,7 +69,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
             declare(transitions.defaultDeclaration())
 
             integerIteration(keys.size(), block@ this) {
-                val key = declare(variable(KotlinTypes.NULLABLE_ANY, "key"), keys.get(loopVariable), false)
+                val key = declare(variable(KotlinSequenceTypes.NULLABLE_ANY, "key"), keys.get(loopVariable), false)
                 val lst = list(dsl.types.INT, "lst")
                 declare(lst, keys2TimesBefore.computeIfAbsent(key, lambda("k") {
                     doReturn(newList(types.INT))
@@ -80,7 +80,7 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
             forEachLoop(variable(types.INT, "afterTime"), time2ValueAfter.keys()) {
                 val afterTime = loopVariable
                 val valueAfter = declare(variable(call.typeAfter, "valueAfter"), time2ValueAfter.get(loopVariable), false)
-                val key = declare(variable(KotlinTypes.NULLABLE_ANY, "key"), nullExpression, true)
+                val key = declare(variable(KotlinSequenceTypes.NULLABLE_ANY, "key"), nullExpression, true)
                 integerIteration(beforeTimes.size(), forEachLoop@ this) {
                     ifBranch((valueAfter same beforeValues.get(loopVariable)) and !transitions.contains(beforeTimes.get(loopVariable))) {
                         key assign keys.get(loopVariable)

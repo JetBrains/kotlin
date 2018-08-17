@@ -12,7 +12,7 @@ import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.impl.CallArgumentImpl
 import com.intellij.debugger.streams.wrapper.impl.IntermediateStreamCallImpl
 import com.intellij.openapi.util.TextRange.EMPTY_RANGE
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
 
 class FilterIsInstanceHandler(num: Int, call: IntermediateStreamCall, dsl: Dsl) : HandlerBase.Intermediate(dsl) {
     private companion object {
@@ -56,7 +56,7 @@ class FilterIsInstanceHandler(num: Int, call: IntermediateStreamCall, dsl: Dsl) 
 
         override fun transformCall(call: IntermediateStreamCall): IntermediateStreamCall {
             val typeAfter = call.typeAfter.genericTypeName
-            val predicateType = functionalType(typeAfter, KotlinTypes.BOOLEAN.genericTypeName)
+            val predicateType = functionalType(typeAfter, KotlinSequenceTypes.BOOLEAN.genericTypeName)
             val predicate = CallArgumentImpl(predicateType, " { x -> x is $typeAfter} ")
             return syntheticFilterCall(predicate)
         }
