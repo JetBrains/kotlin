@@ -3,8 +3,9 @@ package org.jetbrains.konan.analyser
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.LocalFileSystem
-import org.jetbrains.konan.KotlinWorkaroundUtil.*
 import org.jetbrains.konan.analyser.index.KonanDescriptorManager
+import org.jetbrains.konan.createDeclarationProviderFactory
+import org.jetbrains.konan.destructModuleContent
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.backend.konan.descriptors.createForwardDeclarationsModule
@@ -43,10 +44,14 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
     ): ResolverForModule {
 
         val (syntheticFiles, moduleContentScope) = destructModuleContent(moduleContent)
-        val project = getProject(moduleContext)
+        val project = moduleContext.project
+
         val declarationProviderFactory = createDeclarationProviderFactory(
-            project, moduleContext, syntheticFiles,
-            moduleContent.moduleInfo, moduleContentScope
+            project,
+            moduleContext,
+            syntheticFiles,
+            moduleContent.moduleInfo,
+            moduleContentScope
         )
 
         val container = createContainerForLazyResolve(
@@ -62,7 +67,7 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
         val packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
         val moduleInfo = moduleContent.moduleInfo as? ModuleProductionSourceInfo
-        val module = moduleInfo?.let { getModule(it) }
+        val module = moduleInfo?.let { it.module }
 
         fun createLibraryDescriptor(library: Library): ModuleDescriptorImpl? {
 

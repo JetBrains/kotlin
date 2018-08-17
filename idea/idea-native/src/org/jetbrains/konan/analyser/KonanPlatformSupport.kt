@@ -32,7 +32,7 @@ class KonanPlatformSupport : IdePlatformSupport() {
         get() = KonanPlatform
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
-        val builtIns = KonanBuiltIns(sdkContext.storageManager)
+        val builtIns: KotlinBuiltIns = KonanBuiltIns(sdkContext.storageManager)
 
         //todo: it depends on a random project's stdlib, propagate the actual project here
         val stdlibFile = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
