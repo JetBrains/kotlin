@@ -46,11 +46,12 @@ internal constructor(private val storage: ShortArray) : Collection<UShort> {
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
 public inline fun UShortArray(size: Int, init: (Int) -> UShort): UShortArray {
     return UShortArray(ShortArray(size) { index -> init(index).toShort() })
 }
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-// TODO: @kotlin.internal.InlineOnly
+@kotlin.internal.InlineOnly
 public inline fun ushortArrayOf(vararg elements: UShort): UShortArray = elements
