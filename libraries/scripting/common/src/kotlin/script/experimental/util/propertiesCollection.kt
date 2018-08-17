@@ -163,7 +163,7 @@ open class PropertiesCollection(val properties: Map<Key<*>, Any> = emptyMap()) {
 
         @JvmName("appendToMap")
         fun <K, V> PropertiesCollection.Key<in Map<K, V>>.append(values: Iterable<Pair<K, V>>) {
-            val newValues = get(this)?.let { it + values } ?: values
+            val newValues = get(this)?.let { it + values } ?: values.toMap()
             data[this] = newValues
         }
 

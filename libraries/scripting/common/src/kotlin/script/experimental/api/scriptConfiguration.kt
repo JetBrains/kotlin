@@ -30,38 +30,43 @@ val ScriptCompileConfigurationKeys.sourceFragments by PropertiesCollection.key<L
 
 val ScriptCompileConfigurationKeys.scriptBodyTarget by PropertiesCollection.keyCopy(ScriptDefinition.scriptBodyTarget)
 
-val ScriptCompileConfigurationKeys.scriptImplicitReceivers by PropertiesCollection.keyCopy(ScriptDefinition.scriptImplicitReceivers)
+val ScriptCompileConfigurationKeys.scriptImplicitReceivers by PropertiesCollection.keyCopy(ScriptDefinition.implicitReceivers)
 
-val ScriptCompileConfigurationKeys.contextVariables by PropertiesCollection.keyCopy(ScriptDefinition.contextVariables)
+val ScriptCompileConfigurationKeys.providedProperties by PropertiesCollection.keyCopy(ScriptDefinition.providedProperties)
 
 val ScriptCompileConfigurationKeys.defaultImports by PropertiesCollection.keyCopy(ScriptDefinition.defaultImports)
-
-val ScriptCompileConfigurationKeys.restrictions by PropertiesCollection.keyCopy(ScriptDefinition.restrictions)
-
-val ScriptCompileConfigurationKeys.importedScripts by PropertiesCollection.keyCopy(ScriptDefinition.importedScripts)
 
 val ScriptCompileConfigurationKeys.dependencies by PropertiesCollection.keyCopy(ScriptDefinition.dependencies)
 
 val ScriptCompileConfigurationKeys.compilerOptions by PropertiesCollection.keyCopy(ScriptDefinition.compilerOptions)
 
 
-interface ProcessedScriptDataKeys
+interface ScriptCollectedDataKeys
 
-class ProcessedScriptData(properties: Map<PropertiesCollection.Key<*>, Any>) : PropertiesCollection(properties) {
+class ScriptCollectedData(properties: Map<PropertiesCollection.Key<*>, Any>) : PropertiesCollection(properties) {
 
-    companion object : ProcessedScriptDataKeys
+    companion object : ScriptCollectedDataKeys
 }
 
-val ProcessedScriptDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
+val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
 
-val ProcessedScriptDataKeys.foundFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
+val ScriptCollectedDataKeys.foundFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
 
+class ScriptDataFacade(
+    val source: ScriptSource,
+    val definition: ScriptDefinition,
+    val configuration: ScriptCompileConfiguration?,
+    val collectedData: ScriptCollectedData? = null
+)
 
-interface RefineScriptCompilationConfigurationHandler {
-    suspend operator fun invoke(
-        scriptSource: ScriptSource,
-        scriptDefinition: ScriptDefinition,
-        configuration: ScriptCompileConfiguration?,
-        processedScriptData: ProcessedScriptData? = null
-    ): ResultWithDiagnostics<ScriptCompileConfiguration?>
-}
+typealias RefineScriptCompilationConfigurationHandler = (ScriptDataFacade) -> ResultWithDiagnostics<ScriptCompileConfiguration?>
+
+class RefineConfigurationOnAnnotationsData(
+    val annotations: List<KotlinType>,
+    val handler: RefineScriptCompilationConfigurationHandler
+)
+
+class RefineConfigurationOnSectionsData(
+    val sections: List<String>,
+    val handler: RefineScriptCompilationConfigurationHandler
+)

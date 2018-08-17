@@ -40,46 +40,37 @@ object MyScriptDefinition : ScriptDefinition(
         // variant: dependencies(collectDependenciesFromCurrentContext(...
         refineConfiguration {
             // variant ^: dynamicConfiguration
-            handler(MyConfigurator())
-            triggerOnAnnotations(DependsOn::class, Repository::class)
+            onAnnotations(DependsOn::class, Repository::class, handler = ::myConfigureOnAnnotations)
             // variants: onAnnotations, refineOnAnnotations (esp. for dynamicConfiguration), updateOnAnnotations
             // other triggers: beforeParsing, onSections
         }
     }
 )
 
-class MyConfigurator : RefineScriptCompilationConfigurationHandler {
+private val resolver = FilesAndMavenResolver()
 
-    private val resolver = FilesAndMavenResolver()
-
-    override suspend operator fun invoke(
-        scriptSource: ScriptSource,
-        scriptDefinition: ScriptDefinition,
-        configuration: ScriptCompileConfiguration?,
-        processedScriptData: ProcessedScriptData?
-    ): ResultWithDiagnostics<ScriptCompileConfiguration?> {
-        val annotations = processedScriptData?.get(ProcessedScriptData.foundAnnotations)?.takeIf { it.isNotEmpty() }
-            ?: return configuration.asSuccess()
-        val scriptContents = object : ScriptContents {
-            override val annotations: Iterable<Annotation> = annotations
-            override val file: File? = null
-            override val text: CharSequence? = null
-        }
-        val diagnostics = arrayListOf<ScriptDiagnostic>()
-        fun report(severity: ScriptDependenciesResolver.ReportSeverity, message: String, position: ScriptContents.Position?) {
-            diagnostics.add(ScriptDiagnostic(message, mapLegacyDiagnosticSeverity(severity), mapLegacyScriptPosition(position)))
-        }
-        return try {
-            val newDepsFromResolver = resolver.resolve(scriptContents, emptyMap(), ::report, null).get()
-                ?: return configuration.asSuccess(diagnostics)
-            val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
-                ?: return configuration.asSuccess(diagnostics)
-            ScriptCompileConfiguration {
-                dependencies(JvmDependency(resolvedClasspath))
-            }.asSuccess(diagnostics)
-        } catch (e: Throwable) {
-            ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
-        }
+fun myConfigureOnAnnotations(script: ScriptDataFacade): ResultWithDiagnostics<ScriptCompileConfiguration?> {
+    val annotations = script.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
+        ?: return script.configuration.asSuccess()
+    val scriptContents = object : ScriptContents {
+        override val annotations: Iterable<Annotation> = annotations
+        override val file: File? = null
+        override val text: CharSequence? = null
+    }
+    val diagnostics = arrayListOf<ScriptDiagnostic>()
+    fun report(severity: ScriptDependenciesResolver.ReportSeverity, message: String, position: ScriptContents.Position?) {
+        diagnostics.add(ScriptDiagnostic(message, mapLegacyDiagnosticSeverity(severity), mapLegacyScriptPosition(position)))
+    }
+    return try {
+        val newDepsFromResolver = resolver.resolve(scriptContents, emptyMap(), ::report, null).get()
+            ?: return script.configuration.asSuccess(diagnostics)
+        val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
+            ?: return script.configuration.asSuccess(diagnostics)
+        ScriptCompileConfiguration {
+            dependencies(JvmDependency(resolvedClasspath))
+        }.asSuccess(diagnostics)
+    } catch (e: Throwable) {
+        ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
     }
 }
 

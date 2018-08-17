@@ -40,20 +40,13 @@ open class JvmScriptCompiler(
         scriptDefinition: ScriptDefinition,
         additionalConfiguration: ScriptCompileConfiguration?
     ): ResultWithDiagnostics<CompiledScript<*>> {
-        val refineConfigurationFn = scriptDefinition[ScriptDefinition.refineConfigurationHandler]
+        val refineConfigurationFn = scriptDefinition[ScriptDefinition.refineConfigurationBeforeParsing]
         val refinedConfiguration =
-            if (scriptDefinition[ScriptDefinition.refineConfigurationBeforeParsing] == true) {
-                if (refineConfigurationFn == null) {
-                    return ResultWithDiagnostics.Failure("Non-null configurator expected".asErrorDiagnostics())
+            refineConfigurationFn?.invoke(ScriptDataFacade(script, scriptDefinition, additionalConfiguration))?.let {
+                when (it) {
+                    is ResultWithDiagnostics.Failure -> return it
+                    is ResultWithDiagnostics.Success -> it.value
                 }
-                refineConfigurationFn(script, scriptDefinition, additionalConfiguration).let {
-                    when (it) {
-                        is ResultWithDiagnostics.Failure -> return it
-                        is ResultWithDiagnostics.Success -> it.value
-                    }
-                }
-            } else {
-                null
             }
         val actualConfiguration = mergeConfigurations(additionalConfiguration, refinedConfiguration)
         val cached = cache.get(script, scriptDefinition, actualConfiguration)

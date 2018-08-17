@@ -44,7 +44,7 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
     return ScriptDefinition {
         baseClass(baseClassType)
         fileExtension(baseClass.findAnnotation<KotlinScriptFileExtension>()?.extension ?: mainAnnotation.extension)
-        name(mainAnnotation.name)
+        displayName(mainAnnotation.name)
 
         include(scriptingPropsInstance(mainAnnotation.definition))
 

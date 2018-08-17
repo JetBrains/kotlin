@@ -35,18 +35,18 @@ class BridgeDependenciesResolver(
         return try {
 
             val diagnostics = arrayListOf<ScriptReport>()
-            val processedScriptData = ProcessedScriptData(
+            val processedScriptData = ScriptCollectedData(
                 mapOf(
-                    ProcessedScriptData.foundAnnotations to scriptContents.annotations
+                    ScriptCollectedData.foundAnnotations to scriptContents.annotations
                 )
             )
 
-            val refineFn = scriptDefinition[ScriptDefinition.refineConfigurationHandler]
+            val refineFn = scriptDefinition[ScriptDefinition.refineConfigurationOnAnnotations]?.handler
             val refinedConfiguration =
                 if (refineFn == null) null
                 else {
                     val res = refineFn(
-                        scriptContents.toScriptSource(), scriptDefinition, additionalConfiguration, processedScriptData
+                        ScriptDataFacade(scriptContents.toScriptSource(), scriptDefinition, additionalConfiguration, processedScriptData)
                     )
                     when (res) {
                         is ResultWithDiagnostics.Failure ->

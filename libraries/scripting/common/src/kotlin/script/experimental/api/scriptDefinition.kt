@@ -29,7 +29,7 @@ open class ScriptDefinition(baseDefinitions: Iterable<ScriptDefinition>, body: B
     }
 }
 
-val ScriptDefinitionKeys.name by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
+val ScriptDefinitionKeys.displayName by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
 
 val ScriptDefinitionKeys.fileExtension by PropertiesCollection.key<String>("kts") // file extension
 
@@ -37,31 +37,25 @@ val ScriptDefinitionKeys.baseClass by PropertiesCollection.key<KotlinType>() // 
 
 val ScriptDefinitionKeys.scriptBodyTarget by PropertiesCollection.key<ScriptBodyTarget>(ScriptBodyTarget.Constructor)
 
-val ScriptDefinitionKeys.scriptImplicitReceivers by PropertiesCollection.key<List<KotlinType>>() // in the order from outer to inner scope
+val ScriptDefinitionKeys.implicitReceivers by PropertiesCollection.key<List<KotlinType>>() // in the order from outer to inner scope
 
-val ScriptDefinitionKeys.contextVariables by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
+val ScriptDefinitionKeys.providedProperties by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
 
 val ScriptDefinitionKeys.defaultImports by PropertiesCollection.key<List<String>>()
-
-val ScriptDefinitionKeys.restrictions by PropertiesCollection.key<List<ResolvingRestrictionRule>>()
-
-val ScriptDefinitionKeys.importedScripts by PropertiesCollection.key<List<ScriptSource>>()
 
 val ScriptDefinitionKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
 val ScriptDefinitionKeys.generatedClassAnnotations by PropertiesCollection.key<List<Annotation>>()
 
-val ScriptDefinitionKeys.generatedMethodAnnotations by PropertiesCollection.key<List<Annotation>>()
+val ScriptDefinitionKeys.copyAnnotationsFrom by PropertiesCollection.key<List<KotlinType>>()
 
 val ScriptDefinitionKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
 
-val ScriptDefinitionKeys.refineConfigurationHandler by PropertiesCollection.key<RefineScriptCompilationConfigurationHandler>() // dynamic configurator
+val ScriptDefinitionKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<RefineScriptCompilationConfigurationHandler>() // default: false
 
-val ScriptDefinitionKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<Boolean>() // default: false
+val ScriptDefinitionKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<RefineConfigurationOnAnnotationsData>()
 
-val ScriptDefinitionKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<List<KotlinType>>()
-
-val ScriptDefinitionKeys.refineConfigurationOnSections by PropertiesCollection.key<List<String>>()
+val ScriptDefinitionKeys.refineConfigurationOnSections by PropertiesCollection.key<RefineConfigurationOnSectionsData>()
 
 // DSL:
 
@@ -70,36 +64,36 @@ val ScriptDefinition.Builder.refineConfiguration get() = RefineConfigurationBuil
 
 class RefineConfigurationBuilder : PropertiesCollection.Builder() {
 
-    fun handler(fn: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptDefinition.refineConfigurationHandler, fn)
+    fun beforeParsing(handler: RefineScriptCompilationConfigurationHandler) {
+        set(ScriptDefinition.refineConfigurationBeforeParsing, handler)
     }
 
-    fun triggerBeforeParsing(value: Boolean = true) {
-        set(ScriptDefinition.refineConfigurationBeforeParsing, value)
+    fun onAnnotations(annotations: List<KotlinType>, handler: RefineScriptCompilationConfigurationHandler) {
+        set(ScriptDefinition.refineConfigurationOnAnnotations, RefineConfigurationOnAnnotationsData(annotations, handler))
     }
 
-    fun triggerOnAnnotations(annotations: Iterable<KotlinType>) {
-        ScriptDefinition.refineConfigurationOnAnnotations.append(annotations)
+    fun onAnnotations(vararg annotations: KotlinType, handler: RefineScriptCompilationConfigurationHandler) {
+        onAnnotations(annotations.asList(), handler)
     }
 
-    fun triggerOnAnnotations(vararg annotations: KotlinType) {
-        triggerOnAnnotations(annotations.asIterable())
+    inline fun <reified T : Annotation> onAnnotations(noinline handler: RefineScriptCompilationConfigurationHandler) {
+        onAnnotations(listOf(KotlinType(T::class)), handler)
     }
 
-    inline fun <reified T : Annotation> triggerOnAnnotations() {
-        triggerOnAnnotations(KotlinType(T::class))
+    fun onAnnotations(vararg annotations: KClass<out Annotation>, handler: RefineScriptCompilationConfigurationHandler) {
+        onAnnotations(annotations.map { KotlinType(it) }, handler)
     }
 
-    fun triggerOnAnnotations(vararg annotations: KClass<out Annotation>) {
-        triggerOnAnnotations(annotations.map { KotlinType(it) })
+    fun onAnnotations(annotations: Iterable<KClass<out Annotation>>, handler: RefineScriptCompilationConfigurationHandler) {
+        onAnnotations(annotations.map { KotlinType(it) }, handler)
     }
 
-    fun triggerOnSections(sections: Iterable<String>) {
-        ScriptDefinition.refineConfigurationOnSections.append(sections)
+    fun onSections(sections: List<String>, handler: RefineScriptCompilationConfigurationHandler) {
+        set(ScriptDefinition.refineConfigurationOnSections, RefineConfigurationOnSectionsData(sections, handler))
     }
 
-    fun triggerOnSections(vararg sections: String) {
-        ScriptDefinition.refineConfigurationOnSections.append(*sections)
+    fun onSections(vararg sections: String, handler: RefineScriptCompilationConfigurationHandler) {
+        onSections(sections.asList(), handler)
     }
 }
 

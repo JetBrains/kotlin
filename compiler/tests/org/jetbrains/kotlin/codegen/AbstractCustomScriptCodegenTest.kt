@@ -21,8 +21,8 @@ import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptDefinition
-import kotlin.script.experimental.api.contextVariables
-import kotlin.script.experimental.api.scriptImplicitReceivers
+import kotlin.script.experimental.api.implicitReceivers
+import kotlin.script.experimental.api.providedProperties
 
 abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     private lateinit var scriptDefinitions: List<String>
@@ -121,21 +121,19 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     }
 }
 
-object TestScriptWithReceiversConfiguration : ScriptDefinition {
-    override val properties = properties {
-        scriptImplicitReceivers<String>()
-    }
-}
+object TestScriptWithReceiversConfiguration : ScriptDefinition(
+    {
+        implicitReceivers<String>()
+    })
 
 @Suppress("unused")
 @KotlinScript(definition = TestScriptWithReceiversConfiguration::class)
 abstract class TestScriptWithReceivers
 
-object TestScriptWithSimpleEnvVarsConfiguration : ScriptDefinition {
-    override val properties = properties {
-        contextVariables("stringVar1" to String::class)
-    }
-}
+object TestScriptWithSimpleEnvVarsConfiguration : ScriptDefinition(
+    {
+        providedProperties("stringVar1" to String::class)
+    })
 
 @Suppress("unused")
 @KotlinScript(definition = TestScriptWithSimpleEnvVarsConfiguration::class)

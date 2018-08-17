@@ -22,7 +22,7 @@ data class ScriptSourceNamedFragment(val name: String?, val range: ScriptSource.
 
 enum class ScriptBodyTarget {
     Constructor,
-    SingleAbstractMethod
+    SAMFunction
 }
 
 data class ResolvingRestrictionRule(
