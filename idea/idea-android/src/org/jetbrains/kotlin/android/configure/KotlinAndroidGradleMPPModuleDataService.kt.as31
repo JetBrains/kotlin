@@ -10,10 +10,12 @@ import com.android.tools.idea.gradle.util.ContentEntries.findParentContentEntry
 import com.android.tools.idea.io.FilePaths
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.model.project.ContentRootData
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
+import com.intellij.openapi.externalSystem.service.project.manage.ContentRootDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableRootModel
@@ -23,6 +25,8 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinPlatform
+import org.jetbrains.kotlin.idea.configuration.kotlinSourceSet
+import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import java.io.File
 
 class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<ModuleData, Void>() {
@@ -34,8 +38,17 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
         project: Project,
         modelsProvider: IdeModifiableModelsProvider
     ) {
+        val contentRootsToImport = ArrayList<DataNode<ContentRootData>>()
+
         for (nodeToImport in toImport) {
             val projectNode = ExternalSystemApiUtil.findParent(nodeToImport, ProjectKeys.PROJECT) ?: continue
+
+            for (childNode in ExternalSystemApiUtil.getChildren(nodeToImport, GradleSourceSetData.KEY)) {
+                val sourceSet = childNode.kotlinSourceSet?.kotlinModule ?: continue
+                if (sourceSet.platform == KotlinPlatform.ANDROID) continue
+                contentRootsToImport += ExternalSystemApiUtil.getChildren(childNode, ProjectKeys.CONTENT_ROOT)
+            }
+
             val moduleData = nodeToImport.data
             val module = modelsProvider.findIdeModule(moduleData) ?: continue
             val androidModel = AndroidModuleModel.get(module) ?: continue
@@ -59,6 +72,8 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                 }
             }
         }
+
+        ContentRootDataService().importData(contentRootsToImport, projectData, project, modelsProvider)
     }
 
     private fun addSourceRoot(
