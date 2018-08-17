@@ -5542,26 +5542,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/int.kt");
         }
 
-        @TestMetadata("listMinusEqual.kt")
-        public void testListMinusEqual() throws Exception {
-            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/listMinusEqual.kt");
-        }
-
-        @TestMetadata("listPlusEqual.kt")
-        public void testListPlusEqual() throws Exception {
-            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/listPlusEqual.kt");
-        }
-
-        @TestMetadata("mapMinusEqual.kt")
-        public void testMapMinusEqual() throws Exception {
-            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/mapMinusEqual.kt");
-        }
-
-        @TestMetadata("mapPlusEqual.kt")
-        public void testMapPlusEqual() throws Exception {
-            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/mapPlusEqual.kt");
-        }
-
         @TestMetadata("minus.kt")
         public void testMinus() throws Exception {
             runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/minus.kt");
@@ -5582,24 +5562,125 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/mutableSet.kt");
         }
 
+        @TestMetadata("noInitializer.kt")
+        public void testNoInitializer() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/noInitializer.kt");
+        }
+
+        @TestMetadata("notLocalVariable.kt")
+        public void testNotLocalVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/notLocalVariable.kt");
+        }
+
         @TestMetadata("plus.kt")
         public void testPlus() throws Exception {
             runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/plus.kt");
         }
 
-        @TestMetadata("setMinusEqual.kt")
-        public void testSetMinusEqual() throws Exception {
-            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/setMinusEqual.kt");
-        }
-
-        @TestMetadata("setPlusEqual.kt")
-        public void testSetPlusEqual() throws Exception {
-            runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/setPlusEqual.kt");
-        }
-
         @TestMetadata("val.kt")
         public void testVal() throws Exception {
             runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/val.kt");
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/assignToLocalVariable")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AssignToLocalVariable extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAssignToLocalVariable() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/assignToLocalVariable"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("listMinusEqual.kt")
+            public void testListMinusEqual() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/assignToLocalVariable/listMinusEqual.kt");
+            }
+
+            @TestMetadata("listPlusEqual.kt")
+            public void testListPlusEqual() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/assignToLocalVariable/listPlusEqual.kt");
+            }
+
+            @TestMetadata("mapMinusEqual.kt")
+            public void testMapMinusEqual() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/assignToLocalVariable/mapMinusEqual.kt");
+            }
+
+            @TestMetadata("mapPlusEqual.kt")
+            public void testMapPlusEqual() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/assignToLocalVariable/mapPlusEqual.kt");
+            }
+
+            @TestMetadata("setMinusEqual.kt")
+            public void testSetMinusEqual() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/assignToLocalVariable/setMinusEqual.kt");
+            }
+
+            @TestMetadata("setPlusEqual.kt")
+            public void testSetPlusEqual() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/assignToLocalVariable/setPlusEqual.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ChangeTypeToMutable extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInChangeTypeToMutable() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("hasType.kt")
+            public void testHasType() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/hasType.kt");
+            }
+
+            @TestMetadata("hasType2.kt")
+            public void testHasType2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/hasType2.kt");
+            }
+
+            @TestMetadata("mutableListOf.kt")
+            public void testMutableListOf() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/mutableListOf.kt");
+            }
+
+            @TestMetadata("mutableMapOf.kt")
+            public void testMutableMapOf() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/mutableMapOf.kt");
+            }
+
+            @TestMetadata("mutableSetOf.kt")
+            public void testMutableSetOf() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/mutableSetOf.kt");
+            }
+
+            @TestMetadata("toMutableList.kt")
+            public void testToMutableList() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/toMutableList.kt");
+            }
+
+            @TestMetadata("toMutableList2.kt")
+            public void testToMutableList2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/toMutableList2.kt");
+            }
+
+            @TestMetadata("toMutableMap.kt")
+            public void testToMutableMap() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/toMutableMap.kt");
+            }
+
+            @TestMetadata("toMutableSet.kt")
+            public void testToMutableSet() throws Exception {
+                runTest("idea/testData/inspectionsLocal/suspiciousCollectionReassignment/changeTypeToMutable/toMutableSet.kt");
+            }
         }
     }
 

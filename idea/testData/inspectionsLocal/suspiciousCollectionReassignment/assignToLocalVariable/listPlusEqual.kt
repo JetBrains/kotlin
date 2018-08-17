@@ -1,4 +1,4 @@
-// PROBLEM: 'list' is reassigned by augmented assignment
+// PROBLEM: '+=' create new list under the hood
 // FIX: Assign to local variable
 // WITH_RUNTIME
 fun test() {
