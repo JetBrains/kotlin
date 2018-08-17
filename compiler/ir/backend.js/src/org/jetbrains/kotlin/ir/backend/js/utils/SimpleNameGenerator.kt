@@ -74,7 +74,10 @@ class SimpleNameGenerator : NameGenerator {
 
         // global identifiers usually declared in a typical JS interpreter
         "NaN", "isNaN", "Infinity", "undefined",
-        "Error", "Object", "Math", "String", "Number", "Boolean", "Date", "Array", "RegExp", "JSON",
+
+        "Error", "Object",
+
+        // "Math", "String", "Number", "Boolean", "Date", "Array", "RegExp", "JSON",
 
         // global identifiers usually declared in know environments (node.js, browser, require.js, WebWorkers, etc)
         // "require", "define", "module", "window", "self",
@@ -119,6 +122,7 @@ class SimpleNameGenerator : NameGenerator {
                             nameBuilder.append('.')
                             nameBuilder.append(declaration.index)
                         }
+                        nameDeclarator = context.currentScope::declareFreshName
                     }
                 }
                 is IrField -> {

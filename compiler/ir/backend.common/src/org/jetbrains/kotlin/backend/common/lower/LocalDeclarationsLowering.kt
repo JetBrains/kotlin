@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import java.util.*
 
 interface LocalNameProvider {
@@ -65,14 +66,18 @@ class LocalDeclarationsLowering(
         IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        if (irDeclarationContainer is IrDeclaration &&
-            (irDeclarationContainer as IrDeclaration).parents.any { it is IrFunction }
-//            irDeclarationContainer.descriptor.parents.any { it is CallableDescriptor }
-        ) {
+        if (irDeclarationContainer is IrDeclaration) {
 
-            // Lowering of non-local declarations handles all local declarations inside.
-            // This declaration is local and shouldn't be considered.
-            return
+            // TODO: in case of `crossinline` lambda the @containingDeclaration and @parent points to completely different locations
+//            val parentsDecl = irDeclarationContainer.parents
+            val parentsDesc = irDeclarationContainer.descriptor.parents
+
+            if (parentsDesc.any { it is CallableDescriptor }) {
+
+                // Lowering of non-local declarations handles all local declarations inside.
+                // This declaration is local and shouldn't be considered.
+                return
+            }
         }
 
         // Continuous numbering across all declarations in the container.

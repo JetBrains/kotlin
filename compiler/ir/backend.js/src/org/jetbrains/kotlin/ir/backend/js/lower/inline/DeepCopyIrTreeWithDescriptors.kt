@@ -479,7 +479,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
             return IrCallImpl(
                 startOffset    = expression.startOffset,
                 endOffset      = expression.endOffset,
-                type           = newDescriptor.returnType?.toIrType()!!,
+                type           = newDescriptor.returnType?.toIrType(context.symbolTable)!!,
                 descriptor     = newDescriptor,
                 typeArgumentsCount = expression.typeArgumentsCount,
                 origin         = expression.origin,
@@ -532,11 +532,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
         //---------------------------------------------------------------------//
 
-        fun foo() {}
         override fun visitTypeOperator(expression: IrTypeOperatorCall): IrTypeOperatorCall {
-            if (expression.operator == IrTypeOperator.CAST) {
-                foo()
-            }
             val typeOperand = substituteType(expression.typeOperand)!!
             val returnType = getTypeOperatorReturnType(expression.operator, typeOperand)
             return IrTypeOperatorCallImpl(

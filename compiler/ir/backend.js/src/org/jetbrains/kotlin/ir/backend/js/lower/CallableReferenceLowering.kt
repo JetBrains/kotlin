@@ -185,7 +185,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
         is IrConstructor -> (declaration.parent as IrClass).name.identifier
         is IrProperty -> declaration.name.identifier
         is IrSimpleFunction -> declaration.name.asString()
-        is IrVariable -> declaration.name.asString()
+        is IrVariable -> declaration.name.asString().replace("\$delegate", "")
         else -> TODO("Unexpected declaration type")
     }
 
