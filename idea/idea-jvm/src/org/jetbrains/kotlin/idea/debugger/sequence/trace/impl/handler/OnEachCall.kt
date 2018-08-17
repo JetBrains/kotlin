@@ -7,13 +7,13 @@ import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.StreamCallType
 import com.intellij.debugger.streams.wrapper.impl.CallArgumentImpl
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
 
 class OnEachCall(private val elementsType: GenericType, lambda: String) : IntermediateStreamCall {
     private val args: List<CallArgument>
 
     init {
-        args = listOf(CallArgumentImpl(KotlinTypes.ANY.genericTypeName, lambda))
+        args = listOf(CallArgumentImpl(KotlinSequenceTypes.ANY.genericTypeName, lambda))
     }
 
     override fun getArguments(): List<CallArgument> = args

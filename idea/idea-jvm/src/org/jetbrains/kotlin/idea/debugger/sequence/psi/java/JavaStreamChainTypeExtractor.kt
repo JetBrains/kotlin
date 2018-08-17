@@ -6,21 +6,21 @@ import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.psi.CommonClassNames
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallTypeExtractor
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.KotlinPsiUtil
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 
 class JavaStreamChainTypeExtractor : CallTypeExtractor.Base() {
     override fun extractItemsType(type: KotlinType?): GenericType {
         if (type == null) {
-            return KotlinTypes.NULLABLE_ANY
+            return KotlinSequenceTypes.NULLABLE_ANY
         }
 
         return when (KotlinPsiUtil.getTypeWithoutTypeParameters(type)) {
-            CommonClassNames.JAVA_UTIL_STREAM_INT_STREAM -> KotlinTypes.INT
-            CommonClassNames.JAVA_UTIL_STREAM_DOUBLE_STREAM -> KotlinTypes.DOUBLE
-            CommonClassNames.JAVA_UTIL_STREAM_LONG_STREAM -> KotlinTypes.LONG
-            CommonClassNames.JAVA_UTIL_STREAM_BASE_STREAM -> KotlinTypes.NULLABLE_ANY
+            CommonClassNames.JAVA_UTIL_STREAM_INT_STREAM -> KotlinSequenceTypes.INT
+            CommonClassNames.JAVA_UTIL_STREAM_DOUBLE_STREAM -> KotlinSequenceTypes.DOUBLE
+            CommonClassNames.JAVA_UTIL_STREAM_LONG_STREAM -> KotlinSequenceTypes.LONG
+            CommonClassNames.JAVA_UTIL_STREAM_BASE_STREAM -> KotlinSequenceTypes.NULLABLE_ANY
             else -> extractItemsType(type.getImmediateSuperclassNotAny())
         }
     }

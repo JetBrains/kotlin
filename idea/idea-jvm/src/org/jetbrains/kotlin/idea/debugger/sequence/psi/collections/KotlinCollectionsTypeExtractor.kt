@@ -5,9 +5,9 @@ import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallTypeExtractor
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.KotlinPsiUtil
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.ANY
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.NULLABLE_ANY
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes.ANY
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes.NULLABLE_ANY
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
@@ -24,7 +24,7 @@ class KotlinCollectionsTypeExtractor : CallTypeExtractor.Base() {
 
     override fun getResultType(type: KotlinType): GenericType {
         val typeName = KotlinPsiUtil.getTypeWithoutTypeParameters(type)
-        return KotlinTypes.primitiveTypeByName(typeName) ?: KotlinTypes.primitiveArrayByName(typeName) ?: getAny(type)
+        return KotlinSequenceTypes.primitiveTypeByName(typeName) ?: KotlinSequenceTypes.primitiveArrayByName(typeName) ?: getAny(type)
     }
 
     private fun tryToFindElementType(type: KotlinType): GenericType? {
@@ -33,13 +33,13 @@ class KotlinCollectionsTypeExtractor : CallTypeExtractor.Base() {
             if (type.arguments.isEmpty()) return NULLABLE_ANY
             val itemsType = type.arguments.first().type
             if (itemsType.isMarkedNullable) return NULLABLE_ANY
-            val primitiveType = KotlinTypes.primitiveTypeByName(KotlinPsiUtil.getTypeWithoutTypeParameters(itemsType))
+            val primitiveType = KotlinSequenceTypes.primitiveTypeByName(KotlinPsiUtil.getTypeWithoutTypeParameters(itemsType))
             return primitiveType ?: ANY
         }
 
-        if (typeName == "kotlin.String" || typeName == "kotlin.CharSequence") return KotlinTypes.CHAR
+        if (typeName == "kotlin.String" || typeName == "kotlin.CharSequence") return KotlinSequenceTypes.CHAR
 
-        val primitiveArray = KotlinTypes.primitiveArrayByName(typeName)
+        val primitiveArray = KotlinSequenceTypes.primitiveArrayByName(typeName)
         if (primitiveArray != null) return primitiveArray.elementType
 
         return type.supertypes().asSequence()

@@ -4,47 +4,47 @@ package org.jetbrains.kotlin.idea.debugger.sequence.psi.collection
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import org.jetbrains.kotlin.idea.debugger.sequence.lib.collections.KotlinCollectionSupportProvider
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.TypedChainTestCase
-import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinSequenceTypes
 
 class TypedCollectionChainTest : TypedChainTestCase("collection/positive/types") {
     override val kotlinChainBuilder: StreamChainBuilder = KotlinCollectionSupportProvider().chainBuilder
 
-    fun testAny() = doTest(KotlinTypes.ANY)
-    fun testNullableAny() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testAny() = doTest(KotlinSequenceTypes.ANY)
+    fun testNullableAny() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testBoolean() = doTest(KotlinTypes.BOOLEAN)
-    fun testNullableBoolean() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testBoolean() = doTest(KotlinSequenceTypes.BOOLEAN)
+    fun testNullableBoolean() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testByte() = doTest(KotlinTypes.BYTE)
-    fun testNullableByte() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testByte() = doTest(KotlinSequenceTypes.BYTE)
+    fun testNullableByte() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testShort() = doTest(KotlinTypes.SHORT)
-    fun testNullableShort() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testShort() = doTest(KotlinSequenceTypes.SHORT)
+    fun testNullableShort() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testInt() = doTest(KotlinTypes.INT)
-    fun testNullableInt() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testInt() = doTest(KotlinSequenceTypes.INT)
+    fun testNullableInt() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testLong() = doTest(KotlinTypes.LONG)
-    fun testNullableLong() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testLong() = doTest(KotlinSequenceTypes.LONG)
+    fun testNullableLong() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testFloat() = doTest(KotlinTypes.FLOAT)
-    fun testNullableFloat() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testFloat() = doTest(KotlinSequenceTypes.FLOAT)
+    fun testNullableFloat() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testDouble() = doTest(KotlinTypes.DOUBLE)
-    fun testNullableDouble() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testDouble() = doTest(KotlinSequenceTypes.DOUBLE)
+    fun testNullableDouble() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testChar() = doTest(KotlinTypes.CHAR)
-    fun testNullableChar() = doTest(KotlinTypes.NULLABLE_ANY)
+    fun testChar() = doTest(KotlinSequenceTypes.CHAR)
+    fun testNullableChar() = doTest(KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testNullableAnyToPrimitive() = doTest(KotlinTypes.NULLABLE_ANY, KotlinTypes.BOOLEAN)
-    fun testPrimitiveToNullableAny() = doTest(KotlinTypes.INT, KotlinTypes.NULLABLE_ANY)
+    fun testNullableAnyToPrimitive() = doTest(KotlinSequenceTypes.NULLABLE_ANY, KotlinSequenceTypes.BOOLEAN)
+    fun testPrimitiveToNullableAny() = doTest(KotlinSequenceTypes.INT, KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testAnyToPrimitive() = doTest(KotlinTypes.ANY, KotlinTypes.INT)
-    fun testPrimitiveToAny() = doTest(KotlinTypes.INT, KotlinTypes.ANY)
+    fun testAnyToPrimitive() = doTest(KotlinSequenceTypes.ANY, KotlinSequenceTypes.INT)
+    fun testPrimitiveToAny() = doTest(KotlinSequenceTypes.INT, KotlinSequenceTypes.ANY)
 
-    fun testNullableToNotNull() = doTest(KotlinTypes.NULLABLE_ANY, KotlinTypes.INT)
-    fun testNotNullToNullable() = doTest(KotlinTypes.DOUBLE, KotlinTypes.NULLABLE_ANY)
+    fun testNullableToNotNull() = doTest(KotlinSequenceTypes.NULLABLE_ANY, KotlinSequenceTypes.INT)
+    fun testNotNullToNullable() = doTest(KotlinSequenceTypes.DOUBLE, KotlinSequenceTypes.NULLABLE_ANY)
 
-    fun testFewTransitions1() = doTest(KotlinTypes.BYTE, KotlinTypes.ANY, KotlinTypes.NULLABLE_ANY, KotlinTypes.INT)
-    fun testFewTransitions2() = doTest(KotlinTypes.CHAR, KotlinTypes.BOOLEAN, KotlinTypes.DOUBLE, KotlinTypes.ANY)
+    fun testFewTransitions1() = doTest(KotlinSequenceTypes.BYTE, KotlinSequenceTypes.ANY, KotlinSequenceTypes.NULLABLE_ANY, KotlinSequenceTypes.INT)
+    fun testFewTransitions2() = doTest(KotlinSequenceTypes.CHAR, KotlinSequenceTypes.BOOLEAN, KotlinSequenceTypes.DOUBLE, KotlinSequenceTypes.ANY)
 }
