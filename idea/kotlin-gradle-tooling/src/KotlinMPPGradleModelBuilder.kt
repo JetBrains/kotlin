@@ -164,7 +164,9 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         @Suppress("UNCHECKED_CAST")
         val gradleCompilations =
             (getCompilations.invoke(gradleTarget) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
-        val compilations = gradleCompilations.mapNotNull { buildCompilation(it, sourceSetMap, dependencyResolver, project) }
+        val compilations = gradleCompilations.mapNotNull {
+            buildCompilation(it, disambiguationClassifier, sourceSetMap, dependencyResolver, project)
+        }
         val jar = buildTargetJar(gradleTarget, project)
         val target = KotlinTargetImpl(gradleTarget.name, disambiguationClassifier, platform, compilations, jar)
         compilations.forEach { it.target = target }
@@ -184,6 +186,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
     private fun buildCompilation(
         gradleCompilation: Named,
+        classifier: String?,
         sourceSetMap: Map<String, KotlinSourceSet>,
         dependencyResolver: DependencyResolver,
         project: Project
@@ -200,12 +203,14 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val output = buildCompilationOutput(gradleCompilation, compileKotlinTask) ?: return null
         val arguments = buildCompilationArguments(compileKotlinTask) ?: return null
         val dependencyClasspath = buildDependencyClasspath(compileKotlinTask)
-        val dependencies = buildCompilationDependencies(gradleCompilation, dependencyResolver, project)
+        val dependencies = buildCompilationDependencies(gradleCompilation, classifier, sourceSetMap, dependencyResolver, project)
         return KotlinCompilationImpl(gradleCompilation.name, kotlinSourceSets, dependencies, output, arguments, dependencyClasspath)
     }
 
     private fun buildCompilationDependencies(
         gradleCompilation: Named,
+        classifier: String?,
+        sourceSetMap: Map<String, KotlinSourceSet>,
         dependencyResolver: DependencyResolver,
         project: Project
     ): Set<KotlinDependency> {
@@ -216,6 +221,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             this += buildDependencies(
                 gradleCompilation, dependencyResolver, "getRuntimeDependencyConfigurationName", "RUNTIME", project
             )
+            this += sourceSetMap[compilationFullName(gradleCompilation.name, classifier)]?.dependencies ?: emptySet()
         }
     }
 
@@ -226,16 +232,16 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     ): Set<KotlinDependency> {
         return LinkedHashSet<KotlinDependency>().apply {
             this += buildDependencies(
-                gradleSourceSet, dependencyResolver, "getApiConfigurationName", "COMPILE", project
+                gradleSourceSet, dependencyResolver, "getApiMetadataConfigurationName", "COMPILE", project
             )
             this += buildDependencies(
-                gradleSourceSet, dependencyResolver, "getImplementationConfigurationName", "COMPILE", project
+                gradleSourceSet, dependencyResolver, "getImplementationMetadataConfigurationName", "COMPILE", project
             )
             this += buildDependencies(
-                gradleSourceSet, dependencyResolver, "getCompileOnlyConfigurationName", "COMPILE", project
+                gradleSourceSet, dependencyResolver, "getCompileOnlyMetadataConfigurationName", "COMPILE", project
             )
             this += buildDependencies(
-                gradleSourceSet, dependencyResolver, "getRuntimeOnlyConfigurationName", "RUNTIME", project
+                gradleSourceSet, dependencyResolver, "getRuntimeOnlyMetadataConfigurationName", "RUNTIME", project
             )
         }
     }

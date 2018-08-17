@@ -628,7 +628,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         }
 
         private fun KotlinModule.fullName(simpleName: String = name) = when (this) {
-            is KotlinCompilation -> target.disambiguationClassifier?.let { it + simpleName.capitalize() } ?: simpleName
+            is KotlinCompilation -> compilationFullName(simpleName, target.disambiguationClassifier)
             else -> simpleName
         }
 
