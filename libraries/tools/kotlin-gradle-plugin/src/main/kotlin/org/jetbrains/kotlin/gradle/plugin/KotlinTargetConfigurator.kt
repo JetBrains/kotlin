@@ -407,7 +407,7 @@ open class KotlinNativeTargetConfigurator(
         }
 
     private fun Project.createTestTask(compilation: KotlinNativeCompilation, testExecutableLinkTask: KotlinNativeCompile) {
-        val taskName = lowerCamelCaseName("run", compilation.name, compilation.platformType.name)
+        val taskName = lowerCamelCaseName("run", compilation.name, compilation.target.name)
         val testTask = tasks.create(taskName, RunTestExecutable::class.java).apply {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
             description = "Executes Kotlin/Native unit tests from the '${compilation.name}' compilation " +
@@ -555,6 +555,10 @@ open class KotlinNativeTargetConfigurator(
     }
 
     override fun configureArchivesAndComponent(target: KotlinNativeTarget) = with(target.project) {
+        if (!HostManager().isEnabled(target.konanTarget)) {
+            return
+        }
+
         tasks.create(target.artifactsTaskName)
         target.compilations.all {
             createKlibCompilationTask(it)
