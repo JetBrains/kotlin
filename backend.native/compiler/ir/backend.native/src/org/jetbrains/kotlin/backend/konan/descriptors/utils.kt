@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 val DeserializedPropertyDescriptor.backingField: PropertyDescriptor?
     get() = 
-        if (this.proto.getExtension(KonanLinkData.hasBackingField)) 
+        if (this.proto.getExtension(KonanProtoBuf.hasBackingField))
             this 
         else null
 

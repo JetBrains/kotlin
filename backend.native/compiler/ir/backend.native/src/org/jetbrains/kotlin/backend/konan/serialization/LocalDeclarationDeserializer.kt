@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.allContainingDeclarations
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.metadata.KonanIr
-import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -125,7 +125,7 @@ class LocalDeclarationDeserializer(val rootDescriptor: DeclarationDescriptor) {
         val proto = irProto.irLocalDeclaration.descriptor.property
         val property = memberDeserializer.loadProperty(proto)
 
-        return if (proto.getExtension(KonanLinkData.usedAsVariable)) {
+        return if (proto.getExtension(KonanProtoBuf.usedAsVariable)) {
             propertyToVariable(property)
         } else {
             property

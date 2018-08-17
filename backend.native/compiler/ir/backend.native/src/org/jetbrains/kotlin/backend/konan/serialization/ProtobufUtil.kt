@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.metadata.KonanIr
-import org.jetbrains.kotlin.metadata.KonanLinkData
-import org.jetbrains.kotlin.metadata.KonanLinkData.*
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 
 fun newUniqId(index: Long): KonanIr.UniqId =
@@ -81,7 +81,7 @@ fun ProtoBuf.Function.Builder.setInlineIr(body: InlineIrBody): ProtoBuf.Function
 // -----------------------------------------------------------
 
 fun inlineBody(encodedIR: String) 
-    = KonanLinkData.InlineIrBody
+    = KonanProtoBuf.InlineIrBody
         .newBuilder()
         .setEncodedIr(encodedIR)
         .build()
@@ -89,7 +89,7 @@ fun inlineBody(encodedIR: String)
 // -----------------------------------------------------------
 
 internal fun printType(proto: ProtoBuf.Type) {
-    println("debug text: " + proto.getExtension(KonanLinkData.typeText))
+    println("debug text: " + proto.getExtension(KonanProtoBuf.typeText))
 }
 
 internal fun printTypeTable(proto: ProtoBuf.TypeTable) {

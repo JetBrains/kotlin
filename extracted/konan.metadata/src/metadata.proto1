@@ -1,0 +1,555 @@
+/*
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.metadata;
+
+import "ext_options.proto1";
+
+option java_outer_classname = "ProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+message StringTable {
+  repeated string string = 1;
+}
+
+message QualifiedNameTable {
+  message QualifiedName {
+    optional int32 parent_qualified_name = 1 [default = -1];
+    // id in the StringTable
+    required int32 short_name = 2;
+    optional Kind kind = 3 [default = PACKAGE];
+
+    enum Kind {
+      CLASS = 0;
+      PACKAGE = 1;
+      LOCAL = 2;
+    }
+  }
+
+  repeated QualifiedName qualified_name = 1;
+}
+
+message Annotation {
+  message Argument {
+    message Value {
+      enum Type {
+        BYTE = 0;
+        CHAR = 1;
+        SHORT = 2;
+        INT = 3;
+        LONG = 4;
+        FLOAT = 5;
+        DOUBLE = 6;
+        BOOLEAN = 7;
+
+        STRING = 8;
+        CLASS = 9;
+        ENUM = 10;
+        ANNOTATION = 11;
+        ARRAY = 12;
+      }
+
+      // Note: a *Value* has a Type, not an Argument! This is done for future language features which may involve using arrays
+      // of elements of different types. Such entries are allowed in the constant pool of JVM class files.
+      // However, to save space, this field is optional: in case of homogeneous arrays, only the type of the first element is required
+      optional Type type = 1;
+
+      // Only one of the following values should be present
+
+      optional sint64 int_value = 2;
+      optional float float_value = 3;
+      optional double double_value = 4;
+
+      optional int32 string_value = 5 [(string_id_in_table) = true];
+
+      // If type = CLASS, FQ name of the referenced class; if type = ENUM, FQ name of the enum class
+      optional int32 class_id = 6 [(fq_name_id_in_table) = true];
+
+      optional int32 enum_value_id = 7 [(name_id_in_table) = true];
+
+      optional Annotation annotation = 8;
+
+      repeated Value array_element = 9;
+    }
+
+    required int32 name_id = 1 [(name_id_in_table) = true];
+    required Value value = 2;
+  }
+
+  required int32 id = 1 [(fq_name_id_in_table) = true];
+
+  repeated Argument argument = 2;
+}
+
+message Type {
+  message Argument {
+    enum Projection {
+      IN = 0;
+      OUT = 1;
+      INV = 2;
+      STAR = 3;
+    }
+
+    optional Projection projection = 1 [default = INV];
+
+    // When projection is STAR, no type is written, otherwise type must be specified
+    optional Type type = 2;
+    optional int32 type_id = 3;
+  }
+
+  repeated Argument argument = 2;
+
+  optional bool nullable = 3 [default = false];
+
+  // If this field is set, the type is flexible.
+  // All the other fields and extensions represent its lower bound, and flexible_upper_bound must be set and represents its upper bound.
+  optional int32 flexible_type_capabilities_id = 4 [(string_id_in_table) = true];
+
+  optional Type flexible_upper_bound = 5;
+  optional int32 flexible_upper_bound_id = 8;
+
+  // Only one of [class_name, type_parameter, type_parameter_name, type_alias_name] should be present
+
+  optional int32 class_name = 6 [(fq_name_id_in_table) = true];
+  optional int32 type_parameter = 7; // id of the type parameter
+  // Name of the type parameter in the immediate owner
+  optional int32 type_parameter_name = 9 [(name_id_in_table) = true];
+
+  // Note that this may be present only for abbreviated_type
+  // Top level types are always fully expanded
+  optional int32 type_alias_name = 12 [(fq_name_id_in_table) = true];
+
+  // Outer type may be present only if class_name or type_alias_name is present
+  optional Type outer_type = 10;
+  optional int32 outer_type_id = 11;
+
+  optional Type abbreviated_type = 13;
+  optional int32 abbreviated_type_id = 14;
+
+  /*
+    suspend
+   */
+  optional int32 flags = 1;
+
+  extensions 100 to 199;
+}
+
+message TypeParameter {
+  required int32 id = 1;
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  optional bool reified = 3 [default = false];
+
+  enum Variance {
+    IN = 0;
+    OUT = 1;
+    INV = 2;
+  }
+  optional Variance variance = 4 [default = INV];
+
+  repeated Type upper_bound = 5;
+  repeated int32 upper_bound_id = 6 [packed = true];
+
+  extensions 100 to 999;
+}
+
+message Class {
+  enum Kind {
+    // 3 bits
+    CLASS = 0;
+    INTERFACE = 1;
+    ENUM_CLASS = 2;
+    ENUM_ENTRY = 3;
+    ANNOTATION_CLASS = 4;
+    OBJECT = 5;
+    COMPANION_OBJECT = 6;
+  }
+
+  /*
+    hasAnnotations
+    Visibility
+    Modality
+    ClassKind
+    isInner
+    isData
+    isExternal
+    isExpect
+    isInline
+  */
+  optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
+
+  required int32 fq_name = 3 [(fq_name_id_in_table) = true];
+
+  optional int32 companion_object_name = 4 [(name_id_in_table) = true];
+
+  repeated TypeParameter type_parameter = 5;
+
+  repeated Type supertype = 6;
+  repeated int32 supertype_id = 2 [packed = true];
+
+  repeated int32 nested_class_name = 7 [packed = true, (name_id_in_table) = true];
+
+  repeated Constructor constructor = 8;
+  repeated Function function = 9;
+  repeated Property property = 10;
+  repeated TypeAlias type_alias = 11;
+
+  repeated EnumEntry enum_entry = 13;
+
+  repeated int32 sealed_subclass_fq_name = 16 [packed = true, (fq_name_id_in_table) = true];
+
+  optional TypeTable type_table = 30;
+
+  // Index into the VersionRequirementTable
+  optional int32 version_requirement = 31;
+
+  optional VersionRequirementTable version_requirement_table = 32;
+
+  extensions 100 to 18999;
+}
+
+message Package {
+  repeated Function function = 3;
+  repeated Property property = 4;
+  repeated TypeAlias type_alias = 5;
+
+  optional TypeTable type_table = 30;
+
+  optional VersionRequirementTable version_requirement_table = 32;
+
+  extensions 100 to 199;
+}
+
+message TypeTable {
+  repeated Type type = 1;
+
+  // Index starting from which all types are nullable, or nothing if all types in this table are non-null.
+  // Note that the 'nullable' field of Type messages is ignored and shouldn't be written because it wastes too much space
+  optional int32 first_nullable = 2 [default = -1];
+}
+
+message Constructor {
+  /*
+    hasAnnotations
+    Visibility
+    isSecondary
+  */
+  optional int32 flags = 1 [default = 6 /* public constructor, no annotations */];
+
+  repeated ValueParameter value_parameter = 2;
+
+  // Index into the VersionRequirementTable
+  optional int32 version_requirement = 31;
+
+  extensions 100 to 18999;
+}
+
+message Function {
+  /*
+    hasAnnotations
+    Visibility
+    Modality
+    MemberKind
+    isOperator
+    isInfix
+    isInline
+    isTailrec
+    isExternal
+    isSuspend
+    isExpect
+  */
+  optional int32 flags = 9 [default = 6 /* public final function, no annotations */];
+  optional int32 old_flags = 1 [default = 6];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  optional Type return_type = 3;
+  optional int32 return_type_id = 7;
+
+  repeated TypeParameter type_parameter = 4;
+
+  optional Type receiver_type = 5;
+  optional int32 receiver_type_id = 8;
+
+  repeated ValueParameter value_parameter = 6;
+
+  optional TypeTable type_table = 30;
+
+  // Index into the VersionRequirementTable
+  optional int32 version_requirement = 31;
+
+  optional Contract contract = 32;
+
+  extensions 100 to 18999;
+}
+
+message Property {
+  /*
+    hasAnnotations
+    Visibility
+    Modality
+    MemberKind
+    isVar
+    hasGetter
+    hasSetter
+    isConst
+    isLateinit
+    hasConstant
+    isExternal
+    isDelegated
+    isExpect
+  */
+  optional int32 flags = 11 [default = 518 /* public (6) final property with getter (512) */];
+  optional int32 old_flags = 1 [default = 2054];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  optional Type return_type = 3;
+  optional int32 return_type_id = 9;
+
+  repeated TypeParameter type_parameter = 4;
+
+  optional Type receiver_type = 5;
+  optional int32 receiver_type_id = 10;
+
+  optional ValueParameter setter_value_parameter = 6;
+
+  /*
+    hasAnnotations
+    Visibility
+    Modality
+    isNotDefault
+    isExternal
+    isInline
+
+    If getter_flags or setter_flags are absent, their value should be computed as follows:
+    - hasAnnotations, Visibility, Modality have the same value as in the property flags
+    - all other flags are false
+  */
+  optional int32 getter_flags = 7;
+  optional int32 setter_flags = 8;
+
+  // Index into the VersionRequirementTable
+  optional int32 version_requirement = 31;
+
+  extensions 100 to 18999;
+}
+
+message ValueParameter {
+  /*
+    hasAnnotations
+    declaresDefault
+    isCrossinline
+    isNoinline
+  */
+  optional int32 flags = 1 [default = 0];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  optional Type type = 3;
+  optional int32 type_id = 5;
+
+  optional Type vararg_element_type = 4;
+  optional int32 vararg_element_type_id = 6;
+
+  extensions 100 to 199;
+}
+
+message TypeAlias {
+  /*
+    hasAnnotations
+    Visibility
+  */
+  optional int32 flags = 1 [default = 6 /* public, no annotations */];
+
+  required int32 name = 2 [(name_id_in_table) = true];
+
+  repeated TypeParameter type_parameter = 3;
+
+  optional Type underlying_type = 4;
+  optional int32 underlying_type_id = 5;
+
+  optional Type expanded_type = 6;
+  optional int32 expanded_type_id = 7;
+
+  repeated Annotation annotation = 8;
+
+  // Index into the VersionRequirementTable
+  optional int32 version_requirement = 31;
+
+  extensions 100 to 199;
+}
+
+message EnumEntry {
+  optional int32 name = 1 [(name_id_in_table) = true];
+
+  extensions 100 to 199;
+}
+
+enum Modality {
+  // 2 bits
+  FINAL = 0;
+  OPEN = 1;
+  ABSTRACT = 2;
+  SEALED = 3;
+}
+
+enum Visibility {
+  // 3 bits
+  INTERNAL = 0;
+  PRIVATE = 1;
+  PROTECTED = 2;
+  PUBLIC = 3;
+  PRIVATE_TO_THIS = 4;
+  LOCAL = 5;
+}
+
+enum MemberKind {
+  // 2 bits
+  DECLARATION = 0;
+  FAKE_OVERRIDE = 1;
+  DELEGATION = 2;
+  SYNTHESIZED = 3;
+}
+
+message VersionRequirement {
+  enum Level {
+    WARNING = 0;
+    ERROR = 1;
+    HIDDEN = 2;
+  }
+
+  enum VersionKind {
+    LANGUAGE_VERSION = 0;
+    COMPILER_VERSION = 1;
+    API_VERSION = 2;
+  }
+
+  // Kotlin version, since which this declaration is accessible, in the following format (encoded version is "major.minor.patch"):
+  // (patch << 7) + (minor << 3) + major
+  // Compilers with version less than this value should report a diagnostic if this declaration is selected as the resolution result
+  optional int32 version = 1;
+
+  // Version in base 256, in case we run out of space to store the version in the optimized form. Has priority over 'version'.
+  // (patch << 16) + (minor << 8) + major
+  optional int32 version_full = 2;
+
+  // Level of the reported diagnostic
+  optional Level level = 3 [default = ERROR];
+
+  // Error code, to be looked up on the website
+  optional int32 error_code = 4;
+
+  // Diagnostic message
+  optional int32 message = 5 [(string_id_in_table) = true];
+
+  // Which version is this requirement for. For example, if version_kind = API_VERSION, this declaration requires the API version
+  // (the "-api-version" argument value when compiling the call site) to be of at least the specified value
+  optional VersionKind version_kind = 6 [default = LANGUAGE_VERSION];
+}
+
+message VersionRequirementTable {
+  repeated VersionRequirement requirement = 1;
+}
+
+// A part of the package, which is used to serialize .kjsm/.meta.js, .kotlin_builtins and .kotlin_metadata files.
+// Is not used in the JVM back-end
+message PackageFragment {
+  optional StringTable strings = 1;
+  optional QualifiedNameTable qualified_names = 2;
+
+  optional Package package = 3;
+
+  repeated Class class = 4;
+
+  extensions 100 to 199;
+}
+
+
+
+message Contract {
+  repeated Effect effect = 1;
+}
+
+message Effect {
+  // This enum controls which effect this message contains and how 'effectConstructorArguments'
+  // should be parsed.
+  // Each enum value documented in the following syntax: "EffectName(arg1: T1, arg2: T2, ...)"
+  // Those arguments are expected to be found in 'effectConstructorArguments' in exactly the same
+  // order and amount as defined by signature, otherwise message should be dropped.
+  enum EffectType {
+    // Returns(value: ConstantValue?)
+    RETURNS_CONSTANT = 0;
+
+    // CallsInPlace(callable: ParameterReference)
+    // Additionally, InvocationKind in the field 'kind' may be provided to define exact amount of invocations.
+    CALLS = 1;
+
+    // ReturnsNotNull()
+    RETURNS_NOT_NULL = 2;
+  }
+  optional EffectType effect_type = 1;
+
+  repeated Expression effect_constructor_argument = 2;
+
+  // If present, then whole message is clause of form 'Effect -> Expression', where 'Effect'
+  // is given by other fields in this message, and 'Expression' is stored in this field.
+  optional Expression conclusion_of_conditional_effect = 3;
+
+  enum InvocationKind {
+    AT_MOST_ONCE = 0;
+    EXACTLY_ONCE = 1;
+    AT_LEAST_ONCE = 2;
+  }
+  optional InvocationKind kind = 4;
+}
+
+// We use some trickery to optimize memory footprint of contract-expressions:
+// exact type of Expression is determined based on its contents.
+message Expression {
+  /*
+    isNegated => this expression should be negated
+    isIsNullPredicate => this expression is IsNullPredicate with 'variableName' as argument
+  */
+  optional int32 flags = 1;
+
+  // stored as index in valueParameters list of owner-function in 1-indexation
+  // Index '0' is reserved for extension receiver
+  optional int32 value_parameter_reference = 2;
+
+  enum ConstantValue {
+    TRUE = 0;
+    FALSE = 1;
+    NULL = 2;
+  }
+  optional ConstantValue constant_value = 3;
+
+  // present => this expression is IsInstancePredicate,  with 'variableName' as LHS
+  // and with type encoded in either one of next two fields as RHS.
+  optional Type is_instance_type = 4;
+  optional int32 is_instance_type_id = 5;
+
+  // non-empty => this expression is boolean formula of form 'andArguments[0] && andArguments[1] && ...'
+  // Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+  // it is optimized and embedded straight into this message
+  repeated Expression and_argument = 6;
+
+  // non-empty => this expression is boolean formula of form 'orArguments[0] || andArguments[1] || ...'
+  // Additionally, if first argument of formula is primitive expression (i.e. predicate or value),
+  // it is optimized and embedded straight into this message.
+  repeated Expression or_argument = 7;
+}

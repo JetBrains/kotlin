@@ -1,0 +1,29 @@
+/*
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+syntax = "proto2";
+package org.jetbrains.kotlin.metadata;
+
+import "google_descriptor.proto1";
+
+option java_outer_classname = "ExtOptionsProtoBuf";
+
+extend google.protobuf.FieldOptions {
+  optional bool skip_in_comparison = 50000;
+  optional bool name_id_in_table = 50001;
+  optional bool fq_name_id_in_table = 50002;
+  optional bool string_id_in_table = 50003;
+}

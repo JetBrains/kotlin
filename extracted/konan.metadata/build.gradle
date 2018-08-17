@@ -3,9 +3,15 @@ buildscript {
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
+
+    dependencies {
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.0"
+    }
 }
 
-apply plugin: 'kotlin'
+String protobufVersion = '2.6.1'
+apply plugin: "com.google.protobuf"
+apply plugin: 'java'
 
 group = 'org.jetbrains.kotlin'
 version = konanVersion
@@ -18,8 +24,12 @@ repositories {
 }
 
 sourceSets {
-    main.kotlin {
-        srcDir 'src/main/kotlin'
+    main {
+        proto.srcDir 'src'
+        java {
+            srcDir 'src'
+            srcDir 'build/renamed/source/proto/main/java'
+        }
     }
 }
 
@@ -28,7 +38,27 @@ jar {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
-    compile "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
+    compile "com.google.protobuf:protobuf-java:${protobufVersion}"
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+}
+
+compileJava {
+    dependsOn('renamePackage')
+    doFirst {
+        delete 'build/generated'
+    }
+}
+
+task renamePackage(type: Copy) {
+    dependsOn('generateProto')
+    from 'build/generated/source/proto/main/java'
+    into 'build/renamed/source/proto/main/java'
+    filter {line -> line.replaceAll("com.google.protobuf", "org.jetbrains.kotlin.protobuf")}
+    outputs.dir('build/renamed')
 }

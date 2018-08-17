@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.metadata.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.serialization.*
+import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
+import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class KonanSerializerExtension(val context: Context, override val metadataVersion: BinaryVersion) :
@@ -36,7 +39,7 @@ internal class KonanSerializerExtension(val context: Context, override val metad
         // TODO: For debugging purpose we store the textual 
         // representation of serialized types.
         // To be removed for release 1.0.
-        proto.setExtension(KonanLinkData.typeText, type.toString())
+        proto.setExtension(KonanProtoBuf.typeText, type.toString())
 
         super.serializeType(type, proto)
     }
@@ -52,7 +55,7 @@ internal class KonanSerializerExtension(val context: Context, override val metad
     override fun serializeEnumEntry(descriptor: ClassDescriptor, proto: ProtoBuf.EnumEntry.Builder) {
         // Serialization doesn't preserve enum entry order, so we need to serialize ordinal.
         val ordinal = context.specialDeclarationsFactory.getEnumEntryOrdinal(descriptor)
-        proto.setExtension(KonanLinkData.enumEntryOrdinal, ordinal)
+        proto.setExtension(KonanProtoBuf.enumEntryOrdinal, ordinal)
         super.serializeEnumEntry(descriptor, proto)
     }
 
@@ -74,10 +77,10 @@ internal class KonanSerializerExtension(val context: Context, override val metad
     override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder, versionRequirementTable: MutableVersionRequirementTable) {
         val variable = originalVariables[descriptor]
         if (variable != null) {
-            proto.setExtension(KonanLinkData.usedAsVariable, true)
+            proto.setExtension(KonanProtoBuf.usedAsVariable, true)
         }
 
-        proto.setExtension(KonanLinkData.hasBackingField, 
+        proto.setExtension(KonanProtoBuf.hasBackingField,
             context.ir.propertiesWithBackingFields.contains(descriptor))
 
         super.serializeProperty(descriptor, proto, versionRequirementTable)
@@ -104,18 +107,18 @@ internal class KonanSerializerExtension(val context: Context, override val metad
 
 object KonanSerializerProtocol : SerializerExtensionProtocol(
         ExtensionRegistryLite.newInstance().apply {
-           KonanLinkData.registerAllExtensions(this)
+            KonanProtoBuf.registerAllExtensions(this)
         },
-        KonanLinkData.packageFqName,
-        KonanLinkData.constructorAnnotation,
-        KonanLinkData.classAnnotation,
-        KonanLinkData.functionAnnotation,
-        KonanLinkData.propertyAnnotation,
-        KonanLinkData.enumEntryAnnotation,
-        KonanLinkData.compileTimeValue,
-        KonanLinkData.parameterAnnotation,
-        KonanLinkData.typeAnnotation,
-        KonanLinkData.typeParameterAnnotation
+        KonanProtoBuf.packageFqName,
+        KonanProtoBuf.constructorAnnotation,
+        KonanProtoBuf.classAnnotation,
+        KonanProtoBuf.functionAnnotation,
+        KonanProtoBuf.propertyAnnotation,
+        KonanProtoBuf.enumEntryAnnotation,
+        KonanProtoBuf.compileTimeValue,
+        KonanProtoBuf.parameterAnnotation,
+        KonanProtoBuf.typeAnnotation,
+        KonanProtoBuf.typeParameterAnnotation
 )
 
 internal interface IrAwareExtension {

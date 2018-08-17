@@ -1,6 +1,5 @@
-
 syntax = "proto2";
-package org.jetbrains.kotlin.metadata;
+package org.jetbrains.kotlin.metadata.konan;
 
 // This, and all the rest of the included proto files have ".proto1" extension.
 // That allows us to construct the current file,
@@ -8,9 +7,11 @@ package org.jetbrains.kotlin.metadata;
 // The issue here is that we need to co-exist with the big Kotlin,
 // in the same namespace of renamed org.jetbrains.kotlin.protobuf packages.
 // In case we merge to the main Kotlin workspace the scheme will be simplified.
-import "org/jetbrains/kotlin/backend/konan/serialization/metadata.proto1";
 
-option java_outer_classname = "KonanLinkData";
+// FIXME: ddol: fix this import after moving `metadata` to main Kotlin repo - it should refer to the actual metadata.proto file from Kotlin project
+import "metadata.proto1";
+
+option java_outer_classname = "KonanProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
 // Konan extensions to the "descriptors" protobuf.

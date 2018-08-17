@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class KonanClassDataFinder(
-        private val fragment: KonanLinkData.LinkDataPackageFragment,
+        private val fragment: KonanProtoBuf.LinkDataPackageFragment,
         private val nameResolver: NameResolver
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {

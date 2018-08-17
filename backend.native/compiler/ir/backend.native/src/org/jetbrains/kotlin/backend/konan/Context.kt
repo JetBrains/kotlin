@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -124,7 +124,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
         if (enumClassDescriptor is DeserializedClassDescriptor) {
             return enumClassDescriptor.classProto.enumEntryList
                     .first { entryDescriptor.name == enumClassDescriptor.c.nameResolver.getName(it.name) }
-                    .getExtension(KonanLinkData.enumEntryOrdinal)
+                    .getExtension(KonanProtoBuf.enumEntryOrdinal)
         }
         return ordinals.getOrPut(enumClassDescriptor) { assignOrdinalsToEnumEntries(enumClassDescriptor) }[entryDescriptor]!!
     }

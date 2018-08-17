@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibrarySearchPathResolver
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
-import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import java.lang.System.out
 import kotlin.system.exitProcess
 
@@ -88,7 +88,7 @@ fun error(text: String) {
 val defaultRepository = File(DependencyProcessor.localKonanDir.resolve("klib").absolutePath)
 
 open class ModuleDeserializer(val library: ByteArray) {
-    protected val moduleHeader: KonanLinkData.LinkDataLibrary
+    protected val moduleHeader: KonanProtoBuf.LinkDataLibrary
         get() = parseModuleHeader(library)
 
     val moduleName: String
