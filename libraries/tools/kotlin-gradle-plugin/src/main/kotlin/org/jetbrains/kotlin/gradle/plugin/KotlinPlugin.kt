@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.net.URL
+import java.util.*
 import java.util.concurrent.Callable
 import java.util.jar.Manifest
 
@@ -115,20 +116,15 @@ internal abstract class KotlinJavaSourceSetProcessor<T : AbstractKotlinCompile<*
         if (javaSourceSet == null)
             return
 
-        val kotlinDirSets = kotlinCompilation.kotlinSourceSets
+        val kotlinDirSets = kotlinCompilation.kotlinSourceSets.map(KotlinSourceSet::kotlin)
 
-        // run lazily to support changing kotlinSourceSets after plugin is applied
-        val kotlinSrcDirsToAdd = Callable {
-            // Try to avoid duplicate Java sources in allSource:
-            kotlinDirSets.map { filterOutJavaSrcDirsIfPossible(it.kotlin) }
-        }
+        // Try to avoid duplicate Java sources in allSource:
+        val kotlinSrcDirsToAdd = kotlinDirSets.map { filterOutJavaSrcDirsIfPossible(it) }
 
-        javaSourceSet.allJava.srcDirs(kotlinSrcDirsToAdd)
-        javaSourceSet.allSource.srcDirs(kotlinSrcDirsToAdd)
-
-        javaSourceSet.resources.filter.exclude { fileTreeElement ->
-            val file = fileTreeElement.file
-            kotlinDirSets.any { file in it.kotlin }
+        kotlinSrcDirsToAdd.forEach { kotlinSrcDirs ->
+            javaSourceSet.allJava.srcDirs(kotlinSrcDirs)
+            javaSourceSet.allSource.srcDirs(kotlinSrcDirs)
+            javaSourceSet.resources.filter.exclude { it.file in kotlinSrcDirs }
         }
     }
 
