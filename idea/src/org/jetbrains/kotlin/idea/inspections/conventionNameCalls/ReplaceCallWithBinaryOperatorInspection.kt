@@ -22,13 +22,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
-import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
-import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
-import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
@@ -123,6 +123,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
                 if (!dotQualified.isAnyEquals()) return null
+                if (dotQualified.isFloatingPointNumberEquals()) return null
 
                 val prefixExpression = dotQualified.getWrappingPrefixExpressionIfAny()
                 if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
@@ -147,5 +148,20 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
             }
             else -> OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
         }
+    }
+
+    private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
+        val parentBinary = this.parent as? KtBinaryExpression ?: return false
+        val binaryExpression = parentBinary.getChildOfType<KtBinaryExpression>() ?: return false
+        val isExpressions = binaryExpression.getChildrenOfType<KtIsExpression>()
+        if (isExpressions.size != 2) return false
+
+        listOf("Double", "Float").forEach { floatingPointNumber ->
+            if (isExpressions.all { it.typeReference?.text == floatingPointNumber }) {
+                return true
+            }
+        }
+
+        return false
     }
 }
