@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.sequence.psi.sequence
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.StreamCallChecker
 import org.jetbrains.kotlin.psi.KtCallExpression
 
-class SequenceCallCheckerByName(private val nestedChecker: StreamCallChecker) : StreamCallChecker {
+class SequenceCallCheckerWithNameHeuristics(private val nestedChecker: StreamCallChecker) : StreamCallChecker {
     private companion object {
         val TERMINATION_CALLS: Set<String> = setOf(
             "all", "any", "associate", "associateBy", "associateByTo", "associateTo", "average", "chunked", "contains", "count", "distinct",
@@ -25,6 +25,11 @@ class SequenceCallCheckerByName(private val nestedChecker: StreamCallChecker) : 
     }
 
     override fun isTerminationCall(expression: KtCallExpression): Boolean {
-        return TERMINATION_CALLS.contains(expression.name) && nestedChecker.isTerminationCall(expression)
+        val name = expression.calleeExpression?.text
+        if (name != null) {
+            return TERMINATION_CALLS.contains(name) && nestedChecker.isTerminationCall(expression)
+        }
+
+        return nestedChecker.isTerminationCall(expression)
     }
 }
