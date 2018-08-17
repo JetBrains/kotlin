@@ -206,7 +206,10 @@ def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfigurati
 }
 
 task run_external () {
-    update_external_tests()
+    // Set this property to disable auto update tests
+    if (!project.hasProperty("test.disable_update")) {
+        update_external_tests()
+    }
 
     // Create tasks for external tests.
     createTestTasks(externalTestsDir, RunExternalTestGroup) { }
