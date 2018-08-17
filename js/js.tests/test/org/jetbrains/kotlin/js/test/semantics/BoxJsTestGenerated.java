@@ -2495,6 +2495,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/function/vararg.kt");
             }
 
+            @TestMetadata("varargUInt.kt")
+            public void testVarargUInt() throws Exception {
+                runTest("js/js.translator/testData/box/expression/function/varargUInt.kt");
+            }
+
             @TestMetadata("whenFunction.kt")
             public void testWhenFunction() throws Exception {
                 runTest("js/js.translator/testData/box/expression/function/whenFunction.kt");

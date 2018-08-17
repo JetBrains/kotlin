@@ -18,13 +18,18 @@ package org.jetbrains.kotlin.js.translate.declaration;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -47,6 +52,15 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         super(klass, context.bindingContext());
         this.context = context;
         this.isInline = isInline;
+    }
+
+    @Override
+    public void generate() {
+        if (isInline) {
+            generateUnboxFunction();
+        }
+
+        super.generate();
     }
 
     @Override
@@ -211,6 +225,18 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         JsReturn returnStatement = new JsReturn(returnExpression);
         returnStatement.setSource(getDeclaration());
         functionObj.getBody().getStatements().add(returnStatement);
+    }
+
+    private void generateUnboxFunction() {
+        PropertyDescriptor boxee = getPrimaryConstructorProperties().get(0);
+
+        JsFunction unboxFunction = context.createRootScopedFunction("unbox");
+        JsExpression prototypeRef = JsAstUtils.prototypeOf(context.getInnerReference(getClassDescriptor()));
+        JsExpression functionRef = new JsNameRef("unbox", prototypeRef);
+
+        unboxFunction.getBody().getStatements().add(new JsReturn(JsAstUtils.pureFqn(context.getNameForDescriptor(boxee), new JsThisRef())));
+
+        context.addDeclarationStatement(JsAstUtils.assignment(functionRef, unboxFunction).makeStmt());
     }
 
     private JsFunction generateJsMethod(@NotNull FunctionDescriptor functionDescriptor) {

@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
 // WITH_UNSIGNED
-// IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS_IR
 
 fun uint(vararg us: UInt): UIntArray = us
 

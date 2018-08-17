@@ -60,7 +60,7 @@ abstract class FunctionsFromAnyGenerator(protected val declaration: KtClassOrObj
         generateEqualsMethod(function, properties)
     }
 
-    private val primaryConstructorProperties: List<PropertyDescriptor>
+    protected val primaryConstructorProperties: List<PropertyDescriptor>
         get() = primaryConstructorParameters
             .filter { it.hasValOrVar() }
             .map { bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it)!! }
