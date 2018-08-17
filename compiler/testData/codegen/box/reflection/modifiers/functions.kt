@@ -9,6 +9,7 @@
 
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
+import kotlin.reflect.full.isSuspend
 
 inline fun inline() {}
 class External { external fun external() }
@@ -60,6 +61,7 @@ fun box(): String {
     assertFalse(::inlineProperty.getter.isExternal)
     assertTrue(::inlineProperty.getter.isInline)
     assertTrue(::inlineProperty.setter.isInline)
+    assertFalse(::inlineProperty.isSuspend)
 
     return "OK"
 }
