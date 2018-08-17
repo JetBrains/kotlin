@@ -526,10 +526,10 @@ public final class TranslationUtils {
             }
         }
 
-        if (ArrayFIF.INSTANCE.unsignedPrimitiveToSigned(to) != null) {
-            PrimitiveType fromPrimitive = Objects.requireNonNull(ArrayFIF.INSTANCE.unsignedPrimitiveToSigned(to));
+        PrimitiveType signedPrimitiveFromUnsigned = ArrayFIF.INSTANCE.unsignedPrimitiveToSigned(to);
+        if (signedPrimitiveFromUnsigned != null) {
             if (KotlinBuiltIns.isInt(from)) {
-                switch (fromPrimitive) {
+                switch (signedPrimitiveFromUnsigned) {
                     case BYTE:
                         value = AstUtilsKt.toByte(context, value);
                         break;

@@ -27,6 +27,10 @@ fun box(): String {
     val complexInlinedUInts = inlinedUInt(*inlinedUInts, 3u, *inlinedUInts)
     if (sum(*complexInlinedUInts) != 11u) return "Fail 5"
 
+    if (nullableUInts !is UIntArray) return "Fail 6"
+
+    if (inlinedUInts !is UIntArray) return "Fail 7"
+
     return "OK"
 }
 
