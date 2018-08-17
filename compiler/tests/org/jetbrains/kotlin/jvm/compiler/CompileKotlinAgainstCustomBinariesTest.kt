@@ -393,7 +393,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testTypeAliasesAreInvisibleInCompatibilityMode() {
         val library = compileLibrary("library")
-        compileKotlin("main.kt", tmpdir, listOf(library), K2JVMCompiler(), listOf("-language-version", "1.0"))
+        // -Xskip-metadata-version-check because if master is pre-release, an extra error will be reported when compiling with LV 1.0
+        // against a library compiled by a pre-release compiler
+        compileKotlin(
+            "main.kt", tmpdir, listOf(library), K2JVMCompiler(), listOf("-language-version", "1.0", "-Xskip-metadata-version-check")
+        )
     }
 
     fun testInnerClassPackageConflict() {
