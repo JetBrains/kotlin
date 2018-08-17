@@ -5064,5 +5064,21 @@ public final class kotlin/text/UStringNumberConversionsKt {
 	public static final fun toString (II)Ljava/lang/String;
 	public static final fun toString (JI)Ljava/lang/String;
 	public static final fun toString (SI)Ljava/lang/String;
+	public static final fun toUByte (Ljava/lang/String;)B
+	public static final fun toUByte (Ljava/lang/String;I)B
+	public static final fun toUByteOrNull (Ljava/lang/String;)Lkotlin/UByte;
+	public static final fun toUByteOrNull (Ljava/lang/String;I)Lkotlin/UByte;
+	public static final fun toUInt (Ljava/lang/String;)I
+	public static final fun toUInt (Ljava/lang/String;I)I
+	public static final fun toUIntOrNull (Ljava/lang/String;)Lkotlin/UInt;
+	public static final fun toUIntOrNull (Ljava/lang/String;I)Lkotlin/UInt;
+	public static final fun toULong (Ljava/lang/String;)J
+	public static final fun toULong (Ljava/lang/String;I)J
+	public static final fun toULongOrNull (Ljava/lang/String;)Lkotlin/ULong;
+	public static final fun toULongOrNull (Ljava/lang/String;I)Lkotlin/ULong;
+	public static final fun toUShort (Ljava/lang/String;)S
+	public static final fun toUShort (Ljava/lang/String;I)S
+	public static final fun toUShortOrNull (Ljava/lang/String;)Lkotlin/UShort;
+	public static final fun toUShortOrNull (Ljava/lang/String;I)Lkotlin/UShort;
 }
 
