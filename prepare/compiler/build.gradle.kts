@@ -65,7 +65,6 @@ dependencies {
     proguardLibraryJars(projectDist(":kotlin-reflect"))
     proguardLibraryJars(project(":kotlin-annotations-jvm"))
     proguardLibraryJars(projectDist(":kotlin-scripting-common"))
-    proguardLibraryJars(projectDist(":kotlin-scripting-jvm"))
 
     compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-script-runtime"))
