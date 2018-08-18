@@ -1,26 +1,14 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.android.parcel
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.codegen.CodegenTestCase
-import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -32,7 +20,7 @@ private val LINE_SEPARATOR = System.getProperty("line.separator")
 abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
     private companion object {
         val CURIOUS_ABOUT_DIRECTIVE = "// CURIOUS_ABOUT "
-        val LOCAL_VARIABLES_TABLE_DIRECTIVE = "// LOCAL_VARIABLES_TABLE"
+        val LOCAL_VARIABLE_TABLE_DIRECTIVE = "// LOCAL_VARIABLE_TABLE"
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
@@ -51,14 +39,14 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
                 .map { it.substring(CURIOUS_ABOUT_DIRECTIVE.length) }
                 .flatMap { it.split(',').map { it.trim() } }
 
-        val showLocalVariables = testFileLines.any { it.trim() == LOCAL_VARIABLES_TABLE_DIRECTIVE }
+        val showLocalVariables = testFileLines.any { it.trim() == LOCAL_VARIABLE_TABLE_DIRECTIVE }
 
         KotlinTestUtils.assertEqualsToFile(txtFile, classes.joinToString(LINE_SEPARATOR.repeat(2)) {
             renderClassNode(it, printBytecodeForTheseMethods, showLocalVariables)
         })
     }
 
-    private fun renderClassNode(clazz: ClassNode, printBytecodeForTheseMethods: List<String>, showLocalVariables: Boolean): String {
+    private fun renderClassNode(clazz: ClassNode, showBytecodeForTheseMethods: List<String>, showLocalVariables: Boolean): String {
         val fields = (clazz.fields ?: emptyList()).sortedBy { it.name }
         val methods = (clazz.methods ?: emptyList()).sortedBy { it.name }
 
@@ -83,8 +71,8 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             }
 
             methods.joinTo(this, LINE_SEPARATOR.repeat(2)) {
-                val printBytecode = printBytecodeForTheseMethods.contains(it.name)
-                renderMethod(it, printBytecode, showLocalVariables).withMargin()
+                val showBytecode = showBytecodeForTheseMethods.contains(it.name)
+                renderMethod(it, showBytecode, showLocalVariables).withMargin()
             }
 
             appendln().append("}")
@@ -98,28 +86,52 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         append(field.name)
     }
 
-    private fun renderMethod(method: MethodNode, printBytecode: Boolean, showLocalVariables: Boolean) = buildString {
+    private fun renderMethod(method: MethodNode, showBytecode: Boolean, showLocalVariables: Boolean) = buildString {
         renderVisibilityModifiers(method.access)
         renderModalityModifiers(method.access)
         val (returnType, parameterTypes) = with(Type.getMethodType(method.desc)) { returnType to argumentTypes }
         append(returnType.className).append(' ')
         append(method.name)
-        parameterTypes.mapIndexed { index, type -> "${type.className} p$index" }.joinTo(this, prefix = "(", postfix = ")")
 
-        if (printBytecode && (method.access and ACC_ABSTRACT) == 0) {
+        parameterTypes.mapIndexed { index, type ->
+            val name = getParameterName(index, method)
+            "${type.className} $name"
+        }.joinTo(this, prefix = "(", postfix = ")")
+
+        val actualShowBytecode = showBytecode && (method.access and ACC_ABSTRACT) == 0
+        val actualShowLocalVariables = showLocalVariables && method.localVariables?.takeIf { it.isNotEmpty() } != null
+
+        if (actualShowBytecode || actualShowLocalVariables) {
             appendln(" {")
-            append(renderBytecodeInstructions(method.instructions).trimEnd().withMargin())
 
-            if (showLocalVariables) {
+            if (actualShowLocalVariables) {
                 val localVariableTable = buildLocalVariableTable(method)
                 if (localVariableTable.isNotEmpty()) {
-                    appendln().appendln()
                     append(localVariableTable.withMargin())
                 }
             }
 
+            if (actualShowBytecode) {
+                if (actualShowLocalVariables) {
+                    appendln().appendln()
+                }
+                append(renderBytecodeInstructions(method.instructions).trimEnd().withMargin())
+            }
+
             appendln().append("}")
         }
+    }
+
+    private fun getParameterName(index: Int, method: MethodNode): String {
+        val localVariableIndexOffset = when {
+            (method.access and Opcodes.ACC_STATIC) != 0 -> 0
+            method.isJvmOverloadsGenerated() -> 0
+            else -> 1
+        }
+
+        val actualIndex = index + localVariableIndexOffset
+        val localVariables = method.localVariables?.takeIf { it.size > actualIndex } ?: return "p$index"
+        return localVariables[actualIndex].name
     }
 
     private fun buildLocalVariableTable(method: MethodNode): String {
@@ -127,7 +139,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         return buildString {
             append("Local variables:")
             for (variable in localVariables) {
-                appendln().append((variable.name + ": " + variable.desc).withMargin())
+                appendln().append((variable.index.toString() + " " + variable.name + ": " + variable.desc).withMargin())
             }
         }
     }
@@ -194,4 +206,12 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             return mappings.getOrPut(hashCode) { currentIndex++ }
         }
     }
+}
+
+private fun MethodNode.isJvmOverloadsGenerated(): Boolean {
+    fun AnnotationNode.isJvmOverloadsGenerated() =
+        this.desc == DefaultParameterValueSubstitutor.ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS
+
+    return (visibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
+            || (invisibleAnnotations?.any { it.isJvmOverloadsGenerated() } ?: false)
 }

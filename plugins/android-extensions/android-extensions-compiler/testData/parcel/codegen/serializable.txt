@@ -3,7 +3,7 @@ public final class SerializableSimple : java/lang/Object, java/io/Serializable {
 
     private final java.lang.String b
 
-    public void <init>(java.lang.String p0, java.lang.String p1)
+    public void <init>(java.lang.String a, java.lang.String b)
 
     public final java.lang.String getA()
 
@@ -13,7 +13,7 @@ public final class SerializableSimple : java/lang/Object, java/io/Serializable {
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -31,7 +31,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L1)
     }
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
@@ -49,7 +49,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
           RETURN
     }
 
-    public void <init>(SerializableSimple p0, SerializableSimple p1)
+    public void <init>(SerializableSimple notNull, SerializableSimple nullable)
 
     public int describeContents()
 
@@ -57,7 +57,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final SerializableSimple getNullable()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

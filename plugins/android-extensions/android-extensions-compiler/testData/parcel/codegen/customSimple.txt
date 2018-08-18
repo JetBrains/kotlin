@@ -1,13 +1,13 @@
 final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
     private void <init>()
 
-    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0)
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
-    public User create(android.os.Parcel p0)
+    public User create(android.os.Parcel parcel)
 
     public java.lang.Object create(android.os.Parcel p0)
 
-    public User[] newArray(int p0) {
+    public User[] newArray(int size) {
         LABEL (L0)
         LINENUMBER (10)
           ALOAD (0)
@@ -27,7 +27,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
           ARETURN
     }
 
-    public void write(User p0, android.os.Parcel p1, int p2)
+    public void write(User this@write, android.os.Parcel parcel, int flags)
 
     public void write(java.lang.Object p0, android.os.Parcel p1, int p2)
 }
@@ -35,7 +35,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -47,7 +47,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L1)
     }
 
-    public final java.lang.Object[] newArray(int p0) {
+    public final java.lang.Object[] newArray(int size) {
         LABEL (L0)
           ILOAD (1)
           ANEWARRAY
@@ -69,7 +69,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     static void <clinit>()
 
-    public void <init>(java.lang.String p0, java.lang.String p1, int p2)
+    public void <init>(java.lang.String firstName, java.lang.String lastName, int age)
 
     public int describeContents()
 
@@ -79,7 +79,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final java.lang.String getLastName()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

@@ -1,13 +1,13 @@
 public final class k/KotlinParcelable$Companion : java/lang/Object {
     private void <init>()
 
-    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0)
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 }
 
 public final class k/KotlinParcelable$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public k.KotlinParcelable createFromParcel(android.os.Parcel p0) {
+    public k.KotlinParcelable createFromParcel(android.os.Parcel this) {
         LABEL (L0)
           ALOAD (1)
           LDC (source)
@@ -36,7 +36,7 @@ public final class k/KotlinParcelable$Creator : java/lang/Object, android/os/Par
           ARETURN
     }
 
-    public k.KotlinParcelable[] newArray(int p0)
+    public k.KotlinParcelable[] newArray(int size)
 
     public java.lang.Object[] newArray(int p0)
 }
@@ -63,11 +63,11 @@ public final class k/KotlinParcelable : java/lang/Object, android/os/Parcelable 
           RETURN
     }
 
-    public void <init>(int p0)
+    public void <init>(int data)
 
     public final int component1()
 
-    public final k.KotlinParcelable copy(int p0)
+    public final k.KotlinParcelable copy(int data)
 
     public static k.KotlinParcelable copy$default(k.KotlinParcelable p0, int p1, int p2, java.lang.Object p3)
 
@@ -79,11 +79,11 @@ public final class k/KotlinParcelable : java/lang/Object, android/os/Parcelable 
 
     public int hashCode()
 
-    public final void setData(int p0)
+    public final void setData(int <set-?>)
 
     public java.lang.String toString()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel dest, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (dest)
@@ -104,7 +104,7 @@ public final class k/KotlinParcelable : java/lang/Object, android/os/Parcelable 
 public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -121,7 +121,7 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
         LABEL (L1)
     }
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class test/Foo : java/lang/Object, android/os/Parcelable {
@@ -137,13 +137,13 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           RETURN
     }
 
-    public void <init>(k.KotlinParcelable p0)
+    public void <init>(k.KotlinParcelable kp)
 
     public int describeContents()
 
     public final k.KotlinParcelable getKp()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
