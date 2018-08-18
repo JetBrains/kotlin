@@ -38,6 +38,12 @@ class AtomicInt(private var value: Int = 0) {
     external fun compareAndSwap(expected: Int, new: Int): Int
 
     /**
+     * Sets the new atomic value.
+     */
+    @SymbolName("Kotlin_AtomicInt_set")
+    external fun set(new: Int): Unit
+
+    /**
      * Increments value by one.
      */
     fun increment(): Int = addAndGet(1)
@@ -78,6 +84,12 @@ class AtomicLong(private var value: Long = 0)  {
      */
     @SymbolName("Kotlin_AtomicLong_compareAndSwap")
     external fun compareAndSwap(expected: Long, new: Long): Long
+
+    /**
+     * Sets the new atomic value.
+     */
+    @SymbolName("Kotlin_AtomicLong_set")
+    external fun set(new: Long): Unit
 
     /**
      * Increments value by one.
@@ -145,6 +157,14 @@ class AtomicReference<T>(private var value: T? = null) {
      */
     @SymbolName("Kotlin_AtomicReference_compareAndSwap")
     external public fun compareAndSwap(expected: T?, new: T?): T?
+
+    /**
+     * Sets the value to [new] value
+     * If [new] value is not null, it must be frozen or permanent object, otherwise an
+     * @InvalidMutabilityException is thrown.
+     */
+    @SymbolName("Kotlin_AtomicReference_set")
+    external public fun set(new: T?): Unit
 
     /**
      * Returns the current value.

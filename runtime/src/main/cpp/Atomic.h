@@ -25,5 +25,13 @@ ALWAYS_INLINE inline T compareAndSwap(volatile T* where, T expectedValue, T newV
 #endif
 }
 
+template <typename T>
+ALWAYS_INLINE inline void atomicSet(volatile T* where, T what) {
+#ifndef KONAN_NO_THREADS
+  __atomic_store(where, &what, __ATOMIC_SEQ_CST);
+#else
+  *where = what;
+#endif
+}
 
 #endif // RUNTIME_ATOMIC_H

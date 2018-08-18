@@ -1743,6 +1743,16 @@ OBJ_GETTER(SwapRefLocked,
   return oldValue;
 }
 
+void SetRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock) {
+  lock(spinlock);
+  ObjHeader* oldValue = *location;
+  // We do not use UpdateRef() here to avoid having ReleaseRef() on old value under the lock.
+  SetRef(location, newValue);
+  unlock(spinlock);
+  if (oldValue != nullptr)
+    ReleaseRef(oldValue);
+}
+
 OBJ_GETTER(ReadRefLocked, ObjHeader** location, int32_t* spinlock) {
   lock(spinlock);
   ObjHeader* value = *location;

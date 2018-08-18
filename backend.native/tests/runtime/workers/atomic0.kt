@@ -78,6 +78,26 @@ fun test4() {
     }
 }
 
+fun test5() {
+    assertFailsWith<InvalidMutabilityException> {
+        AtomicReference<Data>().set(Data(2))
+    }
+    val ref = AtomicReference<Data>()
+    val value = Data(3).freeze()
+    assertEquals(null, ref.get())
+    ref.set(value)
+    assertEquals(3, ref.get()!!.value)
+}
+
+fun test6() {
+    val int = AtomicInt()
+    int.set(239)
+    assertEquals(239, int.get())
+    val long = AtomicLong()
+    long.set(239L)
+    assertEquals(239L, long.get())
+}
+
 @Test fun runTest() {
     val COUNT = 20
     val workers = Array(COUNT, { _ -> startWorker()})
@@ -86,6 +106,8 @@ fun test4() {
     test2(workers)
     test3(workers)
     test4()
+    test5()
+    test6()
 
     workers.forEach {
         it.requestTermination().consume { _ -> }

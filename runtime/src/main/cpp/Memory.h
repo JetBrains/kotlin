@@ -443,6 +443,8 @@ void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NO
 // Compares and swaps reference with taken lock.
 OBJ_GETTER(SwapRefLocked,
     ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
+// Sets reference with taken lock.
+void SetRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock) RUNTIME_NOTHROW;
 // Reads reference with taken lock.
 OBJ_GETTER(ReadRefLocked, ObjHeader** location, int32_t* spinlock) RUNTIME_NOTHROW;
 // Optimization: release all references in range.

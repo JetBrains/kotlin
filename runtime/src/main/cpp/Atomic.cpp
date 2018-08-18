@@ -27,6 +27,11 @@ struct AtomicReferenceLayout {
   KInt lock_;
 };
 
+template <typename T> void setImpl(KRef thiz, T value) {
+  volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
+  atomicSet(location, value);
+}
+
 template <typename T> T addAndGetImpl(KRef thiz, T delta) {
   volatile T* location = reinterpret_cast<volatile T*>(thiz + 1);
   return atomicAdd(location, delta);
@@ -53,6 +58,10 @@ KInt Kotlin_AtomicInt_compareAndSwap(KRef thiz, KInt expectedValue, KInt newValu
     return compareAndSwapImpl(thiz, expectedValue, newValue);
 }
 
+void Kotlin_AtomicInt_set(KRef thiz, KInt newValue) {
+    setImpl(thiz, newValue);
+}
+
 KLong Kotlin_AtomicLong_addAndGet(KRef thiz, KLong delta) {
     return addAndGetImpl(thiz, delta);
 }
@@ -75,8 +84,26 @@ KLong Kotlin_AtomicLong_compareAndSwap(KRef thiz, KLong expectedValue, KLong new
 #endif
 }
 
+void Kotlin_AtomicLong_set(KRef thiz, KLong newValue) {
+#ifdef __mips
+    // Potentially huge performance penalty, but correct.
+    // TODO: reconsider, once target MIPS can do proper 64-bit atomic store.
+    static int lock = 0;
+    while (compareAndSwap(&lock, 0, 1) != 0);
+    KLong* address = reinterpret_cast<KLong*>(thiz + 1);
+    *address = newValue;
+    compareAndSwap(&lock, 1, 0);
+#else
+    setImpl(thiz, newValue);
+#endif
+}
+
 KNativePtr Kotlin_AtomicNativePtr_compareAndSwap(KRef thiz, KNativePtr expectedValue, KNativePtr newValue) {
     return compareAndSwapImpl(thiz, expectedValue, newValue);
+}
+
+void Kotlin_AtomicNativePtr_set(KRef thiz, KNativePtr newValue) {
+    setImpl(thiz, newValue);
 }
 
 void Kotlin_AtomicReference_checkIfFrozen(KRef value) {
@@ -90,6 +117,12 @@ OBJ_GETTER(Kotlin_AtomicReference_compareAndSwap, KRef thiz, KRef expectedValue,
     // See Kotlin_AtomicReference_get() for explanations, why locking is needed.
     AtomicReferenceLayout* ref = asAtomicReference(thiz);
     RETURN_RESULT_OF(SwapRefLocked, &ref->value_, expectedValue, newValue, &ref->lock_);
+}
+
+void Kotlin_AtomicReference_set(KRef thiz, KRef newValue) {
+    Kotlin_AtomicReference_checkIfFrozen(newValue);
+    AtomicReferenceLayout* ref = asAtomicReference(thiz);
+    SetRefLocked(&ref->value_, newValue, &ref->lock_);
 }
 
 OBJ_GETTER(Kotlin_AtomicReference_get, KRef thiz) {
