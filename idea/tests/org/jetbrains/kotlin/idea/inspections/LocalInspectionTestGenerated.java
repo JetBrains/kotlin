@@ -4181,6 +4181,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testCompanionWithName() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSemicolon/companionWithName.kt");
         }
+
+        @TestMetadata("ifElse.kt")
+        public void testIfElse() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSemicolon/ifElse.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantSetter")
