@@ -23,10 +23,9 @@ open class ScriptDefinition(baseDefinitions: Iterable<ScriptDefinition>, body: B
         PropertiesCollection.Builder(baseDefinitions)
 
     // inherited from script definition for using as a keys anchor
-    companion object : ScriptDefinitionKeys {
+    companion object : ScriptDefinitionKeys
 
-        val Default = ScriptDefinition()
-    }
+    object Default : ScriptDefinition()
 }
 
 val ScriptDefinitionKeys.displayName by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
