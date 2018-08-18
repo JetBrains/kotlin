@@ -32,6 +32,7 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
         } catch (e: Throwable) {
             throw IllegalArgumentException("${ERROR_MSG_PREFIX}Unable to load base class $baseClassType", e)
         }
+    val loadedBaseClassType = if (baseClass == baseClassType.fromClass) baseClassType else KotlinType(baseClass)
 
     val mainAnnotation = baseClass.findAnnotation<KotlinScript>()
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $baseClass")
@@ -43,7 +44,7 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
     }
 
     return ScriptDefinition {
-        baseClass(baseClassType)
+        baseClass(loadedBaseClassType)
         fileExtension(baseClass.findAnnotation<KotlinScriptFileExtension>()?.extension ?: mainAnnotation.extension)
         displayName(mainAnnotation.name)
 
