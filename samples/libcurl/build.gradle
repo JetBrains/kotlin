@@ -25,6 +25,11 @@ konanArtifacts {
 
 apply plugin: 'maven-publish'
 def localMavenRepo="file://${new File(System.properties['user.home'] as String)}/.m2-kotlin-native"
+
+task cleanLocalRepo(type: Delete) {
+    delete localMavenRepo
+}
+
 publishing {
     publications{
         libcurl(MavenPublication) {
