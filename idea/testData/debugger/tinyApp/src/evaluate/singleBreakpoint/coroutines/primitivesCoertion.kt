@@ -1,6 +1,6 @@
 package primitivesCoertion
 
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 fun main(args: Array<String>) {
     val a = buildSequence {
