@@ -37,6 +37,8 @@ class NewCodeBuilder {
         JKClass.ClassKind.CLASS -> "class"
         JKClass.ClassKind.ENUM -> "enum class"
         JKClass.ClassKind.INTERFACE -> "interface"
+        JKClass.ClassKind.OBJECT -> "object"
+        JKClass.ClassKind.COMPANION -> "companion object"
     }
 
     inner class Visitor : JKVisitorVoid {
@@ -327,17 +329,17 @@ class NewCodeBuilder {
                     printer.printWithNoIndent(type.name)
                 else -> printer.printWithNoIndent("Unit /* TODO: ${type::class} */")
             }
-            when (type.nullability) {
-                Nullability.Nullable -> printer.printWithNoIndent("?")
-                Nullability.Default -> printer.printWithNoIndent("?")// /* TODO: Default */")
-                else -> {
-                }
-            }
             if (type is JKParametrizedType && type.parameters.isNotEmpty()) {
                 printer.par(ANGLE) {
                     renderList(type.parameters) {
                         renderType(it)
                     }
+                }
+            }
+            when (type.nullability) {
+                Nullability.Nullable -> printer.printWithNoIndent("?")
+                Nullability.Default -> printer.printWithNoIndent("?")// /* TODO: Default */")
+                else -> {
                 }
             }
         }
