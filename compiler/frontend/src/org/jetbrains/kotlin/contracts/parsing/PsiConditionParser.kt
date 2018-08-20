@@ -103,12 +103,20 @@ internal class PsiConditionParser(
         when (expression.operationToken) {
             KtTokens.ANDAND -> operationConstructor = ::LogicalAnd
             KtTokens.OROR -> operationConstructor = ::LogicalOr
+            KtTokens.EXCLEQEQEQ, KtTokens.EQEQEQ -> return parseIdentityEquals(expression)
             else -> return super.visitBinaryExpression(expression, data) // pass binary expression further
         }
 
         val left = expression.left?.accept(this, data) ?: return null
         val right = expression.right?.accept(this, data) ?: return null
         return operationConstructor(left, right)
+    }
+
+    private fun parseIdentityEquals(expression: KtBinaryExpression): BooleanExpression? {
+        val lhs = dispatcher.parseValue(expression.left) ?: return null
+        val rhs = dispatcher.parseValue(expression.right) ?: return null
+
+        return processEquals(lhs, rhs, expression.operationToken == KtTokens.EXCLEQEQEQ, expression)
     }
 
     private fun processEquals(
