@@ -2084,6 +2084,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun associateByTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateByTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWith (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWithTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun averageOfByte (Ljava/lang/Iterable;)D
 	public static final fun averageOfDouble (Ljava/lang/Iterable;)D
 	public static final fun averageOfFloat (Ljava/lang/Iterable;)D
@@ -4356,6 +4358,8 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun associateByTo (Lkotlin/sequences/Sequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateByTo (Lkotlin/sequences/Sequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateTo (Lkotlin/sequences/Sequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWith (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWithTo (Lkotlin/sequences/Sequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun averageOfByte (Lkotlin/sequences/Sequence;)D
 	public static final fun averageOfDouble (Lkotlin/sequences/Sequence;)D
 	public static final fun averageOfFloat (Lkotlin/sequences/Sequence;)D
@@ -4693,6 +4697,8 @@ public final class kotlin/text/StringsKt {
 	public static final fun associateByTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateByTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWith (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWithTo (Ljava/lang/CharSequence;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun capitalize (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun chunked (Ljava/lang/CharSequence;I)Ljava/util/List;
 	public static final fun chunked (Ljava/lang/CharSequence;ILkotlin/jvm/functions/Function1;)Ljava/util/List;

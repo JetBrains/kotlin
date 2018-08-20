@@ -301,6 +301,14 @@ class Collections {
     class Transformations {
 
         @Sample
+        fun associateWith() {
+            val words = listOf("a", "abc", "ab", "def", "abcd")
+            val withLength = words.associateWith { it.length }
+            assertPrints(withLength.keys, "[a, abc, ab, def, abcd]")
+            assertPrints(withLength.values, "[1, 3, 2, 3, 4]")
+        }
+
+        @Sample
         fun groupBy() {
             val words = listOf("a", "abc", "ab", "def", "abcd")
             val byLength = words.groupBy { it.length }

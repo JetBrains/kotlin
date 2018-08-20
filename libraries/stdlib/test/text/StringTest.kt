@@ -1159,6 +1159,14 @@ class StringTest {
         assertEquals(listOf('A', 'A', 'B', 'D'), result[true])
     }
 
+    @Test fun associateWith() = withOneCharSequenceArg("abc") { data ->
+        val result = data.associateWith { it + 1 }
+        assertEquals(mapOf('a' to 'b', 'b' to 'c', 'c' to 'd'), result)
+
+        val mutableResult = data.drop(1).associateWithTo(result.toMutableMap()) { it - 1 }
+        assertEquals(mapOf('a' to 'b', 'b' to 'a', 'c' to 'b'), mutableResult)
+    }
+
     @Test fun joinToString() {
         val data = "abcd".toList()
         val result = data.joinToString("_", "(", ")")
