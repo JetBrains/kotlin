@@ -46,9 +46,9 @@ class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
 
     override fun resolve(): PsiElement? = multiResolve(false).firstOrNull()?.element
 
-    override fun handleElementRename(newElementName: String?): PsiElement? {
+    override fun handleElementRename(newElementName: String): PsiElement? {
         val textRange = element.getNameTextRange()
-        val newText = textRange.replace(element.text, newElementName!!)
+        val newText = textRange.replace(element.text, newElementName)
         val newLink = KDocElementFactory(element.project).createNameFromText(newText)
         return element.replace(newLink)
     }

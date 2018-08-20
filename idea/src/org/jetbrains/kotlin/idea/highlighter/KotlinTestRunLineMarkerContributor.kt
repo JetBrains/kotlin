@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.TestFrameworks
 import com.intellij.execution.TestStateStorage
+import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.execution.testframework.TestIconMapper
@@ -29,16 +30,15 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
-import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
+import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.idea.util.string.joinWithEscape
-import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -46,8 +46,6 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.TargetPlatform.Common
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import javax.swing.Icon
 
 class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
@@ -110,12 +108,17 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
     private fun getJavaScriptTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
         if (!descriptor.isTest()) return null
 
-        val module = declaration.module?.jsOrJsImpl() ?: return null
-        val testFilePath = module.jsTestOutputFilePath ?: return null
+        val runConfigData = RunConfigurationProducer
+            .getProducers(declaration.project)
+            .asSequence()
+            .filterIsInstance<KotlinJSRunConfigurationDataProvider<*>>()
+            .filter { it.isForTests }
+            .mapNotNull { it.getConfigurationData(declaration) }
+            .firstOrNull() ?: return null
 
         val locations = ArrayList<String>()
 
-        locations += FileUtil.toSystemDependentName(testFilePath)
+        locations += FileUtil.toSystemDependentName(runConfigData.jsOutputFilePath)
 
         val klass = when (declaration) {
             is KtClassOrObject -> declaration
@@ -147,12 +150,23 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         // To prevent IDEA failing on red code
         val descriptor = declaration.resolveToDescriptorIfAny() ?: return null
 
-        val platform = TargetPlatformDetector.getPlatform(declaration.containingKtFile)
-        val icon = when (platform) {
-            is JvmPlatform -> getJavaTestIcon(declaration)
-            is JsPlatform, is Common -> getJavaScriptTestIcon(declaration, descriptor)
-            else -> return null
-        } ?: return null
+        val icon = getTestIcon(declaration, descriptor) ?: return null
         return RunLineMarkerContributor.Info(icon, { "Run Test" }, ExecutorAction.getActions())
+    }
+
+    private fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
+        val module = declaration.module ?: return null
+        val targetPlatformKind = module.targetPlatform ?: return null
+        return when (targetPlatformKind) {
+            is TargetPlatformKind.JavaScript -> getJavaScriptTestIcon(declaration, descriptor)
+            is TargetPlatformKind.Jvm -> getJavaTestIcon(declaration)
+            is TargetPlatformKind.Common -> {
+                val icons = listOfNotNull(getJavaScriptTestIcon(declaration, descriptor), getJavaTestIcon(declaration))
+                when (icons.size) {
+                    0 -> null
+                    else -> icons.distinct().singleOrNull() ?: AllIcons.RunConfigurations.TestState.Run
+                }
+            }
+        }
     }
 }

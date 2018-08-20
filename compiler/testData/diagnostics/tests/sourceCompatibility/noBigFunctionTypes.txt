@@ -1,0 +1,12 @@
+package
+
+public fun bar(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun foo(/*0*/ p00: A, /*1*/ p01: A, /*2*/ p02: A, /*3*/ p03: A, /*4*/ p04: A, /*5*/ p05: A, /*6*/ p06: A, /*7*/ p07: A, /*8*/ p08: A, /*9*/ p09: A, /*10*/ p10: A, /*11*/ p11: A, /*12*/ p12: A, /*13*/ p13: A, /*14*/ p14: A, /*15*/ p15: A, /*16*/ p16: A, /*17*/ p17: A, /*18*/ p18: A, /*19*/ p19: A, /*20*/ p20: A, /*21*/ p21: A, /*22*/ p22: A, /*23*/ p23: A, /*24*/ p24: A, /*25*/ p25: A, /*26*/ p26: A, /*27*/ p27: A, /*28*/ p28: A, /*29*/ p29: A): kotlin.Unit
+public fun test(/*0*/ w: (A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A) -> kotlin.Unit, /*1*/ vararg x: kotlin.Function30<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, kotlin.Unit> /*kotlin.Array<out kotlin.Function30<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, kotlin.Unit>>*/): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

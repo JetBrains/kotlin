@@ -18,19 +18,26 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrCallWithIndexedArgumentsBase(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin) {
+) :
+    IrMemberAccessExpressionBase(
+        startOffset,
+        endOffset,
+        type,
+        typeArgumentsCount,
+        valueArgumentsCount,
+        origin
+    ) {
 
     private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
 

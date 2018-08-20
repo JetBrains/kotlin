@@ -1,6 +1,6 @@
 package test
 
-@field:test.Anno(t = {ElementType.PACKAGE}) public val bar: kotlin.Int = 42
+@field:test.Anno(t = {ElementType.PACKAGE}) public val bar: kotlin.Int
     public fun <get-bar>(): kotlin.Int
 @test.Anno(t = {}) public fun baz(): kotlin.Unit
 @test.Anno(t = {ElementType.METHOD, ElementType.FIELD}) public fun foo(): kotlin.Unit

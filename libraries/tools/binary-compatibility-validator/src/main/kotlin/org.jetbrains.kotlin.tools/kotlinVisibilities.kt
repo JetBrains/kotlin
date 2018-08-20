@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.tools
 
 import kotlinx.metadata.Flag
 import kotlinx.metadata.Flags
+import kotlinx.metadata.jvm.JvmMemberSignature
 
 class ClassVisibility(
     val name: String,
     val flags: Flags?,
-    val members: Map<MemberSignature, MemberVisibility>,
+    val members: Map<JvmMemberSignature, MemberVisibility>,
     val facadeClassName: String? = null
 ) {
     val visibility get() = flags
@@ -21,12 +22,11 @@ class ClassVisibility(
     val partVisibilities = mutableListOf<ClassVisibility>()
 }
 
-fun ClassVisibility.findMember(signature: MemberSignature): MemberVisibility? =
+fun ClassVisibility.findMember(signature: JvmMemberSignature): MemberVisibility? =
     members[signature] ?: partVisibilities.mapNotNull { it.members[signature] }.firstOrNull()
 
 
-data class MemberVisibility(val member: MemberSignature, val visibility: Flags?)
-data class MemberSignature(val name: String, val desc: String)
+data class MemberVisibility(val member: JvmMemberSignature, val visibility: Flags?)
 
 private fun isPublic(visibility: Flags?, isPublishedApi: Boolean) =
     visibility == null

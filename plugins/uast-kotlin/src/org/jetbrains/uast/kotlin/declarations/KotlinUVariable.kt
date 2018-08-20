@@ -18,6 +18,7 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -429,14 +430,16 @@ class KotlinUEnumConstant(
     override val valueArgumentCount: Int
         get() = psi.argumentList?.expressions?.size ?: 0
 
-    override val valueArguments by lz {
-        psi.argumentList?.expressions?.map {
-            getLanguagePlugin().convertElement(it, this) as? UExpression ?: UastEmptyExpression
-        } ?: emptyList()
-    }
+    override val valueArguments by lz(fun(): List<UExpression> {
+        val ktEnumEntry = sourcePsi as? KtEnumEntry ?: return emptyList()
+        val ktSuperTypeCallEntry = ktEnumEntry.initializerList?.initializers?.firstOrNull() as? KtSuperTypeCallEntry ?: return emptyList()
+        return ktSuperTypeCallEntry.valueArguments.map {
+            it.getArgumentExpression()?.let { getLanguagePlugin().convertElement(it, this) } as? UExpression ?: UastEmptyExpression(this)
+        }
+    })
 
     override val returnType: PsiType?
-        get() = psi.type
+        get() = uastParent?.getAsJavaPsiElement(PsiClass::class.java)?.let { PsiTypesUtil.getClassType(it) }
 
     override fun resolve() = psi.resolveMethod()
 

@@ -1,5 +1,6 @@
 // !LANGUAGE: +InlineClasses
 
+@Suppress("INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE")
 inline class Default<T>(val x: T)
 
 class Inv<T>

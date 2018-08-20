@@ -27,7 +27,11 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (kind in PrimitiveType.values()) {
             val typeLower = kind.name.toLowerCase()
             val s = kind.capitalized
-            val defaultValue = if (kind == PrimitiveType.BOOLEAN) "false" else "zero"
+            val defaultValue = when (kind) {
+                PrimitiveType.CHAR -> "null char (`\\u0000')"
+                PrimitiveType.BOOLEAN -> "`false`"
+                else -> "zero"
+            }
             out.println("/**")
             out.println(" * An array of ${typeLower}s. When targeting the JVM, instances of this class are represented as `$typeLower[]`.")
             out.println(" * @constructor Creates a new array of the specified [size], with all elements initialized to $defaultValue.")

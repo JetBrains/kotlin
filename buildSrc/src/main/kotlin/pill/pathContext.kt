@@ -4,6 +4,20 @@ package org.jetbrains.kotlin.pill
 import org.gradle.api.Project
 import java.io.File
 
+private val USER_HOME_DIR_PATH = System.getProperty("user.home").withSlash()
+
+private fun replacePrefix(path: String, prefix: String, variableName: String): String {
+    if (path.startsWith(prefix)) {
+        return "$" + variableName + "$/" + path.drop(prefix.length)
+    }
+
+    return path
+}
+
+private fun simplifyUserHomeDirPath(path: String): String {
+    return replacePrefix(path, USER_HOME_DIR_PATH, "USER_HOME")
+}
+
 interface PathContext {
     operator fun invoke(file: File): String
 
@@ -22,14 +36,14 @@ class ProjectContext private constructor(private val projectDir: File) : PathCon
     constructor(project: Project) : this(project.projectDir)
 
     override fun invoke(file: File): String {
-        return file.absolutePath.replace(projectDir.absolutePath, "\$PROJECT_DIR\$")
+        return simplifyUserHomeDirPath(replacePrefix(file.absolutePath, projectDir.absolutePath.withSlash(), "PROJECT_DIR"))
     }
 }
 
 class ModuleContext(val project: PProject, val module: PModule) : PathContext {
     override fun invoke(file: File): String {
         if (!file.startsWith(project.rootDirectory)) {
-            return file.absolutePath
+            return simplifyUserHomeDirPath(file.absolutePath)
         }
 
         return "\$MODULE_DIR\$/" + file.toRelativeString(module.moduleFile.parentFile)

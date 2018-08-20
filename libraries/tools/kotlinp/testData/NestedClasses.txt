@@ -58,3 +58,7 @@ public final class A.D.F.G : A.D.F {
   // signature: <init>()V
   public /* primary */ constructor()
 }
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
+import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
@@ -68,8 +68,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt.API_VERSION_DIRECTIVE;
 import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings;
-import static org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt.writeAllTo;
+import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
@@ -196,9 +197,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             }
 
             Map<String, String> directives = KotlinTestUtils.parseDirectives(testFile.content);
+
+            if (InTextDirectivesUtils.isDirectiveDefined(testFile.content, "WITH_UNSIGNED")) {
+                assertDirectivesToNull(explicitLanguageVersionSettings, explicitLanguageVersion);
+                explicitLanguageVersion = LanguageVersion.KOTLIN_1_3;
+                directives.put(API_VERSION_DIRECTIVE, ApiVersion.KOTLIN_1_3.getVersionString());
+            }
+
             LanguageVersionSettings fileLanguageVersionSettings = parseLanguageVersionSettings(directives);
             if (fileLanguageVersionSettings != null) {
-                assertDirectivesToNull(explicitLanguageVersionSettings, explicitLanguageVersion);
+                assertDirectivesToNull(explicitLanguageVersionSettings, null);
                 explicitLanguageVersionSettings = fileLanguageVersionSettings;
             }
         }
@@ -235,7 +243,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     private static final Pattern BOOLEAN_FLAG_PATTERN = Pattern.compile("([+-])(([a-zA-Z_0-9]*)\\.)?([a-zA-Z_0-9]*)");
     private static final Pattern CONSTRUCTOR_CALL_NORMALIZATION_MODE_FLAG_PATTERN = Pattern.compile(
-            "CONSTRUCTOR_CALL_NORMALIZATION_MODE=([a-zA-Z_0-9]*)");
+            "CONSTRUCTOR_CALL_NORMALIZATION_MODE=([a-zA-Z_\\-0-9]*)");
     private static final Pattern ASSERTIONS_MODE_FLAG_PATTERN = Pattern.compile("ASSERTIONS_MODE=([a-zA-Z_0-9-]*)");
 
     private static void updateConfigurationWithFlags(@NotNull CompilerConfiguration configuration, @NotNull List<String> flags) {
@@ -410,13 +418,29 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     @NotNull
     protected GeneratedClassLoader createClassLoader() {
+        ClassLoader classLoader;
+        if (configurationKind.getWithReflection() && configurationKind.getWithCoroutines()) {
+            classLoader = ForTestCompileRuntime.reflectAndCoroutinesJarClassLoader();
+        }
+        else if (configurationKind.getWithUnsignedTypes() && configurationKind.getWithReflection()) {
+            classLoader = ForTestCompileRuntime.reflectAndUnsignedTypesJarClassLoader();
+        }
+        else if (configurationKind.getWithReflection()) {
+            classLoader = ForTestCompileRuntime.runtimeAndReflectJarClassLoader();
+        }
+        else if (configurationKind.getWithCoroutines()) {
+            classLoader = ForTestCompileRuntime.runtimeAndCoroutinesJarClassLoader();
+        }
+        else if (configurationKind.getWithUnsignedTypes()) {
+            classLoader = ForTestCompileRuntime.runtimeAndUnsignedTypesJarClassLoader();
+        }
+        else {
+            classLoader = ForTestCompileRuntime.runtimeJarClassLoader();
+        }
+
         return new GeneratedClassLoader(
                 generateClassesInFile(),
-                configurationKind.getWithReflection()
-                ? ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
-                : configurationKind.getWithCoroutines()
-                  ? ForTestCompileRuntime.runtimeAndCoroutinesJarClassLoader()
-                  : ForTestCompileRuntime.runtimeJarClassLoader(),
+                classLoader,
                 getClassPathURLs()
         );
     }
@@ -456,10 +480,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     @NotNull
     protected String generateToText() {
+        return generateToText(null);
+    }
+
+    @NotNull
+    protected String generateToText(@Nullable String ignorePathPrefix) {
         if (classFileFactory == null) {
             classFileFactory = generateFiles(myEnvironment, myFiles);
         }
-        return classFileFactory.createText();
+        return classFileFactory.createText(ignorePathPrefix);
     }
 
     @NotNull
@@ -671,6 +700,9 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             if (configurationKind.getWithCoroutines()) {
                 javaClasspath.add(ForTestCompileRuntime.coroutinesJarForTests().getPath());
             }
+            if (configurationKind.getWithUnsignedTypes()) {
+                javaClasspath.add(ForTestCompileRuntime.unsignedTypesJarForTests().getPath());
+            }
 
             javaClassesOutputDirectory = CodegenTestUtil.compileJava(
                     findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions
@@ -683,8 +715,11 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         boolean addRuntime = false;
         boolean addReflect = false;
         boolean addCoroutines = false;
+        boolean addUnsignedTypes = false;
         for (TestFile file : files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "COMMON_COROUTINES_TEST")) {
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "COMMON_COROUTINES_TEST") ||
+                InTextDirectivesUtils.isDirectiveDefined(file.content, "!LANGUAGE: +ReleaseCoroutines") ||
+                InTextDirectivesUtils.isDirectiveDefined(file.content, "LANGUAGE_VERSION: 1.3")) {
                 addCoroutines = true;
             }
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
@@ -693,11 +728,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
                 addReflect = true;
             }
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_UNSIGNED")) {
+                addUnsignedTypes = true;
+            }
         }
 
-        return (addReflect && addCoroutines) ? ConfigurationKind.ALL :
+        return (addReflect && addCoroutines && addUnsignedTypes) ? ConfigurationKind.ALL :
+               (addReflect && addCoroutines) ? ConfigurationKind.WITH_COROUTINES_AND_REFLECT :
                addReflect ? ConfigurationKind.WITH_REFLECT :
                addCoroutines ? ConfigurationKind.WITH_COROUTINES :
+               addUnsignedTypes ? ConfigurationKind.WITH_UNSIGNED_TYPES :
                addRuntime ? ConfigurationKind.NO_KOTLIN_REFLECT :
                ConfigurationKind.JDK_ONLY;
     }

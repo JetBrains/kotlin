@@ -1,0 +1,2 @@
+warning: argfile not found: $TESTDATA_DIR$/nonexisting.argfile
+OK

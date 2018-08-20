@@ -263,7 +263,7 @@ public class Visibilities {
     public static final Visibility INVISIBLE_FAKE = new Visibility("invisible_fake", false) {
         @Override
         public boolean mustCheckInImports() {
-            throw new IllegalStateException("This method shouldn't be invoked for INVISIBLE_FAKE visibility");
+            return true;
         }
 
         @Override

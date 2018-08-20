@@ -44,6 +44,8 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
     private val form = ConfigurePluginUpdatesForm()
     private var update: PluginUpdateStatus.Update? = null
 
+    private var savedChannel = -1
+
     private var versionForInstallation: String? = null
 
     private var installedVersion: String? = null
@@ -108,11 +110,15 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
             }
         }
 
-        val savedChannel: Int = EAPChannels.EAP_1_3.indexIfAvailable() ?: EAPChannels.EAP_1_2.indexIfAvailable() ?: 0
+        savedChannel = EAPChannels.EAP_1_3.indexIfAvailable() ?: EAPChannels.EAP_1_2.indexIfAvailable() ?: 0
         form.channelCombo.selectedIndex = savedChannel
 
         form.channelCombo.addActionListener {
-            checkForUpdates()
+            val newChannel = form.channelCombo.selectedIndex
+            if (newChannel != savedChannel) {
+                savedChannel = newChannel
+                checkForUpdates()
+            }
         }
 
         checkForUpdates()
@@ -121,7 +127,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
     }
 
     private fun checkForUpdates() {
-        saveSettings()
+        saveChannelSettings()
         form.updateCheckProgressIcon.resume()
         form.resetUpdateStatus()
         KotlinPluginUpdater.getInstance().runUpdateCheck{ pluginUpdateStatus ->
@@ -132,7 +138,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
             when (pluginUpdateStatus) {
                 PluginUpdateStatus.LatestVersionInstalled -> {
                     form.setUpdateStatus(
-                        "You have the latest version of the plugin (${KotlinPluginUtil.getPluginVersion()}) installed.",
+                        "You have the latest version of the plugin installed.",
                         false
                     )
                 }
@@ -150,13 +156,21 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
                 is PluginUpdateStatus.CheckFailed ->
                     form.setUpdateStatus("Update check failed: ${pluginUpdateStatus.message}", false)
+
+                is PluginUpdateStatus.Unverified -> {
+                    val version = pluginUpdateStatus.updateStatus.pluginDescriptor.version
+                    val generalLine = "A new version $version is found but it's not verified by ${pluginUpdateStatus.verifierName}."
+                    val reasonLine = pluginUpdateStatus.reason ?: ""
+                    val message = "<html>$generalLine<br/>$reasonLine</html>"
+                    form.setUpdateStatus(message, false)
+                }
             }
 
             false  // do not auto-retry update check
         }
     }
 
-    private fun saveSettings() {
+    private fun saveChannelSettings() {
         saveSelectedChannel(form.channelCombo.selectedIndex)
     }
 }

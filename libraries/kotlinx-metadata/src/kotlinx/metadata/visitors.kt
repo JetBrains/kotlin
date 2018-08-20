@@ -6,7 +6,7 @@
 package kotlinx.metadata
 
 /**
- * A visitor to visit Kotlin declarations, which are containers of other declarations: functions, properties and type aliases.
+ * A visitor containing the common code to visit Kotlin declaration containers, such as classes and package fragments.
  */
 abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected open val delegate: KmDeclarationContainerVisitor? = null) {
     /**
@@ -39,6 +39,13 @@ abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected
      */
     open fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
         delegate?.visitTypeAlias(flags, name)
+
+    /**
+     * Visits the extensions of the given type on the container.
+     *
+     * @param type the type of extension visitor to be returned
+     */
+    abstract fun visitExtensions(type: KmExtensionType): KmDeclarationContainerExtensionVisitor?
 }
 
 /**
@@ -136,7 +143,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param type the type of extension visitor to be returned
      */
-    open fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? =
+    override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? =
         delegate?.visitExtensions(type)
 
     /**
@@ -155,6 +162,14 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
 abstract class KmPackageVisitor @JvmOverloads constructor(delegate: KmPackageVisitor? = null) : KmDeclarationContainerVisitor(delegate) {
     override val delegate: KmPackageVisitor?
         get() = super.delegate as KmPackageVisitor?
+
+    /**
+     * Visits the extensions of the given type on the package fragment.
+     *
+     * @param type the type of extension visitor to be returned
+     */
+    override fun visitExtensions(type: KmExtensionType): KmPackageExtensionVisitor? =
+        delegate?.visitExtensions(type)
 
     /**
      * Visits the end of the package fragment.

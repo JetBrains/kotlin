@@ -16,17 +16,17 @@ suspend fun bar1() {
     return if (1.hashCode() > 0) {
         foo()
     }
-    else suspendCoroutineOrReturn { x: Continuation<Unit> -> }
+    else suspendCoroutineUninterceptedOrReturn { x: Continuation<Unit> -> }
 }
 
 suspend fun bar2() =
         if (1.hashCode() > 0) {
             foo()
         }
-        else suspendCoroutineOrReturn { x: Continuation<Unit> -> }
+        else suspendCoroutineUninterceptedOrReturn { x: Continuation<Unit> -> }
 
 suspend fun bar3() =
         when {
             true -> { foo() }
-            else -> suspendCoroutineOrReturn { x: Continuation<Unit> -> }
+            else -> suspendCoroutineUninterceptedOrReturn { x: Continuation<Unit> -> }
         }

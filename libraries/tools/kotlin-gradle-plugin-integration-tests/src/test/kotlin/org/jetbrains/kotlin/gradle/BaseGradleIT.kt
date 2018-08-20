@@ -1,7 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.model.ModelContainer
+import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.After
 import org.junit.AfterClass
@@ -18,6 +21,9 @@ abstract class BaseGradleIT {
     protected var workingDir = File(".")
 
     protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
+
+    protected open val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.None
 
     @Before
     fun setUp() {
@@ -48,8 +54,30 @@ abstract class BaseGradleIT {
     }
 
     companion object {
-        // wrapper version to the number of daemon runs performed
-        private val daemonRunCount = hashMapOf<String, Int>()
+
+        private object DaemonRegistry {
+            // wrapper version to the number of daemon runs performed
+            private val daemonRunCount = hashMapOf<String, Int>()
+            private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
+
+            val activeDaemons: List<String>
+                get() = daemonRunCount.keys.toList()
+
+            fun register(version: String) {
+                if (version == runnerGradleVersion) return
+
+                daemonRunCount[version] = (daemonRunCount[version] ?: 0) + 1
+            }
+
+            fun unregister(version: String) {
+                daemonRunCount.remove(version)
+            }
+
+            fun runCountForDaemon(version: String): Int =
+                daemonRunCount[version] ?: 0
+        }
+
+
         // gradle wrapper version to wrapper directory
         private val gradleWrappers = hashMapOf<String, File>()
         private const val MAX_DAEMON_RUNS = 30
@@ -81,27 +109,27 @@ abstract class BaseGradleIT {
             environmentVariables: Map<String, String> = mapOf(),
             withDaemon: Boolean = true
         ): File {
-            val wrapperDir = gradleWrappers.getOrPut(version) { createNewWrapperDir(version) }
-
-            // Even if gradle is run with --no-daemon, we should check,
-            // that common active process count does not exceed the threshold,
-            // to avoid retaining too much memory (which is critical for CI)
-            val activeDaemonsCount = daemonRunCount.keys.size
-            val nonDaemonCount = if (!withDaemon) 1 else 0
-            if (activeDaemonsCount + nonDaemonCount > MAX_ACTIVE_GRADLE_PROCESSES) {
-                println("Too many Gradle active processes (max is $MAX_ACTIVE_GRADLE_PROCESSES). Stopping all daemons")
-                stopAllDaemons(environmentVariables)
-            }
+            val wrapper = gradleWrappers.getOrPut(version) { createNewWrapperDir(version) }
 
             if (withDaemon) {
-                val timesDaemonUsed = daemonRunCount[version] ?: 0
-                if (timesDaemonUsed >= MAX_DAEMON_RUNS) {
+                DaemonRegistry.register(version)
+
+                if (DaemonRegistry.activeDaemons.size > MAX_ACTIVE_GRADLE_PROCESSES) {
+                    println("Too many Gradle active processes (max is $MAX_ACTIVE_GRADLE_PROCESSES). Stopping all daemons")
+                    stopAllDaemons(environmentVariables)
+                }
+
+                if (DaemonRegistry.runCountForDaemon(version) >= MAX_DAEMON_RUNS) {
                     stopDaemon(version, environmentVariables)
                 }
-                daemonRunCount[version] = timesDaemonUsed + 1
+
+                // we could've stopped daemon
+                if (DaemonRegistry.runCountForDaemon(version) <= 0) {
+                    DaemonRegistry.register(version)
+                }
             }
 
-            return wrapperDir
+            return wrapper
         }
 
         private fun createNewWrapperDir(version: String): File =
@@ -115,36 +143,28 @@ abstract class BaseGradleIT {
         private val runnerGradleVersion = System.getProperty("runnerGradleVersion")
 
         private fun stopDaemon(version: String, environmentVariables: Map<String, String>) {
-            if (version == runnerGradleVersion) {
-                println("Not stopping Gradle daemon v$version as it matches the runner version")
-                return
-            }
-
+            assert(version != runnerGradleVersion) { "Not stopping Gradle daemon v$version as it matches the runner version" }
             println("Stopping gradle daemon v$version")
 
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
-            if (version in daemonRunCount) {
-                val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
-                val result = runProcess(cmd, wrapperDir, environmentVariables)
-                assert(result.isSuccessful) { "Could not stop daemon: $result" }
-                daemonRunCount.remove(version)
-            }
+            val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
+            val result = runProcess(cmd, wrapperDir, environmentVariables)
+            assert(result.isSuccessful) { "Could not stop daemon: $result" }
+            DaemonRegistry.unregister(version)
         }
 
         private fun stopAllDaemons(environmentVariables: Map<String, String>) {
-            // copy wrapper versions, because stopDaemon modifies daemonRunCount
-            val wrapperVersions = daemonRunCount.keys.toList()
-            for (version in wrapperVersions) {
+            for (version in DaemonRegistry.activeDaemons) {
                 stopDaemon(version, environmentVariables)
             }
-            assert(daemonRunCount.keys.none { it != runnerGradleVersion }) {
-                "Could not stop some daemons ${(daemonRunCount.keys - runnerGradleVersion).joinToString()}"
+            assert(DaemonRegistry.activeDaemons.isEmpty()) {
+                "Could not stop some daemons ${(DaemonRegistry.activeDaemons).joinToString()}"
             }
         }
     }
 
     // the second parameter is for using with ToolingAPI, that do not like --daemon/--no-daemon  options at all
-    data class BuildOptions(
+    data class BuildOptions constructor(
         val withDaemon: Boolean = false,
         val daemonOptionSupported: Boolean = true,
         val incremental: Boolean? = null,
@@ -157,12 +177,15 @@ abstract class BaseGradleIT {
         val kotlinVersion: String = KOTLIN_VERSION,
         val kotlinDaemonDebugPort: Int? = null,
         val usePreciseJavaTracking: Boolean? = null,
-        val withBuildCache: Boolean = false
+        val withBuildCache: Boolean = false,
+        val kaptOptions: KaptOptions? = null
     )
+
+    data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean)
 
     open inner class Project(
         val projectName: String,
-        val gradleVersionRequirement: GradleVersionRequired = GradleVersionRequired.None,
+        val gradleVersionRequirement: GradleVersionRequired = defaultGradleVersion,
         directoryPrefix: String? = null,
         val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
@@ -252,6 +275,21 @@ abstract class BaseGradleIT {
             }
             throw t
         }
+    }
+
+    fun <T> Project.getModels(modelType: Class<T>): ModelContainer<T> {
+        if (!projectDir.exists()) {
+            setupWorkingDir()
+        }
+
+        val connection = GradleConnector.newConnector().forProjectDirectory(projectDir).connect()
+        val options = defaultBuildOptions()
+        val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}")
+        options.androidGradlePluginVersion?.let { arguments.add("-Pandroid_tools_version=$it") }
+        val env = createEnvironmentVariablesMap(options)
+        val model = connection.action(ModelFetcherBuildAction(modelType)).withArguments(arguments).setEnvironmentVariables(env).run()
+        connection.close()
+        return model
     }
 
     fun CompiledProject.assertSuccessful() {
@@ -509,6 +547,11 @@ abstract class BaseGradleIT {
             } else {
                 // Override possibly enabled system-wide caching:
                 add("-Dorg.gradle.caching=false")
+            }
+
+            options.kaptOptions?.also { kaptOptions ->
+                add("-Pkapt.verbose=${kaptOptions.verbose}")
+                add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

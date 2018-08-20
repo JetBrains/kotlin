@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 typealias BoolArray = Array<Boolean>
 typealias IArray = IntArray
 typealias MyArray<T> = Array<T>

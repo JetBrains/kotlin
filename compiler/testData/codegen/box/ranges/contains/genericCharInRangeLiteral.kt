@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Cell<T>(val value: T)
 
 fun box(): String =

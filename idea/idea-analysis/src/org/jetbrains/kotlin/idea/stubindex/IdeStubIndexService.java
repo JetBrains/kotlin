@@ -156,6 +156,10 @@ public class IdeStubIndexService extends StubIndexService {
             if (TypeIndexUtilKt.isProbablyNothing(stub.getPsi().getTypeReference())) {
                 sink.occurrence(KotlinProbablyNothingFunctionShortNameIndex.getInstance().getKey(), name);
             }
+
+            if (stub.mayHaveContract()) {
+                sink.occurrence(KotlinProbablyContractedFunctionShortNameIndex.getInstance().getKey(), name);
+            }
         }
 
         if (stub.isTopLevel()) {

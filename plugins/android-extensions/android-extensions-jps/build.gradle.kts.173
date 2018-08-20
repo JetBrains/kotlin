@@ -15,7 +15,6 @@ dependencies {
     compile(intellijPluginDep("android")) { includeJars("jps/android-jps-plugin") }
 
     testCompile(projectTests(":jps-plugin"))
-    testCompile(project(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))

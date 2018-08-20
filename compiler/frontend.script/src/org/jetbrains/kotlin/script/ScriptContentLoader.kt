@@ -44,7 +44,9 @@ class ScriptContentLoader(private val project: Project) {
                     // TODO: consider advanced matching using semantic similar to actual resolving
                     scriptDefinition.acceptedAnnotations.find { ann ->
                         psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                    }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                    }?.let {
+                        constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>, project)
+                    }
                 }
         }
     }
@@ -58,8 +60,8 @@ class ScriptContentLoader(private val project: Project) {
 
     class BasicScriptContents(virtualFile: VirtualFile, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
         override val file: File = File(virtualFile.path)
-        override val annotations: Iterable<Annotation> by lazy { getAnnotations() }
-        override val text: CharSequence? by lazy { virtualFile.inputStream.reader(charset = virtualFile.charset).readText() }
+        override val annotations: Iterable<Annotation> by lazy(LazyThreadSafetyMode.PUBLICATION) { getAnnotations() }
+        override val text: CharSequence? by lazy(LazyThreadSafetyMode.PUBLICATION) { virtualFile.inputStream.reader(charset = virtualFile.charset).readText() }
     }
 
     fun loadContentsAndResolveDependencies(

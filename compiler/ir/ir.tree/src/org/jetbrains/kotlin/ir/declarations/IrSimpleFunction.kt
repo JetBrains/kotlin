@@ -18,15 +18,16 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.name.Name
 
 interface IrSimpleFunction : IrFunction, IrSymbolDeclaration<IrSimpleFunctionSymbol> {
     val modality: Modality
     val isTailrec: Boolean
     val isSuspend: Boolean
 
-    val overriddenSymbols: MutableList<IrSimpleFunctionSymbol>
+    var correspondingProperty: IrProperty?
 
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.FUNCTION
+    val overriddenSymbols: MutableList<IrSimpleFunctionSymbol>
 }
+
+val IrFunction.isPropertyAccessor: Boolean
+    get() = this is IrSimpleFunction && correspondingProperty != null

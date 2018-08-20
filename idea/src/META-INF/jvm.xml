@@ -94,7 +94,6 @@
         <debugger.simplePropertyGetterProvider implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSimpleGetterProvider"/>
 
         <framework.type implementation="org.jetbrains.kotlin.idea.framework.JavaFrameworkType"/>
-        <framework.type implementation="org.jetbrains.kotlin.idea.framework.JSFrameworkType"/>
         <projectTemplatesFactory implementation="org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory" />
 
         <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider"/>
@@ -130,8 +129,8 @@
             displayName="Incompatible API usage"
             implementationClass="org.jetbrains.kotlin.idea.inspections.api.IncompatibleAPIInspection"/>
 
-        <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
-                        serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
+        <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastResolveProviderService"
+                        serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastResolveProviderService"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">

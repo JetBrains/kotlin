@@ -1,3 +1,4 @@
+// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 object X1
@@ -8,5 +9,5 @@ fun overloadedFun5(s: String, vararg ss: String) = X2
 
 val test1 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>overloadedFun5<!>("")
 val test2 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>overloadedFun5<!>("", "")
-val test3: X2 = overloadedFun5(s = "", ss = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION!>""<!>)
-val test4: X1 = overloadedFun5(ss = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION!>""<!>)
+val test3: X2 = overloadedFun5(s = "", ss = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!>)
+val test4: X1 = overloadedFun5(ss = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!>)

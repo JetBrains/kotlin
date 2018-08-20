@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentDescriptor
 import org.jetbrains.org.objectweb.asm.Type
@@ -64,13 +65,27 @@ class ScriptContext(
         }
     }
 
-    fun getImplicitReceiverName(index: Int): String = "\$\$implicitReceiver$index"
+    val ctorValueParametersStart = if (earlierScripts.isNotEmpty()) 1 else 0
+
+    private val ctorImplicitReceiversParametersStart =
+        ctorValueParametersStart + (scriptDescriptor.getSuperClassNotAny()?.unsubstitutedPrimaryConstructor?.valueParameters?.size ?: 0)
+
+    private val ctorEnvironmentVarsParametersStart =
+        ctorImplicitReceiversParametersStart + scriptDescriptor.implicitReceivers.size
+
+    fun getImplicitReceiverName(index: Int): String =
+        scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters[ctorImplicitReceiversParametersStart + index].name.identifier
 
     fun getImplicitReceiverType(index: Int): Type? {
         val receivers = script.kotlinScriptDefinition.value.implicitReceivers
         val kClass = receivers.getOrNull(index)?.classifier as? KClass<*>
         return kClass?.java?.classId?.let(AsmUtil::asmTypeByClassId)
     }
+
+    fun getEnvironmentVarName(index: Int): String =
+        scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters[ctorEnvironmentVarsParametersStart + index].name.identifier
+
+    fun getEnvironmentVarType(index: Int): Type = typeMapper.mapType(scriptDescriptor.scriptEnvironmentProperties[index].type)
 
     fun getOuterReceiverExpression(prefix: StackValue?, thisOrOuterClass: ClassDescriptor): StackValue {
         if (thisOrOuterClass is ScriptEnvironmentDescriptor) {

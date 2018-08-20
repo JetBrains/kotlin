@@ -1,9 +1,9 @@
 warning: ATTENTION!
-This build uses internal compiler arguments:
+This build uses unsafe internal compiler arguments:
 
 -XXLanguage:+SoundSmartCastsAfterTry
 
-This mode is strictly prohibited for production use,
+This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 

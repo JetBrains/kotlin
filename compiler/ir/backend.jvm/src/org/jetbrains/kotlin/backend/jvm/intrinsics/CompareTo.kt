@@ -30,7 +30,13 @@ import java.lang.UnsupportedOperationException
 class CompareTo : IntrinsicMethod() {
     private fun genInvoke(type: Type?, v: InstructionAdapter) {
         when (type) {
-            Type.INT_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(II)I", false)
+            Type.CHAR_TYPE, Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE ->
+                v.invokestatic(
+                    IntrinsicMethods.INTRINSICS_CLASS_NAME,
+                    "compare",
+                    "(II)I",
+                    false
+                )
             Type.LONG_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(JJ)I", false)
             Type.FLOAT_TYPE -> v.invokestatic("java/lang/Float", "compare", "(FF)I", false)
             Type.DOUBLE_TYPE -> v.invokestatic("java/lang/Double", "compare", "(DD)I", false)
@@ -68,7 +74,13 @@ class PrimitiveComparison(
 
         return object : IrIntrinsicFunction(expression, signature, context, listOf(parameterType, parameterType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                StackValue.cmp(operatorToken, parameterType, StackValue.onStack(parameterType), StackValue.onStack(parameterType))
+                StackValue
+                    .cmp(
+                        operatorToken,
+                        parameterType,
+                        StackValue.onStack(parameterType, primitiveNumberType),
+                        StackValue.onStack(parameterType, primitiveNumberType)
+                    )
                     .put(Type.BOOLEAN_TYPE, v)
             }
         }

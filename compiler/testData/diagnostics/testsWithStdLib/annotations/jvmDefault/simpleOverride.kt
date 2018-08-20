@@ -1,6 +1,6 @@
 // !API_VERSION: 1.3
 // !JVM_TARGET: 1.8
-// !ENABLE_JVM_DEFAULT
+// !JVM_DEFAULT_MODE: enable
 interface A {
     @JvmDefault
     fun test() {}

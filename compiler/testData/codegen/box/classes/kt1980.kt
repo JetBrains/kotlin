@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 public inline fun Int.times(body : () -> Unit) {
     var count = this;
     while (count > 0) {

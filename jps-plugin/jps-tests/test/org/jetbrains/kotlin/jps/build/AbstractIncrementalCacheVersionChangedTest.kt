@@ -33,7 +33,7 @@ abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJ
         }
 
         if (modifiedFiles.none { it.endsWith("do-not-change-cache-versions") }) {
-            val cacheVersionProvider = CacheVersionProvider(paths)
+            val cacheVersionProvider = CacheVersionProvider(paths, isIncrementalCompilationEnabled = true)
             val versions = getVersions(cacheVersionProvider, targets)
             val versionFiles = versions.map { it.formatVersionFile }.filter { it.exists() }
             versionFiles.forEach { it.writeText("777") }

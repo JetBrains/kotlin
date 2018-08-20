@@ -63,9 +63,10 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
             if (additionalRepository != null) {
                 val repository = additionalRepository.toKotlinRepositorySnippet()
                 updateSettingsScript(module) {
-                    with(KotlinWithGradleConfigurator.getManipulator(it)) {
+                    with(it) {
                         addPluginRepository(additionalRepository)
                         addMavenCentralPluginRepository()
+                        addPluginRepository(DEFAULT_GRADLE_PLUGIN_REPOSITORY)
                     }
                 }
                 buildScriptData.addRepositoriesDefinition("mavenCentral()")
@@ -87,12 +88,13 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
                 .addPropertyDefinition("val $GSK_KOTLIN_VERSION_PROPERTY_NAME: String by extra")
                 .addPluginDefinition(getOldSyntaxPluginDefinition())
                 .addBuildscriptRepositoriesDefinition("mavenCentral()")
-                .addRepositoriesDefinition("mavenCentral()")
                 // TODO: in gradle > 4.1 this could be single declaration e.g. 'val kotlin_version: String by extra { "1.1.11" }'
                 .addBuildscriptPropertyDefinition("var $GSK_KOTLIN_VERSION_PROPERTY_NAME: String by extra\n    $GSK_KOTLIN_VERSION_PROPERTY_NAME = \"$kotlinVersion\"")
                 .addDependencyNotation(getRuntimeLibrary(rootModel, "\$$GSK_KOTLIN_VERSION_PROPERTY_NAME"))
                 .addBuildscriptDependencyNotation(getKotlinGradlePluginClassPathSnippet())
         }
+
+        buildScriptData.addRepositoriesDefinition("mavenCentral()")
     }
 
     private fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
@@ -147,7 +149,7 @@ class KotlinDslGradleKotlinJSFrameworkSupportProvider :
     ) {
         super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
         updateSettingsScript(module) {
-            KotlinWithGradleConfigurator.getManipulator(it).addResolutionStrategy("kotlin2js")
+            it.addResolutionStrategy("kotlin2js")
         }
     }
 }

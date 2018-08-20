@@ -183,13 +183,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 }
             }
 
-            override fun visitFor(x: JsFor) = withNewScope { super.visitFor(x) }
-
-            override fun visitForIn(x: JsForIn) = withNewScope { super.visitForIn(x) }
-
-            override fun visitWhile(x: JsWhile) = withNewScope { super.visitWhile(x) }
-
-            override fun visitDoWhile(x: JsDoWhile) = withNewScope { super.visitDoWhile(x) }
+            override fun visitLoop(x: JsLoop) = withNewScope { super.visitLoop(x) }
 
             override fun visitIf(x: JsIf) {
                 accept(x.ifExpression)

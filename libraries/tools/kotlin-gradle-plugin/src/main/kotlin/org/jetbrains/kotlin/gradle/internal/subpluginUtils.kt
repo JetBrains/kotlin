@@ -55,7 +55,6 @@ internal fun CompilerPluginOptions.withWrappedKaptOptions(withApClasspath: Itera
     }
 
     val result = CompilerPluginOptions()
-    classpath.forEach { result.addClasspathEntry(File(it)) }
     resultOptionsByPluginId.forEach { pluginId, options ->
         options.forEach { option -> result.addPluginArgument(pluginId, option) }
     }

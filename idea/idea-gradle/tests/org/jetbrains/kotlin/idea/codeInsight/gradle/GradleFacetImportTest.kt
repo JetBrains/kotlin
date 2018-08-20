@@ -25,15 +25,16 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
 import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootMap
@@ -42,10 +43,16 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.util.projectStructure.sdk
+import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.Test
+import java.util.*
 
 internal fun GradleImportingTestCase.facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
 
@@ -73,6 +80,13 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     override fun tearDown() {
         currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         super.tearDown()
+    }
+
+    private fun assertKotlinSdk(vararg moduleNames: String) {
+        val sdks = moduleNames.map { getModule(it).sdk!! }
+        val refSdk = sdks.firstOrNull() ?: return
+        Assert.assertTrue(refSdk.sdkType is KotlinSdkType)
+        Assert.assertTrue(sdks.all { it === refSdk })
     }
 
     @Test
@@ -611,8 +625,7 @@ compileTestKotlin {
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
         assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
 
-        Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_main")).sdk!!.sdkType is KotlinSdkType)
-        Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_test")).sdk!!.sdkType is KotlinSdkType)
+        assertKotlinSdk("project_main", "project_test")
 
         Assert.assertEquals(
                 listOf("file:///src/main/java" to KotlinSourceRootType.Source,
@@ -1386,7 +1399,11 @@ compileTestKotlin {
         }
 
         val rootManager = ModuleRootManager.getInstance(getModule("js-module"))
-        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library!!
+        val stdlib = rootManager
+            .orderEntries
+            .filterIsInstance<LibraryOrderEntry>()
+            .first { it.libraryName?.startsWith("Gradle: kotlin-stdlib-js-") ?: false }
+            .library!!
         assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
         assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
     }
@@ -1401,13 +1418,11 @@ compileTestKotlin {
             buildscript {
                 repositories {
                     jcenter()
-                    maven {
-                        url='https://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
+                    mavenCentral()
                 }
                 dependencies {
                     classpath "com.android.tools.build:gradle:2.3.0"
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50"
                 }
             }
 
@@ -1445,6 +1460,12 @@ compileTestKotlin {
                     }
                 }
             }
+
+            tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+                kotlinOptions {
+                    freeCompilerArgs = ['-Xprogressive']
+                }
+            }
         """
         )
         createProjectSubFile(
@@ -1462,7 +1483,8 @@ compileTestKotlin {
         )
         importProject()
 
-        Assert.assertNotNull(KotlinFacet.get(getModule("project")))
+        val kotlinFacet = KotlinFacet.get(getModule("project"))!!
+        Assert.assertTrue(kotlinFacet.configuration.settings.mergedCompilerArguments!!.progressiveMode)
     }
 
     @Test
@@ -2077,8 +2099,7 @@ compileTestKotlin {
         val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
         assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
 
-        Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_main")).sdk!!.sdkType is KotlinSdkType)
-        Assert.assertTrue(ModuleRootManager.getInstance(getModule("project_test")).sdk!!.sdkType is KotlinSdkType)
+        assertKotlinSdk("project_main", "project_test")
 
         Assert.assertEquals(
                 listOf("file:///src/main/kotlin" to KotlinSourceRootType.Source,
@@ -2090,6 +2111,176 @@ compileTestKotlin {
                        "file:///src/test/resources" to KotlinResourceRootType.TestResource),
                 getSourceRootInfos("project_test")
         )
+    }
+
+    @Test
+    fun testInternalArgumentsFacetImporting() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
+            }
+
+            compileKotlin {
+                kotlinOptions.freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
+                kotlinOptions.languageVersion = "1.2"
+            }
+        """
+        )
+        importProject()
+
+        // Version is indeed 1.2
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_2, facetSettings.languageLevel)
+
+        // We haven't lost internal argument during importing to facet
+        Assert.assertEquals("-XXLanguage:+InlineClasses", facetSettings.compilerSettings?.additionalArguments)
+
+        // Inline classes are enabled even though LV = 1.2
+        Assert.assertEquals(
+            LanguageFeature.State.ENABLED,
+            getModule("project_main").languageVersionSettings.getFeatureSupport(LanguageFeature.InlineClasses)
+        )
+
+        assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testStableModuleNameWhileUsingGradle_JS() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
+                }
+            }
+
+            apply plugin: 'kotlin2js'
+
+            repositories {
+                mavenCentral()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
+            }
+
+        """
+        )
+        importProject()
+
+        checkStableModuleName("project_main", "project", JsPlatform, isProduction = true)
+        // Note "_test" suffix: this is current behavior of K2JS Compiler
+        checkStableModuleName("project_test", "project_test", JsPlatform, isProduction = false)
+
+        assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testStableModuleNameWhileUsingGradle_JVM() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.50")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.50"
+            }
+
+            compileKotlin {
+                kotlinOptions.languageVersion = "1.2"
+            }
+        """
+        )
+        importProject()
+
+        checkStableModuleName("project_main", "project", JvmPlatform, isProduction = true)
+        checkStableModuleName("project_test", "project", JvmPlatform, isProduction = false)
+
+        assertAllModulesConfigured()
+    }
+
+    @Test
+    fun testNoFriendPathsAreShown() {
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.70-eap-4")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            repositories {
+                mavenCentral()
+                maven {
+                    url 'http://dl.bintray.com/kotlin/kotlin-dev'
+                }
+            }
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.70-eap-4"
+            }
+        """
+        )
+        importProject()
+
+        Assert.assertEquals(
+            "-version",
+            testFacetSettings.compilerSettings!!.additionalArguments
+        )
+
+        assertAllModulesConfigured()
+    }
+
+    private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
+        val module = getModule(projectName)
+        val moduleInfo = if (isProduction) module.productionSourceInfo() else module.testSourceInfo()
+
+        val resolutionFacade = KotlinCacheService.getInstance(myProject).getResolutionFacadeByModuleInfo(moduleInfo!!, platform)!!
+        val moduleDescriptor = resolutionFacade.moduleDescriptor
+
+        Assert.assertEquals("<$expectedName>", moduleDescriptor.stableName?.asString())
     }
 
     private fun assertAllModulesConfigured() {

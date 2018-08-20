@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.context.MultifileClassFacadeContext;
 import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter;
@@ -32,11 +33,9 @@ import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -52,6 +51,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
+import static org.jetbrains.kotlin.codegen.FunctionCodegen.processInterfaceMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTIES;
@@ -179,18 +179,11 @@ public class PropertyCodegen {
                                       ? !(context instanceof MultifileClassPartContext)
                                       : CodegenContextUtil.isImplClassOwner(context);
 
-        if (isBackingFieldOwner) {
-            Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
-            Annotations delegateAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD);
-            assert declaration != null : "Declaration is null: " + descriptor + " (context=" + context + ")";
-            generateBackingField(declaration, descriptor, fieldAnnotations, delegateAnnotations);
-            generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
-        }
-
-        if (!propertyAnnotations.getAllAnnotations().isEmpty() && kind != OwnerKind.DEFAULT_IMPLS &&
-            CodegenContextUtil.isImplClassOwner(context)) {
-            v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, getSyntheticMethodSignature(descriptor));
-        }
+        Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
+        Annotations delegateAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD);
+        assert declaration != null : "Declaration is null: " + descriptor + " (context=" + context + ")";
+        generateBackingField(declaration, descriptor, fieldAnnotations, delegateAnnotations, isBackingFieldOwner);
+        generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations, isBackingFieldOwner);
     }
 
     /**
@@ -320,42 +313,45 @@ public class PropertyCodegen {
         return null;
     }
 
-    private boolean generateBackingField(
+    private void generateBackingField(
             @NotNull KtNamedDeclaration p,
             @NotNull PropertyDescriptor descriptor,
             @NotNull Annotations backingFieldAnnotations,
-            @NotNull Annotations delegateAnnotations
+            @NotNull Annotations delegateAnnotations,
+            boolean isBackingFieldOwner
     ) {
-        if (isJvmInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.DEFAULT_IMPLS) {
-            return false;
-        }
-
-        if (kind == OwnerKind.ERASED_INLINE_CLASS) {
-            return false;
+        if (isJvmInterface(descriptor.getContainingDeclaration()) || kind == OwnerKind.DEFAULT_IMPLS ||
+            kind == OwnerKind.ERASED_INLINE_CLASS) {
+            return;
         }
 
         if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
-            generatePropertyDelegateAccess((KtProperty) p, descriptor, delegateAnnotations);
+            generatePropertyDelegateAccess((KtProperty) p, descriptor, delegateAnnotations, isBackingFieldOwner);
         }
         else if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
-            generateBackingFieldAccess(p, descriptor, backingFieldAnnotations);
+            generateBackingFieldAccess(p, descriptor, backingFieldAnnotations, isBackingFieldOwner);
         }
-        else {
-            return false;
-        }
-        return true;
     }
 
     // Annotations on properties are stored in bytecode on an empty synthetic method. This way they're still
     // accessible via reflection, and 'deprecated' and 'synthetic' flags prevent this method from being called accidentally
-    private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor, @NotNull Annotations annotations) {
+    private void generateSyntheticMethodIfNeeded(
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull Annotations annotations,
+            boolean isBackingFieldOwner
+    ) {
         if (annotations.getAllAnnotations().isEmpty()) return;
 
-        DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
-        if (!isInterface(contextDescriptor) || FunctionCodegen.processInterfaceMethod(descriptor, kind, true)) {
-            memberCodegen.generateSyntheticAnnotationsMethod(
-                    descriptor, getSyntheticMethodSignature(descriptor), annotations, AnnotationUseSiteTarget.PROPERTY
-            );
+        Method signature = getSyntheticMethodSignature(descriptor);
+        if (kind != OwnerKind.DEFAULT_IMPLS && CodegenContextUtil.isImplClassOwner(context)) {
+            v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, signature);
+        }
+
+        if (isBackingFieldOwner) {
+            if (!isInterface(context.getContextDescriptor()) ||
+                processInterfaceMethod(descriptor, kind, false, true, state.getJvmDefaultMode())) {
+                memberCodegen.generateSyntheticAnnotationsMethod(descriptor, signature, annotations, AnnotationUseSiteTarget.PROPERTY);
+            }
         }
     }
 
@@ -373,7 +369,8 @@ public class PropertyCodegen {
             boolean isDelegate,
             KotlinType kotlinType,
             Object defaultValue,
-            Annotations annotations
+            Annotations annotations,
+            boolean isBackingFieldOwner
     ) {
         int modifiers = getDeprecatedAccessFlag(propertyDescriptor);
 
@@ -420,24 +417,27 @@ public class PropertyCodegen {
 
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
 
-        FieldVisitor fv = builder.newField(
-                JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
-                isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
-        );
+        if (isBackingFieldOwner) {
+            FieldVisitor fv = builder.newField(
+                    JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
+                    isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
+            );
 
-        Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);
-        AnnotationCodegen.forField(fv, memberCodegen, typeMapper).genAnnotations(
-                fieldAnnotated, type, isDelegate ? AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD : AnnotationUseSiteTarget.FIELD);
+            Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);
+            AnnotationCodegen.forField(fv, memberCodegen, typeMapper).genAnnotations(
+                    fieldAnnotated, type, isDelegate ? AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD : AnnotationUseSiteTarget.FIELD);
+        }
     }
 
     private void generatePropertyDelegateAccess(
             @NotNull KtProperty p,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull Annotations annotations
+            @NotNull Annotations annotations,
+            boolean isBackingFieldOwner
     ) {
         KotlinType delegateType = getDelegateTypeForProperty(p, propertyDescriptor);
 
-        generateBackingField(p, propertyDescriptor, true, delegateType, null, annotations);
+        generateBackingField(p, propertyDescriptor, true, delegateType, null, annotations, isBackingFieldOwner);
     }
 
     @NotNull
@@ -465,7 +465,8 @@ public class PropertyCodegen {
     private void generateBackingFieldAccess(
             @NotNull KtNamedDeclaration p,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull Annotations annotations
+            @NotNull Annotations annotations,
+            boolean isBackingFieldOwner
     ) {
         Object value = null;
 
@@ -476,10 +477,13 @@ public class PropertyCodegen {
             }
         }
 
-        generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value, annotations);
+        generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value, annotations, isBackingFieldOwner);
     }
 
     private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {
+        if (!descriptor.isConst() && state.getLanguageVersionSettings().supportsFeature(LanguageFeature.NoConstantValueAttributeForNonConstVals))
+            return false;
+
         //final field of primitive or String type
         if (!descriptor.isVar()) {
             Type type = typeMapper.mapType(descriptor);
@@ -515,10 +519,7 @@ public class PropertyCodegen {
 
         FunctionGenerationStrategy strategy;
         if (accessor == null || !accessor.hasBody()) {
-            if (accessorDescriptor.getCorrespondingProperty() instanceof ScriptEnvironmentPropertyDescriptor) {
-                strategy = new ScriptEnvPropertyAccessorStrategy(state, accessorDescriptor);
-            }
-            else if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
+            if (p instanceof KtProperty && ((KtProperty) p).hasDelegate()) {
                 strategy = new DelegatedPropertyAccessorStrategy(state, accessorDescriptor);
             }
             else {
@@ -602,7 +603,7 @@ public class PropertyCodegen {
         StackValue.Field array = StackValue.field(
                 Type.getType("[" + K_PROPERTY_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true, StackValue.none()
         );
-        return StackValue.arrayElement(K_PROPERTY_TYPE, null, array, StackValue.constant(index, Type.INT_TYPE));
+        return StackValue.arrayElement(K_PROPERTY_TYPE, null, array, StackValue.constant(index));
     }
 
     private static class DelegatedPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
@@ -628,42 +629,6 @@ public class PropertyCodegen {
             Type asmType = signature.getReturnType();
             lastValue.put(asmType, v);
             v.areturn(asmType);
-        }
-    }
-
-    static class ScriptEnvPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
-        public static final Type MAP_IFACE_TYPE = Type.getObjectType("java/util/Map");
-        public static final String MAP_FIELD_NAME = "$scriptEnvironment";
-        private final PropertyAccessorDescriptor propertyAccessorDescriptor;
-
-        public ScriptEnvPropertyAccessorStrategy(@NotNull GenerationState state, @NotNull PropertyAccessorDescriptor descriptor) {
-            super(state);
-            this.propertyAccessorDescriptor = descriptor;
-        }
-
-        @Override
-        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-            InstructionAdapter v = codegen.v;
-
-            Type scriptType = state.getTypeMapper().mapOwner(propertyAccessorDescriptor);
-            String scriptInternalName = scriptType.getInternalName();
-            v.load(0, scriptType);
-            v.getfield(scriptInternalName, MAP_FIELD_NAME, MAP_IFACE_TYPE.getDescriptor());
-            v.aconst(propertyAccessorDescriptor.getCorrespondingProperty().getName().asString());
-            if (propertyAccessorDescriptor instanceof PropertyGetterDescriptor) {
-                v.invokeinterface(MAP_IFACE_TYPE.getInternalName(), "get",
-                                  Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE));
-            }
-            else {
-                Type valueType = state.getTypeMapper().mapType(propertyAccessorDescriptor.getCorrespondingProperty());
-                v.load(1, valueType);
-                StackValue.coerce(valueType, AsmTypes.OBJECT_TYPE, v);
-                v.visitMethodInsn(Opcodes.INVOKEINTERFACE, MAP_IFACE_TYPE.getInternalName(), "put",
-                                  Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE), true);
-            }
-            Type returnType = state.getTypeMapper().mapReturnType(propertyAccessorDescriptor);
-            StackValue.coerce(AsmTypes.OBJECT_TYPE, returnType, v);
-            v.areturn(returnType);
         }
     }
 

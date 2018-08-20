@@ -41,5 +41,11 @@ class KotlinConsoleFilterTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(102, resultItem.getHighlightEndOffset())
     }
 
+    fun testNoStringIndexOutOfBoundsException() {
+        val filter = KotlinConsoleFilter(project, GlobalSearchScope.allScope(project))
+        val line = """NewOrEditTeamPageDescriptor.kt: (58, 52): The message with something/looks/like/a/path"""
+        assertEquals(null, filter.applyFilter(line, line.length))
+    }
+
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE!!
 }

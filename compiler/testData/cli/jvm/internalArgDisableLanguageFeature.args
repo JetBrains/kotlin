@@ -1,6 +1,4 @@
--language-version
-1.3
--XXLanguage\:-InlineClasses
-$TESTDATA_DIR$/inlineClass.kt
+$TESTDATA_DIR$/legacySmartCastsAfterTry.kt
 -d
 $TEMP_DIR$
+-XXLanguage\:-SoundSmartCastsAfterTry

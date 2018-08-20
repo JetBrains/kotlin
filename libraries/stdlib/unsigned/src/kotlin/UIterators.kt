@@ -8,6 +8,8 @@
 package kotlin.collections
 
 /** An iterator over a sequence of values of type `UByte`. */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public abstract class UByteIterator : Iterator<UByte> {
     override final fun next() = nextUByte()
 
@@ -16,6 +18,8 @@ public abstract class UByteIterator : Iterator<UByte> {
 }
 
 /** An iterator over a sequence of values of type `UShort`. */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public abstract class UShortIterator : Iterator<UShort> {
     override final fun next() = nextUShort()
 
@@ -24,6 +28,8 @@ public abstract class UShortIterator : Iterator<UShort> {
 }
 
 /** An iterator over a sequence of values of type `UInt`. */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public abstract class UIntIterator : Iterator<UInt> {
     override final fun next() = nextUInt()
 
@@ -32,6 +38,8 @@ public abstract class UIntIterator : Iterator<UInt> {
 }
 
 /** An iterator over a sequence of values of type `ULong`. */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public abstract class ULongIterator : Iterator<ULong> {
     override final fun next() = nextULong()
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,7 +39,8 @@ class FunctionClassDescriptor(
     enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
         Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
         SuspendFunction(BUILT_INS_PACKAGE_FQ_NAME, "SuspendFunction"),
-        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction");
+        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction"),
+        KSuspendFunction(KOTLIN_REFLECT_FQ_NAME, "KSuspendFunction");
 
         fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
 
@@ -71,6 +72,10 @@ class FunctionClassDescriptor(
 
         parameters = result.toList()
     }
+
+    @get:JvmName("hasBigArity")
+    val hasBigArity: Boolean
+        get() = arity >= FunctionInvokeDescriptor.BIG_ARITY
 
     override fun getContainingDeclaration() = containingDeclaration
 
@@ -117,22 +122,26 @@ class FunctionClassDescriptor(
                 result.add(KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, descriptor, arguments))
             }
 
-
-            if (functionKind == Kind.SuspendFunction) {
-                // SuspendFunction$N<...> <: Any
-                result.add(containingDeclaration.builtIns.anyType)
+            when (functionKind) {
+                Kind.SuspendFunction -> // SuspendFunction$N<...> <: Function
+                    add(containingDeclaration, Name.identifier("Function"))
+                Kind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
+                    add(containingDeclaration, Name.identifier("KFunction"))
+                else -> // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
+                    add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
             }
-            else {
-                // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
-                add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
-            }
 
-            // For KFunction{n}, add corresponding numbered Function{n} class, e.g. Function2 for KFunction2
-            if (functionKind == Kind.KFunction) {
+            // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
+            val numberedSupertypeKind = when (functionKind) {
+                Kind.KFunction -> Kind.Function
+                Kind.KSuspendFunction -> Kind.SuspendFunction
+                else -> null
+            }
+            if (numberedSupertypeKind != null) {
                 val packageView = containingDeclaration.containingDeclaration.getPackage(BUILT_INS_PACKAGE_FQ_NAME)
                 val kotlinPackageFragment = packageView.fragments.filterIsInstance<BuiltInsPackageFragment>().first()
 
-                add(kotlinPackageFragment, Kind.Function.numberedClassName(arity))
+                add(kotlinPackageFragment, numberedSupertypeKind.numberedClassName(arity))
             }
 
             return result.toList()

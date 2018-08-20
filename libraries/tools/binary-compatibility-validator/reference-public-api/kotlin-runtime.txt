@@ -880,6 +880,7 @@ public class kotlin/jvm/internal/Reflection {
 	public static fun property0 (Lkotlin/jvm/internal/PropertyReference0;)Lkotlin/reflect/KProperty0;
 	public static fun property1 (Lkotlin/jvm/internal/PropertyReference1;)Lkotlin/reflect/KProperty1;
 	public static fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/KProperty2;
+	public static fun renderLambdaToString (Lkotlin/jvm/internal/FunctionBase;)Ljava/lang/String;
 	public static fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
 }
 
@@ -897,6 +898,7 @@ public class kotlin/jvm/internal/ReflectionFactory {
 	public fun property0 (Lkotlin/jvm/internal/PropertyReference0;)Lkotlin/reflect/KProperty0;
 	public fun property1 (Lkotlin/jvm/internal/PropertyReference1;)Lkotlin/reflect/KProperty1;
 	public fun property2 (Lkotlin/jvm/internal/PropertyReference2;)Lkotlin/reflect/KProperty2;
+	public fun renderLambdaToString (Lkotlin/jvm/internal/FunctionBase;)Ljava/lang/String;
 	public fun renderLambdaToString (Lkotlin/jvm/internal/Lambda;)Ljava/lang/String;
 }
 

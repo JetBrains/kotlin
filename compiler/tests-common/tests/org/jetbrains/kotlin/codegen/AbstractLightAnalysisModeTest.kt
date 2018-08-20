@@ -107,6 +107,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
 
         override fun shouldWriteMethod(access: Int, name: String, desc: String) = when {
             name == "<clinit>" -> false
+            name.contains("\$\$forInline") -> false
             AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.descriptor in desc -> false
             name.startsWith("access$") && (access and ACC_STATIC != 0) && (access and ACC_SYNTHETIC != 0) -> false
             else -> true

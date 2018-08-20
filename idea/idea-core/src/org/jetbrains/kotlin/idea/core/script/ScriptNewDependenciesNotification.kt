@@ -52,7 +52,7 @@ private class NewScriptDependenciesNotificationPanel(
 
     init {
         setText("There are new script dependencies available.")
-        createComponentActionLabel("Reload dependencies") {
+        createComponentActionLabel("Apply dependencies") {
             onClick(dependencies)
         }
 

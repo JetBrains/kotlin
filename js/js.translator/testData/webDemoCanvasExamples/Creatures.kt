@@ -94,18 +94,12 @@ class Logo(override var pos: Vector) : Shape() {
         get() = pos + size * 0.5
 }
 
-val gradientGenerator: RadialGradientGenerator? = null
-    get() {
-        if (field == null) {
-            field = RadialGradientGenerator(context)
-        }
-        return field
-    }
+val gradientGenerator by lazy { RadialGradientGenerator(context) }
 
 class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
 
     val shadowOffset = v(-5.0, 5.0)
-    val colorStops = gradientGenerator!!.getNext()
+    val colorStops = gradientGenerator.getNext()
     val relSize = 0.05
     // these properties have no backing fields and in java/javascript they could be represented as little helper functions
     val radius: Double

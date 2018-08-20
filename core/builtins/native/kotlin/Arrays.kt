@@ -32,7 +32,7 @@ public class ByteArray(size: Int) {
 
 /**
  * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ * @constructor Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
  */
 public class CharArray(size: Int) {
     /**
@@ -170,7 +170,7 @@ public class DoubleArray(size: Int) {
 
 /**
  * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to false.
+ * @constructor Creates a new array of the specified [size], with all elements initialized to `false`.
  */
 public class BooleanArray(size: Int) {
     /**

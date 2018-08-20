@@ -29,18 +29,16 @@ class JavaScriptStringTable : StringTableImpl() {
     override fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId? {
         return if (descriptor.containingDeclaration is CallableMemberDescriptor) {
             val superClassifiers = descriptor.getAllSuperClassifiers()
-                    .mapNotNull { it as ClassifierDescriptorWithTypeParameters }
-                    .filter { it != descriptor }
-                    .toList()
+                .mapNotNull { it as ClassifierDescriptorWithTypeParameters }
+                .filter { it != descriptor }
+                .toList()
             if (superClassifiers.size == 1) {
                 superClassifiers[0].classId
-            }
-            else {
+            } else {
                 val superClass = superClassifiers.find { !DescriptorUtils.isInterface(it) }
                 superClass?.classId ?: ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe())
             }
-        }
-        else {
+        } else {
             super.getLocalClassIdReplacement(descriptor)
         }
     }

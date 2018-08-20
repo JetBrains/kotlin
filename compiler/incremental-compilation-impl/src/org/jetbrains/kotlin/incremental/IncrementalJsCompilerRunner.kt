@@ -37,7 +37,8 @@ fun makeJsIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val versions = commonCacheVersions(cachesDir) + standaloneCacheVersion(cachesDir)
+    val isIncremental = IncrementalCompilation.isEnabledForJs()
+    val versions = commonCacheVersions(cachesDir, isIncremental) + standaloneCacheVersion(cachesDir, isIncremental)
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
             .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
 
@@ -47,14 +48,13 @@ fun makeJsIncrementally(
     }
 }
 
-inline fun <R> withJsIC(fn: ()->R): R {
+inline fun <R> withJsIC(fn: () -> R): R {
     val isJsEnabledBackup = IncrementalCompilation.isEnabledForJs()
     IncrementalCompilation.setIsEnabledForJs(true)
 
     try {
-        return withIC { fn() }
-    }
-    finally {
+        return fn()
+    } finally {
         IncrementalCompilation.setIsEnabledForJs(isJsEnabledBackup)
     }
 }
@@ -70,7 +70,7 @@ class IncrementalJsCompilerRunner(
         reporter
 ) {
     override fun isICEnabled(): Boolean =
-        IncrementalCompilation.isEnabled() && IncrementalCompilation.isEnabledForJs()
+        IncrementalCompilation.isEnabledForJs()
 
     override fun createCacheManager(args: K2JSCompilerArguments): IncrementalJsCachesManager =
         IncrementalJsCachesManager(cacheDirectory, reporter)
@@ -117,17 +117,20 @@ class IncrementalJsCompilerRunner(
     }
 
     override fun makeServices(
-            args: K2JSCompilerArguments,
-            lookupTracker: LookupTracker,
-            expectActualTracker: ExpectActualTracker,
-            caches: IncrementalJsCachesManager,
-            compilationMode: CompilationMode
+        args: K2JSCompilerArguments,
+        lookupTracker: LookupTracker,
+        expectActualTracker: ExpectActualTracker,
+        caches: IncrementalJsCachesManager,
+        compilationMode: CompilationMode
     ): Services.Builder =
         super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
             register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
 
             if (compilationMode is CompilationMode.Incremental) {
-                register(IncrementalDataProvider::class.java, IncrementalDataProviderFromCache(caches.platformCache))
+                register(
+                    IncrementalDataProvider::class.java,
+                    IncrementalDataProviderFromCache(caches.platformCache)
+                )
             }
         }
 

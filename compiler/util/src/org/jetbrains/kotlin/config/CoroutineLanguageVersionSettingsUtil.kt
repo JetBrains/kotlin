@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 fun LanguageVersionSettings.coroutinesPackageFqName(): FqName {
-    return coroutinesPackageFqName(supportsFeature(LanguageFeature.ReleaseCoroutines))
+    return coroutinesPackageFqName(isReleaseCoroutines())
 }
+
+fun LanguageVersionSettings.isReleaseCoroutines() = supportsFeature(LanguageFeature.ReleaseCoroutines)
 
 private fun coroutinesPackageFqName(isReleaseCoroutines: Boolean): FqName {
     return if (isReleaseCoroutines)

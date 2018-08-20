@@ -140,7 +140,11 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
     override fun getSupportedOptions(): List<Option> = HintType.values().map { it.option }
 
     override fun getDefaultBlackList(): Set<String> =
-        setOf("*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf", "*assert*(*)", "*mapOf", "*MapOf")
+        setOf(
+            "*listOf", "*setOf", "*arrayOf", "*ListOf", "*SetOf", "*ArrayOf", "*assert*(*)", "*mapOf", "*MapOf",
+            "kotlin.require*(*)", "kotlin.check*(*)", "*contains*(value)", "*containsKey(key)", "kotlin.lazyOf(value)",
+            "*SequenceBuilder.resume(value)", "*SequenceBuilder.yield(value)"
+        )
 
     override fun getHintInfo(element: PsiElement): HintInfo? {
         val hintType = HintType.resolve(element) ?: return null
@@ -170,7 +174,7 @@ class KotlinInlayParameterHintsProvider : InlayParameterHintsProvider {
         val resolvedCallee = resolvedCall?.candidateDescriptor
         if (resolvedCallee is FunctionDescriptor) {
             val paramNames =
-                resolvedCallee.valueParameters.map { it.name }.filter { !it.isSpecial }.map(Name::asString)
+                resolvedCallee.valueParameters.asSequence().map { it.name }.filter { !it.isSpecial }.map(Name::asString).toList()
             val fqName = if (resolvedCallee is ConstructorDescriptor)
                 resolvedCallee.containingDeclaration.fqNameSafe.asString()
             else

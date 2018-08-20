@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.codeInsight.CodeInsightTestCase
 import com.intellij.codeInsight.daemon.impl.EditorTracker
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -22,6 +23,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
@@ -31,9 +33,14 @@ import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.COMPILER_ARGUMENTS_DIRECTIVE
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.JVM_TARGET_DIRECTIVE
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives.LANGUAGE_VERSION_DIRECTIVE
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -128,6 +135,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_REFLECT")) {
                     return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_REFLECT
                 }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SCRIPT_RUNTIME")) {
+                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_SCRIPT_RUNTIME
+                }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME") ||
                          InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_RUNTIME")) {
                     return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -175,10 +185,19 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 }
 
+
+object CompilerTestDirectives {
+    const val LANGUAGE_VERSION_DIRECTIVE = "LANGUAGE_VERSION:"
+    const val JVM_TARGET_DIRECTIVE = "JVM_TARGET:"
+    const val COMPILER_ARGUMENTS_DIRECTIVE = "COMPILER_ARGUMENTS:"
+
+    val ALL_COMPILER_TEST_DIRECTIVES = listOf(LANGUAGE_VERSION_DIRECTIVE, JVM_TARGET_DIRECTIVE, COMPILER_ARGUMENTS_DIRECTIVE)
+}
+
 fun configureCompilerOptions(fileText: String, project: Project, module: Module) {
-    val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// LANGUAGE_VERSION: ")
-    val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// JVM_TARGET: ")
-    val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// COMPILER_ARGUMENTS: ")
+    val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $LANGUAGE_VERSION_DIRECTIVE ")
+    val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $JVM_TARGET_DIRECTIVE ")
+    val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $COMPILER_ARGUMENTS_DIRECTIVE ")
 
     if (version != null || jvmTarget != null || options != null) {
         configureLanguageAndApiVersion(project, module, version ?: LanguageVersion.LATEST_STABLE.versionString)
@@ -195,6 +214,8 @@ fun configureCompilerOptions(fileText: String, project: Project, module: Module)
             }
             compilerSettings.additionalArguments = options
             facetSettings.updateMergedArguments()
+
+            KotlinCompilerSettings.getInstance(project).update { this.additionalArguments = options }
         }
     }
 }
@@ -213,6 +234,7 @@ fun configureLanguageAndApiVersion(
         if (apiVersion != null) {
             facet.configuration.settings.apiLevel = LanguageVersion.fromVersionString(apiVersion)
         }
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update { this.languageVersion = languageVersion }
         modelsProvider.commit()
     }
     finally {
@@ -227,5 +249,14 @@ fun Project.allKotlinFiles(): List<KtFile> {
         .filterIsInstance<KtFile>()
 }
 
+fun Project.allJavaFiles(): List<PsiJavaFile> {
+    val virtualFiles = FileTypeIndex.getFiles(JavaFileType.INSTANCE, ProjectScope.getProjectScope(this))
+    return virtualFiles
+        .map { PsiManager.getInstance(this).findFile(it) }
+        .filterIsInstance<PsiJavaFile>()
+}
+
 fun Project.findFileWithCaret() =
-    allKotlinFiles().single { "<caret>" in VfsUtilCore.loadText(it.virtualFile) }
+    (allKotlinFiles() + allJavaFiles()).single {
+        "<caret>" in VfsUtilCore.loadText(it.virtualFile) && !it.virtualFile.name.endsWith(".after")
+    }

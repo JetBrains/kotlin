@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -9,14 +10,14 @@ import COROUTINES_PACKAGE.intrinsics.*
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineOrReturn { c ->
+    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineUninterceptedOrReturn { c ->
         result += "suspend($value);"
         c.resume(value)
         COROUTINE_SUSPENDED
     }
 
     // Tail calls are not allowed to be Nothing typed. See KT-15051
-    suspend fun suspendLogAndThrow(exception: Throwable): Any? = suspendCoroutineOrReturn { c ->
+    suspend fun suspendLogAndThrow(exception: Throwable): Any? = suspendCoroutineUninterceptedOrReturn { c ->
         result += "throw(${exception.message});"
         c.resumeWithException(exception)
         COROUTINE_SUSPENDED
@@ -25,7 +26,7 @@ class Controller {
 
 fun builder(c: suspend Controller.() -> Unit): String {
     val controller = Controller()
-    c.startCoroutine(controller, object : Continuation<Unit> {
+    c.startCoroutine(controller, object : ContinuationAdapter<Unit>() {
         override val context = EmptyCoroutineContext
 
         override fun resume(data: Unit) {

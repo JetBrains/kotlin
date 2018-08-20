@@ -8,9 +8,9 @@ buildscript {
     }
 }
 
-allprojects {
-    // for test with groovy
+subprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 }

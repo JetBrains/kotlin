@@ -1,0 +1,49 @@
+group 'com.example'
+version '1.0'
+
+buildscript {
+	repositories {
+		mavenLocal()
+		jcenter()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+	}
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url  "http://dl.bintray.com/kotlin/kotlinx.html/" }
+}
+
+kotlin {
+    targets {
+        fromPreset(presets.jvm, 'jvm6')
+        fromPreset(presets.js, 'nodeJs')
+    }
+    sourceSets {
+        jvm6Main {
+            dependencies {
+                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
+            }
+        }
+        nodeJsMain {
+        	dependencies {
+        		implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.6.11'
+        	}
+        }
+    }
+}
+
+kotlin.sourceSets.each { println it.kotlin.srcDirs }
+
+apply plugin: 'maven-publish'
+
+publishing {
+	repositories {
+		maven { url "file://${projectDir.absolutePath.replace('\\', '/')}/repo" }
+	}
+}

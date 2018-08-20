@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tools
 
-import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.*
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.*
 import kotlin.comparisons.*
@@ -38,8 +38,9 @@ data class ClassBinarySignature(
 
 
 interface MemberBinarySignature {
-    val name: String
-    val desc: String
+    val jvmMember: JvmMemberSignature
+    val name: String get() = jvmMember.name
+    val desc: String get() = jvmMember.desc
     val access: AccessFlags
     val isPublishedApi: Boolean
 
@@ -48,15 +49,14 @@ interface MemberBinarySignature {
                 && (findMemberVisibility(classVisibility)?.isPublic(isPublishedApi) ?: true)
 
     fun findMemberVisibility(classVisibility: ClassVisibility?): MemberVisibility? {
-        return classVisibility?.findMember(MemberSignature(name, desc))
+        return classVisibility?.findMember(jvmMember)
     }
 
     val signature: String
 }
 
 data class MethodBinarySignature(
-    override val name: String,
-    override val desc: String,
+    override val jvmMember: JvmMethodSignature,
     override val isPublishedApi: Boolean,
     override val access: AccessFlags
 ) : MemberBinarySignature {
@@ -83,21 +83,23 @@ data class MethodBinarySignature(
      * or a constructor with default parameters.
      * Returns an incorrect result, if there are more than 31 default parameters.
      */
-    private fun alternateDefaultSignature(className: String): MemberSignature? {
+    private fun alternateDefaultSignature(className: String): JvmMethodSignature? {
         return when {
             !access.isSynthetic -> null
             name == "<init>" && "ILkotlin/jvm/internal/DefaultConstructorMarker;" in desc ->
-                MemberSignature(name, desc.replace("ILkotlin/jvm/internal/DefaultConstructorMarker;", ""))
+                JvmMethodSignature(name, desc.replace("ILkotlin/jvm/internal/DefaultConstructorMarker;", ""))
             name.endsWith("\$default") && "ILjava/lang/Object;)" in desc ->
-                MemberSignature(name.removeSuffix("\$default"), desc.replace("ILjava/lang/Object;)", ")").replace("(L$className;", "("))
+                JvmMethodSignature(
+                    name.removeSuffix("\$default"),
+                    desc.replace("ILjava/lang/Object;)", ")").replace("(L$className;", "(")
+                )
             else -> null
         }
     }
 }
 
 data class FieldBinarySignature(
-    override val name: String,
-    override val desc: String,
+    override val jvmMember: JvmFieldSignature,
     override val isPublishedApi: Boolean,
     override val access: AccessFlags
 ) : MemberBinarySignature {

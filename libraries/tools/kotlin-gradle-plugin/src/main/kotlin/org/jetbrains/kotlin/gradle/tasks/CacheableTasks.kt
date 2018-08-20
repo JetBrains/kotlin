@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.gradle.utils.outputsCompatible
 internal fun isBuildCacheSupported(): Boolean =
     gradleVersion >= GradleVersion.version("4.3")
 
+internal fun isWorkerAPISupported(): Boolean =
+    gradleVersion >= GradleVersion.version("4.3")
+
 internal fun isBuildCacheEnabledForKotlin(): Boolean =
         isBuildCacheSupported() &&
         System.getProperty(KOTLIN_CACHING_ENABLED_PROPERTY)?.toBoolean() ?: true

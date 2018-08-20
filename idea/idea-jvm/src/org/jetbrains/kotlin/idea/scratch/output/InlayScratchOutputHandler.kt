@@ -69,7 +69,8 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
 
             fun addInlay(text: String) {
                 val textBeforeNewLine = if (StringUtil.containsLineBreak(text)) text.substringBefore("\n") + "..." else text
-                val shortText = StringUtil.shortenTextWithEllipsis(textBeforeNewLine, maxLineLength - spaceCount - lineLength, 0)
+                val maxInlayLength = (maxLineLength - spaceCount - lineLength).takeIf { it > 5 } ?: 5
+                val shortText = StringUtil.shortenTextWithEllipsis(textBeforeNewLine, maxInlayLength, 0)
                 if (shortText != text) {
                     printToToolWindow(file, expression, output)
                 }

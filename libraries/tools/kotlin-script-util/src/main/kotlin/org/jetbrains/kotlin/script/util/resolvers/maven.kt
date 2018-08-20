@@ -30,7 +30,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
-val mavenCentral = RemoteRepository("maven-central", "default", "http://repo1.maven.org/maven2/")
+val mavenCentral = RemoteRepository("maven-central", "default", "https://repo.maven.apache.org/maven2/")
 
 class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
 

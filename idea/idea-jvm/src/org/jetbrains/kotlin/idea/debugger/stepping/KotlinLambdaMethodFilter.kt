@@ -21,19 +21,19 @@ import com.intellij.debugger.engine.BreakpointStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.util.Range
 import com.sun.jdi.Location
-import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
-import org.jetbrains.kotlin.idea.refactoring.isMultiLine
+import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodNameFromAnyLanguageSettings
 import org.jetbrains.kotlin.idea.debugger.isInsideInlineArgument
+import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinLambdaMethodFilter(
-        private val lambda: KtFunction,
-        private val myCallingExpressionLines: Range<Int>,
-        private val isInline: Boolean,
-        private val isSuspend: Boolean
-): BreakpointStepMethodFilter {
+    private val lambda: KtFunction,
+    private val myCallingExpressionLines: Range<Int>,
+    private val isInline: Boolean,
+    private val isSuspend: Boolean
+) : BreakpointStepMethodFilter {
     private val myFirstStatementPosition: SourcePosition?
     private val myLastStatementLine: Int
 
@@ -52,8 +52,7 @@ class KotlinLambdaMethodFilter(
             }
             myFirstStatementPosition = firstStatementPosition
             myLastStatementLine = if (lastStatementPosition != null) lastStatementPosition.line else -1
-        }
-        else {
+        } else {
             myFirstStatementPosition = SourcePosition.createFromElement(lambda)
             myLastStatementLine = myFirstStatementPosition!!.line
         }
@@ -75,10 +74,10 @@ class KotlinLambdaMethodFilter(
     override fun getCallingExpressionLines() = if (isInline) Range(0, 999) else myCallingExpressionLines
 
     private fun isLambdaName(name: String?): Boolean {
-        if (isSuspend) {
-            return name == DO_RESUME_METHOD_NAME
+        if (isSuspend && name != null) {
+            return isResumeImplMethodNameFromAnyLanguageSettings(name)
         }
-        
+
         return name == OperatorNameConventions.INVOKE.asString()
     }
 

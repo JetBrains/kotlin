@@ -714,6 +714,28 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testAutoIndentInWhenClause() {
+        doCharTypeTest(
+            '\n',
+            """
+            |fun test() {
+            |    when (2) {
+            |        is Int -><caret>
+            |    }
+            |}
+            """,
+            """
+            |fun test() {
+            |    when (2) {
+            |        is Int ->
+            |            <caret>
+            |    }
+            |}
+            """
+        )
+    }
+
+
     fun testMoveThroughGT() {
         LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
         EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')

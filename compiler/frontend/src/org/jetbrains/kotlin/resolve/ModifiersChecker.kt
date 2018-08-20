@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.resolve.calls.checkers.checkCoroutinesFeature
 import java.util.*
 
 object ModifierCheckerCore {
@@ -182,11 +183,12 @@ object ModifierCheckerCore {
         result += incompatibilityRegister(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD)
         // Abstract + open + final + sealed: incompatible
         result += incompatibilityRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD)
-        // data + open, data + inner, data + abstract, data + sealed
+        // data + open, data + inner, data + abstract, data + sealed, data + inline
         result += incompatibilityRegister(DATA_KEYWORD, OPEN_KEYWORD)
         result += incompatibilityRegister(DATA_KEYWORD, INNER_KEYWORD)
         result += incompatibilityRegister(DATA_KEYWORD, ABSTRACT_KEYWORD)
         result += incompatibilityRegister(DATA_KEYWORD, SEALED_KEYWORD)
+        result += incompatibilityRegister(DATA_KEYWORD, INLINE_KEYWORD)
         // open is redundant to abstract & override
         result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
         // abstract is redundant to sealed
@@ -338,25 +340,33 @@ object ModifierCheckerCore {
 
         val dependencies = featureDependencies[modifier] ?: return true
         for (dependency in dependencies) {
-            val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
-
-            val diagnosticData = dependency to languageVersionSettings
-            if (featureSupport == LanguageFeature.State.ENABLED_WITH_ERROR || featureSupport == LanguageFeature.State.DISABLED) {
-                val restrictedTargets = featureDependenciesTargets[dependency]
-                if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
-                    continue
-                }
-
-                if (featureSupport == LanguageFeature.State.DISABLED) {
-                    trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
-                } else {
-                    trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, diagnosticData))
-                }
-                return false
+            val restrictedTargets = featureDependenciesTargets[dependency]
+            if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
+                continue
             }
 
-            if (featureSupport == LanguageFeature.State.ENABLED_WITH_WARNING) {
-                trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
+            val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
+
+            if (dependency == LanguageFeature.Coroutines) {
+                checkCoroutinesFeature(languageVersionSettings, trace, node.psi)
+                continue
+            }
+
+            val diagnosticData = dependency to languageVersionSettings
+            when (featureSupport) {
+                LanguageFeature.State.ENABLED_WITH_WARNING -> {
+                    trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
+                }
+                LanguageFeature.State.ENABLED_WITH_ERROR -> {
+                    trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, diagnosticData))
+                    return false
+                }
+                LanguageFeature.State.DISABLED -> {
+                    trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
+                    return false
+                }
+                LanguageFeature.State.ENABLED -> {
+                }
             }
         }
 

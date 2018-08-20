@@ -90,6 +90,20 @@ expect fun Char.isLowSurrogate(): Boolean
 
 // From string.kt
 
+
+/**
+ * Converts the characters in the specified array to a string.
+ */
+@SinceKotlin("1.2")
+public expect fun String(chars: CharArray): String
+
+/**
+ * Converts the characters from a portion of the specified array to a string.
+ */
+@SinceKotlin("1.2")
+public expect fun String(chars: CharArray, offset: Int, length: Int): String
+
+
 internal expect fun String.nativeIndexOf(str: String, fromIndex: Int): Int
 internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 
@@ -97,8 +111,18 @@ internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 public expect fun String.substring(startIndex: Int): String
 public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
-
+/**
+ * Returns a copy of this string converted to upper case using the rules of the default locale.
+ *
+ * @sample samples.text.Strings.toUpperCase
+ */
 public expect fun String.toUpperCase(): String
+
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
+ *
+ * @sample samples.text.Strings.toLowerCase
+ */
 public expect fun String.toLowerCase(): String
 public expect fun String.capitalize(): String
 public expect fun String.decapitalize(): String
@@ -134,6 +158,13 @@ expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
  */
 expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
 
+/**
+ * Compares two strings lexicographically, optionally ignoring case differences.
+ */
+@SinceKotlin("1.2")
+expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
+
+
 // From stringsCode.kt
 
 internal inline expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
@@ -154,6 +185,16 @@ expect fun CharSequence.regionMatches(
     length: Int,
     ignoreCase: Boolean = false
 ): Boolean
+
+
+/**
+ * A Comparator that orders strings ignoring character case.
+ *
+ * Note that this Comparator does not take locale into account,
+ * and will result in an unsatisfactory ordering for certain locales.
+ */
+@SinceKotlin("1.2")
+public expect val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
 
 
 /**

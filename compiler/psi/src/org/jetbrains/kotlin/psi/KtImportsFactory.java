@@ -16,19 +16,23 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.resolve.ImportPath;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @deprecated This class is not used in the kotlin plugin/compiler and will be removed soon
+ */
+@Deprecated
 public class KtImportsFactory {
     @NotNull private final Project project;
 
-    private final Map<ImportPath, KtImportDirective> importsCache = Maps.newHashMap();
+    private final Map<ImportPath, KtImportDirective> importsCache = new HashMap<>();
 
     public KtImportsFactory(@NotNull Project project) {
         this.project = project;

@@ -222,9 +222,14 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
                 runTest("compiler/testData/cfg/controlStructures/If.kt");
             }
 
-            @TestMetadata("incorrectIndex.kt")
-            public void testIncorrectIndex() throws Exception {
-                runTest("compiler/testData/cfg/controlStructures/incorrectIndex.kt");
+            @TestMetadata("incorrectIndex_After.kt")
+            public void testIncorrectIndex_After() throws Exception {
+                runTest("compiler/testData/cfg/controlStructures/incorrectIndex_After.kt");
+            }
+
+            @TestMetadata("incorrectIndex_Before.kt")
+            public void testIncorrectIndex_Before() throws Exception {
+                runTest("compiler/testData/cfg/controlStructures/incorrectIndex_Before.kt");
             }
 
             @TestMetadata("InfiniteLoops.kt")
@@ -318,9 +323,14 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
                 runTest("compiler/testData/cfg/deadCode/DeadCode.kt");
             }
 
-            @TestMetadata("notLocalReturn.kt")
-            public void testNotLocalReturn() throws Exception {
-                runTest("compiler/testData/cfg/deadCode/notLocalReturn.kt");
+            @TestMetadata("notLocalReturn_after.kt")
+            public void testNotLocalReturn_after() throws Exception {
+                runTest("compiler/testData/cfg/deadCode/notLocalReturn_after.kt");
+            }
+
+            @TestMetadata("notLocalReturn_before.kt")
+            public void testNotLocalReturn_before() throws Exception {
+                runTest("compiler/testData/cfg/deadCode/notLocalReturn_before.kt");
             }
 
             @TestMetadata("returnInElvis.kt")

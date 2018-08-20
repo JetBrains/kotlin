@@ -9,8 +9,8 @@ fun main(args : Array<String>) {
     val <!UNUSED_VARIABLE!>h<!> : String = <!TYPE_MISMATCH!>v--<!>;
     val <!UNUSED_VARIABLE!>h1<!> : String = <!TYPE_MISMATCH!>--v<!>;
     val <!UNUSED_VARIABLE!>i<!> : String = <!TYPE_MISMATCH!>!true<!>;
-    val <!UNUSED_VARIABLE!>j<!> : String = foo@ <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>;
-    val <!UNUSED_VARIABLE!>k<!> : String = foo@ bar@ <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>;
+    val <!UNUSED_VARIABLE!>j<!> : String = <!OI;REDUNDANT_LABEL_WARNING!>foo@<!> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>;
+    val <!UNUSED_VARIABLE!>k<!> : String = <!OI;REDUNDANT_LABEL_WARNING!>foo@<!> <!OI;REDUNDANT_LABEL_WARNING!>bar@<!> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>;
     val <!UNUSED_VARIABLE!>l<!> : String = <!TYPE_MISMATCH!>-1<!>;
     val <!UNUSED_VARIABLE!>m<!> : String = <!TYPE_MISMATCH!>+1<!>;
 }

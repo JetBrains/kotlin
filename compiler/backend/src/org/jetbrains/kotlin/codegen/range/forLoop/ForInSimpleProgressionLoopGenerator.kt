@@ -91,7 +91,7 @@ class ForInSimpleProgressionLoopGenerator(
     override fun checkPreCondition(loopExit: Label) {
         // Generate pre-condition loop if end is not inclusive.
         if (!isEndInclusive) {
-            loopParameter().put(asmElementType, v)
+            loopParameter().put(asmElementType, elementType, v)
             v.load(endVar, asmElementType)
             if (asmElementType.sort == Type.LONG) {
                 v.lcmp()

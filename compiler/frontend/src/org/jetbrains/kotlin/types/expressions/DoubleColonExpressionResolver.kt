@@ -1,29 +1,21 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -36,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
@@ -58,7 +51,6 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.yieldIfNotNull
-import java.lang.UnsupportedOperationException
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.experimental.buildSequence
@@ -94,7 +86,8 @@ class DoubleColonExpressionResolver(
     val typeResolver: TypeResolver,
     val languageVersionSettings: LanguageVersionSettings,
     val additionalCheckers: Iterable<ClassLiteralChecker>,
-    val dataFlowValueFactory: DataFlowValueFactory
+    val dataFlowValueFactory: DataFlowValueFactory,
+    val bigAritySupport: FunctionWithBigAritySupport
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -542,7 +535,7 @@ class DoubleColonExpressionResolver(
         val type = createKCallableTypeForReference(descriptor, lhs, reflectionTypes, context.scope.ownerDescriptor) ?: return null
 
         when (descriptor) {
-            is FunctionDescriptor -> bindFunctionReference(expression, type, context)
+            is FunctionDescriptor -> bindFunctionReference(expression, type, context, descriptor)
             is PropertyDescriptor -> bindPropertyReference(expression, type, context)
         }
 
@@ -579,13 +572,18 @@ class DoubleColonExpressionResolver(
         return original.extensionReceiverParameter != null && original.dispatchReceiverParameter != null
     }
 
-    internal fun bindFunctionReference(expression: KtCallableReferenceExpression, type: KotlinType, context: ResolutionContext<*>) {
+    internal fun bindFunctionReference(
+        expression: KtCallableReferenceExpression,
+        type: KotlinType,
+        context: ResolutionContext<*>,
+        referencedFunction: FunctionDescriptor
+    ) {
         val functionDescriptor = AnonymousFunctionDescriptor(
             context.scope.ownerDescriptor,
             Annotations.EMPTY,
             CallableMemberDescriptor.Kind.DECLARATION,
             expression.toSourceElement(),
-            /* isCoroutine = */ false
+            /* isCoroutine = */ ReflectionTypes.isNumberedKSuspendFunction(type) || referencedFunction.isSuspend
         )
 
         functionDescriptor.initialize(
@@ -597,6 +595,15 @@ class DoubleColonExpressionResolver(
         )
 
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
+
+        if (functionDescriptor.valueParameters.size >= FunctionInvokeDescriptor.BIG_ARITY &&
+            bigAritySupport.shouldCheckLanguageVersionSettings &&
+            !languageVersionSettings.supportsFeature(LanguageFeature.FunctionTypesWithBigArity)
+        ) {
+            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(
+                expression, LanguageFeature.FunctionTypesWithBigArity to languageVersionSettings
+            ))
+        }
     }
 
     internal fun bindPropertyReference(
@@ -635,9 +642,13 @@ class DoubleColonExpressionResolver(
         resolutionResults: OverloadResolutionResults<CallableDescriptor>?
     ) {
         val descriptor =
-            if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor as? FunctionDescriptor else null
-        if (descriptor?.isSuspend == true) {
-            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable references to suspend functions"))
+            if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor else null
+        if (descriptor is PropertyDescriptor && descriptor.isBuiltInCoroutineContext(languageVersionSettings)) {
+            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable reference to suspend property"))
+        } else if (descriptor is FunctionDescriptor && descriptor.isSuspend
+            && !context.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+        ) {
+            context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable reference to suspend function"))
         }
 
         val expressionResult = lhsResult as? DoubleColonLHS.Expression ?: return
@@ -785,7 +796,7 @@ class DoubleColonExpressionResolver(
                     val parametersNames = descriptor.valueParameters.map { it.name }
                     return reflectionTypes.getKFunctionType(
                         Annotations.EMPTY, receiverType,
-                        parametersTypes, parametersNames, returnType, descriptor.builtIns
+                        parametersTypes, parametersNames, returnType, descriptor.builtIns, descriptor.isSuspend
                     )
                 }
                 is PropertyDescriptor -> {
@@ -799,5 +810,17 @@ class DoubleColonExpressionResolver(
                 else -> throw UnsupportedOperationException("Callable reference resolved to an unsupported descriptor: $descriptor")
             }
         }
+    }
+}
+
+// By default, function types with big arity are supported. On platforms where they are not supported by default (e.g. JVM),
+// LANGUAGE_VERSION_DEPENDENT should be used which makes the code check if the corresponding language feature is enabled.
+@DefaultImplementation(FunctionWithBigAritySupport::class)
+class FunctionWithBigAritySupport private constructor(val shouldCheckLanguageVersionSettings: Boolean) {
+    constructor() : this(false)
+
+    companion object {
+        @JvmField
+        val LANGUAGE_VERSION_DEPENDENT = FunctionWithBigAritySupport(true)
     }
 }

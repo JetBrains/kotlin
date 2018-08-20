@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -58,7 +58,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
 
         return lower.context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
 
-            IrCompositeImpl(startOffset, endOffset, context.builtIns.stringType).apply {
+            IrCompositeImpl(startOffset, endOffset, context.irBuiltIns.stringType).apply {
                 receiver?.let {
                     //put receiver for bound callable reference
                     statements.add(it)
@@ -68,7 +68,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
                     IrConstImpl.string(
                         expression.startOffset,
                         expression.endOffset,
-                        context.builtIns.stringType,
+                        context.irBuiltIns.stringType,
                         callableReference.descriptor.name.asString()
                     )
                 )
@@ -104,5 +104,5 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
         endOffset
     )
 
-    class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
+    class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContextBase(backendContext.irBuiltIns)
 }

@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.operators.OperatorReference
 class KotlinConventionMethodReferencesSearcher : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
         val operatorSearcher = OperatorReferenceSearcher.create(
-                queryParameters.method,
-                queryParameters.effectiveSearchScope,
-                consumer,
-                queryParameters.optimizer,
-                KotlinReferencesSearchOptions(acceptCallableOverrides = true)
+            queryParameters.method,
+            queryParameters.effectiveSearchScope,
+            consumer,
+            queryParameters.optimizer,
+            KotlinReferencesSearchOptions(acceptCallableOverrides = true)
         )
         operatorSearcher?.run()
     }

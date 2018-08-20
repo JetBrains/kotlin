@@ -18,7 +18,6 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDir("../ir/backend.common/src")
     }
     "test" {}
 }

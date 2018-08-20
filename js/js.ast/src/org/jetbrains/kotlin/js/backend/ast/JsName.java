@@ -4,9 +4,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.backend.ast.metadata.HasMetadata;
 import org.jetbrains.kotlin.js.common.Symbol;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstract base class for named JavaScript objects.

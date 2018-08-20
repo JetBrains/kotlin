@@ -38,7 +38,7 @@ class CollectionIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor
             StackValue.constant(0, asmElementType),
             true,
             StackValue.operation(Type.INT_TYPE) { v ->
-                codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
+                codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), expectedReceiverType, v)
                 v.invokeinterface("java/util/Collection", "size", "()I")
             },
             false

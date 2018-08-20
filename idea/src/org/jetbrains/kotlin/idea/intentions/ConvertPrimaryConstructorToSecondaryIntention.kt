@@ -101,11 +101,11 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                             superTypeEntry.replace(factory.createSuperTypeEntry(superTypeEntry.typeReference!!.text))
                         }
                     }
-                    val valueParameterInitializers = element.valueParameters.filter { it.hasValOrVar() }.joinToString(separator = "\n") {
+                    val valueParameterInitializers = element.valueParameters.asSequence().filter { it.hasValOrVar() }.joinToString(separator = "\n") {
                         val name = it.name!!
                         "this.$name = $name"
                     }
-                    val classBodyInitializers = klass.declarations.filter {
+                    val classBodyInitializers = klass.declarations.asSequence().filter {
                         (it is KtProperty && initializerMap[it] != null) || it is KtAnonymousInitializer
                     }.joinToString(separator = "\n") {
                         if (it is KtProperty) {

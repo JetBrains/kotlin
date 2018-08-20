@@ -21,18 +21,19 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import java.io.EOFException
 
 class JvmPackagePartProvider(
-        languageVersionSettings: LanguageVersionSettings,
-        private val scope: GlobalSearchScope
-) : PackagePartProvider {
+    languageVersionSettings: LanguageVersionSettings,
+    private val scope: GlobalSearchScope
+) : PackagePartProvider, MetadataPartProvider {
     private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping, val name: String)
 
     private val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
@@ -58,7 +59,7 @@ class JvmPackagePartProvider(
     }
 
     override fun findMetadataPackageParts(packageFqName: String): List<String> =
-            getPackageParts(packageFqName).values.flatMap(PackageParts::metadataParts).distinct()
+        getPackageParts(packageFqName).values.flatMap(PackageParts::metadataParts).distinct()
 
     @Synchronized
     private fun getPackageParts(packageFqName: String): Map<VirtualFile, PackageParts> {

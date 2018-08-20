@@ -2,7 +2,7 @@ LineBreakpoint created at stepIntoStdlib.kt:6
 Run Java
 Connected to the target VM
 stepIntoStdlib.kt:6
-_Arrays.!EXT!
+ArraysKt.!EXT!
 Disconnected from the target VM
 
 Process finished with exit code 0

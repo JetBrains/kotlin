@@ -1,3 +1,0 @@
-// INSPECTION_CLASS: com.intellij.spring.model.highlighting.jam.SpringComponentScanInspection
-// FIXTURE_CLASS: org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
-// CONFIGURE_SPRING_FILE_SET

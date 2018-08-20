@@ -3,8 +3,8 @@ fun text() {
     "direct:a" to "mock:a"
     "direct:a" on {it.body == "<hello/>"} to "mock:a"
     "direct:a" on {it -> it.body == "<hello/>"} to "mock:a"
-    bar <!NI;TYPE_MISMATCH!><!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!>1}<!>
-    bar <!NI;TYPE_MISMATCH!><!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!><!UNRESOLVED_REFERENCE!>it<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> 1}<!>
+    bar <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!>1}
+    bar <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!><!UNRESOLVED_REFERENCE!>it<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> 1}
     bar {it, <!UNUSED_ANONYMOUS_PARAMETER!>it1<!> -> it}
 
     bar1 {1}

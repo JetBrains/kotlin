@@ -94,10 +94,14 @@ fun scriptCompilationClasspathFromContextOrNull(
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false
 ): List<File>? {
-    fun List<File>.takeAndFilter() = if (wholeClasspath) takeIfContainsAll(*keyNames) else filterIfContainsAll(*keyNames)
+    fun List<File>.takeAndFilter() = when {
+        isEmpty() -> null
+        wholeClasspath -> takeIfContainsAll(*keyNames)
+        else -> filterIfContainsAll(*keyNames)
+    }
     return System.getProperty(KOTLIN_SCRIPT_CLASSPATH_PROPERTY)?.split(File.pathSeparator)?.map(::File)
-            ?: classpathFromClassloader(classLoader)?.takeAndFilter()
-            ?: classpathFromClasspathProperty()?.takeAndFilter()
+        ?: classpathFromClassloader(classLoader)?.takeAndFilter()
+        ?: classpathFromClasspathProperty()?.takeAndFilter()
 }
 
 fun scriptCompilationClasspathFromContextOrStlib(

@@ -52,11 +52,21 @@ data class ArgumentParseErrors(
     // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
     val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
 
-    var argumentWithoutValue: String? = null
+    var argumentWithoutValue: String? = null,
+
+    val argfileErrors: MutableList<String> = SmartList(),
+
+    // Reports from internal arguments parsers
+    val internalArgumentsParsingProblems: MutableList<String> = SmartList()
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
 fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A) {
+    val preprocessed = preprocessCommandLineArguments(args, result.errors)
+    parsePreprocessedCommandLineArguments(preprocessed, result)
+}
+
+private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args: List<String>, result: A) {
     data class ArgumentField(val property: KMutableProperty1<A, Any?>, val argument: Argument)
 
     @Suppress("UNCHECKED_CAST")
@@ -101,7 +111,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
     }
 
     val freeArgs = ArrayList<String>()
-    val internalArguments = ArrayList<String>()
+    val internalArguments = ArrayList<InternalArgument>()
 
     var i = 0
     loop@ while (i < args.size) {
@@ -125,7 +135,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
             if (parser == null) {
                 errors.unknownExtraFlags += arg
             } else {
-                internalArguments.add(arg)
+                internalArguments.add(parser.parseInternalArgument(arg, errors) ?: continue)
             }
 
             continue

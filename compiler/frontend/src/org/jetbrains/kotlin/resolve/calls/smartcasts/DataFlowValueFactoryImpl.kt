@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -23,8 +24,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isError
 
+class DataFlowValueFactoryImpl
 @Deprecated("Please, avoid to use that implementation explicitly. If you need DataFlowValueFactory, use injection")
-class DataFlowValueFactoryImpl : DataFlowValueFactory {
+constructor(private val languageVersionSettings: LanguageVersionSettings) : DataFlowValueFactory {
 
     // Receivers
     override fun createDataFlowValue(
@@ -60,7 +62,7 @@ class DataFlowValueFactoryImpl : DataFlowValueFactory {
     ): DataFlowValue {
         val identifierInfo = IdentifierInfo.Variable(
             variableDescriptor,
-            variableDescriptor.variableKind(usageContainingModule, bindingContext, property),
+            variableDescriptor.variableKind(usageContainingModule, bindingContext, property, languageVersionSettings),
             bindingContext[BindingContext.BOUND_INITIALIZER_VALUE, variableDescriptor]
         )
         return DataFlowValue(identifierInfo, variableDescriptor.type)
@@ -89,11 +91,11 @@ class DataFlowValueFactoryImpl : DataFlowValueFactory {
             KotlinBuiltIns.isNullableNothing(type) ->
                 DataFlowValue.nullValue(containingDeclarationOrModule.builtIns) // 'null' is the only inhabitant of 'Nothing?'
 
-            // In most cases type of `E!!`-expression is strictly not nullable and we could get proper Nullability
-            // by calling `getImmanentNullability` (as it happens below).
-            //
-            // But there are some problem with types built on type parameters, e.g.
-            // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
+        // In most cases type of `E!!`-expression is strictly not nullable and we could get proper Nullability
+        // by calling `getImmanentNullability` (as it happens below).
+        //
+        // But there are some problem with types built on type parameters, e.g.
+        // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
             ExpressionTypingUtils.isExclExclExpression(KtPsiUtil.deparenthesize(expression)) ->
                 DataFlowValue(IdentifierInfo.Expression(expression), type, Nullability.NOT_NULL)
 
@@ -101,7 +103,7 @@ class DataFlowValueFactoryImpl : DataFlowValueFactory {
                 DataFlowValue(IdentifierInfo.Expression(expression, stableComplex = true), type)
 
             else -> {
-                val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule)
+                val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule, languageVersionSettings)
                 DataFlowValue(if (result === IdentifierInfo.NO) IdentifierInfo.Expression(expression) else result, type)
             }
         }

@@ -1,0 +1,1 @@
+object _EmptyObject {}

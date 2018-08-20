@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.multiproject
 
+import org.jetbrains.kotlin.daemon.common.IncrementalModuleEntry
 import org.jetbrains.kotlin.daemon.common.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.util.Either
 import java.io.File
@@ -23,7 +24,7 @@ object EmptyModulesApiHistory : ModulesApiHistory {
 
 open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
     protected val projectRootPath: Path = Paths.get(modulesInfo.projectRoot.absolutePath)
-    private val dirToHistoryFileCache = HashMap<File, File?>()
+    private val dirToHistoryFileCache = HashMap<File, Set<File>>()
 
     override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> {
         val result = HashSet<File>()
@@ -53,28 +54,37 @@ open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo
 
         val classFileDirs = classFiles.groupBy { it.parentFile }
         for ((dir, files) in classFileDirs) {
-            val buildHistory = getBuildHistoryForDir(dir)
-                    ?: return Either.Error("Could not get build history for class files: ${files.joinToString()}")
-            result.add(buildHistory)
+            val historyEither = getBuildHistoryForDir(dir)
+            when (historyEither) {
+                is Either.Success<Set<File>> -> result.addAll(historyEither.value)
+                is Either.Error -> return historyEither
+            }
         }
 
         return Either.Success(result)
     }
 
-    private fun getBuildHistoryForDir(file: File): File? =
-        dirToHistoryFileCache.getOrPut(file) {
+    protected open fun getBuildHistoryForDir(file: File): Either<Set<File>> {
+        val history = dirToHistoryFileCache.getOrPut(file) {
             val module = modulesInfo.dirToModule[file]
             val parent = file.parentFile
 
             when {
                 module != null ->
-                    module.buildHistoryFile
-                parent != null && projectRootPath.isParentOf(parent) ->
-                    getBuildHistoryForDir(parent)
+                    setOf(module.buildHistoryFile)
+                parent != null && projectRootPath.isParentOf(parent) -> {
+                    val parentHistory = getBuildHistoryForDir(parent)
+                    when (parentHistory) {
+                        is Either.Success<Set<File>> -> parentHistory.value
+                        is Either.Error -> return parentHistory
+                    }
+                }
                 else ->
-                    null
+                    return Either.Error("Unable to get build history for $file")
             }
         }
+        return Either.Success(history)
+    }
 
     protected open fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
         val classListFile = modulesInfo.jarToClassListFile[jar] ?: return Either.Error("Unknown jar: $jar")
@@ -86,31 +96,52 @@ open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo
             return Either.Error("Could not read class list for $jar from $classListFile: $t")
         }
 
-        val classFileDirs = classFiles.groupBy { it.parentFile }
+        val classFileDirs = classFiles.filter { it.exists() && it.parentFile != null }.groupBy { it.parentFile }
         val result = HashSet<File>()
         for ((dir, files) in classFileDirs) {
-            val buildHistory = getBuildHistoryForDir(dir)
-                    ?: return Either.Error("Could not get build history for class files: ${files.joinToString()}")
-            result.add(buildHistory)
+            val historyEither = getBuildHistoryForDir(dir)
+            when (historyEither) {
+                is Either.Success<Set<File>> -> result.addAll(historyEither.value)
+                is Either.Error -> return historyEither
+            }
         }
         return Either.Success(result)
     }
 }
 
 class ModulesApiHistoryAndroid(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryJvm(modulesInfo) {
+    private val delegate = ModulesApiHistoryJvm(modulesInfo)
+
+    override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> {
+        val historyFromDelegate = delegate.historyFilesForChangedFiles(changedFiles)
+        if (historyFromDelegate is Either.Success<Set<File>>) return historyFromDelegate
+
+        return super.historyFilesForChangedFiles(changedFiles)
+    }
+
     override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
         // Module detection is expensive, so we don't don it for jars outside of project dir
         if (!projectRootPath.isParentOf(jar)) return Either.Error("Non-project jar is modified $jar")
 
         val jarPath = Paths.get(jar.absolutePath)
-        val possibleModules = getPossibleModuleNamesFromJar(jarPath)
-            .flatMapTo(HashSet()) { modulesInfo.nameToModules[it] ?: emptySet() }
+        return getHistoryForModuleNames(jarPath, getPossibleModuleNamesFromJar(jarPath))
+    }
 
-        val modules = possibleModules.filter { Paths.get(it.buildDir.absolutePath).isParentOf(jarPath) }
-        if (modules.isEmpty()) return Either.Error("Unknown module for $jar (candidates: ${possibleModules.joinToString()})")
+    override fun getBuildHistoryForDir(file: File): Either<Set<File>> {
+        if (!projectRootPath.isParentOf(file)) return Either.Error("Non-project file while looking for history $file")
 
-        val result = modules.mapTo(HashSet()) { it.buildHistoryFile }
-        return Either.Success(result)
+        // check both meta-inf and META-INF directories
+        val moduleNames =
+            getPossibleModuleNamesForDir(file.resolve("meta-inf")) + getPossibleModuleNamesForDir(file.resolve("META-INF"))
+        if (moduleNames.isEmpty()) {
+            return if (file.parentFile == null) {
+                Either.Error("Unable to find history for $file")
+            } else {
+                getBuildHistoryForDir(file.parentFile)
+            }
+        }
+
+        return getHistoryForModuleNames(file.toPath(), moduleNames)
     }
 
     private fun getPossibleModuleNamesFromJar(path: Path): Collection<String> {
@@ -132,6 +163,22 @@ class ModulesApiHistoryAndroid(modulesInfo: IncrementalModuleInfo) : ModulesApiH
         }
 
         return result
+    }
+
+    private fun getPossibleModuleNamesForDir(path: File): List<String> {
+        if (!path.isDirectory) return listOf()
+
+        return path.listFiles().filter { it.name.endsWith(".kotlin_module", ignoreCase = true) }.map { it.nameWithoutExtension }
+    }
+
+    private fun getHistoryForModuleNames(path: Path, moduleNames: Iterable<String>): Either<Set<File>> {
+        val possibleModules =
+            moduleNames.flatMapTo(HashSet<IncrementalModuleEntry>()) { modulesInfo.nameToModules[it] ?: emptySet() }
+        val modules = possibleModules.filter { Paths.get(it.buildDir.absolutePath).isParentOf(path) }
+        if (modules.isEmpty()) return Either.Error("Unknown module for $path (candidates: ${possibleModules.joinToString()})")
+
+        val result = modules.mapTo(HashSet()) { it.buildHistoryFile }
+        return Either.Success(result)
     }
 }
 

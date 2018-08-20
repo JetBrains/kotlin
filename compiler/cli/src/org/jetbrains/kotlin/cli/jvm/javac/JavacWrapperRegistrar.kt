@@ -29,25 +29,23 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 object JavacWrapperRegistrar {
-
     private const val JAVAC_CONTEXT_CLASS = "com.sun.tools.javac.util.Context"
 
     fun registerJavac(
-            project: MockProject,
-            configuration: CompilerConfiguration,
-            javaFiles: List<File>,
-            kotlinFiles: List<KtFile>,
-            arguments: Array<String>?,
-            bootClasspath: List<File>?,
-            sourcePath: List<File>?,
-            lightClassGenerationSupport: LightClassGenerationSupport
+        project: MockProject,
+        configuration: CompilerConfiguration,
+        javaFiles: List<File>,
+        kotlinFiles: List<KtFile>,
+        arguments: Array<String>?,
+        bootClasspath: List<File>?,
+        sourcePath: List<File>?,
+        lightClassGenerationSupport: LightClassGenerationSupport
     ): Boolean {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         try {
             Class.forName(JAVAC_CONTEXT_CLASS)
-        }
-        catch (e: ClassNotFoundException) {
+        } catch (e: ClassNotFoundException) {
             messageCollector.report(ERROR, "'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is not found)")
             return false
         }
@@ -60,8 +58,10 @@ object JavacWrapperRegistrar {
         val compileJava = configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
         val kotlinSupertypesResolver = JavacWrapperKotlinResolverImpl(lightClassGenerationSupport)
 
-        val javacWrapper = JavacWrapper(javaFiles, kotlinFiles, arguments, jvmClasspathRoots, bootClasspath, sourcePath,
-                                        kotlinSupertypesResolver, compileJava, outputDirectory, context)
+        val javacWrapper = JavacWrapper(
+            javaFiles, kotlinFiles, arguments, jvmClasspathRoots, bootClasspath, sourcePath,
+            kotlinSupertypesResolver, compileJava, outputDirectory, context
+        )
 
         project.registerService(JavacWrapper::class.java, javacWrapper)
 

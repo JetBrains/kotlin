@@ -29,6 +29,7 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
@@ -64,7 +65,7 @@ testsJar()
 
 val testForWebDemo by task<Test> {
     include("**/*JavaToKotlinConverterForWebDemoTestGenerated*")
-    classpath = the<JavaPluginConvention>().sourceSets["test"].runtimeClasspath
+    classpath = testSourceSet.runtimeClasspath
     workingDir = rootDir
 }
 val cleanTestForWebDemo by tasks

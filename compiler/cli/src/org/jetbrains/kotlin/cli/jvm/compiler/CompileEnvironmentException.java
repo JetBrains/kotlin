@@ -21,10 +21,6 @@ public class CompileEnvironmentException extends RuntimeException {
         super(message);
     }
 
-    public CompileEnvironmentException(Throwable cause) {
-        super(cause);
-    }
-
     public CompileEnvironmentException(String message, Throwable cause) {
         super(message, cause);
     }

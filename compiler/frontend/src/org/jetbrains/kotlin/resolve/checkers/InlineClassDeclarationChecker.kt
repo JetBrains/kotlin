@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object InlineClassDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -71,6 +75,47 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
             return
         }
+
+        val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
+        val baseParameterTypeReference = baseParameter.typeReference
+        if (baseParameterType != null && baseParameterTypeReference != null) {
+            if (baseParameterType.isInapplicableParameterType()) {
+                trace.report(Errors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(baseParameterTypeReference, baseParameterType))
+                return
+            }
+
+            if (baseParameterType.isRecursiveInlineClassType()) {
+                trace.report(Errors.INLINE_CLASS_CANNOT_BE_RECURSIVE.on(baseParameterTypeReference))
+                return
+            }
+        }
+
+        for (supertypeEntry in declaration.superTypeListEntries) {
+            if (supertypeEntry is KtDelegatedSuperTypeEntry) {
+                trace.report(Errors.INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION.on(supertypeEntry))
+                return
+            } else {
+                val typeReference = supertypeEntry.typeReference ?: continue
+                val type = trace[BindingContext.TYPE, typeReference] ?: continue
+                val typeDescriptor = type.constructor.declarationDescriptor ?: continue
+                if (!DescriptorUtils.isInterface(typeDescriptor)) {
+                    trace.report(Errors.INLINE_CLASS_CANNOT_EXTEND_CLASSES.on(typeReference))
+                    return
+                }
+            }
+        }
+    }
+
+    private fun KotlinType.isInapplicableParameterType() =
+        isUnit() || isNothing() || isTypeParameter() || isGenericArrayOfTypeParameter()
+
+    private fun KotlinType.isGenericArrayOfTypeParameter(): Boolean {
+        if (!KotlinBuiltIns.isArray(this)) return false
+        val argument0 = arguments[0]
+        if (argument0.isStarProjection) return false
+        val argument0type = argument0.type
+        return argument0type.isTypeParameter() ||
+                argument0type.isGenericArrayOfTypeParameter()
     }
 
     private fun isParameterAcceptableForInlineClass(parameter: KtParameter): Boolean {
@@ -88,6 +133,10 @@ class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
 
         if (context.trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
             context.trace.report(Errors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS.on(declaration))
+        }
+
+        declaration.delegate?.let {
+            context.trace.report(Errors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS.on(it))
         }
     }
 }

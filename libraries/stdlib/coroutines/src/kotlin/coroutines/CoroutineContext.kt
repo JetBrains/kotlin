@@ -52,6 +52,12 @@ public interface CoroutineContext {
     public fun minusKey(key: Key<*>): CoroutineContext
 
     /**
+     * Key for the elements of [CoroutineContext]. [E] is a type of element with this key.
+     * Keys in the context are compared _by reference_.
+     */
+    public interface Key<E : Element>
+
+    /**
      * An element of the [CoroutineContext]. An element of the coroutine context is a singleton context by itself.
      */
     public interface Element : CoroutineContext {
@@ -70,10 +76,4 @@ public interface CoroutineContext {
         public override fun minusKey(key: Key<*>): CoroutineContext =
             if (this.key === key) EmptyCoroutineContext else this
     }
-
-    /**
-     * Key for the elements of [CoroutineContext]. [E] is a type of element with this key.
-     * Keys in the context are compared _by reference_.
-     */
-    public interface Key<E : Element>
 }

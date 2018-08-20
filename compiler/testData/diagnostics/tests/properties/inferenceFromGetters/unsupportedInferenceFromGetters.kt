@@ -39,7 +39,7 @@ fun <E> l(<!UNUSED_PARAMETER!>x<!>: E): List<E> = null!!
 // vars
 <!UNSUPPORTED_FEATURE!>var x3
     get() = 1
-    set(<!OI;UNUSED_PARAMETER!>q<!>) {
+    set(<!UNUSED_PARAMETER!>q<!>) {
     }<!>
 
 // recursive

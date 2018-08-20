@@ -4,6 +4,7 @@ import java.io.File
 import kotlin.script.dependencies.*
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.templates.ScriptTemplateDefinition
+import kotlin.script.experimental.location.*
 
 class TestDependenciesResolver : DependenciesResolver {
     override fun resolve(
@@ -20,5 +21,6 @@ class TestDependenciesResolver : DependenciesResolver {
     }
 }
 
+@ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])
 @ScriptTemplateDefinition(TestDependenciesResolver::class, scriptFilePattern = "script.kts")
 open class Template

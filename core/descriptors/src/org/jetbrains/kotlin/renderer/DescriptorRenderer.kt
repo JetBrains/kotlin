@@ -48,7 +48,7 @@ abstract class DescriptorRenderer {
     fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String
             = renderValueParameters(functionDescriptor.valueParameters, functionDescriptor.hasSynthesizedParameterNames())
 
-    abstract fun renderName(name: Name): String
+    abstract fun renderName(name: Name, rootRenderedElement: Boolean): String
 
     abstract fun renderFqName(fqName: FqNameUnsafe): String
 
@@ -182,6 +182,7 @@ interface DescriptorRendererOptions {
     var classWithPrimaryConstructor: Boolean
     var verbose: Boolean
     var unitReturnType: Boolean
+    var enhancedTypes: Boolean
     var withoutReturnType: Boolean
     var normalizedVisibilities: Boolean
     var renderDefaultVisibility: Boolean
@@ -192,10 +193,13 @@ interface DescriptorRendererOptions {
     var excludedAnnotationClasses: Set<FqName>
     var excludedTypeAnnotationClasses: Set<FqName>
     var annotationFilter: ((AnnotationDescriptor) -> Boolean)?
+    var eachAnnotationOnNewLine: Boolean
 
     var annotationArgumentsRenderingPolicy: AnnotationArgumentsRenderingPolicy
     val includeAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeAnnotationArguments
     val includeEmptyAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeEmptyAnnotationArguments
+
+    var boldOnlyForNamesInHtml: Boolean
 
     var includePropertyConstant: Boolean
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
@@ -214,6 +218,7 @@ interface DescriptorRendererOptions {
     var includeAdditionalModifiers: Boolean
     var parameterNamesInFunctionalTypes: Boolean
     var renderFunctionContracts: Boolean
+    var presentableUnresolvedTypes: Boolean
 }
 
 object ExcludedTypeAnnotations {

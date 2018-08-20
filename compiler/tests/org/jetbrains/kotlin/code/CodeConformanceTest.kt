@@ -53,24 +53,25 @@ class CodeConformanceTest : TestCase() {
         ).map(::File)
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
-                "dependencies",
-                "out",
-                "dist",
-                "custom-dependencies/android-sdk/build",
-                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-                "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
-                "js/js.tests/.gradle",
-                "js/js.translator/testData/node_modules",
-                "libraries/stdlib/common/build",
-                "libraries/stdlib/js/.gradle",
-                "libraries/stdlib/js/build",
-                "libraries/kotlin.test/js/it/.gradle",
-                "libraries/kotlin.test/js/it/node_modules",
-                "libraries/stdlib/js/node_modules",
-                "libraries/tools/kotlin-maven-plugin-test/target",
-                "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
-                "buildSrc/prepare-deps/android-dx/build",
-                "buildSrc/prepare-deps/intellij-sdk/build"
+            "dependencies",
+            "out",
+            "dist",
+            "custom-dependencies/android-sdk/build",
+            "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+            "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
+            "js/js.tests/.gradle",
+            "js/js.translator/testData/node_modules",
+            "libraries/stdlib/common/build",
+            "libraries/stdlib/js/.gradle",
+            "libraries/stdlib/js/build",
+            "libraries/stdlib/js/irRuntime/longjs.kt",
+            "libraries/kotlin.test/js/it/.gradle",
+            "libraries/kotlin.test/js/it/node_modules",
+            "libraries/stdlib/js/node_modules",
+            "libraries/tools/kotlin-maven-plugin-test/target",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
+            "buildSrc/prepare-deps/android-dx/build",
+            "buildSrc/prepare-deps/intellij-sdk/build"
         )
     }
 

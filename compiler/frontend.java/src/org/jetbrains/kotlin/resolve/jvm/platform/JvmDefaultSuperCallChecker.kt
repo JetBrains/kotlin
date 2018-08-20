@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 class JvmDefaultSuperCallChecker : CallChecker {
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val enableJvmDefault = context.languageVersionSettings.getFlag(AnalysisFlag.enableJvmDefault)
-        if (enableJvmDefault) return
+        val jvmDefaultMode = context.languageVersionSettings.getFlag(AnalysisFlag.jvmDefaultMode)
+        if (jvmDefaultMode.isEnabled) return
         val superExpression = getSuperCallExpression(resolvedCall.call) ?: return
         val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
         if (!resultingDescriptor.hasJvmDefaultAnnotation()) return

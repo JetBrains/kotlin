@@ -12,6 +12,7 @@ val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":compiler:backend",
         ":compiler:backend-common",
+        ":compiler:ir.backend.common",
         ":kotlin-build-common",
         ":compiler:cli-common",
         ":compiler:container",

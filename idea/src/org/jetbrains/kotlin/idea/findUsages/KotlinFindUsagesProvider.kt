@@ -16,32 +16,31 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
+import com.intellij.lang.cacheBuilder.WordsScanner
 import com.intellij.lang.findUsages.FindUsagesProvider
 import com.intellij.lang.java.JavaFindUsagesProvider
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiPackage
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class KotlinFindUsagesProvider : FindUsagesProvider {
     private val javaProvider by lazy { JavaFindUsagesProvider() }
 
     override fun canFindUsagesFor(psiElement: PsiElement): Boolean =
-            psiElement is KtNamedDeclaration
+        psiElement is KtNamedDeclaration
 
-    override fun getWordsScanner() = null
+    override fun getWordsScanner(): WordsScanner? = null
 
     override fun getHelpId(psiElement: PsiElement): String? = null
 
     override fun getType(element: PsiElement): String {
-        return when(element) {
+        return when (element) {
             is KtNamedFunction -> "function"
             is KtClass -> "class"
             is KtParameter -> "parameter"
@@ -73,19 +72,28 @@ class KotlinFindUsagesProvider : FindUsagesProvider {
                 val name = element.name ?: ""
                 val descriptor = element.unsafeResolveToDescriptor() as FunctionDescriptor
                 val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS
-                val paramsDescription = descriptor.valueParameters.joinToString(prefix = "(", postfix = ")") { renderer.renderType(it.type) }
+                val paramsDescription =
+                    descriptor.valueParameters.joinToString(prefix = "(", postfix = ")") { renderer.renderType(it.type) }
                 val returnType = descriptor.returnType
                 val returnTypeDescription = if (returnType != null && !returnType.isUnit()) renderer.renderType(returnType) else null
                 val funDescription = "$name$paramsDescription" + (returnTypeDescription?.let { ": $it" } ?: "")
                 return funDescription + (element.containerDescription?.let { " of $it" } ?: "")
             }
             is KtLabeledExpression -> element.getLabelName() ?: ""
-            is KtImportAlias -> element.getName() ?: ""
+            is KtImportAlias -> element.name ?: ""
             is KtLightElement<*, *> -> element.kotlinOrigin?.let { getDescriptiveName(it) } ?: ""
+            is KtParameter -> {
+                if (element.isPropertyParameter()) {
+                    (element.name ?: "") + (element.containerDescription?.let { " of $it" } ?: "")
+                } else {
+                    element.name ?: ""
+                }
+            }
+            is PsiNamedElement -> element.name ?: ""
             else -> ""
         }
     }
 
     override fun getNodeText(element: PsiElement, useFullName: Boolean): String =
-            getDescriptiveName(element)
+        getDescriptiveName(element)
 }

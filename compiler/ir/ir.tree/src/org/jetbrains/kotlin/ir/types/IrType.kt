@@ -10,13 +10,24 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.types.Variance
 
 interface IrType {
-    val classifier: IrClassifierSymbol
-    val hasQuestionMark: Boolean
-    val arguments: List<IrTypeProjection>
     val annotations: List<IrCall>
 }
 
-interface IrTypeProjection {
+interface IrErrorType : IrType
+
+interface IrDynamicType : IrType
+
+interface IrSimpleType : IrType {
+    val classifier: IrClassifierSymbol
+    val hasQuestionMark: Boolean
+    val arguments: List<IrTypeArgument>
+}
+
+interface IrTypeArgument
+
+interface IrStarProjection : IrTypeArgument
+
+interface IrTypeProjection : IrTypeArgument {
     val variance: Variance
     val type: IrType
 }

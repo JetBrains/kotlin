@@ -1,3 +1,0 @@
-apply from: "$rootDir/libraries/tools/gradle-tools/pluginMarkers.gradle"
-
-pluginMarkerProject('kotlin-scripting-gradle')

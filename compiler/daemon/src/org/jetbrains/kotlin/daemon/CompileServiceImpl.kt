@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
@@ -45,7 +46,10 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
 import org.jetbrains.kotlin.daemon.report.RemoteICReporter
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
@@ -466,7 +470,7 @@ class CompileServiceImpl(
         }
 
         val workingDir = incrementalCompilationOptions.workingDir
-        val versions = commonCacheVersions(workingDir) +
+        val versions = commonCacheVersions(workingDir, enabled = true) +
                        customCacheVersion(incrementalCompilationOptions.customCacheVersion,
                                           incrementalCompilationOptions.customCacheVersionFileName,
                                           workingDir,
@@ -516,7 +520,7 @@ class CompileServiceImpl(
         }
 
         val workingDir = incrementalCompilationOptions.workingDir
-        val versions = commonCacheVersions(workingDir) +
+        val versions = commonCacheVersions(workingDir, enabled = true) +
                        customCacheVersion(incrementalCompilationOptions.customCacheVersion,
                                           incrementalCompilationOptions.customCacheVersionFileName,
                                           workingDir,
@@ -944,6 +948,16 @@ class CompileServiceImpl(
         if (facade.hasCompilationCanceledStatus()) {
             builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(facade, rpcProfiler))
         }
+        if (facade.hasExpectActualTracker()) {
+            builder.register(ExpectActualTracker::class.java, RemoteExpectActualTracker(facade, rpcProfiler))
+        }
+        if (facade.hasIncrementalResultsConsumer()) {
+            builder.register(IncrementalResultsConsumer::class.java, RemoteIncrementalResultsConsumer(facade, eventManager, rpcProfiler))
+        }
+        if (facade.hasIncrementalDataProvider()) {
+            builder.register(IncrementalDataProvider::class.java, RemoteIncrementalDataProvider(facade, rpcProfiler))
+        }
+
         return builder.build()
     }
 

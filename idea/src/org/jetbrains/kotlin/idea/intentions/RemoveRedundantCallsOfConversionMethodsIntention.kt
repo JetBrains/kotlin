@@ -82,9 +82,11 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
                     Boolean::class.qualifiedName
                 } else {
                     resolvedCall?.candidateDescriptor?.returnType?.let {
-                        if (it.isFlexible()) null
-                        else if (it.isMarkedNullable && parent !is KtSafeQualifiedExpression) null
-                        else it.getFqNameAsString()
+                        when {
+                            it.isFlexible() -> null
+                            parent !is KtSafeQualifiedExpression && (this is KtSafeQualifiedExpression || it.isMarkedNullable) -> null
+                            else -> it.getFqNameAsString()
+                        }
                     }
                 }
             }

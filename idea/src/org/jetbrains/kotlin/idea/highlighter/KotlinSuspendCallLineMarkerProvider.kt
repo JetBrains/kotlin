@@ -55,6 +55,12 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
             ProgressManager.checkCanceled()
 
             if (element !is KtExpression) continue
+
+            val containingFile = element.containingFile
+            if (containingFile !is KtFile || containingFile is KtCodeFragment) {
+                continue
+            }
+
             val lineNumber = element.getLineNumber()
             if (lineNumber in markedLineNumbers) continue
             if (!element.hasSuspendCalls()) continue

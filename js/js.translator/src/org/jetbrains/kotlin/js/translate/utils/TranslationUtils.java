@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator.*;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.kotlin.js.translate.utils.UtilsKt.hasOrInheritsParametersWithDefaultValue;
 
 public final class TranslationUtils {
     private static final Set<FqNameUnsafe> CLASSES_WITH_NON_BOXED_CHARS = new HashSet<>(Arrays.asList(
@@ -170,6 +171,16 @@ public final class TranslationUtils {
             boolean isNegated
     ) {
         return nullCheck(prepareForNullCheck(ktSubject, expressionToCheck, context), isNegated);
+    }
+
+    @NotNull
+    public static JsBinaryOperation nullCheck(
+            @NotNull KotlinType expressionType,
+            @NotNull JsExpression expressionToCheck,
+            @NotNull TranslationContext context,
+            boolean isNegated
+    ) {
+        return nullCheck(coerce(context, expressionToCheck, TypeUtils.makeNullable(expressionType)), isNegated);
     }
 
     @NotNull
@@ -405,10 +416,10 @@ public final class TranslationUtils {
     }
 
     public static boolean isOverridableFunctionWithDefaultParameters(@NotNull FunctionDescriptor descriptor) {
-        return DescriptorUtilsKt.hasOrInheritsParametersWithDefaultValue(descriptor) &&
-               !(descriptor instanceof ConstructorDescriptor) &&
-               descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
-               ModalityKt.isOverridable(descriptor);
+        return hasOrInheritsParametersWithDefaultValue(descriptor) &&
+                !(descriptor instanceof ConstructorDescriptor) &&
+                descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
+                ModalityKt.isOverridable(descriptor);
     }
 
     @NotNull

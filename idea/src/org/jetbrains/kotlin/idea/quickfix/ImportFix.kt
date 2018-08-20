@@ -145,10 +145,12 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
         if (importNames.isEmpty()) return emptyList()
 
         return importNames
-                .flatMap { collectSuggestionsForName(it, callTypeAndReceiver) }
-                .distinct()
-                .map { it.fqNameSafe }
-                .distinct()
+            .flatMap { collectSuggestionsForName(it, callTypeAndReceiver) }
+            .asSequence()
+            .distinct()
+            .map { it.fqNameSafe }
+            .distinct()
+            .toList()
     }
 
     private fun collectSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<DeclarationDescriptor> {
@@ -301,15 +303,14 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         indicesHelper.getKotlinEnumsByName(name).filterTo(result, filterByCallType)
 
         val resolutionFacade = element.getResolutionFacade()
-        var actualReceiverTypes = callTypeAndReceiver
-                .receiverTypesWithIndex(bindingContext, element,
-                                        resolutionFacade.moduleDescriptor, resolutionFacade,
-                                        stableSmartCastsOnly = false,
-                                        withImplicitReceiversWhenExplicitPresent = true).orEmpty()
+        val actualReceiverTypes = callTypeAndReceiver
+            .receiverTypesWithIndex(
+                bindingContext, element,
+                resolutionFacade.moduleDescriptor, resolutionFacade,
+                stableSmartCastsOnly = false,
+                withImplicitReceiversWhenExplicitPresent = true
+            ).orEmpty()
 
-        if (element.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) {
-            actualReceiverTypes -= actualReceiverTypes.shadowedByDslMarkers()
-        }
 
         val explicitReceiverTypes = actualReceiverTypes.filterNot { it.implicit }
 

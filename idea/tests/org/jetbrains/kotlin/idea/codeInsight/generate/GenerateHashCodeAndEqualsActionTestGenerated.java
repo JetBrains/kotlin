@@ -114,6 +114,11 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         runTest("idea/testData/codeInsight/generate/equalsWithHashCode/nameClash.kt");
     }
 
+    @TestMetadata("nestedArray.kt")
+    public void testNestedArray() throws Exception {
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/nestedArray.kt");
+    }
+
     @TestMetadata("noVars.kt")
     public void testNoVars() throws Exception {
         runTest("idea/testData/codeInsight/generate/equalsWithHashCode/noVars.kt");

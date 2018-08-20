@@ -1,42 +1,30 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.js
 
 import org.jetbrains.kotlin.backend.common.descriptors.DescriptorsFactory
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
-class JsDescriptorsFactory(
-    private val builtIns: KotlinBuiltIns
-) : DescriptorsFactory {
+class JsDescriptorsFactory : DescriptorsFactory {
     private val singletonFieldDescriptors = HashMap<IrBindableSymbol<*, *>, IrFieldSymbol>()
     private val outerThisFieldSymbols = HashMap<IrClass, IrFieldSymbol>()
     private val innerClassConstructors = HashMap<IrConstructorSymbol, IrConstructorSymbol>()
@@ -66,7 +54,7 @@ class JsDescriptorsFactory(
                 false
             ).apply {
                 setType(
-                    outerClass.defaultType,
+                    outerClass.defaultType.toKotlinType(),
                     emptyList(),
                     innerClass.descriptor.thisAsReceiverParameter,
                     null as? ReceiverParameterDescriptor
@@ -93,19 +81,7 @@ class JsDescriptorsFactory(
             classDescriptor, oldDescriptor.annotations, oldDescriptor.isPrimary, oldDescriptor.source
         )
 
-        val outerThisValueParameter = ValueParameterDescriptorImpl(
-            newDescriptor,
-            null,
-            0,
-            Annotations.EMPTY,
-            Name.identifier("\$outer"),
-            outerThisType,
-            false,
-            false,
-            false,
-            null,
-            SourceElement.NO_SOURCE
-        )
+        val outerThisValueParameter = createValueParameter(newDescriptor, 0, Namer.OUTER_NAME, outerThisType)
 
         val newValueParameters =
             listOf(outerThisValueParameter) +

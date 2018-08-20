@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val a = Array(2) { DoubleArray(3) }
 

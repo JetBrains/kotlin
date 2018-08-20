@@ -22,7 +22,6 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
@@ -31,9 +30,9 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.toVisibility
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
-import java.lang.IllegalArgumentException
 
 open class ChangeVisibilityModifierIntention protected constructor(
     val modifier: KtModifierKeywordToken
@@ -86,16 +85,6 @@ open class ChangeVisibilityModifierIntention protected constructor(
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
         element.setVisibility(modifier)
         if (element is KtPropertyAccessor) element.modifierList?.nextSibling?.replace(KtPsiFactory(element).createWhiteSpace())
-    }
-
-    private fun KtModifierKeywordToken.toVisibility(): Visibility {
-        return when (this) {
-            KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
-            KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
-            KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
-            KtTokens.INTERNAL_KEYWORD -> Visibilities.INTERNAL
-            else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
-        }
     }
 
     private fun noModifierYetApplicabilityRange(declaration: KtDeclaration): TextRange? {

@@ -117,16 +117,26 @@ private fun checkModConvention(
 
     if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
         if (shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
-            addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
+            warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier, languageVersionSettings)
         }
     } else {
         if (languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)) {
-            addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
+            warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier, languageVersionSettings)
         }
     }
 }
 
-private fun addWarningAboutDeprecatedMod(descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
+private fun warnAboutDeprecatedOrForbiddenMod(
+    descriptor: FunctionDescriptor,
+    diagnosticHolder: DiagnosticSink,
+    reportOn: PsiElement,
+    languageVersionSettings: LanguageVersionSettings
+) {
+    val diagnosticFactory = if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod))
+        Errors.FORBIDDEN_BINARY_MOD_AS_REM
+    else
+        Errors.DEPRECATED_BINARY_MOD_AS_REM
+
     val newNameConvention = OperatorConventions.REM_TO_MOD_OPERATION_NAMES.inverse()[descriptor.name]
-    diagnosticHolder.report(Errors.DEPRECATED_BINARY_MOD_AS_REM.on(reportOn, descriptor, newNameConvention!!.asString()))
+    diagnosticHolder.report(diagnosticFactory.on(reportOn, descriptor, newNameConvention!!.asString()))
 }

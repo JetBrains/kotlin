@@ -479,6 +479,21 @@ public class MoveTestGenerated extends AbstractMoveTest {
         runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/implicitInvokeCalls/differentTarget/differentTarget.test");
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/classFromKtsToKt/classFromKtsToKt.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_classFromKtsToKt_ClassFromKtsToKt() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/classFromKtsToKt/classFromKtsToKt.test");
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/classFromKtsToKts/classFromKtsToKts.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_classFromKtsToKts_ClassFromKtsToKts() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/classFromKtsToKts/classFromKtsToKts.test");
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/classFromKtToKts/classFromKtToKts.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_classFromKtToKts_ClassFromKtToKts() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/classFromKtToKts/classFromKtToKts.test");
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/classWithInitializer/delegateInObject.test")
     public void testKotlin_moveTopLevelDeclarations_misc_classWithInitializer_DelegateInObject() throws Exception {
         runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/classWithInitializer/delegateInObject.test");

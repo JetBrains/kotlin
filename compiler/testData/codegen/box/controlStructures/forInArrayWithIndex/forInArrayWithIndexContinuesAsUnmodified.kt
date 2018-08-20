@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // See https://youtrack.jetbrains.com/issue/KT-22424
 // IGNORE_BACKEND: JS
 // WITH_RUNTIME

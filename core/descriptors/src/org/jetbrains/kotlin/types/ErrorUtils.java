@@ -76,6 +76,12 @@ public class ErrorUtils {
 
             @NotNull
             @Override
+            public Name getStableName() {
+                return Name.special("<ERROR MODULE>");
+            }
+
+            @NotNull
+            @Override
             public PackageViewDescriptor getPackage(@NotNull FqName fqName) {
                 throw new IllegalStateException("Should not be called!");
             }

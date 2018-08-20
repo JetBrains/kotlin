@@ -24,14 +24,19 @@ import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.kapt3.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.plus
+import org.jetbrains.kotlin.kapt3.base.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.mapJList
+import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
+import org.jetbrains.kotlin.kapt3.base.pairedListToMap
+import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
+import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
@@ -55,7 +60,7 @@ import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
 
 class ClassFileToSourceStubConverter(
-        val kaptContext: KaptContext<GenerationState>,
+        val kaptContext: KaptContextForStubGeneration,
         val generateNonExistentClass: Boolean,
         val correctErrorTypes: Boolean
 ) {
@@ -146,7 +151,7 @@ class ClassFileToSourceStubConverter(
 
             val metadataFile = File(
                 forSource.parentFile,
-                forSource.nameWithoutExtension + KaptLineMappingCollector.KAPT_METADATA_EXTENSION
+                forSource.nameWithoutExtension + KaptStubLineInformation.KAPT_METADATA_EXTENSION
             )
 
             metadataFile.writeBytes(kaptMetadata)
@@ -230,7 +235,7 @@ class ClassFileToSourceStubConverter(
         // We prefer ordinary imports over aliased ones.
         val sortedImportDirectives = file.importDirectives.partition { it.aliasName == null }.run { first + second }
 
-        for (importDirective in sortedImportDirectives) {
+        loop@ for (importDirective in sortedImportDirectives) {
             // Qualified name should be valid Java fq-name
             val importedFqName = importDirective.importedFqName?.takeIf { it.pathSegments().size > 1 } ?: continue
             if (!isValidQualifiedName(importedFqName)) continue
@@ -238,11 +243,23 @@ class ClassFileToSourceStubConverter(
             val shortName = importedFqName.shortName()
             if (shortName.asString() == classDeclaration.simpleName.toString()) continue
 
-            val importedReference = getReferenceExpression(importDirective.importedReference)
-                    ?.let { kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, it] }
+            val importedReference = resolveImportReference@ run {
+                val referenceExpression = getReferenceExpression(importDirective.importedReference) ?: return@run null
 
-            if (importedReference is CallableDescriptor
-                || (importDirective.isAllUnder && importedReference is ClassifierDescriptor)) continue
+                val bindingContext = kaptContext.bindingContext
+                bindingContext[BindingContext.REFERENCE_TARGET, referenceExpression]?.let { return@run it }
+
+                val allTargets = bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression] ?: return@run null
+                allTargets.find { it is CallableDescriptor }?.let { return@run it }
+
+                return@run allTargets.firstOrNull()
+            }
+
+            val isCallableImport = importedReference is CallableDescriptor
+            val isAllUnderClassifierImport = importDirective.isAllUnder && importedReference is ClassifierDescriptor
+
+            if (isCallableImport || isAllUnderClassifierImport)
+                continue@loop
 
             val importedExpr = treeMaker.FqName(importedFqName.asString())
 
@@ -788,7 +805,7 @@ class ClassFileToSourceStubConverter(
 
     private fun convertAnnotationArgument(constantValue: Any?, value: ResolvedValueArgument?): JCExpression? {
         val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
-        val singleArg by lazy { args.singleOrNull() }
+        val singleArg = args.singleOrNull()
 
         if (constantValue.isOfPrimiviteType()) {
             // Do not inline primitive constants

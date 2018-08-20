@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
@@ -47,6 +49,8 @@ public class DescriptorUtils {
             COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("Continuation"));
     public static final FqName CONTINUATION_INTERFACE_FQ_NAME_RELEASE =
             COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"));
+
+    public static final FqName SUCCESS_OR_FAILURE_FQ_NAME = new FqName("kotlin.SuccessOrFailure");
 
     private DescriptorUtils() {
     }
@@ -181,6 +185,14 @@ public class DescriptorUtils {
             descriptor = descriptor.getContainingDeclaration();
         }
         return null;
+    }
+
+    @Nullable
+    public static ModuleDescriptor getContainingModuleOrNull(@NotNull KotlinType kotlinType) {
+        ClassifierDescriptor descriptor = kotlinType.getConstructor().getDeclarationDescriptor();
+        if (descriptor == null) return null;
+
+        return getContainingModuleOrNull(descriptor);
     }
 
     @NotNull
@@ -457,7 +469,8 @@ public class DescriptorUtils {
         return KotlinBuiltIns.isPrimitiveType(type) ||
                KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getStringType(), type) ||
                KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getNumber().getDefaultType(), type) ||
-               KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type);
+               KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type) ||
+               UnsignedTypes.INSTANCE.isUnsignedType(type);
     }
 
     public static boolean classCanHaveAbstractFakeOverride(@NotNull ClassDescriptor classDescriptor) {
@@ -622,4 +635,15 @@ public class DescriptorUtils {
                : descriptor;
     }
 
+    public static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
+        String name = descriptor.getName().asString();
+        List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
+        if (parameters.isEmpty()) {
+            return name.equals("hashCode") || name.equals("toString");
+        }
+        else if (parameters.size() == 1 && name.equals("equals")) {
+            return isNullableAny(parameters.get(0).getType());
+        }
+        return false;
+    }
 }

@@ -195,11 +195,15 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             erasedInterfaceFunction = samType.getOriginalAbstractMethod();
         }
 
+        List<KotlinType> bridgeParameterKotlinTypes = CollectionsKt.map(erasedInterfaceFunction.getValueParameters(), ValueDescriptor::getType);
+
         generateBridge(
                 typeMapper.mapAsmMethod(erasedInterfaceFunction),
+                bridgeParameterKotlinTypes,
                 erasedInterfaceFunction.getReturnType(),
                 typeMapper.mapAsmMethod(funDescriptor),
-                funDescriptor.getReturnType()
+                funDescriptor.getReturnType(),
+                JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(erasedInterfaceFunction)
         );
 
         //TODO: rewrite cause ugly hack
@@ -268,9 +272,11 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     protected void generateBridge(
             @NotNull Method bridge,
+            @NotNull List<KotlinType> bridgeParameterKotlinTypes,
             @Nullable KotlinType bridgeReturnType,
             @NotNull Method delegate,
-            @Nullable KotlinType delegateReturnType
+            @Nullable KotlinType delegateReturnType,
+            boolean isVarargInvoke
     ) {
         if (bridge.equals(delegate)) return;
 
@@ -285,9 +291,18 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.markLineNumberForDescriptor(DescriptorUtils.getParentOfType(funDescriptor, ClassDescriptor.class), iv);
 
-        iv.load(0, asmType);
+        Type[] bridgeParameterTypes = bridge.getArgumentTypes();
+        if (isVarargInvoke) {
+            assert bridgeParameterTypes.length == 1 && bridgeParameterTypes[0].equals(AsmUtil.getArrayType(OBJECT_TYPE)) :
+                    "Vararg invoke must have one parameter of type [Ljava/lang/Object;: " + bridge;
+            generateVarargInvokeArityAssert(iv, delegate.getArgumentTypes().length);
+        }
+        else {
+            assert bridgeParameterTypes.length == bridgeParameterKotlinTypes.size() :
+                    "Asm parameter types should be the same length as Kotlin parameter types";
+        }
 
-        Type[] myParameterTypes = bridge.getArgumentTypes();
+        iv.load(0, asmType);
 
         List<ParameterDescriptor> calleeParameters = CollectionsKt.plus(
                 CollectionsKt.listOfNotNull(funDescriptor.getExtensionReceiverParameter()),
@@ -296,11 +311,22 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         int slot = 1;
         for (int i = 0; i < calleeParameters.size(); i++) {
-            Type type = myParameterTypes[i];
             ParameterDescriptor calleeParameter = calleeParameters.get(i);
             KotlinType parameterType = calleeParameter.getType();
-            StackValue.local(slot, type, parameterType).put(typeMapper.mapType(calleeParameter), parameterType, iv);
-            slot += type.getSize();
+            StackValue value;
+            if (isVarargInvoke) {
+                value = StackValue.arrayElement(
+                        OBJECT_TYPE, null,
+                        StackValue.local(1, bridgeParameterTypes[0], bridgeParameterKotlinTypes.get(0)),
+                        StackValue.constant(i)
+                );
+            }
+            else {
+                Type type = bridgeParameterTypes[i];
+                value = StackValue.local(slot, type, bridgeParameterKotlinTypes.get(i));
+                slot += type.getSize();
+            }
+            value.put(typeMapper.mapType(calleeParameter), parameterType, iv);
         }
 
         iv.invokevirtual(asmType.getInternalName(), delegate.getName(), delegate.getDescriptor(), false);
@@ -422,7 +448,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
             String superClassConstructorDescriptor;
             if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) ||
-                superClassAsmType.equals(CoroutineCodegenUtilKt.coroutineImplAsmType(state.getLanguageVersionSettings()))) {
+                CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())) {
                 int arity = calculateArity();
                 iv.iconst(arity);
                 if (shouldHaveBoundReferenceReceiver) {

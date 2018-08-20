@@ -96,14 +96,19 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         dialog.show()
         if (!dialog.isOK) return
 
-        project.executeCommand("Configure Kotlin") {
+        val collector = configureSilently(project, dialog.modulesToConfigure, dialog.kotlinVersion)
+        collector.showNotification()
+    }
+
+    fun configureSilently(project: Project, modules: List<Module>, version: String): NotificationMessageCollector {
+        return project.executeCommand("Configure Kotlin") {
             val collector = createConfigureKotlinNotificationCollector(project)
-            val changedFiles = configureWithVersion(project, dialog.modulesToConfigure, dialog.kotlinVersion, collector)
+            val changedFiles = configureWithVersion(project, modules, version, collector)
 
             for (file in changedFiles) {
                 OpenFileAction.openFile(file.virtualFile, project)
             }
-            collector.showNotification()
+            collector
         }
     }
 
@@ -151,11 +156,11 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         val sdk = ModuleUtil.findModuleForPsiElement(file)?.let { ModuleRootManager.getInstance(it).sdk }
         val jvmTarget = getJvmTarget(sdk, version)
         return getManipulator(file).configureModuleBuildScript(
-                kotlinPluginName,
-                getKotlinPluginExpression(file.isKtDsl()),
-                getStdlibArtifactName(sdk, version),
-                version,
-                jvmTarget
+            kotlinPluginName,
+            getKotlinPluginExpression(file.isKtDsl()),
+            getStdlibArtifactName(sdk, version),
+            version,
+            jvmTarget
         )
     }
 
@@ -261,11 +266,13 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         fun getManipulator(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*> = when (file) {
             is KtFile -> KotlinBuildScriptManipulator(file, preferNewSyntax)
             is GroovyFile -> GroovyBuildScriptManipulator(file, preferNewSyntax)
-            else -> error("Unknown build script file type!")
+            else -> error("Unknown build script file type (${file::class.qualifiedName})!")
         }
 
         val GROUP_ID = "org.jetbrains.kotlin"
         val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
+
+        val CLASSPATH = "classpath \"$GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
 
         private val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
         private val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"

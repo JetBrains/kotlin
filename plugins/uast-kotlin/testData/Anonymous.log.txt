@@ -51,3 +51,9 @@ UFile (package = )
                                 UAnnotationMethod (name = run)
                                     UBlockExpression
                                 UAnnotationMethod (name = AnonymousKt$foo$runnableIs$1)
+        UAnnotationMethod (name = withErr)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = runnable)
+                        UObjectLiteralExpression
+                            UClass (name = <invalid object code>)

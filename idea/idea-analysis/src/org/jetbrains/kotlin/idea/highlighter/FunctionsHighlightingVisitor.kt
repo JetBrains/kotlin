@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.checkers.LambdaWithSuspendModifierCallChecker
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext) :
@@ -80,8 +80,7 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
         val key = Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
             extension.highlightCall(callee, resolvedCall)
         } ?: when {
-            calleeDescriptor.fqNameOrNull() ==
-                    LambdaWithSuspendModifierCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> KEYWORD
+            calleeDescriptor.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> KEYWORD
             calleeDescriptor.isDynamic() -> DYNAMIC_FUNCTION_CALL
             resolvedCall is VariableAsFunctionResolvedCall -> {
                 val container = calleeDescriptor.containingDeclaration

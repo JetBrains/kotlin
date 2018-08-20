@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.lazy.DefaultImportProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
@@ -74,9 +73,9 @@ object ReplaceWithAnnotationAnalyzer {
 
         val module = resolutionFacade.moduleDescriptor
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module)
+        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
+        val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module, languageVersionSettings)
 
-        val languageVersionSettings = resolutionFacade.getFrontendService(LanguageVersionSettings::class.java)
         val scope = getResolutionScope(
             symbolDescriptor, symbolDescriptor,
             listOf(explicitImportsScope), defaultImportsScopes, languageVersionSettings
@@ -106,12 +105,10 @@ object ReplaceWithAnnotationAnalyzer {
         val module = resolutionFacade.moduleDescriptor
 
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val defaultImportScopes = buildDefaultImportsScopes(resolutionFacade, module)
+        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
+        val defaultImportScopes = buildDefaultImportsScopes(resolutionFacade, module, languageVersionSettings)
         val scope = getResolutionScope(
-            symbolDescriptor,
-            symbolDescriptor,
-            listOf(explicitImportsScope), defaultImportScopes,
-            resolutionFacade.getFrontendService(LanguageVersionSettings::class.java)
+            symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope), defaultImportScopes, languageVersionSettings
         ) ?: return null
 
         val typeResolver = resolutionFacade.getFrontendService(TypeResolver::class.java)
@@ -138,8 +135,14 @@ object ReplaceWithAnnotationAnalyzer {
         return typeReference.typeElement as KtUserType
     }
 
-    private fun buildDefaultImportsScopes(resolutionFacade: ResolutionFacade, module: ModuleDescriptor): List<ImportingScope> {
-        val (allUnderImports, aliasImports) = resolutionFacade.frontendService<DefaultImportProvider>().defaultImports.partition { it.isAllUnder }
+    private fun buildDefaultImportsScopes(
+        resolutionFacade: ResolutionFacade,
+        module: ModuleDescriptor,
+        languageVersionSettings: LanguageVersionSettings
+    ): List<ImportingScope> {
+        val allDefaultImports =
+            resolutionFacade.frontendService<TargetPlatform>().getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
+        val (allUnderImports, aliasImports) = allDefaultImports.partition { it.isAllUnder }
         // this solution doesn't support aliased default imports with a different alias
         // TODO: Create import directives from ImportPath, create ImportResolver, create LazyResolverScope, see FileScopeProviderImpl
 
@@ -166,10 +169,12 @@ object ReplaceWithAnnotationAnalyzer {
 
     private fun importFqNames(annotation: ReplaceWith): List<FqName> {
         return annotation.imports
+            .asSequence()
             .filter { FqNameUnsafe.isValid(it) }
             .map(::FqNameUnsafe)
             .filter(FqNameUnsafe::isSafe)
             .map(FqNameUnsafe::toSafe)
+            .toList()
     }
 
     private fun getResolutionScope(

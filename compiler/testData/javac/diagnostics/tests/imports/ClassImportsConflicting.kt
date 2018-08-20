@@ -1,3 +1,4 @@
+// SKIP_JAVAC
 // FILE: b.kt
 package b
 
@@ -27,4 +28,4 @@ import a.a
 
 class A : a()
 
-fun test() = A().<!MISSING_DEPENDENCY_CLASS!>getO<!>()
+fun test() = A().getO()

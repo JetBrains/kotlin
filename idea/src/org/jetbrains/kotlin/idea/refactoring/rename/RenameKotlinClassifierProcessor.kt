@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -61,15 +62,16 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
 
         val classOrObject = getClassOrObject(element) as? KtClassOrObject ?: return
 
-        val file = classOrObject.containingKtFile
-
-        val virtualFile = file.virtualFile
-        if (virtualFile != null) {
-            val nameWithoutExtensions = virtualFile.nameWithoutExtension
-            if (nameWithoutExtensions == classOrObject.name) {
-                val newFileName = newName + "." + virtualFile.extension
-                allRenames.put(file, newFileName)
-                RenamePsiElementProcessor.forElement(file).prepareRenaming(file, newFileName, allRenames)
+        classOrObject.withExpectedActuals().forEach {
+            val file = it.containingKtFile
+            val virtualFile = file.virtualFile
+            if (virtualFile != null) {
+                val nameWithoutExtensions = virtualFile.nameWithoutExtension
+                if (nameWithoutExtensions == it.name) {
+                    val newFileName = newName + "." + virtualFile.extension
+                    allRenames.put(file, newFileName)
+                    RenamePsiElementProcessor.forElement(file).prepareRenaming(file, newFileName, allRenames)
+                }
             }
         }
     }
@@ -121,7 +123,7 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
         else -> null
     }
 
-    override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
+    override fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
         val simpleUsages = ArrayList<UsageInfo>(usages.size)
         val ambiguousImportUsages = com.intellij.util.SmartList<UsageInfo>()
         for (usage in usages) {

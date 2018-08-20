@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -26,7 +27,7 @@ fun <T> asyncGenerate(block: suspend AsyncGenerator<T>.() -> Unit): AsyncSequenc
     }
 }
 
-class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuation<Unit> {
+class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, ContinuationAdapter<Unit>() {
     var computedNext = false
     var nextValue: T? = null
     var nextStep: Continuation<Unit>? = null
@@ -38,14 +39,14 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
 
     override val context = EmptyCoroutineContext
 
-    suspend fun computeHasNext(): Boolean = suspendCoroutineOrReturn { c ->
+    suspend fun computeHasNext(): Boolean = suspendCoroutineUninterceptedOrReturn { c ->
         computesNext = false
         computeContinuation = c
         nextStep!!.resume(Unit)
         COROUTINE_SUSPENDED
     }
 
-    suspend fun computeNext(): T = suspendCoroutineOrReturn { c ->
+    suspend fun computeNext(): T = suspendCoroutineUninterceptedOrReturn { c ->
         computesNext = true
         computeContinuation = c
         nextStep!!.resume(Unit)
@@ -95,7 +96,7 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
     }
 
     // Generator implementation
-    override suspend fun yield(value: T): Unit = suspendCoroutineOrReturn { c ->
+    override suspend fun yield(value: T): Unit = suspendCoroutineUninterceptedOrReturn { c ->
         computedNext = true
         nextValue = value
         nextStep = c

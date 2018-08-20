@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.KotlinType
 
 class AnnotationAndConstantLoaderImpl(
-        module: ModuleDescriptor,
-        notFoundClasses: NotFoundClasses,
-        private val protocol: SerializerExtensionProtocol
+    module: ModuleDescriptor,
+    notFoundClasses: NotFoundClasses,
+    private val protocol: SerializerExtensionProtocol
 ) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget> {
     private val deserializer = AnnotationDeserializer(module, notFoundClasses)
 
@@ -41,9 +41,9 @@ class AnnotationAndConstantLoaderImpl(
     }
 
     override fun loadCallableAnnotations(
-            container: ProtoContainer,
-            proto: MessageLite,
-            kind: AnnotatedCallableKind
+        container: ProtoContainer,
+        proto: MessageLite,
+        kind: AnnotatedCallableKind
     ): List<AnnotationWithTarget> {
         val annotations = when (proto) {
             is ProtoBuf.Constructor -> proto.getExtension(protocol.constructorAnnotation)
@@ -51,32 +51,35 @@ class AnnotationAndConstantLoaderImpl(
             is ProtoBuf.Property -> proto.getExtension(protocol.propertyAnnotation)
             else -> error("Unknown message: $proto")
         }.orEmpty()
-        return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
+        return annotations.map { annotationProto ->
+            AnnotationWithTarget(deserializer.deserializeAnnotation(annotationProto, container.nameResolver), null)
+        }
     }
 
-    override fun loadEnumEntryAnnotations(
-            container: ProtoContainer,
-            proto: ProtoBuf.EnumEntry
-    ): List<AnnotationDescriptor> {
+    override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(protocol.enumEntryAnnotation).orEmpty()
-        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, container.nameResolver) }
+        return annotations.map { annotationProto ->
+            deserializer.deserializeAnnotation(annotationProto, container.nameResolver)
+        }
     }
 
     override fun loadValueParameterAnnotations(
-            container: ProtoContainer,
-            callableProto: MessageLite,
-            kind: AnnotatedCallableKind,
-            parameterIndex: Int,
-            proto: ProtoBuf.ValueParameter
+        container: ProtoContainer,
+        callableProto: MessageLite,
+        kind: AnnotatedCallableKind,
+        parameterIndex: Int,
+        proto: ProtoBuf.ValueParameter
     ): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(protocol.parameterAnnotation).orEmpty()
-        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, container.nameResolver) }
+        return annotations.map { annotationProto ->
+            deserializer.deserializeAnnotation(annotationProto, container.nameResolver)
+        }
     }
 
     override fun loadExtensionReceiverParameterAnnotations(
-            container: ProtoContainer,
-            proto: MessageLite,
-            kind: AnnotatedCallableKind
+        container: ProtoContainer,
+        proto: MessageLite,
+        kind: AnnotatedCallableKind
     ): List<AnnotationDescriptor> = emptyList()
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {
@@ -87,11 +90,7 @@ class AnnotationAndConstantLoaderImpl(
         return proto.getExtension(protocol.typeParameterAnnotation).orEmpty().map { deserializer.deserializeAnnotation(it, nameResolver) }
     }
 
-    override fun loadPropertyConstant(
-            container: ProtoContainer,
-            proto: ProtoBuf.Property,
-            expectedType: KotlinType
-    ): ConstantValue<*>? {
+    override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: KotlinType): ConstantValue<*>? {
         val value = proto.getExtensionOrNull(protocol.compileTimeValue) ?: return null
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }

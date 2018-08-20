@@ -291,7 +291,9 @@ class ClassTranslator private constructor(
         val delegationClassDescriptor = (resolvedCall?.resultingDescriptor as? ClassConstructorDescriptor)?.constructedClass
 
         if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
-            if (JsDescriptorUtils.isImmediateSubtypeOfError(classDescriptor)) {
+            val isDelegationToCurrentClass = delegationClassDescriptor == classDescriptor
+            val isDelegationToErrorClass = JsDescriptorUtils.isImmediateSubtypeOfError(classDescriptor) && !isDelegationToCurrentClass
+            if (isDelegationToErrorClass) {
                 superCallGenerators += {
                     val innerContext = context().innerBlock()
                     ClassInitializerTranslator.emulateSuperCallToNativeError(

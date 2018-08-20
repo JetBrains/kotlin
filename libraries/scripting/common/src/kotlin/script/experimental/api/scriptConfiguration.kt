@@ -26,6 +26,6 @@ interface ScriptCompilationConfigurator {
         configuration: ScriptCompileConfiguration,
         processedScriptData: ProcessedScriptData = ProcessedScriptData()
     ): ResultWithDiagnostics<ScriptCompileConfiguration> =
-        defaultConfiguration.asSuccess()
+        configuration.cloneWithNewParent(defaultConfiguration).asSuccess()
 }
 

@@ -30,6 +30,7 @@ import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.gradle.KotlinGradleModel
 import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
@@ -78,6 +79,10 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule: DataNode<ModuleData>,
         ideProject: DataNode<ProjectData>
     ) {
+        if (resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) != null) {
+            return super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        }
+
         val outputToSourceSet = ideProject.getUserData(GradleProjectResolver.MODULES_OUTPUTS)
         val sourceSetByName = ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS)
 
@@ -146,15 +151,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                             ?: emptyList()
 
                     for (implementsModuleId in implementsModuleIds) {
-                        val compositePrefix = if (resolverCtx.models.ideaProject != gradleModule.project
-                            && implementsModuleId.startsWith(":")
-                        ) {
-                            gradleModule.project.name
-                        } else {
-                            ""
-                        }
-
-                        val targetModule = findModuleById(ideProject, compositePrefix + implementsModuleId) ?: continue
+                        val targetModule = findModuleById(ideProject, gradleModule, implementsModuleId) ?: continue
 
                         if (useModulePerSourceSet()) {
                             val targetSourceSetsByName = ExternalSystemApiUtil
@@ -189,7 +186,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
-        addImplementedModuleNames(ideModule, ideProject, gradleModel)
+        addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)
 
         if (useModulePerSourceSet()) {
             super.populateModuleDependencies(gradleModule, ideModule, ideProject)
@@ -197,11 +194,12 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
     }
 
     private fun addImplementedModuleNames(
+        gradleModule: IdeaModule,
         dependentModule: DataNode<ModuleData>,
         ideProject: DataNode<ProjectData>,
         gradleModel: KotlinGradleModel
     ) {
-        val implementedModules = gradleModel.implements.mapNotNull { findModuleById(ideProject, it) }
+        val implementedModules = gradleModel.implements.mapNotNull { findModuleById(ideProject, gradleModule, it) }
         if (useModulePerSourceSet()) {
             val dependentSourceSets = dependentModule.getSourceSetsMap()
             val implementedSourceSetMaps = implementedModules.map { it.getSourceSetsMap() }
@@ -223,10 +221,18 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         val moduleDependencyData = ModuleDependencyData(ideModule.data, targetModule.data)
         moduleDependencyData.scope = DependencyScope.COMPILE
         moduleDependencyData.isExported = false
+        moduleDependencyData.isProductionOnTestDependency = targetModule.sourceSetName == "test"
         ideModule.createChild(ProjectKeys.MODULE_DEPENDENCY, moduleDependencyData)
     }
 
-    private fun findModuleById(ideProject: DataNode<ProjectData>, moduleId: String): DataNode<ModuleData>? {
-        return ideProject.children.find { (it.data as? ModuleData)?.id == moduleId } as DataNode<ModuleData>?
+    private fun findModuleById(ideProject: DataNode<ProjectData>, gradleModule: IdeaModule, moduleId: String): DataNode<ModuleData>? {
+        val isCompositeProject = resolverCtx.models.ideaProject != gradleModule.project
+        val compositePrefix =
+            if (isCompositeProject && moduleId.startsWith(":")) gradleModule.project.name
+            else ""
+
+        val fullModuleId = compositePrefix + moduleId
+
+        return ideProject.children.find { (it.data as? ModuleData)?.id == fullModuleId } as DataNode<ModuleData>?
     }
 }

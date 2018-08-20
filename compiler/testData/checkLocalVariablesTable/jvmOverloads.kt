@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class C {
     @kotlin.jvm.JvmOverloads fun foo(firstParam: Int, secondParam: String = "") {
     }

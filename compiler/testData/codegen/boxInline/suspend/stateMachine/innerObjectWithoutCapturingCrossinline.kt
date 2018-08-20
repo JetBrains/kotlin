@@ -1,13 +1,16 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: inlined.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
+// WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 
 import COROUTINES_PACKAGE.intrinsics.*
+import helpers.*
 
 var i = 0;
 
-suspend fun suspendHere() = suspendCoroutineOrReturn<Unit> {
+suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<Unit> {
     i++
     COROUTINE_SUSPENDED
 }
@@ -33,19 +36,10 @@ suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
 // COMMON_COROUTINES_TEST
 
 import COROUTINES_PACKAGE.*
+import helpers.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: Continuation<Unit> {
-        override val context: CoroutineContext
-            get() = EmptyCoroutineContext
-
-        override fun resume(value: Unit) {
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
-        }
-    })
+    c.startCoroutine(EmptyContinuation)
 }
 
 fun box(): String {

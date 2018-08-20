@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:Suppress("PackageDirectoryMismatch")
 package org.jetbrains.kotlin.pill
 
@@ -289,8 +294,12 @@ private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? 
     val addCompilerBuiltins = "Xadd-compiler-builtins"
     val loadBuiltinsFromDependencies = "Xload-builtins-from-dependencies"
 
+    fun isOptionForScriptingCompilerPlugin(option: String)
+            = option.startsWith("-Xplugin=") && option.contains("kotlin-scripting-compiler")
+
     val extraArguments = compileArguments.filter {
-        it.startsWith("-X") && it != "-$addCompilerBuiltins" && it != "-$loadBuiltinsFromDependencies"
+        it.startsWith("-X") && !isOptionForScriptingCompilerPlugin(it)
+                && it != "-$addCompilerBuiltins" && it != "-$loadBuiltinsFromDependencies"
     }
 
     return PSourceRootKotlinOptions(
@@ -357,11 +366,15 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
                 if (dependency.moduleGroup == mapper.group
                     && dependency.moduleName == mapper.module
                     && dependency.configuration in mapper.configurations
+                    && (mapper.version == null || dependency.moduleVersion == mapper.version)
                 ) {
                     val mappedDependency = mapper.mapping(dependency)
 
                     if (mappedDependency != null) {
-                        mainRoots += POrderRoot(mappedDependency.main, scope)
+                        val mainDependency = mappedDependency.main
+                        if (mainDependency != null) {
+                            mainRoots += POrderRoot(mainDependency, scope)
+                        }
 
                         for (deferredDep in mappedDependency.deferred) {
                             deferredRoots += POrderRoot(deferredDep, scope)

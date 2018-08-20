@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
+import org.junit.Assert
 import org.junit.Test
 import java.io.File
+import java.util.zip.ZipFile
 
 abstract class Kapt3BaseIT : BaseGradleIT() {
     companion object {
@@ -27,11 +29,19 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
     }
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(withDaemon = true)
+        super.defaultBuildOptions().copy(kaptOptions = kaptOptions())
+
+    protected open fun kaptOptions(): KaptOptions =
+        KaptOptions(verbose = true, useWorkers = false)
 
     fun CompiledProject.assertKaptSuccessful() {
         KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
     }
+}
+
+class Kapt3WorkersIT : Kapt3IT() {
+    override fun kaptOptions(): KaptOptions =
+        super.kaptOptions().copy(useWorkers = true)
 }
 
 open class Kapt3IT : Kapt3BaseIT() {
@@ -120,24 +130,6 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testArguments() {
-        Project("arguments", directoryPrefix = "kapt2").build("build") {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertContains(
-                "Options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
-                        "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
-                        "endsWithEquals=a:, withSpace=a b c,"
-            )
-            assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
-            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
-            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
-            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
-            assertContains("Annotation processor class names are set, skip AP discovery")
-        }
-    }
-
-    @Test
     fun testInheritedAnnotations() {
         Project("inheritedAnnotations", directoryPrefix = "kapt2").build("build") {
             assertSuccessful()
@@ -146,6 +138,24 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertFileExists("build/generated/source/kapt/main/example/AncestorClassGenerated.java")
             assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
             assertFileExists(javaClassesDir() + "example/AncestorClassGenerated.class")
+        }
+    }
+
+    @Test
+    fun testArguments() {
+        Project("arguments", directoryPrefix = "kapt2").build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertContains(
+                "AP options: {suffix=Customized, justColon=:, justEquals==, containsColon=a:b, " +
+                        "containsEquals=a=b, startsWithColon=:a, startsWithEquals==a, endsWithColon=a:, " +
+                        "endsWithEquals=a:, withSpace=a b c,"
+            )
+            assertContains("-Xmaxerrs=500, -Xlint:all=-Xlint:all") // Javac options test
+            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
+            assertFileExists(kotlinClassesDir() + "example/TestClass.class")
+            assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
+            assertContains("Annotation processor class names are set, skip AP discovery")
         }
     }
 
@@ -345,13 +355,22 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testLocationMapping() {
+        fun String.modifyNumbers(fn: (Int) -> Int): String =
+            replace("\\d+".toRegex()) { fn(it.value.toInt()).toString() }
+
         val project = Project("locationMapping", directoryPrefix = "kapt2")
+        val regex = "((Test\\.java)|(test\\.kt)):(\\d+): error: GenError element".toRegex()
+
+        fun CompiledProject.getErrorMessages(): String =
+            regex.findAll(output)
+                .map { it.value }
+                .joinToString("\n") { if (isWindows) it.modifyNumbers { it + 1 } else it }
 
         project.build("build") {
             assertFailed()
 
-            assertContains("Test.java:9: error: GenError element")
-            assertContains("Test.java:17: error: GenError element")
+            val expected = arrayOf(9, 17).joinToString("\n") { "Test.java:$it: error: GenError element" }
+            Assert.assertEquals(expected, getErrorMessages())
         }
 
         project.projectDir.getFileByName("build.gradle").modify {
@@ -361,11 +380,8 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("build") {
             assertFailed()
 
-            assertNotContains("Test.java:9: error: GenError element")
-            assertNotContains("Test.java:17: error: GenError element")
-
-            assertContains("test.kt:3: error: GenError element")
-            assertContains("test.kt:7: error: GenError element")
+            val expected = arrayOf(3, 7).joinToString("\n") { "test.kt:$it: error: GenError element" }
+            Assert.assertEquals(expected, getErrorMessages())
         }
     }
 
@@ -405,6 +421,55 @@ open class Kapt3IT : Kapt3BaseIT() {
         build("tasks") {
             assertSuccessful()
             assertNotContains("Resolved!")
+        }
+    }
+
+    @Test
+    fun testKt19179() {
+        val project = Project("kt19179", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertFileExists("processor/build/tmp/kapt3/classes/main/META-INF/services/javax.annotation.processing.Processor")
+
+            val processorJar = fileInWorkingDir("processor/build/libs/processor.jar")
+            assert(processorJar.exists())
+
+            val zip = ZipFile(processorJar)
+            @Suppress("ConvertTryFinallyToUseCall")
+            try {
+                assert(zip.getEntry("META-INF/services/javax.annotation.processing.Processor") != null)
+            } finally {
+                zip.close()
+            }
+
+            assertTasksExecuted(
+                ":processor:kaptGenerateStubsKotlin",
+                ":processor:kaptKotlin",
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
+        }
+
+        project.projectDir.getFileByName("Test.kt").modify { text ->
+            assert("SomeClass()" in text)
+            text.replace("SomeClass()", "SomeClass(); val a = 5")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin")
+        }
+
+        project.projectDir.getFileByName("Test.kt").modify { text ->
+            text + "\n\nfun t() {}"
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
         }
     }
 }

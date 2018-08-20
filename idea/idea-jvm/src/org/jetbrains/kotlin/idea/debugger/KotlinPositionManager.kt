@@ -101,8 +101,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) throw NoDataException.INSTANCE
 
-        val fileName = location.safeSourceName ?: throw NoDataException.INSTANCE
-        val lineNumber = location.safeLineNumber
+        val fileName = location.safeSourceName() ?: throw NoDataException.INSTANCE
+        val lineNumber = location.safeLineNumber()
         if (lineNumber < 0) {
             throw NoDataException.INSTANCE
         }
@@ -121,7 +121,9 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
                     val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
                     val project = myDebugProcess.project
 
-                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, sourceSearchScopes, javaClassName, javaSourceFileName)
+                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(
+                        project, sourceSearchScopes, javaClassName, javaSourceFileName, location)
+
                     if (defaultPsiFile != null) {
                         return SourcePosition.createFromLine(defaultPsiFile, 0)
                     }
@@ -136,7 +138,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         if (psiFile !is KtFile) throw NoDataException.INSTANCE
 
-        val sourceLineNumber = location.safeSourceLineNumber
+        val sourceLineNumber = location.safeSourceLineNumber()
         if (sourceLineNumber < 0) {
             throw NoDataException.INSTANCE
         }
@@ -156,7 +158,10 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             return SourcePosition.createFromLine(ktFile ?: psiFile, line - 1)
         }
 
-        val sameLineLocations = location.safeMethod?.safeAllLineLocations?.filter { it.safeLineNumber == lineNumber && it.safeSourceName == fileName }
+        val sameLineLocations = location.safeMethod()?.safeAllLineLocations()?.filter {
+            it.safeLineNumber() == lineNumber && it.safeSourceName() == fileName
+        }
+
         if (sameLineLocations != null) {
             // There're several locations for same source line. If same source position would be created for all of them,
             // breakpoints at this line will stop on every location.
@@ -250,25 +255,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         return null
     }
 
-    private val Location.safeSourceName: String? get() {
-        return try {
-            sourceName()
-        }
-        catch (e: AbsentInformationException) {
-            null
-        }
-        catch (e: InternalError) {
-            null
-        }
-    }
-
-    private val Location.safeLineNumber: Int get() = DebuggerUtilsEx.getLineNumber(this, false)
-    private val Location.safeSourceLineNumber: Int get() = DebuggerUtilsEx.getLineNumber(this, true)
-    private val Location.safeMethod: Method? get() = DebuggerUtilsEx.getMethod(this)
-    private val Method.safeAllLineLocations: MutableList<Location>? get() = DebuggerUtilsEx.allLineLocations(this)
-
     private fun getPsiFileByLocation(location: Location): PsiFile? {
-        val sourceName = location.safeSourceName ?: return null
+        val sourceName = location.safeSourceName() ?: return null
 
         val referenceInternalName = try {
             if (location.declaringType().containsKotlinStrata()) {
@@ -287,7 +275,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         val project = myDebugProcess.project
 
-        return DebuggerUtils.findSourceFileForClass(project, sourceSearchScopes, className, sourceName)
+        return DebuggerUtils.findSourceFileForClass(project, sourceSearchScopes, className, sourceName, location)
     }
 
     private fun defaultInternalName(location: Location): String {
@@ -306,7 +294,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
 
         if (psiFile is ClsFileImpl) {
             val decompiledPsiFile = psiFile.readAction { it.decompiledPsiFile }
-            if (decompiledPsiFile is KtClsFile && sourcePosition.line == -1) {
+            if (decompiledPsiFile is KtClsFile && runReadAction { sourcePosition.line } == -1) {
                 val className = JvmFileClassUtil.getFileClassInternalName(decompiledPsiFile)
                 return myDebugProcess.virtualMachineProxy.classesByName(className)
             }

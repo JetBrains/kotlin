@@ -94,12 +94,16 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
+ *
+ * @sample samples.text.Strings.toUpperCase
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
 
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
+ *
+ * @sample samples.text.Strings.toLowerCase
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
@@ -260,14 +264,14 @@ public inline fun String(bytes: ByteArray): String =
  * Converts the characters in the specified array to a string.
  */
 @kotlin.internal.InlineOnly
-public inline fun String(chars: CharArray): String =
+public actual inline fun String(chars: CharArray): String =
     java.lang.String(chars) as String
 
 /**
  * Converts the characters from a portion of the specified array to a string.
  */
 @kotlin.internal.InlineOnly
-public inline fun String(chars: CharArray, offset: Int, length: Int): String =
+public actual inline fun String(chars: CharArray, offset: Int, length: Int): String =
     java.lang.String(chars, offset, length) as String
 
 /**
@@ -313,7 +317,8 @@ public inline fun String.codePointCount(beginIndex: Int, endIndex: Int): Int =
 /**
  * Compares two strings lexicographically, optionally ignoring case differences.
  */
-public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
     if (ignoreCase)
         return (this as java.lang.String).compareToIgnoreCase(other)
     else
@@ -461,5 +466,5 @@ public actual fun CharSequence.repeat(n: Int): String {
  * Note that this Comparator does not take locale into account,
  * and will result in an unsatisfactory ordering for certain locales.
  */
-public val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
+public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
     get() = java.lang.String.CASE_INSENSITIVE_ORDER

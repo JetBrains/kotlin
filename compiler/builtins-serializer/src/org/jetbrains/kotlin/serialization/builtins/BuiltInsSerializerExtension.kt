@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnresolvedType
 
@@ -28,6 +30,9 @@ class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeriali
         "LongRange" to "kotlin/ranges/LongRange",
         "CharRange" to "kotlin/ranges/CharRange"
     )
+
+    override val metadataVersion: BinaryVersion
+        get() = BuiltInsBinaryVersion.INSTANCE
 
     override fun shouldUseTypeTable(): Boolean = true
 

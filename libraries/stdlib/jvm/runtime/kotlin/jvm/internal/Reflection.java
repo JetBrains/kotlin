@@ -69,6 +69,11 @@ public class Reflection {
         return factory.renderLambdaToString(lambda);
     }
 
+    @SinceKotlin(version = "1.3")
+    public static String renderLambdaToString(FunctionBase lambda) {
+        return factory.renderLambdaToString(lambda);
+    }
+
     // Functions
 
     public static KFunction function(FunctionReference f) {

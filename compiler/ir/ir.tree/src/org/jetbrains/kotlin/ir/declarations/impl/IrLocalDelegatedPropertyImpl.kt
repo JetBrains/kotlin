@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrLocalDelegatedPropertyImpl(
     startOffset: Int,
@@ -32,19 +32,21 @@ class IrLocalDelegatedPropertyImpl(
     origin: IrDeclarationOrigin,
     override val descriptor: VariableDescriptorWithAccessors,
     override val name: Name,
-    override val type: KotlinType,
+    override val type: IrType,
     override val isVar: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin),
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
     IrLocalDelegatedProperty {
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptorWithAccessors
+        descriptor: VariableDescriptorWithAccessors,
+        type: IrType
     ) : this(
         startOffset, endOffset, origin, descriptor,
-        descriptor.name, descriptor.type, descriptor.isVar
+        descriptor.name, type, descriptor.isVar
     )
 
     constructor(
@@ -52,8 +54,9 @@ class IrLocalDelegatedPropertyImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: VariableDescriptorWithAccessors,
+        type: IrType,
         delegate: IrVariable
-    ) : this(startOffset, endOffset, origin, descriptor) {
+    ) : this(startOffset, endOffset, origin, descriptor, type) {
         this.delegate = delegate
     }
 
@@ -62,10 +65,11 @@ class IrLocalDelegatedPropertyImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: VariableDescriptorWithAccessors,
+        type: IrType,
         delegate: IrVariable,
         getter: IrFunction,
         setter: IrFunction?
-    ) : this(startOffset, endOffset, origin, descriptor) {
+    ) : this(startOffset, endOffset, origin, descriptor, type) {
         this.delegate = delegate
         this.getter = getter
         this.setter = setter

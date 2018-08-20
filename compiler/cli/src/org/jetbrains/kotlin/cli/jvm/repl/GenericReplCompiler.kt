@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl
 
-
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -41,14 +41,18 @@ import kotlin.concurrent.write
 
 // WARNING: not thread safe, assuming external synchronization
 
-open class GenericReplCompiler(disposable: Disposable,
-                               scriptDefinition: KotlinScriptDefinition,
-                               private val compilerConfiguration: CompilerConfiguration,
-                               messageCollector: MessageCollector
+open class GenericReplCompiler(
+    disposable: Disposable,
+    scriptDefinition: KotlinScriptDefinition,
+    private val compilerConfiguration: CompilerConfiguration,
+    messageCollector: MessageCollector
 ) : ReplCompiler {
 
-    constructor(scriptDefinition: KotlinScriptDefinition, compilerConfiguration: CompilerConfiguration, messageCollector: MessageCollector) :
-        this(Disposer.newDisposable(), scriptDefinition, compilerConfiguration, messageCollector)
+    constructor(
+        scriptDefinition: KotlinScriptDefinition,
+        compilerConfiguration: CompilerConfiguration,
+        messageCollector: MessageCollector
+    ) : this(Disposer.newDisposable(), scriptDefinition, compilerConfiguration, messageCollector)
 
     private val checker = GenericReplChecker(disposable, scriptDefinition, compilerConfiguration, messageCollector)
 
@@ -66,7 +70,8 @@ open class GenericReplCompiler(disposable: Disposable,
                     when (res) {
                         is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete()
                         is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message, res.location)
-                        is ReplCheckResult.Ok -> {} // continue
+                        is ReplCheckResult.Ok -> {
+                        } // continue
                     }
                 }
                 Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
@@ -88,29 +93,28 @@ open class GenericReplCompiler(disposable: Disposable,
             }
 
             val generationState = GenerationState.Builder(
-                    psiFile.project,
-                    ClassBuilderFactories.BINARIES,
-                    compilerState.analyzerEngine.module,
-                    compilerState.analyzerEngine.trace.bindingContext,
-                    listOf(psiFile),
-                    compilerConfiguration
+                psiFile.project,
+                ClassBuilderFactories.BINARIES,
+                compilerState.analyzerEngine.module,
+                compilerState.analyzerEngine.trace.bindingContext,
+                listOf(psiFile),
+                compilerConfiguration
             ).build()
             generationState.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
             generationState.replSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
             generationState.beforeCompile()
             KotlinCodegenFacade.generatePackage(
-                    generationState,
-                    psiFile.script!!.containingKtFile.packageFqName,
-                    setOf(psiFile.script!!.containingKtFile),
-                    org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
+                generationState,
+                psiFile.script!!.containingKtFile.packageFqName,
+                setOf(psiFile.script!!.containingKtFile),
+                CompilationErrorHandler.THROW_EXCEPTION
+            )
 
             val generatedClassname = makeScriptBaseName(codeLine)
             compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
-            val expression = psiFile.getChildOfType<KtScript>()?.
-                    getChildOfType<KtBlockExpression>()?.
-                    getChildOfType<KtScriptInitializer>()?.
-                    getChildOfType<KtExpression>()
+            val expression = psiFile.getChildOfType<KtScript>()?.getChildOfType<KtBlockExpression>()?.getChildOfType<KtScriptInitializer>()
+                ?.getChildOfType<KtExpression>()
 
             val type = expression?.let {
                 compilerState.analyzerEngine.trace.bindingContext.getType(it)
@@ -118,17 +122,19 @@ open class GenericReplCompiler(disposable: Disposable,
                 DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
             }
 
-            return ReplCompileResult.CompiledClasses(LineId(codeLine),
-                                                     compilerState.history.map { it.id },
-                                                     generatedClassname,
-                                                     generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
-                                                     generationState.replSpecific.hasResult,
-                                                     classpathAddendum ?: emptyList(),
-                                                     type)
+            return ReplCompileResult.CompiledClasses(
+                LineId(codeLine),
+                compilerState.history.map { it.id },
+                generatedClassname,
+                generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
+                generationState.replSpecific.hasResult,
+                classpathAddendum ?: emptyList(),
+                type
+            )
         }
     }
 
     companion object {
-        private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
+        private const val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
     }
 }

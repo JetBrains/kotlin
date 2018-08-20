@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.util.fileAttribute
+import org.jetbrains.kotlin.idea.core.util.cachedFileAttribute
 import org.jetbrains.kotlin.idea.core.util.readString
 import org.jetbrains.kotlin.idea.core.util.writeString
 import java.io.DataInputStream
 import java.io.DataOutputStream
 
-var VirtualFile.scriptRelatedModuleName: String? by fileAttribute(
+var VirtualFile.scriptRelatedModuleName: String? by cachedFileAttribute(
     name = "kotlin-script-moduleName",
     version = 1,
     read = DataInputStream::readString,

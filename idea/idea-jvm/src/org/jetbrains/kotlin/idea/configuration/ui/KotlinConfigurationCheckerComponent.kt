@@ -21,6 +21,7 @@ import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
@@ -28,11 +29,12 @@ import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.startup.StartupManager
 import org.jetbrains.kotlin.idea.configuration.checkHideNonConfiguredNotifications
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
+import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
 import org.jetbrains.kotlin.idea.versions.findOutdatedKotlinLibraries
-import org.jetbrains.kotlin.idea.versions.notifyOutdatedKotlinRuntime
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectComponent(project) {
@@ -66,6 +68,12 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
                 checkHideNonConfiguredNotifications(project)
             }
         })
+
+        connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
+            notifyOutdatedBundledCompilerIfNecessary(project)
+        })
+
+        notifyKotlinStyleUpdateIfNeeded(project)
     }
 
     override fun projectOpened() {
@@ -84,13 +92,8 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
                 module.getAndCacheLanguageLevelByDependencies()
             }
 
-            val libraries = findOutdatedKotlinLibraries(myProject)
-            if (!libraries.isEmpty()) {
-                ApplicationManager.getApplication().invokeLater {
-                    notifyOutdatedKotlinRuntime(myProject, libraries)
-                }
-            }
             if (!isSyncing) {
+                val libraries = findOutdatedKotlinLibraries(myProject)
                 val excludeModules = collectModulesWithOutdatedRuntime(libraries)
                 showConfigureKotlinNotificationIfNeeded(myProject, excludeModules)
             } else {

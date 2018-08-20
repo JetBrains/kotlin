@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -126,6 +128,14 @@ object InlineTestUtil {
 
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
                     if (skipMethodsOfThisClass) {
+                        return null
+                    }
+
+                    if (name == DO_RESUME_METHOD_NAME && desc == "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;") {
+                        return null
+                    }
+
+                    if (name == INVOKE_SUSPEND_METHOD_NAME && desc == "(Ljava/lang/Object;)Ljava/lang/Object;") {
                         return null
                     }
 

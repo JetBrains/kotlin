@@ -24,35 +24,37 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 
 fun FunctionDescriptor.toStatic(
-        newOwner: ClassOrPackageFragmentDescriptor,
-        name: Name = this.name,
-        dispatchReceiverClass: ClassDescriptor? = this.containingDeclaration as? ClassDescriptor
+    newOwner: ClassOrPackageFragmentDescriptor,
+    name: Name = this.name,
+    dispatchReceiverClass: ClassDescriptor? = this.containingDeclaration as? ClassDescriptor
 ): FunctionDescriptor {
     val newFunction = SimpleFunctionDescriptorImpl.create(
-            newOwner, AnnotationsImpl(emptyList()),
-            name,
-            CallableMemberDescriptor.Kind.DECLARATION, this.source
+        newOwner, AnnotationsImpl(emptyList()),
+        name,
+        CallableMemberDescriptor.Kind.DECLARATION, this.source
     )
 
     var offset = 0
     val dispatchReceiver = dispatchReceiverParameter?.let {
         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("this"),
-                dispatchReceiverClass!!.defaultType, false, false, false, null, dispatchReceiverClass.source, null)
+            newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("this"),
+            dispatchReceiverClass!!.defaultType, false, false, false, null, dispatchReceiverClass.source, null
+        )
     }
 
     val extensionReceiver = extensionReceiverParameter?.let {
         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
-                it.value.type, false, false, false, null, it.source, null)
+            newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
+            it.value.type, false, false, false, null, it.source, null
+        )
     }
 
     val valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
-                          valueParameters.map { it.copy(newFunction, it.name, it.index + offset) }
+            valueParameters.map { it.copy(newFunction, it.name, it.index + offset) }
 
     newFunction.initialize(
-            null, null, emptyList()/*TODO: type parameters*/,
-            valueParameters, returnType, Modality.FINAL, Visibilities.PUBLIC
+        null, null, emptyList()/*TODO: type parameters*/,
+        valueParameters, returnType, Modality.FINAL, Visibilities.PUBLIC
     )
     return newFunction
 }

@@ -1,0 +1,151 @@
+== s ==
+val s = mutableListOf<String>()
+---------------------
+L0:
+  1 <START>
+    v(val s = mutableListOf<String>())
+    mark(mutableListOf<String>())
+    magic[UNRESOLVED_CALL](mutableListOf<String>()|!<v0>) -> <v1>
+    w(s|<v1>)
+L1:
+    <END>                                                            NEXT:[<SINK>]
+error:
+    <ERROR>                                                          PREV:[]
+sink:
+    <SINK>                                                           PREV:[<ERROR>, <END>]
+=====================
+== test ==
+fun test(name: String?, flag: Boolean): Boolean {
+    try {
+        name?.let {
+            if (flag) {
+                s.add(it)
+            }
+            else {
+                s.remove(it)
+            }
+
+            return true
+        }
+
+        return false
+    } finally {
+        name?.hashCode()
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(name: String?)
+    magic[FAKE_INITIALIZER](name: String?) -> <v0>
+    w(name|<v0>)
+    v(flag: Boolean)
+    magic[FAKE_INITIALIZER](flag: Boolean) -> <v1>
+    w(flag|<v1>)
+  2 mark({ try { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false } finally { name?.hashCode() } })
+    mark(try { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false } finally { name?.hashCode() })
+    jmp?(L2)                                                                                                                                          NEXT:[mark({ name?.hashCode() }), mark({ name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false })]
+  3 mark({ name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false })
+    mark(name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true })
+    jf(L3)                                                                                                                                            NEXT:[jmp?(L2), r(name) -> <v2>]
+    r(name) -> <v2>
+    mark({ if (flag) { s.add(it) } else { s.remove(it) } return true })
+    r({ if (flag) { s.add(it) } else { s.remove(it) } return true }) -> <v3>
+    mark(let { if (flag) { s.add(it) } else { s.remove(it) } return true })
+    call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>)
+L4 [before inlined declaration]:
+    inlined({ if (flag) { s.add(it) } else { s.remove(it) } return true })                                                                            NEXT:[<SINK>]
+L3 [result of call]:
+L5 [after inlined declaration]:
+    jmp?(L2)                                                                                                                                          NEXT:[mark({ name?.hashCode() }), r(false) -> <v5>]                                                                                                                        PREV:[jf(L3)]
+    r(false) -> <v5>
+  6 mark({ name?.hashCode() })
+    mark(name?.hashCode())
+    jf(L13)                                                                                                                                           NEXT:[ret(*|<v5>) L1, r(name) -> <v11>]
+    r(name) -> <v11>
+    mark(hashCode())
+    call(hashCode(), hashCode|<v11>) -> <v12>
+L13 [copy of L11, result of call]:
+  3 ret(*|<v5>) L1                                                                                                                                    NEXT:[<END>]                                                                                                                                                               PREV:[jf(L13), call(hashCode(), hashCode|<v11>) -> <v12>]
+- 2 jmp?(L2)                                                                                                                                          NEXT:[mark({ name?.hashCode() }), jmp(L14)]                                                                                                                                PREV:[]
+-   jmp(L14)                                                                                                                                          NEXT:[mark({ name?.hashCode() })]                                                                                                                                          PREV:[]
+L2 [onExceptionToFinallyBlock]:
+  6 mark({ name?.hashCode() })                                                                                                                        PREV:[jmp?(L2), jmp?(L2)]
+    mark(name?.hashCode())
+    jf(L15)                                                                                                                                           NEXT:[jmp(error), r(name) -> <v11>]
+    r(name) -> <v11>
+    mark(hashCode())
+    call(hashCode(), hashCode|<v11>) -> <v12>
+L15 [copy of L11, result of call]:
+  2 jmp(error)                                                                                                                                        NEXT:[<ERROR>]                                                                                                                                                             PREV:[jf(L15), call(hashCode(), hashCode|<v11>) -> <v12>]
+L14 [skipFinallyToErrorBlock]:
+- 6 mark({ name?.hashCode() })                                                                                                                        PREV:[]
+-   mark(name?.hashCode())                                                                                                                            PREV:[]
+-   jf(L16)                                                                                                                                           NEXT:[merge(try { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false } finally { name?.hashCode() }|!<v6>) -> <v7>, r(name) -> <v11>]    PREV:[]
+-   r(name) -> <v11>                                                                                                                                  PREV:[]
+-   mark(hashCode())                                                                                                                                  PREV:[]
+-   call(hashCode(), hashCode|<v11>) -> <v12>                                                                                                         PREV:[]
+L16 [copy of L11, result of call]:
+- 2 merge(try { name?.let { if (flag) { s.add(it) } else { s.remove(it) } return true } return false } finally { name?.hashCode() }|!<v6>) -> <v7>    PREV:[]
+L1:
+  1 <END>                                                                                                                                             NEXT:[<SINK>]                                                                                                                                                              PREV:[ret(*|<v10>) L1, ret(*|<v5>) L1]
+error:
+    <ERROR>                                                                                                                                           PREV:[jmp(error)]
+sink:
+    <SINK>                                                                                                                                            PREV:[<ERROR>, <END>, inlined({ if (flag) { s.add(it) } else { s.remove(it) } return true })]
+=====================
+== inlined anonymous_0 ==
+{
+            if (flag) {
+                s.add(it)
+            }
+            else {
+                s.remove(it)
+            }
+
+            return true
+        }
+---------------------
+L6:
+  4 <START>
+  5 mark(if (flag) { s.add(it) } else { s.remove(it) } return true)
+    mark(if (flag) { s.add(it) } else { s.remove(it) })
+    r(flag) -> <v0>
+    jf(L8|<v0>)                                                                NEXT:[mark({ s.remove(it) }), mark({ s.add(it) })]
+  6 mark({ s.add(it) })
+    mark(s.add(it))
+    r(s) -> <v1>
+    r(it) -> <v2>
+    magic[VALUE_CONSUMER](it|<v2>) -> <v3>
+    mark(add(it))
+    call(add(it), <ERROR FUNCTION>|<v1>) -> <v4>
+  5 jmp(L9)                                                                    NEXT:[merge(if (flag) { s.add(it) } else { s.remove(it) }|<v4>, <v8>) -> <v9>]
+L8 [else branch]:
+  6 mark({ s.remove(it) })                                                     PREV:[jf(L8|<v0>)]
+    mark(s.remove(it))
+    r(s) -> <v5>
+    r(it) -> <v6>
+    magic[VALUE_CONSUMER](it|<v6>) -> <v7>
+    mark(remove(it))
+    call(remove(it), <ERROR FUNCTION>|<v5>) -> <v8>
+L9 ['if' expression result]:
+  5 merge(if (flag) { s.add(it) } else { s.remove(it) }|<v4>, <v8>) -> <v9>    PREV:[jmp(L9), call(remove(it), <ERROR FUNCTION>|<v5>) -> <v8>]
+    r(true) -> <v10>
+L10 [start finally]:
+  6 mark({ name?.hashCode() })
+    mark(name?.hashCode())
+    jf(L11)                                                                    NEXT:[ret(*|<v10>) L1, r(name) -> <v11>]
+    r(name) -> <v11>
+    mark(hashCode())
+    call(hashCode(), hashCode|<v11>) -> <v12>
+L11 [result of call]:
+L12 [finish finally]:
+  5 ret(*|<v10>) L1                                                            NEXT:[<END>]                                                                      PREV:[jf(L11), call(hashCode(), hashCode|<v11>) -> <v12>]
+- 4 ret(*|!<v13>) L7                                                           PREV:[]
+L7:
+-   <END>                                                                      NEXT:[<SINK>]                                                                     PREV:[]
+error:
+-   <ERROR>                                                                    PREV:[]
+sink:
+-   <SINK>                                                                     PREV:[]
+=====================

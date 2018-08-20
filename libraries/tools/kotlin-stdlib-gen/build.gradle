@@ -10,7 +10,6 @@ dependencies {
 }
 
 compileKotlin {
-    compilerJarFile = null
     kotlinOptions {
         languageVersion = "1.2"
         apiVersion = "1.2"

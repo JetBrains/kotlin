@@ -14,6 +14,9 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.jsSyntheticTranslateExtension"
                         interface="org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension"
                         area="IDEA_PROJECT"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.irGenerationExtension"
+                        interface="org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension"
+                        area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
                         area="IDEA_PROJECT"/>

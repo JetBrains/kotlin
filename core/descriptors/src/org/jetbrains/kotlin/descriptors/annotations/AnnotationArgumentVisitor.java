@@ -50,4 +50,12 @@ public interface AnnotationArgumentVisitor<R, D> {
     R visitAnnotationValue(AnnotationValue value, D data);
 
     R visitKClassValue(KClassValue value, D data);
+
+    R visitUByteValue(UByteValue value, D data);
+
+    R visitUShortValue(UShortValue value, D data);
+
+    R visitUIntValue(UIntValue value, D data);
+
+    R visitULongValue(ULongValue value, D data);
 }

@@ -47,12 +47,12 @@ object IdeaSuperMethodSearcher : SuperMethodsSearcher {
 
 private object IdeaJavaDataFlowAnalyzerFacade : JavaDataFlowAnalyzerFacade {
     override fun variableNullability(variable: PsiVariable, context: PsiElement): Nullability =
-            DfaUtil.checkNullness(variable, context).toNullability()
+            DfaUtil.checkNullness(variable, context).toJ2KNullability()
 
     override fun methodNullability(method: PsiMethod): Nullability =
-            DfaUtil.inferMethodNullity(method).toNullability()
+            DfaUtil.inferMethodNullity(method).toJ2KNullability()
 
-    private fun Nullness.toNullability() = when (this) {
+    private fun Nullness.toJ2KNullability() = when (this) {
         Nullness.UNKNOWN -> Nullability.Default
         Nullness.NOT_NULL -> Nullability.NotNull
         Nullness.NULLABLE -> Nullability.Nullable

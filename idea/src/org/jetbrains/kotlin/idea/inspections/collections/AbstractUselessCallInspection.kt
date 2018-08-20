@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 abstract class AbstractUselessCallInspection : AbstractKotlinInspection() {
 
@@ -58,9 +57,9 @@ abstract class AbstractUselessCallInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = QualifiedExpressionVisitor(holder, isOnTheFly)
 
+    protected data class Conversion(val replacementName: String? = null)
 
     protected companion object {
-        data class Conversion(val replacementName: String? = null)
 
         val deleteConversion = Conversion()
 

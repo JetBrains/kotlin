@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.TestLoggerFactory
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.plugins.groovy.GroovyFileType
 import java.io.File
 
 abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -40,6 +42,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         try {
             super.setUp()
             EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
+            runWriteAction { FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle") }
         } catch (e: Throwable) {
             TestLoggerFactory.onTestFinished(false)
             throw e

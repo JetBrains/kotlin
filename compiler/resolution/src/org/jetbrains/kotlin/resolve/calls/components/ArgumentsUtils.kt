@@ -69,7 +69,7 @@ fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     return DFS.ifAny(
         listOf(this),
         { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
-        { it.declaresDefaultValue() || it.isActualParameterWithAnyExpectedDefault }
+        { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }
     )
 }
 

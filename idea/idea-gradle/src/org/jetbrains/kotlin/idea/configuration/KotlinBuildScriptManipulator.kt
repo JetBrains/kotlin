@@ -82,19 +82,19 @@ class KotlinBuildScriptManipulator(
                             with(KotlinWithGradleConfigurator.getManipulator(it)) {
                                 addPluginRepository(repository)
                                 addMavenCentralPluginRepository()
+                                addPluginRepository(DEFAULT_GRADLE_PLUGIN_REPOSITORY)
                             }
                         }
                     }
-                    addMavenCentralIfMissing()
                 }
             } else {
                 script?.blockExpression?.addDeclarationIfMissing("val $GSK_KOTLIN_VERSION_PROPERTY_NAME: String by extra", true)
                 getApplyBlock()?.createPluginIfMissing(kotlinPluginName)
                 getDependenciesBlock()?.addCompileStdlibIfMissing(stdlibArtifactName)
-                getRepositoriesBlock()?.apply {
-                    addRepositoryIfMissing(version)
-                    addMavenCentralIfMissing()
-                }
+            }
+            getRepositoriesBlock()?.apply {
+                addRepositoryIfMissing(version)
+                addMavenCentralIfMissing()
             }
             jvmTarget?.let {
                 changeKotlinTaskParameter("jvmTarget", it, forTests = false)
@@ -119,9 +119,14 @@ class KotlinBuildScriptManipulator(
         libraryDescriptor: ExternalLibraryDescriptor,
         isAndroidModule: Boolean
     ) {
-        val kotlinLibraryVersion = libraryDescriptor.maxVersion.let {
-            if (it == GSK_KOTLIN_VERSION_PROPERTY_NAME) "\$$it" else it
-        }
+        val kotlinLibraryVersion = libraryDescriptor.maxVersion
+            .takeIf {
+                !useNewSyntax(if (isAndroidModule) "kotlin-android" else KotlinGradleModuleConfigurator.KOTLIN)
+            }
+            .let {
+                if (it == GSK_KOTLIN_VERSION_PROPERTY_NAME) "\$$it" else it
+            }
+
         scriptFile.getDependenciesBlock()?.apply {
             addExpressionIfMissing(
                 getCompileDependencySnippet(

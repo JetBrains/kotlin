@@ -51,10 +51,10 @@ UFile (package = ) [public final class StringTemplateComplexKt {...]
                 UReturnExpression [return i]
                     USimpleNameReferenceExpression (identifier = i) [i] : PsiType:int
         UAnnotationMethod (name = foo) [public static final fun foo() : void {...}]
-            UBlockExpression [{...}] : PsiType:Unit
-                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(baz)] : PsiType:Unit
+            UBlockExpression [{...}] : PsiType:void
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) [println(baz)] : PsiType:void
                     UIdentifier (Identifier (println)) [UIdentifier (Identifier (println))]
-                    USimpleNameReferenceExpression (identifier = println) [println] : PsiType:Unit
+                    USimpleNameReferenceExpression (identifier = println) [println] : PsiType:void
                     USimpleNameReferenceExpression (identifier = baz) [baz]
                 UDeclarationsExpression [var template1: java.lang.String = simpleForTemplate()]
                     ULocalVariable (name = template1) [var template1: java.lang.String = simpleForTemplate()]

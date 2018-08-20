@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -41,24 +40,28 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
             false, false, variableDescriptor.isLateInit, variableDescriptor.source
         )
 
-        val valueType = originalDeclaration.descriptor.type
+        val valueType = originalDeclaration.type
         val boxConstructor = closureBoxConstructorTypeDescriptor
         val boxConstructorSymbol = closureBoxConstructorTypeSymbol
-        val constructorTypeParam = closureBoxConstructorTypeDescriptor.typeParameters[0]
-        val boxConstructorTypeArgument = mapOf(constructorTypeParam to valueType)
         val initializer = originalDeclaration.initializer ?: IrConstImpl.constNull(
             originalDeclaration.startOffset,
             originalDeclaration.endOffset,
             valueType
         )
+        // TODO use buildCall?
         val constructorCall = IrCallImpl(
             originalDeclaration.startOffset,
             originalDeclaration.endOffset,
+            // TODO wrong type
+            originalDeclaration.type,
             boxConstructorSymbol,
             boxConstructor,
-            boxConstructorTypeArgument,
+            1,
             JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS
-        ).apply { putValueArgument(0, initializer) }
+        ).apply {
+            putTypeArgument(0, valueType)
+            putValueArgument(0, initializer)
+        }
 
 
         return IrVariableImpl(
@@ -66,6 +69,8 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
             originalDeclaration.endOffset,
             originalDeclaration.origin,
             sharedVariableDescriptor,
+            // TODO wrong type ?
+            originalDeclaration.type,
             constructorCall
         )
     }
@@ -76,9 +81,11 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
         IrGetFieldImpl(
             originalGet.startOffset, originalGet.endOffset,
             closureBoxFieldSymbol,
+            originalGet.type,
             IrGetValueImpl(
                 originalGet.startOffset,
                 originalGet.endOffset,
+                originalGet.type,
                 sharedVariableSymbol
             ),
             originalGet.origin
@@ -91,9 +98,11 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
             IrGetValueImpl(
                 originalSet.startOffset,
                 originalSet.endOffset,
+                originalSet.type,
                 sharedVariableSymbol
             ),
             originalSet.value,
+            originalSet.type,
             originalSet.origin
         )
 
@@ -136,19 +145,7 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
                 listOf(), true
             )
 
-            val paramDesc = ValueParameterDescriptorImpl(
-                this,
-                null,
-                0,
-                Annotations.EMPTY,
-                Name.identifier("v"),
-                parameterType,
-                false,
-                false,
-                false,
-                null,
-                SourceElement.NO_SOURCE
-            )
+            val paramDesc = createValueParameter(this, 0, "v", parameterType)
 
             initialize(listOf(paramDesc), Visibilities.PUBLIC)
             returnType = KotlinTypeFactory.simpleNotNullType(

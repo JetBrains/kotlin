@@ -37,8 +37,8 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         private val LAMBDA_SUPERCLASSES = listOf(ClassBytes("kotlin.jvm.internal.Lambda"))
     }
 
-    override fun isApplicable(context: EvaluationContextImpl, hasAdditionalClasses: Boolean, hasLoops: Boolean): Boolean {
-        return (hasAdditionalClasses || hasLoops) && context.classLoader != null && !context.debugProcess.isDexDebug()
+    override fun isApplicable(context: EvaluationContextImpl, info: ClassLoadingAdapter.Companion.ClassInfoForEvaluator) = with(info) {
+        isCompilingEvaluatorPreferred && context.classLoader != null && !context.debugProcess.isDexDebug()
     }
 
     override fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference {

@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
@@ -119,8 +121,13 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             val expressionTypeDeclaration = expressionType.constructor.declarationDescriptor?.let {
                 DescriptorToSourceUtils.descriptorToDeclaration(it)
             } as? KtClassOrObject
-            expressionTypeDeclaration?.let { actions.add(LetImplementInterfaceFix(it, expectedType, expressionType)) }
+            if (expressionTypeDeclaration != null && expectedType != TypeUtils.makeNotNullable(expressionType)) {
+                actions.add(LetImplementInterfaceFix(expressionTypeDeclaration, expectedType, expressionType))
+            }
         }
+
+
+        actions.addAll(WrapWithCollectionLiteralCallFix.create(expectedType, expressionType, diagnosticElement))
 
         ConvertCollectionFix.getConversionTypeOrNull(expressionType, expectedType)?.let {
             actions.add(ConvertCollectionFix(diagnosticElement, it))

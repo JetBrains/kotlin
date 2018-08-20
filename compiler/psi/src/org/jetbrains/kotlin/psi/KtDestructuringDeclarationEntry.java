@@ -122,7 +122,8 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
     @NotNull
     private ASTNode getParentNode() {
         ASTNode parent = getNode().getTreeParent();
-        assert parent.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION;
+        assert parent.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION :
+                "parent is " + parent.getElementType();
         return parent;
     }
 

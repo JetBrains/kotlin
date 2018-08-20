@@ -27,9 +27,6 @@ interface IrVariable : IrValueDeclaration, IrSymbolDeclaration<IrVariableSymbol>
     val isConst: Boolean
     val isLateinit: Boolean
 
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.VARIABLE
-
     var initializer: IrExpression?
 }
 

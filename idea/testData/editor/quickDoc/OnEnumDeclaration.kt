@@ -3,4 +3,4 @@
  */
 enum class SomeEnum<caret>
 
-//INFO: <pre><b>public</b> <b>final</b> <b>enum class</b> SomeEnum : <a href="psi_element://kotlin.Enum">Enum</a>&lt;<a href="psi_element://SomeEnum">SomeEnum</a>&gt; <i>defined in</i> root package <i>in file</i> OnEnumDeclaration.kt</pre><p>Useless one</p>
+//INFO: <div class='definition'><pre><font color="808080"><i>OnEnumDeclaration.kt</i></font><br>public final enum class <b>SomeEnum</b> : <a href="psi_element://kotlin.Enum">Enum</a>&lt;<a href="psi_element://SomeEnum">SomeEnum</a>&gt;</pre></div><div class='content'><p>Useless one</p></div><table class='sections'></table>

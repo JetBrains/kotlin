@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1109
 // KT-2470 another name mangling bug: kotlin.test.failsWith() gets generated to invalid JS
 

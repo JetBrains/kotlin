@@ -2,48 +2,6 @@ package
 
 package java {
 
-    package java.awt {
-
-        package java.awt.event {
-        }
-    }
-
-    package java.beans {
-
-        package java.beans.beancontext {
-        }
-    }
-
-    package java.io {
-    }
-
-    package java.lang {
-
-        package java.lang.annotation {
-        }
-
-        package java.lang.reflect {
-        }
-    }
-
-    package java.net {
-    }
-
-    package java.nio {
-
-        package java.nio.charset {
-        }
-    }
-
-    package java.rmi {
-    }
-
-    package java.security {
-    }
-
-    package java.sql {
-    }
-
     package java.util {
 
         public open class Collection {
@@ -52,18 +10,6 @@ package java {
             public open fun foo(): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        }
-
-        package java.util.concurrent {
-
-            package java.util.concurrent.atomic {
-            }
-
-            package java.util.concurrent.locks {
-            }
-        }
-
-        package java.util.regex {
         }
     }
 }

@@ -19,13 +19,16 @@ package org.jetbrains.kotlin.idea.inspections.branchedTransformations
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
@@ -73,8 +76,9 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
             KtPsiUtil.deparenthesize(newExpr)
         }
 
-        if (editor != null) {
-            (resultExpr as? KtSafeQualifiedExpression)?.inlineReceiverIfApplicableWithPrompt(editor)
+        if (editor != null && resultExpr is KtSafeQualifiedExpression) {
+            resultExpr.inlineReceiverIfApplicableWithPrompt(editor)
+            resultExpr.renameLetParameter(editor)
         }
     }
 
@@ -83,6 +87,22 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
         negatedClause == null && baseClause.isUsedAsExpression(context) -> false
         negatedClause != null && !negatedClause.isNullExpression() -> false
         else -> baseClause.evaluatesTo(receiverExpression) || baseClause.hasFirstReceiverOf(receiverExpression) ||
-                receiverExpression is KtThisExpression && getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
+                receiverExpression is KtThisExpression && getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true ||
+                replaceableCallExpression()
+    }
+
+    private fun IfThenToSelectData.replaceableCallExpression(): Boolean {
+        val callExpression = baseClause as? KtCallExpression ?: return false
+        val arguments = callExpression.valueArguments.map { it.getArgumentExpression() }
+        return arguments.any { it?.evaluatesTo(receiverExpression) == true } && arguments.all { it is KtNameReferenceExpression }
+    }
+
+    private fun KtSafeQualifiedExpression.renameLetParameter(editor: Editor) {
+        val callExpression = selectorExpression as? KtCallExpression ?: return
+        if (callExpression.calleeExpression?.text != "let") return
+        val parameter = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.valueParameters?.singleOrNull() ?: return
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+        editor.caretModel.moveToOffset(parameter.startOffset)
+        KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
     }
 }

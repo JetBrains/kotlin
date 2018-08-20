@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -42,11 +43,18 @@ class IrClassImpl(
     override val isCompanion: Boolean,
     override val isInner: Boolean,
     override val isData: Boolean,
-    override val isExternal: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin),
+    override val isExternal: Boolean,
+    override val isInline: Boolean
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
     IrClass {
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrClassSymbol) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrClassSymbol
+    ) :
             this(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name, symbol.descriptor.kind,
@@ -54,14 +62,23 @@ class IrClassImpl(
                 isCompanion = symbol.descriptor.isCompanionObject,
                 isInner = symbol.descriptor.isInner,
                 isData = symbol.descriptor.isData,
-                isExternal = symbol.descriptor.isEffectivelyExternal()
+                isExternal = symbol.descriptor.isEffectivelyExternal(),
+                isInline = symbol.descriptor.isInline
             )
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ClassDescriptor
+    ) :
             this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor))
 
     constructor(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ClassDescriptor,
         members: List<IrDeclaration>
     ) : this(startOffset, endOffset, origin, descriptor) {
         addAll(members)
@@ -79,7 +96,7 @@ class IrClassImpl(
 
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 
-    override val superClasses: MutableList<IrClassSymbol> = SmartList()
+    override val superTypes: MutableList<IrType> = SmartList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)

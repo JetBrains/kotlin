@@ -42,18 +42,20 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println()
 
         out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
+        out.println("@SinceKotlin(\"1.3\")")
+        out.println("@ExperimentalUnsignedTypes")
         out.println("public inline class $className internal constructor(private val data: $storageType) : Comparable<$className> {")
         out.println()
         out.println("""    companion object {
         /**
          * A constant holding the minimum value an instance of $className can have.
          */
-        public /*const*/ val MIN_VALUE: $className = $className(0)
+        public const val MIN_VALUE: $className = $className(0)
 
         /**
          * A constant holding the maximum value an instance of $className can have.
          */
-        public /*const*/ val MAX_VALUE: $className = $className(-1)
+        public const val MAX_VALUE: $className = $className(-1)
     }""")
 
         generateCompareTo()
@@ -196,6 +198,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         for (otherType in UnsignedType.values()) {
             val otherSigned = otherType.asSigned.capitalized
             val thisSigned = type.asSigned.capitalized
+            out.println("@SinceKotlin(\"1.3\")")
+            out.println("@ExperimentalUnsignedTypes")
             out.print("public fun $otherSigned.to$className(): $className = ")
             out.println(when {
                 otherType < type -> "$className(this.to$thisSigned() and ${otherType.mask})"
@@ -238,6 +242,8 @@ class UnsignedIteratorsGenerator(out: PrintWriter) : BuiltInsSourceGenerator(out
         for (type in UnsignedType.values()) {
             val s = type.capitalized
             out.println("/** An iterator over a sequence of values of type `$s`. */")
+            out.println("@SinceKotlin(\"1.3\")")
+            out.println("@ExperimentalUnsignedTypes")
             out.println("public abstract class ${s}Iterator : Iterator<$s> {")
             // TODO: Sort modifiers
             out.println("    override final fun next() = next$s()")
@@ -257,8 +263,12 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     val storageElementType = type.asSigned.capitalized
     val storageArrayType = storageElementType + "Array"
     override fun generateBody() {
+        out.println("@SinceKotlin(\"1.3\")")
+        out.println("@ExperimentalUnsignedTypes")
+        out.println("public inline class $arrayType")
         out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
-        out.println("public inline class $arrayType internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
+        out.println("@PublishedApi")
+        out.println("internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
             """
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
@@ -290,15 +300,18 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
 
         out.println("}")
 
-        out.println("""
-public /*inline*/ fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
+        // TODO: Make inline constructor, like in ByteArray
+        out.println()
+        out.println("@SinceKotlin(\"1.3\")")
+        out.println("@ExperimentalUnsignedTypes")
+        out.println("""public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
     return $arrayType($storageArrayType(size) { index -> init(index).to$storageElementType() })
 }
 
-@Suppress("FORBIDDEN_VARARG_PARAMETER_TYPE")
-public fun $arrayTypeOf(vararg elements: $elementType): $arrayType {
-    return $arrayType(elements.size) { index -> elements[index] }
-}"""
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+// TODO: @kotlin.internal.InlineOnly
+public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elements"""
         )
     }
 }
@@ -322,6 +335,8 @@ import kotlin.internal.*
 /**
  * A range of values of type `$elementType`.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public class ${elementType}Range(start: $elementType, endInclusive: $elementType) : ${elementType}Progression(start, endInclusive, 1), ClosedRange<${elementType}> {
     override val start: $elementType get() = first
     override val endInclusive: $elementType get() = last
@@ -348,6 +363,8 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
 /**
  * A progression of values of type `$elementType`.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public open class ${elementType}Progression
 internal constructor(
     start: $elementType,
@@ -403,6 +420,8 @@ internal constructor(
  * An iterator over a progression of values of type `$elementType`.
  * @property step the number by which the value is incremented on each step.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 private class ${elementType}ProgressionIterator(first: $elementType, last: $elementType, step: $stepType) : ${elementType}Iterator() {
     private val finalElement = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last

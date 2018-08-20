@@ -12,7 +12,7 @@ public actual interface Appendable {
     public actual fun append(c: Char): Appendable
 }
 
-public actual class StringBuilder(content: String) : Appendable, CharSequence {
+public actual class StringBuilder(content: String = "") : Appendable, CharSequence {
     actual constructor(capacity: Int) : this() {}
 
     actual constructor(content: CharSequence) : this(content.toString()) {}

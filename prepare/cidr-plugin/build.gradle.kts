@@ -20,13 +20,13 @@ dependencies {
 }
 
 val pluginXml by tasks.creating {
-    val kotlinVersion: String by rootProject.extra
+    val kotlinVersion = rootProject.extra["kotlinVersion"] as String
     val pluginFullVersionNumber = findProperty("pluginVersion") as? String
             ?: "$kotlinVersion-CIDR"
 
     inputs.property("pluginFullVersionNumber", pluginFullVersionNumber)
     inputs.files(kotlinPlugin)
-    outputs.files(File(buildDir, name, pluginXmlPath))
+    outputs.files(fileFrom(buildDir, name, pluginXmlPath))
 
     doFirst {
         val placeholderRegex = Regex(

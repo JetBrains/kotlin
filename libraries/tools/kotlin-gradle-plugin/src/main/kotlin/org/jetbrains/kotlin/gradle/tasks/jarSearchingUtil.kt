@@ -38,9 +38,9 @@ private val KOTLIN_SCRIPT_RUNTIME_EXPECTED_CLASS = "kotlin.script.templates.Anno
 private val KOTLIN_SCRIPT_ANNOTATION_EXPECTED_CLASS = "kotlin.script.experimental.annotations.KotlinScript"
 private val KOTLIN_JVM_SCRIPT_COMPILER_EXPECTED_CLASS = "kotlin.script.experimental.jvm.JvmScriptCompiler"
 private val KOTLIN_REFLECT_EXPECTED_CLASS = "kotlin.reflect.full.KClasses"
-private val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
+internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 private val KOTLIN_GRADLE_PLUGIN = "kotlin-gradle-plugin"
-private val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
+internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
 private val KOTLIN_STDLIB = "kotlin-stdlib"
 private val KOTLIN_SCRIPT_RUNTIME = "kotlin-script-runtime"
 private val KOTLIN_SCRIPT_COMMON = "kotlin-scripting-common"
@@ -50,8 +50,7 @@ private val KOTLIN_REFLECT = "kotlin-reflect"
 internal fun findKotlinJvmCompilerClasspath(project: Project): List<File> =
         findKotlinModuleJar(project, K2JVM_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
             if (it.isEmpty()) it
-            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project) +
-                    findKotlinScriptCommonClasspath(project) + findKotlinScriptJvmClasspath(project) + findCoroutinesClasspath()
+            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
         }
 
 internal fun findKotlinJsCompilerClasspath(project: Project): List<File> =

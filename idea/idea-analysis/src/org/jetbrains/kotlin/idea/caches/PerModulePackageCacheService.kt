@@ -17,7 +17,6 @@ import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.InvalidVirtualFileAccessException
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -62,6 +61,7 @@ class KotlinPackageContentModificationListener(private val project: Project) {
                 } else {
                     events
                         .asSequence()
+                        .filter { it.isValid }
                         .filter { it.file != null }
                         .filter(::isRelevant)
                         .filter {

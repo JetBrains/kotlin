@@ -22,7 +22,12 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrSyntheticBodyImpl(startOffset: Int, endOffset: Int, override val kind: IrSyntheticBodyKind) : IrElementBase(startOffset, endOffset),
+class IrSyntheticBodyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    override val kind: IrSyntheticBodyKind
+) :
+    IrElementBase(startOffset, endOffset),
     IrSyntheticBody {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSyntheticBody(this, data)

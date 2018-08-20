@@ -5,6 +5,7 @@ import java.util.*
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import proguard.gradle.ProGuardTask
@@ -12,7 +13,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.60-dev-170", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.70-dev-491", onlySuccessBootstrap = false))
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
@@ -35,7 +36,14 @@ buildscript {
         }
     }
 
+    // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
+    // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
+    // see also configureCompilerClasspath@
+    val bootstrapCompilerClasspath by configurations.creating
+
     dependencies {
+        bootstrapCompilerClasspath(kotlinDep("compiler-embeddable", bootstrapKotlinVersion))
+
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
         classpath(kotlinDep("gradle-plugin", bootstrapKotlinVersion))
         classpath("net.sf.proguard:proguard-gradle:5.3.3")
@@ -141,7 +149,6 @@ extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.8.2"
 extra["versions.android"] = "2.3.1"
 extra["versions.kotlinx-coroutines-core"] = "0.20"
-extra["versions.kotlinx-serialization-runtime"] = "0.4.2"
 extra["versions.kotlinx-coroutines-jdk8"] = "0.20"
 extra["versions.json"] = "20160807"
 extra["versions.native-platform"] = "0.14"
@@ -164,12 +171,12 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 extra["IntellijCoreDependencies"] =
         listOf("annotations",
                "asm-all",
-               "guava-21.0",
+               "guava",
                "jdom",
                "jna",
                "log4j",
                "picocontainer",
-               "snappy-in-java-0.5.1",
+               "snappy-in-java",
                "streamex",
                "trove4j")
 
@@ -199,6 +206,7 @@ extra["compilerModules"] = arrayOf(
         ":compiler:daemon",
         ":compiler:ir.tree",
         ":compiler:ir.psi2ir",
+        ":compiler:ir.backend.common",
         ":compiler:backend.js",
         ":compiler:backend-common",
         ":compiler:backend",
@@ -287,7 +295,7 @@ allprojects {
     // therefore it is disabled by default
     // buildDir = File(commonBuildDir, project.name)
 
-    val repos: List<String> by rootProject.extra
+    val repos = rootProject.extra["repos"] as List<String>
     repositories {
         intellijSdkRepo(project)
         androidDxJarRepo(project)
@@ -299,7 +307,7 @@ allprojects {
 
     configureJvmProject(javaHome!!, jvmTarget!!)
 
-    val commonCompilerArgs = listOf("-Xallow-kotlin-package", "-Xread-deserialized-contracts")
+    val commonCompilerArgs = listOfNotNull("-Xallow-kotlin-package", "-Xread-deserialized-contracts", "-Xprogressive".takeIf { hasProperty("test.progressive.mode") })
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
@@ -348,11 +356,39 @@ allprojects {
         fun FileCollection.printClassPath(role: String) =
                 println("${project.path} $role classpath:\n  ${joinToString("\n  ") { it.toProjectRootRelativePathOrSelf() } }")
 
-        try { the<JavaPluginConvention>() } catch (_: UnknownDomainObjectException) { null }?.let { javaConvention ->
+        try { javaPluginConvention() } catch (_: UnknownDomainObjectException) { null }?.let { javaConvention ->
             task("printCompileClasspath") { doFirst { javaConvention.sourceSets["main"].compileClasspath.printClassPath("compile") } }
             task("printRuntimeClasspath") { doFirst { javaConvention.sourceSets["main"].runtimeClasspath.printClassPath("runtime") } }
             task("printTestCompileClasspath") { doFirst { javaConvention.sourceSets["test"].compileClasspath.printClassPath("test compile") } }
             task("printTestRuntimeClasspath") { doFirst { javaConvention.sourceSets["test"].runtimeClasspath.printClassPath("test runtime") } }
+        }
+
+        run configureCompilerClasspath@ {
+            val bootstrapCompilerClasspath by rootProject.buildscript.configurations
+            configurations.findByName("kotlinCompilerClasspath")?.let {
+                dependencies.add(it.name, files(bootstrapCompilerClasspath))
+            }
+        }
+    }
+}
+
+gradle.taskGraph.whenReady {
+    if (isTeamcityBuild) {
+        logger.warn("CI build profile is active (IC is off, proguard is on). Use -Pteamcity=false to reproduce local build")
+        for (task in allTasks) {
+            when (task) {
+                is AbstractKotlinCompile<*> -> task.incremental = false
+                is JavaCompile -> task.options.isIncremental = false
+            }
+        }
+    } else {
+        logger.warn("Local build profile is active (IC is on, proguard is off). Use -Pteamcity=true to reproduce TC build")
+        for (task in allTasks) {
+            when (task) {
+                // todo: remove when Gradle 4.10+ is used (Java IC on by default)
+                is JavaCompile -> task.options.isIncremental = true
+                is org.gradle.jvm.tasks.Jar -> task.entryCompression = ZipEntryCompression.STORED
+            }
         }
     }
 }
@@ -398,6 +434,7 @@ tasks {
         (coreLibProjects + listOf(
                 ":kotlin-stdlib:samples",
                 ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+                ":kotlinx-metadata-jvm",
                 ":tools:binary-compatibility-validator"
         )).forEach {
             dependsOn(it + ":check")
@@ -440,6 +477,10 @@ tasks {
         dependsOn(":compiler:incremental-compilation-impl:test")
     }
 
+    "toolsTest" {
+        dependsOn(":tools:kotlinp:test")
+    }
+
     "examplesTest" {
         dependsOn("dist")
         (project(":examples").subprojects + project(":kotlin-gradle-subplugin-example")).forEach { p ->
@@ -449,8 +490,14 @@ tasks {
 
     "distTest" {
         dependsOn("compilerTest")
+        dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
+    }
+
+    "specTest" {
+        dependsOn("dist")
+        dependsOn(":compiler:tests-spec:test")
     }
 
     "androidCodegenTest" {
@@ -579,8 +626,7 @@ val cidrPlugin by task<Copy> {
     from(ideaPluginDir) {
         exclude("lib/kotlin-plugin.jar")
 
-        exclude("lib/uast-kotlin.jar")
-        exclude("lib/uast-kotlin-ide.jar")
+        exclude("lib/android-lint.jar")
         exclude("lib/android-ide.jar")
         exclude("lib/android-output-parser-ide.jar")
         exclude("lib/android-extensions-ide.jar")
@@ -662,7 +708,7 @@ tasks.create("findShadowJarsInClasspath").doLast {
         for (task in project.tasks) {
             when (task) {
                 is ShadowJar -> {
-                    shadowJars.add(File(task.archivePath))
+                    shadowJars.add(fileFrom(task.archivePath))
                 }
                 is ProGuardTask -> {
                     shadowJars.addAll(task.outputs.files.toList())

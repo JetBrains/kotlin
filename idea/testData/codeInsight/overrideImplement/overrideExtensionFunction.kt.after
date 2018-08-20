@@ -1,0 +1,11 @@
+open class A {
+    open fun Int.foo(): Int {
+        return 0
+    }
+}
+
+class B: A() {
+    override fun Int.foo(): Int {
+        <selection><caret>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+    }
+}

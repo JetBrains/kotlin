@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
@@ -134,7 +133,7 @@ public final class InTextDirectivesUtils {
     }
 
     public static void assertHasUnknownPrefixes(String fileText, Collection<String> knownPrefixes) {
-        Set<String> prefixes = Sets.newHashSet();
+        Set<String> prefixes = new HashSet<>();
 
         for (String line : fileNonEmptyCommentedLines(fileText)) {
             String prefix = probableDirective(line);

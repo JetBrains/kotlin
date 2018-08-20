@@ -23,14 +23,12 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 
 object JsPlatform : TargetPlatform("JS") {
-    private val defaultImports = LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
-        Common.getDefaultImports(includeKotlinComparisons) + ImportPath.fromString("kotlin.js.*")
+    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
+        result.add(ImportPath.fromString("kotlin.js.*"))
     }
-
-    override fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath> = defaultImports(includeKotlinComparisons)
 
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
 
@@ -39,5 +37,6 @@ object JsPlatform : TargetPlatform("JS") {
 
     override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
 
-    override val excludedImports: List<FqName> = listOf("Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json").map { FqName("kotlin.js.$it") }
+    override val excludedImports: List<FqName> =
+        listOf("Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json").map { FqName("kotlin.js.$it") }
 }

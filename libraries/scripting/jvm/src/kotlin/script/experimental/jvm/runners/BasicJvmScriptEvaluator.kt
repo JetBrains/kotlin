@@ -26,13 +26,13 @@ open class BasicJvmScriptEvaluator<ScriptBase : Any>(val environment: ScriptingE
                         ResultWithDiagnostics.Failure(ScriptDiagnostic("expecting class in this implementation, got ${scriptObject?.javaClass}"))
                     else {
                         val receivers = scriptEvaluationEnvironment.getOrNull(ScriptEvaluationEnvironmentParams.implicitReceivers)
-                        if (receivers == null) {
+                        val instance = if (receivers == null) {
                             scriptObject.getConstructor().newInstance()
                         } else {
                             scriptObject.getConstructor(Array<Any>::class.java).newInstance(receivers.toTypedArray())
                         }
 
-                        ResultWithDiagnostics.Success(EvaluationResult(null, scriptEvaluationEnvironment))
+                        ResultWithDiagnostics.Success(EvaluationResult(instance, scriptEvaluationEnvironment))
                     }
                 }
             }

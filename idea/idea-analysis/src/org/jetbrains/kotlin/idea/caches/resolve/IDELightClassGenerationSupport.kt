@@ -71,7 +71,7 @@ class IDELightClassGenerationSupport(project: Project) : LightClassGenerationSup
         return LazyLightClassDataHolder.ForScript(
             builder,
             exactContextProvider = { IDELightClassContexts.contextForScript(script) },
-            dummyContextProvider = { IDELightClassContexts.lightContextForScript(script) },
+            dummyContextProvider = { null },
             diagnosticsHolderProvider = { script.getDiagnosticsHolder() }
         )
     }

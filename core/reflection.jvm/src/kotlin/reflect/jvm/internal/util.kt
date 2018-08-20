@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
@@ -23,14 +24,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -91,43 +88,40 @@ internal fun loadClass(classLoader: ClassLoader, packageName: String, className:
 }
 
 internal fun Visibility.toKVisibility(): KVisibility? =
-        when (this) {
-            Visibilities.PUBLIC -> KVisibility.PUBLIC
-            Visibilities.PROTECTED -> KVisibility.PROTECTED
-            Visibilities.INTERNAL -> KVisibility.INTERNAL
-            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> KVisibility.PRIVATE
-            else -> null
-        }
+    when (this) {
+        Visibilities.PUBLIC -> KVisibility.PUBLIC
+        Visibilities.PROTECTED -> KVisibility.PROTECTED
+        Visibilities.INTERNAL -> KVisibility.INTERNAL
+        Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> KVisibility.PRIVATE
+        else -> null
+    }
 
 internal fun Annotated.computeAnnotations(): List<Annotation> =
-        annotations.mapNotNull {
-            val source = it.source
-            when (source) {
-                is ReflectAnnotationSource -> source.annotation
-                is RuntimeSourceElementFactory.RuntimeSourceElement -> (source.javaElement as? ReflectJavaAnnotation)?.annotation
-                else -> null
-            }
+    annotations.mapNotNull {
+        val source = it.source
+        when (source) {
+            is ReflectAnnotationSource -> source.annotation
+            is RuntimeSourceElementFactory.RuntimeSourceElement -> (source.javaElement as? ReflectJavaAnnotation)?.annotation
+            else -> null
         }
+    }
 
 // TODO: wrap other exceptions
 internal inline fun <R> reflectionCall(block: () -> R): R =
-        try {
-            block()
-        }
-        catch (e: IllegalAccessException) {
-            throw IllegalCallableAccessException(e)
-        }
+    try {
+        block()
+    } catch (e: IllegalAccessException) {
+        throw IllegalCallableAccessException(e)
+    }
 
 internal fun Any?.asKFunctionImpl(): KFunctionImpl? =
-        this as? KFunctionImpl ?:
-        (this as? FunctionReference)?.compute() as? KFunctionImpl
+    this as? KFunctionImpl ?: (this as? FunctionReference)?.compute() as? KFunctionImpl
 
 internal fun Any?.asKPropertyImpl(): KPropertyImpl<*>? =
-        this as? KPropertyImpl<*> ?:
-        (this as? PropertyReference)?.compute() as? KPropertyImpl
+    this as? KPropertyImpl<*> ?: (this as? PropertyReference)?.compute() as? KPropertyImpl
 
 internal fun Any?.asKCallableImpl(): KCallableImpl<*>? =
-        this as? KCallableImpl<*> ?: asKFunctionImpl() ?: asKPropertyImpl()
+    this as? KCallableImpl<*> ?: asKFunctionImpl() ?: asKPropertyImpl()
 
 internal val ReflectKotlinClass.packageModuleName: String?
     get() {
@@ -157,11 +151,12 @@ internal val CallableMemberDescriptor.isPublicInBytecode: Boolean
     }
 
 internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
-        moduleAnchor: Class<*>,
-        proto: M,
-        nameResolver: NameResolver,
-        typeTable: TypeTable,
-        createDescriptor: MemberDeserializer.(M) -> D
+    moduleAnchor: Class<*>,
+    proto: M,
+    nameResolver: NameResolver,
+    typeTable: TypeTable,
+    metadataVersion: BinaryVersion,
+    createDescriptor: MemberDeserializer.(M) -> D
 ): D? {
     val moduleData = moduleAnchor.getOrCreateModule()
 
@@ -172,8 +167,8 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     }
 
     val context = DeserializationContext(
-            moduleData.deserialization, nameResolver, moduleData.module, typeTable, VersionRequirementTable.EMPTY,
-            containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
+        moduleData.deserialization, nameResolver, moduleData.module, typeTable, VersionRequirementTable.EMPTY, metadataVersion,
+        containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
     )
     return MemberDeserializer(context).createDescriptor(proto)
 }

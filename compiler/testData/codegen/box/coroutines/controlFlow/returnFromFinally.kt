@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -5,17 +6,28 @@ import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
+
+
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineOrReturn { c ->
+    suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineUninterceptedOrReturn { c ->
         result += "suspend($value);"
         c.resume(value)
         COROUTINE_SUSPENDED
     }
+
+    var count = 0
+    fun expect(i: Int) {
+        if (++count != i) throw Exception("EXPECTED $i")
+    }
+
+    fun <T> log(value: T) {
+        result += "log($value);"
+    }
 }
 
-fun builder(c: suspend Controller.() -> String): String {
+fun builder(c: suspend Controller.() -> Int): String {
     val controller = Controller()
     c.startCoroutine(controller, handleResultContinuation {
         controller.result += "return($it);"
@@ -23,45 +35,22 @@ fun builder(c: suspend Controller.() -> String): String {
     return controller.result
 }
 
-fun builderUnit(c: suspend Controller.() -> Unit): String {
-    val controller = Controller()
-    c.startCoroutine(controller, handleResultContinuation {
-        controller.result += "return;"
-    })
-    return controller.result
-}
-
-fun <T> id(value: T) = value
-
 fun box(): String {
-    var value = builder {
+    val res = builder {
+        expect(1)
+        log(1)
         try {
-            if (id(23) == 23) {
-                return@builder suspendAndLog("OK")
-            }
+            expect(2)
+            suspendAndLog(2)
+        } finally {
+            expect(3)
+            log(3)
+            return@builder 4
         }
-        finally {
-            result += "finally;"
-        }
-        result += "afterFinally;"
-        "shouldNotReach"
+        log("FAIL")
+        -1
     }
-    if (value != "suspend(OK);finally;return(OK);") return "fail1: $value"
 
-    value = builderUnit {
-        try {
-            if (id(23) == 23) {
-                suspendAndLog("OK")
-                return@builderUnit
-            }
-        }
-        finally {
-            result += "finally;"
-        }
-        result += "afterFinally;"
-        "shouldNotReach"
-    }
-    if (value != "suspend(OK);finally;return;") return "fail2: $value"
-
+    if (res != "log(1);suspend(2);log(3);return(4);") return "FAIL: $res"
     return "OK"
 }

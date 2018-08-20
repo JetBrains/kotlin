@@ -12,4 +12,4 @@ fun main(args: Array<String>) {
 // RESULT: 1: I
 
 // EXPRESSION: s2.length
-// RESULT: java.lang.NullPointerException: Ljava/lang/NullPointerException;
+// RESULT: java.lang.NullPointerException

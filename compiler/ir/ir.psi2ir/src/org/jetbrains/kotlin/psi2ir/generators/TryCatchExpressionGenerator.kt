@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateTryCatch(ktTry: KtTryExpression): IrExpression {
-        val resultType = getInferredTypeWithImplicitCastsOrFail(ktTry)
+        val resultType = getInferredTypeWithImplicitCastsOrFail(ktTry).toIrType()
         val irTryCatch = IrTryImpl(ktTry.startOffset, ktTry.endOffset, resultType)
 
         irTryCatch.tryResult = ktTry.tryBlock.genExpr()
@@ -42,7 +42,7 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 context.symbolTable.declareVariable(
                     ktCatchParameter.startOffset, ktCatchParameter.endOffset,
                     IrDeclarationOrigin.CATCH_PARAMETER,
-                    catchParameterDescriptor
+                    catchParameterDescriptor, catchParameterDescriptor.type.toIrType()
                 )
             ).apply {
                 result = ktCatchBody.genExpr()

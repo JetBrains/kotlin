@@ -40,9 +40,10 @@ import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
 import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
 import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
-import org.jetbrains.kotlin.jps.incremental.runJSCompiler
 import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
+import org.jetbrains.kotlin.jps.incremental.runJSCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.*
 import java.util.*
 
@@ -119,7 +120,10 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
 
     override fun Services.Builder.registerAdditionalServices() {
         if (header != null) {
-            register(IncrementalDataProvider::class.java, IncrementalDataProviderImpl(header!!, packageParts!!))
+            register(
+                IncrementalDataProvider::class.java,
+                IncrementalDataProviderImpl(header!!, packageParts, JsMetadataVersion.INSTANCE.toArray())
+            )
         }
 
         register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
@@ -159,12 +163,12 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         super.setUp()
         srcDir = File(workingDir, "src").apply { mkdirs() }
         outDir = File(workingDir, "out")
-        isICEnabledBackup = IncrementalCompilation.isEnabled()
-        IncrementalCompilation.setIsEnabled(true)
+        isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+        IncrementalCompilation.setIsEnabledForJvm(true)
     }
 
     override fun tearDown() {
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
         super.tearDown()
     }
 

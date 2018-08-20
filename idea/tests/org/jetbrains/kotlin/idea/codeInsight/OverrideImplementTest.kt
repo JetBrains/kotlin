@@ -25,6 +25,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
         myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement"
     }
 
+    fun testAndroidxNotNull() {
+        doOverrideDirectoryTest("foo")
+    }
+
     fun testEmptyClassBodyFunctionMethod() {
         doImplementFileTest()
     }
@@ -118,6 +122,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     }
 
     fun testOverrideExplicitFunction() {
+        doOverrideFileTest()
+    }
+
+    fun testOverrideExtensionFunction() {
         doOverrideFileTest()
     }
 
@@ -284,5 +292,9 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testCopyExperimental() {
         configureLanguageAndApiVersion(project, module, "1.3", "1.3")
         doOverrideFileTest("targetFun")
+    }
+
+    fun testUnresolvedType() {
+        doOverrideFileTest()
     }
 }

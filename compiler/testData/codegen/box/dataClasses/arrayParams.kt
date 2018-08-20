@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 data class A(val x: Array<Int>, val y: IntArray)
 
 fun foo(x: Array<Int>, y: IntArray) = A(x, y)

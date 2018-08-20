@@ -75,10 +75,10 @@ class GroovyBuildScriptManipulator(
                         with(KotlinWithGradleConfigurator.getManipulator(it)) {
                             addPluginRepository(repository)
                             addMavenCentralPluginRepository()
+                            addPluginRepository(DEFAULT_GRADLE_PLUGIN_REPOSITORY)
                         }
                     }
                 }
-                addMavenCentralIfMissing()
             }
         }
         else {
@@ -97,11 +97,11 @@ class GroovyBuildScriptManipulator(
                     }
                 }
             }
+        }
 
-            scriptFile.getRepositoriesBlock().apply {
-                addRepository(version)
-                addMavenCentralIfMissing()
-            }
+        scriptFile.getRepositoriesBlock().apply {
+            addRepository(version)
+            addMavenCentralIfMissing()
         }
 
         scriptFile.getDependenciesBlock().apply {

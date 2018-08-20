@@ -25,6 +25,11 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     val builtIns: KotlinBuiltIns
 
+    /**
+     * Stable name of *Kotlin* module. Can be used for ABI (e.g. for mangling of declarations)
+     */
+    val stableName: Name?
+
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {

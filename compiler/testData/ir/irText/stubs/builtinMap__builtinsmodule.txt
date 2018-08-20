@@ -3,13 +3,13 @@ MODULE_FRAGMENT name:<built-ins module>
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:primary
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
     CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Unit flags:
       superClasses:
@@ -28,106 +28,58 @@ MODULE_FRAGMENT name:<built-ins module>
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Unit flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Cloneable modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Cloneable flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clone visibility:protected modality:OPEN <> ($this:kotlin.Cloneable) returnType:Any flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Cloneable flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
   EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin.collections
     CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableMap modality:ABSTRACT visibility:public flags:
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
       superClasses:
-        UNBOUND: interface Map<K, out V>
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Map modality:ABSTRACT visibility:public flags:
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any?]
-      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, key:K, value:V) returnType:Boolean flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
-      FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
-        overridden:
-          UNBOUND: fun getOrDefault(key: K, defaultValue: V): V
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:Unit flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:put visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, key:K, value:V) returnType:V? flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:putAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, from:kotlin.collections.Map<out K, V>) returnType:Unit flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:from index:0 type:kotlin.collections.Map<out K, V> flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, key:K) returnType:V? flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
-      FUN FAKE_OVERRIDE name:containsKey visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:Boolean flags:
-        overridden:
-          UNBOUND: fun containsKey(key: K): kotlin.Boolean
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
-      FUN FAKE_OVERRIDE name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
-        overridden:
-          UNBOUND: fun containsValue(value: V): kotlin.Boolean
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
-      FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
-        overridden:
-          UNBOUND: operator fun get(key: K): V?
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
-      FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Boolean flags:
-        overridden:
-          UNBOUND: fun isEmpty(): kotlin.Boolean
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
-        FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
-          overridden:
-            UNBOUND: fun <get-size>(): kotlin.Int
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<MutableEntry<K, V>> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
           overridden:
-            UNBOUND: fun <get-entries>(): kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<Entry<K, V>> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<K> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
           overridden:
-            UNBOUND: fun <get-keys>(): kotlin.collections.Set<K>
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<K> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
         FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableCollection<V> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
           overridden:
-            UNBOUND: fun <get-values>(): kotlin.collections.Collection<V>
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Collection<V> flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
-      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableEntry modality:ABSTRACT visibility:public flags:
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap.MutableEntry<K, V> flags:
-        superClasses:
-          UNBOUND: interface Entry<out K, out V>
-        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
-        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any?]
-        FUN IR_EXTERNAL_DECLARATION_STUB name:setValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap.MutableEntry<K, V>, newValue:V) returnType:V flags:
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap.MutableEntry<K, V> flags:
-          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
-          FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
-            overridden:
-              UNBOUND: fun <get-key>(): K
-            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
-          FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
-            overridden:
-              UNBOUND: fun <get-value>(): V
-            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
-          overridden:
-            UNBOUND: fun equals(other: kotlin.Any?): kotlin.Boolean
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
-          overridden:
-            UNBOUND: fun hashCode(): kotlin.Int
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
-          overridden:
-            UNBOUND: fun toString(): kotlin.String
-          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:compute visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:java.util.function.BiFunction<in K, in V?, out V?>) returnType:V? flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
@@ -140,42 +92,1304 @@ MODULE_FRAGMENT name:<built-ins module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.BiFunction<in K, in V, out V?> flags:
+      FUN FAKE_OVERRIDE name:containsKey visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsKey visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN FAKE_OVERRIDE name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiConsumer<in K, in V> flags:
+      FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:merge visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V, p2:java.util.function.BiFunction<in V, in V, out V?>) returnType:V? flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:java.util.function.BiFunction<in V, in V, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:put visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, key:K, value:V) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, from:kotlin.collections.Map<out K, V>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:from index:0 type:kotlin.collections.Map<out K, V> flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:putIfAbsent visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V) returnType:V? flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V) returnType:V? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, key:K) returnType:V? flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
-        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, key:K, value:V) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V, p2:V) returnType:Boolean flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:replaceAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:java.util.function.BiFunction<in K, in V, out V>) returnType:Unit flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiFunction<in K, in V, out V> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableEntry modality:ABSTRACT visibility:public flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap.MutableEntry<K, V> flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Entry modality:ABSTRACT visibility:public flags:
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any?]
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+          FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+            overridden:
+              FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+          FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+            overridden:
+              FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:setValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap.MutableEntry<K, V>, newValue:V) returnType:V flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap.MutableEntry<K, V> flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Map modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<Entry<K, V>> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.Set<K> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<K> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.Set<K> visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.Collection<V> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Collection<V> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.Collection<V> visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsKey visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
         overridden:
-          UNBOUND: fun equals(other: kotlin.Any?): kotlin.Boolean
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiConsumer<in K, in V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Entry modality:ABSTRACT visibility:public flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance:out upperBounds:[kotlin.Any?]
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableIterator modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableIterator<T> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterator modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance:out upperBounds:[kotlin.Any?]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN <> ($this:kotlin.collections.Iterator<T>, p0:java.util.function.Consumer<in T>) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:forEachRemaining visibility:public modality:OPEN <> ($this:kotlin.collections.Iterator<T>, p0:java.util.function.Consumer<in T>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in T> flags:
+      FUN FAKE_OVERRIDE name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:next visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:T flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:T flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableIterator<T>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableIterator<T> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterator modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance:out upperBounds:[kotlin.Any?]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEachRemaining visibility:public modality:OPEN <> ($this:kotlin.collections.Iterator<T>, p0:java.util.function.Consumer<in T>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in T> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:T flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableCollection modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Collection modality:ABSTRACT visibility:public flags:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableIterable modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:E index:0 variance: upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+      FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in E!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:MutableIterator<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Iterator<E> flags:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableIterable<T>) returnType:MutableIterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+      FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<E>, p0:java.util.function.Predicate<in E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Predicate<in E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+          FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Collection modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterable modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:E index:0 variance:out upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in E!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Iterator<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T>) returnType:Iterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterable modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance:out upperBounds:[kotlin.Any?]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in T!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T>) returnType:Iterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableIterable modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableIterable<T> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterable modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance:out upperBounds:[kotlin.Any?]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in T!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableIterable<T>) returnType:MutableIterator<T> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T>) returnType:Iterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableIterable<T> flags:
+      FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableSet modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Set modality:ABSTRACT visibility:public flags:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableCollection modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:E index:0 variance: upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Int flags:
+            FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+      FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, element:E) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in E!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>) returnType:MutableIterator<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Iterator<E> flags:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:MutableIterator<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+      FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+          FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<E>, p0:java.util.function.Predicate<in E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<E>, p0:java.util.function.Predicate<in E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Predicate<in E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Set<E>) returnType:Spliterator<(E..E?)> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Set<E>) returnType:Spliterator<(E..E?)> flags:
+          FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+          FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Set modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Collection modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:E index:0 variance:out upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in E!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Iterator<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Iterator<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Set<E>) returnType:Spliterator<(E..E?)> flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin.collections
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableMap modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Map modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<MutableEntry<K, V>> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<Entry<K, V>> flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableSet<K> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.MutableSet<K> visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<K> flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:MutableCollection<V> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.MutableCollection<V> visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Collection<V> flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:compute visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:java.util.function.BiFunction<in K, in V?, out V?>) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.BiFunction<in K, in V?, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:computeIfAbsent visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:java.util.function.Function<in K, out V>) returnType:V flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.Function<in K, out V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:computeIfPresent visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:java.util.function.BiFunction<in K, in V, out V?>) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:java.util.function.BiFunction<in K, in V, out V?> flags:
+      FUN FAKE_OVERRIDE name:containsKey visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsKey visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN FAKE_OVERRIDE name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
       FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
         overridden:
-          UNBOUND: fun forEach(p0: java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+          FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiConsumer<in K, in V> flags:
+      FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
         overridden:
-          UNBOUND: fun hashCode(): kotlin.Int
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:merge visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V, p2:java.util.function.BiFunction<in V, in V, out V?>) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:java.util.function.BiFunction<in V, in V, out V?> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:put visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, key:K, value:V) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, from:kotlin.collections.Map<out K, V>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:from index:0 type:kotlin.collections.Map<out K, V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:putIfAbsent visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap<K, V>, key:K) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, key:K, value:V) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V, p2:V) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p2 index:2 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replace visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:K, p1:V) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:V flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:replaceAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K, V>, p0:java.util.function.BiFunction<in K, in V, out V>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiFunction<in K, in V, out V> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableEntry modality:ABSTRACT visibility:public flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap.MutableEntry<K, V> flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Entry modality:ABSTRACT visibility:public flags:
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance: upperBounds:[kotlin.Any?]
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+          FUN FAKE_OVERRIDE name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+            overridden:
+              FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+          FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+            overridden:
+              FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:setValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableMap.MutableEntry<K, V>, newValue:V) returnType:V flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableMap.MutableEntry<K, V> flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:newValue index:0 type:V flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Map modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance: upperBounds:[kotlin.Any?]
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<Entry<K, V>> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries type:kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.Set<K> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-keys> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Set<K> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:keys type:kotlin.collections.Set<K> visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.Collection<V> visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-values> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Collection<V> flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:values type:kotlin.collections.Collection<V> visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsKey visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsValue visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, value:V) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:V flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, p0:java.util.function.BiConsumer<in K, in V>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.BiConsumer<in K, in V> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:get visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>, key:K) returnType:V? flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:getOrDefault visibility:public modality:OPEN <> ($this:kotlin.collections.Map<K, V>, key:K, defaultValue:V) returnType:V flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:key index:0 type:K flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:defaultValue index:1 type:V flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map<K, V>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map<K, V> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Entry modality:ABSTRACT visibility:public flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        superClasses:
+          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:K index:0 variance:out upperBounds:[kotlin.Any?]
+        TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:V index:1 variance:out upperBounds:[kotlin.Any?]
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-key> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:K flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:key type:K visibility:public modality:ABSTRACT flags:val
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+          FUN IR_EXTERNAL_DECLARATION_STUB name:<get-value> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Map.Entry<K, V>) returnType:V flags:
+            correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:value type:V visibility:public modality:ABSTRACT flags:val
+            $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Map.Entry<K, V> flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+          VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableIterator modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableIterator<T> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterator modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance:out upperBounds:[kotlin.Any?]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEachRemaining visibility:public modality:OPEN <> ($this:kotlin.collections.Iterator<T>, p0:java.util.function.Consumer<in T>) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:forEachRemaining visibility:public modality:OPEN <> ($this:kotlin.collections.Iterator<T>, p0:java.util.function.Consumer<in T>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in T> flags:
+      FUN FAKE_OVERRIDE name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:next visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:T flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:T flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableIterator<T>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableIterator<T> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterator modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance:out upperBounds:[kotlin.Any?]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEachRemaining visibility:public modality:OPEN <> ($this:kotlin.collections.Iterator<T>, p0:java.util.function.Consumer<in T>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in T> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterator<T>) returnType:T flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterator<T> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableCollection modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Collection modality:ABSTRACT visibility:public flags:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableIterable modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:E index:0 variance: upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+      FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in E!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:MutableIterator<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Iterator<E> flags:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableIterable<T>) returnType:MutableIterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+      FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<E>, p0:java.util.function.Predicate<in E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Predicate<in E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+          FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Collection modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterable modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:E index:0 variance:out upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in E!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Iterator<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T>) returnType:Iterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterable modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance:out upperBounds:[kotlin.Any?]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in T!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T>) returnType:Iterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableIterable modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableIterable<T> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Iterable modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:T index:0 variance:out upperBounds:[kotlin.Any?]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>, p0:java.util.function.Consumer<in T!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in T!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableIterable<T>) returnType:MutableIterator<T> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Iterable<T>) returnType:Iterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableIterable<T> flags:
+      FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<T>) returnType:Spliterator<T> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<T> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableSet modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Set modality:ABSTRACT visibility:public flags:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:MutableCollection modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:E index:0 variance: upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Int flags:
+            FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:addAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>) returnType:Unit flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:clear visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+      FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, element:E) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in E!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Boolean flags:
+          FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>) returnType:MutableIterator<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Iterator<E> flags:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>) returnType:MutableIterator<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+      FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+          FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:remove visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:removeAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<E>, p0:java.util.function.Predicate<in E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<E>, p0:java.util.function.Predicate<in E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableCollection<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Predicate<in E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:retainAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableCollection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.MutableSet<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Set<E>) returnType:Spliterator<(E..E?)> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Set<E>) returnType:Spliterator<(E..E?)> flags:
+          FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+          FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Set modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Collection modality:ABSTRACT visibility:public flags:
+      TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:E index:0 variance:out upperBounds:[kotlin.Any?]
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+        FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Int flags:
+          correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size type:kotlin.Int visibility:public modality:ABSTRACT flags:val
+          overridden:
+            FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Int flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, element:E) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:contains visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, element:E) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:element index:0 type:E flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:containsAll visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>, elements:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:elements index:0 type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<E>, p0:java.util.function.Consumer<in E!>!) returnType:Unit flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Iterable<E> flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:java.util.function.Consumer<in E!>! flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:isEmpty visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<E>) returnType:Iterator<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Collection<E>) returnType:Iterator<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Set<E>) returnType:Spliterator<(E..E?)> flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Spliterator<(E..E?)> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Set<E> flags:
+      FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<E>) returnType:Stream<E> flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.Collection<E> flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+  EXTERNAL_PACKAGE_FRAGMENT fqName:kotlin
+    CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.Any flags:primary
+      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Unit flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Unit flags:primary
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Unit) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Unit flags:
+    CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Cloneable modality:ABSTRACT visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Cloneable flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      FUN IR_EXTERNAL_DECLARATION_STUB name:clone visibility:protected modality:OPEN <> ($this:kotlin.Cloneable) returnType:Any flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Cloneable flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         overridden:
-          UNBOUND: fun toString(): kotlin.String
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:

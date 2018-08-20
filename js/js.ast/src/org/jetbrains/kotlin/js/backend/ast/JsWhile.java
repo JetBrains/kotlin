@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A JavaScript <code>while</code> statement.
  */
-public class JsWhile extends SourceInfoAwareJsNode implements JsStatement {
+public class JsWhile extends SourceInfoAwareJsNode implements JsLoop {
     protected JsStatement body;
     protected JsExpression condition;
 

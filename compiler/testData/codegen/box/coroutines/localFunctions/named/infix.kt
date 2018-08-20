@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -7,7 +8,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 suspend fun callLocal(): String {
-    suspend infix fun String.local(a: String) = suspendCoroutineOrReturn<String> {
+    suspend infix fun String.local(a: String) = suspendCoroutineUninterceptedOrReturn<String> {
         it.resume(this + a)
         COROUTINE_SUSPENDED
     }

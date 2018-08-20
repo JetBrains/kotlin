@@ -1,0 +1,29 @@
+package
+
+public fun baz1(/*0*/ x: (@MyDsl A).() -> kotlin.Unit): kotlin.Unit
+public fun baz2(/*0*/ x: (@MyDsl B).() -> kotlin.Unit): kotlin.Unit
+public fun baz3(/*0*/ x: @MyDsl() (A.() -> kotlin.Unit)): kotlin.Unit
+public fun baz4(/*0*/ x: @MyDsl() (B.() -> kotlin.Unit)): kotlin.Unit
+public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun @MyDsl A.baz5(): kotlin.Unit
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B {
+    public abstract fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.DslMarker public final annotation class MyDsl : kotlin.Annotation {
+    public constructor MyDsl()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

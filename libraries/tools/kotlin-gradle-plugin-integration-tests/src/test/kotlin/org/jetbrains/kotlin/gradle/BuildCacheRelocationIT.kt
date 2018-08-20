@@ -58,14 +58,14 @@ class BuildCacheRelocationIT : BaseGradleIT() {
             lateinit var firstOutputHashes: List<Pair<File, Int>>
 
             workingDir = workingDirs[0]
-            firstProject.build("build") {
+            firstProject.build(*testCase.taskToExecute) {
                 assertSuccessful()
                 firstOutputHashes = hashOutputFiles(outputRoots)
                 cacheableTaskNames.forEach { assertContains("Packing task ':$it") }
             }
 
             workingDir = workingDirs[1]
-            secondProject.build("build") {
+            secondProject.build(*testCase.taskToExecute) {
                 assertSuccessful()
                 val secondOutputHashes = hashOutputFiles(outputRoots)
                 assertEquals(firstOutputHashes, secondOutputHashes)
@@ -82,7 +82,8 @@ class BuildCacheRelocationIT : BaseGradleIT() {
         val cacheableTaskNames: List<String>,
         val projectDirectoryPrefix: String? = null,
         val outputRootPaths: List<String> = listOf("build"),
-        val initProject: Project.() -> Unit = { }
+        val initProject: Project.() -> Unit = { },
+        val taskToExecute: Array<String>
     ) {
 
         override fun toString(): String = (projectDirectoryPrefix?.plus("/") ?: "") + projectName
@@ -99,15 +100,19 @@ class BuildCacheRelocationIT : BaseGradleIT() {
         fun testCases(): List<Array<TestCase>> = listOf(
             TestCase(
                 "simpleProject",
+                taskToExecute = arrayOf("classes", "testClasses"),
                 cacheableTaskNames = listOf("compileKotlin", "compileTestKotlin")
             ),
-            TestCase("simple", projectDirectoryPrefix = "kapt2",
+            TestCase("simple",
+                     projectDirectoryPrefix = "kapt2",
+                     taskToExecute = arrayOf("classes", "testClasses"),
                      cacheableTaskNames = listOf(
                          "kaptKotlin", "kaptGenerateStubsKotlin", "compileKotlin", "compileTestKotlin", "compileJava"
                      ),
                      initProject = { File(projectDir, "build.gradle").appendText("\nkapt.useBuildCache = true") }
             ),
             TestCase("kotlin2JsDceProject",
+                     taskToExecute = arrayOf("assemble", "runDceKotlinJs"),
                      cacheableTaskNames = listOf("mainProject", "libraryProject").map { "$it:compileKotlin2Js" } +
                              "mainProject:runDceKotlinJs",
                      initProject = {
@@ -121,6 +126,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
                      }
             ),
             TestCase("multiplatformProject",
+                     taskToExecute = arrayOf("classes", "testClasses"),
                      cacheableTaskNames = listOf(
                          "lib:compileKotlinCommon", "libJvm:compileKotlin", "libJvm:compileTestKotlin",
                          "libJs:compileKotlin2Js", "libJs:compileTestKotlin2Js"
@@ -128,17 +134,20 @@ class BuildCacheRelocationIT : BaseGradleIT() {
                      outputRootPaths = listOf("lib", "libJvm", "libJs").map { "$it/build" }
             ),
             TestCase("AndroidProject",
+                     taskToExecute = arrayOf("assembleDebug"),
                      cacheableTaskNames = listOf("Lib", "Android").flatMap { module ->
                          listOf("Flavor1", "Flavor2").flatMap { flavor ->
-                             listOf("Debug", "Release").map { buildType ->
+                             listOf("Debug").map { buildType ->
                                  "$module:compile$flavor${buildType}Kotlin"
                              }
                          }
                      },
                      outputRootPaths = listOf("Lib", "Android", "Test").map { "$it/build" }
             ),
-            TestCase("android-dagger", projectDirectoryPrefix = "kapt2",
-                     cacheableTaskNames = listOf("Debug", "Release").flatMap { buildType ->
+            TestCase("android-dagger",
+                     taskToExecute = arrayOf("assembleDebug"),
+                     projectDirectoryPrefix = "kapt2",
+                     cacheableTaskNames = listOf("Debug").flatMap { buildType ->
                          listOf("kapt", "kaptGenerateStubs", "compile").map { kotlinTask ->
                              "app:$kotlinTask${buildType}Kotlin"
                          }

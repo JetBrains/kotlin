@@ -23,10 +23,9 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 //This method was moved to separate class cause of LightClass generation problem: KT-18419
 //Move it back to inlineCodegenUtil after fix
 fun initDefaultSourceMappingIfNeeded(
-        context: CodegenContext<*>, codegen: MemberCodegen<*>, state: GenerationState
+    context: CodegenContext<*>, codegen: MemberCodegen<*>, state: GenerationState
 ) {
     if (state.isInlineDisabled) return
-
 
     var parentContext: CodegenContext<*>? = context.parentContext
     while (parentContext != null) {

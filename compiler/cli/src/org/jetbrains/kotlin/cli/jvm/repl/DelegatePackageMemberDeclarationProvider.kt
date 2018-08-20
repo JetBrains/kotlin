@@ -31,15 +31,17 @@ open class DelegatePackageMemberDeclarationProvider(var delegate: PackageMemberD
 
     override fun containsFile(file: KtFile) = delegate.containsFile(file)
 
-    override fun getDeclarations(kindFilter: DescriptorKindFilter,
-                                 nameFilter: (Name) -> Boolean) = delegate.getDeclarations(kindFilter, nameFilter)
+    override fun getDeclarations(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean
+    ) = delegate.getDeclarations(kindFilter, nameFilter)
 
     override fun getFunctionDeclarations(name: Name) = delegate.getFunctionDeclarations(name)
 
     override fun getPropertyDeclarations(name: Name) = delegate.getPropertyDeclarations(name)
 
     override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry> =
-            delegate.getDestructuringDeclarationsEntries(name)
+        delegate.getDestructuringDeclarationsEntries(name)
 
     override fun getClassOrObjectDeclarations(name: Name) = delegate.getClassOrObjectDeclarations(name)
 

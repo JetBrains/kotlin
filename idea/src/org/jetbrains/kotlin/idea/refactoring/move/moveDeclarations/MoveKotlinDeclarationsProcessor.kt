@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinClassHandler
@@ -71,7 +72,11 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
     object Default : Mover {
         override fun invoke(originalElement: KtNamedDeclaration, targetContainer: KtElement): KtNamedDeclaration {
             return when (targetContainer) {
-                is KtFile -> targetContainer.add(originalElement) as KtNamedDeclaration
+                is KtFile -> {
+                    val declarationContainer: KtElement =
+                        if (targetContainer.isScript()) targetContainer.script!!.blockExpression else targetContainer
+                    declarationContainer.add(originalElement) as KtNamedDeclaration
+                }
                 is KtClassOrObject -> targetContainer.addDeclaration(originalElement)
                 else -> error("Unexpected element: ${targetContainer.getElementTextWithContext()}")
             }.apply {
@@ -317,7 +322,7 @@ class MoveKotlinDeclarationsProcessor(
             }
 
             val internalUsageScopes: List<KtElement> = if (descriptor.scanEntireFile) {
-                newDeclarations.map { it.containingKtFile }.distinct()
+                newDeclarations.asSequence().map { it.containingKtFile }.distinct().toList()
             } else {
                 newDeclarations
             }
@@ -343,6 +348,14 @@ class MoveKotlinDeclarationsProcessor(
 
     fun execute(usages: List<UsageInfo>) {
         execute(usages.toTypedArray())
+    }
+
+    override fun doRun() {
+        try {
+            super.doRun()
+        } finally {
+            broadcastRefactoringExit(myProject, refactoringId)
+        }
     }
 
     override fun getCommandName(): String = REFACTORING_NAME

@@ -36,7 +36,7 @@ class CliScriptReportSink(private val messageCollector: MessageCollector) : Scri
         return CompilerMessageLocation.create(scriptFile.path, position.startLine, position.startColumn, null)
     }
 
-    private fun ScriptReport.Severity.convertSeverity(): CompilerMessageSeverity = when(this) {
+    private fun ScriptReport.Severity.convertSeverity(): CompilerMessageSeverity = when (this) {
         ScriptReport.Severity.FATAL -> CompilerMessageSeverity.ERROR
         ScriptReport.Severity.ERROR -> CompilerMessageSeverity.ERROR
         ScriptReport.Severity.WARNING -> CompilerMessageSeverity.WARNING
@@ -44,4 +44,3 @@ class CliScriptReportSink(private val messageCollector: MessageCollector) : Scri
         ScriptReport.Severity.DEBUG -> CompilerMessageSeverity.LOGGING
     }
 }
-

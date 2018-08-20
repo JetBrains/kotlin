@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -50,6 +51,14 @@ class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
         if (declaration is IrDeclarationParent) {
             declarationParentsStack.pop()
         }
+    }
+
+    override fun visitProperty(declaration: IrProperty) {
+        declaration.getter?.let { it.correspondingProperty = declaration }
+        declaration.setter?.let { it.correspondingProperty = declaration }
+        declaration.backingField?.let { it.correspondingProperty = declaration }
+
+        super.visitProperty(declaration)
     }
 
     private fun patchParent(declaration: IrDeclaration) {

@@ -22,7 +22,12 @@ dependencies {
     compileOnly project(':core:util.runtime')
 }
 
-compileJava9Sources(project, 'kotlin.reflect', [sourceSets.main.output, configurations.compileOnly])
+compileJava9Sources(
+        project, 'kotlin.reflect',
+        [sourceSets.main.output, configurations.compileOnly.filter {
+            !it.name.contains("kotlin-stdlib")
+        }]
+)
 
 compileKotlin {
     kotlinOptions {

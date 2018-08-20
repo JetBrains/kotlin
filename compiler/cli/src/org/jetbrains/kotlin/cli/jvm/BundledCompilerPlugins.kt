@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 
 object BundledCompilerPlugins {
-
     val componentRegistrars: List<ComponentRegistrar>
         get() = emptyList()
 
     val commandLineProcessors: List<CommandLineProcessor>
         get() = emptyList()
-
 }

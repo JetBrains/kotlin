@@ -1,0 +1,20 @@
+package
+
+public fun testAnnotatedLambdaLabel(): () -> kotlin.Unit
+public fun testAnonymousFunctionLabel(): () -> kotlin.Unit
+public fun testFunctionName(): kotlin.Unit
+public fun testHighOrderFunctionCallLabelInReturn(): kotlin.Unit
+public fun testHighOrderFunctionName(): kotlin.Unit
+public fun testLambdaLabel(): () -> kotlin.Unit
+public fun testLambdaMultipleLabels1(): () -> kotlin.Unit
+public fun testLambdaMultipleLabels2(): () -> kotlin.Unit
+public fun testLoopLabelInReturn(/*0*/ xs: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+public fun testParenthesizedLambdaLabel(): () -> kotlin.Unit
+public fun testValLabelInReturn(): kotlin.Unit
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.EXPRESSION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

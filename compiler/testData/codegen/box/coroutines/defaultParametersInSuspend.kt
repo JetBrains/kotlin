@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -6,7 +7,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
-    suspend fun suspendHere(a: String = "abc", i: Int = 2): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(a: String = "abc", i: Int = 2): String = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(a + "#" + (i + 1))
         COROUTINE_SUSPENDED
     }

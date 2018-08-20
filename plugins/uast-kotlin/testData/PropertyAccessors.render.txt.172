@@ -1,9 +1,0 @@
-public final class PropertyTest {
-    public final fun getStringRepresentation() : java.lang.String = this.toString()
-    public final fun setStringRepresentation(value: java.lang.String) : void {
-        setDataFromString(value)
-    }
-    public final fun setDataFromString(data: java.lang.String) : void {
-    }
-    public fun PropertyTest() = UastEmptyExpression
-}

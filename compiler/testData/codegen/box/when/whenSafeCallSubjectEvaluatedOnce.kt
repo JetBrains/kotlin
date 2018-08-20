@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var subjectEvaluated = 0
 
 fun String.foo() = length.also { ++subjectEvaluated }

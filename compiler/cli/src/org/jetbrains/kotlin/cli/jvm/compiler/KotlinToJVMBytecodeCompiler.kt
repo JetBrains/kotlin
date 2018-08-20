@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
@@ -29,18 +31,24 @@ import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
-import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
+import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -51,22 +59,20 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
-import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
-import java.util.concurrent.TimeUnit
 
 object KotlinToJVMBytecodeCompiler {
 
-    private fun getAbsolutePaths(buildFile: File, module: Module): List<String> {
+    private fun getAbsoluteFiles(buildFile: File, module: Module): List<File> {
         return module.getSourceFiles().map { sourceFile ->
             val source = File(sourceFile)
             if (!source.isAbsolute) {
-                File(buildFile.absoluteFile.parentFile, sourceFile).absolutePath
+                File(buildFile.absoluteFile.parentFile, sourceFile)
             } else {
-                source.absolutePath
+                source
             }
         }
     }
@@ -132,11 +138,13 @@ object KotlinToJVMBytecodeCompiler {
 
         val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
 
+        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            val ktFiles = CompileEnvironmentUtil.getKtFiles(
-                environment.project, getAbsolutePaths(buildFile, module), projectConfiguration
-            ) { path -> throw IllegalStateException("Should have been checked before: $path") }
+            val moduleSourceFiles = getAbsoluteFiles(buildFile, module).map { file -> localFileSystem.findFileByPath(file.path) }
+            val ktFiles = environment.getSourceFiles().filter { file -> file.virtualFile in moduleSourceFiles }
+
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
             val moduleConfiguration = projectConfiguration.copy().apply {
@@ -159,12 +167,11 @@ object KotlinToJVMBytecodeCompiler {
                         it.compile(File(singleModule.getOutputDirectory()))
                     }
                 } else {
-                    projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).let {
-                        it.report(
-                            WARNING,
-                            "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). -Xuse-javac option couldn't be used to compile java files"
-                        )
-                    }
+                    projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                        WARNING,
+                        "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
+                                "-Xuse-javac option couldn't be used to compile java files"
+                    )
                     JavacWrapper.getInstance(environment.project).close()
                 }
             }
@@ -177,7 +184,7 @@ object KotlinToJVMBytecodeCompiler {
 
     internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File) {
         for (module in chunk) {
-            configuration.addKotlinSourceRoots(getAbsolutePaths(buildFile, module))
+            configuration.addKotlinSourceRoots(getAbsoluteFiles(buildFile, module).map(File::getPath))
         }
 
         for (module in chunk) {
@@ -198,7 +205,7 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             for (classpathRoot in module.getClasspathRoots()) {
                 configuration.add(
-                    JVMConfigurationKeys.CONTENT_ROOTS,
+                    CLIConfigurationKeys.CONTENT_ROOTS,
                     if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))
                 )
             }
@@ -257,7 +264,7 @@ object KotlinToJVMBytecodeCompiler {
         try {
             try {
                 tryConstructClassFromStringArgs(scriptClass, scriptArgs)
-                        ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
+                    ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
             } finally {
                 // NB: these lines are required (see KT-9546) but aren't covered by tests
                 System.out.flush()
@@ -322,7 +329,7 @@ object KotlinToJVMBytecodeCompiler {
         val state = analyzeAndGenerate(environment) ?: return null
 
         try {
-            val urls = environment.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
+            val urls = environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).mapNotNull { root ->
                 when (root) {
                     is JvmModulePathRoot -> root.file // TODO: only add required modules
                     is JvmClasspathRoot -> root.file
@@ -335,10 +342,11 @@ object KotlinToJVMBytecodeCompiler {
             val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
             return classLoader.loadClass(script.fqName.asString())
         } catch (e: Exception) {
-            throw RuntimeException("Failed to evaluate script: " + e, e)
+            throw RuntimeException("Failed to evaluate script: $e", e)
         }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
         val result = repeatAnalysisIfNeeded(analyze(environment, null), environment, null) ?: return null
 

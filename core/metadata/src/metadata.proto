@@ -83,6 +83,11 @@ message Annotation {
       optional Annotation annotation = 8;
 
       repeated Value array_element = 9;
+
+      /*
+        isUnsigned
+      */
+      optional int32 flags = 10 [default = 0];
     }
 
     required int32 name_id = 1 [(name_id_in_table) = true];
@@ -215,7 +220,7 @@ message Class {
   optional TypeTable type_table = 30;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   optional VersionRequirementTable version_requirement_table = 32;
 
@@ -253,7 +258,7 @@ message Constructor {
   repeated ValueParameter value_parameter = 2;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   extensions 100 to 18999;
 }
@@ -290,7 +295,7 @@ message Function {
   optional TypeTable type_table = 30;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   optional Contract contract = 32;
 
@@ -344,7 +349,7 @@ message Property {
   optional int32 setter_flags = 8;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   extensions 100 to 18999;
 }
@@ -389,7 +394,7 @@ message TypeAlias {
   repeated Annotation annotation = 8;
 
   // Index into the VersionRequirementTable
-  optional int32 version_requirement = 31;
+  repeated int32 version_requirement = 31;
 
   extensions 100 to 199;
 }

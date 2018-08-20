@@ -1,0 +1,7 @@
+package
+
+public fun rawUInt(/*0*/ vararg a: kotlin.UInt /*kotlin.UIntArray*/): kotlin.IntArray
+public fun ubyte(/*0*/ vararg a: kotlin.UByte /*kotlin.UByteArray*/): kotlin.UByteArray
+public fun uint(/*0*/ vararg a: kotlin.UInt /*kotlin.UIntArray*/): kotlin.UIntArray
+public fun ulong(/*0*/ vararg a: kotlin.ULong /*kotlin.ULongArray*/): kotlin.ULongArray
+public fun ushort(/*0*/ vararg a: kotlin.UShort /*kotlin.UShortArray*/): kotlin.UShortArray

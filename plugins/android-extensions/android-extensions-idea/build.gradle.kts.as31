@@ -23,7 +23,6 @@ dependencies {
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijDep())
 
-    testCompile(project(":compiler:tests-common"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
@@ -43,6 +42,7 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
+    testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":plugins:lint"))
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("IntelliLang"))

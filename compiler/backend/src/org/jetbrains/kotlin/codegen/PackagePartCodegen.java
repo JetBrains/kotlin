@@ -90,7 +90,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
 
     @Override
     protected void generateBody() {
-        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(element)) {
+        for (KtDeclaration declaration : CodegenUtil.getDeclarationsToGenerate(element, state.getBindingContext())) {
             if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty || declaration instanceof KtTypeAlias) {
                 genSimpleMember(declaration);
             }
@@ -123,7 +123,8 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             @NotNull Type packagePartType
     ) {
         BindingContext bindingContext = codegen.bindingContext;
-        List<DeclarationDescriptor> members = CollectionsKt.mapNotNull(CodegenUtil.getActualDeclarations(codegen.element), declaration -> {
+        List<KtDeclaration> allDeclarations = CodegenUtil.getDeclarationsToGenerate(codegen.element, bindingContext);
+        List<DeclarationDescriptor> members = CollectionsKt.mapNotNull(allDeclarations, declaration -> {
             if (declaration instanceof KtNamedFunction) {
                 return bindingContext.get(BindingContext.FUNCTION, declaration);
             }

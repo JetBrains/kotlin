@@ -64,6 +64,16 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         return ConstantValueFactory.createConstantValue(normalizedValue)
     }
 
+    override fun transformToUnsignedConstant(constant: ConstantValue<*>): ConstantValue<*>? {
+        return when (constant) {
+            is ByteValue -> UByteValue(constant.value)
+            is ShortValue -> UShortValue(constant.value)
+            is IntValue -> UIntValue(constant.value)
+            is LongValue -> ULongValue(constant.value)
+            else -> constant
+        }
+    }
+
     override fun loadPropertyAnnotations(
             propertyAnnotations: List<AnnotationDescriptor>,
             fieldAnnotations: List<AnnotationDescriptor>,

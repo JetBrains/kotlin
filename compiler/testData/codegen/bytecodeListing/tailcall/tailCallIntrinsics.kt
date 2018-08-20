@@ -9,11 +9,11 @@ private suspend fun withoutInline() {
         if (p > 52158) Unit else COROUTINE_SUSPENDED
     }
 
-    return suspendCoroutineOrReturn(c)
+    return suspendCoroutineUninterceptedOrReturn(c)
 }
 
 private suspend fun withInline() {
-    return suspendCoroutineOrReturn { c ->
+    return suspendCoroutineUninterceptedOrReturn { c ->
         if (p > 52158) Unit else COROUTINE_SUSPENDED
     }
 }

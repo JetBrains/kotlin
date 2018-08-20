@@ -1,0 +1,43 @@
+// LANGUAGE_VERSION: 1.3
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foobar
+import foo.Bar
+
+open class Base {
+    companion object : Bar() {
+
+    }
+}
+
+class Derived : Base() {
+    fun test() {
+        val x = foobar<caret>
+    }
+}
+
+// FILE: foo/Bar.java
+package foo;
+
+public class Bar {
+    public static final String foobar = "foobar";
+}
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foobar
+import foo.Bar
+import foo.Bar.foobar
+
+open class Base {
+    companion object : Bar() {
+
+    }
+}
+
+class Derived : Base() {
+    fun test() {
+        val x = foobar<caret>
+    }
+}
+

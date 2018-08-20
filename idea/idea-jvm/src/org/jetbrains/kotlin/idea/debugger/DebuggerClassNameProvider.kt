@@ -22,6 +22,7 @@ import com.intellij.debugger.engine.DebuggerUtils
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
+import com.sun.jdi.ObjectCollectedException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClassOrNull
@@ -81,7 +82,7 @@ class DebuggerClassNameProvider(
      * Returns classes in which the given line number *is* present.
      */
     fun getClassesForPosition(position: SourcePosition): List<ReferenceType> = with (debugProcess) {
-        val lineNumber = position.line
+        val lineNumber = runReadAction { position.line }
 
         return doGetClassesForPosition(position)
                 .flatMap { className -> virtualMachineProxy.classesByName(className) }
@@ -199,7 +200,7 @@ class DebuggerClassNameProvider(
 
                         if (typeForAnonymousClass == null) {
                             val parentText = runReadAction { getRelevantElement(element.parent)?.text } ?: "<parent was null>"
-                            LOG.error("Can not get type for ${element.text}, parent: $parentText")
+                            LOG.error("Can not get type for ${runReadAction { element.text }}, parent: $parentText")
                             classNamesOfContainingDeclaration
                         } else {
                             classNamesOfContainingDeclaration + ComputedClassNames.Cached(typeForAnonymousClass.internalName.toJdiName())
@@ -268,7 +269,14 @@ private fun String.toJdiName() = replace('/', '.')
 
 private fun DebugProcess.findTargetClasses(outerClass: ReferenceType, lineAt: Int): List<ReferenceType> {
     val vmProxy = virtualMachineProxy
-    if (!outerClass.isPrepared) return emptyList()
+
+    try {
+        if (!outerClass.isPrepared) {
+            return emptyList()
+        }
+    } catch (e: ObjectCollectedException) {
+        return emptyList()
+    }
 
     val targetClasses = ArrayList<ReferenceType>(1)
 

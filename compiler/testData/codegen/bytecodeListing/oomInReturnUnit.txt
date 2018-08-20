@@ -18,6 +18,13 @@ public final class OomInReturnUnitKt {
 }
 
 @kotlin.Metadata
+public abstract class helpers/ContinuationAdapter {
+    private final @org.jetbrains.annotations.NotNull field context: COROUTINES_PACKAGE.CoroutineContext
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getContext(): COROUTINES_PACKAGE.CoroutineContext
+}
+
+@kotlin.Metadata
 public final class helpers/CoroutineUtilKt$handleExceptionContinuation$1 {
     synthetic final field $x: kotlin.jvm.functions.Function1
     private final @org.jetbrains.annotations.NotNull field context: COROUTINES_PACKAGE.EmptyCoroutineContext

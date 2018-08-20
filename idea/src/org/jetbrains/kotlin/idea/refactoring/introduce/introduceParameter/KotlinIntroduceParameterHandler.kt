@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
@@ -39,12 +40,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.refactoring.CompositeRefactoringRunner
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.removeTemplateEntryBracesIfPossible
-import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
+import org.jetbrains.kotlin.idea.refactoring.showWithTransaction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -122,15 +124,17 @@ fun getParametersToRemove(
 
     val occurrenceRanges = occurrencesToReplace.map { it.getTextRange() }
     return parametersUsages.entrySet()
-            .filter {
-                it.value.all { paramUsage ->
-                    occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramUsage.textRange) }
-                }
+        .asSequence()
+        .filter {
+            it.value.all { paramUsage ->
+                occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramUsage.textRange) }
             }
-            .map { it.key }
+        }
+        .map { it.key }
+        .toList()
 }
 
-fun IntroduceParameterDescriptor.performRefactoring() {
+fun IntroduceParameterDescriptor.performRefactoring(onExit: (() -> Unit)? = null) {
     val config = object : KotlinChangeSignatureConfiguration {
         override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
             return originalDescriptor.modify { methodDescriptor ->
@@ -138,12 +142,12 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                     val parameters = callable.getValueParameters()
                     val withReceiver = methodDescriptor.receiver != null
                     parametersToRemove
-                            .map {
-                                if (it is KtParameter) {
-                                    parameters.indexOf(it) + if (withReceiver) 1 else 0
-                                } else 0
-                            }
-                            .sortedDescending()
+                        .map {
+                            if (it is KtParameter) {
+                                parameters.indexOf(it) + if (withReceiver) 1 else 0
+                            } else 0
+                        }
+                        .sortedDescending()
                             .forEach { methodDescriptor.removeParameter(it) }
                 }
 
@@ -162,18 +166,19 @@ fun IntroduceParameterDescriptor.performRefactoring() {
     }
 
     val project = callable.project
-    val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER) }
+    object : CompositeRefactoringRunner(project, "refactoring.changeSignature") {
+        override fun runRefactoring() {
+            runChangeSignature(project, callableDescriptor, config, callable, INTRODUCE_PARAMETER)
+        }
 
-    changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
-        try {
+        override fun onRefactoringDone() {
             occurrencesToReplace.forEach { occurrenceReplacer(it) }
         }
-        finally {
-            project.messageBus
-                    .syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC)
-                    .refactoringDone(INTRODUCE_PARAMETER_REFACTORING_ID, null)
+
+        override fun onExit() {
+            onExit?.invoke()
         }
-    }
+    }.run()
 }
 
 fun selectNewParameterContext(
@@ -187,6 +192,7 @@ fun selectNewParameterContext(
             file = file,
             title = "Introduce parameter to declaration",
             elementKinds = listOf(CodeInsightUtils.ElementKind.EXPRESSION),
+            elementValidator = ::validateExpressionElements,
             getContainers = { _, parent ->
                 val parents = parent.parents
                 val stopAt = (parent.parents.zip(parent.parents.drop(1)))
@@ -265,28 +271,33 @@ open class KotlinIntroduceParameterHandler(
 
         val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor) ?: return
 
-        val forbiddenRanges = (targetParent as? KtClass)?.declarations?.filter(::isObjectOrNonInnerClass)?.map { it.textRange }
-                              ?: Collections.emptyList()
+        val forbiddenRanges = (targetParent as? KtClass)?.declarations?.asSequence()
+            ?.filter(::isObjectOrNonInnerClass)
+            ?.map { it.textRange }
+            ?.toList()
+            ?: Collections.emptyList()
 
         val occurrencesToReplace = if (expression is KtProperty) {
             ReferencesSearch.search(expression).mapNotNullTo(SmartList(expression.toRange())) { it.element?.toRange() }
         }
         else {
             expression.toRange()
-                    .match(targetParent, KotlinPsiUnifier.DEFAULT)
-                    .filterNot {
-                        val textRange = it.range.getPhysicalTextRange()
-                        forbiddenRanges.any { it.intersects(textRange) }
+                .match(targetParent, KotlinPsiUnifier.DEFAULT)
+                .asSequence()
+                .filterNot {
+                    val textRange = it.range.getPhysicalTextRange()
+                    forbiddenRanges.any { it.intersects(textRange) }
+                }
+                .mapNotNull {
+                    val matchedElement = it.range.elements.singleOrNull()
+                    val matchedExpr = when (matchedElement) {
+                        is KtExpression -> matchedElement
+                        is KtStringTemplateEntryWithExpression -> matchedElement.expression
+                        else -> null
                     }
-                    .mapNotNull {
-                        val matchedElement = it.range.elements.singleOrNull()
-                        val matchedExpr = when (matchedElement) {
-                            is KtExpression -> matchedElement
-                            is KtStringTemplateEntryWithExpression -> matchedElement.expression
-                            else -> null
-                        }
-                        matchedExpr?.toRange()
-                    }
+                    matchedExpr?.toRange()
+                }
+                .toList()
         }
 
         project.executeCommand(
@@ -354,12 +365,15 @@ open class KotlinIntroduceParameterHandler(
                         if (introducer.startInplaceIntroduceTemplate()) return
                     }
 
-                    KotlinIntroduceParameterDialog(project,
-                                                   editor,
-                                                   introduceParameterDescriptor,
-                                                   suggestedNames.toTypedArray(),
-                                                   listOf(replacementType) + replacementType.supertypes(),
-                                                   helper).show()
+                    val dialog = KotlinIntroduceParameterDialog(
+                            project,
+                            editor,
+                            introduceParameterDescriptor,
+                            suggestedNames.toTypedArray(),
+                            listOf(replacementType) + replacementType.supertypes(),
+                            helper
+                    )
+                    dialog.showWithTransaction()
                 }
         )
     }
@@ -507,7 +521,7 @@ open class KotlinIntroduceLambdaParameterHandler(
                 dialog.performRefactoring()
             }
             else {
-                dialog.show()
+                dialog.showWithTransaction()
             }
         }
     }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 package whats.the.difference
 
 fun iarray(vararg a : Int) = a // BUG

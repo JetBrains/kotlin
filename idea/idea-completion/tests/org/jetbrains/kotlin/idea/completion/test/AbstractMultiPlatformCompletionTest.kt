@@ -22,7 +22,7 @@ import java.io.File
 abstract class AbstractMultiPlatformCompletionTest : AbstractMultiModuleTest() {
     protected fun doTest(testPath: String) {
         setupMppProjectFromDirStructure(File(testPath))
-        val file = project.findFileWithCaret()
+        val file = project.findFileWithCaret() as KtFile
         val doc = PsiDocumentManager.getInstance(myProject).getDocument(file)!!
         val offset = doc.extractMarkerOffset(project)
         val editor = EditorFactory.getInstance().createEditor(doc, myProject)!!

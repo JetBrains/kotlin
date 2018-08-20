@@ -17,7 +17,7 @@ abstract class BaseIncrementalGradleIT : BaseGradleIT() {
         val resourcesBase: File,
         val relPath: String,
         minLogLevel: LogLevel = LogLevel.DEBUG
-    ) : Project(File(relPath).name, GradleVersionRequired.Exact("2.10"), null, minLogLevel) {
+    ) : Project(File(relPath).name, GradleVersionRequired.None, null, minLogLevel) {
 
         override val resourcesRoot = File(resourcesBase, relPath)
         val mapWorkingToOriginalFile = hashMapOf<File, File>()

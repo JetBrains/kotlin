@@ -168,18 +168,6 @@ internal object IDELightClassContexts {
         return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
     }
 
-    fun lightContextForScript(script: KtScript): LightClassConstructionContext {
-        val resolveSession = setupAdHocResolve(
-            script.project,
-            script.getResolutionFacade().moduleDescriptor,
-            listOf(script.containingKtFile)
-        )
-
-        ForceResolveUtil.forceResolveAllContents(resolveSession.resolveToDescriptor(script))
-
-        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
-    }
-
     private fun isDummyResolveApplicable(classOrObject: KtClassOrObject): Boolean {
         if (classOrObject.hasLightClassMatchingErrors) return false
 
@@ -203,11 +191,11 @@ internal object IDELightClassContexts {
     }
 
     private fun isGeneratedForDataClass(name: Name): Boolean {
-        return name == DataClassDescriptorResolver.EQUALS_METHOD_NAME ||
+        return name == FunctionsFromAny.EQUALS_METHOD_NAME ||
                 // known failure is related to equals override, checking for other methods 'just in case'
                 name == DataClassDescriptorResolver.COPY_METHOD_NAME ||
-                name == DataClassDescriptorResolver.HASH_CODE_METHOD_NAME ||
-                name == DataClassDescriptorResolver.TO_STRING_METHOD_NAME ||
+                name == FunctionsFromAny.HASH_CODE_METHOD_NAME ||
+                name == FunctionsFromAny.TO_STRING_METHOD_NAME ||
                 DataClassDescriptorResolver.isComponentLike(name)
     }
 
@@ -281,13 +269,14 @@ internal object IDELightClassContexts {
     private fun setupAdHocResolve(project: Project, realWorldModule: ModuleDescriptor, files: List<KtFile>): ResolveSession {
         val trace = BindingTraceContext()
         val sm = LockBasedStorageManager.NO_LOCKS
-        val moduleDescriptor = ModuleDescriptorImpl(realWorldModule.name, sm, realWorldModule.builtIns)
+        val moduleDescriptor =
+            ModuleDescriptorImpl(realWorldModule.name, sm, realWorldModule.builtIns, stableName = realWorldModule.stableName)
 
         moduleDescriptor.setDependencies(moduleDescriptor, moduleDescriptor.builtIns.builtInsModule)
 
         val moduleInfo = files.first().getModuleInfo()
         val container = createContainer("LightClassStub", JvmPlatform) {
-            val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget
+            val jvmTarget = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project) as? JvmTarget
             configureModule(
                 ModuleContext(moduleDescriptor, project), JvmPlatform,
                 jvmTarget ?: JvmTarget.DEFAULT, trace

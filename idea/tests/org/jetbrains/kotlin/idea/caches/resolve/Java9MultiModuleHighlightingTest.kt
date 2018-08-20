@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.Module
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -30,7 +29,7 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testSimpleModuleExportsPackage() {
         module("main").addDependency(module("dependency"))
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testSimpleLibraryExportsPackage() {
@@ -42,22 +41,22 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         )
 
         module("main").addLibrary(library, "library")
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testNamedDependsOnUnnamed() {
         module("main").addDependency(module("dependency"))
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testUnnamedDependsOnNamed() {
         module("main").addDependency(module("dependency"))
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testDeclarationKinds() {
         module("main").addDependency(module("dependency"))
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testExportsTo() {
@@ -65,17 +64,17 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module("first").addDependency(d)
         module("second").addDependency(d)
         module("unnamed").addDependency(d)
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testExportedPackageIsInaccessibleWithoutRequires() {
         module("main").addDependency(module("dependency"))
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testTypealiasToUnexported() {
         module("main").addDependency(module("dependency"))
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testCyclicDependency() {
@@ -83,6 +82,6 @@ class Java9MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         val b = module("moduleB")
         val c = module("moduleC")
         module("main").addDependency(a).addDependency(b).addDependency(c)
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 }

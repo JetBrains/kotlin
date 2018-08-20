@@ -306,6 +306,31 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             runTest("idea/testData/copyPaste/imports/ThisReference.kt");
         }
 
+        @TestMetadata("TopLevelCallableRef.kt")
+        public void testTopLevelCallableRef() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelCallableRef.kt");
+        }
+
+        @TestMetadata("TopLevelExtensionCallableRefWithExpressionLHS.kt")
+        public void testTopLevelExtensionCallableRefWithExpressionLHS() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelExtensionCallableRefWithExpressionLHS.kt");
+        }
+
+        @TestMetadata("TopLevelExtensionCallableRefWithTypeLHS.kt")
+        public void testTopLevelExtensionCallableRefWithTypeLHS() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelExtensionCallableRefWithTypeLHS.kt");
+        }
+
+        @TestMetadata("TopLevelMemberCallableRefWithExpressionLHS.kt")
+        public void testTopLevelMemberCallableRefWithExpressionLHS() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelMemberCallableRefWithExpressionLHS.kt");
+        }
+
+        @TestMetadata("TopLevelMemberCallableRefWithTypeLHS.kt")
+        public void testTopLevelMemberCallableRefWithTypeLHS() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelMemberCallableRefWithTypeLHS.kt");
+        }
+
         @TestMetadata("TopLevelProperty.kt")
         public void testTopLevelProperty() throws Exception {
             runTest("idea/testData/copyPaste/imports/TopLevelProperty.kt");
@@ -617,6 +642,31 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("ThisReference.kt")
         public void testThisReference() throws Exception {
             runTest("idea/testData/copyPaste/imports/ThisReference.kt");
+        }
+
+        @TestMetadata("TopLevelCallableRef.kt")
+        public void testTopLevelCallableRef() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelCallableRef.kt");
+        }
+
+        @TestMetadata("TopLevelExtensionCallableRefWithExpressionLHS.kt")
+        public void testTopLevelExtensionCallableRefWithExpressionLHS() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelExtensionCallableRefWithExpressionLHS.kt");
+        }
+
+        @TestMetadata("TopLevelExtensionCallableRefWithTypeLHS.kt")
+        public void testTopLevelExtensionCallableRefWithTypeLHS() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelExtensionCallableRefWithTypeLHS.kt");
+        }
+
+        @TestMetadata("TopLevelMemberCallableRefWithExpressionLHS.kt")
+        public void testTopLevelMemberCallableRefWithExpressionLHS() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelMemberCallableRefWithExpressionLHS.kt");
+        }
+
+        @TestMetadata("TopLevelMemberCallableRefWithTypeLHS.kt")
+        public void testTopLevelMemberCallableRefWithTypeLHS() throws Exception {
+            runTest("idea/testData/copyPaste/imports/TopLevelMemberCallableRefWithTypeLHS.kt");
         }
 
         @TestMetadata("TopLevelProperty.kt")

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -175,7 +176,7 @@ class PropertyReferenceCodegen(
                 assert(receiverValue != null) { "Receiver expected for bound property reference: $classDescriptor" }
                 iv.anew(asmType)
                 iv.dup()
-                receiverValue!!.put(receiverValue.type, iv)
+                receiverValue!!.put(receiverValue.type, receiverValue.kotlinType, iv)
                 iv.invokespecial(asmType.internalName, "<init>", constructor.descriptor, false)
             }
         }
@@ -195,15 +196,20 @@ class PropertyReferenceCodegen(
 
         @JvmStatic
         fun generateCallableReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
+            iv.aconst(getSignatureString(callable, state))
+        }
+
+        @JvmStatic
+        fun getSignatureString(callable: CallableDescriptor, state: GenerationState): String {
             if (callable is LocalVariableDescriptor) {
                 val asmType = state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, callable)
-                val allDelegatedProperties = state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTIES, asmType)
-                val index = allDelegatedProperties?.indexOf(callable) ?: -1
+                        ?: throw AssertionError("No delegated property metadata owner for $callable")
+                val localDelegatedProperties = CodegenBinding.getLocalDelegatedProperties(state.bindingContext, asmType)
+                val index = localDelegatedProperties?.indexOf(callable) ?: -1
                 if (index < 0) {
                     throw AssertionError("Local delegated property is not found in $asmType: $callable")
                 }
-                iv.aconst("<v#$index>") // v = "variable"
-                return
+                return "<v#$index>"
             }
 
             val accessor = when (callable) {
@@ -217,7 +223,7 @@ class PropertyReferenceCodegen(
             }
             val declaration = DescriptorUtils.unwrapFakeOverride(accessor).original
             val method = state.typeMapper.mapAsmMethod(declaration)
-            iv.aconst(method.name + method.descriptor)
+            return method.name + method.descriptor
         }
 
         @JvmStatic
@@ -264,7 +270,9 @@ class PropertyReferenceCodegen(
             val typeMapper = state.typeMapper
             if (target is PropertyImportedFromObject) {
                 val containingObject = target.containingObject
-                StackValue.singleton(containingObject, typeMapper).put(typeMapper.mapClass(containingObject), v)
+                StackValue
+                    .singleton(containingObject, typeMapper)
+                    .put(typeMapper.mapClass(containingObject), containingObject.defaultType, v)
             }
 
             if (receiverType != null) {
@@ -275,7 +283,7 @@ class PropertyReferenceCodegen(
             else {
                 val receivers = originalFunctionDesc.valueParameters.dropLast(if (isGetter) 0 else 1)
                 receivers.forEachIndexed { i, valueParameterDescriptor ->
-                    StackValue.local(i + 1, OBJECT_TYPE).put(typeMapper.mapType(valueParameterDescriptor), v)
+                    StackValue.local(i + 1, OBJECT_TYPE).put(typeMapper.mapType(valueParameterDescriptor), valueParameterDescriptor.type, v)
                 }
             }
 

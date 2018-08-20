@@ -1,6 +1,9 @@
 // !LANGUAGE: +InlineClasses
 
+@Suppress("INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE")
 inline class NonNull<T : Any>(val x: T)
+
+@Suppress("INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE")
 inline class NullableValue<T : Any>(val x: T?)
 
 object Test {

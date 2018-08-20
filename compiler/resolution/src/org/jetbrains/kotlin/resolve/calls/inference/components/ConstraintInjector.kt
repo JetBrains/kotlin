@@ -154,6 +154,11 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
                     ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
 
             var targetType = type
+            if (targetType.isError) {
+                c.addError(ConstrainingTypeIsError(typeVariable, targetType, position))
+                return
+            }
+
             if (type.contains(this::isCapturedTypeFromSubtyping)) {
                 // TypeVariable <: type -> if TypeVariable <: subType => TypeVariable <: type
                 if (kind == UPPER) {

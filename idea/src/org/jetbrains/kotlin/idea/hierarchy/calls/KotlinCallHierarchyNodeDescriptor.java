@@ -31,14 +31,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.ui.LayeredIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import javax.swing.*;
@@ -141,62 +138,68 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
 
     @Nullable
     private static String renderElement(@Nullable PsiElement element) {
-        String elementText;
-        String containerText = null;
-
         if (element instanceof KtFile) {
-            elementText = ((KtFile) element).getName();
+            return ((KtFile) element).getName();
         }
-        else if (element instanceof KtNamedDeclaration) {
-            BindingContext bindingContext = ResolutionUtils.analyze((KtElement) element, BodyResolveMode.FULL);
 
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-            if (descriptor == null) return null;
+        if (!(element instanceof KtNamedDeclaration)) {
+            return null;
+        }
 
-            if (element instanceof KtClassOrObject) {
-                if (element instanceof KtObjectDeclaration && ((KtObjectDeclaration) element).isCompanion()) {
-                    descriptor = descriptor.getContainingDeclaration();
-                    if (!(descriptor instanceof ClassDescriptor)) return null;
+        DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptorIfAny((KtNamedDeclaration) element, BodyResolveMode.PARTIAL);
+        if (descriptor == null) return null;
 
+        String elementText;
+        if (element instanceof KtClassOrObject) {
+            if (element instanceof KtObjectDeclaration && ((KtObjectDeclaration) element).isCompanion()) {
+                descriptor = descriptor.getContainingDeclaration();
+                if (!(descriptor instanceof ClassDescriptor)) return null;
+
+                elementText = renderClassOrObject((ClassDescriptor) descriptor);
+            }
+            else if (element instanceof KtEnumEntry) {
+                elementText = ((KtEnumEntry) element).getName();
+            }
+            else {
+                if (((KtClassOrObject) element).getName() != null) {
                     elementText = renderClassOrObject((ClassDescriptor) descriptor);
                 }
-                else if (element instanceof KtEnumEntry) {
-                    elementText = ((KtEnumEntry) element).getName();
-                }
                 else {
-                    if (((KtClassOrObject) element).getName() != null) {
-                        elementText = renderClassOrObject((ClassDescriptor) descriptor);
-                    }
-                    else {
-                        elementText = "[anonymous]";
-                    }
+                    elementText = "[anonymous]";
                 }
             }
-            else if (element instanceof KtNamedFunction || element instanceof KtConstructor) {
-                elementText = renderNamedFunction((FunctionDescriptor) descriptor);
-            }
-            else if (element instanceof KtProperty) {
-                elementText = ((KtProperty) element).getName();
-            }
-            else return null;
-
-            DeclarationDescriptor containerDescriptor = descriptor.getContainingDeclaration();
-            while (containerDescriptor != null) {
-                String name = containerDescriptor.getName().asString();
-                if (!name.startsWith("<")) {
-                    containerText = name;
-                    break;
-                }
-                containerDescriptor = containerDescriptor.getContainingDeclaration();
-            }
+        }
+        else if ((element instanceof KtNamedFunction || element instanceof KtConstructor)) {
+            if (!(descriptor instanceof FunctionDescriptor)) return null;
+            elementText = renderNamedFunction((FunctionDescriptor) descriptor);
+        }
+        else if (element instanceof KtProperty) {
+            elementText = ((KtProperty) element).getName();
         }
         else return null;
 
         if (elementText == null) return null;
-        return containerText != null ? containerText + "." + elementText : elementText;
-    }
 
-    public static String renderNamedFunction(FunctionDescriptor descriptor) {
+        String containerText = null;
+        DeclarationDescriptor containerDescriptor = descriptor.getContainingDeclaration();
+        while (containerDescriptor != null) {
+            if (containerDescriptor instanceof PackageFragmentDescriptor || containerDescriptor instanceof ModuleDescriptor) {
+                break;
+            }
+
+            Name name = containerDescriptor.getName();
+            if (!name.isSpecial()) {
+                String identifier = name.getIdentifier();
+                containerText = containerText != null ? identifier + "." + containerText : identifier;
+            }
+
+            containerDescriptor = containerDescriptor.getContainingDeclaration();
+        }
+
+        return containerText != null ? containerText + "." + elementText : elementText;
+}
+
+    public static String renderNamedFunction(@NotNull FunctionDescriptor descriptor) {
         DeclarationDescriptor descriptorForName = descriptor instanceof ConstructorDescriptor
                                                   ? descriptor.getContainingDeclaration()
                                                   : descriptor;

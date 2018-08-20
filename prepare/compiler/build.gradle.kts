@@ -30,14 +30,14 @@ val compile by configurations
 
 val compilerBaseName = name
 
-val outputJar = File(buildDir, "libs", "$compilerBaseName.jar")
+val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName.jar")
 
 val compilerModules: Array<String> by rootProject.extra
 
 compilerModules.forEach { evaluationDependsOn(it) }
 
 val compiledModulesSources = compilerModules.map {
-    project(it).the<JavaPluginConvention>().sourceSets.getByName("main").allSource
+    project(it).mainSourceSet.allSource
 }
 
 dependencies {
@@ -56,7 +56,6 @@ dependencies {
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
     fatJarContents(commonDep("io.javaslang", "javaslang"))
     fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-serialization-runtime")) { isTransitive = false }
 
     proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
             firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
@@ -64,6 +63,7 @@ dependencies {
     proguardLibraryJars(projectDist(":kotlin-stdlib"))
     proguardLibraryJars(projectDist(":kotlin-script-runtime"))
     proguardLibraryJars(projectDist(":kotlin-reflect"))
+    proguardLibraryJars(project(":kotlin-annotations-jvm"))
     proguardLibraryJars(projectDist(":kotlin-scripting-common"))
     proguardLibraryJars(projectDist(":kotlin-scripting-jvm"))
 
@@ -72,7 +72,7 @@ dependencies {
     compile(project(":kotlin-reflect"))
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeIntellijCoreJarDependencies(project, { !(it.startsWith("jdom") || it.startsWith("log4j")) }) }
-    fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-java-1.3") }
+    fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
     fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
 }
@@ -98,7 +98,7 @@ val proguard by task<ProGuardTask> {
     dependsOn(packCompiler)
     configuration("$rootDir/compiler/compiler.pro")
 
-    val outputJar = File(buildDir, "libs", "$compilerBaseName-after-proguard.jar")
+    val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName-after-proguard.jar")
 
     inputs.files(packCompiler.outputs.files.singleFile)
     outputs.file(outputJar)

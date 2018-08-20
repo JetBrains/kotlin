@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -5,7 +6,7 @@ import helpers.*
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
-suspend fun foo(value: String): String = suspendCoroutineOrReturn { x ->
+suspend fun foo(value: String): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(value)
     COROUTINE_SUSPENDED
 }

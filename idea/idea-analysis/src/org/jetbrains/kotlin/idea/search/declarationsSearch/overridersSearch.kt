@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.util.*
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {
-    is PsiMethod -> PsiUtil.canBeOverriden(this)
+    is PsiMethod -> PsiUtil.canBeOverridden(this)
     is KtDeclaration -> isOverridable()
     else -> false
 }
@@ -75,7 +75,6 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
                     DirectClassInheritorsSearch.search(
                             current,
                             current.project.allScope(),
-                            /* checkInheritance = */ true,
                             /* includeAnonymous = */ true
                     )
 
@@ -105,7 +104,7 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
 
 object PsiMethodOverridingHierarchyTraverser: HierarchyTraverser<PsiMethod> {
     override fun nextElements(current: PsiMethod): Iterable<PsiMethod> = KotlinPsiMethodOverridersSearch.searchDirectOverriders(current)
-    override fun shouldDescend(element: PsiMethod): Boolean = PsiUtil.canBeOverriden(element)
+    override fun shouldDescend(element: PsiMethod): Boolean = PsiUtil.canBeOverridden(element)
 }
 
 fun PsiElement.toPossiblyFakeLightMethods(): List<PsiMethod> {

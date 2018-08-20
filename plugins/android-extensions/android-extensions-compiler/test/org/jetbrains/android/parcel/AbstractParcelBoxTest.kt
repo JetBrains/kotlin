@@ -54,6 +54,7 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
                 }
 
                 with(visitAnnotation("Lorg/robolectric/annotation/Config;", true)) {
+                    visit("sdk", intArrayOf(19))
                     visit("manifest", "--none")
                     visitEnd()
                 }

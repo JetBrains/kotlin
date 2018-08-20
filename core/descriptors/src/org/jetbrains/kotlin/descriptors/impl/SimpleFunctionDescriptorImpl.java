@@ -79,7 +79,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         super.initialize(receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
                          unsubstitutedReturnType, modality, visibility);
 
-        if (userData != null) {
+        if (userData != null && !userData.isEmpty()) {
             userDataMap = new LinkedHashMap<UserDataKey<?>, Object>(userData);
         }
 

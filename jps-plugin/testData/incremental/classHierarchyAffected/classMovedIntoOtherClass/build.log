@@ -10,6 +10,7 @@ Cleaning output files:
   out/production/module/B.class
   out/production/module/C$Z.class
   out/production/module/C.class
+  out/production/module/META-INF/module.kotlin_module
   out/production/module/X.class
 End of files
 Compiling files:

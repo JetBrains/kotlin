@@ -219,19 +219,19 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
     actualNeeded: Boolean,
     existingDeclarations: List<KtDeclaration> = emptyList()
 ): KtClassOrObject {
+    fun areCompatible(first: KtFunction, second: KtFunction) =
+        first.valueParameters.size == second.valueParameters.size &&
+                first.valueParameters.zip(second.valueParameters).all { (firstParam, secondParam) ->
+                    firstParam.name == secondParam.name && firstParam.typeReference?.text == secondParam.typeReference?.text
+                }
+
     fun KtDeclaration.exists() =
         existingDeclarations.any {
-            name == it.name && this.javaClass == it.javaClass && when (this) {
-                is KtClassOrObject, is KtProperty, is KtEnumEntry -> true
-                is KtFunction -> {
-                    it as KtFunction
-                    valueParameters.size == it.valueParameters.size &&
-                            valueParameters.zip(it.valueParameters).all { (parameter, existingParameter) ->
-                                parameter.name == existingParameter.name &&
-                                        parameter.typeReference?.text == existingParameter.typeReference?.text
-                            }
-                }
-                else -> true
+            name == it.name && when (this) {
+                is KtConstructor<*> -> it is KtConstructor<*> && areCompatible(this, it)
+                is KtNamedFunction -> it is KtNamedFunction && areCompatible(this, it)
+                is KtProperty -> it is KtProperty || it is KtParameter && it.hasValOrVar()
+                else -> this.javaClass == it.javaClass
             }
         }
 
@@ -259,9 +259,16 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                     it.delete()
                 } else {
                     it.addModifier(KtTokens.ACTUAL_KEYWORD)
+                    if (it is KtFunction) {
+                        it.removeParameterDefaultValues()
+                    }
                 }
             }
         }
+    }
+    val primaryConstructor = actualClass.primaryConstructor
+    if (primaryConstructor != null && primaryConstructor.exists()) {
+        primaryConstructor.delete()
     }
 
     val context = expectedClass.analyze()
@@ -320,7 +327,9 @@ private fun KtPsiFactory.generateFunction(
 ): KtFunction {
     val returnType = descriptor.returnType
     val body = run {
-        if (returnType != null && !KotlinBuiltIns.isUnit(returnType)) {
+        if (expectedFunction.hasBody()) {
+            ""
+        } else if (returnType != null && !KotlinBuiltIns.isUnit(returnType)) {
             val delegation = getFunctionBodyTextFromTemplate(
                 project,
                 TemplateKind.FUNCTION,
@@ -342,6 +351,17 @@ private fun KtPsiFactory.generateFunction(
         replaceExpectModifier(actualNeeded)
         if (returnType != null && KotlinBuiltIns.isUnit(returnType)) {
             typeReference = null
+        }
+        removeParameterDefaultValues()
+    }
+}
+
+private fun KtFunction.removeParameterDefaultValues() {
+    for (valueParameter in valueParameters) {
+        val defaultValue = valueParameter.defaultValue
+        if (defaultValue != null) {
+            val equalsToken = valueParameter.equalsToken
+            valueParameter.deleteChildRange(equalsToken, defaultValue)
         }
     }
 }

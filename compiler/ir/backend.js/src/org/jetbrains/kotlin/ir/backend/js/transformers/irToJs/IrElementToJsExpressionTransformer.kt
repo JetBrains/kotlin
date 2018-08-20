@@ -5,32 +5,72 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.backend.common.utils.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
-    private val neutralExpression: JsExpression = JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
-
-    override fun visitContainerExpression(expression: IrContainerExpression, context: JsGenerationContext): JsExpression =
-        expression.statements.map { it.accept(this, context) }.fold(neutralExpression) { left, right ->
-            if (left != neutralExpression) JsBinaryOperation(JsBinaryOperator.COMMA, left, right) else right
+    override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
+        // TODO: perform the dark magic below in the separated lowering
+        if (expression.elements.size == 1) {
+            val element = expression.elements[0]
+            if (element is IrSpreadElement) {
+                // special case, invoke slice()
+                val expr = element.expression.accept(this, context)
+                return JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, expr))
+            }
         }
+
+        var arrayLiteralElements = mutableListOf<JsExpression>()
+        val concatArguments = mutableListOf<JsExpression>()
+        var qualifier: JsExpression? = null
+
+        expression.elements.forEach {
+            if (it is IrSpreadElement) {
+                val expr = it.expression.accept(this, context)
+                if (qualifier == null) {
+                    if (arrayLiteralElements.isEmpty()) {
+                        qualifier = JsNameRef(Namer.CONCAT_FUNCTION, expr)
+                    } else {
+                        val dispatch = JsArrayLiteral(arrayLiteralElements)
+                        arrayLiteralElements = mutableListOf()
+                        qualifier = JsNameRef(Namer.CONCAT_FUNCTION, dispatch)
+                        concatArguments.add(expr)
+                    }
+                } else {
+                    if (arrayLiteralElements.isNotEmpty()) {
+                        concatArguments.add(JsArrayLiteral(arrayLiteralElements))
+                        arrayLiteralElements = mutableListOf()
+                    }
+                    concatArguments.add(expr)
+                }
+            } else {
+                arrayLiteralElements.add(it.accept(this, context))
+            }
+        }
+
+        return qualifier?.let {
+            if (arrayLiteralElements.isNotEmpty()) {
+                concatArguments.add(JsArrayLiteral(arrayLiteralElements))
+            }
+            return JsInvocation(it, concatArguments)
+        } ?: JsArrayLiteral(arrayLiteralElements)
+    }
 
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
         body.expression.accept(this, context)
 
     override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
-        val irFunction = expression.symbol.owner as IrFunction
+        val irFunction = expression.symbol.owner
         return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
     }
 
@@ -43,8 +83,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Byte -> JsIntLiteral(kind.valueOf(expression).toInt())
             is IrConstKind.Short -> JsIntLiteral(kind.valueOf(expression).toInt())
             is IrConstKind.Int -> JsIntLiteral(kind.valueOf(expression))
-            is IrConstKind.Long,
-            is IrConstKind.Char -> super.visitConst(expression, context)
+            is IrConstKind.Long -> throw IllegalStateException("Long const should have been lowered at this point")
+            is IrConstKind.Char -> throw IllegalStateException("Char const should have been lowered at this point")
             is IrConstKind.Float -> JsDoubleLiteral(kind.valueOf(expression).toDouble())
             is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
         }
@@ -71,7 +111,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.owner.kind) {
         ClassKind.OBJECT -> {
-            // TODO:
+            // TODO: return unit instance instead of null
             if (expression.type.isUnit()) JsNullLiteral()
             else {
                 val className = context.getNameForSymbol(expression.symbol)
@@ -119,7 +159,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val arguments = translateCallArguments(expression, context)
 
         if (dispatchReceiver != null &&
-            dispatchReceiver.type.isFunctionTypeOrSubtype && symbol.owner.name == OperatorNameConventions.INVOKE
+            dispatchReceiver.type.isFunctionTypeOrSubtype() && symbol.descriptor.name == OperatorNameConventions.INVOKE && !symbol.descriptor.isSuspend
         ) {
             return JsInvocation(jsDispatchReceiver!!, arguments)
         }
@@ -135,7 +175,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return if (symbol is IrConstructorSymbol) {
             JsNew(context.getNameForSymbol(symbol).makeRef(), arguments)
         } else {
-            // TODO sanitize name
             val symbolName = context.getNameForSymbol(symbol)
             val ref = if (jsDispatchReceiver != null) JsNameRef(symbolName, jsDispatchReceiver) else JsNameRef(symbolName)
             JsInvocation(ref, jsExtensionReceiver?.let { listOf(jsExtensionReceiver) + arguments } ?: arguments)

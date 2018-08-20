@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.util.KotlinJars
 import java.io.File
 import java.net.URLClassLoader
-import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.host.getMergedScriptText
@@ -82,8 +82,12 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
             ResultWithDiagnostics.Failure(*messageCollector.diagnostics.toTypedArray(), *diagnostics)
 
         try {
+            setIdeaIoUseFallback()
+
+            val scriptCompileConfiguration = configurator?.defaultConfiguration?.let { additionalConfiguration.cloneWithNewParent(it) }
+                ?: additionalConfiguration
             var environment: KotlinCoreEnvironment? = null
-            var updatedScriptCompileConfiguration = additionalConfiguration
+            var updatedScriptCompileConfiguration = scriptCompileConfiguration
 
             fun updateClasspath(classpath: List<File>) {
                 environment!!.updateClasspath(classpath.map(::JvmClasspathRoot))
@@ -100,18 +104,18 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
             val kotlinCompilerConfiguration = org.jetbrains.kotlin.config.CompilerConfiguration().apply {
                 add(
                     JVMConfigurationKeys.SCRIPT_DEFINITIONS,
-                    BridgeScriptDefinition(additionalConfiguration, configurator, ::updateClasspath)
+                    BridgeScriptDefinition(scriptCompileConfiguration, configurator, ::updateClasspath)
                 )
                 put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 var isModularJava = false
-                additionalConfiguration.getOrNull(JvmScriptCompileConfigurationProperties.javaHomeDir)?.let {
+                scriptCompileConfiguration.getOrNull(JvmScriptCompileConfigurationProperties.javaHomeDir)?.let {
                     put(JVMConfigurationKeys.JDK_HOME, it)
                     isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }
 
-                additionalConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.let {
+                scriptCompileConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.let {
                     addJvmClasspathRoots(
                         it.flatMap {
                             (it as JvmDependency).classpath
@@ -120,10 +124,10 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
                 }
                 fun addRoot(moduleName: String, file: File) {
                     if (isModularJava) {
-                        add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                        add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
                         add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, moduleName)
                     } else {
-                        add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+                        add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
                     }
                 }
                 // TODO: implement logic similar to compiler's  -no-stdlib (and -no-reflect?)
@@ -143,7 +147,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
             val analyzerWithCompilerReport = AnalyzerWithCompilerReport(messageCollector, environment.configuration.languageVersionSettings)
 
             val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
-            val scriptText = getMergedScriptText(script, additionalConfiguration)
+            val scriptText = getMergedScriptText(script, scriptCompileConfiguration)
             val scriptFileName = "script" // TODO: extract from file/url if available
             val virtualFile = LightVirtualFile(
                 "$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}",
@@ -236,10 +240,13 @@ internal class BridgeScriptDefinition(
     scriptCompilerConfiguration: ScriptCompileConfiguration,
     scriptConfigurator: ScriptCompilationConfigurator?,
     updateClasspath: (List<File>) -> Unit
-) : KotlinScriptDefinition(scriptCompilerConfiguration[ScriptingEnvironmentProperties.baseClass] as KClass<out Any>) {
-    override val acceptedAnnotations =
-        scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)?.toList()
+) : KotlinScriptDefinition(scriptCompilerConfiguration.getScriptBaseClass(BridgeScriptDefinition::class)) {
+    override val acceptedAnnotations = run {
+        val cl = this::class.java.classLoader
+        scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)
+            ?.map { (cl.loadClass(it.typeName) as Class<out Annotation>).kotlin }
                 ?: emptyList()
+    }
 
     override val dependencyResolver: DependenciesResolver =
         BridgeDependenciesResolver(scriptConfigurator, scriptCompilerConfiguration, updateClasspath)

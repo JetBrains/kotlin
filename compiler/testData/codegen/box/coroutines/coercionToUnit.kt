@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -6,7 +7,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 
-suspend fun <T> await(t: T): T = suspendCoroutineOrReturn { c ->
+suspend fun <T> await(t: T): T = suspendCoroutineUninterceptedOrReturn { c ->
     c.resume(t)
     COROUTINE_SUSPENDED
 }

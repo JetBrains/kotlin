@@ -18,11 +18,11 @@ Exit code: OK
 
 Cleaning output files:
   out/production/module/Foo.class
+  out/production/module/META-INF/module.kotlin_module
 End of files
 Marked as dirty by Kotlin:
   src/usage.kt
 Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
   out/production/module/UsageKt.class
 End of files
 Compiling files:

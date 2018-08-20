@@ -59,6 +59,16 @@ public class PartialBodyResolveTestGenerated extends AbstractPartialBodyResolveT
         runTest("idea/testData/resolve/partialBodyResolve/ClassInitializerHasNoValue.kt");
     }
 
+    @TestMetadata("ContractFromBinary.kt")
+    public void testContractFromBinary() throws Exception {
+        runTest("idea/testData/resolve/partialBodyResolve/ContractFromBinary.kt");
+    }
+
+    @TestMetadata("ContractFromSource.kt")
+    public void testContractFromSource() throws Exception {
+        runTest("idea/testData/resolve/partialBodyResolve/ContractFromSource.kt");
+    }
+
     @TestMetadata("DeclarationsBefore.kt")
     public void testDeclarationsBefore() throws Exception {
         runTest("idea/testData/resolve/partialBodyResolve/DeclarationsBefore.kt");

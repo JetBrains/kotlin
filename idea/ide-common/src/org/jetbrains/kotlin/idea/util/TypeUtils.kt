@@ -18,12 +18,12 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -37,13 +37,15 @@ fun KotlinType.approximateFlexibleTypes(
         preferStarForRaw: Boolean = false
 ): KotlinType {
     if (isDynamic()) return this
-    return approximateNonDynamicFlexibleTypes(preferNotNull, preferStarForRaw)
+    return unwrapEnhancement().approximateNonDynamicFlexibleTypes(preferNotNull, preferStarForRaw)
 }
 
 private fun KotlinType.approximateNonDynamicFlexibleTypes(
         preferNotNull: Boolean = false,
         preferStarForRaw: Boolean = false
 ): SimpleType {
+    if (this is ErrorType) return this
+
     if (isFlexible()) {
         val flexible = asFlexibleType()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?

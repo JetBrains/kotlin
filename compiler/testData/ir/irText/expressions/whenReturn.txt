@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/whenReturn.kt
-  FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:String flags:
+  FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String flags:
     VALUE_PARAMETER name:grade index:0 type:kotlin.String flags:
     BLOCK_BODY
       BLOCK type=kotlin.Nothing origin=WHEN

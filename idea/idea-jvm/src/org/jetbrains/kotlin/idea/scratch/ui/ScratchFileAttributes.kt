@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.scratch.ui
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.util.fileAttribute
+import org.jetbrains.kotlin.idea.core.util.cachedFileAttribute
 
-var VirtualFile.scratchPanelConfig: ScratchPanelConfig? by fileAttribute(
+var VirtualFile.scratchPanelConfig: ScratchPanelConfig? by cachedFileAttribute(
     name = "kotlin-scratch-panel-config",
     version = 1,
     read = { ScratchPanelConfig(readBoolean(), readBoolean()) },

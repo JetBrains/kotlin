@@ -74,6 +74,9 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
+    testCompile(project(":kotlin-scripting-compiler"))
+    testCompile(project(":kotlin-scripting-misc"))
+    testCompile(project(":kotlin-script-util"))
     testCompileOnly(projectRuntimeJar(":kotlin-daemon-client"))
     testCompileOnly(project(":kotlin-reflect-api"))
     otherCompilerModules.forEach {
@@ -97,8 +100,6 @@ sourceSets {
     "main" {}
     "test" {
         projectDefault()
-        // not yet ready
-//        java.srcDir("tests-ir-jvm/tests")
     }
 }
 
@@ -110,7 +111,7 @@ jar.from("../idea/src") {
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")

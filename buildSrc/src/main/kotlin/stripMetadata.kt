@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.jar.JarFile
+import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 /**
@@ -47,8 +48,8 @@ fun stripMetadata(logger: Logger, classNamePattern: String, inFile: File, outFil
                     error("Size increased for ${entry.name}: was ${inBytes.size} bytes, became ${outBytes.size} bytes")
                 }
 
-                entry.compressedSize = -1L
-                outJar.putNextEntry(entry)
+                val newEntry = ZipEntry(entry.name)
+                outJar.putNextEntry(newEntry)
                 outJar.write(outBytes)
                 outJar.closeEntry()
             }

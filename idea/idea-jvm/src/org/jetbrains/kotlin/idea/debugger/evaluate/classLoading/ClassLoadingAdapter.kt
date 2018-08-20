@@ -25,9 +25,7 @@ import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.Value
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
-import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
-import org.jetbrains.org.objectweb.asm.tree.LabelNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.math.min
 
 interface ClassLoadingAdapter {
@@ -40,15 +38,15 @@ interface ClassLoadingAdapter {
         )
 
         fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
-            val hasAdditionalClasses = classes.size > 1
-            val hasLoops = classes.isNotEmpty() && doesContainLoops(classes.first { it.isMainClass() }.bytes)
+            val mainClass = classes.firstOrNull { it.isMainClass() } ?: return null
+
+            var info = ClassInfoForEvaluator(containsAdditionalClasses = classes.size > 1)
+            if (!info.containsAdditionalClasses) {
+                info = analyzeClass(mainClass, info)
+            }
 
             for (adapter in ADAPTERS) {
-                if (adapter.isApplicable(
-                        context,
-                        hasAdditionalClasses = hasAdditionalClasses,
-                        hasLoops = hasLoops
-                )) {
+                if (adapter.isApplicable(context, info)) {
                     return adapter.loadClasses(context, classes)
                 }
             }
@@ -56,30 +54,44 @@ interface ClassLoadingAdapter {
             return null
         }
 
-        private fun doesContainLoops(clazz: ByteArray): Boolean {
-            val classNode = ClassNode().apply { ClassReader(clazz).accept(this, ClassReader.EXPAND_FRAMES) }
+        data class ClassInfoForEvaluator(
+            val containsLoops: Boolean = false,
+            val containsCodeUnsupportedInEval4J: Boolean = false,
+            val containsAdditionalClasses: Boolean = false
+        ) {
+            val isCompilingEvaluatorPreferred: Boolean
+                get() = containsLoops || containsCodeUnsupportedInEval4J || containsAdditionalClasses
+        }
+
+        private fun analyzeClass(classToLoad: ClassToLoad, info: ClassInfoForEvaluator): ClassInfoForEvaluator {
+            val classNode = ClassNode().apply { ClassReader(classToLoad.bytes).accept(this, ClassReader.EXPAND_FRAMES) }
             val methodToRun = classNode.methods.single()
 
-            val labelsVisited = hashSetOf<Label>()
-            var currentInsn = methodToRun.instructions.first
-            while (currentInsn != null) {
-                if (currentInsn is LabelNode) {
-                    labelsVisited += currentInsn.label
-                }
-                else if (currentInsn is JumpInsnNode) {
-                    if (currentInsn.label.label in labelsVisited) {
-                        return true
+            val visitedLabels = hashSetOf<Label>()
+
+            tailrec fun analyzeInsn(insn: AbstractInsnNode, info: ClassInfoForEvaluator): ClassInfoForEvaluator {
+                when (insn) {
+                    is LabelNode -> visitedLabels += insn.label
+                    is JumpInsnNode -> {
+                        if (insn.label.label in visitedLabels) {
+                            return info.copy(containsLoops = true)
+                        }
+                    }
+                    is TableSwitchInsnNode, is LookupSwitchInsnNode -> {
+                        return info.copy(containsCodeUnsupportedInEval4J = true)
                     }
                 }
 
-                currentInsn = currentInsn.next
+                val nextInsn = insn.next ?: return info
+                return analyzeInsn(nextInsn, info)
             }
 
-            return false
+            val firstInsn = methodToRun.instructions?.first ?: return info
+            return analyzeInsn(firstInsn, info)
         }
     }
 
-    fun isApplicable(context: EvaluationContextImpl, hasAdditionalClasses: Boolean, hasLoops: Boolean): Boolean
+    fun isApplicable(context: EvaluationContextImpl, info: ClassInfoForEvaluator): Boolean
 
     fun loadClasses(context: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference
 

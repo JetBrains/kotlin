@@ -23,13 +23,13 @@ import kotlin.reflect.jvm.internal.structure.wrapperByPrimitive
 import java.lang.reflect.Method as ReflectMethod
 
 internal class AnnotationConstructorCaller(
-        private val jClass: Class<*>,
-        private val parameterNames: List<String>,
-        private val callMode: CallMode,
-        origin: Origin,
-        private val methods: List<ReflectMethod> = parameterNames.map { name -> jClass.getDeclaredMethod(name) }
+    private val jClass: Class<*>,
+    private val parameterNames: List<String>,
+    private val callMode: CallMode,
+    origin: Origin,
+    private val methods: List<ReflectMethod> = parameterNames.map { name -> jClass.getDeclaredMethod(name) }
 ) : FunctionCaller<Nothing?>(
-        null, jClass, null, methods.map { it.genericReturnType }.toTypedArray()
+    null, jClass, null, methods.map { it.genericReturnType }.toTypedArray()
 ) {
     enum class CallMode { CALL_BY_NAME, POSITIONAL_CALL }
 
@@ -44,9 +44,9 @@ internal class AnnotationConstructorCaller(
         // TODO: consider lifting this restriction once KT-8957 is implemented
         if (callMode == CallMode.POSITIONAL_CALL && origin == Origin.JAVA && (parameterNames - "value").isNotEmpty()) {
             throw UnsupportedOperationException(
-                    "Positional call of a Java annotation constructor is allowed only if there are no parameters " +
-                    "or one parameter named \"value\". This restriction exists because Java annotations (in contrast to Kotlin)" +
-                    "do not impose any order on their arguments. Use KCallable#callBy instead."
+                "Positional call of a Java annotation constructor is allowed only if there are no parameters " +
+                        "or one parameter named \"value\". This restriction exists because Java annotations (in contrast to Kotlin)" +
+                        "do not impose any order on their arguments. Use KCallable#callBy instead."
             )
         }
     }
@@ -56,8 +56,8 @@ internal class AnnotationConstructorCaller(
 
         val values = args.mapIndexed { index, arg ->
             val value =
-                    if (arg == null && callMode == CallMode.CALL_BY_NAME) defaultValues[index]
-                    else arg.transformKotlinToJvm(erasedParameterTypes[index])
+                if (arg == null && callMode == CallMode.CALL_BY_NAME) defaultValues[index]
+                else arg.transformKotlinToJvm(erasedParameterTypes[index])
             value ?: throwIllegalArgumentType(index, parameterNames[index], erasedParameterTypes[index])
         }
 
@@ -103,23 +103,23 @@ private fun throwIllegalArgumentType(index: Int, name: String, expectedJvmType: 
 
 private fun createAnnotationInstance(annotationClass: Class<*>, methods: List<ReflectMethod>, values: Map<String, Any>): Any {
     fun equals(other: Any?): Boolean =
-            (other as? Annotation)?.annotationClass?.java == annotationClass &&
-            methods.all { method ->
-                val ours = values[method.name]
-                val theirs = method(other)
-                when (ours) {
-                    is BooleanArray -> Arrays.equals(ours, theirs as BooleanArray)
-                    is CharArray -> Arrays.equals(ours, theirs as CharArray)
-                    is ByteArray -> Arrays.equals(ours, theirs as ByteArray)
-                    is ShortArray -> Arrays.equals(ours, theirs as ShortArray)
-                    is IntArray -> Arrays.equals(ours, theirs as IntArray)
-                    is FloatArray -> Arrays.equals(ours, theirs as FloatArray)
-                    is LongArray -> Arrays.equals(ours, theirs as LongArray)
-                    is DoubleArray -> Arrays.equals(ours, theirs as DoubleArray)
-                    is Array<*> -> Arrays.equals(ours, theirs as Array<*>)
-                    else -> ours == theirs
+        (other as? Annotation)?.annotationClass?.java == annotationClass &&
+                methods.all { method ->
+                    val ours = values[method.name]
+                    val theirs = method(other)
+                    when (ours) {
+                        is BooleanArray -> Arrays.equals(ours, theirs as BooleanArray)
+                        is CharArray -> Arrays.equals(ours, theirs as CharArray)
+                        is ByteArray -> Arrays.equals(ours, theirs as ByteArray)
+                        is ShortArray -> Arrays.equals(ours, theirs as ShortArray)
+                        is IntArray -> Arrays.equals(ours, theirs as IntArray)
+                        is FloatArray -> Arrays.equals(ours, theirs as FloatArray)
+                        is LongArray -> Arrays.equals(ours, theirs as LongArray)
+                        is DoubleArray -> Arrays.equals(ours, theirs as DoubleArray)
+                        is Array<*> -> Arrays.equals(ours, theirs as Array<*>)
+                        else -> ours == theirs
+                    }
                 }
-            }
 
     val hashCode by lazy {
         values.entries.sumBy { entry ->
@@ -163,7 +163,7 @@ private fun createAnnotationInstance(annotationClass: Class<*>, methods: List<Re
         }
     }
 
-    return Proxy.newProxyInstance(annotationClass.classLoader, arrayOf(annotationClass)) { proxy, method, args ->
+    return Proxy.newProxyInstance(annotationClass.classLoader, arrayOf(annotationClass)) { _, method, args ->
         val name = method.name
         when (name) {
             "annotationType" -> annotationClass

@@ -213,4 +213,37 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
     public void testWhile() throws Exception {
         runTest("idea/testData/codeInsight/postfix/while.kt");
     }
+
+    @TestMetadata("idea/testData/codeInsight/postfix/wrapWithCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WrapWithCall extends AbstractPostfixTemplateProviderTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInWrapWithCall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix/wrapWithCall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("arrayOfStatement.kt")
+        public void testArrayOfStatement() throws Exception {
+            runTest("idea/testData/codeInsight/postfix/wrapWithCall/arrayOfStatement.kt");
+        }
+
+        @TestMetadata("listOf.kt")
+        public void testListOf() throws Exception {
+            runTest("idea/testData/codeInsight/postfix/wrapWithCall/listOf.kt");
+        }
+
+        @TestMetadata("returnSequenceOf.kt")
+        public void testReturnSequenceOf() throws Exception {
+            runTest("idea/testData/codeInsight/postfix/wrapWithCall/returnSequenceOf.kt");
+        }
+
+        @TestMetadata("setOf.kt")
+        public void testSetOf() throws Exception {
+            runTest("idea/testData/codeInsight/postfix/wrapWithCall/setOf.kt");
+        }
+    }
 }

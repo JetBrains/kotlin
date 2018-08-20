@@ -8,7 +8,7 @@ plugins {
 dependencies {
     runtime(project(":kotlin-stdlib"))
     runtime(project(":kotlin-script-runtime"))
-    runtimeOnly(project(":kotlin-reflect"))
+    runtime(project(":kotlin-reflect"))
 }
 
 noDefaultJar()

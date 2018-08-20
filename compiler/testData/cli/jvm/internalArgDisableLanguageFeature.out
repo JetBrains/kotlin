@@ -1,14 +1,13 @@
 warning: ATTENTION!
-This build uses internal compiler arguments:
+This build uses unsafe internal compiler arguments:
 
--XXLanguage:-InlineClasses
+-XXLanguage:-SoundSmartCastsAfterTry
 
-This mode is strictly prohibited for production use,
+This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-warning: language version 1.3 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/inlineClass.kt:1:1: error: the feature "inline classes" is experimental and should be enabled explicitly
-inline class Foo(val x: Int)
-^
-COMPILATION_ERROR
+compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:2:25: warning: variable 'some' initializer is redundant
+    var some: String? = null
+                        ^
+OK

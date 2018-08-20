@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.test.util;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import kotlin.Unit;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -105,51 +106,58 @@ public class RecursiveDescriptorComparator {
         boolean isClassOrPackage =
                 (descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) && !isEnumEntry;
 
-        if (isClassOrPackage && !topLevel) {
-            printer.println();
-        }
-
-        boolean isPrimaryConstructor = descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
-        printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", conf.renderer.render(descriptor));
-
-        if (descriptor instanceof FunctionDescriptor && conf.checkFunctionContracts) {
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-            printEffectsIfAny(functionDescriptor, printer);
-        }
-
+        StringBuilder content = new StringBuilder();
         if (isClassOrPackage) {
+            Printer child = new Printer(content, printer);
+
             if (!topLevel) {
-                printer.printlnWithNoIndent(" {").pushIndent();
-            }
-            else {
-                printer.println();
-                printer.println();
+                child.pushIndent();
             }
 
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor klass = (ClassDescriptor) descriptor;
-                appendSubDescriptors(descriptor, module,
-                                     klass.getDefaultType().getMemberScope(), klass.getConstructors(), printer);
+                appendSubDescriptors(descriptor, module, klass.getDefaultType().getMemberScope(), klass.getConstructors(), child);
                 MemberScope staticScope = klass.getStaticScope();
                 if (!DescriptorUtils.getAllDescriptors(staticScope).isEmpty()) {
-                    printer.println();
-                    printer.println("// Static members");
-                    appendSubDescriptors(descriptor, module, staticScope, Collections.emptyList(), printer);
+                    child.println();
+                    child.println("// Static members");
+                    appendSubDescriptors(descriptor, module, staticScope, Collections.emptyList(), child);
                 }
             }
             else if (descriptor instanceof PackageFragmentDescriptor) {
                 appendSubDescriptors(descriptor, module,
                                      ((PackageFragmentDescriptor) descriptor).getMemberScope(),
-                                     Collections.emptyList(), printer);
+                                     Collections.emptyList(), child);
             }
             else if (descriptor instanceof PackageViewDescriptor) {
                 appendSubDescriptors(descriptor, module,
                                      getPackageScopeInModule((PackageViewDescriptor) descriptor, module),
-                                     Collections.emptyList(), printer);
+                                     Collections.emptyList(), child);
             }
 
             if (!topLevel) {
-                printer.popIndent().println("}");
+                if (child.isEmpty() && (
+                        descriptor instanceof PackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor
+                )) {
+                    return;
+                }
+
+                printer.println();
+            }
+        }
+
+        printDescriptor(descriptor, printer);
+
+        if (isClassOrPackage) {
+            if (!topLevel) {
+                printer.printlnWithNoIndent(" {");
+                printer.printWithNoIndent(content);
+                printer.println("}");
+            }
+            else {
+                printer.println();
+                printer.println();
+                printer.printWithNoIndent(StringsKt.trimStart(content, Printer.LINE_SEPARATOR.toCharArray()));
             }
         }
         else if (conf.checkPropertyAccessors && descriptor instanceof PropertyDescriptor) {
@@ -177,7 +185,21 @@ public class RecursiveDescriptorComparator {
         }
     }
 
-    private void printEffectsIfAny(FunctionDescriptor functionDescriptor, Printer printer) {
+    private void printDescriptor(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull Printer printer
+    ) {
+        boolean isPrimaryConstructor = conf.checkPrimaryConstructors &&
+                                       descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
+
+        printer.print(isPrimaryConstructor ? "/*primary*/ " : "", conf.renderer.render(descriptor));
+
+        if (descriptor instanceof FunctionDescriptor && conf.checkFunctionContracts) {
+            printEffectsIfAny((FunctionDescriptor) descriptor, printer);
+        }
+    }
+
+    private static void printEffectsIfAny(FunctionDescriptor functionDescriptor, Printer printer) {
         LazyContractProvider contractProvider = functionDescriptor.getUserData(ContractProviderKey.INSTANCE);
         if (contractProvider == null) return;
 

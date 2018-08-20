@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,6 +77,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.*;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private static final String RECENTS_KEY = "MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY";
@@ -168,8 +171,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         sourceFiles,
                         new Function1<KtFile, Iterable<?>>() {
                             @Override
-                            public Iterable<?> invoke(KtFile jetFile) {
-                                return jetFile.getDeclarations();
+                            public Iterable<?> invoke(KtFile ktFile) {
+                                return KtPsiUtilKt.getFileOrScriptDeclarations(ktFile);
                             }
                         }
                 ),
@@ -190,7 +193,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             @Nullable String targetFileName,
             @Nullable final PsiDirectory targetDirectory
     ) {
-        if (targetDirectory == null) return Collections.emptyList();
+        if (targetDirectory == null) return emptyList();
 
         List<String> fileNames =
                 targetFileName != null
@@ -446,7 +449,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 }
         );
         for (Map.Entry<KtFile, List<KtNamedDeclaration>> entry : fileToElements.entrySet()) {
-            if (entry.getKey().getDeclarations().size() != entry.getValue().size()) return false;
+            if (KtPsiUtilKt.getFileOrScriptDeclarations(entry.getKey()).size() != entry.getValue().size()) return false;
         }
         return true;
     }

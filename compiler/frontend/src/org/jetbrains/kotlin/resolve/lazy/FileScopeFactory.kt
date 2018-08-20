@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import gnu.trove.THashSet
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtImportsFactory
+import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -34,36 +35,46 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 
-data class FileScopes(val lexicalScope: LexicalScope, val importingScope: ImportingScope, val importResolver: ImportResolver)
+data class FileScopes(val lexicalScope: LexicalScope, val importingScope: ImportingScope, val importForceResolver: ImportForceResolver)
 
 class FileScopeFactory(
     private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
-    private val storageManager: StorageManager,
-    private val moduleDescriptor: ModuleDescriptor,
-    private val qualifiedExpressionResolver: QualifiedExpressionResolver,
     private val bindingTrace: BindingTrace,
-    private val ktImportsFactory: KtImportsFactory,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap,
-    private val defaultImportProvider: DefaultImportProvider,
-    private val languageVersionSettings: LanguageVersionSettings,
-    private val deprecationResolver: DeprecationResolver
+    private val targetPlatform: TargetPlatform,
+    private val components: ImportResolutionComponents
 ) {
-    /* avoid constructing psi for default imports prematurely (time consuming in some scenarios) */
-    private val defaultImports by storageManager.createLazyValue {
-        ktImportsFactory.createImportDirectivesNotCached(defaultImportProvider.defaultImports)
+    private val defaultImports =
+        targetPlatform.getDefaultImports(components.languageVersionSettings, includeLowPriorityImports = false).map(::DefaultImportImpl)
+
+    private val defaultLowPriorityImports = targetPlatform.defaultLowPriorityImports.map(::DefaultImportImpl)
+
+    private class DefaultImportImpl(private val importPath: ImportPath) : KtImportInfo {
+        override val isAllUnder: Boolean get() = importPath.isAllUnder
+
+        override val importContent = KtImportInfo.ImportContent.FqNameBased(importPath.fqName)
+
+        override val aliasName: String? get() = importPath.alias?.asString()
+
+        override val importedFqName: FqName? get() = importPath.fqName
     }
 
     fun createScopesForFile(file: KtFile, existingImports: ImportingScope? = null): FileScopes {
-        val packageView = moduleDescriptor.getPackage(file.packageFqName)
+        val packageView = components.moduleDescriptor.getPackage(file.packageFqName)
         val packageFragment = topLevelDescriptorProvider.getPackageFragmentOrDiagnoseFailure(file.packageFqName, file)
 
         return FilesScopesBuilder(file, existingImports, packageFragment, packageView).result
     }
 
+    private data class DefaultImportResolvers(
+        val explicit: LazyImportResolver<DefaultImportImpl>,
+        val allUnder: LazyImportResolver<DefaultImportImpl>,
+        val lowPriority: LazyImportResolver<DefaultImportImpl>
+    )
+
     private fun createDefaultImportResolvers(
-        extraImports: Collection<KtImportDirective>,
+        extraImports: Collection<DefaultImportImpl>,
         aliasImportNames: Collection<FqName>
-    ): Pair<LazyImportResolver, LazyImportResolver> {
+    ): DefaultImportResolvers {
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve", false)
         val allImplicitImports = defaultImports concat extraImports
 
@@ -73,40 +84,54 @@ class FileScopeFactory(
             allImplicitImports.filter { it.isAllUnder || it.importedFqName !in aliasImportNames }
         }
 
-        val defaultExplicitImportResolver = createImportResolver(
+        val explicit = createDefaultImportResolver(
             ExplicitImportsIndexed(defaultImportsFiltered),
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames
         )
-        val defaultAllUnderImportResolver =
-            createImportResolver(
-                AllUnderImportsIndexed(defaultImportsFiltered),
-                tempTrace,
-                packageFragment = null,
-                aliasImportNames = aliasImportNames,
-                excludedImports = defaultImportProvider.excludedImports
-            )
+        val allUnder = createDefaultImportResolver(
+            AllUnderImportsIndexed(defaultImportsFiltered),
+            tempTrace,
+            packageFragment = null,
+            aliasImportNames = aliasImportNames,
+            excludedImports = targetPlatform.excludedImports
+        )
+        val lowPriority = createDefaultImportResolver(
+            AllUnderImportsIndexed(defaultLowPriorityImports.also { imports ->
+                assert(imports.all { it.isAllUnder }) { "All low priority imports must be all-under: $imports" }
+            }),
+            tempTrace,
+            packageFragment = null,
+            aliasImportNames = aliasImportNames
+        )
 
-        return defaultExplicitImportResolver to defaultAllUnderImportResolver
+        return DefaultImportResolvers(explicit, allUnder, lowPriority)
     }
 
-    private val defaultImportResolvers by storageManager.createLazyValue {
+    private val defaultImportResolvers by components.storageManager.createLazyValue {
         createDefaultImportResolvers(emptyList(), emptyList())
     }
 
-    private fun createImportResolver(
-        indexedImports: IndexedImports,
+    private fun createDefaultImportResolver(
+        indexedImports: IndexedImports<DefaultImportImpl>,
         trace: BindingTrace,
         aliasImportNames: Collection<FqName>,
         packageFragment: PackageFragmentDescriptor?,
         excludedImports: List<FqName>? = null
     ) = LazyImportResolver(
-        storageManager, qualifiedExpressionResolver, moduleDescriptor, platformToKotlinClassMap, languageVersionSettings,
-        indexedImports, aliasImportNames concat excludedImports, trace, packageFragment,
-        deprecationResolver
+        components, indexedImports, aliasImportNames concat excludedImports, trace, packageFragment
     )
 
+    private fun createImportResolver(
+        indexedImports: IndexedImports<KtImportDirective>,
+        trace: BindingTrace,
+        aliasImportNames: Collection<FqName>,
+        packageFragment: PackageFragmentDescriptor?,
+        excludedImports: List<FqName>? = null
+    ) = LazyImportResolverForKtImportDirective(
+        components, indexedImports, aliasImportNames concat excludedImports, trace, packageFragment
+    )
 
     private inner class FilesScopesBuilder(
         private val file: KtFile,
@@ -127,7 +152,7 @@ class FileScopeFactory(
 
         val lazyImportingScope = object : ImportingScope by ImportingScope.Empty {
             // avoid constructing the scope before we query it
-            override val parent: ImportingScope by storageManager.createLazyValue {
+            override val parent: ImportingScope by components.storageManager.createLazyValue {
                 createImportingScope()
             }
         }
@@ -135,10 +160,10 @@ class FileScopeFactory(
         val lexicalScope =
             LexicalScope.Base(lazyImportingScope, topLevelDescriptorProvider.getPackageFragmentOrDiagnoseFailure(file.packageFqName, file))
 
-        val importResolver = object : ImportResolver {
-            override fun forceResolveAllImports() {
-                explicitImportResolver.forceResolveAllImports()
-                allUnderImportResolver.forceResolveAllImports()
+        val importResolver = object : ImportForceResolver {
+            override fun forceResolveNonDefaultImports() {
+                explicitImportResolver.forceResolveNonDefaultImports()
+                allUnderImportResolver.forceResolveNonDefaultImports()
             }
 
             override fun forceResolveImport(importDirective: KtImportDirective) {
@@ -152,10 +177,10 @@ class FileScopeFactory(
 
         val result = FileScopes(lexicalScope, lazyImportingScope, importResolver)
 
-        private fun createDefaultImportResolversForFile(): Pair<LazyImportResolver, LazyImportResolver> {
+        private fun createDefaultImportResolversForFile(): DefaultImportResolvers {
             val extraImports = file.takeIf { it.isScript() }?.originalFile?.virtualFile?.let { vFile ->
                 val scriptExternalDependencies = getScriptExternalDependencies(vFile, file.project)
-                ktImportsFactory.createImportDirectives(scriptExternalDependencies?.imports?.map { ImportPath.fromString(it) }.orEmpty())
+                scriptExternalDependencies?.imports?.map { DefaultImportImpl(ImportPath.fromString(it)) }.orEmpty()
             }.orEmpty()
 
             if (extraImports.isEmpty() && aliasImportNames.isEmpty()) {
@@ -166,45 +191,48 @@ class FileScopeFactory(
         }
 
         fun createImportingScope(): LazyImportScope {
-            val (defaultExplicitImportResolver, defaultAllUnderImportResolver) = createDefaultImportResolversForFile()
+            val (defaultExplicitImportResolver, defaultAllUnderImportResolver, defaultLowPriorityImportResolver) =
+                    createDefaultImportResolversForFile()
 
             val dummyContainerDescriptor = DummyContainerDescriptor(file, packageFragment)
 
             var scope: ImportingScope
 
             val debugName = "LazyFileScope for file " + file.name
+
             scope = LazyImportScope(
-                existingImports, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
+                existingImports, defaultAllUnderImportResolver, defaultLowPriorityImportResolver,
+                LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
                 "Default all under imports in $debugName (invisible classes only)"
             )
 
             scope = LazyImportScope(
-                scope, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
+                scope, allUnderImportResolver, null, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
                 "All under imports in $debugName (invisible classes only)"
             )
 
             scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.INVISIBLE_CLASSES, scope)
 
             scope = LazyImportScope(
-                scope, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
+                scope, defaultAllUnderImportResolver, defaultLowPriorityImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "Default all under imports in $debugName (visible classes)"
             )
 
             scope = LazyImportScope(
-                scope, allUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
+                scope, allUnderImportResolver, null, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "All under imports in $debugName (visible classes)"
             )
 
             scope = LazyImportScope(
-                scope, defaultExplicitImportResolver, LazyImportScope.FilteringKind.ALL,
+                scope, defaultExplicitImportResolver, null, LazyImportScope.FilteringKind.ALL,
                 "Default explicit imports in $debugName"
             )
 
-            scope = SubpackagesImportingScope(scope, moduleDescriptor, FqName.ROOT)
+            scope = SubpackagesImportingScope(scope, components.moduleDescriptor, FqName.ROOT)
 
             scope = currentPackageScope(packageView, aliasImportNames, dummyContainerDescriptor, FilteringKind.VISIBLE_CLASSES, scope)
 
-            return LazyImportScope(scope, explicitImportResolver, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
+            return LazyImportScope(scope, explicitImportResolver, null, LazyImportScope.FilteringKind.ALL, "Explicit imports in $debugName")
         }
 
     }
@@ -221,14 +249,14 @@ class FileScopeFactory(
         parentScope: ImportingScope
     ): ImportingScope {
         val scope = packageView.memberScope
-        val names by lazy(LazyThreadSafetyMode.PUBLICATION) { scope.computeAllNames() }
+        val names by lazy(LazyThreadSafetyMode.PUBLICATION) { scope.computeAllNames()?.let(::THashSet) }
         val packageName = packageView.fqName
         val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
 
         return object : ImportingScope {
             override val parent: ImportingScope? = parentScope
 
-            override fun getContributedPackage(name: Name) = null
+            override fun getContributedPackage(name: Name): Nothing? = null
 
             override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
                 if (name in excludedNames) return null

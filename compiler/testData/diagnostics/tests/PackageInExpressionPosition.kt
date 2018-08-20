@@ -22,6 +22,6 @@ fun main(args : Array<String>) {
     <!NO_COMPANION_OBJECT!>System<!> is Int
     <!INVISIBLE_MEMBER!>System<!>()
     (<!NO_COMPANION_OBJECT!>System<!>)
-    foo@ <!NO_COMPANION_OBJECT!>System<!>
+    <!OI;REDUNDANT_LABEL_WARNING!>foo@<!> <!NO_COMPANION_OBJECT!>System<!>
     null in <!NO_COMPANION_OBJECT!>System<!>
 }

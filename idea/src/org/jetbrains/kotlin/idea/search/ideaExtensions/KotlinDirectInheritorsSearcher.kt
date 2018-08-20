@@ -49,11 +49,11 @@ open class KotlinDirectInheritorsSearcher : QueryExecutorBase<PsiClass, DirectCl
         fun searchForTypeAliasesRecursively(typeName: String) {
             ProgressManager.checkCanceled()
             typeAliasIndex[typeName, project, scope].asSequence()
-                    .map { it.name }
-                    .filterNotNull()
-                    .filter { it !in names }
-                    .onEach { names.add(it) }
-                    .forEach(::searchForTypeAliasesRecursively)
+                .map { it.name }
+                .filterNotNull()
+                .filter { it !in names }
+                .onEach { names.add(it) }
+                .forEach(::searchForTypeAliasesRecursively)
         }
 
         searchForTypeAliasesRecursively(name)
@@ -63,10 +63,10 @@ open class KotlinDirectInheritorsSearcher : QueryExecutorBase<PsiClass, DirectCl
 
             names.forEach { name ->
                 KotlinSuperClassIndex.getInstance()
-                        .get(name, baseClass.project, noLibrarySourceScope).asSequence()
-                        .mapNotNull { candidate -> candidate.toLightClassWithBuiltinMapping() ?: KtFakeLightClass(candidate) }
-                        .filter { candidate -> candidate.isInheritor(baseClass, false) }
-                        .forEach { candidate -> consumer.process(candidate) }
+                    .get(name, baseClass.project, noLibrarySourceScope).asSequence()
+                    .mapNotNull { candidate -> candidate.toLightClassWithBuiltinMapping() ?: KtFakeLightClass(candidate) }
+                    .filter { candidate -> candidate.isInheritor(baseClass, false) }
+                    .forEach { candidate -> consumer.process(candidate) }
             }
         }
     }

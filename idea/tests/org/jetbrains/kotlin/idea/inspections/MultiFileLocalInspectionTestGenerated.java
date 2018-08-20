@@ -78,4 +78,14 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
     public void testReconcilePackageWithDirectory_packageMatchesDirectory_PackageMatchesDirectory() throws Exception {
         runTest("idea/testData/multiFileLocalInspections/reconcilePackageWithDirectory/packageMatchesDirectory/packageMatchesDirectory.test");
     }
+
+    @TestMetadata("unusedSymbol/fromKotlinTest/fromKotlinTest.test")
+    public void testUnusedSymbol_fromKotlinTest_FromKotlinTest() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/unusedSymbol/fromKotlinTest/fromKotlinTest.test");
+    }
+
+    @TestMetadata("unusedSymbol/fromKotlinTestClass/fromKotlinTestClass.test")
+    public void testUnusedSymbol_fromKotlinTestClass_FromKotlinTestClass() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/unusedSymbol/fromKotlinTestClass/fromKotlinTestClass.test");
+    }
 }

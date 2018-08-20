@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.load.java.lazy
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -36,6 +39,7 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMi
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
@@ -52,14 +56,15 @@ class JavaResolverComponents(
         val samConversionResolver: SamConversionResolver,
         val sourceElementFactory: JavaSourceElementFactory,
         val moduleClassResolver: ModuleClassResolver,
-        val packageMapper: PackagePartProvider,
+        val packagePartProvider: PackagePartProvider,
         val supertypeLoopChecker: SupertypeLoopChecker,
         val lookupTracker: LookupTracker,
         val module: ModuleDescriptor,
         val reflectionTypes: ReflectionTypes,
         val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver,
         val signatureEnhancement: SignatureEnhancement,
-        val javaClassesTracker: JavaClassesTracker
+        val javaClassesTracker: JavaClassesTracker,
+        val settings: JavaResolverSettings
 ) {
     fun replace(
             javaResolverCache: JavaResolverCache = this.javaResolverCache
@@ -67,9 +72,25 @@ class JavaResolverComponents(
             storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
             signaturePropagator, errorReporter, javaResolverCache,
             javaPropertyInitializerEvaluator, samConversionResolver, sourceElementFactory,
-            moduleClassResolver, packageMapper, supertypeLoopChecker, lookupTracker, module, reflectionTypes,
-            annotationTypeQualifierResolver, signatureEnhancement, javaClassesTracker
+            moduleClassResolver, packagePartProvider, supertypeLoopChecker, lookupTracker, module, reflectionTypes,
+            annotationTypeQualifierResolver, signatureEnhancement, javaClassesTracker, settings
     )
+}
+
+interface JavaResolverSettings {
+    val isReleaseCoroutines: Boolean
+
+    object Default : JavaResolverSettings {
+        override val isReleaseCoroutines: Boolean
+            get() = false
+    }
+
+    companion object {
+        fun create(isReleaseCoroutines: Boolean): JavaResolverSettings =
+            object : JavaResolverSettings {
+                override val isReleaseCoroutines get() = isReleaseCoroutines
+            }
+    }
 }
 
 private typealias QualifierByApplicabilityType = EnumMap<AnnotationTypeQualifierResolver.QualifierApplicabilityType, NullabilityQualifierWithMigrationStatus?>

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 //KT-2997 Automatically cast error (Array)
 
 fun foo(a: Any): Int {

@@ -61,5 +61,5 @@ fun testAtLeastOnceFlow(x: Any?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
     } while (x != null)
 
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    <!DEBUG_INFO_SMARTCAST!>x<!>.<!UNREACHABLE_CODE!>length<!>
 }

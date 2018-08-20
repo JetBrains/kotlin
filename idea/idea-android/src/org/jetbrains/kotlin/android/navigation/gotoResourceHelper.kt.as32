@@ -24,7 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiClass
 import org.jetbrains.android.util.AndroidUtils
 import com.android.SdkConstants
-import org.jetbrains.android.augment.AndroidPsiElementFinder
+import com.android.tools.idea.res.AndroidInternalRClassFinder
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -80,7 +80,7 @@ private fun getReferredInfo(
     }
     val qName = resolvedClass.qualifiedName
 
-    if (SdkConstants.CLASS_R == qName || AndroidPsiElementFinder.INTERNAL_R_CLASS_QNAME == qName) {
+    if (SdkConstants.CLASS_R == qName || AndroidInternalRClassFinder.INTERNAL_R_CLASS_QNAME == qName) {
         return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, facet.module, true, false)
     }
     val containingFile = resolvedClass.containingFile ?: return null

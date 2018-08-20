@@ -166,7 +166,7 @@ class JDIEval(
             return array.array().getValue(index.int).asValue()
         }
         catch (e: IndexOutOfBoundsException) {
-            throwEvalException(ArrayIndexOutOfBoundsException(e.message))
+            throwInterpretingException(ArrayIndexOutOfBoundsException(e.message))
         }
     }
 
@@ -175,7 +175,7 @@ class JDIEval(
             return array.array().setValue(index.int, newValue.asJdiValue(vm, array.asmType.arrayElementType))
         }
         catch (e: IndexOutOfBoundsException) {
-            throwEvalException(ArrayIndexOutOfBoundsException(e.message))
+            throwInterpretingException(ArrayIndexOutOfBoundsException(e.message))
         }
     }
 
@@ -314,7 +314,7 @@ class JDIEval(
             Type.CHAR_TYPE -> MethodDescription("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false)
             Type.FLOAT_TYPE -> MethodDescription("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false)
             Type.DOUBLE_TYPE -> MethodDescription("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false)
-            else -> throw UnsupportedOperationException("Couldn't box non primitive type ${value.asmType.internalName}")
+            else -> throw UnsupportedOperationException("Couldn't box non-primitive type ${value.asmType.internalName}")
         }
         return invokeStaticMethod(method, listOf(value))
     }
@@ -357,7 +357,17 @@ class JDIEval(
     }
 
     private fun shouldInvokeMethodWithReflection(method: Method, args: List<com.sun.jdi.Value?>): Boolean {
-        return !method.isVarArgs && args.zip(method.argumentTypes()).any { isArrayOfInterfaces(it.first?.type(), it.second) }
+        if (method.isVarArgs) {
+            return false
+        }
+
+        val argumentTypes = try {
+            method.argumentTypes()
+        } catch (e: ClassNotLoadedException) {
+            return false
+        }
+
+        return args.zip(argumentTypes).any { isArrayOfInterfaces(it.first?.type(), it.second) }
     }
 
     private fun isArrayOfInterfaces(valueType: jdi_Type?, expectedType: jdi_Type?): Boolean {
@@ -413,8 +423,8 @@ class JDIEval(
     }
 
 
-    private fun mapArguments(arguments: List<Value>, expecetedTypes: List<jdi_Type>): List<jdi_Value?> {
-        return arguments.zip(expecetedTypes).map {
+    private fun mapArguments(arguments: List<Value>, expectedTypes: List<jdi_Type>): List<jdi_Value?> {
+        return arguments.zip(expectedTypes).map {
             val (arg, expectedType) = it
             arg.asJdiValue(vm, expectedType.asType())
         }
@@ -423,9 +433,27 @@ class JDIEval(
     private fun Method.safeArgumentTypes(): List<jdi_Type> {
         try {
             return argumentTypes()
-        }
-        catch (e: ClassNotLoadedException) {
-            return argumentTypeNames()!!.map { name -> loadClassByName(name, declaringType().classLoader()) }
+        } catch (e: ClassNotLoadedException) {
+            return argumentTypeNames()!!.map { name ->
+                val classLoader = declaringType()?.classLoader()
+                if (classLoader != null) {
+                    return@map loadClassByName(name, classLoader)
+                }
+
+                when (name) {
+                    "void" -> virtualMachine().mirrorOfVoid().type()
+                    "boolean" -> primitiveTypes.getValue(Type.BOOLEAN_TYPE.className)
+                    "byte" -> primitiveTypes.getValue(Type.BYTE_TYPE.className)
+                    "char" -> primitiveTypes.getValue(Type.CHAR_TYPE.className)
+                    "short" -> primitiveTypes.getValue(Type.SHORT_TYPE.className)
+                    "int" -> primitiveTypes.getValue(Type.INT_TYPE.className)
+                    "long" -> primitiveTypes.getValue(Type.LONG_TYPE.className)
+                    "float" -> primitiveTypes.getValue(Type.FLOAT_TYPE.className)
+                    "double" -> primitiveTypes.getValue(Type.DOUBLE_TYPE.className)
+                    else -> virtualMachine().classesByName(name).firstOrNull()
+                            ?: throw IllegalStateException("Unknown class $name")
+                }
+            }
         }
     }
 }

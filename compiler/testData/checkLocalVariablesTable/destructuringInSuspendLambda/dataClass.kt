@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 data class Data(val x: String, val y: Int)
 
 suspend fun test() {

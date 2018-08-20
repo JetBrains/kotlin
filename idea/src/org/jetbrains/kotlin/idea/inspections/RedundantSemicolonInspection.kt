@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -86,6 +87,11 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
             return false
         }
 
+        val prevNameReference = semicolon.getPrevSiblingIgnoringWhitespaceAndComments() as? KtNameReferenceExpression
+        if (prevNameReference != null && prevNameReference.text in softModifierKeywords
+            && semicolon.getNextSiblingIgnoringWhitespaceAndComments() is KtDeclaration
+        ) return false
+
         return true
     }
 
@@ -112,4 +118,6 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
             descriptor.psiElement.delete()
         }
     }
+
+    private val softModifierKeywords = KtTokens.SOFT_KEYWORDS.types.mapNotNull { (it as? KtModifierKeywordToken)?.toString() }
 }

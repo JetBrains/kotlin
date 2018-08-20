@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -488,7 +487,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
 
     private void assertSupertypes(String typeStr, String... supertypeStrs) {
         Set<KotlinType> allSupertypes = TypeUtils.getAllSupertypes(makeType(scopeWithImports, typeStr));
-        Set<KotlinType> expected = Sets.newHashSet();
+        Set<KotlinType> expected = new HashSet<>();
         for (String supertypeStr : supertypeStrs) {
             KotlinType supertype = makeType(scopeWithImports, supertypeStr);
             expected.add(supertype);
