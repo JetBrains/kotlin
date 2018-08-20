@@ -11,7 +11,6 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.testFramework.PlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
@@ -154,7 +153,9 @@ private fun parseDependency(it: String): Dependency {
 private fun parseModuleId(parts: List<String>): ModuleId {
     val platform = parsePlatform(parts)
     val name = parseModuleName(parts)
-    return ModuleId(name, platform)
+    val id = parseIndex(parts) ?: 0
+    assert(id == 0 || platform !is TargetPlatformKind.Common)
+    return ModuleId(name, platform, id)
 }
 
 private fun parsePlatform(parts: List<String>) =
@@ -170,11 +171,19 @@ private fun parseModuleName(parts: List<String>) = when {
 private fun parseIsTestRoot(parts: List<String>) =
     testSuffixes.any { suffix -> parts.any { it.equals(suffix, ignoreCase = true) } }
 
+private fun parseIndex(parts: List<String>): Int? {
+    return parts.singleOrNull() { it.startsWith("id") }?.substringAfter("id")?.toInt()
+}
+
 private data class ModuleId(
     val groupName: String,
-    val platform: TargetPlatformKind<*>
+    val platform: TargetPlatformKind<*>,
+    val index: Int = 0
 ) {
-    fun ideaModuleName() = "${groupName}_${platform.presentableName}"
+    fun ideaModuleName(): String {
+        val suffix = "_$index".takeIf { index != 0 } ?: ""
+        return "${groupName}_${platform.presentableName}$suffix"
+    }
 }
 
 private val TargetPlatformKind<*>.presentableName: String

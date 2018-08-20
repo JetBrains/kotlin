@@ -49,6 +49,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/depends/");
     }
 
+    @TestMetadata("differentJvmImpls")
+    public void testDifferentJvmImpls() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/differentJvmImpls/");
+    }
+
     @TestMetadata("headerClass")
     public void testHeaderClass() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/headerClass/");
