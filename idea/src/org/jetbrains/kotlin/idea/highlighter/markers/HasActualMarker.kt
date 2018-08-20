@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import java.awt.event.MouseEvent
 
-fun getPlatformActualTooltip(declaration: KtDeclaration?): String? {
-    val actualDeclarations = declaration?.actualsForExpected() ?: return null
+fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
+    val actualDeclarations = declaration.actualsForExpected()
     if (actualDeclarations.isEmpty()) return null
 
     return actualDeclarations.asSequence()
@@ -49,8 +49,8 @@ fun getPlatformActualTooltip(declaration: KtDeclaration?): String? {
         }
 }
 
-fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration?) {
-    val actualDeclarations = declaration?.actualsForExpected() ?: return
+fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration) {
+    val actualDeclarations = declaration.actualsForExpected()
     if (actualDeclarations.isEmpty()) return
 
     val renderer = object : DefaultPsiElementCellRenderer() {
