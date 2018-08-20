@@ -39,22 +39,35 @@ Kotlin.callSetter = function (thisObject, klass, propertyName, value) {
     Kotlin.callSetter(thisObject, Object.getPrototypeOf(klass), propertyName, value);
 };
 
-function isInheritanceFromInterface(ctor, iface) {
-    if (ctor === iface) return true;
-
+function getAllInterfaces(ctor) {
+    if (ctor.$metadata$ == null) ctor.$metadata$ = {};
     var metadata = ctor.$metadata$;
-    if (metadata != null) {
+    if (metadata._allInterfaces === undefined) {
+        var allInterfaces = metadata._allInterfaces = [];
+
+        allInterfaces.push(ctor);
+
         var interfaces = metadata.interfaces;
-        for (var i = 0; i < interfaces.length; i++) {
-            if (isInheritanceFromInterface(interfaces[i], iface)) {
-                return true;
+        if (interfaces !== undefined) {
+            for (var i = 0; i < interfaces.length; i++) {
+                allInterfaces.push.apply(allInterfaces, getAllInterfaces(interfaces[i]));
             }
         }
-    }
 
-    var superPrototype = ctor.prototype != null ? Object.getPrototypeOf(ctor.prototype) : null;
-    var superConstructor = superPrototype != null ? superPrototype.constructor : null;
-    return superConstructor != null && isInheritanceFromInterface(superConstructor, iface);
+        var superPrototype = ctor.prototype != null ? Object.getPrototypeOf(ctor.prototype) : null;
+        var superConstructor = superPrototype != null ? superPrototype.constructor : null;
+        if (superConstructor != null) {
+            allInterfaces.push.apply(allInterfaces, getAllInterfaces(superConstructor));
+        }
+        // @TODO: faster duplicate removal
+        metadata._allInterfaces = metadata._allInterfaces.filter(function(item, pos, self) { return self.indexOf(item) === pos; });
+    }
+    return metadata._allInterfaces;
+}
+
+function isInheritanceFromInterface(ctor, iface) {
+    if (ctor === iface) return true;
+    return getAllInterfaces(ctor).indexOf(iface) >= 0;
 }
 
 /**
