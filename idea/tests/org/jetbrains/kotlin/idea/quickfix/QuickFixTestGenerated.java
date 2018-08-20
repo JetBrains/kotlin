@@ -6234,6 +6234,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/experimental/override.kt");
         }
 
+        @TestMetadata("propertyInConstructor.kt")
+        public void testPropertyInConstructor() throws Exception {
+            runTest("idea/testData/quickfix/experimental/propertyInConstructor.kt");
+        }
+
         @TestMetadata("switchOn.kt")
         public void testSwitchOn() throws Exception {
             runTest("idea/testData/quickfix/experimental/switchOn.kt");
