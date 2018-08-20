@@ -19,13 +19,15 @@ package org.jetbrains.kotlin.contracts.parsing
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.descriptors.impl.AbstractTypeParameterDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.types.CastDiagnosticsUtil
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 internal class PsiConditionParser(
     private val collector: ContractParsingDiagnosticsCollector,
@@ -36,7 +38,23 @@ internal class PsiConditionParser(
     override fun visitIsExpression(expression: KtIsExpression, data: Unit): BooleanExpression? {
         val variable = dispatcher.parseVariable(expression.leftHandSide) ?: return null
         val typeReference = expression.typeReference ?: return null
-        val type = callContext.bindingContext[BindingContext.TYPE, typeReference] ?: return null
+        val type = callContext.bindingContext[BindingContext.TYPE, typeReference]?.unwrap() ?: return null
+        val descriptor = type.constructor.declarationDescriptor
+
+        if (type is CapturedType) {
+            collector.badDescription("references to captured types are forbidden in contracts", typeReference)
+            return null
+        }
+
+        if (descriptor is AbstractTypeParameterDescriptor) {
+            collector.badDescription("references to type parameters are forbidden in contracts", typeReference)
+            return null
+        }
+
+        // This should be reported as "Can't check for erased" error, but we explicitly abort contract parsing. Just in case.
+        if (CastDiagnosticsUtil.isCastErased(variable.descriptor.type, type, KotlinTypeChecker.DEFAULT)) {
+            return null
+        }
 
         return IsInstancePredicate(variable, type, expression.isNegated)
     }
