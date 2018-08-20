@@ -39,7 +39,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.RuntimeException
 
-class ClassCodegen private constructor(
+open class ClassCodegen protected constructor(
     internal val irClass: IrClass,
     val context: JvmBackendContext,
     private val parentClassCodegen: ClassCodegen? = null
@@ -66,7 +66,9 @@ class ClassCodegen private constructor(
 
     val psiElement = irClass.descriptor.psiElement!!
 
-    val visitor: ClassBuilder = state.factory.newVisitor(OtherOrigin(psiElement, descriptor), type, psiElement.containingFile)
+    val visitor: ClassBuilder = createClassBuilder()
+
+    open fun createClassBuilder() = state.factory.newVisitor(OtherOrigin(psiElement, descriptor), type, psiElement.containingFile)
 
     private var sourceMapper: DefaultSourceMapper? = null
 
@@ -210,13 +212,7 @@ class ClassCodegen private constructor(
 
     fun getOrCreateSourceMapper(): DefaultSourceMapper {
         if (sourceMapper == null) {
-            sourceMapper = DefaultSourceMapper(
-                SourceInfo.createInfoForIr(
-                    fileEntry.getSourceRangeInfo(irClass.startOffset, irClass.endOffset).endLineNumber + 1,
-                    this.visitor.thisName,
-                    this.psiElement.containingFile.name
-                )
-            )
+            sourceMapper = context.getSourceMapper(irClass)
         }
         return sourceMapper!!
     }
