@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.net.URL
-import java.util.*
 import java.util.concurrent.Callable
 import java.util.jar.Manifest
 
@@ -53,7 +52,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     val taskDescription: String,
     val kotlinCompilation: KotlinCompilation
 ) {
-    abstract protected fun doTargetSpecificProcessing()
+    protected abstract fun doTargetSpecificProcessing()
     protected val logger = Logging.getLogger(this.javaClass)!!
 
     protected val isSeparateClassesDirSupported: Boolean by lazy {
@@ -64,6 +63,8 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected val sourceSetName: String = kotlinCompilation.compilationName
 
     protected val kotlinTask: T = createKotlinCompileTask()
+
+    protected val javaSourceSet: SourceSet? = (kotlinCompilation as? KotlinWithJavaCompilation)?.javaSourceSet
 
     protected open val defaultKotlinDestinationDir: File
         get() {
@@ -92,40 +93,21 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     }
 
     open fun run() {
+        addKotlinDirectoriesToJavaSourceSet()
         doTargetSpecificProcessing()
     }
 
-    protected abstract fun doCreateTask(project: Project, taskName: String): T
-}
-
-internal abstract class KotlinJavaSourceSetProcessor<T : AbstractKotlinCompile<*>>(
-    project: Project,
-    tasksProvider: KotlinTasksProvider,
-    taskDescription: String,
-    val javaSourceSet: SourceSet?,
-    kotlinCompilation: KotlinCompilation
-): KotlinSourceSetProcessor<T>(
-    project, tasksProvider, taskDescription, kotlinCompilation
-) {
-    override fun run() {
-        addKotlinDirSetToSources()
-        super.run()
-    }
-
-    private fun addKotlinDirSetToSources() {
+    private fun addKotlinDirectoriesToJavaSourceSet() {
         if (javaSourceSet == null)
             return
 
-        val kotlinDirSets = kotlinCompilation.kotlinSourceSets.map(KotlinSourceSet::kotlin)
-
-        // Try to avoid duplicate Java sources in allSource:
-        val kotlinSrcDirsToAdd = kotlinDirSets.map { filterOutJavaSrcDirsIfPossible(it) }
-
-        kotlinSrcDirsToAdd.forEach { kotlinSrcDirs ->
-            javaSourceSet.allJava.srcDirs(kotlinSrcDirs)
-            javaSourceSet.allSource.srcDirs(kotlinSrcDirs)
-            javaSourceSet.resources.filter.exclude { it.file in kotlinSrcDirs }
+        // Try to avoid duplicate Java sources in allSource; run lazily to allow changing the directory set:
+        val kotlinSrcDirsToAdd = Callable {
+            kotlinCompilation.kotlinSourceSets.map { filterOutJavaSrcDirsIfPossible(it.kotlin) }
         }
+
+        javaSourceSet.allJava.srcDirs(kotlinSrcDirsToAdd)
+        javaSourceSet.allSource.srcDirs(kotlinSrcDirsToAdd)
     }
 
     private fun filterOutJavaSrcDirsIfPossible(sourceDirectorySet: SourceDirectorySet): FileCollection {
@@ -145,6 +127,8 @@ internal abstract class KotlinJavaSourceSetProcessor<T : AbstractKotlinCompile<*
         // Build a lazily-resolved file collection that filters out Java sources from sources of this sourceDirectorySet
         return getSourceDirectories(sourceDirectorySet).minus(getSourceDirectories(javaSourceSet.java))
     }
+
+    protected abstract fun doCreateTask(project: Project, taskName: String): T
 }
 
 internal class Kotlin2JvmSourceSetProcessor(
@@ -152,10 +136,8 @@ internal class Kotlin2JvmSourceSetProcessor(
     tasksProvider: KotlinTasksProvider,
     kotlinCompilation: KotlinCompilation,
     private val kotlinPluginVersion: String
-) : KotlinJavaSourceSetProcessor<KotlinCompile>(
-    project, tasksProvider, taskDescription = "Compiles the $kotlinCompilation.",
-    javaSourceSet = if (kotlinCompilation is KotlinWithJavaCompilation) kotlinCompilation.javaSourceSet else null,
-    kotlinCompilation = kotlinCompilation
+) : KotlinSourceSetProcessor<KotlinCompile>(
+    project, tasksProvider, "Compiles the $kotlinCompilation.", kotlinCompilation
 ) {
     override val defaultKotlinDestinationDir: File
         get() = if (!isSeparateClassesDirSupported)
