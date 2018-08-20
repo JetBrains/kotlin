@@ -12,8 +12,11 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
     private var jsTargetName: String = "js"
 
     private val commonSourceName get() = "$commonName$productionSuffix"
+    private val commonTestName get() = "$commonName$testSuffix"
     private val jvmSourceName get() = "$jvmTargetName$productionSuffix"
+    private val jvmTestName get() = "$jvmTargetName$testSuffix"
     private val jsSourceName get() = "$jsTargetName$productionSuffix"
+    private val jsTestName get() = "$jsTargetName$testSuffix"
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.web"
 
@@ -35,14 +38,31 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                             implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
                         }
                     }
+                    $commonTestName {
+                        dependencies {
+                    		implementation 'org.jetbrains.kotlin:kotlin-test-common'
+                    		implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                        }
+                    }
                     $jvmSourceName {
                         dependencies {
                             implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
                         }
                     }
+                    $jvmTestName {
+                        dependencies {
+                            implementation 'org.jetbrains.kotlin:kotlin-test'
+                            implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+                        }
+                    }
                     $jsSourceName {
                         dependencies {
                             implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+                        }
+                    }
+                    $jsTestName {
+                        dependencies {
+                            implementation 'org.jetbrains.kotlin:kotlin-test-js'
                         }
                     }
                 }

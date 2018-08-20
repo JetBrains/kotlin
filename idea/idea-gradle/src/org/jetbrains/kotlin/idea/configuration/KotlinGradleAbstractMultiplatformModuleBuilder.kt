@@ -48,5 +48,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuil
 
     companion object {
         const val productionSuffix = "Main"
+
+        const val testSuffix = "Test"
     }
 }
