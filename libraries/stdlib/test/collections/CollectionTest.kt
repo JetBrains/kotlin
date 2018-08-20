@@ -358,6 +358,18 @@ class CollectionTest {
         assertEquals(namesByTeam, mutableNamesByTeam)
     }
 
+    @Test fun associateWith() {
+        val items = listOf("Alice", "Bob", "Carol")
+        val itemsWithTheirLength = items.associateWith { it.length }
+
+        assertEquals(mapOf("Alice" to 5, "Bob" to 3, "Carol" to 5), itemsWithTheirLength)
+
+        val updatedLength =
+            items.drop(1).associateWithTo(itemsWithTheirLength.toMutableMap()) { name -> name.toLowerCase().count { it in "aeuio" }}
+
+        assertEquals(mapOf("Alice" to 5, "Bob" to 1, "Carol" to 2), updatedLength)
+    }
+
     @Test fun plusRanges() {
         val range1 = 1..3
         val range2 = 4..7

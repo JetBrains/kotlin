@@ -616,6 +616,36 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(de
 }
 
 /**
+ * Returns a [Map] where keys are characters from the given char sequence and values are
+ * produced by the [valueSelector] function applied to each character.
+ * 
+ * If any two characters are equal, the last one gets added to the map.
+ * 
+ * The returned map preserves the entry iteration order of the original char sequence.
+ * 
+ * @sample samples.text.Strings.associateWith
+ */
+@SinceKotlin("1.3")
+public inline fun <V> CharSequence.associateWith(valueSelector: (Char) -> V): Map<Char, V> {
+    val result = LinkedHashMap<Char, V>(mapCapacity(length).coerceAtLeast(16))
+    return associateWithTo(result, valueSelector)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs for each character of the given char sequence,
+ * where key is the character itself and value is provided by the [valueSelector] function applied to that key.
+ * 
+ * If any two characters are equal, the last one overwrites the former value in the map.
+ */
+@SinceKotlin("1.3")
+public inline fun <V, M : MutableMap<in Char, in V>> CharSequence.associateWithTo(destination: M, valueSelector: (Char) -> V): M {
+    for (element in this) {
+        destination.put(element, valueSelector(element))
+    }
+    return destination
+}
+
+/**
  * Appends all characters to the given [destination] collection.
  */
 public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destination: C): C {
