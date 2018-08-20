@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -83,8 +85,18 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         if (functionDescriptor == null)
             collector.contractNotAllowed("Contracts are allowed only for functions")
 
-        if (scope.kind != LexicalScopeKind.CODE_BLOCK || (scope.parent as? LexicalScope)?.kind != LexicalScopeKind.FUNCTION_INNER_SCOPE)
+
+        if (callContext.ownerDescriptor.containingDeclaration !is PackageFragmentDescriptor
+            || scope.kind != LexicalScopeKind.CODE_BLOCK
+            || (scope.parent as? LexicalScope)?.kind != LexicalScopeKind.FUNCTION_INNER_SCOPE
+        )
             collector.contractNotAllowed("Contracts are allowed only for top-level functions")
+
+        if (functionDescriptor?.isOperator == true) collector.contractNotAllowed("Contracts are not allowed for operator functions")
+
+        if (functionDescriptor?.isSuspend == true) collector.contractNotAllowed("Contracts are not allowed for suspend functions")
+
+        if (functionDescriptor?.isOverridable == true) collector.contractNotAllowed("Contracts are not allowed for open functions")
     }
 
     private fun KtExpression.isContractDescriptionCallPreciseCheck(context: BindingContext): Boolean =
