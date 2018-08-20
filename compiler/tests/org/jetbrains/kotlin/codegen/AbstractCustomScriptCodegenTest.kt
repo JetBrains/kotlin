@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
 import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.api.ScriptDefinition
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.implicitReceivers
 import kotlin.script.experimental.api.providedProperties
 
@@ -121,20 +121,20 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     }
 }
 
-object TestScriptWithReceiversConfiguration : ScriptDefinition(
+object TestScriptWithReceiversConfiguration : ScriptCompilationConfiguration(
     {
         implicitReceivers<String>()
     })
 
 @Suppress("unused")
-@KotlinScript(definition = TestScriptWithReceiversConfiguration::class)
+@KotlinScript(compilationConfiguration = TestScriptWithReceiversConfiguration::class)
 abstract class TestScriptWithReceivers
 
-object TestScriptWithSimpleEnvVarsConfiguration : ScriptDefinition(
+object TestScriptWithSimpleEnvVarsConfiguration : ScriptCompilationConfiguration(
     {
         providedProperties("stringVar1" to String::class)
     })
 
 @Suppress("unused")
-@KotlinScript(definition = TestScriptWithSimpleEnvVarsConfiguration::class)
+@KotlinScript(compilationConfiguration = TestScriptWithSimpleEnvVarsConfiguration::class)
 abstract class TestScriptWithSimpleEnvVars

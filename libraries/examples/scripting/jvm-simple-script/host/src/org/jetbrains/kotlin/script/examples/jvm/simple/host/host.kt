@@ -13,10 +13,10 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createBasicScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.jvmhost.createBasicScriptCompilationConfigurationFromAnnotatedBaseClass
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val scriptDefinition = createBasicScriptDefinitionFromAnnotatedBaseClass<MyScript> {
+    val compilationConfiguration = createBasicScriptCompilationConfigurationFromAnnotatedBaseClass<MyScript> {
         jvm {
             dependenciesFromCurrentContext(
                 "scripting-jvm-simple-script" /* script library jar name */
@@ -24,7 +24,7 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
         }
     }
 
-    return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), scriptDefinition, null)
+    return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), compilationConfiguration, null)
 }
 
 fun main(vararg args: String) {

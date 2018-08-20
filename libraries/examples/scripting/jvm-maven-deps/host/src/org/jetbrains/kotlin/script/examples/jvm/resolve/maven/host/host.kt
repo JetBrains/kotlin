@@ -11,13 +11,13 @@ import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createBasicScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.jvmhost.createBasicScriptCompilationConfigurationFromAnnotatedBaseClass
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
 
-    val scriptDefinition = createBasicScriptDefinitionFromAnnotatedBaseClass<MyScriptWithMavenDeps>()
+    val compilationConfiguration = createBasicScriptCompilationConfigurationFromAnnotatedBaseClass<MyScriptWithMavenDeps>()
 
-    return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), scriptDefinition, null)
+    return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), compilationConfiguration, null)
 }
 
 fun main(vararg args: String) {

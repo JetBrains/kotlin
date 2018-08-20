@@ -1,9 +1,9 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.definitions
+package kotlin.script.experimental.configuration
 
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
@@ -14,14 +14,14 @@ import kotlin.script.experimental.api.*
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 
 private const val ILLEGAL_CONFIG_ANN_ARG =
-    "Illegal argument to KotlinScriptDefaultCompilationConfiguration annotation: expecting List-derived object or default-constructed class of configuration parameters"
+    "Illegal argument compilationConfiguration of the KotlinScript annotation: expecting an object or default-constructed class derived from ScriptCompilationConfiguration"
 
-fun createScriptDefinitionFromAnnotatedBaseClass(
+fun createScriptCompilationConfigurationFromAnnotatedBaseClass(
     baseClassType: KotlinType,
     environment: ScriptingEnvironment,
-    contextClass: KClass<*> = ScriptDefinition::class,
-    body: ScriptDefinition.Builder.() -> Unit = {}
-): ScriptDefinition {
+    contextClass: KClass<*> = ScriptCompilationConfiguration::class,
+    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+): ScriptCompilationConfiguration {
 
     val getScriptingClass = environment[ScriptingEnvironment.getScriptingClass]
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting environment")
@@ -37,21 +37,21 @@ fun createScriptDefinitionFromAnnotatedBaseClass(
     val mainAnnotation = baseClass.findAnnotation<KotlinScript>()
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $baseClass")
 
-    fun scriptingPropsInstance(kclass: KClass<out ScriptDefinition>): ScriptDefinition = try {
+    fun scriptingPropsInstance(kclass: KClass<out ScriptCompilationConfiguration>): ScriptCompilationConfiguration = try {
         kclass.objectInstance ?: kclass.createInstance()
     } catch (e: Throwable) {
         throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
     }
 
-    return ScriptDefinition {
+    return ScriptCompilationConfiguration {
         baseClass(loadedBaseClassType)
         fileExtension(baseClass.findAnnotation<KotlinScriptFileExtension>()?.extension ?: mainAnnotation.extension)
         displayName(mainAnnotation.name)
 
-        include(scriptingPropsInstance(mainAnnotation.definition))
+        include(scriptingPropsInstance(mainAnnotation.compilationConfiguration))
 
         baseClass.java.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
-            include(scriptingPropsInstance(ann.definition))
+            include(scriptingPropsInstance(ann.compilationConfiguration))
         }
         body()
     }

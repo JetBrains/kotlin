@@ -10,65 +10,67 @@ package kotlin.script.experimental.api
 import kotlin.reflect.KClass
 import kotlin.script.experimental.util.PropertiesCollection
 
-interface ScriptDefinitionKeys
+interface ScriptCompilationConfigurationKeys
 
-open class ScriptDefinition(baseDefinitions: Iterable<ScriptDefinition>, body: Builder.() -> Unit) :
-    PropertiesCollection(Builder(baseDefinitions).apply(body).data) {
+open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCompilationConfiguration>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseConfigurations).apply(body).data) {
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
-    constructor(vararg baseDefinitions: ScriptDefinition, body: Builder.() -> Unit = {}) : this(baseDefinitions.asIterable(), body)
+    constructor(
+        vararg baseConfigurations: ScriptCompilationConfiguration, body: Builder.() -> Unit = {}
+    ) : this(baseConfigurations.asIterable(), body)
 
-    class Builder internal constructor(baseDefinitions: Iterable<ScriptDefinition>) :
-        ScriptDefinitionKeys,
-        PropertiesCollection.Builder(baseDefinitions)
+    class Builder internal constructor(baseConfigurations: Iterable<ScriptCompilationConfiguration>) :
+        ScriptCompilationConfigurationKeys,
+        PropertiesCollection.Builder(baseConfigurations)
 
-    // inherited from script definition for using as a keys anchor
-    companion object : ScriptDefinitionKeys
+    // inherited from script compilationConfiguration for using as a keys anchor
+    companion object : ScriptCompilationConfigurationKeys
 
-    object Default : ScriptDefinition()
+    object Default : ScriptCompilationConfiguration()
 }
 
-val ScriptDefinitionKeys.displayName by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
+val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
 
-val ScriptDefinitionKeys.fileExtension by PropertiesCollection.key<String>("kts") // file extension
+val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key<String>("kts") // file extension
 
-val ScriptDefinitionKeys.baseClass by PropertiesCollection.key<KotlinType>() // script base class
+val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>() // script base class
 
-val ScriptDefinitionKeys.scriptBodyTarget by PropertiesCollection.key<ScriptBodyTarget>(ScriptBodyTarget.Constructor)
+val ScriptCompilationConfigurationKeys.scriptBodyTarget by PropertiesCollection.key<ScriptBodyTarget>(ScriptBodyTarget.Constructor)
 
-val ScriptDefinitionKeys.implicitReceivers by PropertiesCollection.key<List<KotlinType>>() // in the order from outer to inner scope
+val ScriptCompilationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<KotlinType>>() // in the order from outer to inner scope
 
-val ScriptDefinitionKeys.providedProperties by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
+val ScriptCompilationConfigurationKeys.providedProperties by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
 
-val ScriptDefinitionKeys.defaultImports by PropertiesCollection.key<List<String>>()
+val ScriptCompilationConfigurationKeys.defaultImports by PropertiesCollection.key<List<String>>()
 
-val ScriptDefinitionKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
+val ScriptCompilationConfigurationKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
-val ScriptDefinitionKeys.copyAnnotationsFrom by PropertiesCollection.key<List<KotlinType>>()
+val ScriptCompilationConfigurationKeys.copyAnnotationsFrom by PropertiesCollection.key<List<KotlinType>>()
 
-val ScriptDefinitionKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
+val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
 
-val ScriptDefinitionKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<RefineConfigurationBeforeParsingData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<RefineConfigurationBeforeParsingData>()
 
-val ScriptDefinitionKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<RefineConfigurationOnAnnotationsData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<RefineConfigurationOnAnnotationsData>()
 
-val ScriptDefinitionKeys.refineConfigurationOnSections by PropertiesCollection.key<RefineConfigurationOnSectionsData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationOnSections by PropertiesCollection.key<RefineConfigurationOnSectionsData>()
 
-val ScriptDefinitionKeys.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
+val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
 
 // DSL:
 
-val ScriptDefinition.Builder.refineConfiguration get() = RefineConfigurationBuilder()
+val ScriptCompilationConfiguration.Builder.refineConfiguration get() = RefineConfigurationBuilder()
 
 
 class RefineConfigurationBuilder : PropertiesCollection.Builder() {
 
     fun beforeParsing(handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptDefinition.refineConfigurationBeforeParsing, RefineConfigurationBeforeParsingData(handler))
+        set(ScriptCompilationConfiguration.refineConfigurationBeforeParsing, RefineConfigurationBeforeParsingData(handler))
     }
 
     fun onAnnotations(annotations: List<KotlinType>, handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptDefinition.refineConfigurationOnAnnotations, RefineConfigurationOnAnnotationsData(annotations, handler))
+        set(ScriptCompilationConfiguration.refineConfigurationOnAnnotations, RefineConfigurationOnAnnotationsData(annotations, handler))
     }
 
     fun onAnnotations(vararg annotations: KotlinType, handler: RefineScriptCompilationConfigurationHandler) {
@@ -88,7 +90,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
     }
 
     fun onSections(sections: List<String>, handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptDefinition.refineConfigurationOnSections, RefineConfigurationOnSectionsData(sections, handler))
+        set(ScriptCompilationConfiguration.refineConfigurationOnSections, RefineConfigurationOnSectionsData(sections, handler))
     }
 
     fun onSections(vararg sections: String, handler: RefineScriptCompilationConfigurationHandler) {

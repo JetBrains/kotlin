@@ -21,13 +21,13 @@ import kotlin.script.experimental.jvm.jvm
 
 @KotlinScript(
     extension = "scriptwithdeps.kts",
-    definition = MyScriptDefinition::class
+    compilationConfiguration = MyScriptCompilationConfiguration::class
 )
 abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-object MyScriptDefinition : ScriptDefinition(
+object MyScriptCompilationConfiguration : ScriptCompilationConfiguration(
     {
         defaultImports<DependsOn>()
         defaultImports(Repository::class)
@@ -49,7 +49,7 @@ object MyScriptDefinition : ScriptDefinition(
 
 private val resolver = FilesAndMavenResolver()
 
-fun myConfigureOnAnnotations(script: ScriptDataFacade): ResultWithDiagnostics<ScriptDefinition?> {
+fun myConfigureOnAnnotations(script: ScriptDataFacade): ResultWithDiagnostics<ScriptCompilationConfiguration?> {
     val annotations = script.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
         ?: return null.asSuccess()
     val scriptContents = object : ScriptContents {
@@ -66,7 +66,7 @@ fun myConfigureOnAnnotations(script: ScriptDataFacade): ResultWithDiagnostics<Sc
             ?: return null.asSuccess(diagnostics)
         val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
             ?: return null.asSuccess(diagnostics)
-        ScriptDefinition(script.definition) {
+        ScriptCompilationConfiguration(script.compilationConfiguration) {
             dependencies.append(JvmDependency(resolvedClasspath))
         }.asSuccess(diagnostics)
     } catch (e: Throwable) {

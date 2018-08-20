@@ -12,7 +12,7 @@ interface ReplSnippetChecker {
     suspend operator fun invoke(
         snippet: ReplSnippetSource,
         state: ReplStageState<*>,
-        scriptDefinition: ScriptDefinition
+        compilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<Unit>
 }
 
@@ -21,7 +21,7 @@ interface ReplSnippetCompiler {
     suspend operator fun invoke(
         snippet: ReplSnippetSource,
         state: ReplStageState<*>,
-        scriptDefinition: ScriptDefinition
+        compilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledReplSnippet<*>>
 }
 

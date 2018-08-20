@@ -23,11 +23,11 @@ val ScriptCollectedDataKeys.foundFragments by PropertiesCollection.key<List<Scri
 
 class ScriptDataFacade(
     val source: ScriptSource,
-    val definition: ScriptDefinition,
+    val compilationConfiguration: ScriptCompilationConfiguration,
     val collectedData: ScriptCollectedData? = null
 )
 
-typealias RefineScriptCompilationConfigurationHandler = (ScriptDataFacade) -> ResultWithDiagnostics<ScriptDefinition?>
+typealias RefineScriptCompilationConfigurationHandler = (ScriptDataFacade) -> ResultWithDiagnostics<ScriptCompilationConfiguration?>
 
 // to make it "hasheable" for cashing
 class RefineConfigurationBeforeParsingData(

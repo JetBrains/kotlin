@@ -16,7 +16,7 @@ import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.configuration.createScriptCompilationConfigurationFromAnnotatedBaseClass
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 
@@ -41,13 +41,13 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         }
     }
 
-    override val scriptDefinition: ScriptDefinition by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val scriptCompilationConfiguration: ScriptCompilationConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageCollector.report(
             CompilerMessageSeverity.LOGGING,
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
-            createScriptDefinitionFromAnnotatedBaseClass(
+            createScriptCompilationConfigurationFromAnnotatedBaseClass(
                 KotlinType(className),
                 hostEnvironment,
                 LazyScriptDefinitionFromDiscoveredClass::class
@@ -70,8 +70,8 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
                     ?: annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
                 )?.find { it.name == "extension" }?.value
         val ext = extFromAnn
-            ?: scriptDefinition.let {
-                it[ScriptDefinition.fileExtension] ?: "kts"
+            ?: scriptCompilationConfiguration.let {
+                it[ScriptCompilationConfiguration.fileExtension] ?: "kts"
             }
         ".$ext"
     }
@@ -82,4 +82,4 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 }
 
-val InvalidScriptDefinition = ScriptDefinition()
+val InvalidScriptDefinition = ScriptCompilationConfiguration()

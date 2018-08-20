@@ -13,14 +13,14 @@
 package kotlin.script.experimental.annotations
 
 import kotlin.reflect.KClass
-import kotlin.script.experimental.api.ScriptDefinition
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class KotlinScript(
     val name: String = "Kotlin script",
     val extension: String = "kts",
-    val definition: KClass<out ScriptDefinition> = ScriptDefinition.Default::class // object or class filled in 0-ary constructor
+    val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class // object or class filled in 0-ary constructor
 )
 
 @Target(AnnotationTarget.CLASS)
@@ -32,5 +32,5 @@ annotation class KotlinScriptFileExtension(
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class KotlinScriptProperties(
-    val definition: KClass<out ScriptDefinition> // object or class filled in 0-ary constructor
+    val compilationConfiguration: KClass<out ScriptCompilationConfiguration> // object or class filled in 0-ary constructor
 )

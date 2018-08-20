@@ -6,10 +6,10 @@
 package kotlin.script.experimental.jvmhost
 
 import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.api.ScriptDefinition
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluator
 import kotlin.script.experimental.api.ScriptingEnvironment
-import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.configuration.createScriptCompilationConfigurationFromAnnotatedBaseClass
 import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 
@@ -20,7 +20,12 @@ open class BasicJvmScriptingHost(
 ) : BasicScriptingHost(compiler, evaluator)
 
 
-inline fun <reified T : Any> createBasicScriptDefinitionFromAnnotatedBaseClass(
+inline fun <reified T : Any> createBasicScriptCompilationConfigurationFromAnnotatedBaseClass(
     hostEnvironment: ScriptingEnvironment = defaultJvmScriptingEnvironment,
-    noinline body: ScriptDefinition.Builder.() -> Unit = {}
-): ScriptDefinition = createScriptDefinitionFromAnnotatedBaseClass(KotlinType(T::class), hostEnvironment, ScriptDefinition::class, body)
+    noinline body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+): ScriptCompilationConfiguration = createScriptCompilationConfigurationFromAnnotatedBaseClass(
+    KotlinType(T::class),
+    hostEnvironment,
+    ScriptCompilationConfiguration::class,
+    body
+)

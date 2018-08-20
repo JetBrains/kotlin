@@ -20,7 +20,7 @@ import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportPosition
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
 
 class BridgeDependenciesResolver(
-    val scriptDefinition: ScriptDefinition,
+    val scriptCompilationConfiguration: ScriptCompilationConfiguration,
     val onClasspathUpdated: (List<File>) -> Unit = {}
 ) : AsyncDependenciesResolver {
 
@@ -39,12 +39,12 @@ class BridgeDependenciesResolver(
                 )
             )
 
-            val refineFn = scriptDefinition[ScriptDefinition.refineConfigurationOnAnnotations]?.handler
+            val refineFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler
             val refinedConfiguration =
                 if (refineFn == null) null
                 else {
                     val res = refineFn(
-                        ScriptDataFacade(scriptContents.toScriptSource(), scriptDefinition, processedScriptData)
+                        ScriptDataFacade(scriptContents.toScriptSource(), scriptCompilationConfiguration, processedScriptData)
                     )
                     when (res) {
                         is ResultWithDiagnostics.Failure ->
@@ -56,11 +56,11 @@ class BridgeDependenciesResolver(
                     }
                 }
 
-            val newClasspath = refinedConfiguration?.get(ScriptDefinition.dependencies)
+            val newClasspath = refinedConfiguration?.get(ScriptCompilationConfiguration.dependencies)
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
             if (newClasspath.isNotEmpty()) {
                 val oldClasspath =
-                    scriptDefinition[ScriptDefinition.dependencies]
+                    scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]
                         ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
                 if (newClasspath != oldClasspath) {
                     onClasspathUpdated(newClasspath)
@@ -69,7 +69,7 @@ class BridgeDependenciesResolver(
             DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
-                    imports = scriptDefinition[ScriptDefinition.defaultImports]?.toList() ?: emptyList()
+                    imports = scriptCompilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
                 ),
                 diagnostics
             )

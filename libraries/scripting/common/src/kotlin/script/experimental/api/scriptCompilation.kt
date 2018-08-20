@@ -9,14 +9,14 @@ interface ScriptCompiler {
 
     suspend operator fun invoke(
         script: ScriptSource,
-        scriptDefinition: ScriptDefinition
+        scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 
 
 interface CompiledScript<out ScriptBase : Any> {
 
-    val definition: ScriptDefinition
+    val compilationConfiguration: ScriptCompilationConfiguration
 
     suspend fun instantiate(scriptEvaluationEnvironment: ScriptEvaluationEnvironment?): ResultWithDiagnostics<ScriptBase>
 }

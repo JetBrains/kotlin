@@ -9,7 +9,7 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptDefinition
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ReplCommandProcessor {
@@ -51,7 +51,7 @@ abstract class ReplHost(
     abstract fun eval(
         snippet: ReplSnippetSource,
         state: ReplStageState<*>,
-        scriptDefinition: ScriptDefinition,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
         replEvaluationEnvironment: ReplEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult>
 }

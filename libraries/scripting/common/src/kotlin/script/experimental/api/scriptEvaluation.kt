@@ -20,7 +20,7 @@ class ScriptEvaluationEnvironment(baseEvaluationEnvironments: Iterable<ScriptEva
     ) : this(baseEvaluationEnvironments.asIterable(), body)
 
     class Builder internal constructor(baseEvaluationEnvironments: Iterable<ScriptEvaluationEnvironment>) :
-        ScriptDefinitionKeys,
+        ScriptCompilationConfigurationKeys,
         PropertiesCollection.Builder(baseEvaluationEnvironments)
 
     companion object : ScriptEvaluationEnvironmentKeys

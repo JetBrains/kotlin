@@ -13,16 +13,16 @@ import kotlin.script.experimental.jvmhost.impl.KJvmCompilerImpl
 import kotlin.script.experimental.jvmhost.impl.withDefaults
 
 interface CompiledJvmScriptsCache {
-    fun get(script: ScriptSource, scriptDefinition: ScriptDefinition): CompiledScript<*>?
-    fun store(compiledScript: CompiledScript<*>, scriptDefinition: ScriptDefinition)
+    fun get(script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>?
+    fun store(compiledScript: CompiledScript<*>, scriptCompilationConfiguration: ScriptCompilationConfiguration)
 
     object NoCache : CompiledJvmScriptsCache {
         override fun get(
-            script: ScriptSource, scriptDefinition: ScriptDefinition
+            script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration
         ): CompiledScript<*>? = null
 
         override fun store(
-            compiledScript: CompiledScript<*>, scriptDefinition: ScriptDefinition
+            compiledScript: CompiledScript<*>, scriptCompilationConfiguration: ScriptCompilationConfiguration
         ) {
         }
     }
@@ -36,16 +36,16 @@ open class JvmScriptCompiler(
 
     override suspend operator fun invoke(
         script: ScriptSource,
-        scriptDefinition: ScriptDefinition
+        scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>> {
-        val refineConfigurationFn = scriptDefinition[ScriptDefinition.refineConfigurationBeforeParsing]
+        val refineConfigurationFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeParsing]
         val refinedConfiguration =
-            refineConfigurationFn?.handler?.invoke(ScriptDataFacade(script, scriptDefinition))?.let {
+            refineConfigurationFn?.handler?.invoke(ScriptDataFacade(script, scriptCompilationConfiguration))?.let {
                 when (it) {
                     is ResultWithDiagnostics.Failure -> return it
                     is ResultWithDiagnostics.Success -> it.value
                 }
-            } ?: scriptDefinition
+            } ?: scriptCompilationConfiguration
         val cached = cache.get(script, refinedConfiguration)
 
         if (cached != null) return cached.asSuccess()
@@ -61,7 +61,7 @@ open class JvmScriptCompiler(
 interface KJvmCompilerProxy {
     fun compile(
         script: ScriptSource,
-        scriptDefinition: ScriptDefinition
+        scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 

@@ -15,31 +15,31 @@ data class JvmDependency(val classpath: List<File>) : ScriptDependency {
     constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
 }
 
-interface JvmScriptDefinitionKeys
+interface JvmScriptCompilationConfigurationKeys
 
-open class JvmScriptDefinitionBuilder : PropertiesCollection.Builder(), JvmScriptDefinitionKeys {
-    companion object : PropertiesCollection.Builder.BuilderExtension<JvmScriptDefinitionBuilder>, JvmScriptDefinitionKeys {
-        override fun get() = JvmScriptDefinitionBuilder()
+open class JvmScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptCompilationConfigurationKeys {
+    companion object : PropertiesCollection.Builder.BuilderExtension<JvmScriptCompilationConfigurationBuilder>, JvmScriptCompilationConfigurationKeys {
+        override fun get() = JvmScriptCompilationConfigurationBuilder()
     }
 }
 
-fun JvmScriptDefinitionBuilder.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
+fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
     dependenciesFromClassloader(*libraries, wholeClasspath = wholeClasspath)
 }
 
-fun JvmScriptDefinitionBuilder.dependenciesFromClassloader(
+fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassloader(
     vararg libraries: String,
     classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
     wholeClasspath: Boolean = false
 ) {
-    ScriptDefinition.dependencies.append(
+    ScriptCompilationConfiguration.dependencies.append(
         JvmDependency(scriptCompilationClasspathFromContext(*libraries, classLoader = classLoader, wholeClasspath = wholeClasspath))
     )
 }
 
-val JvmScriptDefinitionKeys.javaHome by PropertiesCollection.keyCopy(ScriptingEnvironment.jvm.javaHome)
+val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCopy(ScriptingEnvironment.jvm.javaHome)
 
 @Suppress("unused")
-val ScriptDefinitionKeys.jvm
-    get() = JvmScriptDefinitionBuilder
+val ScriptCompilationConfigurationKeys.jvm
+    get() = JvmScriptCompilationConfigurationBuilder
 

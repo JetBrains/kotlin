@@ -51,7 +51,7 @@ import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptingEnvironment
 import kotlin.script.experimental.api.configurationDependencies
-import kotlin.script.experimental.definitions.createScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.configuration.createScriptCompilationConfigurationFromAnnotatedBaseClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
@@ -213,7 +213,11 @@ fun loadDefinitionsFromTemplates(
                         configurationDependencies(JvmDependency(classpath))
                     }
                     KotlinScriptDefinitionAdapterFromNewAPI(
-                        createScriptDefinitionFromAnnotatedBaseClass(KotlinType(template), hostEnvironment, KotlinScriptDefinition::class),
+                        createScriptCompilationConfigurationFromAnnotatedBaseClass(
+                            KotlinType(
+                                template
+                            ), hostEnvironment, KotlinScriptDefinition::class
+                        ),
                         hostEnvironment
                     )
                 }
