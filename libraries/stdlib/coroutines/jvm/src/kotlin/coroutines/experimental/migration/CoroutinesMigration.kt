@@ -10,7 +10,6 @@ import kotlin.coroutines.experimental.CoroutineContext as ExperimentalCoroutineC
 import kotlin.coroutines.experimental.AbstractCoroutineContextElement as ExperimentalAbstractCoroutineContextElement
 import kotlin.coroutines.experimental.EmptyCoroutineContext as ExperimentalEmptyCoroutineContext
 import kotlin.coroutines.experimental.ContinuationInterceptor as ExperimentalContinuationInterceptor
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED as EXPERIMENTAL_COROUTINE_SUSPENDED
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -124,8 +123,7 @@ private class ExperimentalSuspendFunction0Migration<R>(
     val function: (Continuation<R>) -> Any?
 ) : (ExperimentalContinuation<R>) -> Any? {
     override fun invoke(continuation: ExperimentalContinuation<R>): Any? {
-        val result = function(continuation.toContinuation())
-        return if (result === COROUTINE_SUSPENDED) EXPERIMENTAL_COROUTINE_SUSPENDED else result
+        return function(continuation.toContinuation())
     }
 }
 
@@ -133,8 +131,7 @@ private class ExperimentalSuspendFunction1Migration<T1, R>(
     val function: (T1, Continuation<R>) -> Any?
 ) : (T1, ExperimentalContinuation<R>) -> Any? {
     override fun invoke(t1: T1, continuation: ExperimentalContinuation<R>): Any? {
-        val result = function(t1, continuation.toContinuation())
-        return if (result === COROUTINE_SUSPENDED) EXPERIMENTAL_COROUTINE_SUSPENDED else result
+        return function(t1, continuation.toContinuation())
     }
 }
 
@@ -142,7 +139,6 @@ private class ExperimentalSuspendFunction2Migration<T1, T2, R>(
     val function: (T1, T2, Continuation<R>) -> Any?
 ) : (T1, T2, ExperimentalContinuation<R>) -> Any? {
     override fun invoke(t1: T1, t2: T2, continuation: ExperimentalContinuation<R>): Any? {
-        val result = function(t1, t2, continuation.toContinuation())
-        return if (result === COROUTINE_SUSPENDED) EXPERIMENTAL_COROUTINE_SUSPENDED else result
+        return function(t1, t2, continuation.toContinuation())
     }
 }
