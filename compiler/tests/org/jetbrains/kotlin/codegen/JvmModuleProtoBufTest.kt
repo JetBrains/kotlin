@@ -45,7 +45,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                 "-d", tmpdir.path,
                 "-module-name", moduleName,
                 "-language-version", compileWith.versionString
-        ) + extraOptions + listOfNotNull("-Xskip-metadata-version-check".takeIf { KotlinCompilerVersion.isPreRelease() }))
+        ) + extraOptions)
 
         val mapping = ModuleMapping.loadModuleMapping(
                 File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",
