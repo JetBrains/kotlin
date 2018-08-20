@@ -275,7 +275,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
         }
     }
 
-    override fun isPreRelease(): Boolean = languageVersion.isPreRelease() ||
+    override fun isPreRelease(): Boolean = KotlinCompilerVersion.isPreRelease() ||
             specificFeatures.any { (feature, state) ->
                 state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()
             }
