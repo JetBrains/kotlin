@@ -56,7 +56,14 @@ internal class PsiContractParserDispatcher(
         // Must be non-null because of checks in 'checkContractAndRecordIfPresent', but actually is not, see EA-124365
         val resolvedCall = callContext.contractCallExpression.getResolvedCall(callContext.bindingContext) ?: return null
 
-        val lambda = resolvedCall.firstArgumentAsExpressionOrNull() as? KtLambdaExpression ?: return null
+        val firstArgumentExpression = resolvedCall.firstArgumentAsExpressionOrNull()
+        val lambda = if (firstArgumentExpression is KtLambdaExpression) {
+            firstArgumentExpression
+        } else {
+            val reportOn = firstArgumentExpression ?: callContext.contractCallExpression
+            collector.badDescription("first argument of 'contract'-call should be a lambda expression", reportOn)
+            return null
+        }
 
         val effects = lambda.bodyExpression?.statements?.mapNotNull { parseEffect(it) } ?: return null
 
