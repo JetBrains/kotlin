@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -432,3 +434,6 @@ fun KotlinType.isInlineClassTypeWithPrimitiveEquality(): Boolean {
     // TODO support other inline classes that can be compared as underlying primitives
     return false
 }
+
+fun CallableDescriptor.needsExperimentalCoroutinesWrapper() =
+    (this as? DeserializedMemberDescriptor)?.coroutinesExperimentalCompatibilityMode == CoroutinesCompatibilityMode.NEEDS_WRAPPER
