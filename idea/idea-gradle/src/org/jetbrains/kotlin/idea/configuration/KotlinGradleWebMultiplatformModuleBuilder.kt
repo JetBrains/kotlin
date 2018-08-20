@@ -29,7 +29,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
         return """
             kotlin {
                 targets {
-                    fromPreset(presets.jvmWithJava, '$jvmTargetName')
+                    fromPreset(presets.jvm, '$jvmTargetName')
                     fromPreset(presets.js, '$jsTargetName')
                 }
                 sourceSets {
