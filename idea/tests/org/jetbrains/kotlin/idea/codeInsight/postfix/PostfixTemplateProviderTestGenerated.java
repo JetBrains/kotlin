@@ -144,6 +144,16 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         runTest("idea/testData/codeInsight/postfix/soutInLoop.kt");
     }
 
+    @TestMetadata("spread.kt")
+    public void testSpread() throws Exception {
+        runTest("idea/testData/codeInsight/postfix/spread.kt");
+    }
+
+    @TestMetadata("spreadIntArray.kt")
+    public void testSpreadIntArray() throws Exception {
+        runTest("idea/testData/codeInsight/postfix/spreadIntArray.kt");
+    }
+
     @TestMetadata("try.kt")
     public void testTry() throws Exception {
         runTest("idea/testData/codeInsight/postfix/try.kt");
