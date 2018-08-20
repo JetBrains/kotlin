@@ -10289,6 +10289,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/upperBounds/nonNullUpperBound.kt");
                 }
 
+                @TestMetadata("typeParameterAsUpperBound.kt")
+                public void testTypeParameterAsUpperBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/upperBounds/typeParameterAsUpperBound.kt");
+                }
+
                 @TestMetadata("useBoundsIfUnknownParameters.kt")
                 public void testUseBoundsIfUnknownParameters() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/upperBounds/useBoundsIfUnknownParameters.kt");
