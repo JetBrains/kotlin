@@ -218,12 +218,7 @@ object KotlinToJVMBytecodeCompiler {
 
     private fun getAbsolutePaths(buildFile: File, sourceFilePaths: List<String>): List<String> =
         sourceFilePaths.map { path ->
-            val sourceFile = File(path)
-            if (!sourceFile.isAbsolute) {
-                File(buildFile.absoluteFile.parentFile, path).absolutePath
-            } else {
-                sourceFile.absolutePath
-            }
+            (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
         }
 
     private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {
