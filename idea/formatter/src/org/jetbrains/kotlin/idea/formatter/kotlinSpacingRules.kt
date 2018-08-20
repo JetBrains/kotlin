@@ -469,6 +469,10 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 spacingForLeftBrace(block = parent.requireNode(), blockType = WHEN)
             }
 
+            inPosition(left = LBRACE, right = WHEN_ENTRY).customRule { _, _, _ ->
+                createSpacing(0, minLineFeeds = 1)
+            }
+
             val spacesInSimpleFunction = if (kotlinCustomSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0
             inPosition(parent = FUNCTION_LITERAL,
                        left = LBRACE,

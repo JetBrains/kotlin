@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.intentions.ImportAllMembersIntention
-import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -79,10 +78,6 @@ class AddWhenRemainingBranchesFix(
             val whenCloseBrace = element.closeBrace ?: throw AssertionError("isAvailable should check if close brace exist")
             val elseBranch = element.entries.find { it.isElse }
             val psiFactory = KtPsiFactory(element)
-
-            if (missingCases.isNotEmpty() && !element.isMultiLine()) {
-                element.addBefore(psiFactory.createNewLine(), whenCloseBrace)
-            }
 
             for (case in missingCases) {
                 val branchConditionText = when (case) {
