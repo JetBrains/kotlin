@@ -941,7 +941,7 @@ public class DefaultErrorMessages {
         MAP.put(PLUGIN_INFO, "{0}", (d, c) -> d.getText());
 
         MAP.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description: {0}", TO_STRING);
-        MAP.put(CONTRACT_NOT_ALLOWED, "Contract is not allowed here");
+        MAP.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING);
 
         MAP.setImmutable();
 

@@ -27,18 +27,22 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-internal class PsiConditionParser(val trace: BindingTrace, val dispatcher: PsiContractParserDispatcher) :
-    KtVisitor<BooleanExpression?, Unit>() {
+internal class PsiConditionParser(
+    private val collector: ContractParsingDiagnosticsCollector,
+    private val callContext: ContractCallContext,
+    private val dispatcher: PsiContractParserDispatcher
+) : KtVisitor<BooleanExpression?, Unit>() {
+
     override fun visitIsExpression(expression: KtIsExpression, data: Unit): BooleanExpression? {
         val variable = dispatcher.parseVariable(expression.leftHandSide) ?: return null
         val typeReference = expression.typeReference ?: return null
-        val type = trace[BindingContext.TYPE, typeReference] ?: return null
+        val type = callContext.bindingContext[BindingContext.TYPE, typeReference] ?: return null
 
         return IsInstancePredicate(variable, type, expression.isNegated)
     }
 
     override fun visitKtElement(element: KtElement, data: Unit): BooleanExpression? {
-        val resolvedCall = element.getResolvedCall(trace.bindingContext)
+        val resolvedCall = element.getResolvedCall(callContext.bindingContext)
         val descriptor = resolvedCall?.resultingDescriptor ?: return null
 
         // boolean variable
@@ -63,12 +67,12 @@ internal class PsiConditionParser(val trace: BindingTrace, val dispatcher: PsiCo
                     return IsNullPredicate(left, isNegated)
                 }
 
-                trace.report(Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(element, "only equality comparisons with 'null' allowed"))
+                collector.badDescription("only equality comparisons with 'null' allowed", element)
                 return null
             }
 
             else -> {
-                trace.report(Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(element, "unsupported construction"))
+                collector.badDescription("unsupported construction", element)
                 return null
             }
         }
@@ -80,7 +84,7 @@ internal class PsiConditionParser(val trace: BindingTrace, val dispatcher: PsiCo
     }
 
     override fun visitCallExpression(expression: KtCallExpression, data: Unit?): BooleanExpression? {
-        trace.report(Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(expression, "call-expressions are not supported yet"))
+        collector.badDescription("call-expressions are not supported yet", expression)
         return null
     }
 
@@ -102,11 +106,9 @@ internal class PsiConditionParser(val trace: BindingTrace, val dispatcher: PsiCo
         if (expression.operationToken != KtTokens.EXCL) return super.visitUnaryExpression(expression, data)
         val arg = expression.baseExpression?.accept(this, data) ?: return null
         if (arg !is ContractDescriptionValue) {
-            trace.report(
-                Errors.ERROR_IN_CONTRACT_DESCRIPTION.on(
-                    expression.baseExpression!!,
-                    "negations in contract description can be applied only to variables/values"
-                )
+            collector.badDescription(
+                "negations in contract description can be applied only to variables/values",
+                expression.baseExpression!!
             )
         }
         return LogicalNot(arg)
