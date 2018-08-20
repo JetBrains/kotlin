@@ -51,9 +51,9 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     private fun doTestWithTxt(vararg extraClassPath: File) {
         validateAndCompareDescriptorWithFile(
-                analyzeFileToPackageView(*extraClassPath),
-                AbstractLoadJavaTest.COMPARATOR_CONFIGURATION,
-                getTestDataFileWithExtension("txt")
+            analyzeFileToPackageView(*extraClassPath),
+            AbstractLoadJavaTest.COMPARATOR_CONFIGURATION,
+            getTestDataFileWithExtension("txt")
         )
     }
 
@@ -74,7 +74,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     private fun analyzeAndGetAllDescriptors(vararg extraClassPath: File): Collection<DeclarationDescriptor> =
-            DescriptorUtils.getAllDescriptors(analyzeFileToPackageView(*extraClassPath).memberScope)
+        DescriptorUtils.getAllDescriptors(analyzeFileToPackageView(*extraClassPath).memberScope)
 
     private fun doTestBrokenLibrary(libraryName: String, vararg pathsToDelete: String) {
         // This function compiles a library, then deletes one class file and attempts to compile a Kotlin source against
@@ -105,10 +105,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     private fun doTestPreReleaseKotlinLibrary(
-            compiler: CLICompiler<*>,
-            libraryName: String,
-            usageDestination: File,
-            vararg additionalOptions: String
+        compiler: CLICompiler<*>,
+        libraryName: String,
+        usageDestination: File,
+        vararg additionalOptions: String
     ) {
         // Compiles the library with the "pre-release" flag, then compiles a usage of this library in the release mode
 
@@ -126,13 +126,12 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     private fun <T> withPreRelease(value: Boolean, block: () -> T): T =
-            try {
-                System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, value.toString())
-                block()
-            }
-            finally {
-                System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
-            }
+        try {
+            System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, value.toString())
+            block()
+        } finally {
+            System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
+        }
 
     // ------------------------------------------------------------------------------
 
@@ -175,8 +174,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         result.throwIfError()
 
         AnalyzerWithCompilerReport.reportDiagnostics(
-                result.bindingContext.diagnostics,
-                PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+            result.bindingContext.diagnostics,
+            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
         )
 
         assertEquals("There should be no diagnostics", 0, result.bindingContext.diagnostics.count())
@@ -207,10 +206,14 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testMissingDependencyConflictingLibraries() {
-        val library1 = copyJarFileWithoutEntry(compileLibrary("library1"),
-                                               "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class")
-        val library2 = copyJarFileWithoutEntry(compileLibrary("library2"),
-                                               "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class")
+        val library1 = copyJarFileWithoutEntry(
+            compileLibrary("library1"),
+            "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class"
+        )
+        val library2 = copyJarFileWithoutEntry(
+            compileLibrary("library2"),
+            "a/A.class", "a/A\$Inner.class", "a/AA.class", "a/AA\$Inner.class"
+        )
         compileKotlin("source.kt", tmpdir, listOf(library1, library2))
     }
 
@@ -248,16 +251,20 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         withPreRelease(true) {
             val library = compileLibrary("library")
             val someStableReleasedVersion = LanguageVersion.values().first().also { assert(it.isStable) }
-            compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler(),
-                          listOf("-language-version", someStableReleasedVersion.versionString))
+            compileKotlin(
+                "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
+                listOf("-language-version", someStableReleasedVersion.versionString)
+            )
         }
     }
 
     fun testPreReleaseCompilerAgainstPreReleaseLibraryLatestStable() {
         withPreRelease(true) {
             val library = compileLibrary("library")
-            compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler(),
-                          listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString))
+            compileKotlin(
+                "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
+                listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString)
+            )
         }
     }
 
@@ -277,8 +284,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 strings.map { string ->
                     String(string.toByteArray().map { x -> x xor 42 }.toTypedArray().toByteArray())
                 }.toTypedArray()
-            }
-            else null
+            } else null
         })
     }
 
@@ -363,8 +369,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
         if (GENERATE_SMAP) {
             assertEquals(expected, debugInfo)
-        }
-        else {
+        } else {
             assertEquals(null, debugInfo)
         }
     }
@@ -421,26 +426,42 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val version = intArrayOf(1, 0, 1) // legacy coroutines metadata
         val options = listOf("-Xcoroutines=enable")
         val library = transformJar(
-                compileLibrary("library", additionalOptions = options),
-                { _, bytes ->
-                    val (resultBytes, removedCounter) = stripSuspensionMarksToImitateLegacyCompiler(
-                        WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { name, _ ->
-                            if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) version else null
-                        })
-                    // we expect 4 instructions to be removed in this test library
-                    assertEquals(4, removedCounter)
-                    resultBytes
-                })
-        compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler(),
-                      additionalOptions = options)
-        val classLoader = URLClassLoader(arrayOf(library.toURI().toURL(), tmpdir.toURI().toURL()),
-                                         ForTestCompileRuntime.runtimeJarClassLoader())
+            compileLibrary("library", additionalOptions = options),
+            { _, bytes ->
+                val (resultBytes, removedCounter) = stripSuspensionMarksToImitateLegacyCompiler(
+                    WrongBytecodeVersionTest.transformMetadataInClassFile(bytes) { name, _ ->
+                        if (name == JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME) version else null
+                    })
+                // we expect 4 instructions to be removed in this test library
+                assertEquals(4, removedCounter)
+                resultBytes
+            })
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
+            additionalOptions = options
+        )
+        val classLoader = URLClassLoader(
+            arrayOf(library.toURI().toURL(), tmpdir.toURI().toURL()),
+            ForTestCompileRuntime.runtimeJarClassLoader()
+        )
         @Suppress("UNCHECKED_CAST")
         val result = classLoader
-                .loadClass("SourceKt")
-                .getDeclaredMethod("run")
-                .invoke(null) as Array<String>
+            .loadClass("SourceKt")
+            .getDeclaredMethod("run")
+            .invoke(null) as Array<String>
         assertEquals(result[0], result[1])
+    }
+
+    fun testInlineFunctionsWithMatchingJvmSignatures() {
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-XXLanguage:+InlineClasses"),
+            checkKotlinOutput = { _ -> }
+        )
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-XXLanguage:+InlineClasses"))
+
+        URLClassLoader(arrayOf(library.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
+            .loadClass("SourceKt").getDeclaredMethod("run").invoke(null)
     }
 
     fun testClassFromJdkInLibrary() {
@@ -503,9 +524,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testInternalFromFriendModuleCommon() {
         val library = compileCommonLibrary("library")
-        compileKotlin("source.kt", tmpdir, listOf(library), K2MetadataCompiler(), listOf(
-            // TODO: "-Xfriend-paths=${library.path}"
-        ))
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library), K2MetadataCompiler(), listOf(
+                // TODO: "-Xfriend-paths=${library.path}"
+            )
+        )
     }
 
     companion object {
@@ -514,12 +537,18 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             val writer = ClassWriter(0)
             var removedCounter = 0
             ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5, writer) {
-                override fun visitMethod(access: Int, name: String?, desc: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+                override fun visitMethod(
+                    access: Int,
+                    name: String?,
+                    desc: String?,
+                    signature: String?,
+                    exceptions: Array<out String>?
+                ): MethodVisitor {
                     val superMV = super.visitMethod(access, name, desc, signature, exceptions)
                     return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                         override fun visitEnd() {
                             val removeList = instructions.asSequence()
-                                    .flatMap { suspendMarkerInsns(it).asSequence() }.toList()
+                                .flatMap { suspendMarkerInsns(it).asSequence() }.toList()
                             remove(removeList)
                             removedCounter += removeList.size
                             accept(superMV)
@@ -537,18 +566,19 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 && insn.opcode == Opcodes.INVOKESTATIC
                 && insn.owner == "kotlin/jvm/internal/InlineMarker"
                 && insn.name == "mark"
-                && insn.previous.intConstant in 0..1) listOf(insn, insn.previous)
+                && insn.previous.intConstant in 0..1
+            ) listOf(insn, insn.previous)
             else emptyList()
 
         // -----
 
         private fun copyJarFileWithoutEntry(jarPath: File, vararg entriesToDelete: String): File =
-                transformJar(jarPath, { _, bytes -> bytes }, entriesToDelete.toSet())
+            transformJar(jarPath, { _, bytes -> bytes }, entriesToDelete.toSet())
 
         private fun transformJar(
-                jarPath: File,
-                transformEntry: (String, ByteArray) -> ByteArray,
-                entriesToDelete: Set<String> = emptySet()
+            jarPath: File,
+            transformEntry: (String, ByteArray) -> ByteArray,
+            entriesToDelete: Set<String> = emptySet()
         ): File {
             val outputFile = File(jarPath.parentFile, "${jarPath.nameWithoutExtension}-after.jar")
 

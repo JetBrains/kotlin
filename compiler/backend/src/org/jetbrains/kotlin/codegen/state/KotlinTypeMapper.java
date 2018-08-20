@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
+import org.jetbrains.kotlin.codegen.inline.FictitiousArrayConstructor;
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
@@ -250,6 +251,10 @@ public class KotlinTypeMapper {
         // TODO: drop this usage and move IrBuiltinsPackageFragmentDescriptor to IR modules; it shouldn't be used here
         if (descriptor.getContainingDeclaration() instanceof IrBuiltinsPackageFragmentDescriptor) {
             return descriptor.getContainingDeclaration().getName().asString();
+        }
+
+        if (directMember instanceof FictitiousArrayConstructor) {
+            return "kotlin.Array";
         }
 
         throw new RuntimeException("Could not find package member for " + descriptor +
