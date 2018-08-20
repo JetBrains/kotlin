@@ -1224,6 +1224,110 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/assignOperatorAmbiguity")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AssignOperatorAmbiguity extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAssignOperatorAmbiguity() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ChangeToVal extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInChangeToVal() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("arrayList.kt")
+            public void testArrayList() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/arrayList.kt");
+            }
+
+            @TestMetadata("classVariable.kt")
+            public void testClassVariable() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/classVariable.kt");
+            }
+
+            @TestMetadata("hashMap.kt")
+            public void testHashMap() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/hashMap.kt");
+            }
+
+            @TestMetadata("hashSet.kt")
+            public void testHashSet() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/hashSet.kt");
+            }
+
+            @TestMetadata("mutableList.kt")
+            public void testMutableList() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/mutableList.kt");
+            }
+
+            @TestMetadata("mutableMap.kt")
+            public void testMutableMap() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/mutableMap.kt");
+            }
+
+            @TestMetadata("mutableSet.kt")
+            public void testMutableSet() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal/mutableSet.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReplaceWithAssignCall extends AbstractQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInReplaceWithAssignCall() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("arrayList.kt")
+            public void testArrayList() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/arrayList.kt");
+            }
+
+            @TestMetadata("hashMap.kt")
+            public void testHashMap() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/hashMap.kt");
+            }
+
+            @TestMetadata("hashSet.kt")
+            public void testHashSet() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/hashSet.kt");
+            }
+
+            @TestMetadata("mutableList.kt")
+            public void testMutableList() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/mutableList.kt");
+            }
+
+            @TestMetadata("mutableMap.kt")
+            public void testMutableMap() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/mutableMap.kt");
+            }
+
+            @TestMetadata("mutableSet.kt")
+            public void testMutableSet() throws Exception {
+                runTest("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall/mutableSet.kt");
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/assignToProperty")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
