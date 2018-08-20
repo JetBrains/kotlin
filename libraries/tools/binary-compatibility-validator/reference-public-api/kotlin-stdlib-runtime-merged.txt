@@ -2739,7 +2739,6 @@ public final class kotlin/coroutines/experimental/migration/CoroutinesMigrationK
 }
 
 public final class kotlin/coroutines/intrinsics/CoroutineSingletons : java/lang/Enum {
-	public static final field COROUTINE_SUSPENDED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
 	public static final field RESUMED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
 	public static final field UNDECIDED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/coroutines/intrinsics/CoroutineSingletons;
