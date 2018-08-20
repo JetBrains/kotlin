@@ -363,11 +363,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
             val dependency = (dependencyInfo as DependencyInfo.ResolvedDependencyInfo).dependency
 
             for (mapper in dependencyMappers) {
-                if (dependency.moduleGroup == mapper.group
-                    && dependency.moduleName == mapper.module
-                    && dependency.configuration in mapper.configurations
-                    && (mapper.version == null || dependency.moduleVersion == mapper.version)
-                ) {
+                if (dependency.configuration in mapper.configurations && mapper.predicate(dependency)) {
                     val mappedDependency = mapper.mapping(dependency)
 
                     if (mappedDependency != null) {
