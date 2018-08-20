@@ -46,8 +46,14 @@ internal class PsiCallsEffectParser(
 
         val kind = when (kindArgument) {
             is DefaultValueArgument -> InvocationKind.UNKNOWN
-            is ExpressionValueArgument -> kindArgument.valueArgument?.getArgumentExpression()?.toInvocationKind(callContext.bindingContext) ?: return null
-            else -> return null
+            is ExpressionValueArgument -> kindArgument.valueArgument?.getArgumentExpression()?.toInvocationKind(callContext.bindingContext)
+            else -> null
+        }
+
+        if (kind == null) {
+            val reportOn = (kindArgument as? ExpressionValueArgument)?.valueArgument?.getArgumentExpression() ?: expression
+            collector.badDescription("unrecognized InvocationKind", reportOn)
+            return null
         }
 
         return CallsEffectDeclaration(lambda, kind)
