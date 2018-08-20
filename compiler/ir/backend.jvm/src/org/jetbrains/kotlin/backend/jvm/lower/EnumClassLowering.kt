@@ -187,7 +187,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         }
 
         private fun createFieldForEnumEntry(enumEntry: IrEnumEntry) =
-            context.declarationFactory.getSymbolForEnumEntry(enumEntry).also {
+            context.declarationFactory.getSymbolForEnumEntry(enumEntry, enumEntry.initializerExpression!!.type).also {
                 it.initializer = IrExpressionBodyImpl(enumEntry.initializerExpression!!)
                 enumEntryFields.add(it)
                 enumEntriesByField[it] = enumEntry

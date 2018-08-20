@@ -21,7 +21,7 @@ class SingletonReferencesLowering(val context: JvmBackendContext) : BodyLowering
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
-        val entrySymbol = context.declarationFactory.getSymbolForEnumEntry(expression.symbol.owner)
+        val entrySymbol = context.declarationFactory.getSymbolForEnumEntry(expression.symbol.owner, expression.type)
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, entrySymbol.symbol, expression.type)
     }
 

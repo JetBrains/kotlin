@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -39,19 +40,19 @@ class JvmDeclarationFactory(
     private val psiSourceManager: PsiSourceManager,
     private val builtIns: KotlinBuiltIns
 ) : DeclarationFactory {
-    private val singletonFieldDescriptors = HashMap<IrSymbolOwner, IrField>()
-    private val outerThisDescriptors = HashMap<IrClass, IrField>()
+    private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
+    private val outerThisDeclarations = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
 
-    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntry): IrField =
-        singletonFieldDescriptors.getOrPut(enumEntry) {
+    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField =
+        singletonFieldDeclarations.getOrPut(enumEntry) {
             val symbol = IrFieldSymbolImpl(createEnumEntryFieldDescriptor(enumEntry.descriptor))
             IrFieldImpl(
                 enumEntry.startOffset,
                 enumEntry.endOffset,
                 JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
                 symbol,
-                enumEntry.initializerExpression!!.type
+                type
             )
         }
 
@@ -70,7 +71,7 @@ class JvmDeclarationFactory(
 
     override fun getOuterThisFieldSymbol(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
-        else outerThisDescriptors.getOrPut(innerClass) {
+        else outerThisDeclarations.getOrPut(innerClass) {
             val outerClass = innerClass.parent as? IrClass
                     ?: throw AssertionError("No containing class for inner class ${innerClass.dump()}")
 
@@ -81,10 +82,9 @@ class JvmDeclarationFactory(
                 )
             )
 
-
-                IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DeclarationFactory.FIELD_FOR_OUTER_THIS, symbol, outerClass.defaultType).also {
-                    it.parent = innerClass
-                }
+            IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DeclarationFactory.FIELD_FOR_OUTER_THIS, symbol, outerClass.defaultType).also {
+                it.parent = innerClass
+            }
         }
 
     override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor {
@@ -161,7 +161,7 @@ class JvmDeclarationFactory(
     }
 
     override fun getSymbolForObjectInstance(singleton: IrClass): IrField =
-        singletonFieldDescriptors.getOrPut(singleton) {
+        singletonFieldDeclarations.getOrPut(singleton) {
             val symbol = IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
             return IrFieldImpl(
                 UNDEFINED_OFFSET,
