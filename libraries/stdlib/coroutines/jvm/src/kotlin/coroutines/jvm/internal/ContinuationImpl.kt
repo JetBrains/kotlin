@@ -7,7 +7,7 @@ package kotlin.coroutines.jvm.internal
 
 import java.io.Serializable
 import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.CoroutineSingletons
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.jvm.internal.FunctionBase
 import kotlin.jvm.internal.Reflection
 
@@ -30,7 +30,7 @@ internal abstract class BaseContinuationImpl(
                 val outcome: SuccessOrFailure<Any?> =
                     try {
                         val outcome = invokeSuspend(param)
-                        if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
+                        if (outcome === COROUTINE_SUSPENDED) return
                         SuccessOrFailure.success(outcome)
                     } catch (exception: Throwable) {
                         SuccessOrFailure.failure(exception)

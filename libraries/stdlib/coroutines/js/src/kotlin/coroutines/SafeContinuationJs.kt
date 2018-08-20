@@ -6,6 +6,7 @@
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.CoroutineSingletons.*
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @PublishedApi
 @SinceKotlin("1.3")
