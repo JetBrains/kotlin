@@ -210,10 +210,10 @@ private val PLATFORM_ACTUAL = MarkerType(
 
 private val EXPECTED_DECLARATION = MarkerType(
     "EXPECTED_DECLARATION",
-    { it?.let { getExpectedDeclarationTooltip(it.markerDeclaration) } },
+    { element -> element?.markerDeclaration?.let { getExpectedDeclarationTooltip(it) } },
     object : LineMarkerNavigator() {
         override fun browse(e: MouseEvent?, element: PsiElement?) {
-            element?.let { navigateToExpectedDeclaration(it.markerDeclaration) }
+            element?.markerDeclaration?.let { navigateToExpectedDeclaration(it) }
         }
     }
 )
