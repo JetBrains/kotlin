@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
@@ -17,7 +18,12 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.typeUtil.contains
 
 class MemberDeserializer(private val c: DeserializationContext) {
     private val annotationDeserializer = AnnotationDeserializer(c.components.moduleDescriptor, c.components.notFoundClasses)
@@ -130,11 +136,96 @@ class MemberDeserializer(private val c: DeserializationContext) {
         return property
     }
 
-    private fun DeserializedMemberDescriptor.checkExperimentalCoroutine(typeDeserializer: TypeDeserializer): Boolean {
-        // Calculate checkExperimentalCoroutine for type parameters
-        typeDeserializer.ownTypeParameters.forEach { it.upperBounds }
-        return typeDeserializer.experimentalSuspendFunctionTypeEncountered && versionAndReleaseCoroutinesMismatch()
+    private fun DeserializedMemberDescriptor.checkExperimentalCoroutine(
+        typeDeserializer: TypeDeserializer
+    ): DeserializedMemberDescriptor.CoroutinesCompatibilityMode {
+        if (!versionAndReleaseCoroutinesMismatch()) return CoroutinesCompatibilityMode.COMPATIBLE
+
+        forceUpperBoundsComputation(typeDeserializer)
+
+        return if (typeDeserializer.experimentalSuspendFunctionTypeEncountered)
+            CoroutinesCompatibilityMode.INCOMPATIBLE
+        else
+            CoroutinesCompatibilityMode.COMPATIBLE
     }
+
+    private fun forceUpperBoundsComputation(typeDeserializer: TypeDeserializer) {
+        typeDeserializer.ownTypeParameters.forEach { it.upperBounds }
+    }
+
+    private fun DeserializedSimpleFunctionDescriptor.initializeWithCoroutinesExperimentalityStatus(
+        receiverParameterType: KotlinType?,
+        dispatchReceiverParameter: ReceiverParameterDescriptor?,
+        typeParameters: List<TypeParameterDescriptor>,
+        unsubstitutedValueParameters: List<ValueParameterDescriptor>,
+        unsubstitutedReturnType: KotlinType?,
+        modality: Modality?,
+        visibility: Visibility,
+        userDataMap: Map<out FunctionDescriptor.UserDataKey<*>, *>,
+        isSuspend: Boolean
+    ) {
+        initialize(
+            receiverParameterType,
+            dispatchReceiverParameter,
+            typeParameters,
+            unsubstitutedValueParameters,
+            unsubstitutedReturnType,
+            modality,
+            visibility,
+            userDataMap,
+            computeExperimentalityModeForFunctions(
+                receiverParameterType,
+                unsubstitutedValueParameters,
+                typeParameters,
+                unsubstitutedReturnType,
+                isSuspend
+            )
+        )
+    }
+
+    private fun DeserializedCallableMemberDescriptor.computeExperimentalityModeForFunctions(
+        extensionReceiverType: KotlinType?,
+        parameters: Collection<ValueParameterDescriptor>,
+        typeParameters: Collection<TypeParameterDescriptor>,
+        returnType: KotlinType?,
+        isSuspend: Boolean
+    ): DeserializedMemberDescriptor.CoroutinesCompatibilityMode {
+        if (!versionAndReleaseCoroutinesMismatch()) return CoroutinesCompatibilityMode.COMPATIBLE
+        if (fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME) return CoroutinesCompatibilityMode.COMPATIBLE
+
+        val types = parameters.map { it.type } + listOfNotNull(extensionReceiverType)
+
+        if (returnType?.containsSuspendFunctionType() == true) return CoroutinesCompatibilityMode.INCOMPATIBLE
+        if (typeParameters.any { typeParameter -> typeParameter.upperBounds.any { it.containsSuspendFunctionType() } }) {
+            return CoroutinesCompatibilityMode.INCOMPATIBLE
+        }
+
+        val maxFromParameters = types.map { type ->
+            when {
+                type.isSuspendFunctionType && type.arguments.size <= 3 ->
+                    if (type.arguments.any { it.type.containsSuspendFunctionType() })
+                        CoroutinesCompatibilityMode.INCOMPATIBLE
+                    else
+                        CoroutinesCompatibilityMode.NEEDS_WRAPPER
+
+                type.containsSuspendFunctionType() -> CoroutinesCompatibilityMode.INCOMPATIBLE
+
+                else -> CoroutinesCompatibilityMode.COMPATIBLE
+            }
+        }.max() ?: CoroutinesCompatibilityMode.COMPATIBLE
+
+        return maxOf(
+            if (isSuspend)
+                CoroutinesCompatibilityMode.NEEDS_WRAPPER
+            else
+                CoroutinesCompatibilityMode.COMPATIBLE,
+            maxFromParameters
+        )
+    }
+
+
+    private fun KotlinType.containsSuspendFunctionType() = contains(UnwrappedType::isSuspendFunctionType)
+
 
     private fun DeserializedMemberDescriptor.versionAndReleaseCoroutinesMismatch(): Boolean =
         c.components.configuration.releaseCoroutines && versionRequirements.none {
@@ -160,7 +251,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         )
         val local = c.childContext(function, proto.typeParameterList)
 
-        function.initialize(
+        function.initializeWithCoroutinesExperimentalityStatus(
             proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) },
             getDispatchReceiverParameter(),
             local.typeDeserializer.ownTypeParameters,
@@ -169,8 +260,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
             emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>(),
-            (Flags.IS_SUSPEND.get(flags) && function.versionAndReleaseCoroutinesMismatch()) ||
-                    function.checkExperimentalCoroutine(local.typeDeserializer)
+            Flags.IS_SUSPEND.get(flags)
         )
         function.isOperator = Flags.IS_OPERATOR.get(flags)
         function.isInfix = Flags.IS_INFIX.get(flags)
@@ -227,11 +317,18 @@ class MemberDeserializer(private val c: DeserializationContext) {
         )
         descriptor.returnType = classDescriptor.defaultType
 
-        // Calculate isExperimentalCoroutineInReleaseEnvironment for type parameters
-        descriptor.typeParameters.forEach { it.upperBounds }
-        descriptor.isExperimentalCoroutineInReleaseEnvironment = local.typeDeserializer.experimentalSuspendFunctionTypeEncountered ||
-                ((c.containingDeclaration as? DeserializedClassDescriptor)?.c?.typeDeserializer?.experimentalSuspendFunctionTypeEncountered == true &&
-                        descriptor.versionAndReleaseCoroutinesMismatch())
+        val doesClassContainIncompatibility =
+            (c.containingDeclaration as? DeserializedClassDescriptor)
+                ?.c?.typeDeserializer?.experimentalSuspendFunctionTypeEncountered == true
+                    && descriptor.versionAndReleaseCoroutinesMismatch()
+
+        descriptor.coroutinesExperimentalCompatibilityMode =
+                if (doesClassContainIncompatibility)
+                    CoroutinesCompatibilityMode.INCOMPATIBLE
+                else descriptor.computeExperimentalityModeForFunctions(
+                    null, descriptor.valueParameters, descriptor.typeParameters,
+                    descriptor.returnType, isSuspend = false
+                )
 
         return descriptor
     }

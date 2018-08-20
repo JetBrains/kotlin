@@ -484,6 +484,14 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testExperimentalCoroutineCallFromRelease() {
+        doTestExperimentalCoroutineCallFromRelease()
+    }
+
+    fun testExperimentalCoroutineCallFromReleaseWarnings() {
+        doTestExperimentalCoroutineCallFromRelease()
+    }
+
+    private fun doTestExperimentalCoroutineCallFromRelease() {
         val library = compileLibrary(
             "library",
             additionalOptions = listOf("-language-version", "1.2"),
@@ -492,7 +500,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin(
             "release.kt",
             tmpdir,
-            listOf(library),
+            listOf(library, ForTestCompileRuntime.coroutinesJarForTests()),
             additionalOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
         )
     }
