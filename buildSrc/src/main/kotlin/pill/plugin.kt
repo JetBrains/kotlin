@@ -48,7 +48,13 @@ class JpsCompatiblePlugin : Plugin<Project> {
                 DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler-embeddable", "runtimeJar") { null },
                 DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib-js", "distJar") { null },
                 DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler", "runtimeJar") { null },
-                DependencyMapper("org.jetbrains.kotlin", "compiler", "runtimeElements") { null }
+                DependencyMapper("org.jetbrains.kotlin", "compiler", "runtimeElements") { null },
+                DependencyMapper("kotlin.build.custom.deps", "android", "default") { dep ->
+                    val (sdkCommon, otherJars) = dep.moduleArtifacts.map { it.file }.partition { it.name == "sdk-common.jar" }
+                    val mainLibrary = PDependency.ModuleLibrary(PLibrary(dep.moduleName, otherJars))
+                    val deferredLibrary = PDependency.ModuleLibrary(PLibrary(dep.moduleName + "-deferred", sdkCommon))
+                    MappedDependency(mainLibrary, listOf(deferredLibrary))
+                }
             )
         }
 
