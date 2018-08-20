@@ -159,7 +159,7 @@ class SimpleNameGenerator : NameGenerator {
                 }
                 is IrSimpleFunction -> {
                     nameBuilder.append(declaration.name.asString())
-                    declaration.extensionReceiverParameter?.let { nameBuilder.append("_${it.name.asString()}") }
+                    declaration.extensionReceiverParameter?.let { nameBuilder.append("_${it.type.render()}") }
                     declaration.typeParameters.forEach { nameBuilder.append("_${it.name.asString()}") }
                     declaration.valueParameters.forEach { nameBuilder.append("_${it.type.render()}") }
                 }
