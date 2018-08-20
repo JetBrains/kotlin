@@ -77,16 +77,7 @@ internal class PsiConditionParser(
                 val right = dispatcher.parseValue(resolvedCall.firstArgumentAsExpressionOrNull()) ?: return null
                 val isNegated = (element as? KtBinaryExpression)?.operationToken == KtTokens.EXCLEQ ?: false
 
-                if (left is ConstantReference && left == ConstantReference.NULL && right is VariableReference) {
-                    return IsNullPredicate(right, isNegated)
-                }
-
-                if (right is ConstantReference && right == ConstantReference.NULL && left is VariableReference) {
-                    return IsNullPredicate(left, isNegated)
-                }
-
-                collector.badDescription("only equality comparisons with 'null' allowed", element)
-                return null
+                return processEquals(left, right, isNegated, element)
             }
 
             else -> {
@@ -118,6 +109,25 @@ internal class PsiConditionParser(
         val left = expression.left?.accept(this, data) ?: return null
         val right = expression.right?.accept(this, data) ?: return null
         return operationConstructor(left, right)
+    }
+
+    private fun processEquals(
+        left: ContractDescriptionValue,
+        right: ContractDescriptionValue,
+        isNegated: Boolean,
+        reportOn: KtElement
+    ): BooleanExpression? {
+        return when {
+            left is ConstantReference && left == ConstantReference.NULL && right is VariableReference -> IsNullPredicate(right, isNegated)
+
+            right is ConstantReference && right == ConstantReference.NULL && left is VariableReference -> IsNullPredicate(left, isNegated)
+
+            else -> {
+                collector.badDescription("only equality comparisons with 'null' allowed", reportOn)
+                null
+            }
+        }
+
     }
 
     override fun visitUnaryExpression(expression: KtUnaryExpression, data: Unit): BooleanExpression? {
