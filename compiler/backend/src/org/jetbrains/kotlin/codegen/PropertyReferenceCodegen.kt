@@ -321,11 +321,12 @@ class PropertyReferenceCodegen(
             }
 
             codegen.markStartLineNumber(expression)
+            val type = target.type
             if (isGetter) {
-                value.put(OBJECT_TYPE, v)
+                value.put(OBJECT_TYPE, type, v)
             } else {
                 val functionDescriptor = codegen.context.functionDescriptor
-                value.store(StackValue.local(codegen.frameMap.getIndex(functionDescriptor.valueParameters.last()), OBJECT_TYPE), v)
+                value.store(StackValue.local(codegen.frameMap.getIndex(functionDescriptor.valueParameters.last()), OBJECT_TYPE, type), v)
             }
             v.areturn(signature.returnType)
         }
