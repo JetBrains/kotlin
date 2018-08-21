@@ -4,8 +4,8 @@
 		"visibility": "public",
 		"class": "C",
 		"members": [
-			{"visibility": "public",	"declaration": "open suspend fun foo(): V", "name": "foo", "desc": "(Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;"},
-			{"visibility": "public",	"declaration": "open suspend fun foo(): V", "name": "foo$suspendImpl", "desc": "(LC;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;"},
+			{"visibility": "public",	"declaration": "open suspend fun foo(): V", "name": "foo", "desc": "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;"},
+			{"visibility": "public",	"declaration": "open suspend fun foo(): V", "name": "foo$suspendImpl", "desc": "(LC;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;"},
 			{"visibility": "public",	"declaration": "constructor C<V>()", "name": "<init>", "desc": "()V"}
 		]
 	},
@@ -38,7 +38,7 @@
 		"visibility": "public",
 		"class": "A",
 		"members": [
-			{"visibility": "public",	"declaration": "abstract suspend fun foo(): T", "name": "foo", "desc": "(Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;"}
+			{"visibility": "public",	"declaration": "abstract suspend fun foo(): T", "name": "foo", "desc": "(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;"}
 		]
 	}
 ]
