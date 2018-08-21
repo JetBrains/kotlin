@@ -6,50 +6,50 @@ import kotlin.contracts.*
 
 fun ifInContract(x: Any?, boolean: Boolean) {
     contract {
-        if (boolean) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION(unexpected construction in contract description)!>if (boolean) {
             returns() implies (x is String)
         } else {
             returns() implies (x is Int)
-        }
+        }<!>
     }
 }
 
 fun whenInContract(x: Any?, boolean: Boolean) {
     contract {
-        when (boolean) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION(unexpected construction in contract description)!>when (boolean) {
             true -> returns() implies (x is String)
             else -> returns() implies (x is Int)
-        }
+        }<!>
     }
 }
 
 fun forInContract(x: Any?) {
     contract {
-        for (i in 0..1) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION(unexpected construction in contract description)!>for (i in 0..1) {
             returns() implies (x is String)
-        }
+        }<!>
     }
 }
 
 fun whileInContract(x: Any?) {
     contract {
-        while (false) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION(unexpected construction in contract description)!>while (false) {
             returns() implies (x is String)
-        }
+        }<!>
     }
 }
 
 fun doWhileInContract(x: Any?) {
     contract {
-        do {
+        <!ERROR_IN_CONTRACT_DESCRIPTION(unexpected construction in contract description)!>do {
             returns() implies (x is String)
-        } while (false)
+        } while (false)<!>
     }
 }
 
 fun localValInContract(x: Any?) {
     contract {
-        val y: Int = 42
+        <!ERROR_IN_CONTRACT_DESCRIPTION(unexpected construction in contract description)!>val y: Int = 42<!>
         returns() implies (x is String)
     }
 }
