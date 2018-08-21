@@ -1,0 +1,11 @@
+<html>
+<body>
+This inspection reports safe cast with 'return' should be replaced with 'if' type check. For example:
+<br /><br />
+<pre>
+fun test(x: Any) {
+    <b>x as? String ?: return</b> // Should be replaced with '<b>if (x !is String) return</b>'
+}
+</pre>
+</body>
+</html>
