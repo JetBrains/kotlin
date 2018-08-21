@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.gradle.ArgsInfo
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
@@ -72,6 +73,36 @@ interface GradleProjectImportHandler {
 
     fun importBySourceSet(facet: KotlinFacet, sourceSetNode: DataNode<GradleSourceSetData>)
     fun importByModule(facet: KotlinFacet, moduleNode: DataNode<ModuleData>)
+}
+
+class KotlinGradleProjectSettingsDataService : AbstractProjectDataService<ProjectData, Void>() {
+    override fun getTargetDataKey() = ProjectKeys.PROJECT
+
+    override fun postProcess(
+        toImport: MutableCollection<DataNode<ProjectData>>,
+        projectData: ProjectData?,
+        project: Project,
+        modelsProvider: IdeModifiableModelsProvider
+    ) {
+        val allSettings = modelsProvider.modules.mapNotNull {
+            val settings = modelsProvider
+                .getModifiableFacetModel(it)
+                .findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
+                ?.configuration
+                ?.settings ?: return@mapNotNull null
+            if (settings.useProjectSettings) null else settings
+        }
+        val languageVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.languageLevel }.singleOrNull()
+        val apiVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.apiLevel}.singleOrNull()
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
+            if (languageVersion != null) {
+                this.languageVersion = languageVersion.versionString
+            }
+            if (apiVersion != null) {
+                this.apiVersion = apiVersion.versionString
+            }
+        }
+    }
 }
 
 class KotlinGradleSourceSetDataService : AbstractProjectDataService<GradleSourceSetData, Void>() {
