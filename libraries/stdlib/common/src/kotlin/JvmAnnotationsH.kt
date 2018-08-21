@@ -65,6 +65,19 @@ public expect annotation class JvmMultifileClass()
 public expect annotation class JvmField()
 
 /**
+ * Sets `ACC_SYNTHETIC` flag on the annotated target in the Java bytecode.
+ *
+ * Synthetic targets become inaccessible for Java sources at compile time while still being accessible for Kotlin sources.
+ * Marking target as synthetic is a binary compatible change, already compiled Java code will be able to access such target.
+ *
+ * This annotation is intended for *rare cases* when API designer needs to hide Kotlin-specific target from Java API
+ * while keeping it a part of Kotlin API so the resulting API is idiomatic for both languages.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
+@OptionalExpectation
+public expect annotation class JvmSynthetic()
+
+/**
  * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with
  * declaration-site variance, for example such as `Collection<out T>` has.
  *

@@ -76,7 +76,7 @@ internal annotation class JvmPackageName(val name: String)
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class JvmSynthetic
+public actual annotation class JvmSynthetic
 
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method.
