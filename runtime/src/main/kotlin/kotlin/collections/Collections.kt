@@ -17,6 +17,7 @@
 package kotlin.collections
 
 import kotlin.comparisons.*
+import kotlin.internal.InlineOnly
 import kotlin.random.*
 
 // Copies typed varargs array to an array of objects
@@ -246,3 +247,24 @@ public actual fun <T> MutableList<T>.shuffle(): Unit {
 @SinceKotlin("1.2")
 public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
+@PublishedApi
+@SinceKotlin("1.3")
+@InlineOnly
+internal actual inline fun checkIndexOverflow(index: Int): Int {
+    if (index < 0) {
+        // TODO: api version check?
+        throwIndexOverflow()
+    }
+    return index
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@InlineOnly
+internal actual inline fun checkCountOverflow(count: Int): Int {
+    if (count < 0) {
+        // TODO: api version check?
+        throwCountOverflow()
+    }
+    return count
+}

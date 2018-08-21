@@ -55,3 +55,16 @@ public actual fun String(chars: CharArray): String = fromCharArray(chars, 0, cha
  * Converts the characters from a portion of the specified array to a string.
  */
 public actual fun String(chars: CharArray, offset: Int, length: Int): String = fromCharArray(chars, offset, length)
+
+@SymbolName("Kotlin_String_compareToIgnoreCase")
+external fun compareToIgnoreCase(thiz:String, other:String):Int
+
+actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
+    return if (!ignoreCase) this.compareTo(other)
+    else compareToIgnoreCase(this, other)
+}
+
+private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compareTo(b, ignoreCase = true) }
+
+actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
+  get() = STRING_CASE_INSENSITIVE_ORDER

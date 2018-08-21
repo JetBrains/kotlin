@@ -122,6 +122,7 @@ OBJ_GETTER(Kotlin_Int_toString, KInt value);
 KInt Kotlin_String_hashCode(KString thiz);
 KBoolean Kotlin_String_equals(KString thiz, KConstRef other);
 KInt Kotlin_String_compareTo(KString thiz, KString other);
+KInt Kotlin_String_compareToIgnoreCase(KString thiz, KConstRef other);
 KChar Kotlin_String_get(KString thiz, KInt index);
 OBJ_GETTER(Kotlin_String_fromUtf8Array, KConstRef array, KInt start, KInt size);
 OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef array, KInt start, KInt size);

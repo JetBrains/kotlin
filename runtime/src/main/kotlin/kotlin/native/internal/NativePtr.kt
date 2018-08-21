@@ -38,4 +38,10 @@ class NativePtr @PublishedApi internal constructor(private val value: NonNullNat
 internal inline class NonNullNativePtr(val value: NotNullPointerValue) { // TODO: refactor to use this type widely.
     @Suppress("NOTHING_TO_INLINE")
     inline fun toNativePtr() = NativePtr(this)
+    // TODO: fixme.
+    override fun toString() = ""
+
+    override fun hashCode() = 0
+
+    override fun equals(other: Any?) = false
 }

@@ -124,10 +124,10 @@ public open class TypeCastException : ClassCastException {
     constructor(message: String?) : super(message)
 }
 
-public open class ArithmeticException : RuntimeException {
-    constructor() : super()
+public actual open class ArithmeticException : RuntimeException {
+    actual constructor() : super()
 
-    constructor(message: String?) : super(message)
+    actual constructor(message: String?) : super(message)
 }
 
 public actual open class AssertionError : Error {
