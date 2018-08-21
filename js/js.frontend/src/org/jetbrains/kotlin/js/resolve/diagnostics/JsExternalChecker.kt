@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 object JsExternalChecker : DeclarationChecker {
@@ -82,6 +84,29 @@ object JsExternalChecker : DeclarationChecker {
 
         if (descriptor is FunctionDescriptor && descriptor.isInline) {
             trace.report(ErrorsJs.INLINE_EXTERNAL_DECLARATION.on(declaration))
+        }
+
+        if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
+            fun checkTypeIsNotInlineClass(type: KotlinType, elementToReport: KtElement) {
+                if (type.isInlineClassType()) {
+                    trace.report(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION.on(elementToReport))
+                }
+            }
+
+            for (p in descriptor.valueParameters) {
+                val ktParam = p.source.getPsi() as? KtParameter ?: declaration
+                checkTypeIsNotInlineClass(p.varargElementType ?: p.type, ktParam)
+            }
+
+            val elementToReport = when (declaration) {
+                is KtCallableDeclaration -> declaration.typeReference
+                is KtPropertyAccessor -> declaration.returnTypeReference
+                else -> declaration
+            }
+
+            elementToReport?.let {
+                checkTypeIsNotInlineClass(descriptor.returnType!!, it)
+            }
         }
 
         if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
