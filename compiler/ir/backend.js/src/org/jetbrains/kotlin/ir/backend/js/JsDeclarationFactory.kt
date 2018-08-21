@@ -31,9 +31,9 @@ class JsDeclarationFactory : DeclarationFactory {
     private val outerThisFieldSymbols = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
 
-    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField = TODO()
+    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField = TODO()
 
-    override fun getOuterThisFieldSymbol(innerClass: IrClass): IrField =
+    override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
         else {
             outerThisFieldSymbols.getOrPut(innerClass) {
@@ -121,7 +121,7 @@ class JsDeclarationFactory : DeclarationFactory {
         return newConstructor
     }
 
-    override fun getSymbolForObjectInstance(singleton: IrClass): IrField =
+    override fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDescriptors.getOrPut(singleton) {
             createObjectInstanceFieldDescriptor(singleton, JsIrBuilder.SYNTHESIZED_DECLARATION)
         }

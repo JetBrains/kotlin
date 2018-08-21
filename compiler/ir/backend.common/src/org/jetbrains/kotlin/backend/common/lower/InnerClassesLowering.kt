@@ -46,7 +46,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
-            val field = context.declarationFactory.getOuterThisFieldSymbol(irClass)
+            val field = context.declarationFactory.getOuterThisField(irClass)
             outerThisField = field
             irClass.declarations += field
         }
@@ -132,7 +132,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
                             return expression
                         }
 
-                        val outerThisField = context.declarationFactory.getOuterThisFieldSymbol(innerClass)
+                        val outerThisField = context.declarationFactory.getOuterThisField(innerClass)
                         irThis = IrGetFieldImpl(
                             startOffset,
                             endOffset,

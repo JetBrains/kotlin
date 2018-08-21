@@ -47,7 +47,7 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
     private fun process(irClass: IrClass) {
         if (!irClass.isObject) return
 
-        val publicInstanceField = context.declarationFactory.getSymbolForObjectInstance(irClass)
+        val publicInstanceField = context.declarationFactory.getFieldForObjectInstance(irClass)
 
         val constructor = irClass.descriptor.unsubstitutedPrimaryConstructor
                 ?: throw AssertionError("Object should have a primary constructor: ${irClass.descriptor}")

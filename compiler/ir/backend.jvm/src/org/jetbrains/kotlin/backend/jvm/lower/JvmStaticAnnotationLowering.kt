@@ -106,7 +106,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
     }
 
     private fun createProxyBody(target: IrFunction, proxy: IrFunction, companion: IrClass): IrBody {
-        val companionInstanceField = context.declarationFactory.getSymbolForObjectInstance(companion)
+        val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
         val companionInstanceFieldSymbol = companionInstanceField.symbol
         val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
 
@@ -167,7 +167,7 @@ private class ReplaceThisByStaticReference(
 ) : IrElementTransformer<Nothing?> {
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression {
         if (expression.symbol == oldThisReceiverParameter.symbol) {
-            val instanceSymbol = context.declarationFactory.getSymbolForObjectInstance(irClass)
+            val instanceSymbol = context.declarationFactory.getFieldForObjectInstance(irClass)
             return IrGetFieldImpl(
                 expression.startOffset,
                 expression.endOffset,

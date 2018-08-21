@@ -44,7 +44,7 @@ class JvmDeclarationFactory(
     private val outerThisDeclarations = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
 
-    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField =
+    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
             val symbol = IrFieldSymbolImpl(createEnumEntryFieldDescriptor(enumEntry.descriptor))
             IrFieldImpl(
@@ -69,7 +69,7 @@ class JvmDeclarationFactory(
         )
     }
 
-    override fun getOuterThisFieldSymbol(innerClass: IrClass): IrField =
+    override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
         else outerThisDeclarations.getOrPut(innerClass) {
             val outerClass = innerClass.parent as? IrClass
@@ -160,7 +160,7 @@ class JvmDeclarationFactory(
         )
     }
 
-    override fun getSymbolForObjectInstance(singleton: IrClass): IrField =
+    override fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singletonFieldDeclarations.getOrPut(singleton) {
             val symbol = IrFieldSymbolImpl(createObjectInstanceFieldDescriptor(singleton.descriptor))
             return IrFieldImpl(

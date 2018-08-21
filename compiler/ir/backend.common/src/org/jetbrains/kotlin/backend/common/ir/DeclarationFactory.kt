@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 interface DeclarationFactory {
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
 
-    fun getSymbolForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField
-    fun getOuterThisFieldSymbol(innerClass: IrClass): IrField
+    fun getFieldForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField
+    fun getOuterThisField(innerClass: IrClass): IrField
     fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructor
-    fun getSymbolForObjectInstance(singleton: IrClass): IrField
+    fun getFieldForObjectInstance(singleton: IrClass): IrField
 }
