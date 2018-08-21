@@ -59,6 +59,7 @@ open class KotlinNativeCompile : DefaultTask() {
         @Input get() = compilation.extraOpts
 
 
+    @OutputFile
     val outputFile: Property<File> = project.objects.property(File::class.java)
 
     // endregion
