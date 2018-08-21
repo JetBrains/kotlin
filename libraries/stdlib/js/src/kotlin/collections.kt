@@ -126,6 +126,27 @@ internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
     return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
 }
 
+@SinceKotlin("1.3")
+@PublishedApi
+@JsName("arrayCopy")
+internal fun <T> arrayCopy(source: Array<out T>, destination: Array<in T>, destinationOffset: Int, startIndex: Int, endIndex: Int) {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) source.size else endIndex // TODO: Remove when default value from expect is fixed
+    AbstractList.checkRangeIndexes(startIndex, endIndex, source.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+
+    if (source !== destination || destinationOffset <= startIndex) {
+        for (index in 0 until rangeSize) {
+            destination[destinationOffset + index] = source[startIndex + index]
+        }
+    } else {
+        for (index in rangeSize - 1 downTo 0) {
+            destination[destinationOffset + index] = source[startIndex + index]
+        }
+    }
+}
+
 // no singleton map implementation in js, return map as is
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
