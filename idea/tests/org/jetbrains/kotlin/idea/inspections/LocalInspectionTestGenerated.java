@@ -5295,6 +5295,44 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/safeCastWithReturn")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SafeCastWithReturn extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSafeCastWithReturn() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/safeCastWithReturn"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("castNeverSucceeds.kt")
+        public void testCastNeverSucceeds() throws Exception {
+            runTest("idea/testData/inspectionsLocal/safeCastWithReturn/castNeverSucceeds.kt");
+        }
+
+        @TestMetadata("hasParenthesize.kt")
+        public void testHasParenthesize() throws Exception {
+            runTest("idea/testData/inspectionsLocal/safeCastWithReturn/hasParenthesize.kt");
+        }
+
+        @TestMetadata("labeledReturn.kt")
+        public void testLabeledReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/safeCastWithReturn/labeledReturn.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/safeCastWithReturn/simple.kt");
+        }
+
+        @TestMetadata("usedAsExpression.kt")
+        public void testUsedAsExpression() throws Exception {
+            runTest("idea/testData/inspectionsLocal/safeCastWithReturn/usedAsExpression.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/scopeFunctions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
