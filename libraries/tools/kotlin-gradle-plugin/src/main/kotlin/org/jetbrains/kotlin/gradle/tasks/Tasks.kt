@@ -192,6 +192,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal var sourceSetName: String by Delegates.notNull()
 
     @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     internal var commonSourceSet: Iterable<File> = emptyList()
 
     @get:Input
