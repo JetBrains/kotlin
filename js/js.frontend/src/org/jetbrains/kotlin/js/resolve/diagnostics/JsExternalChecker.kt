@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
@@ -86,45 +87,36 @@ object JsExternalChecker : DeclarationChecker {
             trace.report(ErrorsJs.INLINE_EXTERNAL_DECLARATION.on(declaration))
         }
 
-        if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
-            fun checkTypeIsNotInlineClass(type: KotlinType, elementToReport: KtElement) {
-                if (type.isInlineClassType()) {
-                    trace.report(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION.on(elementToReport))
+        fun reportOnParametersAndReturnTypesIf(
+            diagnosticFactory: DiagnosticFactory0<KtElement>,
+            condition: (KotlinType) -> Boolean
+        ) {
+            if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
+                fun checkTypeIsNotInlineClass(type: KotlinType, elementToReport: KtElement) {
+                    if (condition(type)) {
+                        trace.report(diagnosticFactory.on(elementToReport))
+                    }
                 }
-            }
 
-            for (p in descriptor.valueParameters) {
-                val ktParam = p.source.getPsi() as? KtParameter ?: declaration
-                checkTypeIsNotInlineClass(p.varargElementType ?: p.type, ktParam)
-            }
-
-            val elementToReport = when (declaration) {
-                is KtCallableDeclaration -> declaration.typeReference
-                is KtPropertyAccessor -> declaration.returnTypeReference
-                else -> declaration
-            }
-
-            elementToReport?.let {
-                checkTypeIsNotInlineClass(descriptor.returnType!!, it)
-            }
-        }
-
-        if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
-            for (p in descriptor.valueParameters) {
-                if ((p.varargElementType ?: p.type).isExtensionFunctionType) {
+                for (p in descriptor.valueParameters) {
                     val ktParam = p.source.getPsi() as? KtParameter ?: declaration
-                    trace.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(ktParam))
+                    checkTypeIsNotInlineClass(p.varargElementType ?: p.type, ktParam)
+                }
+
+                val elementToReport = when (declaration) {
+                    is KtCallableDeclaration -> declaration.typeReference
+                    is KtPropertyAccessor -> declaration.returnTypeReference
+                    else -> declaration
+                }
+
+                elementToReport?.let {
+                    checkTypeIsNotInlineClass(descriptor.returnType!!, it)
                 }
             }
-
-            // Only report on properties if there are no custom accessors
-            val propertyWithCustomAccessors = descriptor is PropertyDescriptor &&
-                                              !(descriptor.getter?.isDefault ?: true && descriptor.setter?.isDefault ?: true)
-
-            if (!propertyWithCustomAccessors && descriptor.returnType?.isExtensionFunctionType ?: false) {
-                trace.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(declaration))
-            }
         }
+
+        reportOnParametersAndReturnTypesIf(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION, KotlinType::isInlineClassType)
+        reportOnParametersAndReturnTypesIf(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, KotlinType::isExtensionFunctionType)
 
         if (descriptor is CallableMemberDescriptor && descriptor.isNonAbstractMemberOfInterface() &&
             !descriptor.isNullableProperty()
