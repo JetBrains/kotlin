@@ -26,10 +26,10 @@ fun box(): String {
     }
 
     for (entry in stackTrace) {
-        if (entry.methodName.startsWith("test$")) {
+        if (entry.methodName.startsWith("test")) {
             return "OK"
         }
     }
 
-    throw AssertionError()
+    throw AssertionError(stackTrace.asList().toString())
 }
