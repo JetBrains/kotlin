@@ -32,7 +32,6 @@ import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -210,44 +209,24 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
     protected fun configureBuild(target: KotlinTargetType) {
         val project = target.project
-        val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
-        project.tasks.maybeCreate(buildNeededTaskName, DefaultTask::class.java).apply {
-            description = "Assembles and tests this project and all projects it depends on."
-            group = "build"
-            dependsOn("build")
-            if (testCompilation is KotlinCompilationToRunnableFiles) {
-                addDependsOnTaskInOtherProjects(this@apply, true, name, testCompilation.deprecatedRuntimeConfigurationName)
-            }
-        }
 
-        project.tasks.maybeCreate(buildDependentTaskName, DefaultTask::class.java).apply {
-            setDescription("Assembles and tests this project and all projects that depend on it.")
-            setGroup("build")
-            dependsOn("build")
-            doFirst {
-                if (!project.gradle.includedBuilds.isEmpty()) {
-                    project.logger.warn("[composite-build] Warning: `" + path + "` task does not build included builds.")
-                }
-            }
-            if (testCompilation is KotlinCompilationToRunnableFiles) {
-                addDependsOnTaskInOtherProjects(this@apply, false, name, testCompilation.deprecatedRuntimeConfigurationName)
-            }
+        val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
+        val buildNeeded = project.tasks.getByName(JavaBasePlugin.BUILD_NEEDED_TASK_NAME)
+        val buildDependent = project.tasks.getByName(JavaBasePlugin.BUILD_DEPENDENTS_TASK_NAME)
+
+        if (testCompilation is KotlinCompilationToRunnableFiles) {
+            addDependsOnTaskInOtherProjects(buildNeeded, true, testCompilation.deprecatedRuntimeConfigurationName)
+            addDependsOnTaskInOtherProjects(buildDependent, false, testCompilation.deprecatedRuntimeConfigurationName)
         }
     }
 
-    private fun addDependsOnTaskInOtherProjects(
-        task: Task, useDependedOn: Boolean, otherProjectTaskName: String,
-        configurationName: String
-    ) {
+    private fun addDependsOnTaskInOtherProjects(task: Task, useDependedOn: Boolean, configurationName: String) {
         val project = task.project
         val configuration = project.configurations.getByName(configurationName)
-        task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, otherProjectTaskName))
+        task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, task.name))
     }
 
     companion object {
-        const val buildNeededTaskName = "buildAllNeeded"
-        const val buildDependentTaskName = "buildAllDependents"
-
         const val testTaskNameSuffix = "test"
 
         fun defineConfigurationsForCompilation(
@@ -333,13 +312,6 @@ open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
     buildOutputCleanupRegistry: BuildOutputCleanupRegistry
 ) : AbstractKotlinTargetConfigurator<KotlinOnlyTarget<KotlinCompilationType>>(buildOutputCleanupRegistry) {
 
-    override fun configureTarget(
-        target: KotlinOnlyTarget<KotlinCompilationType>
-    ) {
-        super.configureTarget(target)
-        setCompatibilityOfAbstractCompileTasks(target.project)
-    }
-
     override fun configureArchivesAndComponent(target: KotlinOnlyTarget<KotlinCompilationType>) {
         val project = target.project
 
@@ -380,14 +352,6 @@ open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
         // Configure an implicit variant
         publications.artifacts.add(jarArtifact)
         publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
-    }
-
-    private fun setCompatibilityOfAbstractCompileTasks(project: Project) = with (project) {
-        tasks.withType(AbstractKotlinCompile::class.java).all {
-            // Workaround: these are input properties and should not hold null values:
-            it.targetCompatibility = ""
-            it.sourceCompatibility = ""
-        }
     }
 }
 
