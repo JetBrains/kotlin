@@ -1,4 +1,3 @@
 package
 
 public fun kotlin.Any?.foo(): kotlin.Boolean
-    Returns(TRUE) -> <this> != null
