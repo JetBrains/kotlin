@@ -207,9 +207,9 @@ public fun String.toUIntOrNull(radix: Int): UInt? {
 
         result *= uradix
 
-        if (result > limit - digit.toUInt()) return null
-
+        val beforeAdding = result
         result += digit.toUInt()
+        if (result < beforeAdding) return null // overflow has happened
     }
 
     return result
@@ -260,9 +260,9 @@ public fun String.toULongOrNull(radix: Int): ULong? {
 
         result *= uradix
 
-        if (result > limit - digit.toUInt()) return null
-
+        val beforeAdding = result
         result += digit.toUInt()
+        if (result < beforeAdding) return null // overflow has happened
     }
 
     return result
