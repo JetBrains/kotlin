@@ -870,12 +870,6 @@ fun runTest() {
     boolean isEnabledForNativeBackend(String fileName) {
         def text = project.file(fileName).text
 
-        def unsigned = findLinesWithPrefixesRemoved(text, '// WITH_UNSIGNED')
-        if (unsigned.size() != 0) {
-            // Unsigned types are not yet supported
-            return false
-        }
-
         def inproperIeee754Comparisons = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
         if (inproperIeee754Comparisons.contains('-ProperIeee754Comparisons')) {
             // K/N supports only proper IEEE754 comparisons
