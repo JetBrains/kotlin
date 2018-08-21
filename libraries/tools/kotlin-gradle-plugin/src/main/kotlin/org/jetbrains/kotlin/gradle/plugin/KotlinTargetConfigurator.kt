@@ -49,8 +49,6 @@ open class KotlinTargetConfigurator(
         configureArchivesAndComponent(target)
         configureTest(target)
         configureBuild(target)
-
-        setCompatibilityOfAbstractCompileTasks(target.project)
     }
 
     private fun <KotlinCompilationType: KotlinCompilation> configureCompilations(platformTarget: KotlinOnlyTarget<KotlinCompilationType>) {
@@ -94,7 +92,7 @@ open class KotlinTargetConfigurator(
         }
     }
 
-    private fun configureArchivesAndComponent(target: KotlinOnlyTarget<*>) {
+    fun <KotlinCompilationType: KotlinCompilation> configureArchivesAndComponent(target: KotlinOnlyTarget<KotlinCompilationType>) {
         val project = target.project
 
         val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
@@ -245,52 +243,24 @@ open class KotlinTargetConfigurator(
 
     private fun configureBuild(target: KotlinOnlyTarget<*>) {
         val project = target.project
-        val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
-        project.tasks.maybeCreate(buildNeededTaskName, DefaultTask::class.java).apply {
-            description = "Assembles and tests this project and all projects it depends on."
-            group = "build"
-            dependsOn("build")
-            if (testCompilation is KotlinCompilationToRunnableFiles) {
-                addDependsOnTaskInOtherProjects(this@apply, true, name, testCompilation.deprecatedRuntimeConfigurationName)
-            }
-        }
 
-        project.tasks.maybeCreate(buildDependentTaskName, DefaultTask::class.java).apply {
-            setDescription("Assembles and tests this project and all projects that depend on it.")
-            setGroup("build")
-            dependsOn("build")
-            doFirst {
-                if (!project.gradle.includedBuilds.isEmpty()) {
-                    project.logger.warn("[composite-build] Warning: `" + path + "` task does not build included builds.")
-                }
-            }
-            if (testCompilation is KotlinCompilationToRunnableFiles) {
-                addDependsOnTaskInOtherProjects(this@apply, false, name, testCompilation.deprecatedRuntimeConfigurationName)
-            }
+        val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
+        val buildNeeded = project.tasks.getByName(JavaBasePlugin.BUILD_NEEDED_TASK_NAME)
+        val buildDependent = project.tasks.getByName(JavaBasePlugin.BUILD_DEPENDENTS_TASK_NAME)
+
+        if (testCompilation is KotlinCompilationToRunnableFiles) {
+            addDependsOnTaskInOtherProjects(buildNeeded, true, testCompilation.deprecatedRuntimeConfigurationName)
+            addDependsOnTaskInOtherProjects(buildDependent, false, testCompilation.deprecatedRuntimeConfigurationName)
         }
     }
 
-    private fun addDependsOnTaskInOtherProjects(
-        task: Task, useDependedOn: Boolean, otherProjectTaskName: String,
-        configurationName: String
-    ) {
+    private fun addDependsOnTaskInOtherProjects(task: Task, useDependedOn: Boolean, configurationName: String) {
         val project = task.project
         val configuration = project.configurations.getByName(configurationName)
-        task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, otherProjectTaskName))
-    }
-
-    private fun setCompatibilityOfAbstractCompileTasks(project: Project) = with (project) {
-        tasks.withType(AbstractKotlinCompile::class.java).all {
-            // Workaround: these are input properties and should not hold null values:
-            it.targetCompatibility = ""
-            it.sourceCompatibility = ""
-        }
+        task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, task.name))
     }
 
     companion object {
-        const val buildNeededTaskName = "buildAllNeeded"
-        const val buildDependentTaskName = "buildAllDependents"
-
         const val testTaskNameSuffix = "test"
 
         fun defineConfigurationsForCompilation(

@@ -13,8 +13,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.plugins.ReportingBasePlugin
+import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
@@ -50,8 +49,7 @@ class KotlinMultiplatformPlugin(
     }
 
     override fun apply(project: Project) {
-        project.plugins.apply(BasePlugin::class.java)
-        project.plugins.apply(ReportingBasePlugin::class.java)
+        project.plugins.apply(JavaBasePlugin::class.java)
 
         val targetsContainer = project.container(KotlinTarget::class.java)
         val targetsFromPreset = TargetFromPresetExtension(targetsContainer)

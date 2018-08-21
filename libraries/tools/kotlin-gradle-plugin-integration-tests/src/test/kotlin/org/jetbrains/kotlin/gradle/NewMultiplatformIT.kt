@@ -89,8 +89,9 @@ class NewMultiplatformIT : BaseGradleIT() {
                 }
             }
 
-            build("assemble") {
+            build("assemble", "resolveRuntimeDependencies") {
                 checkAppBuild()
+                assertTasksExecuted(":resolveRuntimeDependencies") // KT-26301
             }
 
             // Now run again with a project dependency instead of a module one:
