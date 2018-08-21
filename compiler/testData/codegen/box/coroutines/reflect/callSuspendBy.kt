@@ -1,6 +1,9 @@
 // !LANGUAGE: +ReleaseCoroutines
 // WITH_COROUTINES
 // WITH_REFLECT
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JVM_IR
 
 import helpers.*
 import kotlin.coroutines.*

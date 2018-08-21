@@ -9,7 +9,6 @@
 
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
-import kotlin.reflect.full.isSuspend
 
 inline fun inline() {}
 class External { external fun external() }

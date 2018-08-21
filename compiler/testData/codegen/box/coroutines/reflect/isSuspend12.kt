@@ -2,6 +2,9 @@
 // WITH_COROUTINES
 // WITH_REFLECT
 
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS
+
 import helpers.*
 import kotlin.coroutines.experimental.*
 
