@@ -39,22 +39,23 @@ object JsExternalChecker : DeclarationChecker {
             }
         }
 
-        if (DescriptorUtils.isAnnotationClass(descriptor)) {
-            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "annotation class"))
+        if (descriptor is ClassDescriptor) {
+            val classKind = when {
+                descriptor.isData -> "data class"
+                descriptor.isInner -> "inner class"
+                descriptor.isInline -> "inline class"
+                DescriptorUtils.isAnnotationClass(descriptor) -> "annotation class"
+                else -> null
+            }
+
+            if (classKind != null) {
+                trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, classKind))
+            }
         }
-        else if (descriptor is ClassDescriptor && descriptor.isData) {
-            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "data class"))
-        }
-        else if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
+
+        if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
             trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "property accessor"))
-        }
-        else if (descriptor is ClassDescriptor && descriptor.isInner) {
-            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "inner class"))
-        }
-        else if (descriptor is ClassDescriptor && descriptor.isInline) {
-            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "inline class"))
-        }
-        else if (isPrivateMemberOfExternalClass(descriptor)) {
+        } else if (isPrivateMemberOfExternalClass(descriptor)) {
             trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
         }
 
@@ -132,16 +133,15 @@ object JsExternalChecker : DeclarationChecker {
     }
 
     private fun checkBody(
-            declaration: KtDeclaration, descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
+        declaration: KtDeclaration, descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
     ) {
         if (declaration is KtProperty && descriptor is PropertyAccessorDescriptor) return
 
         if (declaration is KtDeclarationWithBody && !declaration.hasValidExternalBody(bindingContext)) {
             diagnosticHolder.report(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION.on(declaration.bodyExpression!!))
-        }
-        else if (declaration is KtDeclarationWithInitializer &&
-                 declaration.initializer?.isDefinedExternallyExpression(bindingContext) == false
+        } else if (declaration is KtDeclarationWithInitializer &&
+            declaration.initializer?.isDefinedExternallyExpression(bindingContext) == false
         ) {
             diagnosticHolder.report(ErrorsJs.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION.on(declaration.initializer!!))
         }
@@ -168,14 +168,12 @@ object JsExternalChecker : DeclarationChecker {
                     }
                 }
             }
-        }
-        else if (declaration is KtSecondaryConstructor) {
+        } else if (declaration is KtSecondaryConstructor) {
             val delegationCall = declaration.getDelegationCall()
             if (!delegationCall.isImplicit) {
                 diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL.on(delegationCall))
             }
-        }
-        else if (declaration is KtProperty && descriptor !is PropertyAccessorDescriptor) {
+        } else if (declaration is KtProperty && descriptor !is PropertyAccessorDescriptor) {
             declaration.delegate?.let { delegate ->
                 diagnosticHolder.report(ErrorsJs.EXTERNAL_DELEGATION.on(delegate))
             }
@@ -192,15 +190,15 @@ object JsExternalChecker : DeclarationChecker {
 
     private fun checkEnumEntry(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
         if (declaration !is KtEnumEntry) return
-        declaration.getBody()?.let {
+        declaration.body?.let {
             diagnosticHolder.report(ErrorsJs.EXTERNAL_ENUM_ENTRY_WITH_BODY.on(it))
         }
     }
 
     private fun checkConstructorPropertyParam(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        diagnosticHolder: DiagnosticSink
     ) {
         if (descriptor !is PropertyDescriptor || declaration !is KtParameter) return
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
@@ -212,7 +210,7 @@ object JsExternalChecker : DeclarationChecker {
         if (declaration is KtProperty && descriptor is PropertyAccessorDescriptor) return false
 
         return declaration.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
-               AnnotationsUtils.hasAnnotation(descriptor, PredefinedAnnotation.NATIVE)
+                AnnotationsUtils.hasAnnotation(descriptor, PredefinedAnnotation.NATIVE)
     }
 
     private fun isPrivateMemberOfExternalClass(descriptor: DeclarationDescriptor): Boolean {
@@ -224,8 +222,9 @@ object JsExternalChecker : DeclarationChecker {
     }
 
     private fun CallableMemberDescriptor.isNonAbstractMemberOfInterface() =
-            modality != Modality.ABSTRACT && DescriptorUtils.isInterface(containingDeclaration) &&
-            this !is PropertyAccessorDescriptor
+        modality != Modality.ABSTRACT &&
+                DescriptorUtils.isInterface(containingDeclaration) &&
+                this !is PropertyAccessorDescriptor
 
     private fun CallableMemberDescriptor.isNullableProperty() = this is PropertyDescriptor && TypeUtils.isNullableType(type)
 
