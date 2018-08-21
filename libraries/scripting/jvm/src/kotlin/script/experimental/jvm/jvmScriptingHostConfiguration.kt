@@ -16,16 +16,14 @@ interface JvmScriptingHostConfigurationKeys
 
 open class JvmScriptingHostConfigurationBuilder : JvmScriptingHostConfigurationKeys, PropertiesCollection.Builder() {
 
-    companion object : PropertiesCollection.Builder.BuilderExtension<JvmScriptingHostConfigurationBuilder>, JvmScriptingHostConfigurationKeys {
-        override fun get() = JvmScriptingHostConfigurationBuilder()
-    }
+    companion object : JvmScriptingHostConfigurationKeys
 }
 
 val JvmScriptingHostConfigurationKeys.javaHome by PropertiesCollection.key<File>(File(System.getProperty("java.home")))
 
 @Suppress("unused")
 val ScriptingHostConfigurationKeys.jvm
-    get() = JvmScriptingHostConfigurationBuilder
+    get() = JvmScriptingHostConfigurationBuilder()
 
 val defaultJvmScriptingEnvironment = ScriptingHostConfiguration {
     getScriptingClass(JvmGetScriptingClass())

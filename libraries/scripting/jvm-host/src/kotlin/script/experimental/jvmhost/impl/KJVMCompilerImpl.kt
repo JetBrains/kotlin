@@ -48,7 +48,6 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.JvmScriptEvaluationEnvironment
 import kotlin.script.experimental.jvmhost.KJvmCompilerProxy
 import kotlin.script.experimental.jvmhost.baseClassLoader
-import kotlin.script.experimental.util.getFirstFromChainOrNull
 import kotlin.script.experimental.util.getOrError
 
 class KJvmCompiledScript<out ScriptBase : Any>(
@@ -57,23 +56,24 @@ class KJvmCompiledScript<out ScriptBase : Any>(
     private val scriptClassFQName: String
 ) : CompiledScript<ScriptBase> {
 
-    override suspend fun instantiate(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<ScriptBase> = try {
-        val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationEnvironment.baseClassLoader)
-            ?: Thread.currentThread().contextClassLoader
-        val dependencies = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
-            ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }
-        // TODO: previous dependencies and classloaders should be taken into account here
-        val classLoaderWithDeps =
-            if (dependencies == null) baseClassLoader
-            else URLClassLoader(dependencies.toTypedArray(), baseClassLoader)
-        val classLoader = GeneratedClassLoader(generationState.factory, classLoaderWithDeps)
+    override suspend fun instantiate(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<ScriptBase> =
+        try {
+            val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationEnvironment.baseClassLoader)
+                ?: Thread.currentThread().contextClassLoader
+            val dependencies = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
+                ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }
+            // TODO: previous dependencies and classloaders should be taken into account here
+            val classLoaderWithDeps =
+                if (dependencies == null) baseClassLoader
+                else URLClassLoader(dependencies.toTypedArray(), baseClassLoader)
+            val classLoader = GeneratedClassLoader(generationState.factory, classLoaderWithDeps)
 
-        val clazz = classLoader.loadClass(scriptClassFQName)
-        (clazz as? ScriptBase)?.asSuccess()
-            ?: ResultWithDiagnostics.Failure("Compiled class expected to be a subclass of the <ScriptBase>, but got ${clazz.javaClass.name}".asErrorDiagnostics())
-    } catch (e: Throwable) {
-        ResultWithDiagnostics.Failure(ScriptDiagnostic("Unable to instantiate class $scriptClassFQName", exception = e))
-    }
+            val clazz = classLoader.loadClass(scriptClassFQName)
+            (clazz as? ScriptBase)?.asSuccess()
+                ?: ResultWithDiagnostics.Failure("Compiled class expected to be a subclass of the <ScriptBase>, but got ${clazz.javaClass.name}".asErrorDiagnostics())
+        } catch (e: Throwable) {
+            ResultWithDiagnostics.Failure(ScriptDiagnostic("Unable to instantiate class $scriptClassFQName", exception = e))
+        }
 }
 
 class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvmCompilerProxy {
@@ -112,7 +112,8 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 var isModularJava = false
-                getFirstFromChainOrNull(ScriptCompilationConfiguration.jvm.javaHome, updatedConfiguration, hostConfiguration)?.let {
+                (updatedConfiguration.getNoDefault(ScriptCompilationConfiguration.jvm.javaHome)
+                    ?: hostConfiguration[ScriptingHostConfiguration.jvm.javaHome])?.let {
                     put(JVMConfigurationKeys.JDK_HOME, it)
                     isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }

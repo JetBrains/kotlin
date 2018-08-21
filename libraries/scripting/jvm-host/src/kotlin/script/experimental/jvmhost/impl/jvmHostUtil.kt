@@ -9,9 +9,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 
 fun ScriptingHostConfiguration.withDefaults(): ScriptingHostConfiguration =
-    if (this == defaultJvmScriptingEnvironment || defaultJvmScriptingEnvironment.properties.all {
-            this.properties.containsKey(it.key)
-        }) {
+    if (this == defaultJvmScriptingEnvironment) {
         this
     } else {
         ScriptingHostConfiguration(defaultJvmScriptingEnvironment, this)

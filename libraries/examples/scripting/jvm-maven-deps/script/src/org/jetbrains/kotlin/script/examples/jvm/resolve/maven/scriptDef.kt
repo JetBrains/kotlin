@@ -29,8 +29,7 @@ abstract class MyScriptWithMavenDeps {
 
 object MyScriptCompilationConfiguration : ScriptCompilationConfiguration(
     {
-        defaultImports<DependsOn>()
-        defaultImports(Repository::class)
+        defaultImports(DependsOn::class, Repository::class)
         jvm {
             dependenciesFromCurrentContext(
                 "scripting-jvm-maven-deps", // script library jar name
@@ -49,9 +48,9 @@ object MyScriptCompilationConfiguration : ScriptCompilationConfiguration(
 
 private val resolver = FilesAndMavenResolver()
 
-fun myConfigureOnAnnotations(script: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration?> {
-    val annotations = script.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
-        ?: return null.asSuccess()
+fun myConfigureOnAnnotations(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    val annotations = context.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
+        ?: return context.compilationConfiguration.asSuccess()
     val scriptContents = object : ScriptContents {
         override val annotations: Iterable<Annotation> = annotations
         override val file: File? = null
@@ -63,10 +62,10 @@ fun myConfigureOnAnnotations(script: ScriptConfigurationRefinementContext): Resu
     }
     return try {
         val newDepsFromResolver = resolver.resolve(scriptContents, emptyMap(), ::report, null).get()
-            ?: return null.asSuccess(diagnostics)
+            ?: return context.compilationConfiguration.asSuccess(diagnostics)
         val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
-            ?: return null.asSuccess(diagnostics)
-        ScriptCompilationConfiguration(script.compilationConfiguration) {
+            ?: return context.compilationConfiguration.asSuccess(diagnostics)
+        ScriptCompilationConfiguration(context.compilationConfiguration) {
             dependencies.append(JvmDependency(resolvedClasspath))
         }.asSuccess(diagnostics)
     } catch (e: Throwable) {

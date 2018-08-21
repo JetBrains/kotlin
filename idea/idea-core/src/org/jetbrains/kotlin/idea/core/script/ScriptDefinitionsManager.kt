@@ -208,8 +208,7 @@ fun loadDefinitionsFromTemplates(
                     )
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
-                    val hostConfiguration = ScriptingHostConfiguration {
-                        include(defaultJvmScriptingEnvironment)
+                    val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingEnvironment) {
                         configurationDependencies(JvmDependency(classpath))
                     }
                     KotlinScriptDefinitionAdapterFromNewAPI(

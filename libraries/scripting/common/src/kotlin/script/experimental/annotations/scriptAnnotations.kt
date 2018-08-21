@@ -23,14 +23,3 @@ annotation class KotlinScript(
     val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class // object or class filled in 0-ary constructor
 )
 
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptFileExtension(
-    val extension: String
-)
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptProperties(
-    val compilationConfiguration: KClass<out ScriptCompilationConfiguration> // object or class filled in 0-ary constructor
-)

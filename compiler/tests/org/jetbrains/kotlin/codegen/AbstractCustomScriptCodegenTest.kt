@@ -123,7 +123,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 
 object TestScriptWithReceiversConfiguration : ScriptCompilationConfiguration(
     {
-        implicitReceivers<String>()
+        implicitReceivers(String::class)
     })
 
 @Suppress("unused")

@@ -19,9 +19,7 @@ data class JvmDependency(val classpath: List<File>) : ScriptDependency {
 interface JvmScriptCompilationConfigurationKeys
 
 open class JvmScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptCompilationConfigurationKeys {
-    companion object : PropertiesCollection.Builder.BuilderExtension<JvmScriptCompilationConfigurationBuilder>, JvmScriptCompilationConfigurationKeys {
-        override fun get() = JvmScriptCompilationConfigurationBuilder()
-    }
+    companion object : JvmScriptCompilationConfigurationKeys
 }
 
 fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
@@ -42,5 +40,5 @@ val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCo
 
 @Suppress("unused")
 val ScriptCompilationConfigurationKeys.jvm
-    get() = JvmScriptCompilationConfigurationBuilder
+    get() = JvmScriptCompilationConfigurationBuilder()
 

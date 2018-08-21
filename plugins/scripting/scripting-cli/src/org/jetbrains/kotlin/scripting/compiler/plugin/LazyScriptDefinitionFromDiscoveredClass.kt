@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
@@ -37,9 +36,8 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
     override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ScriptingHostConfiguration {
-            include(defaultJvmScriptingEnvironment)
-            configurationDependencies(JvmDependency(classpath))
+        ScriptingHostConfiguration(defaultJvmScriptingEnvironment) {
+            configurationDependencies.append(JvmDependency(classpath))
         }
     }
 
@@ -67,10 +65,8 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 
     override val scriptFileExtensionWithDot: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val extFromAnn = (
-                annotationsFromAsm.find { it.name == KotlinScriptFileExtension::class.simpleName!! }?.args
-                    ?: annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
-                )?.find { it.name == "extension" }?.value
+        val extFromAnn = annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
+            ?.find { it.name == "extension" }?.value
         val ext = extFromAnn
             ?: scriptCompilationConfiguration.let {
                 it[ScriptCompilationConfiguration.fileExtension] ?: "kts"

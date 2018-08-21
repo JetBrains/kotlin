@@ -98,7 +98,8 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
     }
 }
 
-typealias RefineScriptCompilationConfigurationHandler = (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptCompilationConfiguration?>
+typealias RefineScriptCompilationConfigurationHandler =
+            (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptCompilationConfiguration>
 
 // to make it "hasheable" for cashing
 class RefineConfigurationBeforeParsingData(

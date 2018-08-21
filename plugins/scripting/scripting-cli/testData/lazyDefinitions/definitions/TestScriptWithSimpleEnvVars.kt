@@ -3,11 +3,11 @@ import kotlin.script.experimental.annotations.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.*
 
-object TestScriptWithSimpleEnvVarsDefinition : ScriptDefinition(
+object TestScriptWithSimpleEnvVarsDefinition : ScriptCompilationConfiguration(
     {
         providedProperties("stringVar1" to String::class)
     })
 
-@KotlinScript(extension = "2.kts", definition = TestScriptWithSimpleEnvVarsDefinition::class)
+@KotlinScript(extension = "2.kts", compilationConfiguration = TestScriptWithSimpleEnvVarsDefinition::class)
 abstract class TestScriptWithSimpleEnvVars
 

@@ -7,8 +7,6 @@ package kotlin.script.experimental.host
 
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptFileExtension
-import kotlin.script.experimental.annotations.KotlinScriptProperties
 import kotlin.script.experimental.api.*
 
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
@@ -37,22 +35,23 @@ fun createScriptCompilationConfigurationFromAnnotatedBaseClass(
     val mainAnnotation = baseClass.findAnnotation<KotlinScript>()
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $baseClass")
 
-    fun scriptingPropsInstance(kclass: KClass<out ScriptCompilationConfiguration>): ScriptCompilationConfiguration = try {
+    fun scriptConfigInstance(kclass: KClass<out ScriptCompilationConfiguration>): ScriptCompilationConfiguration = try {
         kclass.objectInstance ?: kclass.createInstance()
     } catch (e: Throwable) {
         throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
     }
 
-    return ScriptCompilationConfiguration {
-        baseClass(loadedBaseClassType)
-        fileExtension(baseClass.findAnnotation<KotlinScriptFileExtension>()?.extension ?: mainAnnotation.extension)
-        displayName(mainAnnotation.name)
-
-        include(scriptingPropsInstance(mainAnnotation.compilationConfiguration))
-
-        baseClass.java.annotations.filterIsInstance(KotlinScriptProperties::class.java).forEach { ann ->
-            include(scriptingPropsInstance(ann.compilationConfiguration))
+    return ScriptCompilationConfiguration(scriptConfigInstance(mainAnnotation.compilationConfiguration)) {
+        if (baseClass() == null) {
+            baseClass(loadedBaseClassType)
         }
+        if (fileExtension() == null) {
+            fileExtension(mainAnnotation.extension)
+        }
+        if (displayName() == null) {
+            displayName(mainAnnotation.name)
+        }
+
         body()
     }
 }
