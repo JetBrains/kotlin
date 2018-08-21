@@ -49,7 +49,7 @@ object MyScriptCompilationConfiguration : ScriptCompilationConfiguration(
 
 private val resolver = FilesAndMavenResolver()
 
-fun myConfigureOnAnnotations(script: ScriptDataFacade): ResultWithDiagnostics<ScriptCompilationConfiguration?> {
+fun myConfigureOnAnnotations(script: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration?> {
     val annotations = script.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
         ?: return null.asSuccess()
     val scriptContents = object : ScriptContents {

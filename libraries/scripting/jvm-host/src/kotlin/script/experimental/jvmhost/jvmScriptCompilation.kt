@@ -40,7 +40,7 @@ open class JvmScriptCompiler(
     ): ResultWithDiagnostics<CompiledScript<*>> {
         val refineConfigurationFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeParsing]
         val refinedConfiguration =
-            refineConfigurationFn?.handler?.invoke(ScriptDataFacade(script, scriptCompilationConfiguration))?.let {
+            refineConfigurationFn?.handler?.invoke(ScriptConfigurationRefinementContext(script, scriptCompilationConfiguration))?.let {
                 when (it) {
                     is ResultWithDiagnostics.Failure -> return it
                     is ResultWithDiagnostics.Success -> it.value

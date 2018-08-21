@@ -44,7 +44,7 @@ class BridgeDependenciesResolver(
                 if (refineFn == null) null
                 else {
                     val res = refineFn(
-                        ScriptDataFacade(scriptContents.toScriptSource(), scriptCompilationConfiguration, processedScriptData)
+                        ScriptConfigurationRefinementContext(scriptContents.toScriptSource(), scriptCompilationConfiguration, processedScriptData)
                     )
                     when (res) {
                         is ResultWithDiagnostics.Failure ->
