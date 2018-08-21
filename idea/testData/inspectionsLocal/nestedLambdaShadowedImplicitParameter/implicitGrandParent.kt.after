@@ -1,9 +1,11 @@
 fun foo(f: (String) -> Unit) {}
+fun bar(s: String) {}
 
 fun test() {
     foo { it ->
         foo { s ->
             foo {
+                bar(it)
             }
         }
     }
