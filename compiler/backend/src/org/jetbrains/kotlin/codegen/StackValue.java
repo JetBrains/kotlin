@@ -698,8 +698,8 @@ public abstract class StackValue {
         return new PostIncrement(index, increment);
     }
 
-    public static StackValue preIncrementForLocalVar(int index, int increment) {
-        return new PreIncrementForLocalVar(index, increment);
+    public static StackValue preIncrementForLocalVar(int index, int increment, @Nullable KotlinType kotlinType) {
+        return new PreIncrementForLocalVar(index, increment, kotlinType);
     }
 
     public static StackValue preIncrement(
@@ -710,7 +710,7 @@ public abstract class StackValue {
             @NotNull ExpressionCodegen codegen
     ) {
         if (stackValue instanceof StackValue.Local && Type.INT_TYPE == stackValue.type) {
-            return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta);
+            return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta, stackValue.kotlinType);
         }
         return new PrefixIncrement(type, stackValue, resolvedCall, codegen);
     }
@@ -1834,8 +1834,8 @@ public abstract class StackValue {
         private final int index;
         private final int increment;
 
-        public PreIncrementForLocalVar(int index, int increment) {
-            super(Type.INT_TYPE);
+        public PreIncrementForLocalVar(int index, int increment, @Nullable KotlinType kotlinType) {
+            super(Type.INT_TYPE, kotlinType);
             this.index = index;
             this.increment = increment;
         }
@@ -1861,7 +1861,7 @@ public abstract class StackValue {
                 ResolvedCall resolvedCall,
                 @NotNull ExpressionCodegen codegen
         ) {
-            super(type);
+            super(type, value.kotlinType);
             this.value = value;
             this.resolvedCall = resolvedCall;
             this.codegen = codegen;
