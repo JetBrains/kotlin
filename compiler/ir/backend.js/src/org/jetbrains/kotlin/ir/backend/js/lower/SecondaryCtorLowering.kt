@@ -211,17 +211,13 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
             super.visitCall(expression, data)
 
-            // TODO: figure out the reason why symbol is not bound
-            if (expression.symbol.isBound) {
+            val target = expression.symbol.owner
 
-                val target = expression.symbol.owner
-
-                if (target is IrConstructor) {
-                    if (!target.isPrimary) {
-                        val ctor = oldCtorToNewMap[target.symbol]
-                        if (ctor != null) {
-                            return redirectCall(expression, ctor.stub)
-                        }
+            if (target is IrConstructor) {
+                if (!target.isPrimary) {
+                    val ctor = oldCtorToNewMap[target.symbol]
+                    if (ctor != null) {
+                        return redirectCall(expression, ctor.stub)
                     }
                 }
             }

@@ -351,19 +351,15 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                         return it(call)
                     }
 
-                    // TODO: get rid of unbound symbols
-                    if (symbol.isBound) {
-
-                        (symbol.owner as? IrFunction)?.dispatchReceiverParameter?.let {
-                            val key = SimpleMemberKey(it.type, symbol.owner.name)
-                            memberToTransformer[key]?.let {
-                                return it(call)
-                            }
-                        }
-
-                        nameToTransformer[symbol.owner.name]?.let {
+                    (symbol.owner as? IrFunction)?.dispatchReceiverParameter?.let {
+                        val key = SimpleMemberKey(it.type, symbol.owner.name)
+                        memberToTransformer[key]?.let {
                             return it(call)
                         }
+                    }
+
+                    nameToTransformer[symbol.owner.name]?.let {
+                        return it(call)
                     }
                 }
 
@@ -415,7 +411,6 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
     private fun IrType.findEqualsMethod(rhs: IrType): IrSimpleFunction? {
         val classifier = classifierOrNull ?: return null
-        if (!classifier.isBound) return null
         return ((classifier.owner as? IrClass) ?: return null).declarations
             .filterIsInstance<IrSimpleFunction>()
             .filter {
@@ -489,7 +484,6 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
     private fun transformEqualsMethodCall(call: IrCall): IrExpression {
         val symbol = call.symbol
-        if (!symbol.isBound) return call
         val function = (symbol.owner as? IrFunction) ?: return call
         val lhs = function.dispatchReceiverParameter ?: function.extensionReceiverParameter ?: return call
         val rhs = call.getValueArgument(0) ?: return call

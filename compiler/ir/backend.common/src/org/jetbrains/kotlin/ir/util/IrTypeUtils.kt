@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.name.FqName
@@ -28,9 +29,12 @@ fun IrType.isFunctionTypeOrSubtype(): Boolean {
     }
 
     fun superTypes(irType: IrType): List<IrType> {
-        val classifier = irType.classifierOrNull ?: return emptyList()
-        val classDeclaration = classifier.owner as? IrClass ?: return emptyList()
-        return classDeclaration.superTypes
+        val classifier = irType.classifierOrNull?.owner ?: return emptyList()
+        return when(classifier) {
+            is IrClass -> classifier.superTypes
+            is IrTypeParameter -> classifier.superTypes
+            else -> throw IllegalStateException()
+        }
     }
 
     return DFS.ifAny(listOf(this), ::superTypes, ::checkType)
