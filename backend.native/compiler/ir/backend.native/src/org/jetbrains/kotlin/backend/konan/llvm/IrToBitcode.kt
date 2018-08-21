@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 private val threadLocalAnnotationFqName = FqName("kotlin.native.ThreadLocal")
@@ -1216,11 +1218,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                !this.isChar()
     }
 
+    private fun IrType.isUnsignedInteger(): Boolean =
+            this is IrSimpleType && !this.hasQuestionMark &&
+                    UnsignedType.values().any { it.classId == this.getClass()?.descriptor?.classId }
+
     private fun evaluateIntegerCoercion(value: IrTypeOperatorCall): LLVMValueRef {
         context.log{"evaluateIntegerCoercion        : ${ir2string(value)}"}
         val type = value.typeOperand
-        assert(type.isPrimitiveInteger())
+        val typeIsUnsigned = type.isUnsignedInteger()
+        assert(type.isPrimitiveInteger() || typeIsUnsigned)
         val result = evaluateExpression(value.argument)
+        assert(value.argument.type.isInt())
         val llvmSrcType = codegen.getLLVMType(value.argument.type)
         val llvmDstType = codegen.getLLVMType(type)
         val srcWidth    = LLVMGetIntTypeWidth(llvmSrcType)
@@ -1228,7 +1236,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return when {
             srcWidth == dstWidth           -> result
             srcWidth > dstWidth            -> LLVMBuildTrunc(functionGenerationContext.builder, result, llvmDstType, "")!!
-            else /* srcWidth < dstWidth */ -> LLVMBuildSExt(functionGenerationContext.builder, result, llvmDstType, "")!!
+            /* srcWidth < dstWidth */
+            typeIsUnsigned                 -> LLVMBuildZExt(functionGenerationContext.builder, result, llvmDstType, "")!!
+            else                           -> LLVMBuildSExt(functionGenerationContext.builder, result, llvmDstType, "")!!
         }
     }
 
