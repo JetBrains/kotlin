@@ -418,6 +418,7 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun isAbstract ()Z
 	public fun isFinal ()Z
 	public fun isOpen ()Z
+	public fun isSuspend ()Z
 }
 
 public final class kotlin/jvm/internal/CharCompanionObject {
@@ -1165,6 +1166,7 @@ public abstract interface class kotlin/reflect/KCallable : kotlin/reflect/KAnnot
 	public abstract fun isAbstract ()Z
 	public abstract fun isFinal ()Z
 	public abstract fun isOpen ()Z
+	public abstract fun isSuspend ()Z
 }
 
 public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotatedElement, kotlin/reflect/KClassifier, kotlin/reflect/KDeclarationContainer {
