@@ -12,19 +12,16 @@ inline fun go(f: () -> String) = f()
 // FILE: box.kt
 // WITH_RUNTIME
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object: Continuation<Unit> {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
-        override fun resume(value: Unit) {
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
+        override fun resumeWith(result: SuccessOrFailure<Unit>) {
+            result.getOrThrow()
         }
     })
 }

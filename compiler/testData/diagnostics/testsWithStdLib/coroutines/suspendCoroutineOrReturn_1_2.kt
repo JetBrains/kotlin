@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
 // SKIP_TXT
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     suspend fun noParams(): Unit = suspendCoroutineUninterceptedOrReturn {
@@ -17,7 +17,7 @@ class Controller {
     suspend fun yieldString(value: String) = suspendCoroutineUninterceptedOrReturn<Int> {
         it.resume(1)
         it checkType { _<Continuation<Int>>() }
-        it.resume(<!TYPE_MISMATCH!>""<!>)
+        it.<!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>resume<!>("")
 
         // We can return anything here, 'suspendCoroutineUninterceptedOrReturn' is not very type-safe
         // Also we can call resume and then return the value too, but it's still just our problem
