@@ -31,11 +31,11 @@ abstract class BasicScriptingHost(
     open fun eval(
         script: ScriptSource,
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
-        environment: ScriptEvaluationEnvironment?
+        configuration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
             compiler(script, scriptCompilationConfiguration).onSuccess {
-                evaluator(it, environment)
+                evaluator(it, configuration)
             }
         }
 }

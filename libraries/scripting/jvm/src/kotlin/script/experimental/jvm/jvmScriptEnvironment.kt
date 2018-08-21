@@ -53,7 +53,7 @@ class JvmGetScriptingClass : GetScriptingClass {
         if (dependencies == null) {
             dependencies = newDeps
         } else {
-            if (newDeps != dependencies) throw IllegalArgumentException("scripting environment dependencies changed")
+            if (newDeps != dependencies) throw IllegalArgumentException("scripting configuration dependencies changed")
         }
 
         if (!baseClassLoaderIsInitialized) {

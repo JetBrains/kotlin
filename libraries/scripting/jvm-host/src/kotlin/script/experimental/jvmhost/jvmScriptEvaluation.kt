@@ -17,16 +17,16 @@ open class JvmScriptEvaluationEnvironment : PropertiesCollection.Builder() {
 
 val JvmScriptEvaluationEnvironment.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
 
-val ScriptEvaluationEnvironment.jvm get() = JvmScriptEvaluationEnvironment()
+val ScriptEvaluationConfiguration.jvm get() = JvmScriptEvaluationEnvironment()
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
     override suspend operator fun invoke(
         compiledScript: CompiledScript<*>,
-        scriptEvaluationEnvironment: ScriptEvaluationEnvironment?
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
         try {
-            val obj = compiledScript.instantiate(scriptEvaluationEnvironment)
+            val obj = compiledScript.instantiate(scriptEvaluationConfiguration)
             when (obj) {
                 is ResultWithDiagnostics.Failure -> obj
                 is ResultWithDiagnostics.Success -> {
@@ -37,7 +37,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                     if (scriptObject !is Class<*>)
                         ResultWithDiagnostics.Failure(ScriptDiagnostic("expecting class in this implementation, got ${scriptObject?.javaClass}"))
                     else {
-                        val receivers = scriptEvaluationEnvironment?.get(ScriptEvaluationEnvironment.implicitReceivers)
+                        val receivers = scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.implicitReceivers)
                         val instance = if (receivers == null) {
                             scriptObject.getConstructor().newInstance()
                         } else {
@@ -45,7 +45,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                         }
 
                         // TODO: fix result value
-                        ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", instance, ""), scriptEvaluationEnvironment))
+                        ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", instance, ""), scriptEvaluationConfiguration))
                     }
                 }
             }

@@ -55,8 +55,8 @@ class KJvmCompiledScript<out ScriptBase : Any>(
     private val scriptClassFQName: String
 ) : CompiledScript<ScriptBase> {
 
-    override suspend fun instantiate(scriptEvaluationEnvironment: ScriptEvaluationEnvironment?): ResultWithDiagnostics<ScriptBase> = try {
-        val baseClassLoader = scriptEvaluationEnvironment?.get(JvmScriptEvaluationEnvironment.baseClassLoader)
+    override suspend fun instantiate(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<ScriptBase> = try {
+        val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationEnvironment.baseClassLoader)
             ?: Thread.currentThread().contextClassLoader
         val dependencies = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
             ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }

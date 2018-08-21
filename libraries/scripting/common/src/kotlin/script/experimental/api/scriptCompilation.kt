@@ -129,5 +129,5 @@ interface CompiledScript<out ScriptBase : Any> {
 
     val compilationConfiguration: ScriptCompilationConfiguration
 
-    suspend fun instantiate(scriptEvaluationEnvironment: ScriptEvaluationEnvironment?): ResultWithDiagnostics<ScriptBase>
+    suspend fun instantiate(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<ScriptBase>
 }
