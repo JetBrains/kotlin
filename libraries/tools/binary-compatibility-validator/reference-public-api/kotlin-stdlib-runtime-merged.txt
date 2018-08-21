@@ -998,6 +998,24 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun contains ([Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun contains ([SS)Z
 	public static final fun contains ([ZZ)Z
+	public static final fun copyInto ([B[BIII)[B
+	public static final fun copyInto ([C[CIII)[C
+	public static final fun copyInto ([D[DIII)[D
+	public static final fun copyInto ([F[FIII)[F
+	public static final fun copyInto ([I[IIII)[I
+	public static final fun copyInto ([J[JIII)[J
+	public static final fun copyInto ([Ljava/lang/Object;[Ljava/lang/Object;III)[Ljava/lang/Object;
+	public static final fun copyInto ([S[SIII)[S
+	public static final fun copyInto ([Z[ZIII)[Z
+	public static synthetic fun copyInto$default ([B[BIIIILjava/lang/Object;)[B
+	public static synthetic fun copyInto$default ([C[CIIIILjava/lang/Object;)[C
+	public static synthetic fun copyInto$default ([D[DIIIILjava/lang/Object;)[D
+	public static synthetic fun copyInto$default ([F[FIIIILjava/lang/Object;)[F
+	public static synthetic fun copyInto$default ([I[IIIIILjava/lang/Object;)[I
+	public static synthetic fun copyInto$default ([J[JIIIILjava/lang/Object;)[J
+	public static synthetic fun copyInto$default ([Ljava/lang/Object;[Ljava/lang/Object;IIIILjava/lang/Object;)[Ljava/lang/Object;
+	public static synthetic fun copyInto$default ([S[SIIIILjava/lang/Object;)[S
+	public static synthetic fun copyInto$default ([Z[ZIIIILjava/lang/Object;)[Z
 	public static final fun copyOfRange ([BII)[B
 	public static final fun copyOfRange ([CII)[C
 	public static final fun copyOfRange ([DII)[D
