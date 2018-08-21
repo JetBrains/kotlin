@@ -8,6 +8,7 @@ package kotlin.script.experimental.jvm
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
 data class JvmDependency(val classpath: List<File>) : ScriptDependency {
@@ -37,7 +38,7 @@ fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassloader(
     )
 }
 
-val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCopy(ScriptingEnvironment.jvm.javaHome)
+val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCopy(ScriptingHostConfiguration.jvm.javaHome)
 
 @Suppress("unused")
 val ScriptCompilationConfigurationKeys.jvm

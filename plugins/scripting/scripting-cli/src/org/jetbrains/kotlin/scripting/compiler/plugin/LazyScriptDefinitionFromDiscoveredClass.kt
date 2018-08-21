@@ -16,7 +16,9 @@ import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.configuration.createScriptCompilationConfigurationFromAnnotatedBaseClass
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.host.createScriptCompilationConfigurationFromAnnotatedBaseClass
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 
@@ -34,8 +36,8 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         messageCollector: MessageCollector
     ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
-    override val hostEnvironment: ScriptingEnvironment by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ScriptingEnvironment {
+    override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        ScriptingHostConfiguration {
             include(defaultJvmScriptingEnvironment)
             configurationDependencies(JvmDependency(classpath))
         }
@@ -49,7 +51,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         try {
             createScriptCompilationConfigurationFromAnnotatedBaseClass(
                 KotlinType(className),
-                hostEnvironment,
+                hostConfiguration,
                 LazyScriptDefinitionFromDiscoveredClass::class
             )
         } catch (ex: ClassNotFoundException) {

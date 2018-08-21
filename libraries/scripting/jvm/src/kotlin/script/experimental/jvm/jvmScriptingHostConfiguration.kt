@@ -9,24 +9,25 @@ import java.io.File
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.*
 import kotlin.script.experimental.util.PropertiesCollection
 
-interface JvmScriptingEnvironmentKeys
+interface JvmScriptingHostConfigurationKeys
 
-open class JvmScriptingEnvironmentBuilder : JvmScriptingEnvironmentKeys, PropertiesCollection.Builder() {
+open class JvmScriptingHostConfigurationBuilder : JvmScriptingHostConfigurationKeys, PropertiesCollection.Builder() {
 
-    companion object : PropertiesCollection.Builder.BuilderExtension<JvmScriptingEnvironmentBuilder>, JvmScriptingEnvironmentKeys {
-        override fun get() = JvmScriptingEnvironmentBuilder()
+    companion object : PropertiesCollection.Builder.BuilderExtension<JvmScriptingHostConfigurationBuilder>, JvmScriptingHostConfigurationKeys {
+        override fun get() = JvmScriptingHostConfigurationBuilder()
     }
 }
 
-val JvmScriptingEnvironmentKeys.javaHome by PropertiesCollection.key<File>(File(System.getProperty("java.home")))
+val JvmScriptingHostConfigurationKeys.javaHome by PropertiesCollection.key<File>(File(System.getProperty("java.home")))
 
 @Suppress("unused")
-val ScriptingEnvironmentKeys.jvm
-    get() = JvmScriptingEnvironmentBuilder
+val ScriptingHostConfigurationKeys.jvm
+    get() = JvmScriptingHostConfigurationBuilder
 
-val defaultJvmScriptingEnvironment = ScriptingEnvironment {
+val defaultJvmScriptingEnvironment = ScriptingHostConfiguration {
     getScriptingClass(JvmGetScriptingClass())
 }
 
@@ -38,7 +39,7 @@ class JvmGetScriptingClass : GetScriptingClass {
     private var baseClassLoader: ClassLoader? = null
 
     @Synchronized
-    override fun invoke(classType: KotlinType, contextClass: KClass<*>, environment: ScriptingEnvironment): KClass<*> {
+    override fun invoke(classType: KotlinType, contextClass: KClass<*>, hostConfiguration: ScriptingHostConfiguration): KClass<*> {
 
         // checking if class already loaded in the same context
         val contextClassloader = contextClass.java.classLoader
@@ -49,7 +50,7 @@ class JvmGetScriptingClass : GetScriptingClass {
             if (actualClassLoadersChain.any { it == fromClass.java.classLoader }) return fromClass
         }
 
-        val newDeps = environment[ScriptingEnvironment.configurationDependencies]
+        val newDeps = hostConfiguration[ScriptingHostConfiguration.configurationDependencies]
         if (dependencies == null) {
             dependencies = newDeps
         } else {

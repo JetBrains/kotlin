@@ -18,7 +18,7 @@ import java.util.jar.JarFile
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.configuration.createScriptCompilationConfigurationFromAnnotatedBaseClass
+import kotlin.script.experimental.host.createScriptCompilationConfigurationFromAnnotatedBaseClass
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 import kotlin.script.templates.ScriptTemplateDefinition
 

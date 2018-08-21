@@ -16,6 +16,8 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.starProjectedType
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.experimental.util.getOrError
@@ -25,7 +27,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
 
     protected abstract val scriptCompilationConfiguration: ScriptCompilationConfiguration
 
-    protected abstract val hostEnvironment: ScriptingEnvironment
+    protected abstract val hostConfiguration: ScriptingHostConfiguration
 
     abstract val scriptFileExtensionWithDot: String
 
@@ -83,7 +85,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         )
 
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        hostEnvironment[ScriptingEnvironment.getScriptingClass]
+        hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
             ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment")
     }
 
@@ -91,14 +93,14 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         scriptingClassGetter(
             type,
             KotlinScriptDefinition::class, // Assuming that the KotlinScriptDefinition class is loaded in the proper classloader
-            hostEnvironment
+            hostConfiguration
         )
 }
 
 
 class KotlinScriptDefinitionAdapterFromNewAPI(
     override val scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    override val hostEnvironment: ScriptingEnvironment
+    override val hostConfiguration: ScriptingHostConfiguration
 ) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
 
     override val name: String get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.displayName] ?: super.name

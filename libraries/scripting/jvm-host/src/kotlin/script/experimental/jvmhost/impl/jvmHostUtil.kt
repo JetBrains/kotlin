@@ -5,14 +5,14 @@
 
 package kotlin.script.experimental.jvmhost.impl
 
-import kotlin.script.experimental.api.ScriptingEnvironment
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 
-fun ScriptingEnvironment.withDefaults(): ScriptingEnvironment =
+fun ScriptingHostConfiguration.withDefaults(): ScriptingHostConfiguration =
     if (this == defaultJvmScriptingEnvironment || defaultJvmScriptingEnvironment.properties.all {
             this.properties.containsKey(it.key)
         }) {
         this
     } else {
-        ScriptingEnvironment(defaultJvmScriptingEnvironment, this)
+        ScriptingHostConfiguration(defaultJvmScriptingEnvironment, this)
     }

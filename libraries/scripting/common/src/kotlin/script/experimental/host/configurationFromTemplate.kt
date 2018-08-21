@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.configuration
+package kotlin.script.experimental.host
 
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
@@ -18,17 +18,17 @@ private const val ILLEGAL_CONFIG_ANN_ARG =
 
 fun createScriptCompilationConfigurationFromAnnotatedBaseClass(
     baseClassType: KotlinType,
-    environment: ScriptingEnvironment,
+    hostConfiguration: ScriptingHostConfiguration,
     contextClass: KClass<*> = ScriptCompilationConfiguration::class,
     body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
 ): ScriptCompilationConfiguration {
 
-    val getScriptingClass = environment[ScriptingEnvironment.getScriptingClass]
+    val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting environment")
 
     val baseClass: KClass<*> =
         try {
-            getScriptingClass(baseClassType, contextClass, environment)
+            getScriptingClass(baseClassType, contextClass, hostConfiguration)
         } catch (e: Throwable) {
             throw IllegalArgumentException("${ERROR_MSG_PREFIX}Unable to load base class $baseClassType", e)
         }

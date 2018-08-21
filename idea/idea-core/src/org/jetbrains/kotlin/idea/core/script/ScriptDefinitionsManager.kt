@@ -49,9 +49,9 @@ import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.api.ScriptingEnvironment
-import kotlin.script.experimental.api.configurationDependencies
-import kotlin.script.experimental.configuration.createScriptCompilationConfigurationFromAnnotatedBaseClass
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.host.createScriptCompilationConfigurationFromAnnotatedBaseClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
@@ -208,7 +208,7 @@ fun loadDefinitionsFromTemplates(
                     )
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
-                    val hostEnvironment = ScriptingEnvironment {
+                    val hostConfiguration = ScriptingHostConfiguration {
                         include(defaultJvmScriptingEnvironment)
                         configurationDependencies(JvmDependency(classpath))
                     }
@@ -216,9 +216,9 @@ fun loadDefinitionsFromTemplates(
                         createScriptCompilationConfigurationFromAnnotatedBaseClass(
                             KotlinType(
                                 template
-                            ), hostEnvironment, KotlinScriptDefinition::class
+                            ), hostConfiguration, KotlinScriptDefinition::class
                         ),
-                        hostEnvironment
+                        hostConfiguration
                     )
                 }
                 else -> {

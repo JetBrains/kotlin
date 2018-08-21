@@ -38,7 +38,9 @@ import java.io.File
 import java.net.URLClassLoader
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getMergedScriptText
+import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.jvm.javaHome
@@ -74,7 +76,7 @@ class KJvmCompiledScript<out ScriptBase : Any>(
     }
 }
 
-class KJvmCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJvmCompilerProxy {
+class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvmCompilerProxy {
 
     override fun compile(
         script: ScriptSource,
@@ -104,13 +106,13 @@ class KJvmCompilerImpl(val hostEnvironment: ScriptingEnvironment) : KJvmCompiler
             val kotlinCompilerConfiguration = org.jetbrains.kotlin.config.CompilerConfiguration().apply {
                 add(
                     JVMConfigurationKeys.SCRIPT_DEFINITIONS,
-                    BridgeScriptDefinition(scriptCompilationConfiguration, hostEnvironment, ::updateClasspath)
+                    BridgeScriptDefinition(scriptCompilationConfiguration, hostConfiguration, ::updateClasspath)
                 )
                 put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 var isModularJava = false
-                getFirstFromChainOrNull(ScriptCompilationConfiguration.jvm.javaHome, updatedConfiguration, hostEnvironment)?.let {
+                getFirstFromChainOrNull(ScriptCompilationConfiguration.jvm.javaHome, updatedConfiguration, hostConfiguration)?.let {
                     put(JVMConfigurationKeys.JDK_HOME, it)
                     isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }
@@ -238,10 +240,10 @@ class ScriptDiagnosticsMessageCollector : MessageCollector {
 
 internal class BridgeScriptDefinition(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    hostEnvironment: ScriptingEnvironment,
+    hostConfiguration: ScriptingHostConfiguration,
     updateClasspath: (List<File>) -> Unit
 ) : KotlinScriptDefinition(
-    hostEnvironment.getScriptingClass(
+    hostConfiguration.getScriptingClass(
         scriptCompilationConfiguration.getOrError(ScriptCompilationConfiguration.baseClass),
         BridgeScriptDefinition::class
     )
