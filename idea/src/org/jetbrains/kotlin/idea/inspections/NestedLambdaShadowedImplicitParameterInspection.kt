@@ -15,20 +15,22 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getOrCreateParameterList
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return lambdaExpressionVisitor(fun(lambda: KtLambdaExpression) {
-            val context: BindingContext by lazy { lambda.analyze(BodyResolveMode.PARTIAL) }
-            if (lambda.valueParameters.isNotEmpty() || lambda.functionDescriptor(context)?.valueParameters?.size != 1) return
+            if (lambda.valueParameters.isNotEmpty()) return
+            val context = lambda.analyze(BodyResolveMode.PARTIAL)
+            val implicitParameter = lambda.functionDescriptor(context)?.valueParameters?.singleOrNull() ?: return
             if (lambda.getParentImplicitParameterLambda(context) == null) return
+            if (lambda.findDescendantOfType<KtNameReferenceExpression> {
+                    it.text == "it" && it.getResolvedCall(context)?.resultingDescriptor == implicitParameter
+                } == null) return
             val callee = lambda.getStrictParentOfType<KtCallExpression>()?.calleeExpression ?: return
             holder.registerProblem(
                 callee,
