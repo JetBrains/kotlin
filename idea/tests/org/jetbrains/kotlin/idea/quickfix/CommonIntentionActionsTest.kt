@@ -24,7 +24,10 @@ import com.intellij.lang.jvm.actions.*
 import com.intellij.lang.jvm.types.JvmSubstitutor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair.pair
-import com.intellij.psi.*
+import com.intellij.psi.PsiJvmSubstitutor
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiSubstitutor
+import com.intellij.psi.PsiType
 import com.intellij.psi.codeStyle.SuggestedNameInfo
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
@@ -32,8 +35,6 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.toUElement
 import org.junit.Assert
 
@@ -399,16 +400,16 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = true
-                        )
-                ).findWithText("Add 'var' property 'baz' to 'Foo'")
+            createMethodActions(
+                myFixture.atCaret(),
+                SimpleMethodRequest(
+                    project,
+                    methodName = "setBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(),
+                    parameters = expectedParams(PsiType.getTypeByName("java.lang.String", project, project.allScope()))
+                )
+            ).findWithText("Add 'var' property 'baz' to 'Foo'")
         )
         myFixture.checkResult("""
         |class Foo {
@@ -427,16 +428,16 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = true
-                        )
-                ).findWithText("Add 'lateinit var' property 'baz' to 'Foo'")
+            createMethodActions(
+                myFixture.atCaret(),
+                SimpleMethodRequest(
+                    project,
+                    methodName = "setBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(),
+                    parameters = expectedParams(PsiType.getTypeByName("java.lang.String", project, project.allScope()))
+                )
+            ).findWithText("Add 'lateinit var' property 'baz' to 'Foo'")
         )
         myFixture.checkResult("""
         |class Foo {
@@ -502,10 +503,6 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 
 
-
-    private fun createPropertyActions(atCaret: JvmClass, property: MemberRequest.Property): List<IntentionAction> =
-        com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddPropertyActions(atCaret, property) }
-
     private fun createFieldActions(atCaret: JvmClass, fieldRequest: CreateFieldRequest): List<IntentionAction> =
         com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddFieldActions(atCaret, fieldRequest) }
 
@@ -517,16 +514,16 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = false
-                        )
-                ).findWithText("Add 'val' property 'baz' to 'Foo'")
+            createMethodActions(
+                myFixture.atCaret(),
+                SimpleMethodRequest(
+                    project,
+                    methodName = "getBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(PsiType.getTypeByName("java.lang.String", project, project.allScope())),
+                    parameters = expectedParams()
+                )
+            ).findWithText("Add 'val' property 'baz' to 'Foo'")
         )
         myFixture.checkResult("""
         |class Foo {
@@ -535,13 +532,6 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |    fun bar() {}
         |}
         """.trim().trimMargin(), true)
-    }
-
-    private fun makeParams(vararg psyTypes: PsiType): List<UParameter> {
-        val uastContext = UastContext(myFixture.project)
-        val factory = JavaPsiFacade.getElementFactory(myFixture.project)
-        val parameters = psyTypes.mapIndexed { index, psiType -> factory.createParameter("param$index", psiType) }
-        return parameters.map { uastContext.convertElement(it, null, UParameter::class.java) as UParameter }
     }
 
     private fun expectedTypes(vararg psiTypes: PsiType) = psiTypes.map { expectedType(it) }
