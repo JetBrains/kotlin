@@ -1468,6 +1468,10 @@ task sort1(type: RunKonanTest) {
     source = "runtime/collections/sort1.kt"
 }
 
+task sortWith(type: RunKonanTest) {
+    source = "runtime/collections/SortWith.kt"
+}
+
 task if_else(type: RunKonanTest) {
     source = "codegen/branching/if_else.kt"
 }

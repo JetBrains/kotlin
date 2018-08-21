@@ -53,34 +53,58 @@ private fun <T> quickSort(array: Array<T>, left: Int, right: Int) {
         quickSort(array, index, right)
 }
 
-private fun <T> partition(
-        array: Array<T>, left: Int, right: Int, comparator: Comparator<T>): Int {
-    var i = left
-    var j = right
-    val pivot = array[(left + right) / 2]
-    while (i <= j) {
-        while (comparator.compare(array[i], pivot) < 0)
-            i++
-        while (comparator.compare(array[j], pivot) > 0)
-            j--
-        if (i <= j) {
-            val tmp = array[i]
-            array[i] = array[j]
-            array[j] = tmp
-            i++
-            j--
-        }
+// We use merge sort with comparators becuase the quick sort may cause segfaults if
+// the comparator is incorrect (e.g. if it never returns 0).
+private fun <T> mergeSort(array: Array<T>, start: Int, endInclusive: Int, comparator: Comparator<T>) {
+    @Suppress("UNCHECKED_CAST")
+    val buffer = arrayOfNulls<Any?>(array.size) as Array<T>
+    val result = mergeSort(array, buffer, start, endInclusive, comparator)
+    if (result !== array) {
+        result.forEachIndexed { i, v-> array[i] = v }
     }
-    return i
 }
 
-private fun <T> quickSort(
-        array: Array<T>, left: Int, right: Int, comparator: Comparator<T>) {
-    val index = partition(array, left, right, comparator)
-    if (left < index - 1)
-        quickSort(array, left, index - 1, comparator)
-    if (index < right)
-        quickSort(array, index, right, comparator)
+// Both start and end are inclusive indices.
+private fun <T> mergeSort(array: Array<T>, buffer: Array<T>, start: Int, end: Int, comparator: Comparator<T>): Array<T> {
+    if (start == end) {
+        return array
+    }
+
+    val median = (start + end) / 2
+    val left = mergeSort(array, buffer, start, median, comparator)
+    val right = mergeSort(array, buffer, median + 1, end, comparator)
+    
+    val target = if (left === buffer) array else buffer
+
+    // Merge
+    var leftIndex = start
+    var rightIndex = median + 1
+    for (i in start..end) {
+        when {
+            leftIndex <= median && rightIndex <= end -> {
+                val leftValue = left[leftIndex]
+                val rightValue = right[rightIndex]
+
+                if (comparator.compare(leftValue, rightValue) < 0) {
+                    target[i] = leftValue
+                    leftIndex++
+                } else {
+                    target[i] = rightValue
+                    rightIndex++
+                }
+            }
+            leftIndex <= median -> {
+                target[i] = left[leftIndex]
+                leftIndex++
+            }
+            else /* rightIndex <= end */ -> {
+                target[i] = right[rightIndex]
+                rightIndex++
+            }
+        }
+    }
+
+    return target
 }
 
 // ByteArray    =============================================================================
@@ -339,7 +363,7 @@ private fun quickSort(
 internal fun <T> sortArrayWith(
         array: Array<out T>, fromIndex: Int = 0, toIndex: Int = array.size, comparator: Comparator<T>) {
     @Suppress("UNCHECKED_CAST")
-    quickSort(array as Array<T>, fromIndex, toIndex - 1, comparator)
+    mergeSort(array as Array<T>, fromIndex, toIndex - 1, comparator)
 }
 
 /**
