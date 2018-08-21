@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.contracts.parsing.effects.PsiReturnsEffectParser
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -76,13 +78,31 @@ internal class PsiContractParserDispatcher(
 
     fun parseEffect(expression: KtExpression?): EffectDeclaration? {
         if (expression == null) return null
+        if (!isValidEffectDeclaration(expression)) return null
+
         val returnType = expression.getType(callContext.bindingContext) ?: return null
         val parser = effectsParsers[returnType.constructor.declarationDescriptor?.name]
         if (parser == null) {
             collector.badDescription("unrecognized effect", expression)
             return null
         }
+
         return parser.tryParseEffect(expression)
+    }
+
+    private fun isValidEffectDeclaration(expression: KtExpression): Boolean {
+        if (expression !is KtCallExpression && expression !is KtBinaryExpression) {
+            collector.badDescription("unexpected construction in contract description", expression)
+            return false
+        }
+
+        val resultingDescriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor ?: return false
+        if (!resultingDescriptor.isFromContractDsl()) {
+            collector.badDescription("effects can be produced only by direct calls to ContractsDSL", expression)
+            return false
+        }
+
+        return true
     }
 
     fun parseConstant(expression: KtExpression?): ConstantReference? {
