@@ -21,7 +21,7 @@ import kotlin.comparisons.*
 // TODO: Implement sort for primitives with a custom comparator.
 
 // Array<T>     =============================================================================
-// We use merge becuase the quick sort may cause segfaults if
+// We use merge because the quick sort may cause segfaults if
 // the comparator or the comparable implementation is incorrect (e.g. if it never returns 0).
 
 // Sort of comparables.
@@ -46,7 +46,7 @@ private fun <T: Comparable<T>> mergeSort(array: Array<T>, buffer: Array<T>, star
 
     val target = if (left === buffer) array else buffer
 
-    // Merge
+    // Merge.
     var leftIndex = start
     var rightIndex = median + 1
     for (i in start..end) {
@@ -55,7 +55,7 @@ private fun <T: Comparable<T>> mergeSort(array: Array<T>, buffer: Array<T>, star
                 val leftValue = left[leftIndex]
                 val rightValue = right[rightIndex]
 
-                if (leftValue < rightValue) {
+                if (leftValue <= rightValue) {
                     target[i] = leftValue
                     leftIndex++
                 } else {
@@ -77,7 +77,7 @@ private fun <T: Comparable<T>> mergeSort(array: Array<T>, buffer: Array<T>, star
     return target
 }
 
-// Sort with comparator
+// Sort with comparator.
 private fun <T> mergeSort(array: Array<T>, start: Int, endInclusive: Int, comparator: Comparator<T>) {
     @Suppress("UNCHECKED_CAST")
     val buffer = arrayOfNulls<Any?>(array.size) as Array<T>
@@ -99,7 +99,7 @@ private fun <T> mergeSort(array: Array<T>, buffer: Array<T>, start: Int, end: In
 
     val target = if (left === buffer) array else buffer
 
-    // Merge
+    // Merge.
     var leftIndex = start
     var rightIndex = median + 1
     for (i in start..end) {
@@ -108,7 +108,7 @@ private fun <T> mergeSort(array: Array<T>, buffer: Array<T>, start: Int, end: In
                 val leftValue = left[leftIndex]
                 val rightValue = right[rightIndex]
 
-                if (comparator.compare(leftValue, rightValue) < 0) {
+                if (comparator.compare(leftValue, rightValue) <= 0) {
                     target[i] = leftValue
                     leftIndex++
                 } else {
