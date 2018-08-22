@@ -18,6 +18,9 @@ repositories {
     maven {
         url kotlinCompilerRepo
     }
+    maven {
+        url buildKotlinCompilerRepo
+    }
 }
 
 //TODO: property
