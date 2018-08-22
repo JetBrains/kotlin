@@ -1361,11 +1361,21 @@ public class KotlinTypeMapper {
         if (isBoxMethodForInlineClass(descriptor)) return true;
 
         //noinspection ConstantConditions
-        if (!KotlinBuiltIns.isPrimitiveType(descriptor.getReturnType())) return false;
+        if (!isJvmPrimitive(descriptor.getReturnType())) return false;
 
         for (FunctionDescriptor overridden : getAllOverriddenDescriptors(descriptor)) {
             //noinspection ConstantConditions
-            if (!KotlinBuiltIns.isPrimitiveType(overridden.getReturnType())) return true;
+            if (!isJvmPrimitive(overridden.getReturnType())) return true;
+        }
+
+        return false;
+    }
+
+    private static boolean isJvmPrimitive(@NotNull KotlinType kotlinType) {
+        if (KotlinBuiltIns.isPrimitiveType(kotlinType)) return true;
+
+        if (InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
+            return AsmUtil.isPrimitive(mapInlineClassType(kotlinType));
         }
 
         return false;
