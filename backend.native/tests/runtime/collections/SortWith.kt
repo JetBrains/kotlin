@@ -44,7 +44,7 @@ val comparators = listOf<ComparatorInfo>(
     ComparatorInfo("Incorrect decreasing", Comparator { a ,b -> if (a < b) 1 else -1 },  false),
     ComparatorInfo("Always 1",  Comparator { a ,b ->  1  },  false),
     ComparatorInfo("Always -1", Comparator { a ,b ->  -1 },  false),
-    ComparatorInfo("Alwasy 0",  Comparator { a ,b ->  0  },  false)
+    ComparatorInfo("Always 0",  Comparator { a ,b ->  0  },  false)
 )
 
 val arrays = listOf<Array<Int>>(
