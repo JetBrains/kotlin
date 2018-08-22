@@ -438,7 +438,7 @@ public fun Random.nextUBytes(array: UByteArray) = nextUBytes(array, 0, array.siz
  * Creates a byte array of the specified [size], filled with random bytes.
  */
 @SinceKotlin("1.3")
-public fun Random.nextUBytes(size: Int): UByteArray = nextUBytes(UByteArray(size))
+public fun Random.nextUBytes(size: Int): UByteArray = UByteArray(nextBytes(size))
 
 /**
  * Fills a subrange of the specified UByte [array] starting from [fromIndex] inclusive and ending [toIndex] exclusive with random UBytes
