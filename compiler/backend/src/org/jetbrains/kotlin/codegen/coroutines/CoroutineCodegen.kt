@@ -432,7 +432,8 @@ class CoroutineCodegenForLambda private constructor(
                         shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
-                        languageVersionSettings = languageVersionSettings
+                        languageVersionSettings = languageVersionSettings,
+                        sourceFile = element.containingFile.name
                     )
                 }
 
@@ -511,7 +512,7 @@ class CoroutineCodegenForNamedFunction private constructor(
 
         v.newField(
             JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-            DATA_FIELD_NAME, AsmTypes.OBJECT_TYPE.descriptor, null, null
+            languageVersionSettings.dataFieldName(), AsmTypes.OBJECT_TYPE.descriptor, null, null
         )
 
         if (!languageVersionSettings.isReleaseCoroutines()) {
@@ -529,7 +530,7 @@ class CoroutineCodegenForNamedFunction private constructor(
             object : FunctionGenerationStrategy.CodegenBased(state) {
                 override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                     StackValue.field(
-                        AsmTypes.OBJECT_TYPE, Type.getObjectType(v.thisName), DATA_FIELD_NAME, false,
+                        AsmTypes.OBJECT_TYPE, Type.getObjectType(v.thisName), languageVersionSettings.dataFieldName(), false,
                         StackValue.LOCAL_0
                     ).store(StackValue.local(1, AsmTypes.OBJECT_TYPE), codegen.v)
 
