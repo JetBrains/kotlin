@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -38,10 +37,10 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, T : Any>(
+abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         storageManager: StorageManager,
         private val kotlinClassFinder: KotlinClassFinder
-) : AnnotationAndConstantLoader<A, C, T> {
+) : AnnotationAndConstantLoader<A, C> {
     private val storage = storageManager.createMemoizedFunction<KotlinJvmBinaryClass, Storage<A, C>> {
         kotlinClass ->
         loadAnnotationsAndInitializers(kotlinClass)
@@ -91,48 +90,50 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         return result
     }
 
-    override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<T> {
+    override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<A> {
         if (kind == AnnotatedCallableKind.PROPERTY) {
-            proto as ProtoBuf.Property
-
-            val syntheticFunctionSignature = getPropertySignature(proto, container.nameResolver, container.typeTable, synthetic = true)
-            val fieldSignature = getPropertySignature(proto, container.nameResolver, container.typeTable, field = true)
-
-            val isConst = Flags.IS_CONST.get(proto.flags)
-            val isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto)
-            val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(
-                    container,
-                    sig,
-                    property = true,
-                    isConst = isConst,
-                    isMovedFromInterfaceCompanion = isMovedFromInterfaceCompanion
-                )
-            }.orEmpty()
-
-            val fieldAnnotations = fieldSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(
-                    container,
-                    sig,
-                    property = true,
-                    field = true,
-                    isConst = isConst,
-                    isMovedFromInterfaceCompanion = isMovedFromInterfaceCompanion
-                )
-            }.orEmpty()
-
-            // TODO: check delegate presence in some other way
-            return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations,
-                                           if (fieldSignature?.signature?.contains(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) ?: false) {
-                                               AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-                                           }
-                                           else {
-                                               AnnotationUseSiteTarget.FIELD
-                                           })
+            return loadPropertyAnnotations(container, proto as ProtoBuf.Property, PropertyRelatedElement.PROPERTY)
         }
 
         val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
-        return transformAnnotations(findClassAndLoadMemberAnnotations(container, signature))
+        return findClassAndLoadMemberAnnotations(container, signature)
+    }
+
+    override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<A> =
+        loadPropertyAnnotations(container, proto, PropertyRelatedElement.BACKING_FIELD)
+
+    override fun loadPropertyDelegateFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<A> =
+        loadPropertyAnnotations(container, proto, PropertyRelatedElement.DELEGATE_FIELD)
+
+    private enum class PropertyRelatedElement {
+        PROPERTY,
+        BACKING_FIELD,
+        DELEGATE_FIELD,
+    }
+
+    private fun loadPropertyAnnotations(container: ProtoContainer, proto: ProtoBuf.Property, element: PropertyRelatedElement): List<A> {
+        val isConst = Flags.IS_CONST.get(proto.flags)
+        val isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto)
+        if (element == PropertyRelatedElement.PROPERTY) {
+            val syntheticFunctionSignature =
+                getPropertySignature(proto, container.nameResolver, container.typeTable, synthetic = true) ?: return emptyList()
+            return findClassAndLoadMemberAnnotations(
+                container, syntheticFunctionSignature, property = true, isConst = isConst,
+                isMovedFromInterfaceCompanion = isMovedFromInterfaceCompanion
+            )
+        }
+
+        val fieldSignature =
+            getPropertySignature(proto, container.nameResolver, container.typeTable, field = true) ?: return emptyList()
+
+        // TODO: check delegate presence in some other way
+        val isDelegated = JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX in fieldSignature.signature
+        if (isDelegated != (element == PropertyRelatedElement.DELEGATE_FIELD)) return emptyList()
+
+        return findClassAndLoadMemberAnnotations(
+            container, fieldSignature, property = true, field = true, isConst = isConst,
+            isMovedFromInterfaceCompanion = isMovedFromInterfaceCompanion
+        )
     }
 
     override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<A> {
@@ -142,11 +143,6 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
         )
         return findClassAndLoadMemberAnnotations(container, signature)
     }
-
-    protected abstract fun loadPropertyAnnotations(propertyAnnotations: List<A>, fieldAnnotations: List<A>,
-                                                   fieldUseSiteTarget: AnnotationUseSiteTarget): List<T>
-
-    protected abstract fun transformAnnotations(annotations: List<A>): List<T>
 
     private fun findClassAndLoadMemberAnnotations(
         container: ProtoContainer,

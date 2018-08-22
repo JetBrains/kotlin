@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
@@ -31,11 +30,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
     fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
-        val propertyAnnotations = getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY)
-
         val property = DeserializedPropertyDescriptor(
             c.containingDeclaration, null,
-            propertyAnnotations,
+            getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
             Flags.IS_VAR.get(flags),
@@ -138,17 +135,10 @@ class MemberDeserializer(private val c: DeserializationContext) {
             )
         }
 
-        // TODO: add needed methods to AnnotationAndConstantLoader
-        val fieldAnnotations = DeserializedAnnotations(c.storageManager) {
-            propertyAnnotations.getUseSiteTargetedAnnotations()
-                .filter { it.target == AnnotationUseSiteTarget.FIELD }.map { it.annotation }
-        }
-        val delegateAnnotations = DeserializedAnnotations(c.storageManager) {
-            propertyAnnotations.getUseSiteTargetedAnnotations()
-                .filter { it.target == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD }.map { it.annotation }
-        }
         property.initialize(
-            getter, setter, FieldDescriptorImpl(fieldAnnotations, property), FieldDescriptorImpl(delegateAnnotations, property),
+            getter, setter,
+            FieldDescriptorImpl(getPropertyFieldAnnotations(proto, isDelegate = false), property),
+            FieldDescriptorImpl(getPropertyFieldAnnotations(proto, isDelegate = true), property),
             property.checkExperimentalCoroutine(local.typeDeserializer)
         )
 
@@ -358,9 +348,24 @@ class MemberDeserializer(private val c: DeserializationContext) {
         if (!Flags.HAS_ANNOTATIONS.get(flags)) {
             return Annotations.EMPTY
         }
-        return NonEmptyDeserializedAnnotationsWithPossibleTargets(c.storageManager) {
+        return NonEmptyDeserializedAnnotations(c.storageManager) {
             c.containingDeclaration.asProtoContainer()?.let {
                 c.components.annotationAndConstantLoader.loadCallableAnnotations(it, proto, kind).toList()
+            }.orEmpty()
+        }
+    }
+
+    private fun getPropertyFieldAnnotations(proto: ProtoBuf.Property, isDelegate: Boolean): Annotations {
+        if (!Flags.HAS_ANNOTATIONS.get(proto.flags)) {
+            return Annotations.EMPTY
+        }
+        return NonEmptyDeserializedAnnotations(c.storageManager) {
+            c.containingDeclaration.asProtoContainer()?.let {
+                if (isDelegate) {
+                    c.components.annotationAndConstantLoader.loadPropertyDelegateFieldAnnotations(it, proto).toList()
+                } else {
+                    c.components.annotationAndConstantLoader.loadPropertyBackingFieldAnnotations(it, proto).toList()
+                }
             }.orEmpty()
         }
     }
