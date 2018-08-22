@@ -64,8 +64,7 @@ internal abstract class BaseContinuationImpl(
     }
 
     public override fun toString(): String {
-        // todo: how continuation shall be rendered?
-        return "Continuation @ ${this::class.java.name}"
+        return "Continuation at ${getStackTraceElement() ?: this::class.java.name}"
     }
 }
 
