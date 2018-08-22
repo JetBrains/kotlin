@@ -1,3 +1,4 @@
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1$1 {
     field label: int
@@ -15,6 +16,7 @@ final class LambdaWithMultipleParametersKt$box$1$1 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1 {
     synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef

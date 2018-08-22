@@ -7,23 +7,22 @@ package kotlin.coroutines.jvm.internal
 
 import kotlin.coroutines.Continuation
 
-// TODO: Uncomment when KT-25372 is fixed
 @Target(AnnotationTarget.CLASS)
 @SinceKotlin("1.3")
 internal annotation class DebugMetadata(
-    // @JvmName("r")
+    @get:JvmName("f")
     val sourceFiles: Array<String>,
-    // @JvmName("l")
+    @get:JvmName("l")
     val lineNumbers: IntArray,
-    // @JvmName("n")
+    @get:JvmName("n")
     val localNames: Array<String>,
-    // @JvmName("s")
+    @get:JvmName("s")
     val spilled: Array<String>,
-    // @JvmName("i")
+    @get:JvmName("i")
     val indexToLabel: IntArray,
-    // @JvmName("m")
+    @get:JvmName("m")
     val methodName: String,
-    // @JvmName("c")
+    @get:JvmName("c")
     val className: String
 )
 
