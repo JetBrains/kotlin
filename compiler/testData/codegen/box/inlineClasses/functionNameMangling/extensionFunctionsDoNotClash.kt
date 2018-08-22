@@ -11,6 +11,10 @@ fun Id.test() {
     if (id != "OK") throw AssertionError()
 }
 
+fun Id?.test() {
+    if (this != null) throw AssertionError()
+}
+
 fun Name.test() {
     if (name != "OK") throw AssertionError()
 }
@@ -41,6 +45,7 @@ class Outer {
 
 fun box(): String {
     Id("OK").test()
+    null.test()
     Name("OK").test()
     test(Password("OK"))
 

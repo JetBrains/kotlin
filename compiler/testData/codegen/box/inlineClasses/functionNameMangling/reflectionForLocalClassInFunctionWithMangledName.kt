@@ -3,8 +3,6 @@
 // WITH_REFLECT
 import kotlin.test.*
 
-import kotlin.test.*
-
 inline class S(val string: String)
 
 fun test(s: S) {
