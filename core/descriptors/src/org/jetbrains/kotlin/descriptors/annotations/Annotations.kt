@@ -35,15 +35,13 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
     fun hasAnnotation(fqName: FqName): Boolean = findAnnotation(fqName) != null
 
-    fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
+    fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
     companion object {
         val EMPTY: Annotations = object : Annotations {
             override fun isEmpty() = true
 
             override fun findAnnotation(fqName: FqName) = null
-
-            override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
 
             override fun iterator() = emptyList<AnnotationDescriptor>().iterator()
 
@@ -64,10 +62,6 @@ class FilteredAnnotations(
     override fun findAnnotation(fqName: FqName) =
             if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
             else null
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
-        return delegate.getUseSiteTargetedAnnotations().filter { shouldBeReturned(it.annotation) }
-    }
 
     override fun iterator() = delegate.filter(this::shouldBeReturned).iterator()
 

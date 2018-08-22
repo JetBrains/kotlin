@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.descriptorUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -48,6 +47,4 @@ private class AnnotationsWithOnly(val presentAnnotation: FqName): Annotations {
     override fun isEmpty(): Boolean = false
 
     override fun hasAnnotation(fqName: FqName): Boolean = fqName == this.presentAnnotation
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 }

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -58,8 +57,6 @@ class LazyAnnotations(
     private val annotation = c.storageManager.createMemoizedFunction { entry: KtAnnotationEntry ->
         LazyAnnotationDescriptor(c, entry)
     }
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
     override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.asSequence().map(annotation).iterator()
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -29,8 +28,6 @@ open class DeserializedAnnotations(
     private val annotations by storageManager.createLazyValue(compute)
 
     override fun isEmpty(): Boolean = annotations.isEmpty()
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
     override fun iterator(): Iterator<AnnotationDescriptor> = annotations.iterator()
 }
