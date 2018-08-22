@@ -108,7 +108,7 @@ class AnnotationSplitter(
             other.add(annotation)
         }
 
-        for ((annotation, target) in allAnnotations.getUseSiteTargetedAnnotations()) {
+        for ((annotation, target) in @Suppress("DEPRECATION") allAnnotations.getUseSiteTargetedAnnotations()) {
             if (target in applicableTargets) {
                 map.getOrPut(target) { arrayListOf() }.add(annotation)
             }

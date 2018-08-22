@@ -29,6 +29,8 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
     fun hasAnnotation(fqName: FqName): Boolean = findAnnotation(fqName) != null
 
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("This method should only be used in frontend where we split annotations according to their use-site targets.")
     fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
     companion object {
@@ -81,6 +83,7 @@ class CompositeAnnotations(
 
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findAnnotation(fqName) }.firstOrNull()
 
+    @Suppress("DEPRECATION", "OverridingDeprecatedMember")
     override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
 
     override fun iterator() = delegates.asSequence().flatMap { it.asSequence() }.iterator()
