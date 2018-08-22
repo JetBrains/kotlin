@@ -30,7 +30,7 @@ private fun <T: Comparable<T>> mergeSort(array: Array<T>, start: Int, endInclusi
     val buffer = arrayOfNulls<Any?>(array.size) as Array<T>
     val result = mergeSort(array, buffer, start, endInclusive)
     if (result !== array) {
-        result.forEachIndexed { i, v-> array[i] = v }
+        result.forEachIndexed { i, v -> array[i] = v }
     }
 }
 
@@ -83,7 +83,7 @@ private fun <T> mergeSort(array: Array<T>, start: Int, endInclusive: Int, compar
     val buffer = arrayOfNulls<Any?>(array.size) as Array<T>
     val result = mergeSort(array, buffer, start, endInclusive, comparator)
     if (result !== array) {
-        result.forEachIndexed { i, v-> array[i] = v }
+        result.forEachIndexed { i, v -> array[i] = v }
     }
 }
 
