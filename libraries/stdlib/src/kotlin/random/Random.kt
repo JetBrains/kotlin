@@ -404,7 +404,7 @@ public fun Random.nextULong(origin: ULong, bound: ULong): ULong {
     checkULongRangeBounds(origin, bound)
 
     val originTransformedToLong = origin.toLong() xor Long.MIN_VALUE
-    val boundTransformedToLong = origin.toLong() xor Long.MIN_VALUE
+    val boundTransformedToLong = bound.toLong() xor Long.MIN_VALUE
 
     val randomValueTransformedBack = nextLong(originTransformedToLong, boundTransformedToLong) xor Long.MIN_VALUE
     return randomValueTransformedBack.toULong()
