@@ -22,10 +22,9 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.serialization.konan.KonanSerializerProtocol
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class KonanSerializerExtension(val context: Context, override val metadataVersion: BinaryVersion) :
@@ -104,22 +103,6 @@ internal class KonanSerializerExtension(val context: Context, override val metad
             context, inlineDescriptorTable, stringTable, serializer, descriptor).serializeInlineBody()
     }
 }
-
-object KonanSerializerProtocol : SerializerExtensionProtocol(
-        ExtensionRegistryLite.newInstance().apply {
-            KonanProtoBuf.registerAllExtensions(this)
-        },
-        KonanProtoBuf.packageFqName,
-        KonanProtoBuf.constructorAnnotation,
-        KonanProtoBuf.classAnnotation,
-        KonanProtoBuf.functionAnnotation,
-        KonanProtoBuf.propertyAnnotation,
-        KonanProtoBuf.enumEntryAnnotation,
-        KonanProtoBuf.compileTimeValue,
-        KonanProtoBuf.parameterAnnotation,
-        KonanProtoBuf.typeAnnotation,
-        KonanProtoBuf.typeParameterAnnotation
-)
 
 internal interface IrAwareExtension {
 

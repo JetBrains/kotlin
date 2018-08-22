@@ -140,11 +140,12 @@ dependencies {
     compilerCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     compilerCompile "org.jetbrains.kotlin:konan.descriptors:$konanVersion"
     compilerCompile "org.jetbrains.kotlin:konan.metadata:$konanVersion"
-    compilerCompile "org.jetbrains.kotlin:konan.metadata.serializer:$konanVersion"
+    compilerCompile "org.jetbrains.kotlin:konan.serializer:$konanVersion"
 
     cli_bcCompile kotlinCompilerModule
     cli_bcCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     cli_bcCompile sourceSets.compiler.output
+    cli_bcCompile "org.jetbrains.kotlin:konan.serializer:$konanVersion"
 
     bc_frontendCompile kotlinCompilerModule
 

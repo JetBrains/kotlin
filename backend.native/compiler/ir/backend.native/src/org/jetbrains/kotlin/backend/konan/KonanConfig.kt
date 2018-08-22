@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
-import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
-import org.jetbrains.kotlin.backend.konan.library.impl.purgeUnneeded
 import org.jetbrains.kotlin.backend.konan.library.resolveImmediateLibraries
 import org.jetbrains.kotlin.backend.konan.library.resolveLibrariesRecursive
 import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
@@ -35,9 +32,11 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.interop.createForwardDeclarationsModule
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.profile
+import org.jetbrains.kotlin.serialization.konan.DefaultKonanModuleDescriptorFactory
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -94,7 +93,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
     private val resolver = defaultResolver(repositories, target, distribution)
 
-    internal val immediateLibraries: List<LibraryReaderImpl> by lazy {
+    internal val immediateLibraries: List<KonanLibraryReader> by lazy {
         val result = resolver.resolveImmediateLibraries(libraryNames, target,
                 currentAbiVersion,
                 configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
@@ -136,7 +135,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         for (klib in libraries) {
             profile("Loading ${klib.libraryName}") {
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
-                val moduleDescriptor = klib.moduleDescriptor(specifics)
+                val moduleDescriptor = DefaultKonanModuleDescriptorFactory.createModuleDescriptor(klib, specifics)
                 allMetadata.add(moduleDescriptor)
                 friendLibsSet?.apply {
                     if (contains(klib.libraryFile))
@@ -175,3 +174,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 
     = this.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
+
+private fun <T: KonanLibraryReader> List<T>.purgeUnneeded(config: KonanConfig): List<T> =
+        this.filter{ (!it.isDefaultLibrary && !config.purgeUserLibs) || it.isNeededForLink }

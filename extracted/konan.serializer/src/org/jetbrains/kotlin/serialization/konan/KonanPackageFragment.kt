@@ -1,30 +1,13 @@
-/*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package org.jetbrains.kotlin.serialization.konan
 
-package org.jetbrains.kotlin.backend.konan.serialization
-
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
-import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -33,7 +16,8 @@ import org.jetbrains.kotlin.storage.StorageManager
 class KonanPackageFragment(
         val fqNameString: String,
         val reader: KonanLibraryReader,
-        storageManager: StorageManager, module: ModuleDescriptor
+        storageManager: StorageManager,
+        module: ModuleDescriptor
 ) : DeserializedPackageFragment(FqName(fqNameString), storageManager, module) {
 
     lateinit var components: DeserializationComponents
@@ -48,12 +32,11 @@ class KonanPackageFragment(
         parsePackageFragment(reader.packageMetadata(fqNameString))
     }
 
-    val proto: KonanProtoBuf.LinkDataPackageFragment get() = protoForNames.also {
-        reader.markPackageAccessed(fqNameString)
-    }
+    val proto: KonanProtoBuf.LinkDataPackageFragment
+        get() = protoForNames.also { reader.markPackageAccessed(fqNameString) }
 
     private val nameResolver by lazy {
-        NameResolverImpl(protoForNames.getStringTable(), protoForNames.getNameTable())
+        NameResolverImpl(protoForNames.stringTable, protoForNames.nameTable)
     }
 
     override val classDataFinder by lazy {
@@ -62,14 +45,18 @@ class KonanPackageFragment(
 
     private val memberScope_ by lazy {
         /* TODO: we fake proto binary versioning for now. */
-        DeserializedPackageMemberScope(this, proto.getPackage(),
-                nameResolver, KonanMetadataVersion.INSTANCE,/* containerSource = */ null,
-                components, { loadClassNames() })
+        DeserializedPackageMemberScope(
+                this,
+                proto.getPackage(),
+                nameResolver,
+                KonanMetadataVersion.INSTANCE,
+                /* containerSource = */ null,
+                components) { loadClassNames() }
     }
 
     override fun getMemberScope(): DeserializedPackageMemberScope = memberScope_
 
-    private val classifierNames by lazy {
+    private val classifierNames: Set<Name> by lazy {
         val result = mutableSetOf<Name>()
         result.addAll(loadClassNames())
         protoForNames.getPackage().typeAliasList.mapTo(result) { nameResolver.getName(it.name) }
@@ -80,15 +67,14 @@ class KonanPackageFragment(
 
     private fun loadClassNames(): Collection<Name> {
 
-        val classNameList = protoForNames.getClasses().getClassNameList()
+        val classNameList = protoForNames.classes.classNameList
 
-        val names = classNameList.mapNotNull { 
+        val names = classNameList.mapNotNull {
             val classId = nameResolver.getClassId(it)
-            val shortName = classId.getShortClassName()
+            val shortName = classId.shortClassName
             if (!classId.isNestedClass) shortName else null
-       }
+        }
 
-       return names
+        return names
     }
 }
-

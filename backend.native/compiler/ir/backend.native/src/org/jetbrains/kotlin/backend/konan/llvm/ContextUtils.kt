@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
-import org.jetbrains.kotlin.backend.konan.library.impl.LibraryReaderImpl
+import org.jetbrains.kotlin.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
 import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
@@ -324,7 +323,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return function
     }
 
-    private val usedLibraries = mutableSetOf<LibraryReaderImpl>()
+    private val usedLibraries = mutableSetOf<KonanLibraryReader>()
 
     val imports = object : LlvmImports {
 
@@ -340,7 +339,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 error("$reader (${reader.libraryName}) is used but not requested")
             }
 
-            usedLibraries.add(reader as LibraryReaderImpl)
+            usedLibraries.add(reader)
         }
     }
 
@@ -351,12 +350,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 .topoSort()
     }
 
-    private fun List<LibraryReaderImpl>.topoSort(): List<LibraryReaderImpl> {
-        var sorted = mutableListOf<LibraryReaderImpl>()
-        val visited = mutableSetOf<LibraryReaderImpl>()
-        val tempMarks = mutableSetOf<LibraryReaderImpl>()
+    private fun List<KonanLibraryReader>.topoSort(): List<KonanLibraryReader> {
+        var sorted = mutableListOf<KonanLibraryReader>()
+        val visited = mutableSetOf<KonanLibraryReader>()
+        val tempMarks = mutableSetOf<KonanLibraryReader>()
 
-        fun visit(node: LibraryReaderImpl, result: MutableList<LibraryReaderImpl>) {
+        fun visit(node: KonanLibraryReader, result: MutableList<KonanLibraryReader>) {
             if (visited.contains(node)) return
             if (tempMarks.contains(node)) error("Cyclic dependency in library graph.")
             tempMarks.add(node)

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.util.suffixIfNot
 interface SearchPathResolver {
     val searchRoots: List<File>
     fun resolve(givenPath: String): File
-    fun defaultLinks(nostdlib: Boolean, noDefaultLibs: Boolean): List<File>
+    fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<File>
 }
 
 fun defaultResolver(repositories: List<String>, target: KonanTarget): SearchPathResolver =
@@ -30,7 +30,7 @@ class KonanLibrarySearchPathResolver(
         val distributionKlib: String?,
         val localKonanDir: String?,
         val skipCurrentDir: Boolean = false
-): SearchPathResolver {
+) : SearchPathResolver {
 
     val localHead: File?
         get() = localKonanDir?.File()?.klib
@@ -45,7 +45,7 @@ class KonanLibrarySearchPathResolver(
         get() = if (!skipCurrentDir) File.userDir else null
 
     private val repoRoots: List<File> by lazy {
-        repositories.map{File(it)}
+        repositories.map { File(it) }
     }
 
     // This is the place where we specify the order of library search.
@@ -69,13 +69,13 @@ class KonanLibrarySearchPathResolver(
     override fun resolve(givenPath: String): File {
         val given = File(givenPath)
         if (given.isAbsolute) {
-            found(given)?.apply{ return this }
+            found(given)?.apply { return this }
         } else {
-            searchRoots.forEach{
-                found(File(it, givenPath))?.apply{return this}
+            searchRoots.forEach {
+                found(File(it, givenPath))?.apply { return this }
             }
         }
-        error("Could not find \"$givenPath\" in ${searchRoots.map{it.absolutePath}}.")
+        error("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
     }
 
     private val File.klib
@@ -83,17 +83,23 @@ class KonanLibrarySearchPathResolver(
 
     // The libraries from the default root are linked automatically.
     val defaultRoots: List<File>
-        get() = listOf(distHead, distPlatformHead)
-                .filterNotNull()
-                .filter{ it.exists }
+        get() = listOfNotNull(distHead, distPlatformHead).filter { it.exists }
 
-    override fun defaultLinks(nostdlib: Boolean, noDefaultLibs: Boolean): List<File> {
-        val defaultLibs = defaultRoots.flatMap{ it.listFiles }
-                .filterNot { it.name.removeSuffixIfPresent(".klib") == "stdlib" }
-                .map { File(it.absolutePath) }
+    override fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<File> {
+
         val result = mutableListOf<File>()
-        if (!nostdlib) result.add(resolve("stdlib"))
-        if (!noDefaultLibs) result.addAll(defaultLibs)
+
+        if (!noStdLib) {
+            result.add(resolve("stdlib"))
+        }
+
+        if (!noDefaultLibs) {
+            val defaultLibs = defaultRoots.flatMap { it.listFiles }
+                    .filterNot { it.name.removeSuffixIfPresent(".klib") == "stdlib" }
+                    .map { File(it.absolutePath) }
+            result.addAll(defaultLibs)
+        }
+
         return result
     }
 }

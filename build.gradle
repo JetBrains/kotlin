@@ -259,7 +259,7 @@ task distCompiler(type: Copy) {
         into('konan/lib')
     }
 
-    from(file("${gradle.includedBuild('konan.metadata.serializer').projectDir}/build/libs")) {
+    from(file("${gradle.includedBuild('konan.serializer').projectDir}/build/libs")) {
         into('konan/lib')
     }
 

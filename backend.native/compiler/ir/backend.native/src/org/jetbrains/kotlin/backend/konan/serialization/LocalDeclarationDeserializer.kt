@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.konan.KonanMetadataVersion
+import org.jetbrains.kotlin.serialization.konan.KonanPackageFragment
 
 // This class knows how to construct contexts for 
 // MemberDeserializer to deserialize descriptors declared in IR.

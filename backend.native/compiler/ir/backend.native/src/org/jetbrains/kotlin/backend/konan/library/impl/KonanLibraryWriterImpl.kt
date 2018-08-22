@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.backend.konan.library.impl
 
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.konan.library.KonanLibraryReader
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
-import org.jetbrains.kotlin.backend.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.konan.file.*

@@ -16,14 +16,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.descriptors.ClassifierAliasingPackageFragmentDescriptor
-import org.jetbrains.kotlin.backend.konan.descriptors.ExportedForwardDeclarationsPackageFragmentDescriptor
-import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
-import org.jetbrains.kotlin.backend.konan.serialization.KonanPackageFragment
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.konan.interop.InteropFqNames
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -31,25 +25,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-interface InteropLibrary {
-    fun createSyntheticPackages(
-            module: ModuleDescriptor,
-            konanPackageFragments: List<KonanPackageFragment>
-    ): List<PackageFragmentDescriptor>
-}
-
-fun createInteropLibrary(reader: KonanLibraryReader): InteropLibrary? {
-    if (reader.manifestProperties.getProperty("interop") != "true") return null
-    val pkg = reader.manifestProperties.getProperty("package") 
-        ?: error("Inconsistent manifest: interop library ${reader.libraryName} should have `package` specified")
-    val exportForwardDeclarations = reader.manifestProperties
-            .getProperty("exportForwardDeclarations").split(' ')
-            .map { it.trim() }.filter { it.isNotEmpty() }
-            .map { FqName(it) }
-
-    return InteropLibraryImpl(FqName(pkg), exportForwardDeclarations)
-}
 
 internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: ClassDescriptor) {
 
@@ -183,29 +158,3 @@ private fun MemberScope.getContributedClass(name: String): ClassDescriptor =
 
 private fun MemberScope.getContributedFunctions(name: String) =
         this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
-
-private class InteropLibraryImpl(
-        private val packageFqName: FqName,
-        private val exportForwardDeclarations: List<FqName>
-) : InteropLibrary {
-    override fun createSyntheticPackages(
-            module: ModuleDescriptor,
-            konanPackageFragments: List<KonanPackageFragment>
-    ): List<PackageFragmentDescriptor> {
-        val interopPackageFragments = konanPackageFragments.filter { it.fqName == packageFqName }
-
-        val result = mutableListOf<PackageFragmentDescriptor>()
-
-        // Allow references to forwarding declarations to be resolved into classifiers declared in this library:
-        listOf(InteropFqNames.cNamesStructs, InteropFqNames.objCNamesClasses, InteropFqNames.objCNamesProtocols).mapTo(result) { fqName ->
-            ClassifierAliasingPackageFragmentDescriptor(interopPackageFragments, module, fqName)
-        }
-        // TODO: use separate namespaces for structs, enums, Objective-C protocols etc.
-
-        result.add(ExportedForwardDeclarationsPackageFragmentDescriptor(
-                module, packageFqName, exportForwardDeclarations
-        ))
-
-        return result
-    }
-}
