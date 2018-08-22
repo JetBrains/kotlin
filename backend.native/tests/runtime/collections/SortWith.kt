@@ -24,7 +24,17 @@ fun Array<Int>.assertSorted(cmp: Comparator<Int>, message: String = "") {
     }
 }
 
+fun Array<MyComparable>.assertSorted(message: String = "") {
+    for (i in 1 until size) {
+        assertTrue(this[i - 1] <= this[i], message)
+    }
+}
+
 data class ComparatorInfo(val name: String, val comparator: Comparator<Int>, val isCorrect: Boolean)
+
+class MyComparable (val value: Int, val comparator: Comparator<Int>): Comparable<MyComparable> {
+    override fun compareTo(other: MyComparable): Int = comparator.compare(value, other.value)
+}
 
 // Assert that the array is sorted in terms of a comparator only for correct/partially correct cases
 val comparators = listOf<ComparatorInfo>(
@@ -68,14 +78,28 @@ val arrays = listOf<Array<Int>>(
 @Test fun runTest() {
     arrays.forEach { array ->
         comparators.forEach {
+            // Test with custom comparator
             val arrayUnderTest = array.copyOf()
-
             arrayUnderTest.sortWith(it.comparator)
             if (it.isCorrect) {
                 arrayUnderTest.assertSorted(it.comparator, """
                     Assert sorted failed for comparator: "${it.name}"
                     Array: ${array.joinToString()}
                     Array after sorting: ${arrayUnderTest.joinToString()}
+                """.trimIndent())
+            }
+
+            // Test of a custom comparable
+            val comparableArrayUnderTest = Array(array.size) { i ->
+                MyComparable(array[i], it.comparator)
+            }
+            comparableArrayUnderTest.sort()
+
+            if (it.isCorrect) {
+                comparableArrayUnderTest.assertSorted("""
+                    Assert sorted failed for Comparable: "${it.name}"
+                    Array: ${array.joinToString()}
+                    Array after sorting: ${comparableArrayUnderTest.joinToString()}
                 """.trimIndent())
             }
         }
