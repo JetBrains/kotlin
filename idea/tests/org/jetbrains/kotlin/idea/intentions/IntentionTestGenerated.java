@@ -14848,6 +14848,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/simplifyBooleanWithConstants/notEqualsTrue.kt");
         }
 
+        @TestMetadata("notReduceableBinary.kt")
+        public void testNotReduceableBinary() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/notReduceableBinary.kt");
+        }
+
+        @TestMetadata("notReduceableBinary2.kt")
+        public void testNotReduceableBinary2() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/notReduceableBinary2.kt");
+        }
+
         @TestMetadata("nullableBoolean.kt")
         public void testNullableBoolean() throws Exception {
             runTest("idea/testData/intentions/simplifyBooleanWithConstants/nullableBoolean.kt");
