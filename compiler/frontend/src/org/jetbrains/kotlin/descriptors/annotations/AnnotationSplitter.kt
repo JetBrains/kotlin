@@ -108,11 +108,9 @@ class AnnotationSplitter(
             other.add(annotation)
         }
 
-        for ((annotation, useSiteTarget) in allAnnotations.getUseSiteTargetedAnnotations()) {
-            if (useSiteTarget == null) continue
-
-            if (useSiteTarget in applicableTargets) {
-                map.getOrPut(useSiteTarget) { arrayListOf() }.add(annotation)
+        for ((annotation, target) in allAnnotations.getUseSiteTargetedAnnotations()) {
+            if (target in applicableTargets) {
+                map.getOrPut(target) { arrayListOf() }.add(annotation)
             }
         }
 

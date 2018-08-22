@@ -16,4 +16,4 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-data class AnnotationWithTarget(val annotation: AnnotationDescriptor, val target: AnnotationUseSiteTarget?)
+data class AnnotationWithTarget(val annotation: AnnotationDescriptor, val target: AnnotationUseSiteTarget)

@@ -23,12 +23,6 @@ interface Annotated {
 }
 
 interface Annotations : Iterable<AnnotationDescriptor> {
-    /**
-     * @return `true` iff there are no "direct" annotations applicable to this declaration. Note that even if [isEmpty] is `true`,
-     * there may be use-site-targeted annotations applicable to the declaration!
-     *
-     * @see getUseSiteTargetedAnnotations
-     */
     fun isEmpty(): Boolean
 
     fun findAnnotation(fqName: FqName): AnnotationDescriptor? = firstOrNull { it.fqName == fqName }

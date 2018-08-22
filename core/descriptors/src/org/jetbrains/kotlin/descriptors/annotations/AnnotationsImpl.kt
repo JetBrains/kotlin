@@ -16,40 +16,10 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-class AnnotationsImpl : Annotations {
-    private val annotations: List<AnnotationDescriptor>
-    private val targetedAnnotations: List<AnnotationWithTarget>
+class AnnotationsImpl(private val annotations: List<AnnotationDescriptor>) : Annotations {
+    override fun isEmpty(): Boolean = annotations.isEmpty()
 
-    constructor(annotations: List<AnnotationDescriptor>) {
-        this.annotations = annotations
-        this.targetedAnnotations = annotations.map { AnnotationWithTarget(it, null) }
-    }
+    override fun iterator(): Iterator<AnnotationDescriptor> = annotations.iterator()
 
-    // List<AnnotationDescriptor> and List<AnnotationWithTarget> have the same signature
-    private constructor(
-            targetedAnnotations: List<AnnotationWithTarget>,
-            @Suppress("UNUSED_PARAMETER") i: Int
-    ) {
-        this.targetedAnnotations = targetedAnnotations
-        this.annotations = targetedAnnotations.filter { it.target == null }.map { it.annotation }
-    }
-
-    override fun isEmpty() = targetedAnnotations.isEmpty()
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
-        return targetedAnnotations
-                .filter { it.target != null }
-                .map { AnnotationWithTarget(it.annotation, it.target!!) }
-    }
-
-    override fun iterator() = annotations.iterator()
-
-    override fun toString() = annotations.toString()
-
-    companion object {
-        @JvmStatic
-        fun create(annotationsWithTargets: List<AnnotationWithTarget>): AnnotationsImpl {
-            return AnnotationsImpl(annotationsWithTargets, 0)
-        }
-    }
+    override fun toString(): String = annotations.toString()
 }
