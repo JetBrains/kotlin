@@ -34,6 +34,14 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
+private const val COROUTINES_METADATA_SOURCE_FILES_JVM_NAME = "f"
+private const val COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME = "l"
+private const val COROUTINES_METADATA_LOCAL_NAMES_JVM_NAME = "n"
+private const val COROUTINES_METADATA_SPILLED_JVM_NAME = "s"
+private const val COROUTINES_METADATA_INDEX_TO_LABEL_JVM_NAME = "i"
+private const val COROUTINES_METADATA_METHOD_NAME_JVM_NAME = "m"
+private const val COROUTINES_METADATA_CLASS_NAME_JVM_NAME = "c"
+
 class CoroutineTransformerMethodVisitor(
     delegate: MethodVisitor,
     access: Int,
@@ -187,24 +195,24 @@ class CoroutineTransformerMethodVisitor(
         }
         val metadata = classBuilderForCoroutineState.newAnnotation(DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor, true)
         // TODO: support inlined functions (similar to SMAP)
-        metadata.visitArray("sourceFiles").also { v ->
+        metadata.visitArray(COROUTINES_METADATA_SOURCE_FILES_JVM_NAME).also { v ->
             lines.forEach { v.visit(null, sourceFile) }
         }.visitEnd()
-        metadata.visit("lineNumbers", lines.toIntArray())
+        metadata.visit(COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME, lines.toIntArray())
 
         val debugIndexToLabel = spilledToLocalMapping.withIndex().flatMap { (labelIndex, list) ->
             list.map { labelIndex }
         }
         val variablesMapping = spilledToLocalMapping.flatten()
-        metadata.visit("indexToLabel", debugIndexToLabel.toIntArray())
-        metadata.visitArray("spilled").also { v ->
+        metadata.visit(COROUTINES_METADATA_INDEX_TO_LABEL_JVM_NAME, debugIndexToLabel.toIntArray())
+        metadata.visitArray(COROUTINES_METADATA_SPILLED_JVM_NAME).also { v ->
             variablesMapping.forEach { v.visit(null, it.fieldName) }
         }.visitEnd()
-        metadata.visitArray("localNames").also { v ->
+        metadata.visitArray(COROUTINES_METADATA_LOCAL_NAMES_JVM_NAME).also { v ->
             variablesMapping.forEach { v.visit(null, it.variableName) }
         }.visitEnd()
-        metadata.visit("methodName", methodNode.name)
-        metadata.visit("className", containingClassInternalName)
+        metadata.visit(COROUTINES_METADATA_METHOD_NAME_JVM_NAME, methodNode.name)
+        metadata.visit(COROUTINES_METADATA_CLASS_NAME_JVM_NAME, containingClassInternalName)
         metadata.visitEnd()
     }
 
