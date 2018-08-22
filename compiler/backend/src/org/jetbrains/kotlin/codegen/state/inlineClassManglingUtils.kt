@@ -54,16 +54,6 @@ private fun md5radix36string(signatureForMangling: String): String {
 
 fun KotlinType.isTypeParameterWithInlineClassUpperBound(): Boolean {
     val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
-    return descriptor.isWithInlineClassUpperBoundInner(hashSetOf(descriptor))
-}
-
-private fun TypeParameterDescriptor.isWithInlineClassUpperBoundInner(visited: MutableSet<TypeParameterDescriptor>): Boolean {
-    for (type in typeConstructor.supertypes) {
-        if (type.isInlineClassType()) return true
-
-        val typeParameterDescriptor = type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: continue
-        if (!visited.add(typeParameterDescriptor)) continue
-        if (typeParameterDescriptor.isWithInlineClassUpperBoundInner(visited)) return true
-    }
-    return false
+    val bound = getRepresentativeUpperBound(descriptor)
+    return bound.isInlineClassType() || bound.isTypeParameterWithInlineClassUpperBound()
 }

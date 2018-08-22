@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR, JS, JS_IR
+// IGNORE_BACKEND: JVM_IR, JS
 // WITH_RUNTIME
 import kotlin.test.*
 

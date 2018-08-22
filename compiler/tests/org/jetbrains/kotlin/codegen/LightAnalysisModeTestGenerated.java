@@ -11765,6 +11765,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClash.kt");
             }
 
+            @TestMetadata("genericSignatureOfFunctionWithMangledName.kt")
+            public void testGenericSignatureOfFunctionWithMangledName() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericSignatureOfFunctionWithMangledName.kt");
+            }
+
             @TestMetadata("localClassInFunctionWithMangledName.kt")
             public void testLocalClassInFunctionWithMangledName() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledName.kt");
