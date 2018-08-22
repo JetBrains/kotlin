@@ -127,7 +127,7 @@ abstract class RandomSmokeTest {
         assertFailsWith<IllegalArgumentException> { subject.nextUInt((-1).toUInt(), (-2).toUInt()) }
         assertFailsWith<IllegalArgumentException> { subject.nextUInt(UInt.MIN_VALUE, UInt.MIN_VALUE) }
 
-        for (n in UIntProgression(UInt.MIN_VALUE, UInt.MAX_VALUE - 1u, 0x10000)) {
+        for (n in UInt.MIN_VALUE until UInt.MAX_VALUE step 0x10000) {
             assertEquals(n, subject.nextUInt(n, n + 1u))
         }
         (UInt.MAX_VALUE - 1u).let { n ->
