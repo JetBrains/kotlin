@@ -1667,7 +1667,7 @@ void freezeCyclic(ContainerHeader* rootContainer, const KStdVector<ContainerHead
  * Theory of operations.
  *
  * Kotlin/Native supports object graph freezing, allowing to make certain subgraph immutable and thus
- * suitable for safe sharing amongs multiple concurrent executors. This operation recursively operates
+ * suitable for safe sharing amongst multiple concurrent executors. This operation recursively operates
  * on all objects reachable from the given object, and marks them as frozen. In frozen state object's
  * fields cannot be modified, and so, lifetime of frozen objects correlates. Practically, it means
  * that lifetimes of all strongly connected components are fully controlled by incoming reference
@@ -1687,6 +1687,7 @@ void freezeCyclic(ContainerHeader* rootContainer, const KStdVector<ContainerHead
  * references could be passed across multiple threads.
  */
 void FreezeSubgraph(ObjHeader* root) {
+  if (root == nullptr) return;
   // First check that passed object graph has no cycles.
   // If there are cycles - run graph condensation on cyclic graphs using Kosoraju-Sharir.
   ContainerHeader* rootContainer = root->container();

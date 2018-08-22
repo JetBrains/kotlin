@@ -565,8 +565,8 @@ internal class TestProcessor (val context: KonanBackendContext) {
                 irFile.addChild(ir)
                 val irConstructor = ir.constructors.single()
                 irFile.addTopLevelInitializer(
-                        IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irConstructor.returnType, irConstructor.symbol)
-                )
+                        IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irConstructor.returnType, irConstructor.symbol),
+                        context, threadLocal = true)
             }
 
     /** Check if this fqName already used or not. */
@@ -587,6 +587,8 @@ internal class TestProcessor (val context: KonanBackendContext) {
             return
         }
 
+        // TODO: an awful hack, we make this initializer thread local, so that it doesn't freeze suite,
+        // and later on we could modify some suite's properties. This shall be redesigned.
         irFile.addTopLevelInitializer(builder.irBlock {
             val constructorCall = irCall(symbols.topLevelSuiteConstructor).apply {
                 putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -597,7 +599,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
                     symbols.topLevelSuiteRegisterTestCase,
                     symbols.topLevelSuiteRegisterFunction,
                     functions)
-        })
+        }, context, threadLocal = true)
     }
 
     private fun createTestSuites(irFile: IrFile, annotationCollector: AnnotationCollector) {

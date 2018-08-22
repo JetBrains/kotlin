@@ -173,9 +173,19 @@ class AtomicReference<T>(private var value: T? = null) {
     external public fun get(): T?
 }
 
-internal object UNINITIALIZED
+internal object UNINITIALIZED {
+    // So that single-threaded configs can use those as well.
+    init {
+        freeze()
+    }
+}
 
-internal object INITIALIZING
+internal object INITIALIZING {
+    // So that single-threaded configs can use those as well.
+    init {
+        freeze()
+    }
+}
 
 @Frozen
 internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {

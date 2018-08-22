@@ -69,7 +69,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
         currentFile = irFile
         irFile.transformChildrenVoid(this)
 
-        topLevelInitializers.forEach { irFile.addTopLevelInitializer(it) }
+        topLevelInitializers.forEach { irFile.addTopLevelInitializer(it, context, false) }
         topLevelInitializers.clear()
     }
 

@@ -39,8 +39,9 @@ InitNode* initTailNode = nullptr;
 
 enum {
   INIT_GLOBALS = 0,
-  DEINIT_THREAD_LOCAL_GLOBALS = 1,
-  DEINIT_GLOBALS = 2
+  INIT_THREAD_LOCAL_GLOBALS = 1,
+  DEINIT_THREAD_LOCAL_GLOBALS = 2,
+  DEINIT_GLOBALS = 3
 };
 
 enum {
@@ -78,10 +79,13 @@ RuntimeState* initRuntime() {
   RuntimeState* result = konanConstructInstance<RuntimeState>();
   if (!result) return nullptr;
   result->memoryState = InitMemory();
+  bool firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
   // Keep global variables in state as well.
-  InitOrDeinitGlobalVariables(INIT_GLOBALS);
-  konan::consoleInit();
-  atomicAdd(&aliveRuntimesCount, 1);
+  if (firstRuntime) {
+    konan::consoleInit();
+    InitOrDeinitGlobalVariables(INIT_GLOBALS);
+  }
+  InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS);
   return result;
 }
 

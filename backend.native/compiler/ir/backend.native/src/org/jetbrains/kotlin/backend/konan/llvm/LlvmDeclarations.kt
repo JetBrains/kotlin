@@ -330,7 +330,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         } else {
             "kobjref:" + qualifyInternalName(descriptor)
         }
-        val threadLocal = !(descriptor.symbol.objectIsShared && context.config.threadsAreAllowed)
+        val threadLocal = !(descriptor.objectIsShared && context.config.threadsAreAllowed)
         val instanceFieldRef = addGlobal(
                 symbolName, getLLVMType(descriptor.defaultType), isExported = isExported, threadLocal = threadLocal)
 
@@ -390,7 +390,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             val name = "kvar:" + qualifyInternalName(descriptor)
 
             val storage = addGlobal(
-                    name, getLLVMType(descriptor.type), isExported = false, threadLocal = true)
+                    name, getLLVMType(descriptor.type), isExported = false, threadLocal = !declaration.isShared)
 
             this.staticFields[descriptor] = StaticFieldLlvmDeclarations(storage)
         }

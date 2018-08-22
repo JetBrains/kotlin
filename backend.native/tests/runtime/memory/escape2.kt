@@ -19,6 +19,7 @@ fun bar(b: B) {
     foo(c)
 }
 
+@ThreadLocal
 val global = B()
 
 @Test fun runTest() {

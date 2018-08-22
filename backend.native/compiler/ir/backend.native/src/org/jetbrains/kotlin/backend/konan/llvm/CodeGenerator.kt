@@ -77,7 +77,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun getObjectInstanceShadowStorage(descriptor: ClassDescriptor): LLVMValueRef {
         assert (!descriptor.isUnit())
-        assert (descriptor.symbol.objectIsShared)
+        assert (descriptor.objectIsShared)
         val llvmGlobal = if (!isExternal(descriptor)) {
             context.llvmDeclarations.forSingleton(descriptor).instanceShadowFieldRef!!
         } else {
@@ -298,6 +298,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         } else {
             LLVMBuildStore(builder, value, ptr)
         }
+    }
+
+    fun freeze(value: LLVMValueRef, exceptionHandler: ExceptionHandler) {
+        if (isObjectRef(value))
+            call(context.llvm.freezeSubgraph, listOf(value),  Lifetime.IRRELEVANT, exceptionHandler)
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
@@ -694,7 +699,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             }
         }
 
-        val shared = descriptor.symbol.objectIsShared && context.config.threadsAreAllowed
+        val shared = descriptor.objectIsShared && context.config.threadsAreAllowed
         val objectPtr = codegen.getObjectInstanceStorage(descriptor, shared)
         val bbCurrent = currentBlock
         val bbInit= basicBlock("label_init", locationInfo)

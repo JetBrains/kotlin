@@ -68,6 +68,7 @@ class Graph(val nodes: List<Node>, val roots: List<Node>)
 fun min(x: Int, y: Int) = if (x < y) x else y
 fun max(x: Int, y: Int) = if (x > y) x else y
 
+@ThreadLocal
 val random = Random(42)
 
 fun generate(condensationSize: Int, branchingFactor: Int, swellingFactor: Int): Graph {

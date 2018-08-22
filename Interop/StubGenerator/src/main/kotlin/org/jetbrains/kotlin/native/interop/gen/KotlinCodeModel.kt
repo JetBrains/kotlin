@@ -173,7 +173,6 @@ object KotlinTypes {
     val set by CollectionClassifier
     val map by CollectionClassifier
 
-
     val nativePtr by InteropType
 
     val cOpaque by InteropType
@@ -198,7 +197,6 @@ object KotlinTypes {
     val cFunction by InteropClassifier
 
     val objCObjectVar by InteropClassifier
-    val objCStringVarOf by InteropClassifier
 
     val objCObjectBase by InteropClassifier
     val objCObjectBaseMeta by InteropClassifier
@@ -220,6 +218,7 @@ object KotlinTypes {
 
     private object InteropClassifier : ClassifierAtPackage("kotlinx.cinterop")
     private object InteropType : TypeAtPackage("kotlinx.cinterop")
+
 }
 
 abstract class KotlinFile(

@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -366,6 +367,9 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val kTypeImplForGenerics = internalClass("KTypeImplForGenerics")
 
     val listOfInternal = internalFunction("listOfInternal")
+
+    val threadLocal =
+            context.builtIns.builtInsModule.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("kotlin.native.ThreadLocal")))!!
 
     private fun internalFunction(name: String): IrSimpleFunctionSymbol =
             symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.substitute
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -27,7 +28,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
@@ -47,7 +50,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
@@ -58,10 +60,14 @@ internal fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrC
 
 private var topLevelInitializersCounter = 0
 
-internal fun IrFile.addTopLevelInitializer(expression: IrExpression) {
+internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean) {
     val fieldDescriptor = PropertyDescriptorImpl.create(
             this.packageFragmentDescriptor,
-            Annotations.EMPTY,
+            if (threadLocal)
+                AnnotationsImpl(listOf(AnnotationDescriptorImpl(context.ir.symbols.threadLocal.defaultType,
+                        emptyMap(), SourceElement.NO_SOURCE)))
+            else
+                Annotations.EMPTY,
             Modality.FINAL,
             Visibilities.PRIVATE,
             false,
@@ -76,7 +82,6 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression) {
             false
     )
 
-    val builtIns = fieldDescriptor.builtIns
     fieldDescriptor.setType(expression.type.toKotlinType(), emptyList(), null, null as KotlinType?)
     fieldDescriptor.initialize(null, null)
 
@@ -123,8 +128,8 @@ private fun createFakeOverride(
         is PropertyDescriptor ->
             IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, descriptor).apply {
                 // TODO: add field if getter is missing?
-                getter = descriptor.getter?.createFunction() as IrSimpleFunction?
-                setter = descriptor.setter?.createFunction() as IrSimpleFunction?
+                getter = descriptor.getter?.createFunction()
+                setter = descriptor.setter?.createFunction()
             }
         else -> TODO(descriptor.toString())
     }
@@ -238,7 +243,7 @@ fun IrSimpleFunction.setOverrides(symbolTable: ReferenceSymbolTable) {
 fun IrClass.simpleFunctions(): List<IrSimpleFunction> = this.declarations.flatMap {
     when (it) {
         is IrSimpleFunction -> listOf(it)
-        is IrProperty -> listOfNotNull(it.getter as IrSimpleFunction?, it.setter as IrSimpleFunction?)
+        is IrProperty -> listOfNotNull(it.getter, it.setter)
         else -> emptyList()
     }
 }

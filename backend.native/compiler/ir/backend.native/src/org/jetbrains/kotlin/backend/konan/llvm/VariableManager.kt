@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -121,7 +122,7 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
 
     internal fun createImmutable(descriptor: ValueDescriptor, value: LLVMValueRef) : Int {
         if (contextVariablesToIndex.containsKey(descriptor))
-            throw Error("$descriptor is already defined")
+            throw Error("${ir2string(descriptor)} is already defined")
         val index = variables.size
         variables.add(ValueRecord(value, descriptor.name))
         contextVariablesToIndex[descriptor] = index

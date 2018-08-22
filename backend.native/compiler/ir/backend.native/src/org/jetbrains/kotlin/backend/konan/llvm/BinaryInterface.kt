@@ -307,7 +307,7 @@ internal val ClassDescriptor.objectInstanceShadowFieldSymbolName: String
         assert (this.isExported())
         assert (this.kind.isSingleton)
         assert (!this.isUnit())
-        assert (this.symbol.objectIsShared)
+        assert (this.objectIsShared)
 
         return "kshadowobjref:$fqNameSafe"
     }

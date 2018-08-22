@@ -18,6 +18,7 @@ package kotlin.native.test
 
 import kotlin.system.exitProcess
 
+@ThreadLocal
 private val _generatedSuites = mutableListOf<TestSuite>()
 
 internal fun registerSuite(suite: TestSuite): Unit {
