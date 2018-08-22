@@ -1042,7 +1042,8 @@ class MethodInliner(
             val safeToUseArgumentKotlinType =
                 directOrder.size == directOrderOfArguments.size && directOrderOfArguments.size == directOrderOfInvokeParameters.size
 
-            directOrder.asReversed().forEachIndexed { index, type ->
+            for (index in directOrder.lastIndex downTo 0) {
+                val type = directOrder[index]
                 currentShift -= type.size
                 val typeOnStack = actualParams[index]
 
