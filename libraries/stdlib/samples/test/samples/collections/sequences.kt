@@ -169,6 +169,19 @@ class Sequences {
             val sequence: Sequence<Int>? = sequenceOf(1, 2, 3)
             assertPrints(sequence.orEmpty().toList(), "[1, 2, 3]")
         }
+
+        @Sample
+        fun sequenceIfEmpty() {
+            val empty = emptySequence<Int>()
+
+            val emptyOrDefault = empty.ifEmpty { sequenceOf("default") }
+            assertPrints(emptyOrDefault.toList(), "[default]")
+
+            val nonEmpty = sequenceOf("value")
+
+            val nonEmptyOrDefault = nonEmpty.ifEmpty { sequenceOf("default") }
+            assertPrints(nonEmptyOrDefault.toList(), "[value]")
+        }
     }
 
     class Transformations {

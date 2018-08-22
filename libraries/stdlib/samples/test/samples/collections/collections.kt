@@ -64,6 +64,21 @@ class Collections {
         }
 
         @Sample
+        fun collectionIfEmpty() {
+            val empty: List<Int> = emptyList()
+
+            val emptyOrNull: List<Int>? = empty.ifEmpty { null }
+            assertPrints(emptyOrNull, "null")
+
+            val emptyOrDefault: List<Any> = empty.ifEmpty { listOf("default") }
+            assertPrints(emptyOrDefault, "[default]")
+
+            val nonEmpty = listOf("x")
+            val sameList: List<String> = nonEmpty.ifEmpty { listOf("empty") }
+            assertTrue(nonEmpty === sameList)
+        }
+
+        @Sample
         fun collectionContainsAll() {
             val collection = mutableListOf('a', 'b')
             val test = listOf('a', 'b', 'c')

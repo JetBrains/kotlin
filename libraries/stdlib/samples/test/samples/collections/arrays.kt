@@ -45,6 +45,21 @@ class Arrays {
             val array: Array<Char>? = arrayOf('a', 'b', 'c')
             assertFalse(array.isNullOrEmpty())
         }
+
+        @Sample
+        fun arrayIfEmpty() {
+            val emptyArray: Array<Any> = emptyArray()
+
+            val emptyOrNull: Array<Any>? = emptyArray.ifEmpty { null }
+            assertPrints(emptyOrNull, "null")
+
+            val emptyOrDefault: Array<Any> = emptyArray.ifEmpty { arrayOf("default") }
+            assertPrints(emptyOrDefault.contentToString(), "[default]")
+
+            val nonEmptyArray = arrayOf(1)
+            val sameArray = nonEmptyArray.ifEmpty { arrayOf(2) }
+            assertTrue(nonEmptyArray === sameArray)
+        }
     }
 
     class Transformations {

@@ -163,6 +163,17 @@ public inline fun <K, V> Map<out K, V>?.isNullOrEmpty(): Boolean {
 public inline fun <K, V> Map<K, V>?.orEmpty(): Map<K, V> = this ?: emptyMap()
 
 /**
+ * Returns this map if it's not empty
+ * or the result of calling [defaultValue] function if the map is empty.
+ *
+ * @sample samples.collections.Maps.Usage.mapIfEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <M, R> M.ifEmpty(defaultValue: () -> R): R where M : Map<*, *>, M : R =
+    if (isEmpty()) defaultValue() else this
+
+/**
  * Checks if the map contains the given key.
  *
  * This method allows to use the `x in map` syntax for checking whether an object is contained in the map.
