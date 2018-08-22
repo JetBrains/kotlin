@@ -58,7 +58,8 @@ public abstract class KotlinBuiltIns {
             RANGES_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
             ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
-            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
+            BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal")),
+            COROUTINES_PACKAGE_FQ_NAME_RELEASE
     );
 
     private ModuleDescriptorImpl builtInsModule;
@@ -67,7 +68,6 @@ public abstract class KotlinBuiltIns {
     private final MemoizedFunctionToNotNull<ModuleDescriptor, UnsignedPrimitives> unsignedPrimitives;
     private final NotNullLazyValue<PackageFragments> packageFragments;
 
-    private final MemoizedFunctionToNotNull<Integer, ClassDescriptor> suspendFunctionClasses;
     private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
 
     private final StorageManager storageManager;
@@ -85,13 +85,13 @@ public abstract class KotlinBuiltIns {
 
                 Map<FqName, PackageFragmentDescriptor> nameToFragment = new LinkedHashMap<FqName, PackageFragmentDescriptor>();
                 PackageFragmentDescriptor kotlin = createPackage(provider, nameToFragment, BUILT_INS_PACKAGE_FQ_NAME);
-                PackageFragmentDescriptor kotlinCoroutines = createPackage(provider, null, COROUTINES_PACKAGE_FQ_NAME_RELEASE);
+                createPackage(provider, null, COROUTINES_PACKAGE_FQ_NAME_RELEASE);
                 PackageFragmentDescriptor kotlinCollections = createPackage(provider, nameToFragment, COLLECTIONS_PACKAGE_FQ_NAME);
                 createPackage(provider, nameToFragment, RANGES_PACKAGE_FQ_NAME);
                 PackageFragmentDescriptor kotlinAnnotation = createPackage(provider, nameToFragment, ANNOTATION_PACKAGE_FQ_NAME);
                 Set<PackageFragmentDescriptor> allImportedByDefault = new LinkedHashSet<PackageFragmentDescriptor>(nameToFragment.values());
 
-                return new PackageFragments(kotlin, kotlinCoroutines, kotlinCollections, kotlinAnnotation, allImportedByDefault);
+                return new PackageFragments(kotlin, kotlinCollections, kotlinAnnotation, allImportedByDefault);
             }
         });
 
@@ -135,18 +135,6 @@ public abstract class KotlinBuiltIns {
                     kotlinArrayTypeToUnsignedKotlinType.put(arrayType, type);
                 }
                 return new UnsignedPrimitives(unsignedKotlinTypeToKotlinArrayType, kotlinArrayTypeToUnsignedKotlinType);
-            }
-        });
-
-        this.suspendFunctionClasses = storageManager.createMemoizedFunction(new Function1<Integer, ClassDescriptor>() {
-            @Override
-            public ClassDescriptor invoke(Integer arity) {
-                return new FunctionClassDescriptor(
-                        getStorageManager(),
-                        packageFragments.invoke().coroutinesPackageFragment,
-                        FunctionClassDescriptor.Kind.SuspendFunction,
-                        arity
-                );
             }
         });
 
@@ -269,20 +257,17 @@ public abstract class KotlinBuiltIns {
 
     private static class PackageFragments {
         public final PackageFragmentDescriptor builtInsPackageFragment;
-        public final PackageFragmentDescriptor coroutinesPackageFragment;
         public final PackageFragmentDescriptor collectionsPackageFragment;
         public final PackageFragmentDescriptor annotationPackageFragment;
         public final Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments;
 
         private PackageFragments(
                 @NotNull PackageFragmentDescriptor builtInsPackageFragment,
-                @NotNull PackageFragmentDescriptor coroutinesPackageFragment,
                 @NotNull PackageFragmentDescriptor collectionsPackageFragment,
                 @NotNull PackageFragmentDescriptor annotationPackageFragment,
                 @NotNull Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments
         ) {
             this.builtInsPackageFragment = builtInsPackageFragment;
-            this.coroutinesPackageFragment = coroutinesPackageFragment;
             this.collectionsPackageFragment = collectionsPackageFragment;
             this.annotationPackageFragment = annotationPackageFragment;
             this.allImportedByDefaultBuiltInsPackageFragments = allImportedByDefaultBuiltInsPackageFragments;
@@ -612,8 +597,8 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getSuspendFunction(int parameterCount) {
-        // SuspendFunction$n is not visible through member scope, and is created independently.
-        return suspendFunctionClasses.invoke(parameterCount);
+        Name name = Name.identifier(FunctionClassDescriptor.Kind.SuspendFunction.getClassNamePrefix() + parameterCount);
+        return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(name));
     }
 
     @NotNull
