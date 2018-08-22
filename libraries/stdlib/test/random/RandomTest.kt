@@ -50,6 +50,20 @@ abstract class RandomSmokeTest {
     }
 
     @Test
+    fun nextUInt() {
+        var result1 = UInt.MIN_VALUE
+        var result2 = UInt.MAX_VALUE
+        repeat(1000) {
+            val r = subject.nextUInt()
+            result1 = result1 or r
+            result2 = result2 and r
+        }
+        assertEquals(UInt.MAX_VALUE, result1, "All one bits should be present")
+        assertEquals(UInt.MIN_VALUE, result2, "All zero bits should present")
+
+    }
+
+    @Test
     fun nextIntBound() {
         assertFailsWith<IllegalArgumentException> { subject.nextInt(0) }
         assertFailsWith<IllegalArgumentException> { subject.nextInt(-1) }
@@ -63,6 +77,23 @@ abstract class RandomSmokeTest {
             repeat(1000) {
                 val x = subject.nextInt(bound)
                 if (x !in 0 until bound)
+                    fail("Value $x must be in range [0, $bound)")
+            }
+        }
+    }
+
+    @Test
+    fun nextUIntBound() {
+        assertFailsWith<IllegalArgumentException> { subject.nextUInt(UInt.MIN_VALUE) }
+
+        repeat(1000) {
+            assertEquals(0u, subject.nextUInt(1u))
+        }
+
+        for (bound in listOf(2u, 3u, 7u, 16u, 32u, 0x4000_0000u, UInt.MAX_VALUE)) {
+            repeat(1000) {
+                val x = subject.nextUInt(bound)
+                if (x !in 0u..(bound - 1u))
                     fail("Value $x must be in range [0, $bound)")
             }
         }
@@ -90,6 +121,28 @@ abstract class RandomSmokeTest {
         }
     }
 
+    @Test
+    fun nextUIntOriginBound() {
+        assertFailsWith<IllegalArgumentException> { subject.nextUInt(0u, 0u) }
+        assertFailsWith<IllegalArgumentException> { subject.nextUInt((-1).toUInt(), (-2).toUInt()) }
+        assertFailsWith<IllegalArgumentException> { subject.nextUInt(UInt.MIN_VALUE, UInt.MIN_VALUE) }
+
+        for (n in UInt.MIN_VALUE until UInt.MAX_VALUE step 0x10000) {
+            assertEquals(n, subject.nextUInt(n, n + 1u))
+        }
+        (UInt.MAX_VALUE - 1u).let { n ->
+            assertEquals(n, subject.nextUInt(n, n + 1u))
+        }
+
+        for ((origin, bound) in listOf((0u to 2u), (1u to 6u), (0u to 32u), (0u to UInt.MAX_VALUE), (1u to (Int.MAX_VALUE.toUInt() + 1u)), (UInt.MIN_VALUE to UInt.MAX_VALUE))) {
+            repeat(1000) {
+                val x = subject.nextUInt(origin, bound)
+                if (x !in origin..bound - 1u)
+                    fail("Value $x must be in range [$origin, $bound)")
+            }
+        }
+    }
+
     @Suppress("EmptyRange")
     @Test
     fun nextIntInIntRange() {
@@ -112,6 +165,32 @@ abstract class RandomSmokeTest {
     }
 
     @Test
+    fun nextUIntInUIntRange() {
+        assertFailsWith<IllegalArgumentException> { subject.nextUInt(1u..0u) }
+        assertFailsWith<IllegalArgumentException> { subject.nextUInt((-1).toUInt()..UInt.MIN_VALUE) }
+        assertFailsWith<IllegalArgumentException> { subject.nextUInt(UInt.MAX_VALUE..(UInt.MAX_VALUE - 1u)) }
+
+        repeat(1000) { it ->
+            val n = it.toUInt()
+            assertEquals(n, subject.nextUInt(n..n))
+        }
+
+        for (range in listOf(
+            (0u..1u),
+            (1u..5u),
+            (0u..31u),
+            (0u..UInt.MAX_VALUE - 1u),
+            (0u..UInt.MAX_VALUE)
+        )) {
+            repeat(1000) {
+                val x = subject.nextUInt(range)
+                if (x !in range)
+                    fail("Value $x must be in range $range")
+            }
+        }
+    }
+
+    @Test
     fun nextLong() {
         var result1 = 0L
         var result2 = -1L
@@ -122,6 +201,20 @@ abstract class RandomSmokeTest {
         }
         assertEquals(-1, result1, "All one bits should present")
         assertEquals(0, result2, "All zero bits should present")
+    }
+
+    @Test
+    fun nextULong() {
+        var result1 = ULong.MIN_VALUE
+        var result2 = ULong.MAX_VALUE
+        repeat(1000) {
+            val r = subject.nextULong()
+            result1 = result1 or r
+            result2 = result2 and r
+        }
+
+        assertEquals(ULong.MAX_VALUE, result1, "All one bits should be present")
+        assertEquals(ULong.MIN_VALUE, result2, "All zero bits should be present")
     }
 
     @Test
@@ -139,6 +232,24 @@ abstract class RandomSmokeTest {
                 val x = subject.nextLong(bound)
                 if (x !in 0L until bound)
                     fail("Value $x must be in range [0, $bound)")
+            }
+        }
+    }
+
+    @Test
+    fun nextULongBound() {
+        assertFailsWith<IllegalArgumentException> { subject.nextULong(ULong.MIN_VALUE) }
+
+        repeat(1000) {
+            assertEquals(0uL, subject.nextULong(1uL))
+        }
+
+        for (bound in listOf(2uL, 23uL, 32uL, (0x1_0000_0000).toULong(), 0x4000_0000_0000_000.toULong(), ULong.MAX_VALUE)) {
+            repeat(1000) {
+                val x = subject.nextULong(bound)
+                if (x !in 0uL..(bound - 1uL)) {
+                    fail("Value $x must be in range [0, $bound)")
+                }
             }
         }
     }
@@ -164,6 +275,31 @@ abstract class RandomSmokeTest {
         }
     }
 
+    @Test
+    fun nextULongOriginBound() {
+        assertFailsWith<IllegalArgumentException> { subject.nextULong(0uL, 0uL) }
+        assertFailsWith<IllegalArgumentException> { subject.nextULong((-1).toULong(), (-2).toULong()) }
+
+        for (i in 500uL..1500uL) {
+            val n = (0x1_0000_0000).toULong() + i
+            assertEquals(n, subject.nextULong(n, n + 1uL))
+        }
+
+        for ((origin, bound) in listOf(
+            (0uL to 32uL),
+            (1uL to 6uL),
+            (0uL to 0x1_0000_0000.toULong()),
+            (0uL to ULong.MAX_VALUE)
+        )) {
+            repeat(1000) {
+                val x = subject.nextULong(origin, bound)
+                if (x !in origin..(bound - 1uL)) {
+                    fail("Value $x must be in range [$origin, $bound)")
+                }
+            }
+        }
+    }
+
     @Suppress("EmptyRange")
     @Test
     fun nextLongInLongRange() {
@@ -184,6 +320,35 @@ abstract class RandomSmokeTest {
                     fail("Value $x must be in range $range")
             }
         }
+    }
+
+    @Test
+    fun nextULongInULongRange() {
+        assertFailsWith<IllegalArgumentException> { subject.nextULong(1uL..0uL) }
+        assertFailsWith<IllegalArgumentException> { subject.nextULong(ULong.MAX_VALUE..ULong.MIN_VALUE) }
+        assertFailsWith<IllegalArgumentException> { subject.nextULong(ULong.MAX_VALUE..(ULong.MAX_VALUE - 1uL))}
+
+        repeat(1000) { i ->
+            val n = (0x1_0000_0000).toULong() - 500uL + i.toULong()
+            assertEquals(n, subject.nextULong(n..n))
+
+        }
+
+        for (range in listOf(
+            (0uL..1uL),
+            (1uL..5uL),
+            (0uL..31uL),
+            (0uL..(ULong.MAX_VALUE - 1uL)),
+            (0uL..ULong.MAX_VALUE)
+        )) {
+            repeat(1000) {
+                val x = subject.nextULong(range)
+                if (x !in range) {
+                    fail("Value $x must be in range $range")
+                }
+            }
+        }
+
     }
 
 
@@ -292,6 +457,18 @@ abstract class RandomSmokeTest {
     }
 
     @Test
+    fun nextUBytes() {
+        val size = 20
+        val ubytes1 = subject.nextUBytes(size)
+        assertEquals(size, ubytes1.size)
+        assertTrue(ubytes1.any { it != 0.toUByte() })
+
+        val ubytes2 = subject.nextUBytes(UByteArray(size))
+        assertEquals(size, ubytes2.size)
+        assertTrue(ubytes2.any { it != 0.toUByte() })
+    }
+
+    @Test
     fun nextBytesRange() {
         val size = 100
         val array = subject.nextBytes(size)
@@ -321,7 +498,7 @@ abstract class RandomSmokeTest {
 
             if (noChanges) {
                 fail("Something should have changed in array after subrange [$from, $to) randomization (${1 + retries} times): " +
-                     array.copyOfRange(from, to).contentToString())
+                             array.copyOfRange(from, to).contentToString())
             }
 
             for (p in 0 until from) {
@@ -330,6 +507,53 @@ abstract class RandomSmokeTest {
             for (p in to until size) {
                 assertEquals(prev[p], array[p])
             }
+        }
+    }
+
+    @Test
+    fun nextUBytesRange() {
+        val size = 100
+        val array = subject.nextUBytes(size)
+
+        assertFailsWith<IllegalArgumentException> { subject.nextUBytes(array, -1, 10) }
+        assertFailsWith<IllegalArgumentException> { subject.nextUBytes(array, 0, size + 10) }
+        assertFailsWith<IllegalArgumentException> { subject.nextUBytes(array, 10, 0) }
+
+        repeat(10000) {
+            val from = subject.nextInt(0, size - 1)
+            val to = subject.nextInt(from + 1, size)
+
+            val prev = array.copyOf()
+
+            subject.nextUBytes(array, from, to)
+
+            var noChanges = array contentEquals prev
+            val rangeSize = to - from
+
+            val retries = 4 / rangeSize
+
+            var n = 0
+            while(noChanges && n < retries) {
+                // there's a small chance that a small range will get the same value as before
+                // run randomization again
+                subject.nextUBytes(array, from, to)
+                noChanges = array contentEquals prev
+                n++
+            }
+
+            if(noChanges) {
+                fail("Something should have changed in array after subrange [$from, $to) randomization (${1 + retries} times: " +
+                             array.copyOfRange(from, to).contentToString())
+            }
+
+            for (p in 0 until from) {
+                assertEquals(prev[p], array[p])
+            }
+
+            for (p in to until size) {
+                assertEquals(prev[p], array[p])
+            }
+
         }
     }
 }

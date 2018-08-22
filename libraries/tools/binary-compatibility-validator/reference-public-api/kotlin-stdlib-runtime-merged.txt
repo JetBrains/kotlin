@@ -3894,6 +3894,18 @@ public final class kotlin/random/Random$Companion : kotlin/random/Random {
 public final class kotlin/random/RandomKt {
 	public static final fun Random (I)Lkotlin/random/Random;
 	public static final fun Random (J)Lkotlin/random/Random;
+	public static final fun nextUBytes (Lkotlin/random/Random;I)[B
+	public static final fun nextUBytes-4zielkbi (Lkotlin/random/Random;[BII)[B
+	public static synthetic fun nextUBytes-4zielkbi$default (Lkotlin/random/Random;[BIIILjava/lang/Object;)[B
+	public static final fun nextUBytes-y7z55vk (Lkotlin/random/Random;[B)[B
+	public static final fun nextUInt (Lkotlin/random/Random;)I
+	public static final fun nextUInt (Lkotlin/random/Random;Lkotlin/ranges/UIntRange;)I
+	public static final fun nextUInt-5wlsgfq1 (Lkotlin/random/Random;II)I
+	public static final fun nextUInt-97rx7kg5 (Lkotlin/random/Random;I)I
+	public static final fun nextULong (Lkotlin/random/Random;)J
+	public static final fun nextULong (Lkotlin/random/Random;Lkotlin/ranges/ULongRange;)J
+	public static final fun nextULong-4sbioyd2 (Lkotlin/random/Random;J)J
+	public static final fun nextULong-7szwbobr (Lkotlin/random/Random;JJ)J
 }
 
 public class kotlin/ranges/CharProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
