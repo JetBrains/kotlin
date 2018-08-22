@@ -1,6 +1,7 @@
 package samples.text
 
 import samples.*
+import kotlin.test.assertTrue
 
 class Strings {
 
@@ -146,4 +147,33 @@ class Strings {
         assertPrints(builder, "")
     }
 
+    @Sample
+    fun stringIfEmpty() {
+        val empty = ""
+
+        val emptyOrNull: String? = empty.ifEmpty { null }
+        assertPrints(emptyOrNull, "null")
+
+        val emptyOrDefault = empty.ifEmpty { "default" }
+        assertPrints(emptyOrDefault, "default")
+
+        val nonEmpty = "abc"
+        val sameString = nonEmpty.ifEmpty { "def" }
+        assertTrue(nonEmpty === sameString)
+    }
+
+    @Sample
+    fun stringIfBlank() {
+        val blank = "    "
+
+        val blankOrNull: String? = blank.ifBlank { null }
+        assertPrints(blankOrNull, "null")
+
+        val blankOrDefault = blank.ifBlank { "default" }
+        assertPrints(blankOrDefault, "default")
+
+        val nonBlank = "abc"
+        val sameString = nonBlank.ifBlank { "def" }
+        assertTrue(nonBlank === sameString)
+    }
 }

@@ -198,6 +198,18 @@ public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyLis
 public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 /**
+ * Returns this collection if it's not empty
+ * or the result of calling [defaultValue] function if the collection is empty.
+ *
+ * @sample samples.collections.Collections.Collections.collectionIfEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R =
+    if (isEmpty()) defaultValue() else this
+
+
+/**
  * Checks if all elements in the specified collection are contained in this collection.
  *
  * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.

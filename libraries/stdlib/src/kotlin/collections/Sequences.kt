@@ -9,6 +9,7 @@
 package kotlin.sequences
 
 import kotlin.*
+import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values through the [Iterator]
@@ -54,6 +55,23 @@ private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>?.orEmpty(): Sequence<T> = this ?: emptySequence()
+
+
+/**
+ * Returns a sequence that iterates through the elements either of this sequence
+ * or, if this sequence turns out to be empty, of the sequence returned by [defaultValue] function.
+ *
+ * @sample samples.collections.Sequences.Usage.sequenceIfEmpty
+ */
+@SinceKotlin("1.3")
+public fun <T> Sequence<T>.ifEmpty(defaultValue: () -> Sequence<T>): Sequence<T> = buildSequence {
+    val iterator = this@ifEmpty.iterator()
+    if (iterator.hasNext()) {
+        yieldAll(iterator)
+    } else {
+        yieldAll(defaultValue())
+    }
+}
 
 /**
  * Returns a sequence of all elements from all sequences in this sequence.
