@@ -77,6 +77,29 @@ public final class Char private constructor(private val value: kotlin.native.int
 
     companion object {
         /**
+         * The minimum value of a character code unit.
+         */
+        @SinceKotlin("1.3")
+        public const val MIN_VALUE: Char = '\u0000'
+
+        /**
+         * The maximum value of a character code unit.
+         */
+        @SinceKotlin("1.3")
+        public const val MAX_VALUE: Char = '\uFFFF'
+
+        /**
+         * The number of bytes used to represent a Char in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 2
+        /**
+         * The number of bits used to represent a Char in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 16
+
+        /**
          * The minimum value of a Unicode high-surrogate code unit.
          */
         public const val MIN_HIGH_SURROGATE: Char = '\uD800'

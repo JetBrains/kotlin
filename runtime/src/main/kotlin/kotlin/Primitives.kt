@@ -33,6 +33,18 @@ public final class Byte private constructor(private val value: kotlin.native.int
          * A constant holding the maximum value an instance of Byte can have.
          */
         public const val MAX_VALUE: Byte = 127
+
+        /**
+         * The number of bytes used to represent an instance of Byte in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 1
+
+        /**
+         * The number of bits used to represent an instance of Byte in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 8
     }
 
     /**
@@ -247,6 +259,18 @@ public final class Short private constructor(private val value: kotlin.native.in
          * A constant holding the maximum value an instance of Short can have.
          */
         public const val MAX_VALUE: Short = 32767
+
+        /**
+         * The number of bytes used to represent an instance of Short in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 2
+
+        /**
+         * The number of bits used to represent an instance of Short in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 16
     }
 
     /**
@@ -461,6 +485,18 @@ public final class Int private constructor(private val value: kotlin.native.inte
          * A constant holding the maximum value an instance of Int can have.
          */
         public const val MAX_VALUE: Int = 2147483647
+
+        /**
+         * The number of bytes used to represent an instance of Int in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Int in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -697,6 +733,18 @@ public final class Long private constructor(private val value: kotlin.native.int
          * A constant holding the maximum value an instance of Long can have.
          */
         public const val MAX_VALUE: Long = 9223372036854775807L
+
+        /**
+         * The number of bytes used to represent an instance of Long in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Long in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**

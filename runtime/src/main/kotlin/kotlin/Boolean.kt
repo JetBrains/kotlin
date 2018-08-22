@@ -21,6 +21,10 @@ package kotlin
  * represented as values of the primitive type `boolean`.
  */
 public final class Boolean private constructor(private val value: kotlin.native.internal.BooleanValue) : Comparable<Boolean> {
+
+    @SinceKotlin("1.3")
+    companion object {}
+
     /**
      * Returns the inverse of this boolean.
      */
