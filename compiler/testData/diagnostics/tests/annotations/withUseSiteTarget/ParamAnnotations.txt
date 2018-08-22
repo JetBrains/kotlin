@@ -22,7 +22,7 @@ public final annotation class Second : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class SomeClass {
+@Ann public final class SomeClass {
     public constructor SomeClass(/*0*/ a: kotlin.String)
     protected final val simpleProperty: kotlin.String = "text"
     public final fun anotherFun(): kotlin.Unit

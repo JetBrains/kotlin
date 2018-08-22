@@ -15,7 +15,7 @@ public final class CustomDelegate {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class SomeClass {
+@Ann public final class SomeClass {
     public constructor SomeClass()
     protected final val delegatedProperty: kotlin.String
     public final val propertyWithCustomGetter: kotlin.Int

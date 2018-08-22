@@ -4,7 +4,7 @@ package bar {
     public val prop: [ERROR : No type, no body]
     public fun func(): kotlin.Unit
 
-    public final class C {
+    @bar.baz public final class C {
         public constructor C()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

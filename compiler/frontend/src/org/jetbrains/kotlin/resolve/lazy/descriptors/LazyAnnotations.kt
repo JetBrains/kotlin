@@ -56,27 +56,12 @@ class LazyAnnotations(
     override fun isEmpty() = annotationEntries.isEmpty()
 
     private val annotation = c.storageManager.createMemoizedFunction { entry: KtAnnotationEntry ->
-        val descriptor = LazyAnnotationDescriptor(c, entry)
-        val target = entry.useSiteTarget?.getAnnotationUseSiteTarget()
-        AnnotationWithTarget(descriptor, target)
+        LazyAnnotationDescriptor(c, entry)
     }
 
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
-        return annotationEntries
-            .mapNotNull {
-                val (descriptor, target) = annotation(it)
-                if (target == null) null else AnnotationWithTarget(descriptor, target)
-            }
-    }
+    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
-    override fun iterator(): Iterator<AnnotationDescriptor> {
-        return annotationEntries
-            .asSequence()
-            .mapNotNull {
-                val (descriptor, target) = annotation(it)
-                if (target == null) descriptor else null // Filter out annotations with target
-            }.iterator()
-    }
+    override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.asSequence().map(annotation).iterator()
 
     override fun forceResolveAllContents() {
         // To resolve all entries
