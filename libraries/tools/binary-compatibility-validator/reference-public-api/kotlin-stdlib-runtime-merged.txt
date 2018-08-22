@@ -178,6 +178,10 @@ public final class kotlin/SuccessOrFailure$Failure : java/io/Serializable {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class kotlin/SuccessOrFailureKt {
+	public static final fun getOrDefault (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+}
+
 public abstract interface annotation class kotlin/Suppress : java/lang/annotation/Annotation {
 	public abstract fun names ()[Ljava/lang/String;
 }
@@ -3887,6 +3891,18 @@ public final class kotlin/random/Random$Companion : kotlin/random/Random {
 public final class kotlin/random/RandomKt {
 	public static final fun Random (I)Lkotlin/random/Random;
 	public static final fun Random (J)Lkotlin/random/Random;
+	public static final fun nextUBytes (Lkotlin/random/Random;I)[B
+	public static final fun nextUBytes (Lkotlin/random/Random;[B)[B
+	public static final fun nextUBytes (Lkotlin/random/Random;[BII)[B
+	public static synthetic fun nextUBytes$default (Lkotlin/random/Random;[BIIILjava/lang/Object;)[B
+	public static final fun nextUInt (Lkotlin/random/Random;)I
+	public static final fun nextUInt (Lkotlin/random/Random;I)I
+	public static final fun nextUInt (Lkotlin/random/Random;II)I
+	public static final fun nextUInt (Lkotlin/random/Random;Lkotlin/ranges/UIntRange;)I
+	public static final fun nextULong (Lkotlin/random/Random;)J
+	public static final fun nextULong (Lkotlin/random/Random;J)J
+	public static final fun nextULong (Lkotlin/random/Random;JJ)J
+	public static final fun nextULong (Lkotlin/random/Random;Lkotlin/ranges/ULongRange;)J
 }
 
 public class kotlin/ranges/CharProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
