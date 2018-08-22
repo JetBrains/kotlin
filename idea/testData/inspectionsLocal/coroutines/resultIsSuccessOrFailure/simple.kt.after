@@ -1,0 +1,7 @@
+package kotlin
+
+class SuccessOrFailure<T>(val value: T?) {
+    fun getOrThrow(): T = value ?: throw AssertionError("")
+}
+
+fun incorrect() = SuccessOrFailure("123").getOrThrow()
