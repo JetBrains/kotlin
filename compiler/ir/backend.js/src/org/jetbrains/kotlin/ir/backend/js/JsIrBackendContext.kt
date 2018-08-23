@@ -186,7 +186,7 @@ class JsIrBackendContext(
                 get() = TODO("not implemented")
             override val coroutineImpl = symbolTable.referenceClass(getInternalClass(COROUTINE_IMPL_NAME.identifier))
             override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
-                coroutineIntrinsicsPackage.memberScope.getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).single().getter!!
+                coroutineIntrinsicsPackage.memberScope.getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).filterNot { it.isExpect }.single().getter!!
             )
         }
 
