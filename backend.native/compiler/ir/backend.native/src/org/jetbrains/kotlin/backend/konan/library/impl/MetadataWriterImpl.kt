@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.backend.konan.library.impl
 
-import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.LinkData
+import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 
-internal class MetadataWriterImpl(library: KonanLibrary): KonanLibrary by library {
+internal class MetadataWriterImpl(libraryLayout: KonanLibraryLayout): KonanLibraryLayout by libraryLayout {
 
     fun addLinkData(linkData: LinkData) {
         moduleHeaderFile.writeBytes(linkData.module)

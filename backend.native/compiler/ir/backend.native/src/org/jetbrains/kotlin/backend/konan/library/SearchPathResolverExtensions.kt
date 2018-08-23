@@ -17,15 +17,16 @@
 package org.jetbrains.kotlin.backend.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.SearchPathResolver
-import org.jetbrains.kotlin.konan.library.impl.LibraryReaderImpl
+import org.jetbrains.kotlin.konan.library.createKonanLibraryReader
+import org.jetbrains.kotlin.konan.library.unresolvedDependencies
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 const val KONAN_CURRENT_ABI_VERSION = 1
 
 /**
- * Returns the list of [KonanLibraryReader]s given the list of user provided [libraryNames] along with
+ * Returns the list of [KonanLibrary]s given the list of user provided [libraryNames] along with
  * other parameters: [target], [abiVersion], [noStdLib], [noDefaultLibs].
  */
 fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
@@ -33,13 +34,13 @@ fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
                                                  abiVersion: Int = KONAN_CURRENT_ABI_VERSION,
                                                  noStdLib: Boolean = false,
                                                  noDefaultLibs: Boolean = false,
-                                                 logger: ((String) -> Unit)?): List<KonanLibraryReader> {
+                                                 logger: ((String) -> Unit)?): List<KonanLibrary> {
     val userProvidedLibraries = libraryNames
             .map { resolve(it) }
-            .map{ LibraryReaderImpl(it, abiVersion, target) }
+            .map{ createKonanLibraryReader(it, abiVersion, target) }
 
     val defaultLibraries = defaultLinks(noStdLib = noStdLib, noDefaultLibs = noDefaultLibs).map {
-        LibraryReaderImpl(it, abiVersion, target, isDefaultLibrary = true)
+        createKonanLibraryReader(it, abiVersion, target, isDefaultLibrary = true)
     }
 
     // Make sure the user provided ones appear first, so that 
@@ -64,16 +65,16 @@ private fun warnOnLibraryDuplicates(resolvedLibraries: List<File>, logger: ((Str
 
 /**
  * For each of the given [immediateLibraries] fills in `resolvedDependencies` field with the
- * [KonanLibraryReader]s the library !!directly!! depends on.
+ * [KonanLibrary]s the library !!directly!! depends on.
  */
-fun SearchPathResolver.resolveLibrariesRecursive(immediateLibraries: List<KonanLibraryReader>,
+fun SearchPathResolver.resolveLibrariesRecursive(immediateLibraries: List<KonanLibrary>,
                                                  target: KonanTarget,
                                                  abiVersion: Int) {
-    val cache = mutableMapOf<File, KonanLibraryReader>()
+    val cache = mutableMapOf<File, KonanLibrary>()
     cache.putAll(immediateLibraries.map { it.libraryFile.absoluteFile to it })
     var newDependencies = cache.values.toList()
     do {
-        newDependencies = newDependencies.map { library: KonanLibraryReader ->
+        newDependencies = newDependencies.map { library: KonanLibrary ->
             library.unresolvedDependencies
                     .map { resolve(it).absoluteFile }
                     .mapNotNull {
@@ -81,7 +82,7 @@ fun SearchPathResolver.resolveLibrariesRecursive(immediateLibraries: List<KonanL
                             library.resolvedDependencies.add(cache[it]!!)
                             null
                         } else {
-                            val reader = LibraryReaderImpl(it, abiVersion, target)
+                            val reader = createKonanLibraryReader(it, abiVersion, target)
                             cache[it] = reader
                             library.resolvedDependencies.add(reader)
                             reader
@@ -92,11 +93,11 @@ fun SearchPathResolver.resolveLibrariesRecursive(immediateLibraries: List<KonanL
 }
 
 /**
- * For the given list of [KonanLibraryReader]s returns the list of [KonanLibraryReader]s
+ * For the given list of [KonanLibrary]s returns the list of [KonanLibrary]s
  * that includes the same libraries plus all their (transitive) dependencies.
  */
-fun List<KonanLibraryReader>.withResolvedDependencies(): List<KonanLibraryReader> {
-    val result = mutableSetOf<KonanLibraryReader>()
+fun List<KonanLibrary>.withResolvedDependencies(): List<KonanLibrary> {
+    val result = mutableSetOf<KonanLibrary>()
     result.addAll(this)
     var newDependencies = result.toList()
     do {
@@ -112,7 +113,7 @@ fun SearchPathResolver.resolveLibrariesRecursive(libraryNames: List<String>,
                                                  target: KonanTarget,
                                                  abiVersion: Int = KONAN_CURRENT_ABI_VERSION,
                                                  noStdLib: Boolean = false,
-                                                 noDefaultLibs: Boolean = false): List<KonanLibraryReader> {
+                                                 noDefaultLibs: Boolean = false): List<KonanLibrary> {
     val immediateLibraries = resolveImmediateLibraries(
                     libraryNames = libraryNames,
                     target = target,

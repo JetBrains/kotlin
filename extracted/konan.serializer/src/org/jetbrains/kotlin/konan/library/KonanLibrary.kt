@@ -1,44 +1,64 @@
 package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.name.FqName
 
-// This scheme describes the Kotlin/Native Library (klib) layout.
-interface KonanLibraryLayout {
+const val KLIB_PROPERTY_ABI_VERSION = "abi_version"
+const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
+const val KLIB_PROPERTY_LINKED_OPTS = "linkerOpts"
+const val KLIB_PROPERTY_DEPENDS = "depends"
+const val KLIB_PROPERTY_INTEROP = "interop"
+const val KLIB_PROPERTY_PACKAGE = "package"
+const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
+const val KLIB_PROPERTY_INCLUDED_HEADERS = "includedHeaders"
 
-    val libDir: File
-    val target: KonanTarget?
-        // This is a default implementation. Can't make it an assignment.
-        get() = null
+interface KonanLibrary {
 
-    val manifestFile
-        get() = File(libDir, "manifest")
-    val resourcesDir
-        get() = File(libDir, "resources")
-
-    val targetsDir
-        get() = File(libDir, "targets")
-    val targetDir
-        get() = File(targetsDir, target!!.visibleName)
-
-    val kotlinDir
-        get() = File(targetDir, "kotlin")
-    val nativeDir
-        get() = File(targetDir, "native")
-    val includedDir
-        get() = File(targetDir, "included")
-
-    val linkdataDir
-        get() = File(libDir, "linkdata")
-    val moduleHeaderFile
-        get() = File(linkdataDir, "module")
-    val dataFlowGraphFile
-        get() = File(linkdataDir, "module_data_flow_graph")
-
-    fun packageFile(packageName: String)
-            = File(linkdataDir, if (packageName == "") "root_package.knm" else "package_$packageName.knm")
-}
-
-interface KonanLibrary: KonanLibraryLayout {
     val libraryName: String
+    val libraryFile: File
+
+    // properties:
+    val manifestProperties: Properties
+    val abiVersion: String
+    val linkerOpts: List<String>
+
+    // paths:
+    val bitcodePaths: List<String>
+    val includedPaths: List<String>
+
+    val targetList: List<String>
+
+    val dataFlowGraph: ByteArray?
+    val moduleHeaderData: ByteArray
+    fun packageMetadata(fqName: String): ByteArray
+
+    // FIXME: ddol: to be refactored into some global resolution context
+    val isDefaultLibrary: Boolean get() = false
+    val isNeededForLink: Boolean get() = true
+    val resolvedDependencies: MutableList<KonanLibrary>
+    fun markPackageAccessed(fqName: String)
 }
+
+val KonanLibrary.uniqueName
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)!!
+
+val KonanLibrary.unresolvedDependencies: List<String>
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS)
+
+val KonanLibrary.isInterop
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
+
+val KonanLibrary.packageFqName
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)?.let { FqName(it) }
+
+val KonanLibrary.exportForwardDeclarations
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS)
+            .split(' ')
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .map { FqName(it) }
+
+val KonanLibrary.includedHeaders
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_INCLUDED_HEADERS).split(' ')

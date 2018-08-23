@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.serialization.konan
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 class KonanPackageFragment(
         val fqNameString: String,
-        val reader: KonanLibraryReader,
+        val reader: KonanLibrary,
         storageManager: StorageManager,
         module: ModuleDescriptor
 ) : DeserializedPackageFragment(FqName(fqNameString), storageManager, module) {

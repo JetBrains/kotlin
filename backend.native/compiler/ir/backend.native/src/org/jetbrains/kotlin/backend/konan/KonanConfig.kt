@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.interop.createForwardDeclarationsModule
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.profile
@@ -93,8 +93,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
     private val resolver = defaultResolver(repositories, target, distribution)
 
-    internal val immediateLibraries: List<KonanLibraryReader> by lazy {
-        val result = resolver.resolveImmediateLibraries(libraryNames, target,
+    internal val immediateLibraries: List<KonanLibrary> by lazy {
+        val result = resolver.resolveImmediateLibraries(
+                libraryNames,
+                target,
                 currentAbiVersion,
                 configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
                 configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
@@ -103,7 +105,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         result
     }
 
-    fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibraryReader> {
+    fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
 
         return immediateLibraries.purgeUnneeded(this).withResolvedDependencies()
@@ -175,5 +177,5 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 
     = this.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
 
-private fun <T: KonanLibraryReader> List<T>.purgeUnneeded(config: KonanConfig): List<T> =
+private fun <T: KonanLibrary> List<T>.purgeUnneeded(config: KonanConfig): List<T> =
         this.filter{ (!it.isDefaultLibrary && !config.purgeUserLibs) || it.isNeededForLink }

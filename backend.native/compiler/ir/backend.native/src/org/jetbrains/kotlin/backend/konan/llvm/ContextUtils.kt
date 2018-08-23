@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
 import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
@@ -323,7 +323,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return function
     }
 
-    private val usedLibraries = mutableSetOf<KonanLibraryReader>()
+    private val usedLibraries = mutableSetOf<KonanLibrary>()
 
     val imports = object : LlvmImports {
 
@@ -332,7 +332,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         override fun add(origin: CompiledKonanModuleOrigin) {
             val reader = when (origin) {
                 CurrentKonanModuleOrigin -> return
-                is DeserializedKonanModuleOrigin -> origin.reader as KonanLibraryReader
+                is DeserializedKonanModuleOrigin -> origin.reader as KonanLibrary
             }
 
             if (reader !in allLibraries) {
@@ -343,19 +343,19 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
-    val librariesToLink: List<KonanLibraryReader>  by lazy {
+    val librariesToLink: List<KonanLibrary>  by lazy {
         context.config.immediateLibraries
                 .filter { (!it.isDefaultLibrary && !context.config.purgeUserLibs) || it in usedLibraries }
                 .withResolvedDependencies()
                 .topoSort()
     }
 
-    private fun List<KonanLibraryReader>.topoSort(): List<KonanLibraryReader> {
-        var sorted = mutableListOf<KonanLibraryReader>()
-        val visited = mutableSetOf<KonanLibraryReader>()
-        val tempMarks = mutableSetOf<KonanLibraryReader>()
+    private fun List<KonanLibrary>.topoSort(): List<KonanLibrary> {
+        var sorted = mutableListOf<KonanLibrary>()
+        val visited = mutableSetOf<KonanLibrary>()
+        val tempMarks = mutableSetOf<KonanLibrary>()
 
-        fun visit(node: KonanLibraryReader, result: MutableList<KonanLibraryReader>) {
+        fun visit(node: KonanLibrary, result: MutableList<KonanLibrary>) {
             if (visited.contains(node)) return
             if (tempMarks.contains(node)) error("Cyclic dependency in library graph.")
             tempMarks.add(node)
@@ -373,7 +373,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         return sorted
     }
 
-    val librariesForLibraryManifest: List<KonanLibraryReader> get() {
+    val librariesForLibraryManifest: List<KonanLibrary> get() {
         // Note: library manifest should contain the list of all user libraries and frontend-used default libraries.
         // However this would result into linking too many default libraries into the application which uses current
         // library. This problem should probably be fixed by adding different kind of dependencies to library

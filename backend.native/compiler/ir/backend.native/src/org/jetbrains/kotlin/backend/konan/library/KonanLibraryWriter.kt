@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.backend.konan.library
 
 import llvm.LLVMModuleRef
-import org.jetbrains.kotlin.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 
 interface KonanLibraryWriter {
     fun addLinkData(linkData: LinkData)
     fun addNativeBitcode(library: String)
     fun addIncludedBinary(library: String)
     fun addKotlinBitcode(llvmModule: LLVMModuleRef)
-    fun addLinkDependencies(libraries: List<KonanLibraryReader>)
+    fun addLinkDependencies(libraries: List<KonanLibrary>)
     fun addManifestAddend(path: String)
     fun addDataFlowGraph(dataFlowGraph: ByteArray)
     val mainBitcodeFileName: String

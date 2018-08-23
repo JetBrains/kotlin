@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.cli.utilities
 import org.jetbrains.kotlin.backend.konan.library.resolveLibrariesRecursive
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
+import org.jetbrains.kotlin.konan.library.includedHeaders
+import org.jetbrains.kotlin.konan.library.packageFqName
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -71,13 +73,11 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
             libraries, target, noStdLib = true, noDefaultLibs = noDefaultLibs
     )
 
-    val importArgs = allLibraries.flatMap {
-        val manifestProperties = it.manifestProperties
+    val importArgs = allLibraries.flatMap {libraryReader ->
         // TODO: handle missing properties?
-        manifestProperties["package"]?.let {
-            val pkg = it as String
-            val headerIds = (manifestProperties["includedHeaders"] as String).split(' ')
-            val arg = "$pkg:${headerIds.joinToString(";")}"
+        libraryReader.packageFqName?.asString()?.let { packageFqName ->
+            val headerIds = libraryReader.includedHeaders
+            val arg = "$packageFqName:${headerIds.joinToString(";")}"
             listOf("-import", arg)
         } ?: emptyList()
     }
