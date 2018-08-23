@@ -2559,6 +2559,9 @@ public final class kotlin/contracts/ContractBuilder$DefaultImpls {
 public abstract interface class kotlin/contracts/Effect {
 }
 
+public abstract interface annotation class kotlin/contracts/ExperimentalContracts : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/contracts/InvocationKind : java/lang/Enum {
 	public static final field AT_LEAST_ONCE Lkotlin/contracts/InvocationKind;
 	public static final field AT_MOST_ONCE Lkotlin/contracts/InvocationKind;
