@@ -40,6 +40,7 @@ import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
+import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.components.ReflectAnnotationSource
 import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
 import kotlin.reflect.jvm.internal.components.RuntimeSourceElementFactory

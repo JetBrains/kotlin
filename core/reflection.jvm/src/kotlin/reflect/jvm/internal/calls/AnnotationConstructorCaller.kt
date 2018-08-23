@@ -1,24 +1,15 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.reflect.jvm.internal
+package kotlin.reflect.jvm.internal.calls
 
 import java.lang.reflect.Proxy
+import java.lang.reflect.Type
 import java.util.*
 import kotlin.reflect.KClass
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.structure.wrapperByPrimitive
 import java.lang.reflect.Method as ReflectMethod
 
@@ -28,9 +19,15 @@ internal class AnnotationConstructorCaller(
     private val callMode: CallMode,
     origin: Origin,
     private val methods: List<ReflectMethod> = parameterNames.map { name -> jClass.getDeclaredMethod(name) }
-) : FunctionCaller<Nothing?>(
-    null, jClass, null, methods.map { it.genericReturnType }.toTypedArray()
-) {
+) : Caller<Nothing?> {
+    override val member: Nothing?
+        get() = null
+
+    override val returnType: Type
+        get() = jClass
+
+    override val parameterTypes: List<Type> = methods.map { it.genericReturnType }
+
     enum class CallMode { CALL_BY_NAME, POSITIONAL_CALL }
 
     enum class Origin { JAVA, KOTLIN }

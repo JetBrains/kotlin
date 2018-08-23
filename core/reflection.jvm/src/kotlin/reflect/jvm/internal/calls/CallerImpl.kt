@@ -1,20 +1,9 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.reflect.jvm.internal
+package kotlin.reflect.jvm.internal.calls
 
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
@@ -23,35 +12,24 @@ import java.lang.reflect.Constructor as ReflectConstructor
 import java.lang.reflect.Field as ReflectField
 import java.lang.reflect.Method as ReflectMethod
 
-internal abstract class FunctionCaller<out M : Member?>(
-    internal val member: M,
-    internal val returnType: Type,
-    internal val instanceClass: Class<*>?,
+internal abstract class CallerImpl<out M : Member>(
+    final override val member: M,
+    final override val returnType: Type,
+    val instanceClass: Class<*>?,
     valueParameterTypes: Array<Type>
-) {
-    val parameterTypes: List<Type> =
+) : Caller<M> {
+    override val parameterTypes: List<Type> =
         instanceClass?.let { listOf(it, *valueParameterTypes) } ?: valueParameterTypes.toList()
 
-    val arity: Int
-        get() = parameterTypes.size
-
-    abstract fun call(args: Array<*>): Any?
-
-    protected open fun checkArguments(args: Array<*>) {
-        if (arity != args.size) {
-            throw IllegalArgumentException("Callable expects $arity arguments, but ${args.size} were provided.")
-        }
-    }
-
     protected fun checkObjectInstance(obj: Any?) {
-        if (obj == null || !member!!.declaringClass.isInstance(obj)) {
+        if (obj == null || !member.declaringClass.isInstance(obj)) {
             throw IllegalArgumentException("An object member requires the object instance passed as the first argument.")
         }
     }
 
     // Constructors
 
-    class Constructor(constructor: ReflectConstructor<*>) : FunctionCaller<ReflectConstructor<*>>(
+    class Constructor(constructor: ReflectConstructor<*>) : CallerImpl<ReflectConstructor<*>>(
         constructor,
         constructor.declaringClass,
         constructor.declaringClass.let { klass ->
@@ -69,7 +47,7 @@ internal abstract class FunctionCaller<out M : Member?>(
     // TODO fix 'callBy' for bound (and non-bound) inner class constructor references
     // See https://youtrack.jetbrains.com/issue/KT-14990
     class BoundConstructor(constructor: ReflectConstructor<*>, private val boundReceiver: Any?) :
-        FunctionCaller<ReflectConstructor<*>>(
+        CallerImpl<ReflectConstructor<*>>(
             constructor, constructor.declaringClass, null,
             constructor.genericParameterTypes
         ) {
@@ -85,7 +63,7 @@ internal abstract class FunctionCaller<out M : Member?>(
         method: ReflectMethod,
         requiresInstance: Boolean = !Modifier.isStatic(method.modifiers),
         parameterTypes: Array<Type> = method.genericParameterTypes
-    ) : FunctionCaller<ReflectMethod>(
+    ) : CallerImpl<ReflectMethod>(
         method,
         method.genericReturnType,
         if (requiresInstance) method.declaringClass else null,
@@ -151,7 +129,7 @@ internal abstract class FunctionCaller<out M : Member?>(
     abstract class FieldGetter(
         field: ReflectField,
         requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
-    ) : FunctionCaller<ReflectField>(
+    ) : CallerImpl<ReflectField>(
         field,
         field.genericType,
         if (requiresInstance) field.declaringClass else null,
@@ -167,7 +145,7 @@ internal abstract class FunctionCaller<out M : Member?>(
         field: ReflectField,
         private val notNull: Boolean,
         requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
-    ) : FunctionCaller<ReflectField>(
+    ) : CallerImpl<ReflectField>(
         field,
         Void.TYPE,
         if (requiresInstance) field.declaringClass else null,
@@ -197,7 +175,7 @@ internal abstract class FunctionCaller<out M : Member?>(
         }
     }
 
-    class ClassCompanionFieldGetter(field: ReflectField, klass: Class<*>) : FunctionCaller<ReflectField>(
+    class ClassCompanionFieldGetter(field: ReflectField, klass: Class<*>) : CallerImpl<ReflectField>(
         field, field.genericType, klass, emptyArray()
     ) {
         override fun call(args: Array<*>): Any? {
@@ -237,7 +215,7 @@ internal abstract class FunctionCaller<out M : Member?>(
         }
     }
 
-    class ClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) : FunctionCaller<ReflectField>(
+    class ClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) : CallerImpl<ReflectField>(
         field, Void.TYPE, klass, arrayOf(field.genericType)
     ) {
         override fun call(args: Array<*>): Any? {
@@ -264,18 +242,12 @@ internal abstract class FunctionCaller<out M : Member?>(
         }
     }
 
-    class BoundClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) : FunctionCaller<ReflectField>(
+    class BoundClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) : CallerImpl<ReflectField>(
         field, Void.TYPE, klass, arrayOf(field.genericType)
     ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.set(null, args.last())
-        }
-    }
-
-    object ThrowingCaller : FunctionCaller<Nothing?>(null, Void.TYPE, null, emptyArray()) {
-        override fun call(args: Array<*>): Any? {
-            throw UnsupportedOperationException("call/callBy are not supported for this declaration.")
         }
     }
 
