@@ -10080,6 +10080,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt");
         }
 
+        @TestMetadata("defaultValueOfInlineClassTypeInInlineFun.kt")
+        public void testDefaultValueOfInlineClassTypeInInlineFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultValueOfInlineClassTypeInInlineFun.kt");
+        }
+
         @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
         public void testElvisWithInlineClassAndNullConstant() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt");
@@ -10125,6 +10130,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt");
         }
 
+        @TestMetadata("inlineClassesAsInlineFunParameters.kt")
+        public void testInlineClassesAsInlineFunParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParameters.kt");
+        }
+
         @TestMetadata("inlineClassesCheckCast.kt")
         public void testInlineClassesCheckCast() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCast.kt");
@@ -10133,6 +10143,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("inlineClassesInInlineLambdaParameters.kt")
         public void testInlineClassesInInlineLambdaParameters() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParameters.kt");
+        }
+
+        @TestMetadata("inlineClassesRefTypesInInlineLambdaParameters.kt")
+        public void testInlineClassesRefTypesInInlineLambdaParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParameters.kt");
         }
 
         @TestMetadata("inlineFunctionInsideInlineClass.kt")
