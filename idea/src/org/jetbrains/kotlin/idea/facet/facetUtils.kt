@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -30,35 +29,37 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
-import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import kotlin.reflect.KProperty1
 
-private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatformKind<*> {
-    for (platform in TargetPlatformKind.ALL_PLATFORMS) {
+private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): IdePlatform<*, *> {
+    for (platform in IdePlatformKind.ALL_KINDS) {
         if (getRuntimeLibraryVersions(module, rootModel, platform).isNotEmpty()) {
-            return platform
+            //TODO investigate, looks strange
+            return platform.defaultPlatform
         }
     }
 
     val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
-    val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk!!)
+    val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
     return when {
-        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_8]
-        else -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8)
+        else -> JvmIdePlatformKind.defaultPlatform
     }
 }
 
 fun KotlinFacetSettings.initializeIfNeeded(
     module: Module,
     rootModel: ModuleRootModel?,
-    platformKind: TargetPlatformKind<*>? = null, // if null, detect by module dependencies
+    platformKind: IdePlatform<*, *>? = null, // if null, detect by module dependencies
     compilerVersion: String? = null
 ) {
     val project = module.project
@@ -74,8 +75,8 @@ fun KotlinFacetSettings.initializeIfNeeded(
 
     if (compilerArguments == null) {
         val targetPlatformKind = platformKind ?: getDefaultTargetPlatform(module, rootModel)
-        compilerArguments = targetPlatformKind.createCompilerArguments {
-            targetPlatformKind.getPlatformCompilerArgumentsByProject(module.project)?.let { mergeBeans(it, this) }
+        compilerArguments = targetPlatformKind.createArguments {
+            targetPlatformKind.kind.tooling.compilerArgumentsForProject(module.project)?.let { mergeBeans(it, this) }
             mergeBeans(commonArguments, this)
         }
     }
@@ -89,35 +90,14 @@ fun KotlinFacetSettings.initializeIfNeeded(
         apiLevel = if (useProjectSettings) {
             LanguageVersion.fromVersionString(commonArguments.apiVersion) ?: languageLevel
         } else {
-            languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, targetPlatformKind))
+            languageLevel!!.coerceAtMost(getLibraryLanguageLevel(module, rootModel, this.platformKind?.kind))
         }
     }
 }
 
-fun TargetPlatformKind<*>.getPlatformCompilerArgumentsByProject(project: Project): CommonCompilerArguments? {
-    return when (this) {
-        is TargetPlatformKind.Jvm -> Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
-        is TargetPlatformKind.JavaScript -> Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
-        else -> null
-    }
-}
-
-val TargetPlatformKind<*>.mavenLibraryIds: List<String>
-    get() = when (this) {
-        is TargetPlatformKind.Jvm -> listOf(
-            MAVEN_STDLIB_ID,
-            MAVEN_STDLIB_ID_JRE7,
-            MAVEN_STDLIB_ID_JDK7,
-            MAVEN_STDLIB_ID_JRE8,
-            MAVEN_STDLIB_ID_JDK8
-        )
-        is TargetPlatformKind.JavaScript -> listOf(MAVEN_JS_STDLIB_ID, MAVEN_OLD_JS_STDLIB_ID)
-        is TargetPlatformKind.Common -> listOf(MAVEN_COMMON_STDLIB_ID)
-    }
-
-val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
-    TargetPlatformKind.ALL_PLATFORMS
-        .flatMap { platform -> platform.mavenLibraryIds.map { it to platform } }
+val mavenLibraryIdToPlatform: Map<String, IdePlatformKind<*>> by lazy {
+    IdePlatformKind.ALL_KINDS
+        .flatMap { platform -> platform.tooling.mavenLibraryIds.map { it to platform } }
         .sortedByDescending { it.first.length }
         .toMap()
 }
@@ -148,7 +128,7 @@ fun Module.getOrCreateFacet(
 fun KotlinFacet.configureFacet(
     compilerVersion: String,
     coroutineSupport: LanguageFeature.State,
-    platformKind: TargetPlatformKind<*>?, // if null, detect by module dependencies
+    platformKind: IdePlatform<*, *>?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider
 ) {
     val module = module

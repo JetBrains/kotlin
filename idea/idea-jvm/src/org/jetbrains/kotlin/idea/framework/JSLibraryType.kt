@@ -30,7 +30,6 @@ import com.intellij.openapi.roots.libraries.ui.RootDetector
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryRootsComponentDescriptor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import javax.swing.JComponent
@@ -84,10 +83,3 @@ class JSLibraryType : LibraryType<DummyLibraryProperties>(JSLibraryKind) {
 }
 
 private fun isAcceptedForJsLibrary(extension: String?) = extension == "js" || extension == "kjsm"
-
-val TargetPlatformKind<*>.libraryKind: PersistentLibraryKind<*>?
-    get() = when(this) {
-        TargetPlatformKind.JavaScript -> JSLibraryKind
-        TargetPlatformKind.Common -> CommonLibraryKind
-        else -> null
-    }

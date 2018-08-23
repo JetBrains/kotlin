@@ -10,12 +10,16 @@ import org.jetbrains.jps.builders.ModuleBasedBuildTargetType
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.jps.model.java.JpsJavaModuleType
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.jps.model.targetPlatform
+import org.jetbrains.kotlin.jps.model.platform
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.impl.isJavaScript
+import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.util.concurrent.ConcurrentHashMap
 
@@ -24,9 +28,6 @@ fun ModuleBuildTarget(module: JpsModule, isTests: Boolean) =
 
 val JpsModule.productionBuildTarget
     get() = ModuleBuildTarget(this, false)
-
-val JpsModule.testBuildTarget
-    get() = ModuleBuildTarget(this, true)
 
 private val kotlinBuildTargetsCompileContextKey = Key<KotlinBuildTargets>("kotlinBuildTargets")
 
@@ -59,10 +60,13 @@ class KotlinBuildTargets internal constructor(val compileContext: CompileContext
         if (target.targetType !is ModuleBasedBuildTargetType) return null
 
         return byJpsModuleBuildTarget.computeIfAbsent(target) {
-            when (target.module.targetPlatform ?: detectTargetPlatform(target)) {
-                is TargetPlatformKind.Common -> KotlinCommonModuleBuildTarget(compileContext, target)
-                is TargetPlatformKind.JavaScript -> KotlinJsModuleBuildTarget(compileContext, target)
-                is TargetPlatformKind.Jvm -> KotlinJvmModuleBuildTarget(compileContext, target)
+            val platform = target.module.platform?.kind ?: detectTargetPlatform(target)
+
+            when {
+                platform.isCommon -> KotlinCommonModuleBuildTarget(compileContext, target)
+                platform.isJavaScript -> KotlinJsModuleBuildTarget(compileContext, target)
+                platform.isJvm -> KotlinJvmModuleBuildTarget(compileContext, target)
+                else -> error("Invalid platform $platform")
             }
         }
     }
@@ -71,10 +75,12 @@ class KotlinBuildTargets internal constructor(val compileContext: CompileContext
      * Compatibility for KT-14082
      * todo: remove when all projects migrated to facets
      */
-    private fun detectTargetPlatform(target: ModuleBuildTarget): TargetPlatformKind<*> {
-        if (hasJsStdLib(target)) return TargetPlatformKind.JavaScript
+    private fun detectTargetPlatform(target: ModuleBuildTarget): IdePlatformKind<*> {
+        if (hasJsStdLib(target)) {
+            return JsIdePlatformKind
+        }
 
-        return TargetPlatformKind.DEFAULT_PLATFORM
+        return DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind
     }
 
     private fun hasJsStdLib(target: ModuleBuildTarget): Boolean {

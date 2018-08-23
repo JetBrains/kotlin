@@ -137,7 +137,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                     getFacetElement(KotlinFacetType.ID)
                         ?.getChild(JpsFacetSerializer.CONFIGURATION_TAG)
                         ?.getFacetPlatformByConfigurationElement()
-                        ?.asTargetPlatform()
+                        ?.kind?.compilerPlatform
 
                 private fun ModuleSettings.detectPlatformByDependencies(): TargetPlatform? {
                     var hasCommonStdlib = false
