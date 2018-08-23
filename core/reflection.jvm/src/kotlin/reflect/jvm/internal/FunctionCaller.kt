@@ -75,7 +75,7 @@ internal abstract class FunctionCaller<out M : Member?>(
         ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return member.newInstance(*argsWithReceiver(boundReceiver, args))
+            return member.newInstance(boundReceiver, *args)
         }
     }
 
@@ -111,7 +111,7 @@ internal abstract class FunctionCaller<out M : Member?>(
     class InstanceMethod(method: ReflectMethod) : Method(method) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return callMethod(args[0], args.dropFirstArg())
+            return callMethod(args[0], args.dropFirst())
         }
     }
 
@@ -119,7 +119,7 @@ internal abstract class FunctionCaller<out M : Member?>(
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             checkObjectInstance(args.firstOrNull())
-            return callMethod(null, args.dropFirstArg())
+            return callMethod(null, args.dropFirst())
         }
     }
 
@@ -128,7 +128,7 @@ internal abstract class FunctionCaller<out M : Member?>(
     ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
-            return callMethod(null, argsWithReceiver(boundReceiver, args))
+            return callMethod(null, arrayOf(boundReceiver, *args))
         }
     }
 
@@ -280,19 +280,8 @@ internal abstract class FunctionCaller<out M : Member?>(
     }
 
     companion object {
-        // TODO lazily allocate array at bound callers?
-        fun argsWithReceiver(receiver: Any?, args: Array<out Any?>): Array<out Any?> =
-            arrayOfNulls<Any?>(args.size + 1).apply {
-                this[0] = receiver
-                System.arraycopy(args, 0, this, 1, args.size)
-            }
-
         @Suppress("UNCHECKED_CAST")
         inline fun <reified T> Array<out T>.dropFirst(): Array<T> =
             if (size <= 1) emptyArray() else copyOfRange(1, size) as Array<T>
-
-        @Suppress("UNCHECKED_CAST")
-        fun Array<*>.dropFirstArg(): Array<Any?> =
-            (this as Array<Any?>).dropFirst()
     }
 }
