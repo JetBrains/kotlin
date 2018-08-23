@@ -429,7 +429,7 @@ abstract class RandomSmokeTest {
 
     @Test
     fun nextBoolean() {
-        val size = 1000
+        val size = 10000
         val booleans = (1..size).map { subject.nextBoolean() }.groupingBy { it }.eachCount()
         val ts = booleans[true]!!
         val fs = booleans[false]!!
