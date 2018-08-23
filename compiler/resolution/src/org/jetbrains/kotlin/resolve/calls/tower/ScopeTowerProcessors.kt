@@ -65,13 +65,12 @@ internal abstract class AbstractSimpleScopeTowerProcessor<C : Candidate>(
 ) : SimpleScopeTowerProcessor<C> {
     fun createCandidates(
         collector: Collection<CandidateWithBoundDispatchReceiver>,
-        f:(Boolean)->Boolean,
         kind: ExplicitReceiverKind,
         receiver: ReceiverValueWithSmartCastInfo?
     ) : Collection<C> {
         val result = mutableListOf<C>()
         for (candidate in collector) {
-            if (f(candidate.requiresExtensionReceiver)) {
+            if (candidate.requiresExtensionReceiver == (receiver != null)) {
                 result.add(
                     candidateFactory.createCandidate(
                         candidate,
@@ -98,13 +97,11 @@ internal class ExplicitReceiverScopeTowerProcessor<C : Candidate>(
         return when (data) {
             TowerData.Empty -> createCandidates(
                 MemberScopeTowerLevel(scopeTower, explicitReceiver).collectCandidates(null),
-                { !it },
                 ExplicitReceiverKind.DISPATCH_RECEIVER,
                 null
             )
             is TowerData.TowerLevel -> createCandidates(
                 data.level.collectCandidates(explicitReceiver),
-                { it },
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
                 explicitReceiver
             )
@@ -132,7 +129,6 @@ private class QualifierScopeTowerProcessor<C : Candidate>(
 
         return createCandidates(
             QualifierScopeTowerLevel(scopeTower, qualifier).collectCandidates(null),
-            { !it },
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             null
         )
@@ -149,13 +145,11 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
     override fun simpleProcess(data: TowerData): Collection<C> = when (data) {
         is TowerData.TowerLevel -> createCandidates(
             data.level.collectCandidates(null),
-            { !it },
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             null
         )
         is TowerData.BothTowerLevelAndImplicitReceiver -> createCandidates(
             data.level.collectCandidates(data.implicitReceiver),
-            { it },
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             data.implicitReceiver
         )
