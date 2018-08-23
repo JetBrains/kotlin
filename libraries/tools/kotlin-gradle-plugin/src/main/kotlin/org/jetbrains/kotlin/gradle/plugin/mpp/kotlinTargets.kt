@@ -12,6 +12,7 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -39,7 +40,12 @@ abstract class AbstractKotlinTarget (
     override val publishable: Boolean
         get() = true
 
-    override val component: KotlinTargetComponent = KotlinVariant(project, this)
+    override val component: KotlinTargetComponent by lazy {
+        if (isGradleVersionAtLeast(4, 7))
+            KotlinVariantWithCoordinates(this)
+        else
+            KotlinVariant(this)
+    }
 
     override fun createUsageContexts(): Set<UsageContext> =
         setOf(
