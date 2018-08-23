@@ -185,6 +185,14 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
             }
 
             private fun generateTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
+
+                // TODO: Fix unbound symbols (in inline)
+                toType.classifierOrNull?.apply {
+                    if (!isBound) {
+                        return argument
+                    }
+                }
+
                 val toNotNullable = toType.makeNotNull()
                 val instanceCheck = generateTypeCheckNonNull(argument, toNotNullable)
                 val isFromNullable = argument.type.isNullable()
@@ -222,8 +230,15 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
             }
 
             private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {
-                val typeParameter =
-                    (toType.classifierOrNull as? IrTypeParameterSymbol)?.owner ?: error("expected type parameter, but $toType")
+                val typeParameterSymbol =
+                    (toType.classifierOrNull as? IrTypeParameterSymbol) ?: error("expected type parameter, but $toType")
+
+                // TODO: Stop creating unbound symbols inline:
+                // DeepCopyIrTreeWithDescriptors.copy() -> ... -> ClassifierDescriptor.getSymbol()
+                if (!typeParameterSymbol.isBound) {
+                    return argument
+                }
+                val typeParameter = typeParameterSymbol.owner
 
                 assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
 

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.isNullable
 
 private typealias MemberToTransformer = MutableMap<SimpleMemberKey, (IrCall) -> IrExpression>
 private typealias SymbolToTransformer = MutableMap<IrFunctionSymbol, (IrCall) -> IrExpression>
@@ -572,7 +573,8 @@ fun translateEquals(lhs: IrType, rhs: IrType): EqualityLoweringType = when {
     lhs.isNullableBoolean() -> translateEqualsForNullableBoolean(rhs)
     lhs.isString() -> translateEqualsForString(rhs)
     lhs.isNullableString() -> translateEqualsForNullableString(rhs)
-    lhs.isNullable() -> RuntimeFunctionCall
+    // TODO: Fix unbound symbols (in inline)
+    lhs.toKotlinType().isNullable() -> RuntimeFunctionCall
     else -> RuntimeOrMethodCall
 }
 
