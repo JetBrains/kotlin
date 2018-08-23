@@ -324,29 +324,32 @@ public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).
 /**
  * Gets the next random [UInt] from the random number generator.
  *
- * Generates a Unsigned Int random value uniformly distributed between [UInt.MIN_VALUE] and [UInt.MAX_VALUE] (inclusive)
+ * Generates a [UInt] random value uniformly distributed between [UInt.MIN_VALUE] and [UInt.MAX_VALUE] (inclusive).
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextUInt(): UInt = nextInt().toUInt()
 
 /**
  * Gets the next random [UInt] from the random number generator not greater than the specified [bound].
  *
- * Generated an Unsigned Int random value uniformly distributed between `0`(inclusive) and the specified [bound] (exclusive).
+ * Generates a [UInt] random value uniformly distributed between `0` (inclusive) and the specified [bound] (exclusive).
  *
- * @throws IllegalArgumentException if [bound] is zero
+ * @throws IllegalArgumentException if [bound] is zero.
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextUInt(bound: UInt): UInt = nextUInt(0u, bound)
 
 /**
  * Gets the next random [UInt] from the random number generator in the specified range.
  *
- * Generated an Unsigned Integer random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+ * Generates a [UInt] random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
  *
- * @throws IllegalArgumentException if [origin] is greater than or equal to [bound]
+ * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextUInt(origin: UInt, bound: UInt): UInt {
     checkUIntRangeBounds(origin, bound)
 
@@ -361,45 +364,49 @@ public fun Random.nextUInt(origin: UInt, bound: UInt): UInt {
 /**
  * Gets the next random [UInt] from the random number generator in the specified [range].
  *
- * Generates an Unsigned Integer random value uniformly distributed in the specified [range]:
+ * Generates a [UInt] random value uniformly distributed in the specified [range]:
  * from `range.start` inclusive to `range.endInclusive` inclusive.
  *
  * @throws IllegalArgumentException if [range] is empty.
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextUInt(range: UIntRange): UInt = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-    range.last < UInt.MAX_VALUE -> nextUInt(range.first, range.last + 1.toUInt())
-    range.first > UInt.MIN_VALUE -> nextUInt(range.first, range.last + 1.toUInt())
+    range.last < UInt.MAX_VALUE -> nextUInt(range.first, range.last + 1u)
+    range.first > UInt.MIN_VALUE -> nextUInt(range.first, range.last + 1u)
     else -> nextUInt()
 }
 
 /**
  * Gets the next random [ULong] from the random number generator.
  *
- * Generated a Unsigned Long random value uniformly distributed between [ULong.MIN_VALUE] and [ULong.MAX_VALUE] (inclusive)
+ * Generates a [ULong] random value uniformly distributed between [ULong.MIN_VALUE] and [ULong.MAX_VALUE] (inclusive).
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextULong(): ULong = nextLong().toULong()
 
 /**
  * Gets the next random [ULong] from the random number generator not greater than the specified [bound].
  *
- * Generated an Unsigned Long random value uniformly distributed between `0`(inclusive) and the specified [bound] (exclusive).
+ * Generates a [ULong] random value uniformly distributed between `0` (inclusive) and the specified [bound] (exclusive).
  *
- * @throws IllegalArgumentException if [bound] is zero
+ * @throws IllegalArgumentException if [bound] is zero.
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextULong(bound: ULong): ULong = nextULong(0uL, bound)
 
 /**
- * Gets the next random [ULong] from the random number generator in the specified range
+ * Gets the next random [ULong] from the random number generator in the specified range.
  *
- * Generated an Unsigned Long random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+ * Generates a [ULong] random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
  *
- * @throws IllegalArgumentException if [origin] is greater than or equal to [bound]
+ * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextULong(origin: ULong, bound: ULong): ULong {
     checkULongRangeBounds(origin, bound)
 
@@ -413,41 +420,49 @@ public fun Random.nextULong(origin: ULong, bound: ULong): ULong {
 /**
  * Gets the next random [ULong] from the random number generator in the specified [range].
  *
- * Generates an Unsigned Long random value uniformly distributed in the specified [range]:
+ * Generates a [ULong] random value uniformly distributed in the specified [range]:
  * from `range.start` inclusive to `range.endInclusive` inclusive.
  *
- * @throws IllegalArgumentException if [range] is empty
+ * @throws IllegalArgumentException if [range] is empty.
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextULong(range: ULongRange): ULong = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-    range.last < ULong.MAX_VALUE -> nextULong(range.first, range.last + 1.toULong())
-    range.first > ULong.MIN_VALUE -> nextULong(range.first, range.last + 1.toULong())
+    range.last < ULong.MAX_VALUE -> nextULong(range.first, range.last + 1u)
+    range.first > ULong.MIN_VALUE -> nextULong(range.first, range.last + 1u)
     else -> nextULong()
 }
 
 /**
- * Fills the specified byte [array] with random bytes and returns it.
+ * Fills the specified unsigned byte [array] with random bytes and returns it.
  *
  * @return [array] filled with random bytes.
  */
 @SinceKotlin("1.3")
-public fun Random.nextUBytes(array: UByteArray) = nextUBytes(array, 0, array.size)
+@ExperimentalUnsignedTypes
+public fun Random.nextUBytes(array: UByteArray): UByteArray {
+    nextBytes(array.asByteArray())
+    return array
+}
 
 /**
- * Creates a byte array of the specified [size], filled with random bytes.
+ * Creates an unsigned byte array of the specified [size], filled with random bytes.
  */
 @SinceKotlin("1.3")
-public fun Random.nextUBytes(size: Int): UByteArray = UByteArray(nextBytes(size))
+@ExperimentalUnsignedTypes
+public fun Random.nextUBytes(size: Int): UByteArray = nextBytes(size).asUByteArray()
 
 /**
- * Fills a subrange of the specified UByte [array] starting from [fromIndex] inclusive and ending [toIndex] exclusive with random UBytes
+ * Fills a subrange of the specified `UByte` [array] starting from [fromIndex] inclusive and ending [toIndex] exclusive with random UBytes.
  *
- * @returns [array] with the subrange filled with random bytes.
+ * @return [array] with the subrange filled with random bytes.
  */
 @SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public fun Random.nextUBytes(array: UByteArray, fromIndex: Int = 0, toIndex: Int = array.size): UByteArray {
-    return UByteArray(nextBytes(array.storage, fromIndex, toIndex))
+    nextBytes(array.asByteArray(), fromIndex, toIndex)
+    return array
 }
 
 internal expect fun defaultPlatformRandom(): Random

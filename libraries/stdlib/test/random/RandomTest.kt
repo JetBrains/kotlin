@@ -51,7 +51,7 @@ abstract class RandomSmokeTest {
 
     @Test
     fun nextUInt() {
-        var result1 = UInt.MIN_VALUE
+        var result1 = 0u
         var result2 = UInt.MAX_VALUE
         repeat(1000) {
             val r = subject.nextUInt()
@@ -59,7 +59,7 @@ abstract class RandomSmokeTest {
             result2 = result2 and r
         }
         assertEquals(UInt.MAX_VALUE, result1, "All one bits should be present")
-        assertEquals(UInt.MIN_VALUE, result2, "All zero bits should present")
+        assertEquals(0u, result2, "All zero bits should present")
 
     }
 
@@ -93,7 +93,7 @@ abstract class RandomSmokeTest {
         for (bound in listOf(2u, 3u, 7u, 16u, 32u, 0x4000_0000u, UInt.MAX_VALUE)) {
             repeat(1000) {
                 val x = subject.nextUInt(bound)
-                if (x !in 0u..(bound - 1u))
+                if (x !in 0u until bound)
                     fail("Value $x must be in range [0, $bound)")
             }
         }
@@ -137,7 +137,7 @@ abstract class RandomSmokeTest {
         for ((origin, bound) in listOf((0u to 2u), (1u to 6u), (0u to 32u), (0u to UInt.MAX_VALUE), (1u to (Int.MAX_VALUE.toUInt() + 1u)), (UInt.MIN_VALUE to UInt.MAX_VALUE))) {
             repeat(1000) {
                 val x = subject.nextUInt(origin, bound)
-                if (x !in origin..bound - 1u)
+                if (x !in origin until bound)
                     fail("Value $x must be in range [$origin, $bound)")
             }
         }
@@ -167,7 +167,7 @@ abstract class RandomSmokeTest {
     @Test
     fun nextUIntInUIntRange() {
         assertFailsWith<IllegalArgumentException> { subject.nextUInt(1u..0u) }
-        assertFailsWith<IllegalArgumentException> { subject.nextUInt((-1).toUInt()..UInt.MIN_VALUE) }
+        assertFailsWith<IllegalArgumentException> { subject.nextUInt(UInt.MAX_VALUE..UInt.MIN_VALUE) }
         assertFailsWith<IllegalArgumentException> { subject.nextUInt(UInt.MAX_VALUE..(UInt.MAX_VALUE - 1u)) }
 
         repeat(1000) { it ->
@@ -205,7 +205,7 @@ abstract class RandomSmokeTest {
 
     @Test
     fun nextULong() {
-        var result1 = ULong.MIN_VALUE
+        var result1 = 0uL
         var result2 = ULong.MAX_VALUE
         repeat(1000) {
             val r = subject.nextULong()
@@ -214,7 +214,7 @@ abstract class RandomSmokeTest {
         }
 
         assertEquals(ULong.MAX_VALUE, result1, "All one bits should be present")
-        assertEquals(ULong.MIN_VALUE, result2, "All zero bits should be present")
+        assertEquals(0uL, result2, "All zero bits should be present")
     }
 
     @Test
@@ -244,10 +244,10 @@ abstract class RandomSmokeTest {
             assertEquals(0uL, subject.nextULong(1uL))
         }
 
-        for (bound in listOf(2uL, 23uL, 32uL, (0x1_0000_0000).toULong(), 0x4000_0000_0000_000.toULong(), ULong.MAX_VALUE)) {
+        for (bound in listOf(2uL, 23uL, 32uL, 0x1_0000_0000uL, 0x8000_0000_0000_000uL, ULong.MAX_VALUE)) {
             repeat(1000) {
                 val x = subject.nextULong(bound)
-                if (x !in 0uL..(bound - 1uL)) {
+                if (x !in 0uL until bound) {
                     fail("Value $x must be in range [0, $bound)")
                 }
             }
@@ -280,8 +280,8 @@ abstract class RandomSmokeTest {
         assertFailsWith<IllegalArgumentException> { subject.nextULong(0uL, 0uL) }
         assertFailsWith<IllegalArgumentException> { subject.nextULong((-1).toULong(), (-2).toULong()) }
 
-        for (i in 500uL..1500uL) {
-            val n = (0x1_0000_0000).toULong() + i
+        for (i in 0u..1000u) {
+            val n = 0x1_0000_0000uL - 500u + i
             assertEquals(n, subject.nextULong(n, n + 1uL))
         }
 
@@ -293,7 +293,7 @@ abstract class RandomSmokeTest {
         )) {
             repeat(1000) {
                 val x = subject.nextULong(origin, bound)
-                if (x !in origin..(bound - 1uL)) {
+                if (x !in origin until bound) {
                     fail("Value $x must be in range [$origin, $bound)")
                 }
             }
@@ -331,7 +331,6 @@ abstract class RandomSmokeTest {
         repeat(1000) { i ->
             val n = (0x1_0000_0000).toULong() - 500uL + i.toULong()
             assertEquals(n, subject.nextULong(n..n))
-
         }
 
         for (range in listOf(
@@ -466,6 +465,8 @@ abstract class RandomSmokeTest {
         val ubytes2 = subject.nextUBytes(UByteArray(size))
         assertEquals(size, ubytes2.size)
         assertTrue(ubytes2.any { it != 0.toUByte() })
+
+        assertFalse(ubytes1 contentEquals ubytes2)
     }
 
     @Test
