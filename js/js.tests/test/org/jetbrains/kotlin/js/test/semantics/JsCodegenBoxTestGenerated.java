@@ -13901,6 +13901,54 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testProtectedCompanionObjectAccessedFromNestedClass() throws Exception {
                 runTest("compiler/testData/codegen/box/objects/companionObjectAccess/protectedCompanionObjectAccessedFromNestedClass.kt");
             }
+
+            @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PrimitiveCompanion extends AbstractJsCodegenBoxTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInPrimitiveCompanion() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                }
+
+                @TestMetadata("byteCompanionObject.kt")
+                public void testByteCompanionObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion/byteCompanionObject.kt");
+                }
+
+                @TestMetadata("charCompanionObject.kt")
+                public void testCharCompanionObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion/charCompanionObject.kt");
+                }
+
+                @TestMetadata("doubleCompanionObject.kt")
+                public void testDoubleCompanionObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion/doubleCompanionObject.kt");
+                }
+
+                @TestMetadata("floatCompanionObject.kt")
+                public void testFloatCompanionObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion/floatCompanionObject.kt");
+                }
+
+                @TestMetadata("intCompanionObject.kt")
+                public void testIntCompanionObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion/intCompanionObject.kt");
+                }
+
+                @TestMetadata("longCompanionObject.kt")
+                public void testLongCompanionObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion/longCompanionObject.kt");
+                }
+
+                @TestMetadata("shortCompanionObject.kt")
+                public void testShortCompanionObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion/shortCompanionObject.kt");
+                }
+            }
         }
     }
 

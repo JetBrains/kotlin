@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 const val M = Int.MAX_VALUE
 
 fun box(): String {
