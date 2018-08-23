@@ -1,6 +1,6 @@
 # Curl interop library
 
-This example shows how to build and publish an interop library to communicate with the lubcurl,
+This example shows how to build and publish an interop library to communicate with the libcurl,
 HTTP/HTTPS/FTP/etc client library. Debian-like distros may need to 
 `apt-get install libcurl4-openssl-dev`.
 
