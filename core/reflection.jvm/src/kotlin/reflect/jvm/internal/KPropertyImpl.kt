@@ -21,6 +21,9 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.IllegalPropertyDelegateAccessException
 import kotlin.reflect.jvm.internal.JvmPropertySignature.*
+import kotlin.reflect.jvm.internal.calls.Caller
+import kotlin.reflect.jvm.internal.calls.CallerImpl
+import kotlin.reflect.jvm.internal.calls.ThrowingCaller
 
 internal abstract class KPropertyImpl<out R> private constructor(
     override val container: KDeclarationContainerImpl,
@@ -99,9 +102,9 @@ internal abstract class KPropertyImpl<out R> private constructor(
 
     override val descriptor: PropertyDescriptor get() = _descriptor()
 
-    override val caller: FunctionCaller<*> get() = getter.caller
+    override val caller: Caller<*> get() = getter.caller
 
-    override val defaultCaller: FunctionCaller<*>? get() = getter.defaultCaller
+    override val defaultCaller: Caller<*>? get() = getter.defaultCaller
 
     override val isLateinit: Boolean get() = descriptor.isLateInit
 
@@ -128,7 +131,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
 
         override val container: KDeclarationContainerImpl get() = property.container
 
-        override val defaultCaller: FunctionCaller<*>? get() = null
+        override val defaultCaller: Caller<*>? get() = null
 
         override val isBound: Boolean get() = property.isBound
 
@@ -147,7 +150,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
             property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY)
         }
 
-        override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
+        override val caller: Caller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = true)
         }
     }
@@ -160,7 +163,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)
         }
 
-        override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
+        override val caller: Caller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = false)
         }
     }
@@ -171,9 +174,9 @@ internal abstract class KPropertyImpl<out R> private constructor(
 }
 
 
-private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Boolean): FunctionCaller<*> {
+private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Boolean): Caller<*> {
     if (KDeclarationContainerImpl.LOCAL_PROPERTY_SIGNATURE.matches(property.signature)) {
-        return FunctionCaller.ThrowingCaller
+        return ThrowingCaller
     }
 
     fun isInsideClassCompanionObject(): Boolean {
@@ -201,33 +204,33 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
     fun isNotNullProperty() =
         !TypeUtils.isNullableType(property.descriptor.type)
 
-    fun computeFieldCaller(field: Field): FunctionCaller<Field> = when {
+    fun computeFieldCaller(field: Field): Caller<Field> = when {
         isInsideClassCompanionObject() || isInsideInterfaceCompanionObjectWithJvmField() -> {
             val klass = (descriptor.containingDeclaration as ClassDescriptor).toJavaClass()!!
             if (isGetter)
-                if (isBound) FunctionCaller.BoundClassCompanionFieldGetter(field, klass)
-                else FunctionCaller.ClassCompanionFieldGetter(field, klass)
+                if (isBound) CallerImpl.BoundClassCompanionFieldGetter(field, klass)
+                else CallerImpl.ClassCompanionFieldGetter(field, klass)
             else
-                if (isBound) FunctionCaller.BoundClassCompanionFieldSetter(field, klass)
-                else FunctionCaller.ClassCompanionFieldSetter(field, klass)
+                if (isBound) CallerImpl.BoundClassCompanionFieldSetter(field, klass)
+                else CallerImpl.ClassCompanionFieldSetter(field, klass)
         }
         !Modifier.isStatic(field.modifiers) ->
             if (isGetter)
-                if (isBound) FunctionCaller.BoundInstanceFieldGetter(field, property.boundReceiver)
-                else FunctionCaller.InstanceFieldGetter(field)
+                if (isBound) CallerImpl.BoundInstanceFieldGetter(field, property.boundReceiver)
+                else CallerImpl.InstanceFieldGetter(field)
             else
-                if (isBound) FunctionCaller.BoundInstanceFieldSetter(field, isNotNullProperty(), property.boundReceiver)
-                else FunctionCaller.InstanceFieldSetter(field, isNotNullProperty())
+                if (isBound) CallerImpl.BoundInstanceFieldSetter(field, isNotNullProperty(), property.boundReceiver)
+                else CallerImpl.InstanceFieldSetter(field, isNotNullProperty())
         isJvmStaticProperty() ->
             if (isGetter)
-                if (isBound) FunctionCaller.BoundJvmStaticInObjectFieldGetter(field)
-                else FunctionCaller.JvmStaticInObjectFieldGetter(field)
+                if (isBound) CallerImpl.BoundJvmStaticInObjectFieldGetter(field)
+                else CallerImpl.JvmStaticInObjectFieldGetter(field)
             else
-                if (isBound) FunctionCaller.BoundJvmStaticInObjectFieldSetter(field, isNotNullProperty())
-                else FunctionCaller.JvmStaticInObjectFieldSetter(field, isNotNullProperty())
+                if (isBound) CallerImpl.BoundJvmStaticInObjectFieldSetter(field, isNotNullProperty())
+                else CallerImpl.JvmStaticInObjectFieldSetter(field, isNotNullProperty())
         else ->
-            if (isGetter) FunctionCaller.StaticFieldGetter(field)
-            else FunctionCaller.StaticFieldSetter(field, isNotNullProperty())
+            if (isGetter) CallerImpl.StaticFieldGetter(field)
+            else CallerImpl.StaticFieldSetter(field, isNotNullProperty())
     }
 
     val jvmSignature = RuntimeTypeMapper.mapPropertySignature(property.descriptor)
@@ -250,18 +253,17 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
 
             when {
                 accessor == null -> computeFieldCaller(
-                    property.javaField
-                            ?: throw KotlinReflectionInternalError("No accessors or field is found for property $property")
+                    property.javaField ?: throw KotlinReflectionInternalError("No accessors or field is found for property $property")
                 )
                 !Modifier.isStatic(accessor.modifiers) ->
-                    if (isBound) FunctionCaller.BoundInstanceMethod(accessor, property.boundReceiver)
-                    else FunctionCaller.InstanceMethod(accessor)
+                    if (isBound) CallerImpl.BoundInstanceMethod(accessor, property.boundReceiver)
+                    else CallerImpl.InstanceMethod(accessor)
                 isJvmStaticProperty() ->
-                    if (isBound) FunctionCaller.BoundJvmStaticInObject(accessor)
-                    else FunctionCaller.JvmStaticInObject(accessor)
+                    if (isBound) CallerImpl.BoundJvmStaticInObject(accessor)
+                    else CallerImpl.JvmStaticInObject(accessor)
                 else ->
-                    if (isBound) FunctionCaller.BoundStaticMethod(accessor, property.boundReceiver)
-                    else FunctionCaller.StaticMethod(accessor)
+                    if (isBound) CallerImpl.BoundStaticMethod(accessor, property.boundReceiver)
+                    else CallerImpl.StaticMethod(accessor)
             }
         }
         is JavaField -> {
@@ -273,22 +275,21 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
                 else jvmSignature.setterMethod ?: throw KotlinReflectionInternalError(
                     "No source found for setter of Java method property: ${jvmSignature.getterMethod}"
                 )
-            if (isBound) FunctionCaller.BoundInstanceMethod(method, property.boundReceiver)
-            else FunctionCaller.InstanceMethod(method)
+            if (isBound) CallerImpl.BoundInstanceMethod(method, property.boundReceiver)
+            else CallerImpl.InstanceMethod(method)
         }
         is MappedKotlinProperty -> {
             val signature =
                 if (isGetter) jvmSignature.getterSignature
-                else (jvmSignature.setterSignature
-                        ?: throw KotlinReflectionInternalError("No setter found for property $property"))
+                else (jvmSignature.setterSignature ?: throw KotlinReflectionInternalError("No setter found for property $property"))
             val accessor = property.container.findMethodBySignature(
                 signature.methodName, signature.methodDesc, descriptor.isPublicInBytecode
             ) ?: throw KotlinReflectionInternalError("No accessor found for property $property")
 
             assert(!Modifier.isStatic(accessor.modifiers)) { "Mapped property cannot have a static accessor: $property" }
 
-            return if (isBound) FunctionCaller.BoundInstanceMethod(accessor, property.boundReceiver)
-            else FunctionCaller.InstanceMethod(accessor)
+            return if (isBound) CallerImpl.BoundInstanceMethod(accessor, property.boundReceiver)
+            else CallerImpl.InstanceMethod(accessor)
         }
     }
 }
