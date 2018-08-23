@@ -106,15 +106,15 @@ class KotlinMultiplatformPlugin(
 
                 // Create separate publications for all publishable targets
                 kotlinSoftwareComponent.variants.filter { it.publishable }.forEach { variant ->
-                    val coordinates = variant.coordinates
+                    val coordinates = (variant as? KotlinVariantWithCoordinates)?.coordinates
                     val name = variant.target.disambiguateName("kotlin")
 
                     publishing.publications.create(name, MavenPublication::class.java) { publication ->
                         publication.from(variant)
                         (publication as MavenPublicationInternal).publishWithOriginalFileName()
-                        publication.artifactId = coordinates.name
-                        publication.groupId = coordinates.group
-                        publication.version = coordinates.version
+                        publication.artifactId = coordinates?.name ?: "${project.name}-${variant.target.name.toLowerCase()}"
+                        publication.groupId = coordinates?.group ?: project.group.toString()
+                        publication.version = coordinates?.version ?: project.version.toString()
                     }
                 }
             }

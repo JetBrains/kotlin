@@ -9,10 +9,10 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.HasAttributes
-import org.gradle.api.component.ComponentWithCoordinates
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.UsageContext
 
-interface KotlinTargetComponent : ComponentWithCoordinates {
+interface KotlinTargetComponent : SoftwareComponent {
     val target: KotlinTarget
     val publishable: Boolean
 }
