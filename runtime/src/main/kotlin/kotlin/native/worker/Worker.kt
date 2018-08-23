@@ -18,6 +18,7 @@ package kotlin.native.worker
 
 import kotlin.native.SymbolName
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.native.internal.VolatileLambda
 import kotlinx.cinterop.*
 
 /**

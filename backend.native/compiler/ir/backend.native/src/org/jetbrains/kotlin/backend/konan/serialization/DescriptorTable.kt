@@ -131,9 +131,6 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
     if (this.annotations.hasAnnotation(publishedApiAnnotation)){
         return true
     }
-    if (this.annotations.hasAnnotation(inlineExposedAnnotation)){
-        return true
-    }
 
     if (DescriptorUtils.isAnonymousObject(this))
         return false
@@ -171,8 +168,6 @@ private val cnameAnnotation = FqName("kotlin.native.internal.CName")
 private val exportForCompilerAnnotation = FqName("kotlin.native.internal.ExportForCompiler")
 
 private val publishedApiAnnotation = FqName("kotlin.PublishedApi")
-
-private val inlineExposedAnnotation = FqName("kotlin.internal.InlineExposed")
 
 private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, type: KotlinType): String {
     val descriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)

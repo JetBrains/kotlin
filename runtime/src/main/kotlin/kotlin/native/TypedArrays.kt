@@ -17,17 +17,31 @@ package kotlin.native
 
 import kotlin.native.SymbolName
 
+fun ByteArray.ubyteAt(index: Int): UByte = UByte(get(index))
+
 @SymbolName("Kotlin_ByteArray_getCharAt")
 external fun ByteArray.charAt(index: Int): Char
 
 @SymbolName("Kotlin_ByteArray_getShortAt")
 external fun ByteArray.shortAt(index: Int): Short
 
+@SymbolName("Kotlin_ByteArray_getShortAt")
+@ExperimentalUnsignedTypes
+external fun ByteArray.ushortAt(index: Int): UShort
+
 @SymbolName("Kotlin_ByteArray_getIntAt")
 external fun ByteArray.intAt(index: Int): Int
 
+@SymbolName("Kotlin_ByteArray_getIntAt")
+@ExperimentalUnsignedTypes
+external fun ByteArray.uintAt(index: Int): UInt
+
 @SymbolName("Kotlin_ByteArray_getLongAt")
 external fun ByteArray.longAt(index: Int): Long
+
+@SymbolName("Kotlin_ByteArray_getLongAt")
+@ExperimentalUnsignedTypes
+external fun ByteArray.ulongAt(index: Int): ULong
 
 @SymbolName("Kotlin_ByteArray_getFloatAt")
 external fun ByteArray.floatAt(index: Int): Float
@@ -41,11 +55,22 @@ external fun ByteArray.setCharAt(index: Int, value: Char)
 @SymbolName("Kotlin_ByteArray_setShortAt")
 external fun ByteArray.setShortAt(index: Int, value: Short)
 
+@SymbolName("Kotlin_ByteArray_setShortAt")
+@ExperimentalUnsignedTypes
+external fun ByteArray.setUShortAt(index: Int, value: UShort)
+
 @SymbolName("Kotlin_ByteArray_setIntAt")
 external fun ByteArray.setIntAt(index: Int, value: Int)
 
+@SymbolName("Kotlin_ByteArray_setIntAt")
+external fun ByteArray.setUIntAt(index: Int, value: UInt)
+
 @SymbolName("Kotlin_ByteArray_setLongAt")
 external fun ByteArray.setLongAt(index: Int, value: Long)
+
+@SymbolName("Kotlin_ByteArray_setLongAt")
+@ExperimentalUnsignedTypes
+external fun ByteArray.setULongAt(index: Int, value: ULong)
 
 @SymbolName("Kotlin_ByteArray_setFloatAt")
 external fun ByteArray.setFloatAt(index: Int, value: Float)

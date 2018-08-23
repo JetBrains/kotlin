@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * This pass runs after inlining and performs the following additional transformations over some operations:
- *     - Convert immutableBinaryBlobOf() arguments to special IrConst.
+ *     - Convert immutableBlobOf() arguments to special IrConst.
  *     - Convert `obj::class` and `Class::class` to calls.
  */
 internal class PostInlineLowering(val context: Context) : FileLoweringPass {
@@ -77,7 +77,7 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                 // Function inlining is changing function symbol at callsite
                 // and unbound symbol replacement is happening later.
                 // So we compare descriptors for now.
-                if (expression.descriptor == context.immutableBinaryBlobOf) {
+                if (expression.descriptor == context.immutableBlobOf) {
                     // Convert arguments of the binary blob to special IrConst<String> structure, so that
                     // vararg lowering will not affect it.
                     val args = expression.getValueArgument(0) as? IrVararg
@@ -105,7 +105,7 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                     }
                     expression.putValueArgument(0, IrConstImpl<String>(
                             expression.startOffset, expression.endOffset,
-                            context.ir.symbols.immutableBinaryBlob.typeWithoutArguments,
+                            context.ir.symbols.immutableBlob.typeWithoutArguments,
                             IrConstKind.String, builder.toString()))
                 }
 

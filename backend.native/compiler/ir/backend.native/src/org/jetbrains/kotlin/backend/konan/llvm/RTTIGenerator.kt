@@ -97,11 +97,13 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         staticData.kotlinStringLiteral(string)
     }
 
+    private val EXPORT_TYPE_INFO_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "ExportTypeInfo"))
+
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
-        val annot = classDesc.descriptor.annotations.findAnnotation(FqName("kotlin.native.ExportTypeInfo"))
+        val annot = classDesc.descriptor.annotations.findAnnotation(EXPORT_TYPE_INFO_FQ_NAME)
         if (annot != null) {
             val name = getStringValue(annot)!!
-            // TODO: use LLVMAddAlias?
+            // TODO: use LLVMAddAlias.
             val global = addGlobal(name, pointerType(runtime.typeInfoType), isExported = true)
             LLVMSetInitializer(global, typeInfoGlobal)
         }
@@ -118,7 +120,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             "kotlin.DoubleArray"        to LLVMDoubleType()!!,
             "kotlin.BooleanArray"       to LLVMInt8Type()!!,
             "kotlin.String"             to LLVMInt16Type()!!,
-            "kotlin.native.ImmutableBinaryBlob" to LLVMInt8Type()!!
+            "kotlin.native.ImmutableBlob" to LLVMInt8Type()!!
     )
 
     // Keep in sync with Konan_RuntimeType.

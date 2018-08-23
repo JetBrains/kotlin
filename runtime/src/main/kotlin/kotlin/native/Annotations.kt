@@ -25,25 +25,15 @@ import kotlin.reflect.KClass
  * so it should probably be allowed on `internal` and `private` functions only.
  */
 @Target(AnnotationTarget.FUNCTION)
-// @Retention(AnnotationRetention.SOURCE)
-annotation class SymbolName(val name: String)
+@Retention(AnnotationRetention.BINARY)
+public annotation class SymbolName(val name: String)
 
 /**
- * Exports the TypeInfo of this class by given name to use it from runtime.
+ * Preserve the function entry point during global optimizations.
  */
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
-annotation class ExportTypeInfo(val name: String)
-
-/**
- * If a lambda shall be carefully lowered by the compiler.
- */
-annotation class VolatileLambda
-
-/**
- * Preserve the function entry point during global optimizations
- */
-public annotation class Used
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+public annotation class Retain
 
 // TODO: merge with [kotlin.jvm.Throws]
 /**
@@ -62,22 +52,6 @@ public annotation class Used
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
 /**
- * Need to be fixed because of reflection.
- */
-public annotation class FixmeReflection
-
-/**
- * Need to be fixed because of concurrency.
- */
-public annotation class FixmeConcurrency
-
-/**
- * Escape analysis annotations.
- */
-internal annotation class Escapes(val who: Int)
-internal annotation class PointsTo(vararg val onWhom: Int)
-
-/**
  * Top level variable or object is thread local, and so could be mutable.
  * One may use this annotation as the stopgap measure for singleton
  * object immutability.
@@ -86,3 +60,12 @@ internal annotation class PointsTo(vararg val onWhom: Int)
 @Target(AnnotationTarget.FIELD, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 public annotation class ThreadLocal
+
+/**
+ * Makes top level function available from C/C++ code with the given name.
+ * `fullName` controls the name of top level function, `shortName` controls the short name.
+ * If `fullName` is empty, no top level declaration is being created.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+public annotation class CName(val fullName: String = "", val shortName: String = "")

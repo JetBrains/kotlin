@@ -464,7 +464,7 @@ KInt Kotlin_BooleanArray_getArrayLength(KConstRef thiz) {
   return array->count_;
 }
 
-OBJ_GETTER(Kotlin_ImmutableBinaryBlob_toByteArray, KConstRef thiz, KInt start, KInt count) {
+OBJ_GETTER(Kotlin_ImmutableBlob_toByteArray, KConstRef thiz, KInt start, KInt count) {
    const ArrayHeader* array = thiz->array();
    if (start < 0 || count < 0 || start > array->count_ - count)  {
         ThrowArrayIndexOutOfBoundsException();
@@ -477,7 +477,7 @@ OBJ_GETTER(Kotlin_ImmutableBinaryBlob_toByteArray, KConstRef thiz, KInt start, K
     RETURN_OBJ(result->obj());
 }
 
-KNativePtr Kotlin_ImmutableBinaryBlob_asCPointerImpl(KRef thiz, KInt offset) {
+KNativePtr Kotlin_ImmutableBlob_asCPointerImpl(KRef thiz, KInt offset) {
   ArrayHeader* array = thiz->array();
   if (offset < 0 || offset > array->count_)  {
         ThrowArrayIndexOutOfBoundsException();

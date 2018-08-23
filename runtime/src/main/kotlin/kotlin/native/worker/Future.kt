@@ -100,7 +100,7 @@ fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Future<T>
 external internal fun stateOfFuture(id: FutureId): Int
 
 @SymbolName("Kotlin_Worker_consumeFuture")
-@kotlin.internal.InlineExposed
+@PublishedApi
 external internal fun consumeFuture(id: FutureId): Any?
 
 @SymbolName("Kotlin_Worker_waitForAnyFuture")

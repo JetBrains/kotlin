@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-// TODO: Add SortedSed class and implement toSortedSet extensions
+// TODO: Add SortedSet class and implement toSortedSet extensions
 // TODO: Add fill and binary search methods for primitive arrays (with tests)
 
 package kotlin
 
-import kotlin.native.internal.InlineConstructor
 import kotlin.collections.*
 import kotlin.internal.PureReifiable
+import kotlin.native.internal.ExportTypeInfo
+import kotlin.native.internal.InlineConstructor
+import kotlin.util.sortArray
 import kotlin.util.sortArrayComparable
 import kotlin.util.sortArrayWith
-import kotlin.util.sortArray
-// TODO: make all iterator() methods inline.
 
 /**
  * An array of bytes.
@@ -40,7 +40,6 @@ public final class ByteArray {
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
      */
-    // TODO: What about inline constructors?
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Byte): this(size) {
         for (i in 0..size - 1) {
@@ -66,7 +65,6 @@ public final class ByteArray {
     }
 }
 
-// TODO: replace with generics, once implemented.
 private class ByteIteratorImpl(val collection: ByteArray) : ByteIterator() {
     var index : Int = 0
 

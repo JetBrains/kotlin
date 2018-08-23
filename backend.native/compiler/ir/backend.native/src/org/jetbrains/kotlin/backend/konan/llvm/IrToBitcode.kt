@@ -1745,10 +1745,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     return receiver
                 }
 
-                context.immutableBinaryBlobOf -> {
+                context.immutableBlobOf -> {
                     @Suppress("UNCHECKED_CAST")
                     val arg = expression.getValueArgument(0) as IrConst<String>
-                    return context.llvm.staticData.createImmutableBinaryBlob(arg)
+                    return context.llvm.staticData.createImmutableBlob(arg)
                 }
 
                 context.ir.symbols.initInstance.descriptor -> {

@@ -17,13 +17,6 @@
 package kotlin.internal
 
 /**
- * Specifies that this part of internal API is effectively public exposed by using in public inline function
- */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class InlineExposed
-
-/**
  * Specifies that the corresponding type parameter is not used for unsafe operations such as casts or 'is' checks
  * That means it's completely safe to use generic types as argument for such parameter.
  */

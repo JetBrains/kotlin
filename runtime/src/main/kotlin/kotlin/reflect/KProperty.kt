@@ -16,7 +16,7 @@
 
 package kotlin.reflect
 
-import kotlin.native.*
+import kotlin.native.internal.FixmeReflection
 
 /**
  * Represents a property, such as a named `val` or `var` declaration.

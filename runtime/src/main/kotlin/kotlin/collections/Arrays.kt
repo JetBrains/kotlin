@@ -1152,9 +1152,8 @@ public actual fun CharArray.contentHashCode(): Int {
     return result
 }
 
-// From JS collections.kt.
 internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
-    return arrayOfNulls<Any>(size) as Array<T>
+    return (@Suppress("UNCHECKED_CAST")(arrayOfNulls<Any>(size)) as Array<T>)
 }
 
 internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
@@ -1176,7 +1175,7 @@ internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<
         array[index++] = iterator.next() as T
     }
     if (index < array.size) {
-        return (array as Array<T>).copyOf(index) as Array<T>
+        return (@Suppress("UNCHECKED_CAST")(array as Array<T>)).copyOf(index) as Array<T>
     }
     return array
 }

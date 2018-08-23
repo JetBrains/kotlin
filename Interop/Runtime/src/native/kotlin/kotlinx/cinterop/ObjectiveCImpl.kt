@@ -18,6 +18,7 @@
 
 package kotlinx.cinterop
 import kotlin.native.*
+import kotlin.native.internal.ExportTypeInfo
 
 interface ObjCObject
 interface ObjCClass : ObjCObject

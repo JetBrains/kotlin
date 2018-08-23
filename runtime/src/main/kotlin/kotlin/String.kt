@@ -16,8 +16,11 @@
 
 package kotlin
 
+import kotlin.native.internal.ExportTypeInfo
+import kotlin.native.internal.Frozen
+
 @ExportTypeInfo("theStringTypeInfo")
-@kotlin.native.internal.Frozen
+@Frozen
 public final class String : Comparable<String>, CharSequence {
     public companion object {
     }

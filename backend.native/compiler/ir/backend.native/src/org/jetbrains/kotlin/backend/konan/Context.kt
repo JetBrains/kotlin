@@ -291,8 +291,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     val nativePtrPlusLong by lazy { nativePtr.unsubstitutedMemberScope.getContributedFunctions("plus").single() }
     val nativePtrToLong   by lazy { nativePtr.unsubstitutedMemberScope.getContributedFunctions("toLong").single() }
     val getNativeNullPtr  by lazy { packageScope.getContributedFunctions("getNativeNullPtr").single() }
-    val immutableBinaryBlobOf by lazy {
-        builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBinaryBlobOf").single()
+    val immutableBlobOf by lazy {
+        builtIns.builtInsModule.getPackage(KonanFqNames.packageName).memberScope.getContributedFunctions("immutableBlobOf").single()
     }
 
     val specialDeclarationsFactory = SpecialDeclarationsFactory(this)

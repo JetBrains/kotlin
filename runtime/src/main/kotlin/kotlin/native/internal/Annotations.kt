@@ -23,40 +23,35 @@ package kotlin.native.internal
  * The function to call from C++ can be a wrapper around the original function.
  *
  * If the name is not specified, the function to call will be available by its Kotlin unqualified name.
+ *
+ * This annotation is not intended for the general consumption and is public only for the launcher!
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
-annotation class ExportForCppRuntime(val name: String = "")
-
-/**
- * Makes top level function available from C/C++ code with the given name.
- * `fullName` controls the name of top level function, `shortName` controls the short name.
- * If `fullName` is empty, no top level declaration is being created.
- */
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.BINARY)
-annotation class CName(val fullName: String = "", val shortName: String = "")
+public annotation class ExportForCppRuntime(val name: String = "")
 
 /**
  * This annotation denotes that the element is intrinsic and its usages require special handling in compiler.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
-annotation class Intrinsic
+internal annotation class Intrinsic
 
 /**
  * Exports symbol for compiler needs.
+ *
+ * This annotation is not intended for the general consumption and is public only for interop!
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class ExportForCompiler
+public annotation class ExportForCompiler
 
 /**
  * Annotated constructor will be inlined.
  */
 @Target(AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
-annotation class InlineConstructor
+internal annotation class InlineConstructor
 
 /**
  * Class is frozen by default. Also this annotation is (ab)used for marking objects
@@ -72,3 +67,42 @@ internal annotation class Frozen
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class NoReorderFields
+
+/**
+ * Exports the TypeInfo of this class by given name to use it from runtime.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+public annotation class ExportTypeInfo(val name: String)
+
+/**
+ * If a lambda shall be carefully lowered by the compiler.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class VolatileLambda
+
+/**
+ * Need to be fixed because of reflection.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class FixmeReflection
+
+/**
+ * Need to be fixed because of concurrency.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class FixmeConcurrency
+
+/**
+ * Escape analysis annotations.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class Escapes(val who: Int)
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class PointsTo(vararg val onWhom: Int)

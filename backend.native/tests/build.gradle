@@ -1481,7 +1481,7 @@ task if_else(type: RunKonanTest) {
 }
 
 task immutable_binary_blob_in_lambda(type: RunKonanTest) {
-    source = "lower/immutable_binary_blob_in_lambda.kt"
+    source = "lower/immutable_blob_in_lambda.kt"
     goldValue = "123\n"
 }
 

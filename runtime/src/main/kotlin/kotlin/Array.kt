@@ -15,10 +15,12 @@
  */
 
 package kotlin
-import kotlin.native.internal.ExportForCompiler
-import kotlin.native.internal.InlineConstructor
 
-// TODO: remove that, as RTTI shall be per instantiation.
+import kotlin.native.internal.ExportForCompiler
+import kotlin.native.internal.ExportTypeInfo
+import kotlin.native.internal.InlineConstructor
+import kotlin.native.internal.PointsTo
+
 @ExportTypeInfo("theArrayTypeInfo")
 public final class Array<T> {
     // Constructors are handled with compiler magic.

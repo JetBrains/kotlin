@@ -17,7 +17,8 @@
 package kotlin
 
 // Note:
-// Right now we don't want to have neither 'volatile' nor 'synchronized' at runtime.
+// Right now we don't want to have neither 'volatile' nor 'synchronized' at runtime, as it has different
+// concurrency approach.
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)

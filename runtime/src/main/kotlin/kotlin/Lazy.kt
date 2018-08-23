@@ -17,6 +17,7 @@
 package kotlin
 
 import kotlin.reflect.KProperty
+import kotlin.native.internal.FixmeConcurrency
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -27,7 +28,6 @@ import kotlin.reflect.KProperty
  * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
-@FixmeConcurrency
 public actual fun <T> lazy(initializer: () -> T): Lazy<T> = kotlin.native.worker.FreezeAwareLazyImpl(initializer)
 
 /**
@@ -43,8 +43,8 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> = kotlin.native.worker
 @FixmeConcurrency
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
-            LazyThreadSafetyMode.SYNCHRONIZED -> TODO()//SynchronizedLazyImpl(initializer)
-            LazyThreadSafetyMode.PUBLICATION -> TODO()//SafePublicationLazyImpl(initializer)
+            LazyThreadSafetyMode.SYNCHRONIZED -> TODO() // was SynchronizedLazyImpl(initializer)
+            LazyThreadSafetyMode.PUBLICATION -> TODO() // was SafePublicationLazyImpl(initializer)
             LazyThreadSafetyMode.NONE -> UnsafeLazyImpl(initializer)
         }
 
@@ -61,4 +61,4 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  */
 @FixmeConcurrency
 @Suppress("UNUSED_PARAMETER")
-public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = TODO()//SynchronizedLazyImpl(initializer, lock)
+public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = TODO() // was SynchronizedLazyImpl(initializer, lock)

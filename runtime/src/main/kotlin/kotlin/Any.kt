@@ -16,6 +16,8 @@
 
 package kotlin
 
+import kotlin.native.internal.ExportTypeInfo
+
 /**
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
  */

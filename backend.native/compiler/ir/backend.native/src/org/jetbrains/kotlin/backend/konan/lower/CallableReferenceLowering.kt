@@ -107,7 +107,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     val argumentDescriptor = descriptor.valueParameters.singleOrNull {
                         cur.getValueArgument(it.index) == argument
                     }
-                    if (argumentDescriptor != null && argumentDescriptor.annotations.findAnnotation(FqName("kotlin.native.VolatileLambda")) != null) {
+                    if (argumentDescriptor?.annotations?.findAnnotation(VOLATILE_LAMBDA_FQ_NAME) != null) {
                         return expression
                     }
                     break
@@ -141,9 +141,9 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                                          val functionReferenceConstructor: IrConstructor)
 
     private val COROUTINES_FQ_NAME = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
+    private val VOLATILE_LAMBDA_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "VolatileLambda"))
 
     private val coroutinesScope    = context.irModule!!.descriptor.getPackage(COROUTINES_FQ_NAME).memberScope
-    private val kotlinPackageScope = context.builtIns.builtInsPackageScope
 
     private val continuationClassDescriptor = coroutinesScope
             .getContributedClassifier(Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
