@@ -509,6 +509,9 @@ fun shouldReplaceToStringWithRuntimeCall(call: IrCall): Boolean {
     //  - Use direct method call for dynamic types???
     //  - Define Any?.toString() in runtime library and stop intrincifying extensions
 
+    if (call.valueArgumentsCount > 0)
+        return false
+
     val receiverParameterType = with(call.symbol.owner) {
         dispatchReceiverParameter ?: extensionReceiverParameter
     }?.type ?: return false
