@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.getRepresentativeUpperBound
+import org.jetbrains.kotlin.resolve.DescriptorUtils.SUCCESS_OR_FAILURE_FQ_NAME
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
-
 import java.security.MessageDigest
 
 fun getInlineClassValueParametersManglingSuffix(descriptor: CallableMemberDescriptor): String? {
@@ -19,9 +20,23 @@ fun getInlineClassValueParametersManglingSuffix(descriptor: CallableMemberDescri
 
     val actualValueParameterTypes = listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type }
 
-    if (actualValueParameterTypes.none { it.isInlineClassType() || it.isTypeParameterWithInlineClassUpperBound() }) return null
+    if (actualValueParameterTypes.none { it.requiresFunctionNameMangling() }) return null
 
     return md5radix36string(collectSignatureForMangling(actualValueParameterTypes))
+}
+
+private fun KotlinType.requiresFunctionNameMangling() =
+    isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
+
+private fun KotlinType.isInlineClassThatRequiresMangling() =
+    isInlineClassType() && !isDontMangleClass(this.constructor.declarationDescriptor as ClassDescriptor)
+
+private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
+    classDescriptor.fqNameSafe == SUCCESS_OR_FAILURE_FQ_NAME
+
+private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Boolean {
+    val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
+    return getRepresentativeUpperBound(descriptor).requiresFunctionNameMangling()
 }
 
 private fun collectSignatureForMangling(types: List<KotlinType>) =
@@ -50,10 +65,4 @@ private fun md5radix36string(signatureForMangling: String): String {
         acc = (acc shl 8) + (d[i].toLong() and 0xFFL)
     }
     return acc.toString(36)
-}
-
-fun KotlinType.isTypeParameterWithInlineClassUpperBound(): Boolean {
-    val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
-    val bound = getRepresentativeUpperBound(descriptor)
-    return bound.isInlineClassType() || bound.isTypeParameterWithInlineClassUpperBound()
 }
