@@ -24,6 +24,8 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/reflect",
     "libraries/stdlib/js/src/kotlin/annotationsJVM.kt",
 
+    "libraries/stdlib/js/runtime/primitiveCompanionObjects.kt",
+
     "libraries/stdlib/src/kotlin/internal",
     "libraries/stdlib/src/kotlin/util/Standard.kt",
     "core/builtins/native/kotlin/Annotation.kt",

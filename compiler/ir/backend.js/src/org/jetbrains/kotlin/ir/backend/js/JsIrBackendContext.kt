@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescr
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.js.JsDescriptorsFactory
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -106,6 +107,18 @@ class JsIrBackendContext(
     val kFunctions by lazy {
         (0..22).map { symbolTable.referenceClass(reflectionTypes.getKFunction(it)) }
     }
+
+    val primitiveCompanionObjects = PrimitiveType.NUMBER_TYPES
+        .filter { it.name != "LONG" && it.name != "CHAR" } // skip due to they have own explicit companions
+        .map {
+            it.typeName to symbolTable.lazyWrapper.referenceClass(
+                getClass(
+                    internalPackageName
+                        .child(Name.identifier("internal"))
+                        .child(Name.identifier("${it.typeName.identifier}CompanionObject"))
+                )
+            )
+        }.toMap()
 
     val suspendFunctions = (0..22).map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }
 
