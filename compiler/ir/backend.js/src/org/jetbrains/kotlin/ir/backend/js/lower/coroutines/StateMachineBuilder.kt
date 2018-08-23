@@ -372,7 +372,9 @@ class StateMachineBuilder(
                 currentBlock = branchBlock
                 branch.result.acceptVoid(this)
 
-                if (currentBlock.statements.last() !is IrContinue) {
+                // TODO: block should not be empty
+                val lastStatement = currentBlock.statements.lastOrNull()
+                if (lastStatement != null && lastStatement !is IrContinue) {
                     if (currentState !== rootState) {
                         doDispatch(exitState)
                     }
@@ -382,7 +384,10 @@ class StateMachineBuilder(
                 currentBlock = elseBlock
             } else {
                 branch.result.acceptVoid(this)
-                if (currentBlock.statements.last() !is IrContinue) {
+
+                // TODO: block should not be empty
+                val lastStatement = currentBlock.statements.lastOrNull()
+                if (lastStatement != null && lastStatement !is IrContinue) {
                     if (currentState !== rootState) {
                         doDispatch(exitState)
                     }
