@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert
 import org.junit.Test
 import java.util.zip.ZipFile
+import kotlin.test.assertTrue
 
 class NewMultiplatformIT : BaseGradleIT() {
     val gradleVersion = GradleVersionRequired.AtLeast("4.8")
@@ -26,35 +28,43 @@ class NewMultiplatformIT : BaseGradleIT() {
         val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
         val oldStyleAppProject = Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")
 
+        val hostTargetName = if (isWindows) "mingw64" else "linux64"
+
+        val compileTasksNames =
+            listOf("Jvm6", "NodeJs", "Metadata", "Wasm32", hostTargetName.capitalize()).map { ":compileKotlin$it" }
+
         with(libProject) {
             build("publish") {
                 assertSuccessful()
-                assertTasksExecuted(
-                    ":compileKotlinJvm6", ":compileKotlinNodeJs", ":compileKotlinMetadata",
-                    ":jvm6Jar", ":nodeJsJar", ":metadataJar"
-                )
-                val moduleDir = projectDir.resolve("repo/com/example/sample-lib/1.0")
-                val jvmJarName = "sample-lib-1.0-jvm6.jar"
-                val jsJarName = "sample-lib-1.0-nodeJs.jar"
-                val metadataJarName = "sample-lib-1.0-metadata.jar"
+                assertTasksExecuted(*compileTasksNames.toTypedArray(), ":jvm6Jar", ":nodeJsJar", ":metadataJar")
 
-                listOf(jvmJarName, jsJarName, metadataJarName, "sample-lib-1.0.module").forEach {
-                    Assert.assertTrue(moduleDir.resolve(it).exists())
+                val groupDir = projectDir.resolve("repo/com/example")
+                val jvmJarName = "sample-lib-jvm6/1.0/sample-lib-jvm6-1.0-jvm6.jar"
+                val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0-nodeJs.jar"
+                val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0-metadata.jar"
+                val wasmKlibName = "sample-lib-wasm32/1.0/sample-lib-wasm32-1.0.klib"
+                val nativeKlibName = "sample-lib-$hostTargetName/1.0/sample-lib-$hostTargetName-1.0.klib"
+
+                listOf(jvmJarName, jsJarName, metadataJarName, "sample-lib/1.0/sample-lib-1.0.module").forEach {
+                    Assert.assertTrue("$it should exist", groupDir.resolve(it).exists())
                 }
 
-                val jvmJarEntries = ZipFile(moduleDir.resolve(jvmJarName)).entries().asSequence().map { it.name }.toSet()
+                val jvmJarEntries = ZipFile(groupDir.resolve(jvmJarName)).entries().asSequence().map { it.name }.toSet()
                 Assert.assertTrue("com/example/lib/CommonKt.class" in jvmJarEntries)
                 Assert.assertTrue("com/example/lib/MainKt.class" in jvmJarEntries)
 
-                val jsJar = ZipFile(moduleDir.resolve(jsJarName))
+                val jsJar = ZipFile(groupDir.resolve(jsJarName))
                 val compiledJs = jsJar.getInputStream(jsJar.getEntry("sample-lib.js")).reader().readText()
                 Assert.assertTrue("function id(" in compiledJs)
                 Assert.assertTrue("function idUsage(" in compiledJs)
                 Assert.assertTrue("function expectedFun(" in compiledJs)
                 Assert.assertTrue("function main(" in compiledJs)
 
-                val metadataJarEntries = ZipFile(moduleDir.resolve(metadataJarName)).entries().asSequence().map { it.name }.toSet()
+                val metadataJarEntries = ZipFile(groupDir.resolve(metadataJarName)).entries().asSequence().map { it.name }.toSet()
                 Assert.assertTrue("com/example/lib/CommonKt.kotlin_metadata" in metadataJarEntries)
+
+                Assert.assertTrue(groupDir.resolve(wasmKlibName).exists())
+                Assert.assertTrue(groupDir.resolve(nativeKlibName).exists())
             }
         }
 
@@ -66,7 +76,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             fun CompiledProject.checkAppBuild() {
                 assertSuccessful()
-                assertTasksExecuted(":compileKotlinJvm6", ":compileKotlinJvm8", ":compileKotlinNodeJs", ":compileKotlinMetadata")
+                assertTasksExecuted(*compileTasksNames.toTypedArray())
 
                 projectDir.resolve(targetClassesDir("jvm6")).run {
                     Assert.assertTrue(resolve("com/example/app/AKt.class").exists())
@@ -87,6 +97,19 @@ class NewMultiplatformIT : BaseGradleIT() {
                     Assert.assertTrue(contains("console.info"))
                     Assert.assertTrue(contains("function nodeJsMain("))
                 }
+
+                projectDir.resolve(targetClassesDir("wasm32")).run {
+                    Assert.assertTrue(resolve("sample-app.klib").exists())
+                }
+
+                assertFileExists("build/bin/wasm32/main/debug/main.wasm.js")
+                assertFileExists("build/bin/wasm32/main/debug/main.wasm")
+                assertFileExists("build/bin/wasm32/main/release/main.wasm.js")
+                assertFileExists("build/bin/wasm32/main/release/main.wasm")
+
+                val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
+                assertFileExists("build/bin/$hostTargetName/main/release/$nativeExeName")
+                assertFileExists("build/bin/$hostTargetName/main/debug/$nativeExeName")
             }
 
             build("assemble", "resolveRuntimeDependencies") {
@@ -99,7 +122,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             projectDir.resolve("settings.gradle").appendText("\ninclude '${libProject.projectDir.name}'")
             gradleBuildScript().modify { it.replace("'com.example:sample-lib:1.0'", "project(':${libProject.projectDir.name}')") }
 
-            build("assemble", "--rerun-tasks") {
+            build("clean", "assemble", "--rerun-tasks") {
                 checkAppBuild()
             }
         }
@@ -342,7 +365,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                         doFirst {
                             ['Api', 'Implementation', 'CompileOnly', 'RuntimeOnly'].each { kind ->
                                 def configuration = configurations.getByName("commonMain${'$'}kind" + '$METADATA_CONFIGURATION_NAME_SUFFIX')
-                                configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.absolutePath }
+                                configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.name }
                             }
                         }
                     }
@@ -353,16 +376,13 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("printMetadataFiles") {
                 assertSuccessful()
 
-                val expectedPath =
-                    localRepo.resolve(
-                        "com/example/sample-lib/1.0/sample-lib-1.0-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}.jar"
-                    ).absolutePath
+                val expectedFileName = "sample-lib-1.0-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}.jar"
 
                 val paths = metadataDependencyRegex.findAll(output).map { it.groupValues[1] to it.groupValues[2] }.toSet()
 
                 Assert.assertEquals(
                     listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
-                        "commonMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedPath
+                        "commonMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedFileName
                     }.toSet(),
                     paths
                 )
@@ -370,6 +390,22 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testPublishingOnlySupportedNativeTargets() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        val (publishedVariant, nonPublishedVariant) = listOf("mingw64", "linux64").let { if (!isWindows) it.reversed() else it }
+
+        build("publish") {
+            assertSuccessful()
+
+            assertFileExists("repo/com/example/sample-lib-$publishedVariant/1.0/sample-lib-$publishedVariant-1.0.klib")
+            assertNoSuchFile("repo/com/example/sample-lib-$nonPublishedVariant") // check that no artifacts are published for that variant
+
+            // but check that the module metadata contains both variants:
+            val gradleModuleMetadata = projectDir.resolve("repo/com/example/sample-lib/1.0/sample-lib-1.0.module").readText()
+            assertTrue(""""name": "linux64-api"""" in gradleModuleMetadata)
+            assertTrue(""""name": "mingw64-api"""" in gradleModuleMetadata)
+        }
+    }
 
     @Test
     fun testOptionalExpectations() = with(Project("new-mpp-lib-with-tests", gradleVersion)) {
