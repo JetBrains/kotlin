@@ -63,7 +63,12 @@ interface SimpleScopeTowerProcessor<out C> : ScopeTowerProcessor<C> {
 internal abstract class AbstractSimpleScopeTowerProcessor<C : Candidate>(
     val candidateFactory: CandidateFactory<C>
 ) : SimpleScopeTowerProcessor<C> {
-    fun resolve(collector: Collection<CandidateWithBoundDispatchReceiver>, f:(Boolean)->Boolean, kind: ExplicitReceiverKind, receiver: ReceiverValueWithSmartCastInfo?) : Collection<C> {
+    fun createCandidates(
+        collector: Collection<CandidateWithBoundDispatchReceiver>,
+        f:(Boolean)->Boolean,
+        kind: ExplicitReceiverKind,
+        receiver: ReceiverValueWithSmartCastInfo?
+    ) : Collection<C> {
         val result = mutableListOf<C>()
         for (candidate in collector) {
             if (f(candidate.requiresExtensionReceiver)) {
@@ -91,16 +96,18 @@ internal class ExplicitReceiverScopeTowerProcessor<C : Candidate>(
 ) : AbstractSimpleScopeTowerProcessor<C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> {
         return when (data) {
-            TowerData.Empty -> resolve(
+            TowerData.Empty -> createCandidates(
                 MemberScopeTowerLevel(scopeTower, explicitReceiver).collectCandidates(null),
                 { !it },
                 ExplicitReceiverKind.DISPATCH_RECEIVER,
-                null)
-            is TowerData.TowerLevel -> resolve(
+                null
+            )
+            is TowerData.TowerLevel -> createCandidates(
                 data.level.collectCandidates(explicitReceiver),
                 { it },
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
-                explicitReceiver)
+                explicitReceiver
+            )
             else -> emptyList()
         }
     }
@@ -123,7 +130,7 @@ private class QualifierScopeTowerProcessor<C : Candidate>(
     override fun simpleProcess(data: TowerData): Collection<C> {
         if (data != TowerData.Empty) return emptyList()
 
-        return resolve(
+        return createCandidates(
             QualifierScopeTowerLevel(scopeTower, qualifier).collectCandidates(null),
             { !it },
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
@@ -140,16 +147,18 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
     val collectCandidates: CandidatesCollector
 ) : AbstractSimpleScopeTowerProcessor<C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> = when (data) {
-        is TowerData.TowerLevel -> resolve(
+        is TowerData.TowerLevel -> createCandidates(
             data.level.collectCandidates(null),
             { !it },
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-            null)
-        is TowerData.BothTowerLevelAndImplicitReceiver -> resolve(
+            null
+        )
+        is TowerData.BothTowerLevelAndImplicitReceiver -> createCandidates(
             data.level.collectCandidates(data.implicitReceiver),
             { it },
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-            data.implicitReceiver)
+            data.implicitReceiver
+        )
         else -> emptyList()
     }
 
