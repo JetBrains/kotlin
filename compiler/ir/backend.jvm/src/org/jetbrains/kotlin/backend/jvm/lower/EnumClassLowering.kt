@@ -45,7 +45,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         fun transform(delegatingConstructorCall: IrDelegatingConstructorCall): IrExpression
     }
 
-    private val unsubstitutedArrayOfFun = context.builtIns.findSingleFunction(Name.identifier("arrayOf"))
+    private val unsubstitutedArrayOfFun = context.ir.symbols.arrayOf.descriptor
 
     private fun createArrayOfExpression(arrayElementType: KotlinType, arrayElements: List<IrExpression>): IrExpression {
         val typeParameter0 = unsubstitutedArrayOfFun.typeParameters[0]
