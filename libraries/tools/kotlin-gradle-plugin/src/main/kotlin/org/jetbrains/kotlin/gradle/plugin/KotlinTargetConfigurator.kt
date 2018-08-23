@@ -436,6 +436,7 @@ open class KotlinNativeTargetConfigurator(
                     group = BasePlugin.BUILD_GROUP
                     description = "Links ${kind.description} from the '${compilation.name}' " +
                             "compilation for target '${compilation.platformType.name}'"
+                    enabled = compilation.target.konanTarget.enabledOnCurrentHost
 
                     optimized = buildType.optimized
                     debuggable = buildType.debuggable
@@ -474,6 +475,10 @@ open class KotlinNativeTargetConfigurator(
     }
 
     private fun Project.createKlibPublishableArtifact(compilation: KotlinNativeCompilation, compileTask: KotlinNativeCompile) {
+        if (!compilation.target.konanTarget.enabledOnCurrentHost) {
+            return
+        }
+
         val apiElements = configurations.getByName(compilation.target.apiElementsConfigurationName)
         val klibArtifact = DefaultPublishArtifact(
             compilation.name,
@@ -484,7 +489,6 @@ open class KotlinNativeTargetConfigurator(
             compileTask.outputFile.get(),
             compileTask
         )
-        compilation.target.disambiguationClassifier?.let { klibArtifact.classifier = it }
         project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
 
         with(apiElements.outgoing) {
@@ -503,17 +507,17 @@ open class KotlinNativeTargetConfigurator(
             group = BasePlugin.BUILD_GROUP
             description = "Compiles a klibrary from the '${compilation.name}' " +
                     "compilation for target '${compilation.platformType.name}'"
+            enabled = compilation.target.konanTarget.enabledOnCurrentHost
 
             outputs.file(outputFile)
             outputFile.set(provider {
                 val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
-                val classifier = compilation.target.disambiguationClassifier?.let { "-$it" }.orEmpty()
                 val compilationName = compilation.compilationName
                 val klibName = if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME)
                     project.name
                 else
                     compilationName
-                File(project.buildDir, "classes/kotlin/$targetSubDirectory$compilationName/$klibName$classifier.klib")
+                File(project.buildDir, "classes/kotlin/$targetSubDirectory$compilationName/$klibName.klib")
             })
 
             dependsOnCompilerDownloading()
@@ -537,15 +541,15 @@ open class KotlinNativeTargetConfigurator(
         }
     }
 
-    override fun configureArchivesAndComponent(target: KotlinNativeTarget) = with(target.project) {
-        if (!HostManager().isEnabled(target.konanTarget)) {
-            return
-        }
-
+    override fun configureArchivesAndComponent(target: KotlinNativeTarget) : Unit = with(target.project) {
         tasks.create(target.artifactsTaskName)
         target.compilations.all {
             createKlibCompilationTask(it)
             createBinaryLinkTasks(it)
+        }
+
+        with(configurations.getByName(target.apiElementsConfigurationName)) {
+            outgoing.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
         }
     }
 
@@ -553,7 +557,7 @@ open class KotlinNativeTargetConfigurator(
         dependsOn(KonanCompilerDownloadTask.KONAN_DOWNLOAD_TASK_NAME)
 
     object NativeArtifactFormat {
-        const val KLIB = "org.jerbrains.kotlin.klib"
+        const val KLIB = "org.jetbrains.kotlin.klib"
     }
 }
 
