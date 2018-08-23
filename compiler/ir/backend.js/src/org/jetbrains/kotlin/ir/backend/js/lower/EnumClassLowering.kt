@@ -40,9 +40,13 @@ class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
 class EnumClassLowering(val context: JsIrBackendContext) : DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { declaration ->
-            if (declaration is IrClass && declaration.isEnumClass)
-                EnumClassTransformer(context, declaration).transform()
-            else
+            if (declaration is IrClass && declaration.isEnumClass) {
+                if (declaration.descriptor.isExpect) {
+                    emptyList()
+                } else {
+                    EnumClassTransformer(context, declaration).transform()
+                }
+        } else
                 listOf(declaration)
         }
     }
