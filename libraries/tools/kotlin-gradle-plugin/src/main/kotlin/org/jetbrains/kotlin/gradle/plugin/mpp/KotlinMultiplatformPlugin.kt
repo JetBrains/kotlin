@@ -90,22 +90,40 @@ class KotlinMultiplatformPlugin(
         }
     }
 
-    private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") {
+    private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") { _ ->
         val targets = project.multiplatformExtension!!.targets
         val kotlinSoftwareComponent = KotlinSoftwareComponent(project, "kotlin", targets)
 
         project.afterEvaluate { project -> // Use afterEvaluate because publications configuration is no more lazy since Gradle 4.9
             project.extensions.configure(PublishingExtension::class.java) { publishing ->
+                // The root publication.
                 publishing.publications.create("kotlin", MavenPublication::class.java) { publication ->
                     publication.from(kotlinSoftwareComponent)
                     (publication as MavenPublicationInternal).publishWithOriginalFileName()
                     publication.artifactId = project.name
                     publication.groupId = project.group.toString()
                 }
+
+                // Create separate publications for all publishable targets
+                kotlinSoftwareComponent.variants.filter { it.publishable }.forEach { variant ->
+                    val coordinates = variant.coordinates
+                    val name = variant.target.disambiguateName("kotlin")
+
+                    publishing.publications.create(name, MavenPublication::class.java) { publication ->
+                        publication.from(variant)
+                        (publication as MavenPublicationInternal).publishWithOriginalFileName()
+                        publication.artifactId = coordinates.name
+                        publication.groupId = coordinates.group
+                        publication.version = coordinates.version
+                    }
+                }
             }
         }
 
         project.components.add(kotlinSoftwareComponent)
+        targets.all {
+            project.components.add(it.component)
+        }
     }
 
     private fun configureSourceSets(project: Project) = with (project.kotlinExtension as KotlinMultiplatformExtension) {

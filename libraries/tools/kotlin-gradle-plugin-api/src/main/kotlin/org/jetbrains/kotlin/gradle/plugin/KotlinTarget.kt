@@ -9,7 +9,13 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.HasAttributes
+import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.internal.component.UsageContext
+
+interface KotlinTargetComponent : ComponentWithCoordinates {
+    val target: KotlinTarget
+    val publishable: Boolean
+}
 
 interface KotlinTarget: Named, HasAttributes {
     val targetName: String
@@ -26,6 +32,10 @@ interface KotlinTarget: Named, HasAttributes {
     val defaultConfigurationName: String
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
+
+    val publishable: Boolean
+
+    val component: KotlinTargetComponent
 
     fun createUsageContexts(): Set<UsageContext>
 

@@ -6,24 +6,28 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.DependencyConstraint
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.artifacts.*
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
+import org.gradle.api.component.ComponentWithVariants
+import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 
 class KotlinSoftwareComponent(
     private val project: Project,
     private val name: String,
     private val kotlinTargets: Iterable<KotlinTarget>
-) : SoftwareComponentInternal {
-    override fun getUsages(): Set<UsageContext> = kotlinTargets.flatMap { it.createUsageContexts() }.toSet()
+) : SoftwareComponentInternal, ComponentWithVariants {
+    
+    override fun getUsages(): Set<UsageContext> = emptySet()
+
+    override fun getVariants(): Set<KotlinTargetComponent> =
+        kotlinTargets.map { it.component }.toSet()
 
     override fun getName(): String = name
 
@@ -31,6 +35,24 @@ class KotlinSoftwareComponent(
         fun kotlinApiUsage(project: Project) = project.usageByName(Usage.JAVA_API)
         fun kotlinRuntimeUsage(project: Project) = project.usageByName(Usage.JAVA_RUNTIME)
     }
+}
+
+class KotlinVariant(
+    private val project: Project,
+    override val target: KotlinTarget
+) : SoftwareComponentInternal, KotlinTargetComponent {
+
+    override fun getCoordinates() = DefaultModuleVersionIdentifier(
+        project.group.toString(),
+        "${project.name}-${target.name.toLowerCase()}",
+        project.version.toString()
+    )
+
+    override fun getUsages(): Set<UsageContext> = target.createUsageContexts()
+    override fun getName(): String = target.name
+
+    override val publishable: Boolean
+        get() = target.publishable
 }
 
 // At the moment all KN artifacts have JAVA_API usage.

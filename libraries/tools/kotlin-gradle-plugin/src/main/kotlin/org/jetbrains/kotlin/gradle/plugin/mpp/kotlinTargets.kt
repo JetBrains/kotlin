@@ -11,15 +11,12 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class AbstractKotlinTarget (
-    override val project: Project
+    final override val project: Project
 ) : KotlinTarget {
     private val attributeContainer = HierarchyAttributeContainer(parent = null)
 
@@ -38,6 +35,11 @@ abstract class AbstractKotlinTarget (
         get() = disambiguateName("jar")
 
     override fun toString(): String = "target $name ($platformType)"
+
+    override val publishable: Boolean
+        get() = true
+
+    override val component: KotlinTargetComponent = KotlinVariant(project, this)
 
     override fun createUsageContexts(): Set<UsageContext> =
         setOf(
@@ -133,6 +135,9 @@ class KotlinNativeTarget(
     // TODO: Should binary files be output of a target or a compilation?
     override val artifactsTaskName: String
         get() = disambiguateName("link")
+
+    override val publishable: Boolean
+        get() = konanTarget.enabledOnCurrentHost
 
     companion object {
         val konanTargetAttribute = Attribute.of(
