@@ -22,6 +22,7 @@ import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.rethrow
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.io.IOException
@@ -39,21 +40,26 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
         compile(files, javaFilesDir)
 
-        val classAndMethod = parseClassAndMethodSignature(wholeFile)
-        val split = classAndMethod.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        assert(split.size == 2) { "Exactly one dot is expected: $classAndMethod" }
-        val classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+")
-        val methodName = split[1]
+        try {
+            val classAndMethod = parseClassAndMethodSignature(wholeFile)
+            val split = classAndMethod.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            assert(split.size == 2) { "Exactly one dot is expected: $classAndMethod" }
+            val classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+")
+            val methodName = split[1]
 
-        val outputFiles = (classFileFactory as OutputFileCollection).asList()
-        val outputFile = ContainerUtil.find(outputFiles, { file -> file.relativePath.matches(classFileRegex.toRegex()) })
+            val outputFiles = (classFileFactory as OutputFileCollection).asList()
+            val outputFile = ContainerUtil.find(outputFiles, { file -> file.relativePath.matches(classFileRegex.toRegex()) })
 
-        val pathsString = outputFiles.joinToString { it.relativePath }
-        assertNotNull("Couldn't find class file for pattern $classFileRegex in: $pathsString", outputFile)
+            val pathsString = outputFiles.joinToString { it.relativePath }
+            assertNotNull("Couldn't find class file for pattern $classFileRegex in: $pathsString", outputFile)
 
-        val actualLocalVariables = readLocalVariable(ClassReader(outputFile!!.asByteArray()), methodName)
+            val actualLocalVariables = readLocalVariable(ClassReader(outputFile!!.asByteArray()), methodName)
 
-        doCompare(wholeFile, files.single().content, actualLocalVariables)
+            doCompare(wholeFile, files.single().content, actualLocalVariables)
+        } catch (e: Throwable) {
+            println(classFileFactory.createText())
+            throw e
+        }
     }
 
     protected open fun doCompare(
