@@ -906,21 +906,20 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 val integerClasses = symbols.allIntegerClasses
                 val typeOperand = expression.getTypeArgument(0)!!
                 val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
-                val receiverClass = receiverType.classifierOrFail as IrClassSymbol
-                assert(receiverClass in integerClasses)
+                val source = receiverType.classifierOrFail as IrClassSymbol
+                assert(source in integerClasses)
 
                 if (typeOperand is IrSimpleType && typeOperand.classifier in integerClasses && !typeOperand.hasQuestionMark) {
-                    val typeOperandClass = typeOperand.classifier as IrClassSymbol
+                    val target = typeOperand.classifier as IrClassSymbol
+                    val valueToConvert = expression.extensionReceiver!!
 
-                    val conversion = symbols.integerConversions[receiverClass to typeOperandClass]!!.owner
-
-                    builder.irCall(conversion).apply {
-                        val valueToConvert = expression.extensionReceiver!!
-                        if (conversion.dispatchReceiverParameter != null) {
-                            dispatchReceiver = valueToConvert
-                        } else {
-                            extensionReceiver = valueToConvert
-                        }
+                    if (source in symbols.signedIntegerClasses && target in symbols.unsignedIntegerClasses) {
+                        // Default Kotlin signed-to-unsigned widening integer conversions don't follow C rules.
+                        val signedTarget = symbols.unsignedToSignedOfSameBitWidth[target]!!
+                        val widened = builder.irConvertInteger(source, signedTarget, valueToConvert)
+                        builder.irConvertInteger(signedTarget, target, widened)
+                    } else {
+                        builder.irConvertInteger(source, target, valueToConvert)
                     }
                 } else {
                     context.reportCompilationError(
@@ -984,6 +983,21 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
             }
 
             else -> expression
+        }
+    }
+
+    private fun IrBuilderWithScope.irConvertInteger(
+            source: IrClassSymbol,
+            target: IrClassSymbol,
+            value: IrExpression
+    ): IrExpression {
+        val conversion = symbols.integerConversions[source to target]!!
+        return irCall(conversion.owner).apply {
+            if (conversion.owner.dispatchReceiverParameter != null) {
+                dispatchReceiver = value
+            } else {
+                extensionReceiver = value
+            }
         }
     }
 

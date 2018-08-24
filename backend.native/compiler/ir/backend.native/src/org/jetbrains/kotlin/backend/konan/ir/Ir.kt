@@ -149,6 +149,16 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
 
     val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
 
+    val unsignedToSignedOfSameBitWidth = unsignedIntegerClasses.associate {
+        it to when (it) {
+            uByte -> byte
+            uShort -> short
+            uInt -> int
+            uLong -> long
+            else -> error(it.descriptor)
+        }
+    }
+
     val integerConversions = allIntegerClasses.flatMap { fromClass ->
         allIntegerClasses.map { toClass ->
             val name = Name.identifier("to${toClass.descriptor.name.asString().capitalize()}")
