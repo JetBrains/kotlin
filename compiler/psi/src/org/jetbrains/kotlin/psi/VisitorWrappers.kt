@@ -260,6 +260,13 @@ fun binaryExpressionVisitor(block: (KtBinaryExpression) -> Unit) =
         }
     }
 
+fun binaryWithTypeRHSExpressionVisitor(block: (KtBinaryExpressionWithTypeRHS) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS) {
+            block(expression)
+        }
+    }
+
 fun binaryExpressionRecursiveVisitor(block: (KtBinaryExpression) -> Unit) =
     object : KtTreeVisitorVoid() {
         override fun visitBinaryExpression(binaryExpression: KtBinaryExpression) {
