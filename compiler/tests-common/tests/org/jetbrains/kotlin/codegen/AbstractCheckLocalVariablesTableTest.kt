@@ -14,142 +14,129 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import com.google.common.io.Files;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.org.objectweb.asm.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.common.io.Files
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.containers.ContainerUtil
+import junit.framework.TestCase
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.org.objectweb.asm.*
+import java.io.File
+import java.io.IOException
+import java.nio.charset.Charset
+import java.util.*
+import java.util.regex.Pattern
 
 /**
  * Test correctness of written local variables in class file for specified method
  */
 
-public abstract class AbstractCheckLocalVariablesTableTest extends CodegenTestCase {
-    protected File ktFile;
+abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
+    protected lateinit var ktFile: File
 
-    @Override
-    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
-        ktFile = wholeFile;
-        String text = FileUtil.loadFile(ktFile, true);
-        compile(files, javaFilesDir);
+    @Throws(Exception::class)
+    override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
+        ktFile = wholeFile
+        val text = FileUtil.loadFile(ktFile, true)
+        compile(files, javaFilesDir)
 
-        String classAndMethod = parseClassAndMethodSignature();
-        String[] split = classAndMethod.split("\\.");
-        assert split.length == 2 : "Exactly one dot is expected: " + classAndMethod;
-        String classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+");
-        String methodName = split[1];
+        val classAndMethod = parseClassAndMethodSignature()
+        val split = classAndMethod.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        assert(split.size == 2) { "Exactly one dot is expected: $classAndMethod" }
+        val classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+")
+        val methodName = split[1]
 
-        List<OutputFile> outputFiles = ((OutputFileCollection) classFileFactory).asList();
-        OutputFile outputFile = ContainerUtil.find(outputFiles, file -> file.getRelativePath().matches(classFileRegex));
+        val outputFiles = (classFileFactory as OutputFileCollection).asList()
+        val outputFile = ContainerUtil.find(outputFiles, { file -> file.relativePath.matches(classFileRegex.toRegex()) })
 
-        String pathsString = StringUtil.join(outputFiles, OutputFile::getRelativePath, ", ");
-        assertNotNull("Couldn't find class file for pattern " + classFileRegex + " in: " + pathsString, outputFile);
+        val pathsString = outputFiles.joinToString { it.relativePath }
+        assertNotNull("Couldn't find class file for pattern $classFileRegex in: $pathsString", outputFile)
 
-        ClassReader cr = new ClassReader(outputFile.asByteArray());
-        List<LocalVariable> actualLocalVariables = readLocalVariable(cr, methodName);
+        val cr = ClassReader(outputFile!!.asByteArray())
+        val actualLocalVariables = readLocalVariable(cr, methodName)
 
-        doCompare(text, actualLocalVariables);
+        doCompare(text, actualLocalVariables)
     }
 
-    protected void doCompare(String text, List<LocalVariable> actualLocalVariables) {
-        KotlinTestUtils.assertEqualsToFile(ktFile, text.substring(0, text.indexOf("// VARIABLE : ")) + getActualVariablesAsString(actualLocalVariables));
+    protected open fun doCompare(text: String, actualLocalVariables: List<LocalVariable>) {
+        KotlinTestUtils.assertEqualsToFile(
+            ktFile,
+            text.substring(0, text.indexOf("// VARIABLE : ")) + getActualVariablesAsString(
+                actualLocalVariables
+            )
+        )
     }
 
-    private static String getActualVariablesAsString(List<LocalVariable> list) {
-        StringBuilder builder = new StringBuilder();
-        for (LocalVariable variable : list) {
-            builder.append(variable.toString()).append("\n");
-        }
-        return builder.toString();
-    }
+    protected class LocalVariable internal constructor(
+        private val name: String,
+        private val type: String,
+        private val index: Int
+    ) {
 
-    protected static class LocalVariable {
-        private final String name;
-        private final String type;
-        private final int index;
-
-        private LocalVariable(
-                @NotNull String name,
-                @NotNull String type,
-                int index
-        ) {
-            this.name = name;
-            this.type = type;
-            this.index = index;
-        }
-
-        @Override
-        public String toString() {
-            return "// VARIABLE : NAME=" + name + " TYPE=" + type + " INDEX=" + index;
+        override fun toString(): String {
+            return "// VARIABLE : NAME=$name TYPE=$type INDEX=$index"
         }
     }
 
-    @NotNull
-    private static final Pattern methodPattern = Pattern.compile("^// METHOD : *(.*)");
-
-    @NotNull
-    private String parseClassAndMethodSignature() throws IOException {
-        List<String> lines = Files.readLines(ktFile, Charset.forName("utf-8"));
-        for (String line : lines) {
-            Matcher methodMatcher = methodPattern.matcher(line);
+    @Throws(IOException::class)
+    private fun parseClassAndMethodSignature(): String {
+        val lines = Files.readLines(ktFile, Charset.forName("utf-8"))
+        for (line in lines) {
+            val methodMatcher = methodPattern.matcher(line)
             if (methodMatcher.matches()) {
-                return methodMatcher.group(1);
+                return methodMatcher.group(1)
             }
         }
 
-        throw new AssertionError("method instructions not found");
+        throw AssertionError("method instructions not found")
     }
 
-    @NotNull
-    private static List<LocalVariable> readLocalVariable(ClassReader cr, String methodName) throws Exception {
-        class Visitor extends ClassVisitor {
-            List<LocalVariable> readVariables = new ArrayList<>();
+    companion object {
 
-            public Visitor() {
-                super(Opcodes.ASM5);
+        private fun getActualVariablesAsString(list: List<LocalVariable>): String {
+            val builder = StringBuilder()
+            for (variable in list) {
+                builder.append(variable.toString()).append("\n")
             }
-
-            @Override
-            public MethodVisitor visitMethod(
-                    int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions
-            ) {
-                if (methodName.equals(name + desc)) {
-                    return new MethodVisitor(Opcodes.ASM5) {
-                        @Override
-                        public void visitLocalVariable(
-                                @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
-                        ) {
-                            readVariables.add(new LocalVariable(name, desc, index));
-                        }
-                    };
-                }
-                else {
-                    return super.visitMethod(access, name, desc, signature, exceptions);
-                }
-            }
+            return builder.toString()
         }
-        Visitor visitor = new Visitor();
 
-        cr.accept(visitor, ClassReader.SKIP_FRAMES);
+        private val methodPattern = Pattern.compile("^// METHOD : *(.*)")
 
-        assertFalse("method not found: " + methodName, visitor.readVariables.size() == 0);
+        @Throws(Exception::class)
+        private fun readLocalVariable(cr: ClassReader, methodName: String): List<LocalVariable> {
 
-        return visitor.readVariables;
+            class Visitor : ClassVisitor(Opcodes.ASM5) {
+                var readVariables: MutableList<LocalVariable> = ArrayList()
+
+                override fun visitMethod(
+                    access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
+                ): MethodVisitor? {
+                    return if (methodName == name + desc) {
+                        object : MethodVisitor(Opcodes.ASM5) {
+                            override fun visitLocalVariable(
+                                name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
+                            ) {
+                                readVariables.add(LocalVariable(name, desc, index))
+                            }
+                        }
+                    } else {
+                        super.visitMethod(access, name, desc, signature, exceptions)
+                    }
+                }
+            }
+
+            val visitor = Visitor()
+
+            cr.accept(visitor, ClassReader.SKIP_FRAMES)
+
+            TestCase.assertFalse("method not found: $methodName", visitor.readVariables.size == 0)
+
+            return visitor.readVariables
+        }
     }
 }
 

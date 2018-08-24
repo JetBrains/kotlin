@@ -23,7 +23,7 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
         return ConfigurationKind.ALL;
     }
 
-    override fun doCompare(text: String?, actualLocalVariables: MutableList<LocalVariable>) {
+    override fun doCompare(text: String, actualLocalVariables: List<LocalVariable>) {
         val actual = getActualVariablesAsList(actualLocalVariables)
         val expected = getExpectedVariablesAsList()
         if (!Comparing.equal(expected, actual)) {
