@@ -2133,6 +2133,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
         }
 
+        @TestMetadata("synthesizedBoxMethodIsNotMangled.kt")
+        public void testSynthesizedBoxMethodIsNotMangled() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/synthesizedBoxMethodIsNotMangled.kt");
+        }
+
         @TestMetadata("uIntArrayIteratorWithoutBoxing.kt")
         public void testUIntArrayIteratorWithoutBoxing() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/uIntArrayIteratorWithoutBoxing.kt");
