@@ -84,8 +84,15 @@ class DeserializedDescriptorResolver {
      * or is run with a released language version.
      */
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
-        get() = components.configuration.reportErrorsOnPreReleaseDependencies &&
-                (classHeader.isPreRelease || classHeader.metadataVersion == KOTLIN_1_1_EAP_METADATA_VERSION)
+        get() = (components.configuration.reportErrorsOnPreReleaseDependencies &&
+                (classHeader.isPreRelease || classHeader.metadataVersion == KOTLIN_1_1_EAP_METADATA_VERSION)) ||
+                isCompiledWith13M1
+
+    // We report pre-release errors on .class files produced by 1.3-M1 even if this compiler is pre-release. This is needed because
+    // 1.3-M1 did not mangle names of functions mentioning inline classes yet, and we don't want to support this case in the codegen
+    private val KotlinJvmBinaryClass.isCompiledWith13M1: Boolean
+        get() = !components.configuration.skipMetadataVersionCheck &&
+                classHeader.isPreRelease && classHeader.metadataVersion == KOTLIN_1_3_M1_METADATA_VERSION
 
     internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader
@@ -118,5 +125,7 @@ class DeserializedDescriptorResolver {
                 setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
 
         private val KOTLIN_1_1_EAP_METADATA_VERSION = JvmMetadataVersion(1, 1, 2)
+
+        private val KOTLIN_1_3_M1_METADATA_VERSION = JvmMetadataVersion(1, 1, 11)
     }
 }
