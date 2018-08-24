@@ -10,7 +10,7 @@ import templates.PrimitiveType.Companion.maxByCapacity
 
 object RangeOps : TemplateGroupBase() {
 
-    private val rangePrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Char, PrimitiveType.UInt, PrimitiveType.ULong)
+    private val rangePrimitives = PrimitiveType.rangePrimitives
     private fun rangeElementType(fromType: PrimitiveType, toType: PrimitiveType) =
         maxByCapacity(fromType, toType).let {
             when {

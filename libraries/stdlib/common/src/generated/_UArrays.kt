@@ -16,6 +16,107 @@ package kotlin.collections
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.random(): UInt {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.random(): ULong {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.random(): UByte {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.random(): UShort {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntArray.random(random: Random): UInt {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongArray.random(random: Random): ULong {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UByteArray.random(random: Random): UByte {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UShortArray.random(random: Random): UShort {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
 
 /**
  * Returns an array of type [ByteArray], which is a view of this array where each element is a signed reinterpretation

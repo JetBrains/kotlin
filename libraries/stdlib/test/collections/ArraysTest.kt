@@ -11,6 +11,7 @@ import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.test.*
 import kotlin.comparisons.*
+import kotlin.random.Random
 
 fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual && expected contentEquals actual, message) }
 fun assertArrayNotSameButEquals(expected: IntArray, actual: IntArray, message: String = "") {             assertTrue(expected !== actual && expected contentEquals actual, message) }
@@ -591,6 +592,31 @@ class ArraysTest {
         expect(3) { arrayOf(1, 2, 3).last() }
         expect(2) { arrayOf(1, 2, 3).last { it % 2 == 0 } }
     }
+
+
+    @Test fun random() {
+        Array(100) { it }.let { array ->
+            val tosses = List(10) { array.random() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { array.random(random1) }
+            val tosses2 = List(10) { array.random(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        arrayOf("x").let { singletonArray ->
+            val tosses = List(10) { singletonArray.random() }
+            assertEquals(singletonArray.toList(), tosses.distinct())
+        }
+
+        assertFailsWith<NoSuchElementException> { emptyArray<Any>().random() }
+    }
+
 
     @Test fun contains() {
         assertTrue(arrayOf("1", "2", "3", "4").contains("2"))

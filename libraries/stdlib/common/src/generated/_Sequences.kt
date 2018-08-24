@@ -16,6 +16,7 @@ package kotlin.sequences
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 import kotlin.coroutines.experimental.*
 
 /**

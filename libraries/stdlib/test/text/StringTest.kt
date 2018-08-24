@@ -10,6 +10,7 @@ import test.*
 import test.collections.behaviors.iteratorBehavior
 import test.collections.compare
 import kotlin.math.sign
+import kotlin.random.Random
 
 
 fun createString(content: String): CharSequence = content
@@ -934,6 +935,29 @@ class StringTest {
     @Test fun findNot() = withOneCharSequenceArg("1a2b3c") { data ->
         assertEquals('a', data.filterNot { it.isAsciiDigit() }.firstOrNull())
         assertNull(data.filterNot { it.isAsciiLetter() || it.isAsciiDigit() }.firstOrNull())
+    }
+
+    @Test fun random() = withOneCharSequenceArg { data ->
+        data("abcdefg").let { charSeq ->
+            val tosses = List(10) { charSeq.random() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { charSeq.random(random1) }
+            val tosses2 = List(10) { charSeq.random(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        data("x").let { singletonCharSeq ->
+            val tosses = List(10) { singletonCharSeq.random() }
+            assertEquals(singletonCharSeq.toList(), tosses.distinct())
+        }
+
+        assertFailsWith<NoSuchElementException> { data("").random() }
     }
 
     @Test fun partition() {
