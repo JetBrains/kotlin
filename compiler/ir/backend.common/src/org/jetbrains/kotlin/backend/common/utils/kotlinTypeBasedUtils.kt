@@ -22,22 +22,10 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 // TODO: implement pure Ir-based function (see IrTypeUtils.kt)
 
 @Deprecated("Use pure Ir helper")
-fun IrType.isNullable() = toKotlinType().isNullable()
-
-@Deprecated("Use pure Ir helper")
-fun IrType.isInterface() = toKotlinType().isInterface()
-
-@Deprecated("Use pure Ir helper")
 fun IrType.isPrimitiveArray() = KotlinBuiltIns.isPrimitiveArray(toKotlinType())
 
 @Deprecated("Use pure Ir helper")
 fun IrType.getPrimitiveArrayElementType() = KotlinBuiltIns.getPrimitiveArrayElementType(toKotlinType())
-
-@Deprecated("Use pure Ir helper")
-fun IrType.isTypeParameter() = toKotlinType().isTypeParameter()
-
-@Deprecated("Use pure Ir helper")
-fun IrType.isFunctionOrKFunction() = toKotlinType().isFunctionOrKFunctionType
 
 @Deprecated("Use pure Ir helper")
 fun List<IrType>.commonSupertype() = CommonSupertypes.commonSupertype(map(IrType::toKotlinType)).toIrType()!!
@@ -47,6 +35,3 @@ fun IrType.isSubtypeOf(superType: IrType) = toKotlinType().isSubtypeOf(superType
 
 @Deprecated("Use pure Ir helper")
 fun IrType.isSubtypeOfClass(superClass: IrClassSymbol) = DescriptorUtils.isSubtypeOfClass(toKotlinType(), superClass.descriptor)
-
-@Deprecated("Use pure Ir helper")
-fun IrType.isBuiltinFunctionalTypeOrSubtype() = toKotlinType().isBuiltinFunctionalTypeOrSubtype
