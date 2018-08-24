@@ -14,168 +14,164 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.text.StringUtil;
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.org.objectweb.asm.*;
+import com.google.common.collect.Lists
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.utils.rethrow
+import org.jetbrains.org.objectweb.asm.*
+import java.io.File
+import java.util.*
+import java.util.regex.Pattern
 
-import java.io.File;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+abstract class AbstractLineNumberTest : CodegenTestCase() {
 
-public abstract class AbstractLineNumberTest extends CodegenTestCase {
-    private static final String LINE_NUMBER_FUN = "lineNumber";
-    private static final Pattern TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test." + LINE_NUMBER_FUN + "\\(\\).*$");
-
-    private static TestFile createLineNumberDeclaration() {
-        return new TestFile(
-                LINE_NUMBER_FUN + ".kt",
-                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n"
-        );
-    }
-
-    @Override
-    protected void doMultiFileTest(
-            @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir
+    override fun doMultiFileTest(
+        wholeFile: File, files: MutableList<CodegenTestCase.TestFile>, javaFilesDir: File?
     ) {
-        boolean isCustomTest = wholeFile.getParentFile().getName().equalsIgnoreCase("custom");
+        val isCustomTest = wholeFile.parentFile.name.equals("custom", ignoreCase = true)
         if (!isCustomTest) {
-            files.add(createLineNumberDeclaration());
+            files.add(createLineNumberDeclaration())
         }
-        compile(files, javaFilesDir);
+        compile(files, javaFilesDir)
 
-        KtFile psiFile = CollectionsKt.single(myFiles.getPsiFiles(), file -> file.getName().equals(wholeFile.getName()));
+        val psiFile = myFiles.psiFiles.single { file -> file.name == wholeFile.name }
 
         try {
             if (isCustomTest) {
-                List<String> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, false);
-                String text = psiFile.getText();
-                String newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers);
-                KotlinTestUtils.assertEqualsToFile(wholeFile, newFileText);
+                val actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, false)
+                val text = psiFile.text
+                val newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers)
+                KotlinTestUtils.assertEqualsToFile(wholeFile, newFileText)
+            } else {
+                val expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile)
+                val actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, true)
+                assertFalse("Missed 'lineNumbers' calls in test data", expectedLineNumbers.isEmpty())
+                KtUsefulTestCase.assertSameElements(actualLineNumbers, expectedLineNumbers)
             }
-            else {
-                List<String> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
-                List<String> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, true);
-                assertFalse( "Missed 'lineNumbers' calls in test data", expectedLineNumbers.isEmpty());
-                assertSameElements(actualLineNumbers, expectedLineNumbers);
-            }
-        } catch (Throwable e) {
-            System.out.println(classFileFactory.createText());
-            throw ExceptionUtilsKt.rethrow(e);
+        } catch (e: Throwable) {
+            println(classFileFactory.createText())
+            throw rethrow(e)
+        }
+    }
+
+    companion object {
+        private const val LINE_NUMBER_FUN = "lineNumber"
+        private val TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test.$LINE_NUMBER_FUN\\(\\).*$")
+
+        private fun createLineNumberDeclaration(): CodegenTestCase.TestFile {
+            return CodegenTestCase.TestFile(
+                "$LINE_NUMBER_FUN.kt",
+                "package test;\n\npublic fun $LINE_NUMBER_FUN(): Int = 0\n"
+            )
         }
 
-    }
-
-    private static String getActualLineNumbersAsString(List<String> lines) {
-        return CollectionsKt.joinToString(lines, " ", "// ", "", -1, "...", lineNumber -> lineNumber);
-    }
-
-    @NotNull
-    private static List<String> extractActualLineNumbersFromBytecode(@NotNull ClassFileFactory factory, boolean testFunInvoke) {
-        List<String> actualLineNumbers = Lists.newArrayList();
-        for (OutputFile outputFile : ClassFileUtilsKt.getClassFiles(factory)) {
-            ClassReader cr = new ClassReader(outputFile.asByteArray());
-            try {
-                List<String> lineNumbers = testFunInvoke ? readTestFunLineNumbers(cr) : readAllLineNumbers(cr);
-                actualLineNumbers.addAll(lineNumbers);
-            }
-            catch (Throwable e) {
-                System.out.println(factory.createText());
-                throw ExceptionUtilsKt.rethrow(e);
-            }
+        private fun getActualLineNumbersAsString(lines: List<String>): String {
+            return lines.joinToString(" ", "// ", "", -1, "...") { lineNumber -> lineNumber }
         }
 
-        return actualLineNumbers;
-    }
+        private fun extractActualLineNumbersFromBytecode(factory: ClassFileFactory, testFunInvoke: Boolean): List<String> {
+            val actualLineNumbers = Lists.newArrayList<String>()
+            for (outputFile in factory.getClassFiles()) {
+                val cr = ClassReader(outputFile.asByteArray())
+                try {
+                    val lineNumbers = if (testFunInvoke) readTestFunLineNumbers(cr) else readAllLineNumbers(cr)
+                    actualLineNumbers.addAll(lineNumbers)
+                } catch (e: Throwable) {
+                    println(factory.createText())
+                    throw rethrow(e)
+                }
 
-    @NotNull
-    private static List<String> extractSelectedLineNumbersFromSource(@NotNull KtFile file) {
-        String fileContent = file.getText();
-        List<String> lineNumbers = Lists.newArrayList();
-        String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");
-
-        for (int i = 0; i < lines.length; i++) {
-            Matcher matcher = TEST_LINE_NUMBER_PATTERN.matcher(lines[i]);
-            if (matcher.matches()) {
-                lineNumbers.add(Integer.toString(i + 1));
             }
+
+            return actualLineNumbers
         }
 
-        return lineNumbers;
-    }
+        private fun extractSelectedLineNumbersFromSource(file: KtFile): List<String> {
+            val fileContent = file.text
+            val lineNumbers = Lists.newArrayList<String>()
+            val lines = StringUtil.convertLineSeparators(fileContent).split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-    @NotNull
-    private static List<String> readTestFunLineNumbers(@NotNull ClassReader cr) {
-        List<Label> labels = Lists.newArrayList();
-        Map<Label, String> labels2LineNumbers = new HashMap<>();
+            for (i in lines.indices) {
+                val matcher = TEST_LINE_NUMBER_PATTERN.matcher(lines[i])
+                if (matcher.matches()) {
+                    lineNumbers.add(Integer.toString(i + 1))
+                }
+            }
 
-        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM5) {
-            @Override
-            public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-                return new MethodVisitor(Opcodes.ASM5) {
-                    private Label lastLabel;
+            return lineNumbers
+        }
 
-                    @Override
-                    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-                        if (LINE_NUMBER_FUN.equals(name)) {
-                            assert lastLabel != null : "A function call with no preceding label";
-                            labels.add(lastLabel);
+        private fun readTestFunLineNumbers(cr: ClassReader): List<String> {
+            val labels = Lists.newArrayList<Label>()
+            val labels2LineNumbers = HashMap<Label, String>()
+
+            val visitor = object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    desc: String,
+                    signature: String,
+                    exceptions: Array<String>
+                ): MethodVisitor {
+                    return object : MethodVisitor(Opcodes.ASM5) {
+                        private var lastLabel: Label? = null
+
+                        override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
+                            if (LINE_NUMBER_FUN == name) {
+                                assert(lastLabel != null) { "A function call with no preceding label" }
+                                labels.add(lastLabel)
+                            }
+                            lastLabel = null
                         }
-                        lastLabel = null;
-                    }
 
-                    @Override
-                    public void visitLabel(@NotNull Label label) {
-                        lastLabel = label;
-                    }
+                        override fun visitLabel(label: Label) {
+                            lastLabel = label
+                        }
 
-                    @Override
-                    public void visitLineNumber(int line, @NotNull Label start) {
-                        labels2LineNumbers.put(start, Integer.toString(line));
+                        override fun visitLineNumber(line: Int, start: Label) {
+                            labels2LineNumbers[start] = Integer.toString(line)
+                        }
                     }
-                };
+                }
             }
-        };
 
-        cr.accept(visitor, ClassReader.SKIP_FRAMES);
+            cr.accept(visitor, ClassReader.SKIP_FRAMES)
 
-        List<String> lineNumbers = Lists.newArrayList();
-        for (Label label : labels) {
-            String lineNumber = labels2LineNumbers.get(label);
-            assert lineNumber != null : "No line number found for a label";
-            lineNumbers.add(lineNumber);
+            val lineNumbers = Lists.newArrayList<String>()
+            for (label in labels) {
+                val lineNumber = labels2LineNumbers[label] ?: error("No line number found for a label")
+                lineNumbers.add(lineNumber)
+            }
+
+            return lineNumbers
         }
 
-        return lineNumbers;
-    }
+        private fun readAllLineNumbers(reader: ClassReader): List<String> {
+            val result = ArrayList<String>()
+            val visitedLabels = HashSet<String>()
 
-    @NotNull
-    private static List<String> readAllLineNumbers(@NotNull ClassReader reader) {
-        List<String> result = new ArrayList<>();
-        Set<String> visitedLabels = new HashSet<>();
+            reader.accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitMethod(
+                    access: Int,
+                    name: String,
+                    desc: String,
+                    signature: String,
+                    exceptions: Array<String>
+                ): MethodVisitor {
+                    return object : MethodVisitor(Opcodes.ASM5) {
+                        override fun visitLineNumber(line: Int, label: Label) {
+                            val overrides = !visitedLabels.add(label.toString())
 
-        reader.accept(new ClassVisitor(Opcodes.ASM5) {
-            @Override
-            public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-                return new MethodVisitor(Opcodes.ASM5) {
-                    @Override
-                    public void visitLineNumber(int line, @NotNull Label label) {
-                        boolean overrides = !visitedLabels.add(label.toString());
-
-                        result.add((overrides ? "+" : "") + line);
+                            result.add((if (overrides) "+" else "") + line)
+                        }
                     }
-                };
-            }
-        }, ClassReader.SKIP_FRAMES);
-        return result;
+                }
+            }, ClassReader.SKIP_FRAMES)
+            return result
+        }
     }
 }
