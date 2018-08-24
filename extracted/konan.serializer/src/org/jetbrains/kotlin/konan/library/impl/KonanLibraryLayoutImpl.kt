@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
 
-private class ZippedKonanLibraryLayout(val klibFile: File, override val target: KonanTarget? = null): KonanLibraryLayout {
+private class ZippedKonanLibraryLayout(val klibFile: File, override val target: KonanTarget?): KonanLibraryLayout {
 
     init { zippedKonanLibraryChecks(klibFile) }
 
@@ -29,7 +29,7 @@ internal fun zippedKonanLibraryChecks(klibFile: File) {
 
 internal fun zippedKonanLibraryRoot(klibFile: File) = klibFile.asZipRoot
 
-private class UnzippedKonanLibraryLayout(override val libDir: File, override val target: KonanTarget? = null): KonanLibraryLayout {
+private class UnzippedKonanLibraryLayout(override val libDir: File, override val target: KonanTarget?): KonanLibraryLayout {
     override val libraryName = libDir.path
 }
 

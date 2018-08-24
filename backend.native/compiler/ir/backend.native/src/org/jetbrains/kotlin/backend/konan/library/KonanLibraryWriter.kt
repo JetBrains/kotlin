@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.backend.konan.library
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 
+const val KLIB_CURRENT_ABI_VERSION = 1
+
 interface KonanLibraryWriter {
     fun addLinkData(linkData: LinkData)
     fun addNativeBitcode(library: String)

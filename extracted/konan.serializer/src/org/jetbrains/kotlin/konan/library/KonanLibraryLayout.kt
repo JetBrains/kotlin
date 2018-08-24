@@ -3,9 +3,6 @@ package org.jetbrains.kotlin.konan.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-const val KLIB_FILE_EXTENSION = "klib"
-const val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
-
 // This scheme describes the Kotlin/Native Library (klib) layout.
 interface KonanLibraryLayout {
 

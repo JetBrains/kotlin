@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.konan.library.impl.DefaultMetadataReaderImpl
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.library.impl.zippedKonanLibraryChecks
 import org.jetbrains.kotlin.konan.library.impl.zippedKonanLibraryRoot
+import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolver
+import org.jetbrains.kotlin.konan.library.resolver.impl.KonanLibraryResolverImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 fun File.unpackZippedKonanLibraryTo(newDir: File) {
@@ -23,10 +25,13 @@ fun File.unpackZippedKonanLibraryTo(newDir: File) {
     check(newDir.exists) { "Could not unpack $this as $newDir." }
 }
 
-fun createKonanLibraryReader(
+fun createKonanLibrary(
         libraryFile: File,
         currentAbiVersion: Int,
         target: KonanTarget? = null,
-        isDefaultLibrary: Boolean = false,
+        isDefault: Boolean = false,
         metadataReader: MetadataReader = DefaultMetadataReaderImpl
-): KonanLibrary = KonanLibraryImpl(libraryFile, currentAbiVersion, target, isDefaultLibrary, metadataReader)
+): KonanLibrary = KonanLibraryImpl(libraryFile, currentAbiVersion, target, isDefault, metadataReader)
+
+fun SearchPathResolverWithTarget.libraryResolver(abiVersion: Int): KonanLibraryResolver =
+        KonanLibraryResolverImpl(this, abiVersion)

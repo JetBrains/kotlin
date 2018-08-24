@@ -6,6 +6,10 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.konan.util.suffixIfNot
 
+const val KLIB_FILE_EXTENSION = "klib"
+const val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
+
+const val KONAN_STDLIB_NAME = "stdlib"
 
 interface SearchPathResolver {
     val searchRoots: List<File>
@@ -13,23 +17,40 @@ interface SearchPathResolver {
     fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<File>
 }
 
-fun defaultResolver(repositories: List<String>, target: KonanTarget): SearchPathResolver =
-        defaultResolver(repositories, target, Distribution())
+interface SearchPathResolverWithTarget: SearchPathResolver {
+    val target: KonanTarget
+}
 
-fun defaultResolver(repositories: List<String>, target: KonanTarget, distribution: Distribution): SearchPathResolver =
-        KonanLibrarySearchPathResolver(
-                repositories,
-                target,
-                distribution.klib,
-                distribution.localKonanDir.absolutePath
-        )
-
-class KonanLibrarySearchPathResolver(
+fun defaultResolver(
         repositories: List<String>,
-        val target: KonanTarget?,
+        target: KonanTarget
+): SearchPathResolverWithTarget = defaultResolver(repositories, target, Distribution())
+
+fun defaultResolver(
+        repositories: List<String>,
+        target: KonanTarget,
+        distribution: Distribution,
+        skipCurrentDir: Boolean = false
+): SearchPathResolverWithTarget = KonanLibrarySearchPathResolverWithTarget(
+        repositories,
+        target,
+        distribution.klib,
+        distribution.localKonanDir.absolutePath,
+        skipCurrentDir)
+
+fun noTargetResolver(
+        repositories: List<String>,
+        distributionKlib: String? = null,
+        localKonanDir: String? = null,
+        skipCurrentDir: Boolean = false
+): SearchPathResolver = KonanLibrarySearchPathResolver(repositories, distributionKlib, localKonanDir, skipCurrentDir)
+
+
+internal open class KonanLibrarySearchPathResolver(
+        repositories: List<String>,
         val distributionKlib: String?,
         val localKonanDir: String?,
-        val skipCurrentDir: Boolean = false
+        val skipCurrentDir: Boolean
 ) : SearchPathResolver {
 
     val localHead: File?
@@ -38,15 +59,12 @@ class KonanLibrarySearchPathResolver(
     val distHead: File?
         get() = distributionKlib?.File()?.child("common")
 
-    val distPlatformHead: File?
-        get() = target?.let { distributionKlib?.File()?.child("platform")?.child(target.visibleName) }
+    open val distPlatformHead: File? = null
 
     val currentDirHead: File?
         get() = if (!skipCurrentDir) File.userDir else null
 
-    private val repoRoots: List<File> by lazy {
-        repositories.map { File(it) }
-    }
+    private val repoRoots: List<File> by lazy { repositories.map { File(it) } }
 
     // This is the place where we specify the order of library search.
     override val searchRoots: List<File> by lazy {
@@ -57,8 +75,8 @@ class KonanLibrarySearchPathResolver(
         fun check(file: File): Boolean =
                 file.exists && (file.isFile || File(file, "manifest").exists)
 
-        val noSuffix = File(candidate.path.removeSuffixIfPresent(".klib"))
-        val withSuffix = File(candidate.path.suffixIfNot(".klib"))
+        val noSuffix = File(candidate.path.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT))
+        val withSuffix = File(candidate.path.suffixIfNot(KLIB_FILE_EXTENSION_WITH_DOT))
         return when {
             check(withSuffix) -> withSuffix
             check(noSuffix) -> noSuffix
@@ -90,16 +108,28 @@ class KonanLibrarySearchPathResolver(
         val result = mutableListOf<File>()
 
         if (!noStdLib) {
-            result.add(resolve("stdlib"))
+            result.add(resolve(KONAN_STDLIB_NAME))
         }
 
         if (!noDefaultLibs) {
             val defaultLibs = defaultRoots.flatMap { it.listFiles }
-                    .filterNot { it.name.removeSuffixIfPresent(".klib") == "stdlib" }
+                    .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KONAN_STDLIB_NAME }
                     .map { File(it.absolutePath) }
             result.addAll(defaultLibs)
         }
 
         return result
     }
+}
+
+internal class KonanLibrarySearchPathResolverWithTarget(
+        repositories: List<String>,
+        override val target: KonanTarget,
+        distributionKlib: String?,
+        localKonanDir: String?,
+        skipCurrentDir: Boolean
+): KonanLibrarySearchPathResolver(repositories, distributionKlib, localKonanDir, skipCurrentDir), SearchPathResolverWithTarget {
+
+    override val distPlatformHead: File?
+        get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)
 }

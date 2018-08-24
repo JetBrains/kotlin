@@ -11,8 +11,8 @@ sealed class KonanModuleOrigin {
 
 sealed class CompiledKonanModuleOrigin: KonanModuleOrigin()
 
-// FIXME: ddol: replace `Any` by `KonanLibraryReader` when ready
-class DeserializedKonanModuleOrigin(val reader: Any) : CompiledKonanModuleOrigin()
+// FIXME(ddol): replace `Any` by `KonanLibrary` when ready
+class DeserializedKonanModuleOrigin(val library: Any) : CompiledKonanModuleOrigin()
 
 object CurrentKonanModuleOrigin: CompiledKonanModuleOrigin()
 

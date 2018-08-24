@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -32,6 +33,6 @@ fun createKonanModuleDescriptor(
         capabilities = mapOf(KonanModuleOrigin.CAPABILITY to origin)
 )
 
-private val STDLIB_MODULE_NAME = Name.special("<stdlib>")
+private val STDLIB_MODULE_NAME = Name.special("<$KONAN_STDLIB_NAME>")
 
 fun ModuleDescriptor.isKonanStdlib() = name == STDLIB_MODULE_NAME

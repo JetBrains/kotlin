@@ -11,18 +11,21 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.exportForwardDeclarations
 import org.jetbrains.kotlin.konan.library.isInterop
 import org.jetbrains.kotlin.konan.library.packageFqName
+import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
-// FIXME: ddol: this is a temporary solution, to be refactored into some global resolution context
+// FIXME(ddol): this is a temporary solution, to be refactored into some global resolution context
 interface KonanModuleDescriptorFactory {
 
     fun createModuleDescriptor(
-            libraryReader: KonanLibrary,
+            library: KonanLibrary,
             specifics: LanguageVersionSettings,
+            packageAccessedHandler: PackageAccessedHandler? = null,
             storageManager: StorageManager = LockBasedStorageManager()
     ): ModuleDescriptor
 }
@@ -30,24 +33,26 @@ interface KonanModuleDescriptorFactory {
 object DefaultKonanModuleDescriptorFactory: KonanModuleDescriptorFactory {
 
     override fun createModuleDescriptor(
-            libraryReader: KonanLibrary,
+            library: KonanLibrary,
             specifics: LanguageVersionSettings,
+            packageAccessedHandler: PackageAccessedHandler?,
             storageManager: StorageManager
     ): ModuleDescriptorImpl {
 
-        val libraryProto = parseModuleHeader(libraryReader.moduleHeaderData)
+        val libraryProto = parseModuleHeader(library.moduleHeaderData)
 
         val moduleName = libraryProto.moduleName
 
         val moduleDescriptor = createKonanModuleDescriptor(
                 Name.special(moduleName),
                 storageManager,
-                origin = DeserializedKonanModuleOrigin(libraryReader)
+                origin = DeserializedKonanModuleOrigin(library)
         )
         val deserializationConfiguration = CompilerDeserializationConfiguration(specifics)
 
         val provider = createPackageFragmentProvider(
-                libraryReader,
+                library,
+                packageAccessedHandler,
                 libraryProto.packageFragmentNameList,
                 storageManager,
                 moduleDescriptor,
@@ -59,7 +64,8 @@ object DefaultKonanModuleDescriptorFactory: KonanModuleDescriptorFactory {
     }
 
     private fun createPackageFragmentProvider(
-            libraryReader: KonanLibrary,
+            library: KonanLibrary,
+            packageAccessedHandler: PackageAccessedHandler?,
             fragmentNames: List<String>,
             storageManager: StorageManager,
             moduleDescriptor: ModuleDescriptor,
@@ -67,11 +73,11 @@ object DefaultKonanModuleDescriptorFactory: KonanModuleDescriptorFactory {
     ): PackageFragmentProvider {
 
         val deserializedPackageFragments = fragmentNames.map{
-            KonanPackageFragment(it, libraryReader, storageManager, moduleDescriptor)
+            KonanPackageFragment(FqName(it), library, packageAccessedHandler, storageManager, moduleDescriptor)
         }
 
         val syntheticPackageFragments = getSyntheticPackageFragments(
-                libraryReader,
+                library,
                 moduleDescriptor,
                 deserializedPackageFragments)
 
@@ -108,17 +114,17 @@ object DefaultKonanModuleDescriptorFactory: KonanModuleDescriptorFactory {
     }
 
     private fun getSyntheticPackageFragments(
-            libraryReader: KonanLibrary,
+            library: KonanLibrary,
             moduleDescriptor: ModuleDescriptor,
             konanPackageFragments: List<KonanPackageFragment>
     ): List<PackageFragmentDescriptor> {
 
-        if (!libraryReader.isInterop) return emptyList()
+        if (!library.isInterop) return emptyList()
 
-        val packageFqName = libraryReader.packageFqName
-                ?: error("Inconsistent manifest: interop library ${libraryReader.libraryName} should have `package` specified")
+        val packageFqName = library.packageFqName
+                ?: error("Inconsistent manifest: interop library ${library.libraryName} should have `package` specified")
 
-        val exportForwardDeclarations = libraryReader.exportForwardDeclarations
+        val exportForwardDeclarations = library.exportForwardDeclarations
 
         val interopPackageFragments = konanPackageFragments.filter { it.fqName == packageFqName }
 

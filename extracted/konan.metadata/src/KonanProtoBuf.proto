@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.metadata.konan;
 // in the same namespace of renamed org.jetbrains.kotlin.protobuf packages.
 // In case we merge to the main Kotlin workspace the scheme will be simplified.
 
-// FIXME: ddol: fix this import after moving `metadata` to main Kotlin repo - it should refer to the actual metadata.proto file from Kotlin project
+// FIXME(ddol): fix this import after moving `metadata` to main Kotlin repo - it should refer to the actual metadata.proto file from Kotlin project
 import "metadata.proto1";
 
 option java_outer_classname = "KonanProtoBuf";

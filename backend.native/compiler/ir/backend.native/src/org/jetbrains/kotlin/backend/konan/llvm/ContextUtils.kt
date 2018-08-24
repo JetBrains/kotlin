@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
 import org.jetbrains.kotlin.descriptors.konan.CompiledKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -330,47 +330,23 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         private val allLibraries = context.librariesWithDependencies.toSet()
 
         override fun add(origin: CompiledKonanModuleOrigin) {
-            val reader = when (origin) {
+            val library = when (origin) {
                 CurrentKonanModuleOrigin -> return
-                is DeserializedKonanModuleOrigin -> origin.reader as KonanLibrary
+                is DeserializedKonanModuleOrigin -> origin.library as KonanLibrary
             }
 
-            if (reader !in allLibraries) {
-                error("$reader (${reader.libraryName}) is used but not requested")
+            if (library !in allLibraries) {
+                error("Library (${library.libraryName}) is used but not requested.\nRequested libraries: ${allLibraries.joinToString { it.libraryName }}")
             }
 
-            usedLibraries.add(reader)
+            usedLibraries.add(library)
         }
     }
 
-    val librariesToLink: List<KonanLibrary>  by lazy {
-        context.config.immediateLibraries
-                .filter { (!it.isDefaultLibrary && !context.config.purgeUserLibs) || it in usedLibraries }
-                .withResolvedDependencies()
-                .topoSort()
-    }
-
-    private fun List<KonanLibrary>.topoSort(): List<KonanLibrary> {
-        var sorted = mutableListOf<KonanLibrary>()
-        val visited = mutableSetOf<KonanLibrary>()
-        val tempMarks = mutableSetOf<KonanLibrary>()
-
-        fun visit(node: KonanLibrary, result: MutableList<KonanLibrary>) {
-            if (visited.contains(node)) return
-            if (tempMarks.contains(node)) error("Cyclic dependency in library graph.")
-            tempMarks.add(node)
-            node.resolvedDependencies.forEach {
-                visit(it, result)
-            }
-            visited.add(node)
-            result += node
-        }
-
-        this.forEach next@{
-            if (visited.contains(it)) return@next
-            visit(it, sorted)
-        }
-        return sorted
+    val librariesToLink: List<KonanLibrary> by lazy {
+        context.config.resolvedLibraries
+                .filterRoots { (!it.isDefault && !context.config.purgeUserLibs) || it.library in usedLibraries }
+                .getFullList(TopologicalLibraryOrder)
     }
 
     val librariesForLibraryManifest: List<KonanLibrary> get() {

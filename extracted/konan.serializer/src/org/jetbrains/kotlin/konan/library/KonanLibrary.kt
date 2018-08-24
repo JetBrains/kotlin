@@ -14,10 +14,16 @@ const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
 const val KLIB_PROPERTY_INCLUDED_HEADERS = "includedHeaders"
 
+/**
+ * An abstraction for getting access to the information stored inside of Kotlin/Native library.
+ */
 interface KonanLibrary {
 
     val libraryName: String
     val libraryFile: File
+
+    // whether this library is default (provided by Kotlin/Native distribution)
+    val isDefault: Boolean
 
     // properties:
     val manifestProperties: Properties
@@ -33,12 +39,6 @@ interface KonanLibrary {
     val dataFlowGraph: ByteArray?
     val moduleHeaderData: ByteArray
     fun packageMetadata(fqName: String): ByteArray
-
-    // FIXME: ddol: to be refactored into some global resolution context
-    val isDefaultLibrary: Boolean get() = false
-    val isNeededForLink: Boolean get() = true
-    val resolvedDependencies: MutableList<KonanLibrary>
-    fun markPackageAccessed(fqName: String)
 }
 
 val KonanLibrary.uniqueName
@@ -55,10 +55,11 @@ val KonanLibrary.packageFqName
 
 val KonanLibrary.exportForwardDeclarations
     get() = manifestProperties.getProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS)
-            .split(' ')
+            .split(' ').asSequence()
             .map { it.trim() }
             .filter { it.isNotEmpty() }
             .map { FqName(it) }
+            .toList()
 
 val KonanLibrary.includedHeaders
     get() = manifestProperties.getProperty(KLIB_PROPERTY_INCLUDED_HEADERS).split(' ')

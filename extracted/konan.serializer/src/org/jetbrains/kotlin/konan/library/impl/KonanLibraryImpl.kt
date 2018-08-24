@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.konan.util.substitute
-import org.jetbrains.kotlin.serialization.konan.emptyPackages
 
 internal class KonanLibraryImpl(
         override val libraryFile: File,
         private val currentAbiVersion: Int,
         internal val target: KonanTarget?,
-        override val isDefaultLibrary: Boolean,
+        override val isDefault: Boolean,
         private val metadataReader: MetadataReader
 ) : KonanLibrary {
 
@@ -63,17 +62,5 @@ internal class KonanLibraryImpl(
 
     override fun packageMetadata(fqName: String) = metadataReader.loadSerializedPackageFragment(inPlace, fqName)
 
-    override var isNeededForLink: Boolean = false
-        private set
-
-    override val resolvedDependencies = mutableListOf<KonanLibrary>()
-
-    override fun markPackageAccessed(fqName: String) {
-        if (!isNeededForLink // fast path
-                && !emptyPackages.contains(fqName)) {
-            isNeededForLink = true
-        }
-    }
-
-    private val emptyPackages by lazy { emptyPackages(moduleHeaderData) }
+    override fun toString() = "$libraryName[default=$isDefault]"
 }

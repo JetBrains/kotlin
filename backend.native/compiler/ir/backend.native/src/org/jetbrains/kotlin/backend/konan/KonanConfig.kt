@@ -17,9 +17,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.konan.library.resolveImmediateLibraries
-import org.jetbrains.kotlin.backend.konan.library.resolveLibrariesRecursive
-import org.jetbrains.kotlin.backend.konan.library.withResolvedDependencies
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -34,6 +31,7 @@ import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.defaultResolver
+import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.profile
 import org.jetbrains.kotlin.serialization.konan.DefaultKonanModuleDescriptorFactory
@@ -91,29 +89,25 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-    private val resolver = defaultResolver(repositories, target, distribution)
+    private val resolver = defaultResolver(repositories, target, distribution).libraryResolver(currentAbiVersion)
 
-    internal val immediateLibraries: List<KonanLibrary> by lazy {
-        val result = resolver.resolveImmediateLibraries(
+    internal val resolvedLibraries by lazy {
+        resolver.resolveWithDependencies(
                 libraryNames,
-                target,
-                currentAbiVersion,
-                configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
-                configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
-                { msg -> configuration.report(STRONG_WARNING, msg) })
-        resolver.resolveLibrariesRecursive(result, target, currentAbiVersion)
-        result
+                noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
+                noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS) ) { msg ->
+            configuration.report(STRONG_WARNING, msg) }
     }
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
 
-        return immediateLibraries.purgeUnneeded(this).withResolvedDependencies()
+        return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList()
     }
 
     private val loadedDescriptors = loadLibMetadata()
 
-    internal lateinit var friends:Set<ModuleDescriptorImpl>
+    internal lateinit var friends: Set<ModuleDescriptorImpl>
 
     internal val defaultNativeLibraries = 
         if (produce == CompilerOutputKind.PROGRAM) 
@@ -128,24 +122,25 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     fun loadLibMetadata(): List<ModuleDescriptorImpl> {
 
-        val allMetadata = mutableListOf<ModuleDescriptorImpl>()
         val specifics = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
+        val friendLibsSet = configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet()
 
-        val libraries = immediateLibraries.withResolvedDependencies()
-        val friendLibsSet = configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map{File(it)}?.toSet()
+        val allMetadata = mutableListOf<ModuleDescriptorImpl>()
         val friends = mutableListOf<ModuleDescriptorImpl>()
-        for (klib in libraries) {
-            profile("Loading ${klib.libraryName}") {
+
+        resolvedLibraries.forEach { library, packageAccessedHandler ->
+            profile("Loading ${library.libraryName}") {
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
-                val moduleDescriptor = DefaultKonanModuleDescriptorFactory.createModuleDescriptor(klib, specifics)
+                val moduleDescriptor = DefaultKonanModuleDescriptorFactory.createModuleDescriptor(library, specifics, packageAccessedHandler)
                 allMetadata.add(moduleDescriptor)
                 friendLibsSet?.apply {
-                    if (contains(klib.libraryFile))
-                        friends.add(moduleDescriptor)
+                    if (contains(library.libraryFile)) friends.add(moduleDescriptor)
                 }
             }
         }
+
         this.friends = friends.toSet()
+
         return allMetadata
     }
 
@@ -176,6 +171,3 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 
     = this.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
-
-private fun <T: KonanLibrary> List<T>.purgeUnneeded(config: KonanConfig): List<T> =
-        this.filter{ (!it.isDefaultLibrary && !config.purgeUserLibs) || it.isNeededForLink }

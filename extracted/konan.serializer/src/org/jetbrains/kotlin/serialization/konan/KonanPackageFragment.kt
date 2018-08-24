@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.serialization.konan
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -14,11 +15,12 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.StorageManager
 
 class KonanPackageFragment(
-        val fqNameString: String,
-        val reader: KonanLibrary,
+        fqName: FqName,
+        private val library: KonanLibrary,
+        private val packageAccessedHandler: PackageAccessedHandler?,
         storageManager: StorageManager,
         module: ModuleDescriptor
-) : DeserializedPackageFragment(FqName(fqNameString), storageManager, module) {
+) : DeserializedPackageFragment(fqName, storageManager, module) {
 
     lateinit var components: DeserializationComponents
 
@@ -29,11 +31,11 @@ class KonanPackageFragment(
     // The proto field is lazy so that we can load only needed
     // packages from the library.
     private val protoForNames: KonanProtoBuf.LinkDataPackageFragment by lazy {
-        parsePackageFragment(reader.packageMetadata(fqNameString))
+        parsePackageFragment(library.packageMetadata(fqName.asString()))
     }
 
     val proto: KonanProtoBuf.LinkDataPackageFragment
-        get() = protoForNames.also { reader.markPackageAccessed(fqNameString) }
+        get() = protoForNames.also { packageAccessedHandler?.markPackageAccessed(fqName) }
 
     private val nameResolver by lazy {
         NameResolverImpl(protoForNames.stringTable, protoForNames.nameTable)
@@ -43,7 +45,7 @@ class KonanPackageFragment(
         KonanClassDataFinder(proto, nameResolver)
     }
 
-    private val memberScope_ by lazy {
+    private val _memberScope by lazy {
         /* TODO: we fake proto binary versioning for now. */
         DeserializedPackageMemberScope(
                 this,
@@ -54,7 +56,7 @@ class KonanPackageFragment(
                 components) { loadClassNames() }
     }
 
-    override fun getMemberScope(): DeserializedPackageMemberScope = memberScope_
+    override fun getMemberScope(): DeserializedPackageMemberScope = _memberScope
 
     private val classifierNames: Set<Name> by lazy {
         val result = mutableSetOf<Name>()
