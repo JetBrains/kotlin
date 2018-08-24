@@ -2,13 +2,12 @@ package codegen.coroutines.coroutineContext1
 
 import kotlin.test.*
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
-    override fun resume(value: Any?) {}
-    override fun resumeWithException(exception: Throwable) { throw exception }
+    override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
 }
 
 fun builder(c: suspend () -> Unit) {

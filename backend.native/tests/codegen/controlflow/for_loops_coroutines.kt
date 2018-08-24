@@ -2,7 +2,7 @@ package codegen.controlflow.for_loops_coroutines
 
 import kotlin.test.*
 
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 @Test fun runTest() {
     val sq = buildSequence {

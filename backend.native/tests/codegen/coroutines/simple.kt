@@ -2,16 +2,15 @@ package codegen.coroutines.simple
 
 import kotlin.test.*
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
-    override fun resume(value: Any?) {}
-    override fun resumeWithException(exception: Throwable) { throw exception }
+    override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
 }
 
-suspend fun suspendHere(): Int = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): Int = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(42)
     COROUTINE_SUSPENDED
 }

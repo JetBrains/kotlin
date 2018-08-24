@@ -327,9 +327,6 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val getContinuation = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("getContinuation").single())
 
-    val konanIntercepted = symbolTable.referenceSimpleFunction(
-            context.getInternalFunctions("intercepted").single())
-
     val konanSuspendCoroutineUninterceptedOrReturn = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("suspendCoroutineUninterceptedOrReturn").single())
 
@@ -347,12 +344,32 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             .single()
             .getter!!
 
-    override val coroutineImpl = symbolTable.referenceClass(context.getInternalClass("CoroutineImpl"))
+    override val coroutineImpl get() = TODO()
+
+    val baseContinuationImpl = symbolTable.referenceClass(
+            builtIns.builtInsModule.findClassAcrossModuleDependencies(
+                    ClassId.topLevel(FqName("kotlin.coroutines.native.internal.BaseContinuationImpl")))!!
+    )
+
+    val restrictedContinuationImpl = symbolTable.referenceClass(
+            builtIns.builtInsModule.findClassAcrossModuleDependencies(
+                    ClassId.topLevel(FqName("kotlin.coroutines.native.internal.RestrictedContinuationImpl")))!!
+    )
+
+    val continuationImpl = symbolTable.referenceClass(
+            builtIns.builtInsModule.findClassAcrossModuleDependencies(
+                    ClassId.topLevel(FqName("kotlin.coroutines.native.internal.ContinuationImpl")))!!
+    )
 
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
             coroutinesIntrinsicsPackage
                     .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND)
                     .filterNot { it.isExpect }.single().getter!!
+    )
+
+    val successOrFailure = symbolTable.referenceClass(
+            builtIns.builtInsModule.findClassAcrossModuleDependencies(
+                    ClassId.topLevel(FqName("kotlin.SuccessOrFailure")))!!
     )
 
     val refClass = symbolTable.referenceClass(context.getInternalClass("Ref"))

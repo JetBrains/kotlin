@@ -17,9 +17,6 @@
 package kotlin.coroutines.experimental.intrinsics
 
 import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.processBareContinuationResume
-import kotlin.native.internal.*
 
 
 /**
@@ -34,13 +31,7 @@ import kotlin.native.internal.*
  */
 public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
         completion: Continuation<T>
-): Continuation<Unit> =
-        if (this !is CoroutineImpl)
-            buildContinuationByInvokeCall(completion) {
-                @Suppress("UNCHECKED_CAST") (this as Function1<Continuation<T>, Any?>).invoke(completion)
-            }
-        else
-            (this.create(completion) as CoroutineImpl).facade
+): Continuation<Unit> = errorExperimentalCoroutinesAreNoLongerSupported()
 
 /**
  * Creates a coroutine with receiver type [R] and result type [T].
@@ -55,35 +46,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> =
-        if (this !is CoroutineImpl)
-            buildContinuationByInvokeCall(completion) {
-                @Suppress("UNCHECKED_CAST") (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
-            }
-        else
-            (this.create(receiver, completion) as CoroutineImpl).facade
-
-// INTERNAL DEFINITIONS
-private inline fun <T> buildContinuationByInvokeCall(
-        completion: Continuation<T>,
-        crossinline block: () -> Any?
-): Continuation<Unit> {
-    val continuation =
-            object : Continuation<Unit> {
-                override val context: CoroutineContext
-                    get() = completion.context
-
-                override fun resume(value: Unit) {
-                    processBareContinuationResume(completion, block)
-                }
-
-                override fun resumeWithException(exception: Throwable) {
-                    completion.resumeWithException(exception)
-                }
-            }
-
-    return interceptContinuationIfNeeded(completion.context, continuation)
-}
+): Continuation<Unit> = errorExperimentalCoroutinesAreNoLongerSupported()
 
 /**
  * Starts unintercepted coroutine without receiver and with result type [T] and executes it until its first suspension.
@@ -96,7 +59,7 @@ private inline fun <T> buildContinuationByInvokeCall(
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
         completion: Continuation<T>
-): Any? = (this as Function1<Continuation<T>, Any?>).invoke(completion)
+): Any? = errorExperimentalCoroutinesAreNoLongerSupported()
 
 /**
  * Starts unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
@@ -110,7 +73,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
         receiver: R,
         completion: Continuation<T>
-): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+): Any? = errorExperimentalCoroutinesAreNoLongerSupported()
 
 
 
@@ -119,6 +82,8 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
  * the execution was suspended and will not return any result immediately.
  */
 @SinceKotlin("1.1")
-public actual val COROUTINE_SUSPENDED: Any = CoroutineSuspendedMarker
+public actual val COROUTINE_SUSPENDED: Any get() = errorExperimentalCoroutinesAreNoLongerSupported()
 
-private object CoroutineSuspendedMarker
+@PublishedApi
+internal fun errorExperimentalCoroutinesAreNoLongerSupported(): Nothing =
+        error("kotlin.coroutines.experimental is no longer supported, please migrate to kotlin.coroutines")

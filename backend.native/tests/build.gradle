@@ -1329,16 +1329,19 @@ task coroutines_controlFlow_finally4(type: RunKonanTest) {
 }
 
 task coroutines_controlFlow_finally5(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "s1\nf2\nfinally\n1\n"
     source = "codegen/coroutines/controlFlow_finally5.kt"
 }
 
 task coroutines_controlFlow_finally6(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "s1\nfinally\nerror\n0\n"
     source = "codegen/coroutines/controlFlow_finally6.kt"
 }
 
 task coroutines_controlFlow_finally7(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "s1\nf2\nfinally1\ns2\nfinally2\n42\n"
     source = "codegen/coroutines/controlFlow_finally7.kt"
 }
@@ -1364,21 +1367,25 @@ task coroutines_controlFlow_tryCatch1(type: RunKonanTest) {
 }
 
 task coroutines_controlFlow_tryCatch2(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "s1\n42\n"
     source = "codegen/coroutines/controlFlow_tryCatch2.kt"
 }
 
 task coroutines_controlFlow_tryCatch3(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "s2\nf2\n1\n"
     source = "codegen/coroutines/controlFlow_tryCatch3.kt"
 }
 
 task coroutines_controlFlow_tryCatch4(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "s2\nf2\n1\n"
     source = "codegen/coroutines/controlFlow_tryCatch4.kt"
 }
 
 task coroutines_controlFlow_tryCatch5(type: RunKonanTest) {
+    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     goldValue = "s2\ns1\nError\n42\n"
     source = "codegen/coroutines/controlFlow_tryCatch5.kt"
 }

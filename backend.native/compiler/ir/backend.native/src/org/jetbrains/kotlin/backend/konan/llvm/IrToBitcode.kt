@@ -1920,19 +1920,18 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private val coroutineImplDescriptor = context.ir.symbols.coroutineImpl.owner
-    private val doResumeFunctionDescriptor = coroutineImplDescriptor.declarations
-            .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "doResume" }
+    private val invokeSuspendFunction = context.ir.symbols.baseContinuationImpl.owner.declarations
+            .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "invokeSuspend" }
 
     private fun getContinuation(): LLVMValueRef {
         val caller = functionGenerationContext.functionDescriptor!!
         return if (caller.isSuspend)
             codegen.param(caller, caller.allParameters.size)    // The last argument.
         else {
-            // Suspend call from non-suspend function - must be [CoroutineImpl].
-            assert (doResumeFunctionDescriptor.symbol in (caller as IrSimpleFunction).overriddenSymbols,
-                    { "Expected 'CoroutineImpl.doResume' but was '$caller'" })
-            currentCodeContext.genGetValue(caller.dispatchReceiverParameter!!)   // Coroutine itself is a continuation.
+            // Suspend call from non-suspend function - must be [BaseContinuationImpl].
+            assert ((caller as IrSimpleFunction).overrides(invokeSuspendFunction),
+                    { "Expected 'BaseContinuationImpl.invokeSuspend' but was '$caller'" })
+            currentCodeContext.genGetValue(caller.dispatchReceiverParameter!!)
         }
     }
 

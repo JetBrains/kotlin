@@ -16,8 +16,8 @@
 
 import kotlinx.cinterop.*
 import platform.posix.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun main(args: Array<String>) {
     if (args.size < 1) {
@@ -96,9 +96,8 @@ class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
         if (posix_errno() != EWOULDBLOCK)
             throw IOException(getUnixError())
         // Save continuation and suspend.
-        return suspendCoroutineOrReturn { continuation ->
+        return suspendCoroutine { continuation ->
             waitingList.put(clientFd, WaitingFor.Read(data, dataLength, continuation))
-            COROUTINE_SUSPENDED
         }
     }
 
@@ -109,17 +108,15 @@ class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
         if (posix_errno() != EWOULDBLOCK)
             throw IOException(getUnixError())
         // Save continuation and suspend.
-        return suspendCoroutineOrReturn { continuation ->
+        return suspendCoroutine { continuation ->
             waitingList.put(clientFd, WaitingFor.Write(data, length, continuation))
-            COROUTINE_SUSPENDED
         }
     }
 }
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
-    override fun resume(value: Any?) {}
-    override fun resumeWithException(exception: Throwable) { throw exception }
+    override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
 }
 
 fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {

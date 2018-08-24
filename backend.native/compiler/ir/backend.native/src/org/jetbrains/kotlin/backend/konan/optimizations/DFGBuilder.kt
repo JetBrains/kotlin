@@ -403,9 +403,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         }
     }
 
-    private val doResumeFunctionSymbol =
-            context.ir.symbols.coroutineImpl.owner.declarations
-                    .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "doResume" }.symbol
+    private val invokeSuspendFunctionSymbol =
+            context.ir.symbols.baseContinuationImpl.owner.declarations
+                    .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "invokeSuspend" }.symbol
 
     private val getContinuationSymbol = context.ir.symbols.getContinuation
     private val continuationType = getContinuationSymbol.owner.returnType
@@ -439,7 +439,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             descriptor.isSuspend -> DataFlowIR.Node.Parameter(allParameters.size)
 
-            doResumeFunctionSymbol in descriptor.overriddenSymbols ->            // <this> is a CoroutineImpl inheritor.
+            descriptor.overrides(invokeSuspendFunctionSymbol.owner) ->           // <this> is a ContinuationImpl inheritor.
                 templateParameters[descriptor.dispatchReceiverParameter!!]       // It is its own continuation.
 
             else -> null

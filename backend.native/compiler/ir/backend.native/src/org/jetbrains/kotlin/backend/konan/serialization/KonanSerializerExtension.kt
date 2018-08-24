@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -102,6 +104,9 @@ internal class KonanSerializerExtension(val context: Context, override val metad
         return IrSerializer( 
             context, inlineDescriptorTable, stringTable, serializer, descriptor).serializeInlineBody()
     }
+
+    override fun releaseCoroutines(): Boolean =
+            context.config.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 }
 
 internal interface IrAwareExtension {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -50,6 +51,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
@@ -721,3 +724,17 @@ val IrType.isSimpleTypeWithQuestionMark: Boolean
 
 fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
         if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
+
+fun FunctionDescriptor.createOverriddenDescriptor(owner: ClassDescriptor, final: Boolean = true): FunctionDescriptor {
+    return this.newCopyBuilder()
+            .setOwner(owner)
+            .setCopyOverrides(true)
+            .setModality(if (final) Modality.FINAL else Modality.OPEN)
+            .setDispatchReceiverParameter(owner.thisAsReceiverParameter)
+            .build()!!.apply {
+        overriddenDescriptors = listOf(this@createOverriddenDescriptor)
+    }
+}
+
+fun IrFunction.isRestrictedSuspendFunction(languageVersionSettings: LanguageVersionSettings): Boolean =
+        this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver(languageVersionSettings) == true

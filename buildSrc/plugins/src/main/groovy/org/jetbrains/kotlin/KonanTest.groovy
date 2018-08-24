@@ -151,59 +151,47 @@ abstract class KonanTest extends JavaExec {
     }
 
     void createCoroutineUtil(String file) {
-        StringBuilder text = new StringBuilder("import kotlin.coroutines.experimental.*\n")
+        StringBuilder text = new StringBuilder("import kotlin.coroutines.*\n")
         text.append(
                 """
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
-    override fun resume(value: Any?) {}
-    override fun resumeWithException(exception: Throwable) { throw exception }
+    override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
 }
 
 fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {
     override val context = EmptyCoroutineContext
-    override fun resumeWithException(exception: Throwable) {
-        throw exception
-    }
-
-    override fun resume(data: T) = x(data)
+    override fun resumeWith(result: SuccessOrFailure<T>) { x(result.getOrThrow()) }
 }
 
 fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {
     override val context = EmptyCoroutineContext
-    override fun resumeWithException(exception: Throwable) {
+    override fun resumeWith(result: SuccessOrFailure<Any?>) {
+        val exception = result.exceptionOrNull() ?: return
         x(exception)
     }
-
-    override fun resume(data: Any?) { }
 }
 """     )
         createFile(file, text.toString())
     }
 
     String createTextForHelpers() {
-        def coroutinesPackage = "kotlin.coroutines.experimental"
+        def coroutinesPackage = "kotlin.coroutines"
 
         def emptyContinuationBody =
             """
-                |override fun resume(data: Any?) {}
-                |override fun resumeWithException(exception: Throwable) { throw exception }
+                |override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
             """.stripMargin()
 
         def handleResultContinuationBody = """
-                |override fun resumeWithException(exception: Throwable) {
-                |   throw exception
-                |}
-                |
-                |override fun resume(data: T) = x(data)
+                |override fun resumeWith(result: SuccessOrFailure<T>) { x(result.getOrThrow()) }
             """.stripMargin()
 
         def handleExceptionContinuationBody = """
-                |override fun resumeWithException(exception: Throwable) {
-                |   x(exception)
+                |override fun resumeWith(result: SuccessOrFailure<Any?>) {
+                |    val exception = result.exceptionOrNull() ?: return
+                |    x(exception)
                 |}
-                |
-                |override fun resume(data: Any?) {}
             """.stripMargin()
 
         return """
@@ -228,6 +216,16 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
             |
             |abstract class ContinuationAdapter<in T> : Continuation<T> {
             |    override val context: CoroutineContext = EmptyCoroutineContext
+            |    override fun resumeWith(result: SuccessOrFailure<T>) {
+            |       if (result.isSuccess) {
+            |           resume(result.getOrThrow())
+            |       } else {
+            |           resumeWithException(result.exceptionOrNull()!!)
+            |       }
+            |    }
+            |
+            |    abstract fun resumeWithException(exception: Throwable)
+            |    abstract fun resume(value: T)
             |}
         """.stripMargin()
     }
@@ -741,7 +739,7 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         for (String filePath : result) {
             def text = project.file(filePath).text
             if (text.contains('COROUTINES_PACKAGE')) {
-                text = text.replace('COROUTINES_PACKAGE', 'kotlin.coroutines.experimental')
+                text = text.replace('COROUTINES_PACKAGE', 'kotlin.coroutines')
             }
             def pkg = null
             if (text =~ packagePattern) {

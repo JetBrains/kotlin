@@ -2,22 +2,21 @@ package codegen.coroutines.controlFlow_tryCatch5
 
 import kotlin.test.*
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
-    override fun resume(value: Any?) {}
-    override fun resumeWithException(exception: Throwable) { throw exception }
+    override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
 }
 
-suspend fun s1(): Int = suspendCoroutineOrReturn { x ->
+suspend fun s1(): Int = suspendCoroutineUninterceptedOrReturn { x ->
     println("s1")
     x.resume(42)
     COROUTINE_SUSPENDED
 }
 
-suspend fun s2(): Int = suspendCoroutineOrReturn { x ->
+suspend fun s2(): Int = suspendCoroutineUninterceptedOrReturn { x ->
     println("s2")
     x.resumeWithException(Error("Error"))
     COROUTINE_SUSPENDED

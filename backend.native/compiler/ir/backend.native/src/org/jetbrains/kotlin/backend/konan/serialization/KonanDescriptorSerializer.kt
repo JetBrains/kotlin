@@ -259,7 +259,7 @@ class KonanDescriptorSerializer private constructor(
         if (requirement != null) {
             builder.addAllVersionRequirement(requirement)
         }
-        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
@@ -342,7 +342,7 @@ class KonanDescriptorSerializer private constructor(
         if (requirement != null) {
             builder.addAllVersionRequirement(requirement)
         }
-        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
@@ -380,7 +380,7 @@ class KonanDescriptorSerializer private constructor(
         if (requirement != null) {
             builder.addAllVersionRequirement(requirement)
         }
-        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+        if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 

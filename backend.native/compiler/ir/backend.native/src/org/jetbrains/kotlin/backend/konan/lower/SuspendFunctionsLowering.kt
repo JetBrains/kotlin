@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.getFunction
-import org.jetbrains.kotlin.backend.common.ir.createOverriddenDescriptor
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
@@ -242,7 +242,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
             val irBuilder = context.createIrBuilder(irFunction.symbol, irFunction.startOffset, irFunction.endOffset)
             irFunction.body = irBuilder.irBlockBody(irFunction) {
                 +irReturn(
-                        irCall(coroutine.doResumeFunction.symbol).apply {
+                        irCall(coroutine.invokeSuspendFunction.symbol).apply {
                             dispatchReceiver = irCall(coroutine.coroutineConstructor.symbol).apply {
                                 val functionParameters = irFunction.explicitParameters
                                 functionParameters.forEachIndexed { index, argument ->
@@ -251,8 +251,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                                 putValueArgument(functionParameters.size,
                                         irCall(getContinuation, listOf(irFunction.returnType)))
                             }
-                            putValueArgument(0, irGetObject(symbols.unit)) // value
-                            putValueArgument(1, irNull()) // exception
+                            putValueArgument(0, irSuccess(irGetObject(symbols.unit)))
                         })
             }
         }
@@ -262,7 +261,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
 
     private class BuiltCoroutine(val coroutineClass: IrClass,
                                  val coroutineConstructor: IrConstructor,
-                                 val doResumeFunction: IrFunction)
+                                 val invokeSuspendFunction: IrFunction)
 
     private var coroutineId = 0
 
@@ -280,26 +279,28 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
 
         private var tempIndex = 0
         private var suspensionPointIdIndex = 0
+        private lateinit var labelField: IrField
         private lateinit var suspendResult: IrVariable
-        private lateinit var dataArgument: IrValueParameter
-        private lateinit var exceptionArgument: IrValueParameter
+        private lateinit var resultArgument: IrValueParameter
         private lateinit var coroutineClassDescriptor: ClassDescriptorImpl
         private lateinit var coroutineClass: IrClassImpl
         private lateinit var coroutineClassThis: IrValueParameter
         private lateinit var argumentToPropertiesMap: Map<ParameterDescriptor, IrField>
 
-        private val coroutineImplSymbol = symbols.coroutineImpl
-        private val coroutineImplConstructorSymbol = coroutineImplSymbol.constructors.single()
-        private val coroutineImplClassDescriptor = coroutineImplSymbol.descriptor
-        private val create1Function = coroutineImplSymbol.owner.simpleFunctions()
+        private val baseClass =
+                (if (irFunction.isRestrictedSuspendFunction(context.config.configuration.languageVersionSettings)) {
+                    symbols.restrictedContinuationImpl
+                } else {
+                    symbols.continuationImpl
+                }).owner
+
+        private val baseClassConstructor = baseClass.constructors.single { it.valueParameters.size == 1 }
+        private val create1Function = baseClass.simpleFunctions()
                 .single { it.name.asString() == "create" && it.valueParameters.size == 1 }
         private val create1CompletionParameter = create1Function.valueParameters[0]
 
-        private val coroutineImplLabelGetterSymbol = coroutineImplSymbol.getPropertyGetter("label")!!
-        private val coroutineImplLabelSetterSymbol = coroutineImplSymbol.getPropertySetter("label")!!
-
         fun build(): BuiltCoroutine {
-            val superTypes = mutableListOf<IrType>(coroutineImplSymbol.owner.defaultType)
+            val superTypes = mutableListOf<IrType>(baseClass.defaultType)
             var suspendFunctionClass: IrClass? = null
             var functionClass: IrClass? = null
             var suspendFunctionClassTypeArguments: List<IrType>? = null
@@ -340,16 +341,27 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
             coroutineClass.createParameterDeclarations()
             coroutineClassThis = coroutineClass.thisReceiver!!
 
+            labelField = createField(
+                    irFunction.startOffset,
+                    irFunction.endOffset,
+                    symbols.nativePtrType,
+                    Name.identifier("label"),
+                    true,
+                    IrDeclarationOrigin.DEFINED,
+                    coroutineClass.descriptor
+            )
+            coroutineClass.addChild(labelField)
+
 
             val overriddenMap = mutableMapOf<CallableMemberDescriptor, CallableMemberDescriptor>()
             val coroutineConstructorBuilder = createConstructorBuilder()
             coroutineConstructorBuilder.initialize()
 
-            val doResumeFunction = coroutineImplSymbol.owner.simpleFunctions()
-                    .single { it.name.asString() == "doResume" }
-            val doResumeMethodBuilder = createDoResumeMethodBuilder(doResumeFunction, coroutineClass)
-            doResumeMethodBuilder.initialize()
-            overriddenMap += doResumeFunction.descriptor to doResumeMethodBuilder.symbol.descriptor
+            val invokeSuspendFunction = baseClass.simpleFunctions()
+                    .single { it.name.asString() == "invokeSuspend" }
+            val invokeSuspendMethodBuilder = createInvokeSuspendMethodBuilder(invokeSuspendFunction, coroutineClass)
+            invokeSuspendMethodBuilder.initialize()
+            overriddenMap += invokeSuspendFunction.descriptor to invokeSuspendMethodBuilder.symbol.descriptor
 
             var coroutineFactoryConstructorBuilder: SymbolWithIrBuilder<IrConstructorSymbol, IrConstructor>? = null
             var createMethodBuilder: SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>? = null
@@ -358,7 +370,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                 // Suspend lambda - create factory methods.
                 coroutineFactoryConstructorBuilder = createFactoryConstructorBuilder(boundFunctionParameters!!)
 
-                val createFunctionDescriptor = coroutineImplClassDescriptor.unsubstitutedMemberScope
+                val createFunctionDescriptor = baseClass.descriptor.unsubstitutedMemberScope
                         .getContributedFunctions(Name.identifier("create"), NoLookupLocation.FROM_BACKEND)
                         .atMostOne { it.valueParameters.size == unboundFunctionParameters!!.size + 1 }
                 createMethodBuilder = createCreateMethodBuilder(
@@ -378,7 +390,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         suspendFunctionInvokeFunctionDescriptor = suspendInvokeFunctionDescriptor,
                         functionInvokeFunctionDescriptor        = invokeFunctionDescriptor,
                         createFunction                          = createMethodBuilder.ir,
-                        doResumeFunction                        = doResumeMethodBuilder.ir,
+                        invokeSuspendFunction                   = invokeSuspendMethodBuilder.ir,
                         coroutineClass                          = coroutineClass)
             }
 
@@ -398,7 +410,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                 coroutineClass.addChild(it.ir)
             }
 
-            coroutineClass.addChild(doResumeMethodBuilder.ir)
+            coroutineClass.addChild(invokeSuspendMethodBuilder.ir)
 
             coroutineClass.setSuperSymbolsAndAddFakeOverrides(superTypes)
 
@@ -406,7 +418,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                     coroutineClass       = coroutineClass,
                     coroutineConstructor = coroutineFactoryConstructorBuilder?.ir
                             ?: coroutineConstructorBuilder.ir,
-                    doResumeFunction     = doResumeMethodBuilder.ir)
+                    invokeSuspendFunction = invokeSuspendMethodBuilder.ir)
         }
 
         private fun createConstructorBuilder()
@@ -427,7 +439,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                 val descriptor = symbol.descriptor as ClassConstructorDescriptorImpl
                 constructorParameters = (
                         functionParameters
-                        + coroutineImplConstructorSymbol.owner.valueParameters[0] // completion.
+                        + baseClassConstructor.valueParameters[0] // completion.
                         ).mapIndexed { index, parameter ->
 
                     val parameterDescriptor = parameter.descriptor.copyAsValueParameter(descriptor, index)
@@ -464,10 +476,13 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         val completionParameter = valueParameters.last()
                         +IrDelegatingConstructorCallImpl(startOffset, endOffset,
                                 context.irBuiltIns.unitType,
-                                coroutineImplConstructorSymbol, coroutineImplConstructorSymbol.descriptor).apply {
+                                baseClassConstructor.symbol, baseClassConstructor.descriptor).apply {
                             putValueArgument(0, irGet(completionParameter))
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, coroutineClass.symbol, context.irBuiltIns.unitType)
+
+                        +irSetField(irGet(coroutineClassThis), labelField, irCall(symbols.getNativeNullPtr.owner))
+
                         functionParameters.forEachIndexed { index, parameter ->
                             +irSetField(
                                     irGet(coroutineClassThis),
@@ -523,7 +538,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                     val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                     body = irBuilder.irBlockBody {
                         +IrDelegatingConstructorCallImpl(startOffset, endOffset, context.irBuiltIns.unitType,
-                                coroutineImplConstructorSymbol, coroutineImplConstructorSymbol.descriptor).apply {
+                                baseClassConstructor.symbol, baseClassConstructor.descriptor).apply {
                             putValueArgument(0, irNull()) // Completion.
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, coroutineClass.symbol,
@@ -573,8 +588,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         /* modality                     = */ Modality.FINAL,
                         /* visibility                   = */ Visibilities.PRIVATE).apply {
                     if (superFunctionDescriptor != null) {
-                        overriddenDescriptors           +=   superFunctionDescriptor.overriddenDescriptors
-                        overriddenDescriptors           +=   superFunctionDescriptor
+                        overriddenDescriptors           =    listOf(superFunctionDescriptor)
                     }
                 }
             }
@@ -622,7 +636,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
         private fun createInvokeMethodBuilder(suspendFunctionInvokeFunctionDescriptor: FunctionDescriptor,
                                               functionInvokeFunctionDescriptor: FunctionDescriptor,
                                               createFunction: IrFunction,
-                                              doResumeFunction: IrFunction,
+                                              invokeSuspendFunction: IrFunction,
                                               coroutineClass: IrClass)
                 = object: SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>() {
 
@@ -679,7 +693,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                     val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
                         +irReturn(
-                                irCall(doResumeFunction).apply {
+                                irCall(invokeSuspendFunction).apply {
                                     dispatchReceiver = irCall(createFunction).apply {
                                         dispatchReceiver = irGet(thisReceiver)
                                         valueParameters.forEachIndexed { index, parameter ->
@@ -688,8 +702,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                                         putValueArgument(valueParameters.size,
                                                 irCall(getContinuation, listOf(returnType)))
                                     }
-                                    putValueArgument(0, irGetObject(symbols.unit))       // value
-                                    putValueArgument(1, irNull())       // exception
+                                    putValueArgument(0, irSuccess(irGetObject(symbols.unit)))
                                 }
                         )
                     }
@@ -709,11 +722,11 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
             coroutineClass.addChild(it)
         }
 
-        private fun createDoResumeMethodBuilder(doResumeFunction: IrFunction, coroutineClass: IrClass)
+        private fun createInvokeSuspendMethodBuilder(invokeSuspendFunction: IrFunction, coroutineClass: IrClass)
                 = object: SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrSimpleFunction>() {
 
             override fun buildSymbol() = IrSimpleFunctionSymbolImpl(
-                    doResumeFunction.descriptor.createOverriddenDescriptor(coroutineClassDescriptor)
+                    invokeSuspendFunction.descriptor.createOverriddenDescriptor(coroutineClassDescriptor)
             )
 
             override fun doInitialize() { }
@@ -733,17 +746,13 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
 
                     this.createDispatchReceiverParameter()
 
-                    doResumeFunction.valueParameters.mapIndexedTo(this.valueParameters) { index, it ->
+                    invokeSuspendFunction.valueParameters.mapIndexedTo(this.valueParameters) { index, it ->
                         it.copy(descriptor.valueParameters[index])
                     }
 
                 }
 
-                dataArgument = function.valueParameters[0]
-                exceptionArgument = function.valueParameters[1]
-
-                val label = coroutineImplSymbol.owner.declarations.filterIsInstance<IrProperty>()
-                        .single { it.name.asString() == "label" }
+                resultArgument = function.valueParameters.single()
 
                 val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
                 function.body = irBuilder.irBlockBody(startOffset, endOffset) {
@@ -756,7 +765,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                     , context.irBuiltIns.anyNType)
 
                     // Extract all suspend calls to temporaries in order to make correct jumps to them.
-                    originalBody.transformChildrenVoid(ExpressionSlicer(label.getter!!.returnType))
+                    originalBody.transformChildrenVoid(ExpressionSlicer(labelField.type))
 
                     val liveLocals = computeLivenessAtSuspensionPoints(originalBody)
 
@@ -837,10 +846,11 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                                                     val variable = localsMap[it.descriptor] ?: it
                                                     +irSetField(irGet(thisReceiver), localToPropertyMap[it.symbol]!!, irGet(variable))
                                                 }
-                                                +irCall(coroutineImplLabelSetterSymbol).apply {
-                                                    dispatchReceiver = irGet(thisReceiver)
-                                                    putValueArgument(0, irGet(suspensionPoint.suspensionPointIdParameter))
-                                                }
+                                                +irSetField(
+                                                        irGet(thisReceiver),
+                                                        labelField,
+                                                        irGet(suspensionPoint.suspensionPointIdParameter)
+                                                )
                                             }
                                         }
                                         restoreState.symbol -> {
@@ -865,11 +875,9 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                             startOffset       = startOffset,
                             endOffset         = endOffset,
                             type              = context.irBuiltIns.unitType,
-                            suspensionPointId = irCall(coroutineImplLabelGetterSymbol).apply {
-                                dispatchReceiver = irGet(function.dispatchReceiverParameter!!)
-                            },
+                            suspensionPointId = irGetField(irGet(function.dispatchReceiverParameter!!), labelField),
                             result            = irBlock(startOffset, endOffset) {
-                                +irThrowIfNotNull(exceptionArgument)    // Coroutine might start with an exception.
+                                +irThrowIfNotNull(irExceptionOrNull(irGet(resultArgument))) // Coroutine might start with an exception.
                                 statements.forEach { +it }
                             })
                     if (irFunction.returnType.isUnit())
@@ -1107,8 +1115,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                             },
                             resumeResult               = irBlock(startOffset, endOffset) {
                                 +irCall(restoreState)
-                                +irThrowIfNotNull(exceptionArgument)
-                                +irGet(dataArgument)
+                                +irGetOrThrow(irGet(resultArgument))
                             })
                     val expressionResult = when {
                         suspendCall.type.isUnit() -> irImplicitCoercionToUnit(suspensionPoint)
@@ -1188,7 +1195,11 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                 irIfThen(irEqeqeq(irGet(value), irCall(symbols.coroutineSuspendedGetter)),
                         irReturn(irGet(value)))
 
-        private fun IrBuilderWithScope.irThrowIfNotNull(exception: IrValueDeclaration) =
+        private fun IrBuilderWithScope.irThrowIfNotNull(exception: IrExpression) = irLetS(exception) {
+            irThrowIfNotNull(it.owner)
+        }
+
+        fun IrBuilderWithScope.irThrowIfNotNull(exception: IrValueDeclaration) =
                 irIfThen(irNot(irEqeqeq(irGet(exception), irNull())),
                         irThrow(irImplicitCast(irGet(exception), exception.type.makeNotNull())))
 
@@ -1198,6 +1209,30 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                         extensionReceiver = value
                     })
                 }
+    }
+
+    private fun IrBuilderWithScope.irGetOrThrow(successOrFailure: IrExpression): IrExpression {
+        // TODO: consider inlining getOrThrow function body here.
+        val successOrFailureClass = symbols.successOrFailure.owner
+        val getOrThrow = successOrFailureClass.simpleFunctions().single { it.name.asString() == "getOrThrow" }
+        return irCall(getOrThrow).apply {
+            dispatchReceiver = successOrFailure
+        }
+    }
+
+    private fun IrBuilderWithScope.irExceptionOrNull(successOrFailure: IrExpression): IrExpression {
+        val successOrFailureClass = symbols.successOrFailure.owner
+        val exceptionOrNull = successOrFailureClass.simpleFunctions().single { it.name.asString() == "exceptionOrNull" }
+        return irCall(exceptionOrNull).apply {
+            dispatchReceiver = successOrFailure
+        }
+    }
+
+    fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrCall {
+        val createSuccessOrFailure = symbols.successOrFailure.owner.constructors.single { it.isPrimary }
+        return irCall(createSuccessOrFailure).apply {
+            putValueArgument(0, value)
+        }
     }
 
     private open class VariablesScopeTracker: IrElementVisitorVoid {

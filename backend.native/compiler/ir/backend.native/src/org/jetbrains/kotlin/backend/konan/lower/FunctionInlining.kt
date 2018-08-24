@@ -99,7 +99,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
             descriptor.resolveFakeOverride().original.let {
                 when  {
                     it.isBuiltInIntercepted(context.config.configuration.languageVersionSettings) ->
-                        getFunctionDeclaration(context.ir.symbols.konanIntercepted.descriptor)
+                        error("Continuation.intercepted is not available with release coroutines")
 
                     it.isBuiltInSuspendCoroutineUninterceptedOrReturn(context.config.configuration.languageVersionSettings) ->
                         getFunctionDeclaration(context.ir.symbols.konanSuspendCoroutineUninterceptedOrReturn.descriptor)

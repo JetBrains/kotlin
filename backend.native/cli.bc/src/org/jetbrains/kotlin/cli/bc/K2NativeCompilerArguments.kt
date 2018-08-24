@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.cli.bc
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.Argument
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.LanguageFeature
 
 class K2NativeCompilerArguments : CommonCompilerArguments() {
     // First go the options interesting to the general public.
@@ -149,10 +147,5 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             description = "Paths to friend modules"
     )
     var friendModules: String? = null
-
-    override fun configureLanguageFeatures(collector: MessageCollector) = super.configureLanguageFeatures(collector).also {
-        it[LanguageFeature.InlineClasses] = LanguageFeature.State.ENABLED // TODO: remove after updating to 1.3.
-        it[LanguageFeature.ReleaseCoroutines] = LanguageFeature.State.DISABLED
-    }
 }
 
