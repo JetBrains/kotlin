@@ -1272,8 +1272,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateIntegerCoercion(value: IrTypeOperatorCall): LLVMValueRef {
         context.log{"evaluateIntegerCoercion        : ${ir2string(value)}"}
         val type = value.typeOperand
-        val typeIsUnsigned = type.isUnsignedInteger()
-        assert(type.isPrimitiveInteger() || typeIsUnsigned)
+        assert(type.isPrimitiveInteger() || type.isUnsignedInteger())
         val result = evaluateExpression(value.argument)
         assert(value.argument.type.isInt())
         val llvmSrcType = codegen.getLLVMType(value.argument.type)
@@ -1283,9 +1282,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return when {
             srcWidth == dstWidth           -> result
             srcWidth > dstWidth            -> LLVMBuildTrunc(functionGenerationContext.builder, result, llvmDstType, "")!!
-            /* srcWidth < dstWidth */
-            typeIsUnsigned                 -> LLVMBuildZExt(functionGenerationContext.builder, result, llvmDstType, "")!!
-            else                           -> LLVMBuildSExt(functionGenerationContext.builder, result, llvmDstType, "")!!
+            else /* srcWidth < dstWidth */ -> LLVMBuildSExt(functionGenerationContext.builder, result, llvmDstType, "")!!
         }
     }
 
