@@ -109,14 +109,14 @@ class NewMultiplatformIT : BaseGradleIT() {
                     Assert.assertTrue(resolve("sample-app.klib").exists())
                 }
 
-                assertFileExists("build/bin/wasm32/main/debug/main.wasm.js")
-                assertFileExists("build/bin/wasm32/main/debug/main.wasm")
-                assertFileExists("build/bin/wasm32/main/release/main.wasm.js")
-                assertFileExists("build/bin/wasm32/main/release/main.wasm")
+                assertFileExists("build/bin/wasm32/main/debug/executable/sample_app.wasm.js")
+                assertFileExists("build/bin/wasm32/main/debug/executable/sample_app.wasm")
+                assertFileExists("build/bin/wasm32/main/release/executable/sample_app.wasm.js")
+                assertFileExists("build/bin/wasm32/main/release/executable/sample_app.wasm")
 
-                val nativeExeName = if (isWindows) "main.exe" else "main.kexe"
-                assertFileExists("build/bin/$hostTargetName/main/release/$nativeExeName")
-                assertFileExists("build/bin/$hostTargetName/main/debug/$nativeExeName")
+                val nativeExeName = if (isWindows) "sample-app.exe" else "sample-app.kexe"
+                assertFileExists("build/bin/$hostTargetName/main/release/executable/$nativeExeName")
+                assertFileExists("build/bin/$hostTargetName/main/debug/executable/$nativeExeName")
             }
 
             build("assemble", "resolveRuntimeDependencies") {
