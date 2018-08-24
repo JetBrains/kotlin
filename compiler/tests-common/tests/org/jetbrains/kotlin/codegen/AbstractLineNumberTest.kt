@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.google.common.collect.Lists
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -44,7 +43,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
             if (isCustomTest) {
                 val actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, false)
                 val text = psiFile.text
-                val newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers)
+                val newFileText = text.substringBefore("// ") + getActualLineNumbersAsString(actualLineNumbers)
                 KotlinTestUtils.assertEqualsToFile(wholeFile, newFileText)
             } else {
                 val expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile)
@@ -54,7 +53,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
             }
         } catch (e: Throwable) {
             println(classFileFactory.createText())
-            throw rethrow(e)
+            throw e
         }
     }
 
@@ -62,37 +61,24 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
         private const val LINE_NUMBER_FUN = "lineNumber"
         private val TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test.$LINE_NUMBER_FUN\\(\\).*$")
 
-        private fun createLineNumberDeclaration(): CodegenTestCase.TestFile {
-            return CodegenTestCase.TestFile(
+        private fun createLineNumberDeclaration() =
+            CodegenTestCase.TestFile(
                 "$LINE_NUMBER_FUN.kt",
                 "package test;\n\npublic fun $LINE_NUMBER_FUN(): Int = 0\n"
             )
-        }
 
-        private fun getActualLineNumbersAsString(lines: List<String>): String {
-            return lines.joinToString(" ", "// ", "", -1, "...") { lineNumber -> lineNumber }
-        }
+        private fun getActualLineNumbersAsString(lines: List<String>) =
+            lines.joinToString(" ", "// ")
 
-        private fun extractActualLineNumbersFromBytecode(factory: ClassFileFactory, testFunInvoke: Boolean): List<String> {
-            val actualLineNumbers = Lists.newArrayList<String>()
-            for (outputFile in factory.getClassFiles()) {
+        private fun extractActualLineNumbersFromBytecode(factory: ClassFileFactory, testFunInvoke: Boolean) =
+            factory.getClassFiles().flatMap { outputFile ->
                 val cr = ClassReader(outputFile.asByteArray())
-                try {
-                    val lineNumbers = if (testFunInvoke) readTestFunLineNumbers(cr) else readAllLineNumbers(cr)
-                    actualLineNumbers.addAll(lineNumbers)
-                } catch (e: Throwable) {
-                    println(factory.createText())
-                    throw rethrow(e)
-                }
-
+                if (testFunInvoke) readTestFunLineNumbers(cr) else readAllLineNumbers(cr)
             }
-
-            return actualLineNumbers
-        }
 
         private fun extractSelectedLineNumbersFromSource(file: KtFile): List<String> {
             val fileContent = file.text
-            val lineNumbers = Lists.newArrayList<String>()
+            val lineNumbers = arrayListOf<String>()
             val lines = StringUtil.convertLineSeparators(fileContent).split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
             for (i in lines.indices) {
@@ -106,7 +92,7 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
         }
 
         private fun readTestFunLineNumbers(cr: ClassReader): List<String> {
-            val labels = Lists.newArrayList<Label>()
+            val labels = arrayListOf<Label>()
             val labels2LineNumbers = HashMap<Label, String>()
 
             val visitor = object : ClassVisitor(Opcodes.ASM5) {
@@ -114,16 +100,15 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
                     access: Int,
                     name: String,
                     desc: String,
-                    signature: String,
-                    exceptions: Array<String>
+                    signature: String?,
+                    exceptions: Array<String>?
                 ): MethodVisitor {
                     return object : MethodVisitor(Opcodes.ASM5) {
                         private var lastLabel: Label? = null
 
                         override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
                             if (LINE_NUMBER_FUN == name) {
-                                assert(lastLabel != null) { "A function call with no preceding label" }
-                                labels.add(lastLabel)
+                                labels.add(lastLabel ?: error("A function call with no preceding label"))
                             }
                             lastLabel = null
                         }
@@ -141,13 +126,9 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
 
             cr.accept(visitor, ClassReader.SKIP_FRAMES)
 
-            val lineNumbers = Lists.newArrayList<String>()
-            for (label in labels) {
-                val lineNumber = labels2LineNumbers[label] ?: error("No line number found for a label")
-                lineNumbers.add(lineNumber)
+            return labels.map { label ->
+                labels2LineNumbers[label] ?: error("No line number found for a label")
             }
-
-            return lineNumbers
         }
 
         private fun readAllLineNumbers(reader: ClassReader): List<String> {
@@ -159,8 +140,8 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
                     access: Int,
                     name: String,
                     desc: String,
-                    signature: String,
-                    exceptions: Array<String>
+                    signature: String?,
+                    exceptions: Array<String>?
                 ): MethodVisitor {
                     return object : MethodVisitor(Opcodes.ASM5) {
                         override fun visitLineNumber(line: Int, label: Label) {
