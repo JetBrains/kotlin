@@ -649,6 +649,21 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
     return if (index == -1) missingDelimiterValue else replaceRange(0, index, replacement)
 }
 
+/**
+ * Create a new string by concatenating given string n times.
+ * It behaves like multiplication in some other languages.
+ * Returns the built string.
+ */
+public operator fun String.times(n: Int): String {
+    val result = StringBuilder()
+
+    repeat(n) {
+        result.append(this)
+    }
+
+    return result.toString()
+}
+
 
 // public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String // JVM- and JS-specific
 // public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String // JVM- and JS-specific
