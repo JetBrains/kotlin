@@ -2526,6 +2526,11 @@ task inline_defaultArgs(type: RunKonanTest) {
     source = "codegen/inline/defaultArgs.kt"
 }
 
+task inline_twiceInlinedObject(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "codegen/inline/twiceInlinedObject.kt"
+}
+
 task classDeclarationInsideInline(type: RunKonanTest) {
     source = "codegen/inline/classDeclarationInsideInline.kt"
     goldValue = "test1: 1.0\n1\ntest2\n"
