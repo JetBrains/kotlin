@@ -16,7 +16,7 @@ class JvmBytecodeBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
     companion object {
         @JvmField
-        val INSTANCE = JvmBytecodeBinaryVersion(1, 0, 2)
+        val INSTANCE = JvmBytecodeBinaryVersion(1, 0, 3)
 
         @JvmField
         val INVALID_VERSION = JvmBytecodeBinaryVersion()
