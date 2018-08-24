@@ -389,6 +389,9 @@ open class KotlinNativeTargetConfigurator(
             ""
         }
 
+    private val KotlinNativeCompilation.isMainCompilation: Boolean
+        get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
+
     private fun Project.createTestTask(compilation: KotlinNativeCompilation, testExecutableLinkTask: KotlinNativeCompile) {
         val compilationSuffix = compilation.name.takeIf { it != KotlinCompilation.TEST_COMPILATION_NAME }.orEmpty()
         val taskName = lowerCamelCaseName(compilation.target.targetName, compilationSuffix, testTaskNameSuffix)
@@ -409,6 +412,58 @@ open class KotlinNativeTargetConfigurator(
         }
         tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).apply {
             dependsOn(testTask)
+        }
+    }
+
+    private fun Project.binaryOutputDirectory(
+        buildType: NativeBuildType,
+        kind: NativeOutputKind,
+        compilation: KotlinNativeCompilation
+    ): File {
+        val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
+        val buildTypeSubDirectory = buildType.name.toLowerCase()
+        val kindSubDirectory = kind.outputDirectoryName
+
+        return buildDir.resolve("bin/$targetSubDirectory${compilation.name}/$buildTypeSubDirectory/$kindSubDirectory")
+    }
+
+    private fun Project.klibOutputDirectory(
+        compilation: KotlinNativeCompilation
+    ): File {
+        val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
+        return buildDir.resolve("classes/kotlin/$targetSubDirectory${compilation.name}")
+    }
+
+    private fun KotlinNativeCompile.registerOutputFiles(outputDirectory: File) {
+        val konanTarget = compilation.target.konanTarget
+
+        val prefix = outputKind.prefix(konanTarget)
+        val suffix = outputKind.suffix(konanTarget)
+        val baseName = if (compilation.isMainCompilation) project.name else compilation.name
+
+        outputFile.set(project.provider {
+            var filename = "$prefix$baseName$suffix"
+            if (outputKind == CompilerOutputKind.FRAMEWORK ||
+                outputKind == CompilerOutputKind.STATIC ||
+                outputKind == CompilerOutputKind.DYNAMIC) {
+                filename = filename.replace('-', '_')
+            }
+
+            outputDirectory.resolve(filename)
+        })
+
+        // Register outputs
+        if (outputKind == CompilerOutputKind.FRAMEWORK) {
+            outputs.dir(outputFile)
+        } else {
+            outputs.file(outputFile)
+        }
+
+        if (outputKind == CompilerOutputKind.STATIC || outputKind == CompilerOutputKind.DYNAMIC) {
+            outputs.file(project.provider {
+                val apiFileName = "$prefix${baseName}_api.h".replace('-', '_')
+                outputDirectory.resolve(apiFileName)
+            })
         }
     }
 
@@ -442,25 +497,7 @@ open class KotlinNativeTargetConfigurator(
                     optimized = buildType.optimized
                     debuggable = buildType.debuggable
 
-                    if (outputKind == CompilerOutputKind.FRAMEWORK) {
-                        outputs.dir(outputFile)
-                    } else {
-                        outputs.file(outputFile)
-                    }
-
-                    outputFile.set(provider {
-                        val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
-                        val buildTypeSubDirectory = buildType.name.toLowerCase()
-                        val compilationName = compilation.compilationName
-                        val prefix = compilerOutputKind.prefix(konanTarget)
-                        val suffix = compilerOutputKind.suffix(konanTarget)
-                        var filename = "$prefix$compilationName$suffix"
-                        if (outputKind == CompilerOutputKind.FRAMEWORK) {
-                            filename = filename.replace('-', '_')
-                        }
-                        File(project.buildDir, "bin/$targetSubDirectory$compilationName/$buildTypeSubDirectory/$filename")
-                    })
-
+                    registerOutputFiles(binaryOutputDirectory(buildType, kind, compilation))
                     dependsOnCompilerDownloading()
                     linkAll.dependsOn(this)
                 }
@@ -511,17 +548,7 @@ open class KotlinNativeTargetConfigurator(
                     "compilation for target '${compilation.platformType.name}'"
             enabled = compilation.target.konanTarget.enabledOnCurrentHost
 
-            outputs.file(outputFile)
-            outputFile.set(provider {
-                val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
-                val compilationName = compilation.compilationName
-                val klibName = if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME)
-                    project.name
-                else
-                    compilationName
-                File(project.buildDir, "classes/kotlin/$targetSubDirectory$compilationName/$klibName.klib")
-            })
-
+            registerOutputFiles(klibOutputDirectory(compilation))
             dependsOnCompilerDownloading()
             compilation.output.tryAddClassesDir {
                 project.files(this.outputFile).builtBy(this)
