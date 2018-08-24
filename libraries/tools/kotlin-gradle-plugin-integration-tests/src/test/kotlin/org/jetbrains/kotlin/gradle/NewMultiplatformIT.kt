@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
 import org.junit.Test
 import java.util.zip.ZipFile
@@ -28,7 +29,12 @@ class NewMultiplatformIT : BaseGradleIT() {
         val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
         val oldStyleAppProject = Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")
 
-        val hostTargetName = if (isWindows) "mingw64" else "linux64"
+        val hostTargetName = when {
+            HostManager.hostIsMingw -> "mingw64"
+            HostManager.hostIsLinux -> "linux64"
+            HostManager.hostIsMac -> "macos64"
+            else -> error("Unknown host")
+        }
 
         val compileTasksNames =
             listOf("Jvm6", "NodeJs", "Metadata", "Wasm32", hostTargetName.capitalize()).map { ":compileKotlin$it" }
