@@ -82,12 +82,18 @@ internal fun ThrowIllegalCharacterConversionException(): Nothing {
 }
 
 @ExportForCppRuntime
-fun PrintThrowable(throwable: Throwable) {
+internal fun ThrowIncorrectDereferenceException() {
+    throw IncorrectDereferenceException(
+            "Trying to access top level value not marked as @ThreadLocal or @ImmutableShared from non-main thread")
+}
+
+@ExportForCppRuntime
+internal fun PrintThrowable(throwable: Throwable) {
     println(throwable)
 }
 
 @ExportForCppRuntime
-fun ReportUnhandledException(e: Throwable) {
+internal fun ReportUnhandledException(e: Throwable) {
     print("Uncaught Kotlin exception: ")
     e.printStackTrace()
 }

@@ -112,3 +112,20 @@ class SharedData(rawPtr: NativePtr) : CStructVar(rawPtr) {
 ```
 So combined with the top level variable declared above, it allows seeing the same memory from different
 threads and building traditional concurrent structures with platform-specific synchronization primitives.
+
+ ## <a name="top_level"></a>Global variables and singletons
+
+  Frequently, global variables are a source of unintended concurrency issues, so _Kotlin/Native_ implements
+following mechanisms to prevent unintended sharing of state via global objects:
+
+   * global variables, unless specially marked, can be only accessed from the main thread (that is, the thread
+   _Kotlin/Native_ runtime was first initialized), if other thread access such a global, `IncorrectDereferenceException` is thrown
+   * for global variables marked with the `@kotlin.native.ThreadLocal` annotation each threads keeps thread-local copy,
+   so changes are not visible between threads
+   * for global variables marked with the `@kotlin.native.SharedImmutable` annotation value is shared, but frozen
+   before publishing, so each threads sees the same value
+   * singleton objects unless marked with `@kotlin.native.ThreadLocal` are frozen and shared, lazy values allowed,
+   unless cyclic frozen structures were attempted to be created
+   * enums are always frozen
+
+ Combined, those mechanisms allows natural race-freeze programming with code reuse across platforms in MPP projects.

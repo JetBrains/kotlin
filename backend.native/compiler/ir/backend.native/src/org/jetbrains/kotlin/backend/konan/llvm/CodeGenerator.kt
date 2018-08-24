@@ -305,6 +305,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             call(context.llvm.freezeSubgraph, listOf(value),  Lifetime.IRRELEVANT, exceptionHandler)
     }
 
+    fun checkMainThread(exceptionHandler: ExceptionHandler) {
+        call(context.llvm.checkMainThread, emptyList(), Lifetime.IRRELEVANT, exceptionHandler)
+    }
+
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
         call(context.llvm.updateReturnRefFunction, listOf(address, value))
     }

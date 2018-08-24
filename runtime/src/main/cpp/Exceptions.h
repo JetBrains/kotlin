@@ -52,6 +52,7 @@ void RUNTIME_NORETURN ThrowNotImplementedError();
 void RUNTIME_NORETURN ThrowIllegalCharacterConversionException();
 void RUNTIME_NORETURN ThrowIllegalArgumentException();
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where);
+void RUNTIME_NORETURN ThrowIncorrectDereferenceException();
 // Prints out mesage of Throwable.
 void PrintThrowable(KRef);
 

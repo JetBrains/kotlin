@@ -62,6 +62,14 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
 public annotation class ThreadLocal
 
 /**
+ * Top level variable is immutable and so could be shared.
+ * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
+ */
+@Target(AnnotationTarget.FIELD)
+@Retention(AnnotationRetention.BINARY)
+public annotation class SharedImmutable
+
+/**
  * Makes top level function available from C/C++ code with the given name.
  * `fullName` controls the name of top level function, `shortName` controls the short name.
  * If `fullName` is empty, no top level declaration is being created.

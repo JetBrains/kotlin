@@ -76,6 +76,7 @@ class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
 }
 
 // Only set in the audio thread
+@ThreadLocal
 private var decoder: DecoderWorker? = null
 
 private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?, length: Int) {

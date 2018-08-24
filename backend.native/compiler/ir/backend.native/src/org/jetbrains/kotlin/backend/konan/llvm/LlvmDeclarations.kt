@@ -376,21 +376,18 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
         val containingClass = descriptor.containingClass
         if (containingClass != null) {
-            val classDeclarations = this.classes[containingClass] ?: error(containingClass.descriptor.toString())
-
+            val classDeclarations = this.classes[containingClass] ?:
+                error(containingClass.descriptor.toString())
             val allFields = classDeclarations.fields
-
             this.fields[descriptor] = FieldLlvmDeclarations(
                     allFields.indexOf(descriptor),
                     classDeclarations.bodyType
             )
         } else {
-
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(descriptor)
-
             val storage = addGlobal(
-                    name, getLLVMType(descriptor.type), isExported = false, threadLocal = !declaration.isShared)
+                    name, getLLVMType(descriptor.type), isExported = false, threadLocal = declaration.isThreadLocal)
 
             this.staticFields[descriptor] = StaticFieldLlvmDeclarations(storage)
         }

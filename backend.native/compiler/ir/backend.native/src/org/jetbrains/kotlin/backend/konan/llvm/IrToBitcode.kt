@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -49,12 +50,27 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 private val threadLocalAnnotationFqName = FqName("kotlin.native.ThreadLocal")
+private val sharedAnnotationFqName = FqName("kotlin.native.SharedImmutable")
 
+// TODO: maybe unannotated singleton objects shall be accessed from main thread only as well?
 val IrClass.objectIsShared get() =
     !descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName)
 
+val IrField.isThreadLocal get() =
+    descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName)
+
 val IrField.isShared get() =
-    !descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName) && !descriptor.isVar
+    descriptor.annotations.hasAnnotation(sharedAnnotationFqName)
+
+val IrField.isMainOnly get() =
+    !descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName) &&
+    !descriptor.annotations.hasAnnotation(sharedAnnotationFqName) &&
+    !descriptor.isDelegated
+
+val IrField.isMainOnlyNonPrimitive get() = when  {
+        KotlinBuiltIns.isPrimitiveType(descriptor.type) -> false
+        else -> isMainOnly
+    }
 
 internal fun emitLLVM(context: Context, phaser: PhaseManager) {
     val irModule = context.irModule!!
@@ -404,7 +420,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     context.llvm.fileInitializers
                             .forEach {
                                 if (it.initializer?.expression !is IrConst<*>?) {
-                                    if (it.isShared) {
+                                    if (!it.isThreadLocal) {
                                         val initialization = evaluateExpression(it.initializer!!.expression)
                                         val address = context.llvmDeclarations.forStaticField(it).storage
                                         freeze(initialization, currentCodeContext.exceptionHandler)
@@ -419,7 +435,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     context.llvm.fileInitializers
                             .forEach {
                                 if (it.initializer?.expression !is IrConst<*>?) {
-                                   if (!it.isShared) {
+                                   if (it.isThreadLocal) {
                                        val initialization = evaluateExpression(it.initializer!!.expression)
                                        val address = context.llvmDeclarations.forStaticField(it).storage
                                        storeAny(initialization, address)
@@ -432,7 +448,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 appendingTo(bbLocalDeinit) {
                     context.llvm.fileInitializers.forEach {
                         // Only if a subject for memory management.
-                        if (it.type.binaryTypeIsReference() && !it.isShared) {
+                        if (it.type.binaryTypeIsReference() && it.isThreadLocal) {
                             val address = context.llvmDeclarations.forStaticField(it).storage
                             storeAny(codegen.kNullObjHeaderPtr, address)
                         }
@@ -445,7 +461,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     context.llvm.fileInitializers
                             // Only if a subject for memory management.
                             .forEach {
-                                if (it.type.binaryTypeIsReference() && it.isShared) {
+                                if (it.type.binaryTypeIsReference() && !it.isThreadLocal) {
                                     val address = context.llvmDeclarations.forStaticField(it).storage
                                     storeAny(codegen.kNullObjHeaderPtr, address)
                                 }
@@ -1428,7 +1444,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return functionGenerationContext.loadSlot(
                     fieldPtrOfClass(thisPtr, value.symbol.owner), value.descriptor.isVar())
         } else {
-            assert (value.receiver == null)
+            assert(value.receiver == null)
+            if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive) {
+                functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
+            }
             val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
             return functionGenerationContext.loadSlot(ptr, value.descriptor.isVar())
         }
@@ -1459,6 +1478,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         } else {
             assert(value.receiver == null)
             val globalValue = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
+            if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive)
+                functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.isShared)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
             functionGenerationContext.storeAny(valueToAssign, globalValue)

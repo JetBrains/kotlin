@@ -71,6 +71,7 @@ void InitOrDeinitGlobalVariables(int initialize) {
 }
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = nullptr;
+THREAD_LOCAL_VARIABLE int isMainThread = 0;
 
 int aliveRuntimesCount = 0;
 
@@ -82,6 +83,7 @@ RuntimeState* initRuntime() {
   bool firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
   // Keep global variables in state as well.
   if (firstRuntime) {
+    isMainThread = 1;
     konan::consoleInit();
     InitOrDeinitGlobalVariables(INIT_GLOBALS);
   }
@@ -157,6 +159,11 @@ void Kotlin_resumeRuntime(RuntimeState* state) {
 RuntimeState* RUNTIME_USED Kotlin_getRuntime() {
   RuntimeCheck(::runtimeState != nullptr, "Runtime must be active on the current thread");
   return ::runtimeState;
+}
+
+void CheckIsMainThread() {
+  if (!isMainThread)
+    ThrowIncorrectDereferenceException();
 }
 
 }  // extern "C"
