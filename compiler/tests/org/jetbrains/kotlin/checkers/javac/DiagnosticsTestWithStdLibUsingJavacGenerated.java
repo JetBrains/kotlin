@@ -1653,6 +1653,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendOverridability.kt");
         }
 
+        @TestMetadata("suspendTest.kt")
+        public void testSuspendTest() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendTest.kt");
+        }
+
         @TestMetadata("suspesionInDefaultValue.kt")
         public void testSuspesionInDefaultValue() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspesionInDefaultValue.kt");

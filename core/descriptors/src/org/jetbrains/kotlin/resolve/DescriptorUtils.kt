@@ -221,7 +221,7 @@ val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
 val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
     get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
 
-fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.takeIf { it.isSafe }?.toSafe()
+fun DeclarationDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.takeIf { it.isSafe }?.toSafe()
 
 fun CallableMemberDescriptor.firstOverridden(
     useOriginal: Boolean = false,

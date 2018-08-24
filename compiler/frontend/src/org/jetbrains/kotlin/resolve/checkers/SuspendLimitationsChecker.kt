@@ -18,12 +18,17 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.abbreviationFqName
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.types.getAbbreviation
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object SuspendOperatorsCheckers : DeclarationChecker {
+object SuspendLimitationsChecker : DeclarationChecker {
     private val UNSUPPORTED_OPERATOR_NAMES = setOf(
         OperatorNameConventions.CONTAINS,
         OperatorNameConventions.GET, OperatorNameConventions.SET,
@@ -31,11 +36,22 @@ object SuspendOperatorsCheckers : DeclarationChecker {
     )
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor is FunctionDescriptor && descriptor.isSuspend && descriptor.isOperator &&
-            descriptor.name in UNSUPPORTED_OPERATOR_NAMES) {
+        if (descriptor !is FunctionDescriptor || !descriptor.isSuspend) return
+
+        if (descriptor.isOperator && descriptor.name in UNSUPPORTED_OPERATOR_NAMES) {
             declaration.modifierList?.getModifier(KtTokens.OPERATOR_KEYWORD)?.let {
                 context.trace.report(Errors.UNSUPPORTED.on(it, "suspend operator \"${descriptor.name}\""))
             }
         }
+
+        if (descriptor.annotations.any(AnnotationDescriptor::isKotlinTestAnnotation)) {
+            declaration.modifierList?.getModifier(KtTokens.SUSPEND_KEYWORD)?.let {
+                context.trace.report(Errors.UNSUPPORTED.on(it, "suspend test functions"))
+            }
+        }
     }
 }
+
+private val KOTLIN_TEST_TEST_FQNAME = FqName("kotlin.test.Test")
+private fun AnnotationDescriptor.isKotlinTestAnnotation() =
+    fqName == KOTLIN_TEST_TEST_FQNAME || abbreviationFqName == KOTLIN_TEST_TEST_FQNAME

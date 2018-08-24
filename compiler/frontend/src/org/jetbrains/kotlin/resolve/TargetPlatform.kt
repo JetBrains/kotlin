@@ -116,7 +116,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     DynamicReceiverChecker,
     DelegationChecker(),
     KClassWithIncorrectTypeArgumentChecker,
-    SuspendOperatorsCheckers,
+    SuspendLimitationsChecker,
     InlineClassDeclarationChecker,
     PropertiesWithBackingFieldsInsideInlineClass(),
     AnnotationClassTargetAndRetentionChecker(),
