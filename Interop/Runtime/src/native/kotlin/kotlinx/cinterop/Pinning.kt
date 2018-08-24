@@ -56,6 +56,19 @@ fun IntArray.refTo(index: Int): CValuesRef<IntVar> = this.usingPinned { addressO
 fun Pinned<LongArray>.addressOf(index: Int): CPointer<LongVar> = this.addressOfElement(index)
 fun LongArray.refTo(index: Int): CValuesRef<LongVar> = this.usingPinned { addressOf(index) }
 
+// TODO: pinning of unsigned arrays involves boxing as they are inline classes wrapping signed arrays.
+fun Pinned<UByteArray>.addressOf(index: Int): CPointer<UByteVar> = this.get().addressOfElement(index)
+fun UByteArray.refTo(index: Int): CValuesRef<UByteVar> = this.usingPinned { addressOf(index) }
+
+fun Pinned<UShortArray>.addressOf(index: Int): CPointer<UShortVar> = this.get().addressOfElement(index)
+fun UShortArray.refTo(index: Int): CValuesRef<UShortVar> = this.usingPinned { addressOf(index) }
+
+fun Pinned<UIntArray>.addressOf(index: Int): CPointer<UIntVar> = this.get().addressOfElement(index)
+fun UIntArray.refTo(index: Int): CValuesRef<UIntVar> = this.usingPinned { addressOf(index) }
+
+fun Pinned<ULongArray>.addressOf(index: Int): CPointer<ULongVar> = this.get().addressOfElement(index)
+fun ULongArray.refTo(index: Int): CValuesRef<ULongVar> = this.usingPinned { addressOf(index) }
+
 fun Pinned<FloatArray>.addressOf(index: Int): CPointer<FloatVar> = this.addressOfElement(index)
 fun FloatArray.refTo(index: Int): CValuesRef<FloatVar> = this.usingPinned { addressOf(index) }
 
@@ -79,3 +92,15 @@ private external fun getAddressOfElement(array: Any, index: Int): COpaquePointer
 @Suppress("NOTHING_TO_INLINE")
 private inline fun <P : CVariable> Pinned<*>.addressOfElement(index: Int): CPointer<P> =
         getAddressOfElement(this.get(), index).reinterpret()
+
+@SymbolName("Kotlin_Arrays_getAddressOfElement")
+private external fun UByteArray.addressOfElement(index: Int): CPointer<UByteVar>
+
+@SymbolName("Kotlin_Arrays_getAddressOfElement")
+private external fun UShortArray.addressOfElement(index: Int): CPointer<UShortVar>
+
+@SymbolName("Kotlin_Arrays_getAddressOfElement")
+private external fun UIntArray.addressOfElement(index: Int): CPointer<UIntVar>
+
+@SymbolName("Kotlin_Arrays_getAddressOfElement")
+private external fun ULongArray.addressOfElement(index: Int): CPointer<ULongVar>

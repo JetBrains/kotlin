@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
         return
     }
 
-    val port = atoi(args[0]).toShort()
+    val port = atoi(args[0]).toUShort()
 
     memScoped {
 
@@ -19,13 +19,13 @@ fun main(args: Array<String>) {
                 .ensureUnixCallResult { it >= 0 }
 
         with(serverAddr) {
-            memset(this.ptr, 0, sockaddr_in.size)
-            sin_family = AF_INET.narrow()
-            sin_addr.s_addr = htons(0).toInt()
+            memset(this.ptr, 0, sockaddr_in.size.convert())
+            sin_family = AF_INET.convert()
+            sin_addr.s_addr = htons(0u).convert()
             sin_port = htons(port)
         }
 
-        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toInt())
+        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toUInt())
                 .ensureUnixCallResult { it == 0 }
 
         listen(listenFd, 10)
@@ -35,21 +35,21 @@ fun main(args: Array<String>) {
                 .ensureUnixCallResult { it >= 0 }
 
         while (true) {
-            val length = read(commFd, buffer, bufferLength)
+            val length = read(commFd, buffer, bufferLength.convert())
                     .ensureUnixCallResult { it >= 0 }
 
             if (length == 0L) {
                 break
             }
 
-            write(commFd, buffer, length)
+            write(commFd, buffer, length.convert())
                     .ensureUnixCallResult { it >= 0 }
         }
     }
 }
 
 // Not available through interop because declared as macro:
-fun htons(value: Short) = ((value.toInt() ushr 8) or (value.toInt() shl 8)).toShort()
+fun htons(value: UShort) = ((value.toInt() ushr 8) or (value.toInt() shl 8)).toUShort()
 
 fun throwUnixError(): Nothing {
     perror(null) // TODO: store error message to exception instead.

@@ -32,11 +32,11 @@ class GitCommit(val repository: GitRepository, val commit: CPointer<git_commit>)
     }
 
     val parents: List<GitCommit> get() = memScoped {
-        val count = git_commit_parentcount(commit)
+        val count = git_commit_parentcount(commit).toInt()
         val result = ArrayList<GitCommit>(count)
         for (index in 0..count - 1) {
             val commitPtr = allocPointerTo<git_commit>()
-            git_commit_parent(commitPtr.ptr, commit, index).errorCheck()
+            git_commit_parent(commitPtr.ptr, commit, index.toUInt()).errorCheck()
             result.add(GitCommit(repository, commitPtr.value!!))
         }
         result

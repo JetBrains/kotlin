@@ -1,5 +1,6 @@
 import kotlinx.cinterop.*
 import cfunptr.*
+import kotlin.test.*
 
 fun main(args: Array<String>) {
     val atoiPtr = getAtoiPtr()!!
@@ -23,6 +24,8 @@ fun main(args: Array<String>) {
 
     printIntPtr(isIntPositivePtr(42).ifThenOneElseZero())
     printIntPtr(isIntPositivePtr(-42).ifThenOneElseZero())
+
+    assertEquals(getMaxUIntGetter()!!(), UInt.MAX_VALUE)
 }
 
 fun Boolean.ifThenOneElseZero() = if (this) 1 else 0

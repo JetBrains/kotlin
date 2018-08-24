@@ -103,6 +103,34 @@ private fun invokeImplLongRet(ptr: COpaquePointer, vararg args: Any?): Long = me
 }
 
 @ExportForCompiler
+private fun invokeImplUByteRet(ptr: COpaquePointer, vararg args: Any?): UByte = memScoped {
+    val resultBuffer = allocFfiReturnValueBuffer<UByteVar>(UByteVar)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_UINT8, args, null, memScope)
+    resultBuffer.value
+}
+
+@ExportForCompiler
+private fun invokeImplUShortRet(ptr: COpaquePointer, vararg args: Any?): UShort = memScoped {
+    val resultBuffer = allocFfiReturnValueBuffer<UShortVar>(UShortVar)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_UINT16, args, null, memScope)
+    resultBuffer.value
+}
+
+@ExportForCompiler
+private fun invokeImplUIntRet(ptr: COpaquePointer, vararg args: Any?): UInt = memScoped {
+    val resultBuffer = allocFfiReturnValueBuffer<UIntVar>(UIntVar)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_UINT32, args, null, memScope)
+    resultBuffer.value
+}
+
+@ExportForCompiler
+private fun invokeImplULongRet(ptr: COpaquePointer, vararg args: Any?): ULong = memScoped {
+    val resultBuffer = allocFfiReturnValueBuffer<ULongVar>(ULongVar)
+    callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_UINT64, args, null, memScope)
+    resultBuffer.value
+}
+
+@ExportForCompiler
 private fun invokeImplFloatRet(ptr: COpaquePointer, vararg args: Any?): Float = memScoped {
     val resultBuffer = allocFfiReturnValueBuffer<FloatVar>(FloatVar)
     callWithVarargs(ptr.rawValue, resultBuffer.rawPtr, FFI_TYPE_KIND_FLOAT, args, null, memScope)

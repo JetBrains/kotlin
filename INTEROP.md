@@ -468,28 +468,24 @@ Sometimes the C libraries have function parameters or struct fields of
 platform-dependent type, e.g. `long` or `size_t`. Kotlin itself doesn't provide
 neither implicit integer casts nor C-style integer casts (e.g.
 `(size_t) intValue`), so to make writing portable code in such cases easier,
-the following methods are provided:
+`convert` method is provided:
 
-*   `fun ${type1}.signExtend<${type2}>(): ${type2}`
-*   `fun ${type1}.narrow<${type2}>(): ${type2}`
+```
+fun ${type1}.convert<${type2}>(): ${type2}
+```
 
-where each of `type1` and `type2` must be an integral type.
+where each of `type1` and `type2` must be an integral type, either signed or unsigned.
 
-The `signExtend` converts the integer value to more wide, i.e. the result must
-have the same or greater size.
-The `narrow` converts the integer value to smaller one (possibly changing the
-value due to loosing significant bits), so the result must have the same or
-less size.
+`.convert<${type}>` has the same semantics as one of the
+`.toByte`, `.toShort`, `.toInt`, `.toLong`,
+`.toUByte`, `.toUShort`, `.toUInt` or `.toULong`
+methods, depending on `type`.
 
-Any allowed `.signExtend<${type}>` or `.narrow<${type}>` have the same
-semantics as one of the `.toByte`, `.toShort`, `.toInt` or `.toLong` methods,
-depending on `type`.
-
-The example of using `signExtend`:
+The example of using `convert`:
 
 ```
 fun zeroMemory(buffer: COpaquePointer, size: Int) {
-    memset(buffer, 0, size.signExtend<size_t>())
+    memset(buffer, 0, size.convert<size_t>())
 }
 ```
 

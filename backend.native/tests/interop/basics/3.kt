@@ -4,7 +4,7 @@ fun main(args: Array<String>) {
     val values = intArrayOf(14, 12, 9, 13, 8)
     val count = values.size
 
-    cstdlib.qsort(values.refTo(0), count.toLong(), IntVar.size, staticCFunction { a, b ->
+    cstdlib.qsort(values.refTo(0), count.toULong(), IntVar.size.convert(), staticCFunction { a, b ->
         val aValue = a!!.reinterpret<IntVar>()[0]
         val bValue = b!!.reinterpret<IntVar>()[0]
 

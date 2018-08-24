@@ -52,3 +52,11 @@ typedef _Bool (*isIntPositivePtrType)(int);
 static isIntPositivePtrType getIsIntPositivePtr() {
     return &__isIntPositive;
 }
+
+static unsigned int getMaxUInt(void) {
+    return 0xffffffff;
+}
+
+static typeof(&getMaxUInt) getMaxUIntGetter() {
+    return &getMaxUInt;
+}

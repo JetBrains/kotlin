@@ -2,7 +2,7 @@ import kotlinx.cinterop.*
 
 import platform.zlib.*
 
-val source = immutableBlobOf(0xF3, 0x48, 0xCD, 0xC9, 0xC9, 0x57, 0x04, 0x00).asCPointer()
+val source = immutableBlobOf(0xF3, 0x48, 0xCD, 0xC9, 0xC9, 0x57, 0x04, 0x00).asCPointer().reinterpret<UByteVar>()
 val golden = immutableBlobOf(0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x21, 0x00).asCPointer()
 
 fun main(args: Array<String>) = memScoped {
@@ -10,9 +10,9 @@ fun main(args: Array<String>) = memScoped {
     buffer.usePinned { pinned ->
         val z = alloc<z_stream>().apply {
             next_in = source
-            avail_in = 8
-            next_out = pinned.addressOf(0)
-            avail_out = buffer.size
+            avail_in = 8u
+            next_out = pinned.addressOf(0).reinterpret()
+            avail_out = buffer.size.toUInt()
         }.ptr
 
         if (inflateInit2(z, -15) == Z_OK && inflate(z, Z_FINISH) == Z_STREAM_END && inflateEnd(z) == Z_OK)

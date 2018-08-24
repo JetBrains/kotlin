@@ -1,4 +1,5 @@
 import kotlinx.cinterop.*
+import platform.posix.size_t
 import tensorflow.*
 
 typealias Status = CPointer<TF_Status>
@@ -31,13 +32,13 @@ fun scalarTensor(value: Int): Tensor {
 
     return TF_NewTensor(TF_INT32,
             dims = null, num_dims = 0,
-            data = data, len = IntVar.size,
+            data = data, len = IntVar.size.convert(),
             deallocator = staticCFunction { dataToFree, _, _ -> nativeHeap.free(dataToFree!!.reinterpret<IntVar>()) },
             deallocator_arg = null)!!
 }
 
 val Tensor.scalarIntValue: Int get() {
-    if (TF_INT32 != TF_TensorType(this) || IntVar.size != TF_TensorByteSize(this)) {
+    if (TF_INT32 != TF_TensorType(this) || IntVar.size.convert<size_t>() != TF_TensorByteSize(this)) {
         throw Error("Tensor is not of type int.")
     }
     if (0 != TF_NumDims(this)) {

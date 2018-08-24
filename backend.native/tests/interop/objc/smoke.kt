@@ -118,9 +118,9 @@ fun testTypeOps() {
     assertTrue(NSValue.asAny() is NSObjectProtocolMeta)
     assertFalse(NSValue.asAny() is NSObjectProtocol) // Must be true, but not implemented properly yet.
 
-    assertEquals(3, ("foo" as NSString).length())
-    assertEquals(4, ((1..4).joinToString("") as NSString).length())
-    assertEquals(2, (listOf(0, 1) as NSArray).count())
+    assertEquals(3u, ("foo" as NSString).length())
+    assertEquals(4u, ((1..4).joinToString("") as NSString).length())
+    assertEquals(2u, (listOf(0, 1) as NSArray).count())
     assertEquals(42L, (42 as NSNumber).longLongValue())
 
     assertFails { "bar" as NSNumber }

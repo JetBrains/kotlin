@@ -71,7 +71,7 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
     }
 
     private fun getTime(): Double {
-        clock_gettime(platform.posix.CLOCK_MONOTONIC, now)
+        clock_gettime(platform.posix.CLOCK_MONOTONIC.convert(), now)
         return now.pointed.tv_sec + now.pointed.tv_nsec / 1e9
     }
 
@@ -127,7 +127,7 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
         lastFrameTime += frameDuration // try to maintain perfect frame rate
         // Wait for next frame, if needed
         if (passedTime < frameDuration) {
-            usleep((1000_000 * (frameDuration - passedTime)).toInt())
+            usleep((1000_000 * (frameDuration - passedTime)).toInt().toUInt())
         } else if (passedTime > frameDuration * 1.5){
             lastFrameTime = now // we fell behind more than half frame, reset time
         }
@@ -140,7 +140,7 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
         while (state == State.PAUSED) {
             audio.pause()
             input.check()
-            usleep(1 * 1000)
+            usleep(1u * 1000u)
         }
         audio.resume()
     }
@@ -152,14 +152,14 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
                 if (!decoder.audioVideoSynced()) {
                     println("Resynchronizing video with audio")
                     while (!decoder.audioVideoSynced() && state == State.PLAYING) {
-                        usleep(500)
+                        usleep(500u)
                         input.check()
                     }
                 }
             }
         } else {
             // For pure sound, playback is driven by demand.
-            usleep(10 * 1000)
+            usleep(10u * 1000u)
         }
     }
 }

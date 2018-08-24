@@ -32,16 +32,16 @@ fun main(args: Array<String>) {
         val serverAddr = alloc<sockaddr_in>()
 
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)
-                .ensureUnixCallResult { it >= 0 }
+                .ensureUnixCallResult { !it.isMinusOne() }
 
         with(serverAddr) {
-            memset(this.ptr, 0, sockaddr_in.size)
-            sin_family = AF_INET.narrow()
-            sin_addr.s_addr = posix_htons(0).toInt()
-            sin_port = posix_htons(port)
+            memset(this.ptr, 0, sockaddr_in.size.convert())
+            sin_family = AF_INET.convert()
+            sin_addr.s_addr = posix_htons(0).convert()
+            sin_port = posix_htons(port).convert()
         }
 
-        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toInt())
+        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toUInt())
                 .ensureUnixCallResult { it == 0 }
 
         fcntl(listenFd, F_SETFL, O_NONBLOCK)
@@ -53,8 +53,8 @@ fun main(args: Array<String>) {
         var connectionId = 0
         acceptClientsAndRun(listenFd) {
             memScoped {
-                val bufferLength = 100L
-                val buffer = allocArray<ByteVar>(bufferLength)
+                val bufferLength = 100uL
+                val buffer = allocArray<ByteVar>(bufferLength.toLong())
                 val connectionIdString = "#${++connectionId}: ".cstr
                 val connectionIdBytes = connectionIdString.ptr
 
@@ -62,10 +62,10 @@ fun main(args: Array<String>) {
                     while (true) {
                         val length = read(buffer, bufferLength)
 
-                        if (length == 0L)
+                        if (length == 0uL)
                             break
 
-                        write(connectionIdBytes, connectionIdString.size.toLong())
+                        write(connectionIdBytes, connectionIdString.size.toULong())
                         write(buffer, length)
                     }
                 } catch (e: IOException) {
@@ -80,19 +80,19 @@ sealed class WaitingFor {
     class Accept : WaitingFor()
 
     class Read(val data: CArrayPointer<ByteVar>,
-               val length: Long,
-               val continuation: Continuation<Long>) : WaitingFor()
+               val length: ULong,
+               val continuation: Continuation<ULong>) : WaitingFor()
 
     class Write(val data: CArrayPointer<ByteVar>,
-                val length: Long,
+                val length: ULong,
                 val continuation: Continuation<Unit>) : WaitingFor()
 }
 
 class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
-    suspend fun read(data: CArrayPointer<ByteVar>, dataLength: Long): Long {
+    suspend fun read(data: CArrayPointer<ByteVar>, dataLength: ULong): ULong {
         val length = read(clientFd, data, dataLength)
         if (length >= 0)
-            return length
+            return length.toULong()
         if (posix_errno() != EWOULDBLOCK)
             throw IOException(getUnixError())
         // Save continuation and suspend.
@@ -101,7 +101,7 @@ class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
         }
     }
 
-    suspend fun write(data: CArrayPointer<ByteVar>, length: Long) {
+    suspend fun write(data: CArrayPointer<ByteVar>, length: ULong) {
         val written = write(clientFd, data, length)
         if (written >= 0)
             return
@@ -153,7 +153,7 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
 
                             // Accept new client.
                             val clientFd = accept(serverFd, null, null)
-                            if (clientFd < 0) {
+                            if (clientFd.isMinusOne()) {
                                 if (posix_errno() != EWOULDBLOCK)
                                     throw Error(getUnixError())
                                 break@loop
@@ -173,7 +173,7 @@ fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
                             val length = read(socketFd, waitingFor.data, waitingFor.length)
                             if (length < 0) // Read error.
                                 waitingFor.continuation.resumeWithException(IOException(getUnixError()))
-                            waitingFor.continuation.resume(length)
+                            waitingFor.continuation.resume(length.toULong())
                         }
                         is WaitingFor.Write -> {
                             if (errorOccured)
@@ -210,3 +210,14 @@ inline fun Long.ensureUnixCallResult(predicate: (Long) -> Boolean): Long {
     }
     return this
 }
+
+inline fun ULong.ensureUnixCallResult(predicate: (ULong) -> Boolean): ULong {
+    if (!predicate(this)) {
+        throw Error(getUnixError())
+    }
+    return this
+}
+
+private fun Int.isMinusOne() = (this == -1)
+private fun Long.isMinusOne() = (this == -1L)
+private fun ULong.isMinusOne() = (this == ULong.MAX_VALUE)

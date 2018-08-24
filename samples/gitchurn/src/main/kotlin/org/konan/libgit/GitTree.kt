@@ -23,10 +23,10 @@ class GitTree(val repository: GitRepository, val handle: CPointer<git_tree>) {
     fun close() = git_tree_free(handle)
 
     fun entries(): List<GitTreeEntry> = memScoped {
-        val size = git_tree_entrycount(handle)
-        val entries = ArrayList<GitTreeEntry>(size.toInt())
+        val size = git_tree_entrycount(handle).toInt()
+        val entries = ArrayList<GitTreeEntry>(size)
         for (index in 0..size - 1) {
-            val treeEntry = git_tree_entry_byindex(handle, index)!!
+            val treeEntry = git_tree_entry_byindex(handle, index.convert())!!
             val entryType = git_tree_entry_type(treeEntry)
             val entry = when (entryType) {
                 GIT_OBJ_TREE -> memScoped {

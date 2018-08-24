@@ -162,6 +162,10 @@ object KotlinTypes {
     val short by BuiltInType
     val int by BuiltInType
     val long by BuiltInType
+    val uByte by BuiltInType
+    val uShort by BuiltInType
+    val uInt by BuiltInType
+    val uLong by BuiltInType
     val float by BuiltInType
     val double by BuiltInType
     val unit by BuiltInType

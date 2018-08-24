@@ -42,13 +42,13 @@ class AudioFrame(val buffer: CPointer<AVBufferRef>, var position: Int, val size:
 private fun Int.checkAVError() {
     if (this != 0) {
         val buffer = ByteArray(1024)
-        av_strerror(this, buffer.refTo(0), buffer.size.signExtend())
+        av_strerror(this, buffer.refTo(0), buffer.size.convert())
         throw Error("AVError: ${buffer.stringFromUtf8()}")
     }
 }
 
 private val AVFormatContext.codecs: List<AVCodecContext?>
-    get() = List(nb_streams) { streams?.get(it)?.pointed?.codec?.pointed }
+    get() = List(nb_streams.toInt()) { streams?.get(it)?.pointed?.codec?.pointed }
 
 private fun AVFormatContext.streamAt(index: Int): AVStream? =
     if (index < 0) null else streams?.get(index)?.pointed
@@ -124,7 +124,7 @@ private class VideoDecoder(
         dispose = ::sws_freeContext
     )
     private val scaledFrameSize = avpicture_get_size(avPixelFormat, windowSize.w, windowSize.h)
-    private val buffer: ByteArray = ByteArray(scaledFrameSize)
+    private val buffer: UByteArray = UByteArray(scaledFrameSize) { 0u }
 
     private val videoQueue = Queue<VideoFrame>(100)
 
@@ -158,7 +158,7 @@ private class VideoDecoder(
             val buffer = av_buffer_alloc(scaledFrameSize)!!
             val ts = av_frame_get_best_effort_timestamp(videoFrame.ptr) *
                 av_q2d(videoCodecContext.time_base.readValue())
-            memcpy(buffer.pointed.data, scaledVideoFrame.data[0], scaledFrameSize.signExtend())
+            memcpy(buffer.pointed.data, scaledVideoFrame.data[0], scaledFrameSize.convert())
             videoQueue.push(VideoFrame(buffer, scaledVideoFrame.linesize[0], ts))
         }
     }
@@ -204,11 +204,11 @@ private class AudioDecoder(
             channels = output.channels
             sample_rate = output.sampleRate
             format = output.sampleFormat
-            channel_layout = output.channelLayout.signExtend()
+            channel_layout = output.channelLayout.convert()
         }
 
         with (audioCodecContext) {
-            setResampleOpt("in_channel_layout", channel_layout.narrow())
+            setResampleOpt("in_channel_layout", channel_layout.convert())
             setResampleOpt("out_channel_layout", output.channelLayout)
             setResampleOpt("in_sample_rate", sample_rate)
             setResampleOpt("out_sample_rate", output.sampleRate)
@@ -255,7 +255,7 @@ private class AudioDecoder(
                     val buffer = av_buffer_alloc(audioFrameSize)!!
                     val ts = av_frame_get_best_effort_timestamp(audioFrame.ptr) *
                         av_q2d(audioCodecContext.time_base.readValue())
-                    memcpy(buffer.pointed.data, data[0], audioFrameSize.signExtend())
+                    memcpy(buffer.pointed.data, data[0], audioFrameSize.convert())
                     audioQueue.push(AudioFrame(buffer, 0, audioFrameSize, ts))
                 }
             }

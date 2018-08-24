@@ -40,6 +40,10 @@ const FfiTypeKind FFI_TYPE_KIND_SINT64 = 4;
 const FfiTypeKind FFI_TYPE_KIND_FLOAT = 5;
 const FfiTypeKind FFI_TYPE_KIND_DOUBLE = 6;
 const FfiTypeKind FFI_TYPE_KIND_POINTER = 7;
+const FfiTypeKind FFI_TYPE_KIND_UINT8 = 8;
+const FfiTypeKind FFI_TYPE_KIND_UINT16 = 9;
+const FfiTypeKind FFI_TYPE_KIND_UINT32 = 10;
+const FfiTypeKind FFI_TYPE_KIND_UINT64 = 11;
 
 ffi_type* convertFfiTypeKindToType(FfiTypeKind typeKind) {
     switch (typeKind) {
@@ -51,6 +55,10 @@ ffi_type* convertFfiTypeKindToType(FfiTypeKind typeKind) {
         case FFI_TYPE_KIND_FLOAT: return &ffi_type_float;
         case FFI_TYPE_KIND_DOUBLE: return &ffi_type_double;
         case FFI_TYPE_KIND_POINTER: return &ffi_type_pointer;
+        case FFI_TYPE_KIND_UINT8: return &ffi_type_uint8;
+        case FFI_TYPE_KIND_UINT16: return &ffi_type_uint16;
+        case FFI_TYPE_KIND_UINT32: return &ffi_type_uint32;
+        case FFI_TYPE_KIND_UINT64: return &ffi_type_uint64;
 
         default: assert(false); return nullptr;
     }

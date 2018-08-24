@@ -121,7 +121,7 @@ private fun getEnumCType(classifier: KClass<*>): CEnumType? {
     }
 
     @Suppress("UNCHECKED_CAST")
-    return CEnumType(rawValueCType as CType<Number>)
+    return CEnumType(rawValueCType as CType<Any>)
 }
 
 private fun getArgOrRetValCType(type: KType): CType<*> {
@@ -346,7 +346,7 @@ private class Struct(val size: Long, val align: Int, elementTypes: List<CType<*>
     override fun write(location: NativePtr, value: CValue<*>) = value.write(location)
 }
 
-private class CEnumType(private val rawValueCType: CType<Number>) : CType<CEnum>(rawValueCType.ffiType) {
+private class CEnumType(private val rawValueCType: CType<Any>) : CType<CEnum>(rawValueCType.ffiType) {
 
     override fun read(location: NativePtr): CEnum {
         TODO("enum-typed callback parameters")

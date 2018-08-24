@@ -81,7 +81,7 @@ class SDLRendererWindow(windowPos: Dimensions, videoSize: Dimensions) : Disposab
         SDL_CreateTexture(renderer, SDL_GetWindowPixelFormat(window), 0, videoSize.w, videoSize.h),
         ::SDL_DestroyTexture)
     private val rect = sdlDisposable("calloc(SDL_Rect)",
-        SDL_calloc(1, SDL_Rect.size), ::SDL_free)
+        SDL_calloc(1u, SDL_Rect.size.convert()), ::SDL_free)
         .reinterpret<SDL_Rect>()
 
     init {

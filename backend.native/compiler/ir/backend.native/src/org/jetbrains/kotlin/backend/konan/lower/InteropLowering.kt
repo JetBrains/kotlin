@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -901,6 +902,35 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 }
             }
 
+            in interop.convert -> {
+                val integerClasses = symbols.allIntegerClasses
+                val typeOperand = expression.getTypeArgument(0)!!
+                val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
+                val receiverClass = receiverType.classifierOrFail as IrClassSymbol
+                assert(receiverClass in integerClasses)
+
+                if (typeOperand is IrSimpleType && typeOperand.classifier in integerClasses && !typeOperand.hasQuestionMark) {
+                    val typeOperandClass = typeOperand.classifier as IrClassSymbol
+
+                    val conversion = symbols.integerConversions[receiverClass to typeOperandClass]!!.owner
+
+                    builder.irCall(conversion).apply {
+                        val valueToConvert = expression.extensionReceiver!!
+                        if (conversion.dispatchReceiverParameter != null) {
+                            dispatchReceiver = valueToConvert
+                        } else {
+                            extensionReceiver = valueToConvert
+                        }
+                    }
+                } else {
+                    context.reportCompilationError(
+                            "unable to convert ${receiverType.toKotlinType()} to ${typeOperand.toKotlinType()}",
+                            irFile,
+                            expression
+                    )
+                }
+            }
+
             in interop.cFunctionPointerInvokes -> {
                 // Replace by `invokeImpl${type}Ret`:
 
@@ -968,6 +998,10 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
             return
         }
 
+        if (UnsignedTypes.isUnsignedType(this.toKotlinType()) && !this.containsNull()) {
+            return
+        }
+
         if (this.getClass()?.descriptor == interop.cPointer) {
             return
         }
@@ -976,7 +1010,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
     }
 
     private fun IrType.checkCTypeNullability(reportError: (String) -> Nothing) {
-        if (this.isNullablePrimitiveType()) {
+        if (this.isNullablePrimitiveType() || UnsignedTypes.isUnsignedType(this.toKotlinType()) && this.containsNull()) {
             reportError("Type ${this.toKotlinType()} must not be nullable when used in C function signature")
         }
 

@@ -72,6 +72,12 @@ dependencies {
 
 sourceSets.main.kotlin.srcDirs += "src/jvm/kotlin"
 
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xuse-experimental=kotlin.ExperimentalUnsignedTypes']
+    }
+}
+
 
 task nativelibs(type: Copy) {
     dependsOn 'callbacksSharedLibrary'

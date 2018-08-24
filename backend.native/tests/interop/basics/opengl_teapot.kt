@@ -13,7 +13,7 @@ private val windowHeight = 480
 
 fun display() {
     // Clear Screen and Depth Buffer
-    glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+    glClear((GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT).convert())
     glLoadIdentity()
 
     // Define a viewing transformation
@@ -40,13 +40,13 @@ fun display() {
 
 fun initialize() {
     // select projection matrix
-    glMatrixMode(GL_PROJECTION)
+    glMatrixMode(GL_PROJECTION.convert())
 
     // set the viewport
     glViewport(0, 0, windowWidth, windowHeight)
 
     // set matrix mode
-    glMatrixMode(GL_PROJECTION)
+    glMatrixMode(GL_PROJECTION.convert())
 
     // reset projection matrix
     glLoadIdentity()
@@ -56,29 +56,29 @@ fun initialize() {
     gluPerspective(45.0, aspect, 1.0, 500.0)
 
     // specify which matrix is the current matrix
-    glMatrixMode(GL_MODELVIEW)
-    glShadeModel(GL_SMOOTH)
+    glMatrixMode(GL_MODELVIEW.convert())
+    glShadeModel(GL_SMOOTH.convert())
 
     // specify the clear value for the depth buffer
     glClearDepth(1.0)
-    glEnable(GL_DEPTH_TEST)
-    glDepthFunc(GL_LEQUAL)
+    glEnable(GL_DEPTH_TEST.convert())
+    glDepthFunc(GL_LEQUAL.convert())
 
     // specify implementation-specific hints
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT.convert(), GL_NICEST.convert())
 
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, cValuesOf(0.1f, 0.1f, 0.1f, 1.0f))
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, cValuesOf(0.6f, 0.6f, 0.6f, 1.0f))
-    glLightfv(GL_LIGHT0, GL_SPECULAR, cValuesOf(0.7f, 0.7f, 0.3f, 1.0f))
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT.convert(), cValuesOf(0.1f, 0.1f, 0.1f, 1.0f))
+    glLightfv(GL_LIGHT0.convert(), GL_DIFFUSE.convert(), cValuesOf(0.6f, 0.6f, 0.6f, 1.0f))
+    glLightfv(GL_LIGHT0.convert(), GL_SPECULAR.convert(), cValuesOf(0.7f, 0.7f, 0.3f, 1.0f))
 
-    glEnable(GL_LIGHT0)
-    glEnable(GL_COLOR_MATERIAL)
-    glShadeModel(GL_SMOOTH)
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE)
-    glDepthFunc(GL_LEQUAL)
-    glEnable(GL_DEPTH_TEST)
-    glEnable(GL_LIGHTING)
-    glEnable(GL_LIGHT0)
+    glEnable(GL_LIGHT0.convert())
+    glEnable(GL_COLOR_MATERIAL.convert())
+    glShadeModel(GL_SMOOTH.convert())
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE.convert(), GL_FALSE)
+    glDepthFunc(GL_LEQUAL.convert())
+    glEnable(GL_DEPTH_TEST.convert())
+    glEnable(GL_LIGHTING.convert())
+    glEnable(GL_LIGHT0.convert())
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 }
 
@@ -90,7 +90,7 @@ fun main(args: Array<String>) {
     }
 
     // Display Mode
-    glutInitDisplayMode(GLUT_RGB or GLUT_DOUBLE or GLUT_DEPTH)
+    glutInitDisplayMode((GLUT_RGB or GLUT_DOUBLE or GLUT_DEPTH).convert())
 
     // Set window size
     glutInitWindowSize(windowWidth, windowHeight)

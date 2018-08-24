@@ -30,11 +30,15 @@ const val FFI_TYPE_KIND_SINT64: FfiTypeKind = 4
 const val FFI_TYPE_KIND_FLOAT: FfiTypeKind = 5
 const val FFI_TYPE_KIND_DOUBLE: FfiTypeKind = 6
 const val FFI_TYPE_KIND_POINTER: FfiTypeKind = 7
+const val FFI_TYPE_KIND_UINT8: FfiTypeKind = 8
+const val FFI_TYPE_KIND_UINT16: FfiTypeKind = 9
+const val FFI_TYPE_KIND_UINT32: FfiTypeKind = 10
+const val FFI_TYPE_KIND_UINT64: FfiTypeKind = 11
 
 private tailrec fun convertArgument(
         argument: Any?, isVariadic: Boolean, location: COpaquePointer,
         additionalPlacement: AutofreeScope
-): FfiTypeKind = when (argument) {
+): FfiTypeKind = when (argument) { // FIXME: optimize
     is CValuesRef<*>? -> {
         location.reinterpret<CPointerVar<*>>()[0] = argument?.getPointer(additionalPlacement)
         FFI_TYPE_KIND_POINTER
@@ -77,6 +81,30 @@ private tailrec fun convertArgument(
     } else {
         location.reinterpret<ShortVar>()[0] = argument
         FFI_TYPE_KIND_SINT16
+    }
+
+    is UInt -> {
+        location.reinterpret<UIntVar>()[0] = argument
+        FFI_TYPE_KIND_UINT32
+    }
+
+    is ULong -> {
+        location.reinterpret<ULongVar>()[0] = argument
+        FFI_TYPE_KIND_UINT64
+    }
+
+    is UByte -> if (isVariadic) {
+        convertArgument(argument.toUInt(), isVariadic, location, additionalPlacement)
+    } else {
+        location.reinterpret<UByteVar>()[0] = argument
+        FFI_TYPE_KIND_UINT8
+    }
+
+    is UShort -> if (isVariadic) {
+        convertArgument(argument.toUInt(), isVariadic, location, additionalPlacement)
+    } else {
+        location.reinterpret<UShortVar>()[0] = argument
+        FFI_TYPE_KIND_UINT16
     }
 
     is Double -> {

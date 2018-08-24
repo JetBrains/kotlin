@@ -27,7 +27,7 @@ enum class SampleFormat {
 data class AudioOutput(val sampleRate: Int, val channels: Int, val sampleFormat: SampleFormat)
 
 private fun SampleFormat.toSDLFormat(): SDL_AudioFormat? = when (this) {
-    SampleFormat.S16 -> AUDIO_S16SYS.narrow()
+    SampleFormat.S16 -> AUDIO_S16SYS.convert()
     SampleFormat.INVALID -> null
 }
 
@@ -45,9 +45,9 @@ class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
             val spec = alloc<SDL_AudioSpec>().apply {
                 freq = audio.sampleRate
                 format = audioFormat
-                channels = audio.channels.narrow()
-                silence = 0
-                samples = 4096
+                channels = audio.channels.convert()
+                silence = 0u
+                samples = 4096u
                 userdata = threadData
                 callback = staticCFunction(::audioCallback)
             }
@@ -89,12 +89,12 @@ private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?
         val frame = decoder.nextAudioFrame(length - outPosition)
         if (frame != null) {
             val toCopy = minOf(length - outPosition, frame.size - frame.position)
-            memcpy(buffer + outPosition, frame.buffer.pointed.data + frame.position, toCopy.signExtend())
+            memcpy(buffer + outPosition, frame.buffer.pointed.data + frame.position, toCopy.convert())
             frame.unref()
             outPosition += toCopy
         } else {
             // println("Decoder returned nothing!")
-            memset(buffer + outPosition, 0, (length - outPosition).signExtend())
+            memset(buffer + outPosition, 0, (length - outPosition).convert())
             break
         }
     }

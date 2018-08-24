@@ -156,6 +156,12 @@ class StubGenerator(
         override fun getPackageFor(declaration: TypeDeclaration): String {
             return imports.getPackage(declaration.location) ?: pkgName
         }
+
+        override val useUnsignedTypes: Boolean
+            get() = when (platform) {
+                KotlinPlatform.JVM -> false
+                KotlinPlatform.NATIVE -> true
+            }
     }
 
     fun mirror(type: Type): TypeMirror = mirror(declarationMapper, type)
@@ -472,7 +478,8 @@ class StubGenerator(
 
         block("enum class ${kotlinFile.declare(clazz)}(override val value: $baseKotlinType) : CEnum") {
             canonicalConstants.forEach {
-                out("${it.name.asSimpleName()}(${it.value}),")
+                val literal = integerLiteral(e.baseType, it.value)!!
+                out("${it.name.asSimpleName()}($literal),")
             }
             out(";")
             out("")
@@ -720,20 +727,33 @@ class StubGenerator(
     }
 
     private fun integerLiteral(type: Type, value: Long): String? {
+        val integerType = type.unwrapTypedefs() as? IntegerType ?: return null
+        return integerLiteral(integerType.size, declarationMapper.isMappedToSigned(integerType), value)
+    }
+
+    private fun integerLiteral(size: Int, isSigned: Boolean, value: Long): String? {
+        if (!isSigned) {
+            val signedLiteral = integerLiteral(size, true, value)
+            val converter = when (size) {
+                1 -> "toUByte"
+                2 -> "toUShort"
+                4 -> "toUInt"
+                8 -> "toULong"
+                else -> return null
+            }
+
+            return "($signedLiteral).$converter()"
+        }
+
         if (value == Long.MIN_VALUE) {
             return "${value + 1} - 1" // Workaround for "The value is out of range" compile error.
         }
 
-        val unwrappedType = type.unwrapTypedefs()
-        if (unwrappedType !is PrimitiveType) {
-            return null
-        }
-
-        val narrowedValue: Number = when (unwrappedType.kotlinType) {
-            KotlinTypes.byte -> value.toByte()
-            KotlinTypes.short -> value.toShort()
-            KotlinTypes.int -> value.toInt()
-            KotlinTypes.long -> value
+        val narrowedValue: Number = when (size) {
+            1 -> value.toByte()
+            2 -> value.toShort()
+            4 -> value.toInt()
+            8 -> value
             else -> return null
         }
 

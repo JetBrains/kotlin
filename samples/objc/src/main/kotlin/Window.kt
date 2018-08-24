@@ -24,7 +24,7 @@ private fun runApp() {
     app.run()
 }
 
-data class Data(val stamp: Long)
+data class Data(val stamp: ULong)
 
 private class Controller : NSObject() {
     private val asyncQueue = dispatch_queue_create("com.jetbrains.CustomQueue", null)
@@ -33,7 +33,7 @@ private class Controller : NSObject() {
     fun onClick() {
         // Execute some async action on button click.
         dispatch_async_f(asyncQueue, detachObjectGraph {
-            Data(clock_gettime_nsec_np(CLOCK_REALTIME))
+            Data(clock_gettime_nsec_np(CLOCK_REALTIME.convert()))
         }, staticCFunction {
             it ->
             initRuntimeIfNeeded()

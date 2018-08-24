@@ -28,11 +28,22 @@ external fun bitsToFloat(bits: Int): Float
 @Intrinsic
 external fun bitsToDouble(bits: Long): Double
 
+// TODO: deprecate.
 @Intrinsic
 external fun <R : Number> Number.signExtend(): R
 
+// TODO: deprecate.
 @Intrinsic
 external fun <R : Number> Number.narrow(): R
+
+@Intrinsic external fun <R : Any> Byte.convert(): R
+@Intrinsic external fun <R : Any> Short.convert(): R
+@Intrinsic external fun <R : Any> Int.convert(): R
+@Intrinsic external fun <R : Any> Long.convert(): R
+@Intrinsic external fun <R : Any> UByte.convert(): R
+@Intrinsic external fun <R : Any> UShort.convert(): R
+@Intrinsic external fun <R : Any> UInt.convert(): R
+@Intrinsic external fun <R : Any> ULong.convert(): R
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)

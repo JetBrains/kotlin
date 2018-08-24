@@ -35,35 +35,35 @@ fun main(args: Array<String>) {
         val serverAddr = alloc<sockaddr_in>()
 
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)
-                .ensureUnixCallResult("socket") { it >= 0 }
+                .ensureUnixCallResult("socket") { !it.isMinusOne() }
 
         with(serverAddr) {
-            memset(this.ptr, 0, sockaddr_in.size)
-            sin_family = AF_INET.narrow()
-            sin_port = posix_htons(port)
+            memset(this.ptr, 0, sockaddr_in.size.convert())
+            sin_family = AF_INET.convert()
+            sin_port = posix_htons(port).convert()
         }
 
-        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toInt())
+        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.convert())
                 .ensureUnixCallResult("bind") { it == 0 }
 
         listen(listenFd, 10)
                 .ensureUnixCallResult("listen") { it == 0 }
 
         val commFd = accept(listenFd, null, null)
-                .ensureUnixCallResult("accept") { it >= 0 }
+                .ensureUnixCallResult("accept") { !it.isMinusOne() }
 
         buffer.usePinned { pinned ->
           while (true) {
-            val length = recv(commFd, pinned.addressOf(0), buffer.size.signExtend(), 0).toInt()
+            val length = recv(commFd, pinned.addressOf(0), buffer.size.convert(), 0).toInt()
                     .ensureUnixCallResult("read") { it >= 0 }
 
             if (length == 0) {
                 break
             }
 
-            send(commFd, prefixBuffer.refTo(0), prefixBuffer.size.signExtend(), 0)
+            send(commFd, prefixBuffer.refTo(0), prefixBuffer.size.convert(), 0)
                     .ensureUnixCallResult("write") { it >= 0 }
-            send(commFd, pinned.addressOf(0), length.signExtend(), 0)
+            send(commFd, pinned.addressOf(0), length.convert(), 0)
                     .ensureUnixCallResult("write") { it >= 0 }
           }
         }
@@ -83,3 +83,14 @@ inline fun Long.ensureUnixCallResult(op: String, predicate: (Long) -> Boolean): 
     }
     return this
 }
+
+inline fun ULong.ensureUnixCallResult(op: String, predicate: (ULong) -> Boolean): ULong {
+    if (!predicate(this)) {
+        throw Error("$op: ${strerror(posix_errno())!!.toKString()}")
+    }
+    return this
+}
+
+private fun Int.isMinusOne() = (this == -1)
+private fun Long.isMinusOne() = (this == -1L)
+private fun ULong.isMinusOne() = (this == ULong.MAX_VALUE)

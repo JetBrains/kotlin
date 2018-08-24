@@ -144,6 +144,35 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val uInt = unsignedClass(UnsignedType.UINT)
     val uLong = unsignedClass(UnsignedType.ULONG)
 
+    val signedIntegerClasses = setOf(byte, short, int, long)
+    val unsignedIntegerClasses = setOf(uByte, uShort, uInt, uLong)
+
+    val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
+
+    val integerConversions = allIntegerClasses.flatMap { fromClass ->
+        allIntegerClasses.map { toClass ->
+            val name = Name.identifier("to${toClass.descriptor.name.asString().capitalize()}")
+            val descriptor = if (fromClass in signedIntegerClasses && toClass in unsignedIntegerClasses) {
+                builtInsPackage("kotlin")
+                        .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                        .single {
+                            it.dispatchReceiverParameter == null &&
+                                    it.extensionReceiverParameter?.type == fromClass.descriptor.defaultType &&
+                                    it.valueParameters.isEmpty()
+                        }
+            } else {
+                fromClass.descriptor.unsubstitutedMemberScope
+                        .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                        .single {
+                            it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+                        }
+            }
+            val symbol = symbolTable.referenceSimpleFunction(descriptor)
+
+            (fromClass to toClass) to symbol
+        }
+    }.toMap()
+
     val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
 
     val interopNativePointedGetRawPointer =

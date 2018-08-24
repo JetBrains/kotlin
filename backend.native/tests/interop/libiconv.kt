@@ -22,8 +22,8 @@ fun main(args: Array<String>) {
         val destPtr = alloc<CArrayPointerVar<ByteVar>>()
         destPtr.value = destBytes
 
-        sourceLength.value = sourceByteArray.size.signExtend();
-        destLength.value = golden.size.signExtend();
+        sourceLength.value = sourceByteArray.size.convert()
+        destLength.value = golden.size.convert()
 
         val conversion = iconv_open("UTF-8", "LATIN1")
 

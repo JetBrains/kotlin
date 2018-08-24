@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.descriptors.konan.interop.InteropFqNames
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -90,6 +92,8 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
 
     val narrow = packageScope.getContributedFunctions("narrow").single()
 
+    val convert = packageScope.getContributedFunctions("convert").toSet()
+
     val readBits = packageScope.getContributedFunctions("readBits").single()
     val writeBits = packageScope.getContributedFunctions("writeBits").single()
 
@@ -101,6 +105,9 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
                         TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == cPointer
             }.toSet()
 
+    private fun KonanBuiltIns.getUnsignedClass(unsignedType: UnsignedType): ClassDescriptor =
+            this.builtInsModule.findClassAcrossModuleDependencies(unsignedType.classId)!!
+
     val invokeImpls = mapOf(
             builtIns.unit to "invokeImplUnitRet",
             builtIns.boolean to "invokeImplBooleanRet",
@@ -108,6 +115,10 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
             builtIns.short to "invokeImplShortRet",
             builtIns.int to "invokeImplIntRet",
             builtIns.long to "invokeImplLongRet",
+            builtIns.getUnsignedClass(UnsignedType.UBYTE) to "invokeImplUByteRet",
+            builtIns.getUnsignedClass(UnsignedType.USHORT) to "invokeImplUShortRet",
+            builtIns.getUnsignedClass(UnsignedType.UINT) to "invokeImplUIntRet",
+            builtIns.getUnsignedClass(UnsignedType.ULONG) to "invokeImplULongRet",
             builtIns.float to "invokeImplFloatRet",
             builtIns.double to "invokeImplDoubleRet",
             cPointer to "invokeImplPointerRet"

@@ -321,6 +321,22 @@ fun cValuesOf(vararg elements: Int): CValues<IntVar> =
 fun cValuesOf(vararg elements: Long): CValues<LongVar> =
         createValues(elements.size) { index -> this.value = elements[index] }
 
+@JvmName("cValuesOfUnsigned")
+fun cValuesOf(vararg elements: UByte): CValues<UByteVar> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+@JvmName("cValuesOfUnsigned")
+fun cValuesOf(vararg elements: UShort): CValues<UShortVar> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+@JvmName("cValuesOfUnsigned")
+fun cValuesOf(vararg elements: UInt): CValues<UIntVar> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+@JvmName("cValuesOfUnsigned")
+fun cValuesOf(vararg elements: ULong): CValues<ULongVar> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
 fun cValuesOf(vararg elements: Float): CValues<FloatVar> = object : CValues<FloatVar>() {
     override fun getPointer(scope: AutofreeScope) = scope.allocArrayOf(*elements)
     override val size get() = 4 * elements.size

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.cli.bc
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.Argument
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.AnalysisFlag
 
 class K2NativeCompilerArguments : CommonCompilerArguments() {
     // First go the options interesting to the general public.
@@ -147,5 +149,11 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             description = "Paths to friend modules"
     )
     var friendModules: String? = null
+
+    override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> =
+            super.configureAnalysisFlags(collector).also {
+                val useExperimental = it[AnalysisFlag.useExperimental] as List<*>
+                it[AnalysisFlag.useExperimental] = useExperimental + listOf("kotlin.ExperimentalUnsignedTypes")
+            }
 }
 
