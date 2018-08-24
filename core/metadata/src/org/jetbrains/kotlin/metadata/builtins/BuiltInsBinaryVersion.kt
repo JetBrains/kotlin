@@ -14,8 +14,8 @@ import java.io.InputStream
  * of the core protobuf messages (metadata.proto).
  */
 class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
-    override fun isCompatible() =
-        isMetadataVersionCompatible()
+    override fun isCompatible(): Boolean =
+        this.isCompatibleTo(INSTANCE)
 
     companion object {
         @JvmField

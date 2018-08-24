@@ -35,12 +35,6 @@ abstract class BinaryVersion(private vararg val numbers: Int) {
         else major == ourVersion.major && minor <= ourVersion.minor
     }
 
-    // In Kotlin 1.4, all metadata versions (JVM, JS, built-ins/metadata) are going to be advanced to 1.4.0.
-    // Kotlin 1.3 is able to read metadata of versions up to Kotlin 1.4
-    protected fun isMetadataVersionCompatible(): Boolean {
-        return major == 1 && minor <= 4
-    }
-
     fun isAtLeast(major: Int, minor: Int, patch: Int): Boolean {
         if (this.major > major) return true
         if (this.major < major) return false

@@ -326,7 +326,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testRequireKotlinInNestedClassesAgainst14Js() {
         val library = compileJsLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
-        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler())
+        compileKotlin(
+            "source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(),
+            additionalOptions = listOf("-Xskip-metadata-version-check")
+        )
     }
 
     /*test source mapping generation when source info is absent*/
