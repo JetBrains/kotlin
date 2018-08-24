@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -229,7 +230,11 @@ data class IfThenToSelectData(
         }
     }
 
-    internal fun getImplicitReceiver(): ImplicitReceiver? = baseClause.getResolvedCall(context)?.getImplicitReceiverValue()
+    internal fun getImplicitReceiver(): ImplicitReceiver? {
+        val resolvedCall = baseClause.getResolvedCall(context) ?: return null
+        if (resolvedCall.getExplicitReceiverValue() != null) return null
+        return resolvedCall.getImplicitReceiverValue()
+    }
 
     internal fun hasImplicitReceiver(): Boolean = getImplicitReceiver() != null
 
