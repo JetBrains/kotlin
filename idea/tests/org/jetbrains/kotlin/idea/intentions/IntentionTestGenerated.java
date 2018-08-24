@@ -2276,6 +2276,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/branched/ifThenToElvis/emptyThenBlock.kt");
             }
 
+            @TestMetadata("extensionFunctionInClass.kt")
+            public void testExtensionFunctionInClass() throws Exception {
+                runTest("idea/testData/intentions/branched/ifThenToElvis/extensionFunctionInClass.kt");
+            }
+
             @TestMetadata("ifAndElseBothInBlocks.kt")
             public void testIfAndElseBothInBlocks() throws Exception {
                 runTest("idea/testData/intentions/branched/ifThenToElvis/ifAndElseBothInBlocks.kt");
