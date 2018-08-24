@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
 import org.junit.Test
@@ -398,7 +399,12 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testPublishingOnlySupportedNativeTargets() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
-        val (publishedVariant, nonPublishedVariant) = listOf("mingw64", "linux64").let { if (!isWindows) it.reversed() else it }
+        val (publishedVariant, nonPublishedVariant) = when {
+            HostManager.hostIsMac -> "macos64" to "linux64"
+            HostManager.hostIsLinux -> "linux64" to "macos64"
+            HostManager.hostIsMingw -> "mingw64" to "linux64"
+            else -> error("Unknown host")
+        }
 
         build("publish") {
             assertSuccessful()
@@ -443,6 +449,67 @@ class NewMultiplatformIT : BaseGradleIT() {
         build("compileKotlinJvmWithoutJava") {
             assertFailed()
             assertContains("Declaration annotated with '@OptionalExpectation' can only be used in common module sources")
+        }
+    }
+
+    @Test
+    fun testCanProduceNativeLibraries() = with(Project("new-mpp-native-libraries", gradleVersion)) {
+        val hostTargetName = when {
+            HostManager.hostIsMingw -> "mingw64"
+            HostManager.hostIsLinux -> "linux64"
+            HostManager.hostIsMac -> "macos64"
+            else -> error("Unknown host")
+        }
+        val baseName = "native_lib"
+
+        val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
+        val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
+        val sharedPaths = listOf(
+            "build/bin/$hostTargetName/main/debug/shared/$sharedPrefix$baseName$sharedSuffix",
+            "build/bin/$hostTargetName/main/release/shared/$sharedPrefix$baseName$sharedSuffix"
+        )
+
+        val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
+        val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
+        val staticPaths = listOf(
+            "build/bin/$hostTargetName/main/debug/static/$staticPrefix$baseName$staticSuffix",
+            "build/bin/$hostTargetName/main/release/static/$staticPrefix$baseName$staticSuffix"
+        )
+
+        val headerPaths = listOf(
+            "build/bin/$hostTargetName/main/debug/shared/$sharedPrefix${baseName}_api.h",
+            "build/bin/$hostTargetName/main/release/shared/$sharedPrefix${baseName}_api.h",
+            "build/bin/$hostTargetName/main/debug/static/$staticPrefix${baseName}_api.h",
+            "build/bin/$hostTargetName/main/release/static/$staticPrefix${baseName}_api.h"
+        )
+
+        val taskSuffix = hostTargetName.capitalize()
+        val linkTasks = listOf(
+            ":linkMainDebugShared$taskSuffix",
+            ":linkMainReleaseShared$taskSuffix",
+            ":linkMainDebugStatic$taskSuffix",
+            ":linkMainReleaseStatic$taskSuffix"
+        )
+
+        build("assemble") {
+            assertSuccessful()
+
+            sharedPaths.forEach { assertFileExists(it) }
+            staticPaths.forEach { assertFileExists(it) }
+            headerPaths.forEach { assertFileExists(it) }
+        }
+
+        build("assemble") {
+            assertSuccessful()
+            assertTasksUpToDate(linkTasks)
+        }
+
+        assertTrue(projectDir.resolve(headerPaths[0]).delete())
+
+        build("assemble") {
+            assertSuccessful()
+            assertTasksUpToDate(linkTasks.drop(1))
+            assertTasksExecuted(linkTasks[0])
         }
     }
 }
