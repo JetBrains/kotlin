@@ -16,6 +16,53 @@ package kotlin.ranges
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
+
+/**
+ * Returns a random element from this range.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntRange.random(): UInt {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this range.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongRange.random(): ULong {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun UIntRange.random(random: Random): UInt {
+    return random.nextUInt(this)
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public fun ULongRange.random(random: Random): ULong {
+    return random.nextULong(this)
+}
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.

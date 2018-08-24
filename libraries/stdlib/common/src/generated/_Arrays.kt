@@ -16,6 +16,7 @@ package kotlin.collections
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 
 /**
  * Returns 1st *element* from the collection.
@@ -2047,6 +2048,213 @@ public inline fun CharArray.lastOrNull(predicate: (Char) -> Boolean): Char? {
         if (predicate(element)) return element
     }
     return null
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.random(): T {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.random(): Byte {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.random(): Short {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.random(): Int {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.random(): Long {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.random(): Float {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.random(): Double {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.random(): Boolean {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.random(): Char {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun <T> Array<out T>.random(random: Random): T {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun ByteArray.random(random: Random): Byte {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun ShortArray.random(random: Random): Short {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun IntArray.random(random: Random): Int {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun LongArray.random(random: Random): Long {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun FloatArray.random(random: Random): Float {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun DoubleArray.random(random: Random): Double {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun BooleanArray.random(random: Random): Boolean {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun CharArray.random(random: Random): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
 }
 
 /**

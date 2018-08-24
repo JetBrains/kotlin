@@ -16,6 +16,7 @@ package kotlin.text
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 
 /**
  * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
@@ -168,6 +169,29 @@ public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
         if (predicate(element)) return element
     }
     return null
+}
+
+/**
+ * Returns a random character from this char sequence.
+ * 
+ * @throws NoSuchElementException if this char sequence is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.random(): Char {
+    return random(Random)
+}
+
+/**
+ * Returns a random character from this char sequence using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this char sequence is empty.
+ */
+@SinceKotlin("1.3")
+public fun CharSequence.random(random: Random): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Char sequence is empty.")
+    return get(random.nextInt(length))
 }
 
 /**

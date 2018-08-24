@@ -16,6 +16,7 @@ package kotlin.collections
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 
 /**
  * Returns 1st *element* from the collection.
@@ -454,6 +455,29 @@ public inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T? {
         if (predicate(element)) return element
     }
     return null
+}
+
+/**
+ * Returns a random element from this collection.
+ * 
+ * @throws NoSuchElementException if this collection is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>.random(): T {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this collection using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this collection is empty.
+ */
+@SinceKotlin("1.3")
+public fun <T> Collection<T>.random(random: Random): T {
+    if (isEmpty())
+        throw NoSuchElementException("Collection is empty.")
+    return elementAt(random.nextInt(size))
 }
 
 /**

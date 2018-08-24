@@ -16,6 +16,7 @@ package kotlin.collections
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 
 /**
  * Returns a set containing all elements of the original set except the given [element].
