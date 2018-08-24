@@ -21,12 +21,10 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
@@ -41,32 +39,14 @@ import java.util.regex.Pattern;
  * Test correctness of written local variables in class file for specified method
  */
 
-public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithTmpdir {
+public abstract class AbstractCheckLocalVariablesTableTest extends CodegenTestCase {
     protected File ktFile;
-    protected KotlinCoreEnvironment environment;
-
-    public AbstractCheckLocalVariablesTableTest() {
-    }
 
     @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        environment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        environment = null;
-        super.tearDown();
-    }
-
-    protected void doTest(@NotNull String ktFileName) throws Exception {
-        ktFile = new File(ktFileName);
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
+        ktFile = wholeFile;
         String text = FileUtil.loadFile(ktFile, true);
-
-        KtFile psiFile = KotlinTestUtils.createFile(ktFile.getName(), text, environment.getProject());
-
-        OutputFileCollection outputFiles = GenerationUtils.compileFile(psiFile, environment);
+        compile(files, javaFilesDir);
 
         String classAndMethod = parseClassAndMethodSignature();
         String[] split = classAndMethod.split("\\.");
@@ -74,9 +54,10 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         String classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+");
         String methodName = split[1];
 
-        OutputFile outputFile = ContainerUtil.find(outputFiles.asList(), file -> file.getRelativePath().matches(classFileRegex));
+        List<OutputFile> outputFiles = ((OutputFileCollection) classFileFactory).asList();
+        OutputFile outputFile = ContainerUtil.find(outputFiles, file -> file.getRelativePath().matches(classFileRegex));
 
-        String pathsString = StringUtil.join(outputFiles.asList(), OutputFile::getRelativePath, ", ");
+        String pathsString = StringUtil.join(outputFiles, OutputFile::getRelativePath, ", ");
         assertNotNull("Couldn't find class file for pattern " + classFileRegex + " in: " + pathsString, outputFile);
 
         ClassReader cr = new ClassReader(outputFile.asByteArray());
