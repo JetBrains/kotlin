@@ -33,6 +33,8 @@
 
 package kotlin.text.regex
 
+import kotlin.text.*
+
 /**
  * Represents canonical decomposition of Hangul syllable. Is used when
  * CANON_EQ flag of Pattern class is specified.
@@ -52,7 +54,7 @@ internal class HangulDecomposedCharSet(
      * String representing syllable
      */
     private val decomposedCharUTF16: String by lazy {
-        fromCharArray(decomposedChar, 0, decomposedChar.size)
+        String(decomposedChar, 0, decomposedChar.size)
     }
 
     override val name: String

@@ -24,9 +24,4 @@ import kotlin.native.internal.FixmeReflection
  * for more information.
  */
 @FixmeReflection
-public interface KAnnotatedElement {
-//    /**
-//     * Annotations which are present on this element.
-//     */
-//    public val annotations: List<Annotation>
-}
+public interface KAnnotatedElement

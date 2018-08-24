@@ -147,7 +147,7 @@ private fun AnnotationDescriptor.properValue(key: String) =
 private fun functionImplName(descriptor: DeclarationDescriptor, default: String, shortName: Boolean): String {
     assert(descriptor is FunctionDescriptor)
     val annotation = descriptor.annotations.findAnnotation(cnameAnnotation) ?: return default
-    val key = if (shortName) "shortName" else "fullName"
+    val key = if (shortName) "shortName" else "externName"
     val value = annotation.properValue(key)
     return value.takeIf { value != null && value.isNotEmpty() } ?: default
 }
@@ -262,8 +262,8 @@ private class ExportedElement(val kind: ElementKind,
             if (declaration !is FunctionDescriptor || !declaration.annotations.hasAnnotation(cnameAnnotation))
                 return false
             val annotation = declaration.annotations.findAnnotation(cnameAnnotation)!!
-            val fullName = annotation.properValue("fullName")
-            return fullName != null && fullName.isNotEmpty()
+            val externName = annotation.properValue("externName")
+            return externName != null && externName.isNotEmpty()
         }
     val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
     val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY

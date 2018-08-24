@@ -15,12 +15,12 @@ open class Base {
 
     open fun fooParam(arg0: String, arg1: Int) = println("Base.fooParam: $arg0 $arg1")
 
-    @CName(fullName = "", shortName = "strangeName") fun странноеИмя() = 111
+    @CName(externName = "", shortName = "strangeName") fun странноеИмя() = 111
 
 }
 
 // Top level functions.
-@CName(fullName = "topLevelFunctionFromC", shortName = "topLevelFunctionFromCShort")
+@CName(externName = "topLevelFunctionFromC", shortName = "topLevelFunctionFromCShort")
 fun topLevelFunction(x1: Int, x2: Int) = x1 - x2
 
 @CName("topLevelFunctionVoidFromC")

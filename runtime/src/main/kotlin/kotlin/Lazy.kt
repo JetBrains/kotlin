@@ -44,8 +44,8 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> = FreezeAwareLazyImpl(
 @FixmeConcurrency
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
-            LazyThreadSafetyMode.SYNCHRONIZED -> TODO() // was SynchronizedLazyImpl(initializer)
-            LazyThreadSafetyMode.PUBLICATION -> TODO() // was SafePublicationLazyImpl(initializer)
+            LazyThreadSafetyMode.SYNCHRONIZED -> throw UnsupportedOperationException()
+            LazyThreadSafetyMode.PUBLICATION -> throw UnsupportedOperationException()
             LazyThreadSafetyMode.NONE -> UnsafeLazyImpl(initializer)
         }
 
@@ -62,4 +62,4 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  */
 @FixmeConcurrency
 @Suppress("UNUSED_PARAMETER")
-public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = TODO() // was SynchronizedLazyImpl(initializer, lock)
+public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = throw UnsupportedOperationException()

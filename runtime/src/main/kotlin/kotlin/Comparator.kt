@@ -16,11 +16,11 @@
 
 package kotlin
 
-actual interface Comparator<T> {
+actual public interface Comparator<T> {
     actual fun compare(a: T, b: T): Int
 }
 
-actual inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T> {
+actual public inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T> {
     return object: Comparator<T> {
         override fun compare(a: T, b: T) = comparison(a, b)
     }

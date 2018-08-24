@@ -17,6 +17,5 @@ import kotlin.test.*
     a[2] = 'l'
     a[3] = 'l'
     a[4] = 'o'
-    // Note that it uses private Konan API.
-    println("Hello".hashCode() == fromCharArray(a, 0, 5).hashCode())
+    println("Hello".hashCode() == String(a, 0, 5).hashCode())
 }

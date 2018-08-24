@@ -48,7 +48,6 @@ public actual fun CharSequence.repeat(n: Int): String {
 /**
  * Converts the characters in the specified array to a string.
  */
-// external fun fromCharArray(array: CharArray, start: Int, size: Int) : String
 public actual fun String(chars: CharArray): String = fromCharArray(chars, 0, chars.size)
 
 /**

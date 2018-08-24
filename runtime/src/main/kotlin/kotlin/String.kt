@@ -58,11 +58,8 @@ public final class String : Comparable<String>, CharSequence {
     external public override fun equals(other: Any?): Boolean
 }
 
-// TODO: in big Kotlin this operations are in kotlin.kotlin_builtins.
-private fun nullString() = "null"
-
 public operator fun kotlin.String?.plus(other: kotlin.Any?): kotlin.String =
-    (this?.toString() ?: nullString()).plus(other?.toString() ?: nullString())
+    (this?.toString() ?: "null").plus(other?.toString() ?: "null")
 
 
-public fun Any?.toString() = this?.toString() ?: nullString()
+public fun Any?.toString() = this?.toString() ?: "null"

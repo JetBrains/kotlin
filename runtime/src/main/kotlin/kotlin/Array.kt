@@ -23,7 +23,7 @@ import kotlin.native.internal.PointsTo
 
 @ExportTypeInfo("theArrayTypeInfo")
 public final class Array<T> {
-    // Constructors are handled with compiler magic.
+
     @InlineConstructor
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
     public constructor(size: Int, init: (Int) -> T): this(size) {
@@ -52,7 +52,6 @@ public final class Array<T> {
         return IteratorImpl(this)
     }
 
-    // Konan-specific.
     @SymbolName("Kotlin_Array_getArrayLength")
     external private fun getArrayLength(): Int
 }

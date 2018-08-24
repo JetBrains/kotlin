@@ -71,9 +71,9 @@ public annotation class SharedImmutable
 
 /**
  * Makes top level function available from C/C++ code with the given name.
- * `fullName` controls the name of top level function, `shortName` controls the short name.
- * If `fullName` is empty, no top level declaration is being created.
+ * `externName` controls the name of top level function, `shortName` controls the short name.
+ * If `externName` is empty, no top level declaration is being created.
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-public annotation class CName(val fullName: String = "", val shortName: String = "")
+public annotation class CName(val externName: String = "", val shortName: String = "")

@@ -307,7 +307,9 @@ external private fun copyImpl(array: BooleanArray, fromIndex: Int,
  * Copies a range of array elements at a specified [fromIndex] (inclusive) to [toIndex] (exclusive) range of indices
  * to another [destination] array starting at [destinationIndex].
  */
-fun <E> Array<out E>.copyRangeTo(destination: Array<in E>, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
+@PublishedApi
+internal fun <E> Array<out E>.copyRangeTo(
+        destination: Array<in E>, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
     copyImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any>), fromIndex,
              @Suppress("UNCHECKED_CAST") (destination as Array<Any>),
              destinationIndex, toIndex - fromIndex)

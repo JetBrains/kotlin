@@ -31,7 +31,7 @@ private fun fromInt(value: Int): Set<RegexOption> =
 /**
  * Provides enumeration values to use to set regular expression options.
  */
-actual enum class RegexOption(override val value: Int, override val mask: Int = value) : FlagEnum {
+actual public enum class RegexOption(override val value: Int, override val mask: Int = value) : FlagEnum {
     // common
 
     /** Enables case-insensitive matching. Case comparison is Unicode-aware. */
@@ -79,7 +79,7 @@ actual data class MatchGroup(actual val value: String, val range: IntRange)
  *
  * For pattern syntax reference see [Pattern]
  */
-actual class Regex internal constructor(internal val nativePattern: Pattern) {
+actual public class Regex internal constructor(internal val nativePattern: Pattern) {
 
     enum class Mode {
         FIND, MATCH

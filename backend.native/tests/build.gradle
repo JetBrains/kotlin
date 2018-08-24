@@ -1452,8 +1452,6 @@ task array3(type: RunKonanTest) {
 }
 
 task typed_array0(type: RunKonanTest) {
-    // MIPS target is big-endian.
-    disabled = (project.testTarget == 'linux_mips32')
     goldValue = "OK\n"
     source = "runtime/collections/typed_array0.kt"
 }

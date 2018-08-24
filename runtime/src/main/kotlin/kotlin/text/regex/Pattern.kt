@@ -802,7 +802,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         val isSupplCodePoint = Char.isSupplementaryCodePoint(ch)
 
         return when {
-            isSupplCodePoint -> SequenceSet(fromCharArray(Char.toChars(ch), 0, 2), hasFlag(CASE_INSENSITIVE))
+            isSupplCodePoint -> SequenceSet(String(Char.toChars(ch), 0, 2), hasFlag(CASE_INSENSITIVE))
             ch.toChar().isLowSurrogate() ->  LowSurrogateCharSet(ch.toChar())
             ch.toChar().isHighSurrogate() -> HighSurrogateCharSet(ch.toChar())
             else -> CharSet(ch.toChar(), hasFlag(CASE_INSENSITIVE))

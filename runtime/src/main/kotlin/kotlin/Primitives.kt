@@ -20,9 +20,9 @@ import kotlin.native.internal.NumberConverter
 
 /**
  * Represents a 8-bit signed integer.
- * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
 public final class Byte private constructor(private val value: kotlin.native.internal.ByteValue) : Number(), Comparable<Byte> {
+
     companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
@@ -246,7 +246,6 @@ public final class Byte private constructor(private val value: kotlin.native.int
 
 /**
  * Represents a 16-bit signed integer.
- * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
 public final class Short private constructor(private val value: kotlin.native.internal.ShortValue) : Number(), Comparable<Short> {
     companion object {
@@ -472,7 +471,6 @@ public final class Short private constructor(private val value: kotlin.native.in
 
 /**
  * Represents a 32-bit signed integer.
- * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
 public final class Int private constructor(private val value: kotlin.native.internal.IntValue) : Number(), Comparable<Int> {
     companion object {
@@ -720,7 +718,6 @@ public final class Int private constructor(private val value: kotlin.native.inte
 
 /**
  * Represents a 64-bit signed integer.
- * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
 public final class Long private constructor(private val value: kotlin.native.internal.LongValue) : Number(), Comparable<Long> {
     companion object {
@@ -968,7 +965,6 @@ public final class Long private constructor(private val value: kotlin.native.int
 
 /**
  * Represents a single-precision 32-bit IEEE 754 floating point number.
- * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
 public final class Float private constructor(private val value: kotlin.native.internal.FloatValue) : Number(), Comparable<Float> {
     companion object {
@@ -1188,7 +1184,6 @@ public final class Float private constructor(private val value: kotlin.native.in
 
 /**
  * Represents a double-precision 64-bit IEEE 754 floating point number.
- * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
 public final class Double private constructor(private val value: kotlin.native.internal.DoubleValue) : Number(), Comparable<Double> {
     companion object {

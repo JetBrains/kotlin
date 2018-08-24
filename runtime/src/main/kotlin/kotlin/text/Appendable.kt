@@ -16,7 +16,7 @@
 
 package kotlin.text
 
-actual interface Appendable {
+public actual interface Appendable {
     actual fun append(c: Char): Appendable
     actual fun append(csq: CharSequence?): Appendable
     actual fun append(csq: CharSequence?, start: Int, end: Int): Appendable

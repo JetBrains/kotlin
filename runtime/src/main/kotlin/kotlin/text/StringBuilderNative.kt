@@ -16,7 +16,6 @@
 
 package kotlin.text
 
-
 fun StringBuilder.appendln(it: String) = append(it).appendln()
 fun StringBuilder.appendln(it: Boolean) = append(it).appendln()
 fun StringBuilder.appendln(it: Byte) = append(it).appendln()

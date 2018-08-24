@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package kotlin
+package kotlin.native
 
 /**
  * A vector of bits growing if necessary and allowing one to set/clear/read bits from it by a bit index.
  */
-// TODO: make me internal!
 public class BitSet(size: Int = ELEMENT_SIZE) {
 
     companion object {

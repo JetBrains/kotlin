@@ -21,28 +21,28 @@ package kotlin.test
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-annotation class Test
+public annotation class Test
 
 /**
  * Marks a function to be executed before a suite. Not supported in Kotlin/Common.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-annotation class BeforeClass
+public annotation class BeforeClass
 
 /**
  * Marks a function to be executed after a suite. Not supported in Kotlin/Common.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-annotation class AfterClass
+public annotation class AfterClass
 
 /**
  * Marks a function to be executed before a test.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-annotation class BeforeEach
+public annotation class BeforeEach
 
 
 /**
@@ -50,14 +50,14 @@ annotation class BeforeEach
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-annotation class AfterEach
+public annotation class AfterEach
 
 /**
  * Marks a test or a suite as ignored/pending.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-annotation class Ignore
+public annotation class Ignore
 
-typealias AfterTest = AfterEach
-typealias BeforeTest = BeforeEach
+public typealias AfterTest = AfterEach
+public typealias BeforeTest = BeforeEach

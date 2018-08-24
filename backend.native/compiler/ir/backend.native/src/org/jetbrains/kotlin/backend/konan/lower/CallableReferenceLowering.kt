@@ -183,13 +183,12 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
             superTypes += functionIrClass.symbol.typeWith(functionClassTypeParameters)
 
             var suspendFunctionIrClass: IrClass? = null
-            var suspendFunctionClassTypeParameters: List<IrType>? = null
             val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
             if (lastParameterType != null && lastParameterType.classifierOrNull?.descriptor == continuationClassDescriptor) {
                 lastParameterType as IrSimpleType
                 // If the last parameter is Continuation<> inherit from SuspendFunction.
                 suspendFunctionIrClass = context.ir.symbols.suspendFunctions[numberOfParameters - 1].owner
-                suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
+                var suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
                         (lastParameterType.arguments.single().typeOrNull ?: context.irBuiltIns.anyNType)
                 superTypes += suspendFunctionIrClass.symbol.typeWith(suspendFunctionClassTypeParameters)
             }

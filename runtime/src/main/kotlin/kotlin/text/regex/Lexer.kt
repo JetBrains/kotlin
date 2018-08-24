@@ -460,7 +460,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             // Word/whitespace/digit.
             'w', 's', 'd', 'W', 'S', 'D' -> {
                 lookAheadSpecialToken = AbstractCharClass.getPredefinedClass(
-                        fromCharArray(pattern, prevNonWhitespaceIndex, 1),
+                        String(pattern, prevNonWhitespaceIndex, 1),
                         false
                 )
                 lookAhead = 0

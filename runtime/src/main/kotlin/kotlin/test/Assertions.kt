@@ -15,7 +15,7 @@
  */
 
 /**
- * A number of common helper methods for writing unit tests. Copied from Kotlin repo.
+ * A number of common helper methods for writing unit tests.
  */
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
@@ -28,56 +28,56 @@ import kotlin.reflect.KClass
 /**
  * Current adapter providing assertion implementations
  */
-val asserter: Asserter
+private val asserter: Asserter
     get() = _asserter ?: lookupAsserter()
 
 /** Used to override current asserter internally */
 internal var _asserter: Asserter? = null
 
 /** Asserts that the given [block] returns `true`. */
-fun assertTrue(message: String? = null, block: () -> Boolean): Unit = assertTrue(block(), message)
+public fun assertTrue(message: String? = null, block: () -> Boolean): Unit = assertTrue(block(), message)
 
 /** Asserts that the expression is `true` with an optional [message]. */
-fun assertTrue(actual: Boolean, message: String? = null) {
+public fun assertTrue(actual: Boolean, message: String? = null) {
     return asserter.assertTrue(message ?: "Expected value to be true.", actual)
 }
 
 /** Asserts that the given [block] returns `false`. */
-fun assertFalse(message: String? = null, block: () -> Boolean): Unit = assertFalse(block(), message)
+public fun assertFalse(message: String? = null, block: () -> Boolean): Unit = assertFalse(block(), message)
 
 /** Asserts that the expression is `false` with an optional [message]. */
-fun assertFalse(actual: Boolean, message: String? = null) {
+public fun assertFalse(actual: Boolean, message: String? = null) {
     return asserter.assertTrue(message ?: "Expected value to be false.", !actual)
 }
 
 /** Asserts that the [expected] value is equal to the [actual] value, with an optional [message]. */
-fun <@OnlyInputTypes T> assertEquals(expected: T, actual: T, message: String? = null) {
+public fun <@OnlyInputTypes T> assertEquals(expected: T, actual: T, message: String? = null) {
     asserter.assertEquals(message, expected, actual)
 }
 
 /** Asserts that the [actual] value is not equal to the illegal value, with an optional [message]. */
-fun <@OnlyInputTypes T> assertNotEquals(illegal: T, actual: T, message: String? = null) {
+public fun <@OnlyInputTypes T> assertNotEquals(illegal: T, actual: T, message: String? = null) {
     asserter.assertNotEquals(message, illegal, actual)
 }
 
 /** Asserts that [expected] is the same instance as [actual], with an optional [message]. */
-fun <@OnlyInputTypes T> assertSame(expected: T, actual: T, message: String? = null) {
+public fun <@OnlyInputTypes T> assertSame(expected: T, actual: T, message: String? = null) {
     asserter.assertSame(message, expected, actual)
 }
 
 /** Asserts that [actual] is not the same instance as [illegal], with an optional [message]. */
-fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: String? = null) {
+public fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: String? = null) {
     asserter.assertNotSame(message, illegal, actual)
 }
 
 /** Asserts that the [actual] value is not `null`, with an optional [message]. */
-fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
+public fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
     asserter.assertNotNull(message, actual)
     return actual!!
 }
 
 /** Asserts that the [actual] value is not `null`, with an optional [message] and a function [block] to process the not-null value. */
-fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
+public fun <T: Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
     asserter.assertNotNull(message, actual)
     if (actual != null) {
         block(actual)
@@ -85,31 +85,31 @@ fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -
 }
 
 /** Asserts that the [actual] value is `null`, with an optional [message]. */
-fun assertNull(actual: Any?, message: String? = null) {
+public fun assertNull(actual: Any?, message: String? = null) {
     asserter.assertNull(message, actual)
 }
 
 /** Marks a test as having failed if this point in the execution path is reached, with an optional [message]. */
-fun fail(message: String? = null): Nothing {
+public fun fail(message: String? = null): Nothing {
     asserter.fail(message)
 }
 
 /** Asserts that given function [block] returns the given [expected] value. */
-fun <@OnlyInputTypes T> expect(expected: T, block: () -> T) {
+public fun <@OnlyInputTypes T> expect(expected: T, block: () -> T) {
     assertEquals(expected, block())
 }
 
 /** Asserts that given function [block] returns the given [expected] value and use the given [message] if it fails. */
-fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
+public fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
     assertEquals(expected, block(), message)
 }
 
 /** Asserts that given function [block] fails by throwing an exception. */
-fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
+public fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
 
 /** Asserts that given function [block] fails by throwing an exception. */
 @SinceKotlin("1.1")
-fun assertFails(message: String?, block: () -> Unit): Throwable {
+public fun assertFails(message: String?, block: () -> Unit): Throwable {
     try {
         block()
     } catch (e: Throwable) {
@@ -123,11 +123,11 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
  */
 @InlineOnly
-inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit) : T =
+public inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit) : T =
         assertFailsWith(T::class, message, block)
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T =
+public fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T =
         assertFailsWith(exceptionClass, null, block)
 
 
@@ -137,12 +137,12 @@ fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit
  * to implement in your unit test output
  */
 @Suppress("UNUSED_PARAMETER")
-inline fun todo(block: () -> Unit) {
+public inline fun todo(block: () -> Unit) {
     println("TODO")
 }
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
-fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
+public fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
     try {
         block()
     } catch (e: Throwable) {
@@ -164,7 +164,7 @@ fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?,
 /**
  * Abstracts the logic for performing assertions.
  */
-interface Asserter {
+public interface Asserter {
     /**
      * Fails the current test with the specified message.
      *
@@ -251,7 +251,7 @@ interface Asserter {
 /**
  * Checks applicability and provides Asserter instance
  */
-interface AsserterContributor {
+public interface AsserterContributor {
     /**
      * Provides [Asserter] instance or `null` depends on the current context.
      *

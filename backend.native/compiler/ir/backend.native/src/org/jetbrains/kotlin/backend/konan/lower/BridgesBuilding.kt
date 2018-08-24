@@ -245,7 +245,7 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
         val delegatingCall = IrCallImpl(
                 startOffset,
                 endOffset,
-                (targetSymbol.owner as IrFunction).returnType,
+                targetSymbol.owner.returnType,
                 targetSymbol,
                 targetSymbol.descriptor,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */

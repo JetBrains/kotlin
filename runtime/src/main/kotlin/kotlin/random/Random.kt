@@ -18,7 +18,7 @@ package kotlin.random
 import kotlin.native.concurrent.AtomicLong
 import kotlin.system.getTimeNanos
 
-abstract class NativeRandom {
+public abstract class NativeRandom {
     /**
      * A default pseudo-random linear congruential generator.
      */

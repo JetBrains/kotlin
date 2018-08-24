@@ -18,13 +18,6 @@ package kotlin.util
 
 import kotlin.comparisons.*
 
-// TODO: Implement sort for primitives with a custom comparator.
-
-// Array<T>     =============================================================================
-// We use merge because the quick sort may cause segfaults if
-// the comparator or the comparable implementation is incorrect (e.g. if it never returns 0).
-
-// Sort of comparables.
 private fun <T: Comparable<T>> mergeSort(array: Array<T>, start: Int, endInclusive: Int) {
     @Suppress("UNCHECKED_CAST")
     val buffer = arrayOfNulls<Any?>(array.size) as Array<T>

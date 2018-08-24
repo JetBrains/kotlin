@@ -16,14 +16,6 @@
 
 package kotlin.text
 
-// ByteArray -> String (UTF-8 -> UTF-16)
-
-@Deprecated("Use ByteArray.stringFromUtf8()", ReplaceWith("array.stringFromUtf8(start, end)"))
-fun fromUtf8Array(array: ByteArray, start: Int, size: Int) = array.stringFromUtf8Impl(start, size)
-
-@Deprecated("Use String.toUtf8()", ReplaceWith("string.toUtf8(start, end)"))
-fun toUtf8Array(string: String, start: Int, size: Int) : ByteArray = string.toUtf8(start, size)
-
 /**
  * Clears the content of this string builder making it empty.
  *
@@ -33,61 +25,14 @@ fun toUtf8Array(string: String, start: Int, size: Int) : ByteArray = string.toUt
 public actual fun StringBuilder.clear(): StringBuilder = apply { setLength(0) }
 
 /**
- * Converts an UTF-8 array into a [String]. Replaces invalid input sequences with a default character.
- */
-fun ByteArray.stringFromUtf8(start: Int = 0, size: Int = this.size) : String =
-        stringFromUtf8Impl(start, size)
-
-@SymbolName("Kotlin_ByteArray_stringFromUtf8")
-private external fun ByteArray.stringFromUtf8Impl(start: Int, size: Int) : String
-
-/**
- * Converts an UTF-8 array into a [String]. Throws [IllegalCharacterConversionException] if the input is invalid.
- */
-fun ByteArray.stringFromUtf8OrThrow(start: Int = 0, size: Int = this.size) : String =
-        stringFromUtf8OrThrowImpl(start, size)
-
-@SymbolName("Kotlin_ByteArray_stringFromUtf8OrThrow")
-private external fun ByteArray.stringFromUtf8OrThrowImpl(start: Int, size: Int) : String
-
-// String -> ByteArray (UTF-16 -> UTF-8)
-/**
- * Converts a [String] into an UTF-8 array. Replaces invalid input sequences with a default character.
- */
-fun String.toUtf8(start: Int = 0, size: Int = this.length) : ByteArray =
-        toUtf8Impl(start, size)
-
-@SymbolName("Kotlin_String_toUtf8")
-private external fun String.toUtf8Impl(start: Int, size: Int) : ByteArray
-
-/**
- * Converts a [String] into an UTF-8 array. Throws [IllegalCharacterConversionException] if the input is invalid.
- */
-fun String.toUtf8OrThrow(start: Int = 0, size: Int = this.length) : ByteArray =
-        toUtf8OrThrowImpl(start, size)
-
-@SymbolName("Kotlin_String_toUtf8OrThrow")
-private external fun String.toUtf8OrThrowImpl(start: Int, size: Int) : ByteArray
-
-// TODO: make it somewhat private?
-@SymbolName("Kotlin_String_fromCharArray")
-external fun fromCharArray(array: CharArray, start: Int, size: Int) : String
-
-@SymbolName("Kotlin_StringBuilder_insertString")
-private external fun insertString(array: CharArray, start: Int, value: String): Int
-
-@SymbolName("Kotlin_StringBuilder_insertInt")
-private external fun insertInt(array: CharArray, start: Int, value: Int): Int
-
-/**
  * Sets the character at the specified [index] to the specified [value].
  */
 @kotlin.internal.InlineOnly
 public inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.setCharAt(index, value)
 
 actual class StringBuilder private constructor (
-        private var array: CharArray
-) : CharSequence, Appendable {
+        private var array: CharArray) : CharSequence, Appendable {
+
     actual constructor() : this(10)
 
     actual constructor(capacity: Int) : this(CharArray(capacity))

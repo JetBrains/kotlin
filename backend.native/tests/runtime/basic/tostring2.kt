@@ -10,5 +10,5 @@ import kotlin.test.*
         print(" ")
     }
     println()
-    println(fromCharArray(array, 0, array.size))
+    println(String(array, 0, array.size))
 }

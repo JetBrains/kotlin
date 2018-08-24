@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package kotlin.text
 
-// The values duplicate constants defined in KString.cpp.
 /**
  * Represents the character general category in the Unicode specification.
  */
