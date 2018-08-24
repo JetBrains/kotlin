@@ -1891,6 +1891,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
             }
 
+            @TestMetadata("abstract.kt")
+            public void testAbstract() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/abstract.kt");
+            }
+
             public void testAllFilesPresentInResultIsSuccessOrFailure() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
@@ -1923,6 +1928,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("needParentheses.kt")
             public void testNeedParentheses() throws Exception {
                 runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/needParentheses.kt");
+            }
+
+            @TestMetadata("rename.kt")
+            public void testRename() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/rename.kt");
             }
 
             @TestMetadata("simple.kt")

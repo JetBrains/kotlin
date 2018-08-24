@@ -1,3 +1,4 @@
+// FIX: Add '.getOrThrow()' to function result (breaks use-sites!)
 // WITH_RUNTIME
 
 package kotlin

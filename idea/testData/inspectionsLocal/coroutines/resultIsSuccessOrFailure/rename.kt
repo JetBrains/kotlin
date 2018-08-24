@@ -1,4 +1,4 @@
-// FIX: Add '.getOrThrow()' to function result (breaks use-sites!)
+// FIX: Rename to 'incorrectCatching'
 package kotlin
 
 class SuccessOrFailure<T>(val value: T?) {
