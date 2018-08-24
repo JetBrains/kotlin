@@ -18,6 +18,7 @@ package kotlin.coroutines.native.internal
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons
+import kotlin.coroutines.intrinsics.*
 
 @SinceKotlin("1.3")
 internal abstract class BaseContinuationImpl(
@@ -38,7 +39,7 @@ internal abstract class BaseContinuationImpl(
                 val outcome: SuccessOrFailure<Any?> =
                     try {
                         val outcome = invokeSuspend(param)
-                        if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
+                        if (outcome === COROUTINE_SUSPENDED) return
                         SuccessOrFailure.success(outcome)
                     } catch (exception: Throwable) {
                         SuccessOrFailure.failure(exception)

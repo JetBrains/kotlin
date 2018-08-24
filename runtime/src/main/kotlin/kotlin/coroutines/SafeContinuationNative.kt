@@ -18,6 +18,7 @@ package kotlin.coroutines
 
 import kotlin.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons.*
+import kotlin.coroutines.intrinsics.*
 
 @PublishedApi
 @SinceKotlin("1.3")

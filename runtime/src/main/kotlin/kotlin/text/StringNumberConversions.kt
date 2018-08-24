@@ -160,3 +160,5 @@ public actual fun String.toDoubleOrNull(): Double? {
         return null
     }
 }
+
+internal fun numberFormatError(input: String): Nothing = throw NumberFormatException("Invalid number format: '$input'")
