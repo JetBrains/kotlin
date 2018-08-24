@@ -1,0 +1,56 @@
+package org.jetbrains.kotlin.cli.jvm.compiler.tmp;
+
+option java_outer_classname = "ResolutionDumpProtoBuf";
+
+option optimize_for = LITE_RUNTIME;
+
+message ResolutionResultForFile {
+    optional File file = 1;
+    repeated Element element = 2;
+}
+
+message Element {
+    optional int32 offset = 1;
+    optional string presentable_text = 2;
+
+    // One-of:
+    optional Expression expression = 3;
+}
+
+message Expression {
+    optional Type type = 1;
+
+    // One-of:
+    optional Resolved resolved = 2;
+    optional Error error = 3;
+}
+
+message Resolved {
+    optional Descriptor candidate_descriptor = 1;
+    repeated Type type_argument = 2;
+}
+
+message Error {
+    repeated Diagnostic diagnostic = 1;
+}
+
+message Diagnostic {
+    // TODO: stub
+    optional string diagnostic_family = 1;
+    optional string rendered_text = 2;
+}
+
+message Descriptor {
+    // TODO: stub
+    optional string fqn = 1;
+    repeated Descriptor type_parameter = 2;
+}
+
+message Type {
+    // TODO: stub
+    optional string rendered_type = 1;
+}
+
+message File {
+    optional string relative_path = 1;
+}
