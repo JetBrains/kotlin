@@ -15,25 +15,9 @@ buildscript {
 
     kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.70-dev-491", onlySuccessBootstrap = false))
 
-    val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
-
-    val repos = listOfNotNull(
-            mirrorRepo,
-            bootstrapKotlinRepo,
-            "https://jcenter.bintray.com/",
-            "https://plugins.gradle.org/m2",
-            "http://dl.bintray.com/kotlin/kotlinx",
-            "https://repo.gradle.org/gradle/ext-releases-local", // for native-platform
-            "https://jetbrains.bintray.com/intellij-third-party-dependencies", // for jflex
-            "https://dl.bintray.com/jetbrains/markdown" // for org.jetbrains:markdown
-    )
-
-    extra["repos"] = repos
-
     repositories {
-        for (repo in repos) {
-            maven(url = repo)
-        }
+        bootstrapKotlinRepo?.let(::maven)
+        maven("https://plugins.gradle.org/m2")
     }
 
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -42,10 +26,10 @@ buildscript {
     val bootstrapCompilerClasspath by configurations.creating
 
     dependencies {
-        bootstrapCompilerClasspath(kotlinDep("compiler-embeddable", bootstrapKotlinVersion))
+        bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
         classpath("com.gradle.publish:plugin-publish-plugin:0.9.7")
-        classpath(kotlinDep("gradle-plugin", bootstrapKotlinVersion))
+        classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("net.sf.proguard:proguard-gradle:5.3.3")
     }
 }
@@ -90,19 +74,9 @@ allprojects {
 
 extra["kotlin_root"] = rootDir
 
-val bootstrapCompileCfg = configurations.create("bootstrapCompile")
-
-repositories {
-    for (repo in (rootProject.extra["repos"] as List<String>)) {
-        maven(url = repo)
-    }
-}
-
 val cidrKotlinPlugin by configurations.creating
 
 dependencies {
-    bootstrapCompileCfg(kotlinDep("compiler-embeddable", bootstrapKotlinVersion))
-
     cidrKotlinPlugin(project(":prepare:cidr-plugin", "runtimeJar"))
 }
 
@@ -180,17 +154,6 @@ extra["IntellijCoreDependencies"] =
                "streamex",
                "trove4j")
 
-extra["nativePlatformVariants"] =
-        listOf("windows-amd64",
-               "windows-i386",
-               "osx-amd64",
-               "osx-i386",
-               "linux-amd64",
-               "linux-i386",
-               "freebsd-amd64-libcpp",
-               "freebsd-amd64-libstdcpp",
-               "freebsd-i386-libcpp",
-               "freebsd-i386-libstdcpp")
 
 extra["compilerModules"] = arrayOf(
         ":compiler:util",
@@ -295,19 +258,23 @@ allprojects {
     // therefore it is disabled by default
     // buildDir = File(commonBuildDir, project.name)
 
-    val repos = rootProject.extra["repos"] as List<String>
+    val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
+
     repositories {
         intellijSdkRepo(project)
         androidDxJarRepo(project)
-
-        for (repo in repos) {
-            maven(repo)
-        }
+        mirrorRepo?.let(::maven)
+        bootstrapKotlinRepo?.let(::maven)
+        jcenter()
     }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
 
-    val commonCompilerArgs = listOfNotNull("-Xallow-kotlin-package", "-Xread-deserialized-contracts", "-Xprogressive".takeIf { hasProperty("test.progressive.mode") })
+    val commonCompilerArgs = listOfNotNull(
+        "-Xallow-kotlin-package",
+        "-Xread-deserialized-contracts",
+        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") }
+    )
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {

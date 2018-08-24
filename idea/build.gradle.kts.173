@@ -5,6 +5,10 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    maven("https://dl.bintray.com/jetbrains/markdown")
+}
+
 dependencies {
     testRuntime(intellijDep())
 
@@ -38,11 +42,11 @@ dependencies {
     compile(project(":kotlin-script-util")) { isTransitive = false }
 
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    compile(commonDep("org.jetbrains", "markdown"))
 
     compileOnly(project(":kotlin-daemon-client"))
 
     compileOnly(intellijDep())
+    compileOnly(commonDep("org.jetbrains", "markdown"))
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     compileOnly(intellijPluginDep("IntelliLang"))
     compileOnly(intellijPluginDep("copyright"))
