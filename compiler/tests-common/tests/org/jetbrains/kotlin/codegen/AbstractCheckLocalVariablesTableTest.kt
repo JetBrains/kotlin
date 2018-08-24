@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import com.google.common.io.Files
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
@@ -35,15 +34,12 @@ import java.util.regex.Pattern
  */
 
 abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
-    protected lateinit var ktFile: File
 
     @Throws(Exception::class)
     override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
-        ktFile = wholeFile
-        val text = FileUtil.loadFile(ktFile, true)
         compile(files, javaFilesDir)
 
-        val classAndMethod = parseClassAndMethodSignature()
+        val classAndMethod = parseClassAndMethodSignature(wholeFile)
         val split = classAndMethod.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         assert(split.size == 2) { "Exactly one dot is expected: $classAndMethod" }
         val classFileRegex = StringUtil.escapeToRegexp(split[0] + ".class").replace("\\*", ".+")
@@ -55,15 +51,18 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         val pathsString = outputFiles.joinToString { it.relativePath }
         assertNotNull("Couldn't find class file for pattern $classFileRegex in: $pathsString", outputFile)
 
-        val cr = ClassReader(outputFile!!.asByteArray())
-        val actualLocalVariables = readLocalVariable(cr, methodName)
+        val actualLocalVariables = readLocalVariable(ClassReader(outputFile!!.asByteArray()), methodName)
 
-        doCompare(text, actualLocalVariables)
+        doCompare(wholeFile, files.single().content, actualLocalVariables)
     }
 
-    protected open fun doCompare(text: String, actualLocalVariables: List<LocalVariable>) {
+    protected open fun doCompare(
+        testFile: File,
+        text: String,
+        actualLocalVariables: List<LocalVariable>
+    ) {
         KotlinTestUtils.assertEqualsToFile(
-            ktFile,
+            testFile,
             text.substring(0, text.indexOf("// VARIABLE : ")) + getActualVariablesAsString(
                 actualLocalVariables
             )
@@ -82,8 +81,8 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
     }
 
     @Throws(IOException::class)
-    private fun parseClassAndMethodSignature(): String {
-        val lines = Files.readLines(ktFile, Charset.forName("utf-8"))
+    private fun parseClassAndMethodSignature(testFile: File): String {
+        val lines = Files.readLines(testFile, Charset.forName("utf-8"))
         for (line in lines) {
             val methodMatcher = methodPattern.matcher(line)
             if (methodMatcher.matches()) {

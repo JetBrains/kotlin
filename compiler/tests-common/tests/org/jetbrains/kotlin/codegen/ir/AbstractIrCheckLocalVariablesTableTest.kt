@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.junit.ComparisonFailure
+import java.io.File
 import java.nio.charset.Charset
 
 abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariablesTableTest() {
@@ -23,9 +24,13 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
         return ConfigurationKind.ALL;
     }
 
-    override fun doCompare(text: String, actualLocalVariables: List<LocalVariable>) {
+    override fun doCompare(
+        testFile: File,
+        text: String,
+        actualLocalVariables: List<LocalVariable>
+    ) {
         val actual = getActualVariablesAsList(actualLocalVariables)
-        val expected = getExpectedVariablesAsList()
+        val expected = getExpectedVariablesAsList(testFile)
         if (!Comparing.equal(expected, actual)) {
             throw ComparisonFailure(
                 "Variables differ from expected",
@@ -41,8 +46,8 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
             .sorted()
     }
 
-    private fun getExpectedVariablesAsList(): List<String> {
-        return ktFile.readLines(Charset.forName("utf-8"))
+    private fun getExpectedVariablesAsList(testFile: File): List<String> {
+        return testFile.readLines(Charset.forName("utf-8"))
             .filter { line -> line.startsWith("// VARIABLE ") }
             .filter { !it.contains("NAME=\$i\$") }
             .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") } // Ignore index
