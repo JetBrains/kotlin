@@ -336,8 +336,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractLineNumberTest> {
-            model("lineNumber", recursive = false)
-            model("lineNumber/custom", testMethod = "doTestCustom")
+            model("lineNumber")
         }
 
         testClass<AbstractLocalClassProtoTest> {

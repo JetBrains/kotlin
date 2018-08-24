@@ -17,90 +17,55 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
-import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
+public abstract class AbstractLineNumberTest extends CodegenTestCase {
     private static final String LINE_NUMBER_FUN = "lineNumber";
     private static final Pattern TEST_LINE_NUMBER_PATTERN = Pattern.compile("^.*test." + LINE_NUMBER_FUN + "\\(\\).*$");
 
-    @NotNull
-    private KotlinCoreEnvironment createEnvironment() {
-        return KotlinCoreEnvironment.createForTests(
-                myTestRootDisposable,
-                KotlinTestUtils.newConfiguration(
-                        ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar(), tmpdir
-                ),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+    private static TestFile createLineNumberDeclaration() {
+        return new TestFile(
+                LINE_NUMBER_FUN + ".kt",
+                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n"
         );
     }
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        KotlinCoreEnvironment environment = createEnvironment();
-        KtFile psiFile = KotlinTestUtils.createFile(
-                LINE_NUMBER_FUN + ".kt",
-                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n",
-                environment.getProject()
-        );
-
-        GenerationUtils.compileFileTo(psiFile, environment, tmpdir);
-    }
-
-    @NotNull
-    private Pair<KtFile, KotlinCoreEnvironment> createPsiFile(@NotNull String filename) {
-        File file = new File(filename);
-        KotlinCoreEnvironment environment = createEnvironment();
-
-        String text;
-        try {
-            text = FileUtil.loadFile(file, true);
+    protected void doMultiFileTest(
+            @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir
+    ) {
+        boolean isCustomTest = wholeFile.getParentFile().getName().equalsIgnoreCase("custom");
+        if (!isCustomTest) {
+            files.add(createLineNumberDeclaration());
         }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
+        compile(files, javaFilesDir);
 
-        return new Pair<>(KotlinTestUtils.createFile(file.getName(), text, environment.getProject()), environment);
-    }
-
-    private void doTest(@NotNull String filename, boolean custom) {
-        Pair<KtFile, KotlinCoreEnvironment> fileAndEnv = createPsiFile(filename);
-        KtFile psiFile = fileAndEnv.getFirst();
-        KotlinCoreEnvironment environment = fileAndEnv.getSecond();
-
-        ClassFileFactory classFileFactory = GenerationUtils.compileFile(psiFile, environment);
+        KtFile psiFile = CollectionsKt.single(myFiles.getPsiFiles(), file -> file.getName().equals(wholeFile.getName()));
 
         try {
-            if (custom) {
+            if (isCustomTest) {
                 List<String> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, false);
                 String text = psiFile.getText();
                 String newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers);
-                KotlinTestUtils.assertEqualsToFile(new File(filename), newFileText);
+                KotlinTestUtils.assertEqualsToFile(wholeFile, newFileText);
             }
             else {
                 List<String> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
                 List<String> actualLineNumbers = extractActualLineNumbersFromBytecode(classFileFactory, true);
+                assertFalse( "Missed 'lineNumbers' calls in test data", expectedLineNumbers.isEmpty());
                 assertSameElements(actualLineNumbers, expectedLineNumbers);
             }
         } catch (Throwable e) {
@@ -130,14 +95,6 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
         }
 
         return actualLineNumbers;
-    }
-
-    protected void doTest(String path) {
-        doTest(path, false);
-    }
-
-    protected void doTestCustom(String path) {
-        doTest(path, true);
     }
 
     @NotNull
