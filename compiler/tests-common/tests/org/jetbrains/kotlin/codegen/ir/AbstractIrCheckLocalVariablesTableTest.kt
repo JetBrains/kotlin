@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.junit.ComparisonFailure
 import java.io.File
-import java.nio.charset.Charset
 
 abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariablesTableTest() {
 
@@ -21,7 +20,7 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
     }
 
     override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
-        return ConfigurationKind.ALL;
+        return ConfigurationKind.ALL
     }
 
     override fun doCompare(
@@ -47,7 +46,7 @@ abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariab
     }
 
     private fun getExpectedVariablesAsList(testFile: File): List<String> {
-        return testFile.readLines(Charset.forName("utf-8"))
+        return testFile.readLines()
             .filter { line -> line.startsWith("// VARIABLE ") }
             .filter { !it.contains("NAME=\$i\$") }
             .map { line -> line.replaceFirst("INDEX=\\d+".toRegex(), "INDEX=*") } // Ignore index

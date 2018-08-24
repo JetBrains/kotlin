@@ -16,17 +16,13 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.google.common.io.Files
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.rethrow
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
-import java.io.IOException
-import java.nio.charset.Charset
 import java.util.*
 import java.util.regex.Pattern
 
@@ -36,7 +32,6 @@ import java.util.regex.Pattern
 
 abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
-    @Throws(Exception::class)
     override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
         compile(files, javaFilesDir)
 
@@ -48,7 +43,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             val methodName = split[1]
 
             val outputFiles = (classFileFactory as OutputFileCollection).asList()
-            val outputFile = ContainerUtil.find(outputFiles, { file -> file.relativePath.matches(classFileRegex.toRegex()) })
+            val outputFile = outputFiles.first { file -> file.relativePath.matches(classFileRegex.toRegex()) }
 
             val pathsString = outputFiles.joinToString { it.relativePath }
             assertNotNull("Couldn't find class file for pattern $classFileRegex in: $pathsString", outputFile)
@@ -69,7 +64,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
     ) {
         KotlinTestUtils.assertEqualsToFile(
             testFile,
-            text.substring(0, text.indexOf("// VARIABLE : ")) + getActualVariablesAsString(
+            text.substringBefore("// VARIABLE : ") + getActualVariablesAsString(
                 actualLocalVariables
             )
         )
@@ -86,10 +81,8 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
         }
     }
 
-    @Throws(IOException::class)
     private fun parseClassAndMethodSignature(testFile: File): String {
-        val lines = Files.readLines(testFile, Charset.forName("utf-8"))
-        for (line in lines) {
+        for (line in testFile.readLines()) {
             val methodMatcher = methodPattern.matcher(line)
             if (methodMatcher.matches()) {
                 return methodMatcher.group(1)
@@ -101,17 +94,10 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
     companion object {
 
-        private fun getActualVariablesAsString(list: List<LocalVariable>): String {
-            val builder = StringBuilder()
-            for (variable in list) {
-                builder.append(variable.toString()).append("\n")
-            }
-            return builder.toString()
-        }
+        private fun getActualVariablesAsString(list: List<LocalVariable>) = list.joinToString("\n")
 
         private val methodPattern = Pattern.compile("^// METHOD : *(.*)")
 
-        @Throws(Exception::class)
         private fun readLocalVariable(cr: ClassReader, methodName: String): List<LocalVariable> {
 
             class Visitor : ClassVisitor(Opcodes.ASM5) {
@@ -138,7 +124,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             cr.accept(visitor, ClassReader.SKIP_FRAMES)
 
-            TestCase.assertFalse("method not found: $methodName", visitor.readVariables.size == 0)
+            TestCase.assertFalse("method not found: $methodName", visitor.readVariables.isEmpty())
 
             return visitor.readVariables
         }
