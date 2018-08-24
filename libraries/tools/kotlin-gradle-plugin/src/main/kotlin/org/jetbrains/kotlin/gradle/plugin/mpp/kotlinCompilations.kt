@@ -202,7 +202,9 @@ class KotlinWithJavaCompilation(
 
     override var runtimeDependencyFiles: FileCollection
         get() = javaSourceSet.runtimeClasspath
-        set(value) { javaSourceSet.runtimeClasspath = value }
+        set(value) {
+            javaSourceSet.runtimeClasspath = value
+        }
 
     override val runtimeDependencyConfigurationName: String
         get() = javaSourceSet.runtimeClasspathConfigurationName
@@ -227,7 +229,9 @@ class KotlinWithJavaCompilation(
 
     override var compileDependencyFiles: FileCollection
         get() = javaSourceSet.compileClasspath
-        set(value) { javaSourceSet.compileClasspath = value }
+        set(value) {
+            javaSourceSet.compileClasspath = value
+        }
 
     fun source(javaSourceSet: SourceSet) {
         with(target.project) {
@@ -242,7 +246,7 @@ class KotlinJvmAndroidCompilation(
     target: KotlinAndroidTarget,
     name: String,
     override val output: SourceSetOutput
-): AbstractKotlinCompilationToRunnableFiles(target, name)
+) : AbstractKotlinCompilationToRunnableFiles(target, name)
 
 class KotlinJsCompilation(
     target: KotlinTarget,
@@ -287,6 +291,26 @@ class KotlinNativeCompilation(
 
     var buildTypes = mutableListOf<NativeBuildType>()
     var outputKinds = mutableListOf<NativeOutputKind>()
+
+    fun outputKind(kind: NativeOutputKind) = outputKinds.add(kind)
+
+    fun outputKinds(vararg kinds: NativeOutputKind) {
+        outputKinds = kinds.toMutableList()
+    }
+
+    fun outputKinds(vararg kinds: String) {
+        outputKinds = kinds.map { NativeOutputKind.valueOf(it.toUpperCase()) }.toMutableList()
+    }
+
+    fun outputKinds(kinds: List<Any>) {
+        outputKinds = kinds.map {
+            when (it) {
+                is NativeOutputKind -> it
+                is String -> NativeOutputKind.valueOf(it.toUpperCase())
+                else -> error("Cannot use $it as an output kind")
+            }
+        }.toMutableList()
+    }
 
     // Naming
 
