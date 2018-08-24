@@ -1,8 +1,7 @@
 package kotlin.test.tests
 
 import kotlin.test.*
-import kotlin.native.test.*
-
+import kotlin.native.internal.test.*
 
 @Ignore
 class IgnoredClass {

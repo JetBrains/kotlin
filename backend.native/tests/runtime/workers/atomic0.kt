@@ -2,7 +2,7 @@ package runtime.workers.atomic0
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 fun test1(workers: Array<Worker>) {
     val atomic = AtomicInt(15)

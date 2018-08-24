@@ -2,7 +2,7 @@ package runtime.workers.worker6
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 @Test fun runTest() {
     val worker = startWorker()

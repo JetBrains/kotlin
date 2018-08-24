@@ -48,7 +48,7 @@ framework("MyCustomFramework") {
 ### Q: Why do I see `InvalidMutabilityException`?
 
 A: It likely happens, because you are trying to mutate a frozen object. Object could transfer to the
-frozen state either explicitly, as objects reachable from objects on which `konan.worker.freeze` is called,
+frozen state either explicitly, as objects reachable from objects on which `kotlin.native.concurrent.freeze` is called,
 or implicitly (i.e. reachable from `enum` or global singleton object - see next question).
 
 
@@ -56,7 +56,7 @@ or implicitly (i.e. reachable from `enum` or global singleton object - see next 
 
 A: Currently, singleton objects are immutable (i.e. frozen after creation), and it's generally considered
 a good practise to have global state immutable. If for some reasons you need mutable state inside such an
-object, use `@konan.ThreadLocal` annotation on the object. Also `konan.worker.AtomicReference` class could be
+object, use `@konan.ThreadLocal` annotation on the object. Also `kotlin.native.concurrent.AtomicReference` class could be
 used to store different pointers to frozen objects in a frozen object and atomically update those.
 
 ### Q: How can I compile my project against Kotlin/Native master?

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package kotlin.native.test
+package kotlin.native.internal.test
 
 import kotlin.IllegalArgumentException
 import kotlin.system.getTimeMillis
 import kotlin.system.measureTimeMillis
 import kotlin.text.StringBuilder
 
-class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
+internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     private val filters = mutableListOf<(TestCase) -> Boolean>()
     private val listeners = mutableSetOf<TestListener>()
     private var logger: TestLogger = GTestLogger()

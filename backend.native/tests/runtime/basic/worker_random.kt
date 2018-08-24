@@ -1,6 +1,6 @@
 package runtime.basic.worker_random
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 import kotlin.collections.*
 import kotlin.random.*
 import kotlin.system.*

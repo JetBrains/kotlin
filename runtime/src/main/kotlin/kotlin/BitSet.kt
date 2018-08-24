@@ -19,7 +19,8 @@ package kotlin
 /**
  * A vector of bits growing if necessary and allowing one to set/clear/read bits from it by a bit index.
  */
-class BitSet(size: Int = ELEMENT_SIZE) {
+// TODO: make me internal!
+public class BitSet(size: Int = ELEMENT_SIZE) {
 
     companion object {
         // Size of one element in the array used to store bits.

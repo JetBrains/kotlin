@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package kotlin.native.test
+package kotlin.native.internal.test
 
-class GTestLogger : TestLoggerWithStatistics() {
+internal class GTestLogger : TestLoggerWithStatistics() {
 
     private val Collection<TestSuite>.totalTestsNotIgnored: Int
         get() = asSequence().filter { !it.ignored }.sumBy { it.testCases.values.count { !it.ignored } }

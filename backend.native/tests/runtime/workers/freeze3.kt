@@ -2,7 +2,7 @@ package runtime.workers.freeze3
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 object Immutable {
     var x = 1

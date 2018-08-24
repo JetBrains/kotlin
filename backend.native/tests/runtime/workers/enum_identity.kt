@@ -1,7 +1,7 @@
 package runtime.workers.enum_identity
 
 import kotlin.test.*
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 enum class A {
     A, B

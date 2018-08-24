@@ -415,25 +415,6 @@ KInt schedule(KInt id, KInt transferMode, KRef producer, KNativePtr jobFunction)
   return future->id();
 }
 
-OBJ_GETTER(shallowCopy, KConstRef object) {
-  if (object == nullptr) RETURN_OBJ(nullptr);
-
-  const TypeInfo* typeInfo = object->type_info();
-  bool isArray = typeInfo->instanceSize_ < 0;
-  KRef result = isArray ?
-      AllocArrayInstance(typeInfo, object->array()->count_, OBJ_RESULT) :
-      AllocInstance(typeInfo, OBJ_RESULT);
-  // TODO: what to do when object references exist.
-  if (isArray) {
-    RuntimeAssert(object->array()->count_ == 0 || typeInfo != theArrayTypeInfo, "Object array copy unimplemented");
-    memcpy(result->array() + 1, object->array() + 1, ArrayDataSizeBytes(object->array()));
-  } else {
-    RuntimeAssert(typeInfo->objOffsetsCount_ == 0, "Object reference copy unimplemented");
-    memcpy(result + 1, object + 1, typeInfo->instanceSize_);
-  }
-  return result;
-}
-
 KInt stateOfFuture(KInt id) {
   return theState()->stateOfFutureUnlocked(id);
 }
@@ -475,11 +456,6 @@ KNativePtr detachObjectGraphInternal(KInt transferMode, KRef producer) {
 KInt startWorker() {
   ThrowWorkerUnsupported();
   return -1;
-}
-
-OBJ_GETTER(shallowCopy, KConstRef object) {
-  ThrowWorkerUnsupported();
-  RETURN_OBJ(nullptr);
 }
 
 KInt stateOfFuture(KInt id) {
@@ -538,10 +514,6 @@ KInt Kotlin_Worker_requestTerminationWorkerInternal(KInt id, KBoolean processSch
 
 KInt Kotlin_Worker_scheduleInternal(KInt id, KInt transferMode, KRef producer, KNativePtr job) {
   return schedule(id, transferMode, producer, job);
-}
-
-OBJ_GETTER(Kotlin_Worker_shallowCopyInternal, KConstRef object) {
-  RETURN_RESULT_OF(shallowCopy, object);
 }
 
 KInt Kotlin_Worker_stateOfFuture(KInt id) {

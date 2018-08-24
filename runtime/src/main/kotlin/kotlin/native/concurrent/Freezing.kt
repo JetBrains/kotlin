@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.native.worker
+package kotlin.native.concurrent
 
 import kotlin.native.internal.ExportForCppRuntime
 

@@ -2,11 +2,11 @@ package runtime.workers.worker7
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 @Test fun runTest() {
     val worker = startWorker()
-    val future = worker.schedule(TransferMode.CHECKED, { "Input".shallowCopy() }) {
+    val future = worker.schedule(TransferMode.CHECKED, { "Input" }) {
         input -> println(input)
     }
     future.consume {

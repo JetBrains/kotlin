@@ -297,10 +297,12 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             context.getInternalFunctions("valueOfForEnum").single())
 
     val enumValues = symbolTable.referenceSimpleFunction(
-             builtInsPackage("kotlin").getContributedFunctions(Name.identifier("enumValues"), NoLookupLocation.FROM_BACKEND).single())
+             builtInsPackage("kotlin").getContributedFunctions(
+                     Name.identifier("enumValues"), NoLookupLocation.FROM_BACKEND).single())
 
     val enumValueOf = symbolTable.referenceSimpleFunction(
-            builtInsPackage("kotlin").getContributedFunctions(Name.identifier("enumValueOf"), NoLookupLocation.FROM_BACKEND).single())
+            builtInsPackage("kotlin").getContributedFunctions(
+                    Name.identifier("enumValueOf"), NoLookupLocation.FROM_BACKEND).single())
 
     val createUninitializedInstance = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("createUninitializedInstance").single())
@@ -309,14 +311,17 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             context.getInternalFunctions("initInstance").single())
 
     val freeze = symbolTable.referenceSimpleFunction(
-            builtInsPackage("kotlin", "native", "worker").getContributedFunctions(Name.identifier("freeze"), NoLookupLocation.FROM_BACKEND).single())
+            builtInsPackage("kotlin", "native", "concurrent").getContributedFunctions(
+                    Name.identifier("freeze"), NoLookupLocation.FROM_BACKEND).single())
 
     val println = symbolTable.referenceSimpleFunction(
-            builtInsPackage("kotlin", "io").getContributedFunctions(Name.identifier("println"), NoLookupLocation.FROM_BACKEND)
+            builtInsPackage("kotlin", "io").getContributedFunctions(
+                    Name.identifier("println"), NoLookupLocation.FROM_BACKEND)
                     .single { it.valueParameters.singleOrNull()?.type == builtIns.stringType })
 
     val anyNToString = symbolTable.referenceSimpleFunction(
-            builtInsPackage("kotlin").getContributedFunctions(Name.identifier("toString"), NoLookupLocation.FROM_BACKEND)
+            builtInsPackage("kotlin").getContributedFunctions(
+                    Name.identifier("toString"), NoLookupLocation.FROM_BACKEND)
                     .single { it.extensionReceiverParameter?.type == builtIns.nullableAnyType})
 
     val getContinuation = symbolTable.referenceSimpleFunction(
@@ -350,9 +355,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
                     .filterNot { it.isExpect }.single().getter!!
     )
 
-    // removed in Big Kotlin @c62e4b4fcf50e99800e6d5c3a220101b691e1d43
     val refClass = symbolTable.referenceClass(context.getInternalClass("Ref"))
-
 
     val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
     val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
@@ -376,7 +379,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             symbolTable.referenceClass(context.getInternalClass(name))
 
     private fun getKonanTestClass(className: String) = symbolTable.referenceClass(
-            builtInsPackage("kotlin", "native", "test").getContributedClassifier(
+            builtInsPackage("kotlin", "native", "internal", "test").getContributedClassifier(
                     Name.identifier(className), NoLookupLocation.FROM_BACKEND
             ) as ClassDescriptor)
 

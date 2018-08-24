@@ -1,7 +1,7 @@
 package codegen.enum.isFrozen
 
 import kotlin.test.*
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 enum class Zzz(val zzz: String) {
     Z1("z1"),

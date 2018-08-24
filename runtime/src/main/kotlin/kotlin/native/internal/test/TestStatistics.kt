@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package kotlin.native.test
+package kotlin.native.internal.test
 
-interface TestStatistics {
+internal interface TestStatistics {
     val total: Int
     val passed: Int
     val failed: Int
@@ -28,7 +28,7 @@ interface TestStatistics {
     val hasFailedTests: Boolean
 }
 
-class MutableTestStatistics: TestStatistics {
+internal class MutableTestStatistics: TestStatistics {
 
     override var total:   Int = 0; private set
     override var passed:  Int = 0; private set

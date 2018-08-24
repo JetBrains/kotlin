@@ -2,7 +2,7 @@ package runtime.workers.lazy1
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 class Leak {
     val leak by lazy { this }

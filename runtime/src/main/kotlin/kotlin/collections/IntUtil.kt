@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-fun Int.highestOneBit() : Int {
+internal fun Int.highestOneBit() : Int {
     var index = 31
 
     while (index >= 0) {
@@ -29,7 +29,7 @@ fun Int.highestOneBit() : Int {
     return 0
 }
 
-fun Int.numberOfLeadingZeros() : Int {
+internal fun Int.numberOfLeadingZeros() : Int {
     var index = 31
 
     while (index >= 0) {

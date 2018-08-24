@@ -1182,7 +1182,8 @@ public final class Float private constructor(private val value: kotlin.native.in
     }
 
     @SymbolName("Kotlin_Float_bits")
-    external public fun bits(): Int
+    @PublishedApi
+    external internal fun bits(): Int
 }
 
 /**
@@ -1398,10 +1399,11 @@ public final class Double private constructor(private val value: kotlin.native.i
 
     public override fun equals(other: Any?): Boolean = other is Double && this.equals(other)
 
-    public override fun toString() = NumberConverter.convert(this)
+    public override fun toString(): String = NumberConverter.convert(this)
 
     public override fun hashCode(): Int = bits().hashCode()
 
     @SymbolName("Kotlin_Double_bits")
-    external public fun bits(): Long
+    @PublishedApi
+    external internal fun bits(): Long
 }

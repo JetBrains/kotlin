@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package kotlin.native.test
+package kotlin.native.internal.test
 
-interface TestListener {
+internal interface TestListener {
     fun startTesting(runner: TestRunner)
     fun finishTesting(runner: TestRunner, timeMillis: Long)
 
@@ -33,7 +33,7 @@ interface TestListener {
     fun ignore(testCase: TestCase)
 }
 
-open class BaseTestListener: TestListener {
+internal open class BaseTestListener: TestListener {
     override fun startTesting(runner: TestRunner) {}
     override fun finishTesting(runner: TestRunner, timeMillis: Long) {}
     override fun startIteration(runner: TestRunner, iteration: Int, suites: Collection<TestSuite>) {}

@@ -21,7 +21,7 @@ package kotlin.native.ref
  * retrieve a strong reference to an object, or return null, if object was already destoyed by
  * the memory manager.
  */
-class WeakReference<T : Any> {
+public class WeakReference<T : Any> {
     /**
      * Creates a weak reference object pointing to an object. Weak reference doesn't prevent
      * removing object, and is nullified once object is collected.
@@ -42,9 +42,10 @@ class WeakReference<T : Any> {
     public fun clear() {
         pointer = null
     }
+
+    /**
+     * Returns either reference to an object or null, if it was collected.
+     */
+    public fun get(): T? = pointer?.get() as T?
 }
 
-/**
- * Returns either reference to an object or null, if it was collected.
- */
-public inline fun <reified T : Any> WeakReference<T>.get() = pointer?.get() as T?

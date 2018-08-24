@@ -346,7 +346,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
     }
 
     /**
-     * Builds a method in `[testSuite]` class with anem `[getterName]`
+     * Builds a method in `[testSuite]` class with name `[getterName]`
      * returning a new instance of class referenced by [classSymbol].
      */
     private inner class InstanceGetterBuilder(val classSymbol: IrClassSymbol, testSuite: IrClassSymbol, getterName: Name)

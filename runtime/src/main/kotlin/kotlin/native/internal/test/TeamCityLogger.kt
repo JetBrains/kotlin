@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package kotlin.native.test
+package kotlin.native.internal.test
 
 import kotlin.text.StringBuilder
 
-class TeamCityLogger : BaseTestLogger() {
+internal class TeamCityLogger : BaseTestLogger() {
 
     private fun String.escapeForTC(): String = StringBuilder(length).apply {
         for(char in this@escapeForTC) {

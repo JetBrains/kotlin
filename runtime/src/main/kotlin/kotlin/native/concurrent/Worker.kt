@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.native.worker
+package kotlin.native.concurrent
 
 import kotlin.native.SymbolName
 import kotlin.native.internal.ExportForCppRuntime
@@ -42,12 +42,12 @@ typealias WorkerId = Int
  * Class representing worker.
  */
 // TODO: make me value class!
-class Worker(val id: WorkerId) {
+public class Worker(val id: WorkerId) {
     /**
      * Requests termination of the worker. `processScheduledJobs` controls is we shall wait
      * until all scheduled jobs processed, or terminate immediately.
      */
-    fun requestTermination(processScheduledJobs: Boolean = true) =
+    public fun requestTermination(processScheduledJobs: Boolean = true) =
             Future<Nothing?>(requestTerminationInternal(id, processScheduledJobs))
 
     /**
@@ -61,7 +61,7 @@ class Worker(val id: WorkerId) {
      * the future, can use result of worker's computations.
      */
     @Suppress("UNUSED_PARAMETER")
-    fun <T1, T2> schedule(mode: TransferMode, producer: () -> T1, @VolatileLambda job: (T1) -> T2): Future<T2> =
+    public fun <T1, T2> schedule(mode: TransferMode, producer: () -> T1, @VolatileLambda job: (T1) -> T2): Future<T2> =
             /**
              * This function is a magical operation, handled by lowering in the compiler, and replaced with call to
              *   scheduleImpl(worker, mode, producer, job)
@@ -69,9 +69,9 @@ class Worker(val id: WorkerId) {
              */
             throw RuntimeException("Shall not be called directly")
 
-    override fun equals(other: Any?) = (other is Worker) && (id == other.id)
+    override public fun equals(other: Any?): Boolean = (other is Worker) && (id == other.id)
 
-    override fun hashCode() = id
+    override public fun hashCode(): Int = id
 }
 
 /**
@@ -79,7 +79,7 @@ class Worker(val id: WorkerId) {
  * Typically new worker may be needed for computations offload to another core, for IO it may be
  * better to use non-blocking IO combined with more lightweight coroutines.
  */
-fun startWorker(): Worker = Worker(startInternal())
+public fun startWorker(): Worker = Worker(startInternal())
 
 // Private APIs.
 @kotlin.native.internal.ExportForCompiler

@@ -2,7 +2,7 @@ package runtime.workers.worker1
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 @Test fun runTest() {
     val COUNT = 5
@@ -10,7 +10,7 @@ import kotlin.native.worker.*
 
     for (attempt in 1 .. 3) {
         val futures = Array(workers.size,
-                { i -> workers[i].schedule(TransferMode.CHECKED, { "$attempt: Input $i".shallowCopy() })
+                { i -> workers[i].schedule(TransferMode.CHECKED, { "$attempt: Input $i" })
                 { input -> input + " processed" }
         })
         futures.forEachIndexed { index, future ->

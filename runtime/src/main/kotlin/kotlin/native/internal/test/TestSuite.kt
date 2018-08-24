@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package kotlin.native.test
+package kotlin.native.internal.test
 
 import kotlin.IllegalArgumentException
 import kotlin.system.getTimeMillis
 import kotlin.system.measureTimeMillis
 
-interface TestCase {
+public interface TestCase {
     val name: String
     val ignored: Boolean
     val suite: TestSuite
@@ -30,7 +30,7 @@ interface TestCase {
 
 internal val TestCase.prettyName get() = "${suite.name}.$name"
 
-interface TestSuite {
+public interface TestSuite {
     val name: String
     val ignored: Boolean
     val testCases: Map<String, TestCase>
@@ -40,14 +40,14 @@ interface TestSuite {
     fun doAfterClass()
 }
 
-enum class TestFunctionKind {
+public enum class TestFunctionKind {
     BEFORE_EACH,
     AFTER_EACH,
     BEFORE_CLASS,
     AFTER_CLASS
 }
 
-abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String, override val ignored: Boolean)
+public abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String, override val ignored: Boolean)
     : TestSuite {
     override fun toString(): String = name
 
@@ -80,7 +80,7 @@ abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String, o
         get() = testCases.size
 }
 
-abstract class BaseClassSuite<INSTANCE, COMPANION>(name: String, ignored: Boolean)
+public abstract class BaseClassSuite<INSTANCE, COMPANION>(name: String, ignored: Boolean)
     : AbstractTestSuite<INSTANCE.() -> Unit>(name, ignored) {
 
     class TestCase<INSTANCE, COMPANION>(name: String,
@@ -145,7 +145,7 @@ abstract class BaseClassSuite<INSTANCE, COMPANION>(name: String, ignored: Boolea
 
 private typealias TopLevelFun = () -> Unit
 
-class TopLevelSuite(name: String): AbstractTestSuite<TopLevelFun>(name, false) {
+public class TopLevelSuite(name: String): AbstractTestSuite<TopLevelFun>(name, false) {
 
     class TestCase(name: String, override val suite: TopLevelSuite, testFunction: TopLevelFun, ignored: Boolean)
         : BasicTestCase<TopLevelFun>(name, suite, testFunction, ignored) {

@@ -2,7 +2,7 @@ package runtime.workers.worker3
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 data class DataParam(var int: Int)
 data class WorkerArgument(val intParam: Int, val dataParam: DataParam)

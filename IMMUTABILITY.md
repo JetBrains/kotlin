@@ -5,7 +5,7 @@ important invariant that object is either immutable or
 accessible from the single thread at the moment (`mutable XOR global`).
 
  Immutability is the runtime property in Kotlin/Native, and can be applied
-to an arbitrary object subgraph using `konan.worker.freeze` function.
+to an arbitrary object subgraph using `kotlin.native.concurrent.freeze` function.
 It makes all objects reachable from the given one immutable, and
 such a transition is a one way operation (object cannot be unfrozen later).
 Some naturally immutable objects, such as `kotlin.String`, `kotlin.Int` and

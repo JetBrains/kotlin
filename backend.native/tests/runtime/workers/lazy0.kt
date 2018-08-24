@@ -2,7 +2,7 @@ package runtime.workers.lazy0
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 data class Data(val x: Int, val y: String)
 

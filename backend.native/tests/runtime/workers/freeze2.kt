@@ -18,7 +18,7 @@ package runtime.workers.freeze2
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 data class Data(var int: Int)
 

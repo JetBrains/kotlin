@@ -2,7 +2,7 @@ package runtime.workers.worker9
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 @Test fun runTest() {
     withLock { println("zzz") }

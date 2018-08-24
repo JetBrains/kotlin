@@ -15,8 +15,8 @@
  */
 
 import ffmpeg.*
+import kotlin.native.concurrent.*
 import kotlinx.cinterop.*
-import kotlin.native.worker.*
 import platform.posix.memcpy
 
 // This global variable only set to != null value in the decoding worker.
@@ -329,7 +329,7 @@ class DecoderWorker : Disposable {
     // All the real state must be stored on the worker's side.
     private val worker: Worker
 
-    constructor() { worker = kotlin.native.worker.startWorker() }
+    constructor() { worker = startWorker() }
     constructor(id: WorkerId) { worker = Worker(id) }
 
     override fun dispose() {

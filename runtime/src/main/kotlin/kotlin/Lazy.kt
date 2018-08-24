@@ -16,8 +16,9 @@
 
 package kotlin
 
-import kotlin.reflect.KProperty
+import kotlin.native.concurrent.FreezeAwareLazyImpl
 import kotlin.native.internal.FixmeConcurrency
+import kotlin.reflect.KProperty
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -28,7 +29,7 @@ import kotlin.native.internal.FixmeConcurrency
  * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
-public actual fun <T> lazy(initializer: () -> T): Lazy<T> = kotlin.native.worker.FreezeAwareLazyImpl(initializer)
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> = FreezeAwareLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]

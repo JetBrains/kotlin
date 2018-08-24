@@ -2,7 +2,7 @@ package runtime.workers.worker8
 
 import kotlin.test.*
 
-import kotlin.native.worker.*
+import kotlin.native.concurrent.*
 
 data class SharedDataMember(val double: Double)
 

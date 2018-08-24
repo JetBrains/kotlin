@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package kotlin.native.test
+package kotlin.native.internal.test
 
 import kotlin.system.exitProcess
 
 @ThreadLocal
 private val _generatedSuites = mutableListOf<TestSuite>()
 
-internal fun registerSuite(suite: TestSuite): Unit {
+public fun registerSuite(suite: TestSuite): Unit {
     _generatedSuites.add(suite)
 }
 

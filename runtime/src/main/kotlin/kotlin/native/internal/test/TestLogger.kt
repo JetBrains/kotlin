@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package kotlin.native.test
+package kotlin.native.internal.test
 
-interface TestLogger: TestListener {
+internal interface TestLogger: TestListener {
     fun logTestList(runner: TestRunner, suites: Collection<TestSuite>)
     fun log(message: String)
 }
 
-open class BaseTestLogger: BaseTestListener(), TestLogger {
+internal open class BaseTestLogger: BaseTestListener(), TestLogger {
     override fun log(message: String) = println(message)
     override fun logTestList(runner: TestRunner, suites: Collection<TestSuite>) {
         suites.forEach { suite ->
@@ -33,7 +33,7 @@ open class BaseTestLogger: BaseTestListener(), TestLogger {
     }
 }
 
-open class TestLoggerWithStatistics: BaseTestLogger() {
+internal open class TestLoggerWithStatistics: BaseTestLogger() {
 
     protected val statistics = MutableTestStatistics()
 
@@ -46,13 +46,13 @@ open class TestLoggerWithStatistics: BaseTestLogger() {
     override fun ignore(testCase: TestCase) = statistics.registerIgnore()
 }
 
-class SilentTestLogger: BaseTestLogger() {
+internal class SilentTestLogger: BaseTestLogger() {
     override fun logTestList(runner: TestRunner, suites: Collection<TestSuite>) {}
     override fun log(message: String) {}
     override fun fail(testCase: TestCase, e: Throwable, timeMillis: Long) = e.printStackTrace()
 }
 
-class SimpleTestLogger: BaseTestLogger() {
+internal class SimpleTestLogger: BaseTestLogger() {
     override fun startTesting(runner: TestRunner) = println("Starting testing")
     override fun finishTesting(runner: TestRunner, timeMillis: Long) = println("Testing finished")
 

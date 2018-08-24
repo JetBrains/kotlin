@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.native.worker
+package kotlin.native.concurrent
 
 import kotlin.native.internal.NoReorderFields
 
@@ -65,7 +65,9 @@ internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             }
         }
 
-    // Racy!
+    /**
+     * This operation on shared objects may return value which is no longer reflect the current state of lazy.
+     */
     override fun isInitialized(): Boolean = (value_ !== UNINITIALIZED) && (value_ !== INITIALIZING)
 
     override fun toString(): String = if (isInitialized())

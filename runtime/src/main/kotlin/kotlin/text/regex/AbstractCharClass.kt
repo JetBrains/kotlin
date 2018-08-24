@@ -33,10 +33,9 @@
 
 package kotlin.text.regex
 
-import kotlin.native.worker.AtomicReference
 import kotlin.collections.associate
-import kotlin.native.worker.freeze
-
+import kotlin.native.concurrent.AtomicReference
+import kotlin.native.concurrent.freeze
 
 /**
  * Unicode category (i.e. Ll, Lu).

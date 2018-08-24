@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.native.worker
+package kotlin.native.concurrent
 
 import kotlin.native.SymbolName
 import kotlin.native.internal.ExportForCppRuntime
@@ -40,12 +40,11 @@ enum class FutureState(val value: Int) {
 /**
  * Class representing abstract computation, whose result may become available in the future.
  */
-// TODO: make me value class!
-class Future<T> internal constructor(val id: FutureId) {
+public inline class Future<T>(val id: FutureId) {
     /**
      * Blocks execution until the future is ready.
      */
-    inline fun <R> consume(code: (T) -> R) =
+    public inline fun <R> consume(code: (T) -> R): R =
             when (state) {
                 FutureState.SCHEDULED, FutureState.COMPUTED -> {
                     val value = @Suppress("UNCHECKED_CAST", "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE") (consumeFuture(id) as T)
@@ -57,21 +56,21 @@ class Future<T> internal constructor(val id: FutureId) {
                     throw IllegalStateException("Future is cancelled")
             }
 
-    fun result(): T  = consume { it -> it }
+    public fun result(): T  = consume { it -> it }
 
-    val state: FutureState
+    public val state: FutureState
         get() = FutureState.values()[stateOfFuture(id)]
 
-    override fun equals(other: Any?) = (other is Future<*>) && (id == other.id)
+    public override fun equals(other: Any?): Boolean = (other is Future<*>) && (id == other.id)
 
-    override fun hashCode() = id
+    public override fun hashCode(): Int = id
 }
 
 /**
  * Wait for availability of futures in the collection. Returns set with all futures which have
  * value available for the consumption.
  */
-fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Future<T>> {
+public fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Future<T>> {
     val result = mutableSetOf<Future<T>>()
 
     while (true) {

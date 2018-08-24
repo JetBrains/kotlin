@@ -16,7 +16,7 @@
 
 package kotlin.collections
 
-import kotlin.native.worker.isFrozen
+import kotlin.native.concurrent.isFrozen
 
 actual class HashMap<K, V> private constructor(
         private var keysArray: Array<K>,

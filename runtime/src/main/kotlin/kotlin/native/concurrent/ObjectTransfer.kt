@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.native.worker
+package kotlin.native.concurrent
 
 import kotlinx.cinterop.*
 
@@ -47,17 +47,6 @@ enum class TransferMode(val value: Int) {
 }
 
 /**
- * Creates verbatim *shallow* copy of passed object, use carefully to create disjoint object graph.
- */
-inline fun <reified T> T.shallowCopy(): T = shallowCopyInternal(this) as T
-
-/**
- * Creates verbatim *deep* copy of passed object's graph, use *VERY* carefully to create disjoint object graph.
- * Note that this function could potentially duplicate a lot of objects.
- */
-inline fun <reified T> T.deepCopy(): T = TODO()
-
-/**
  * Creates stable pointer to object, ensuring associated object subgraph is disjoint in specified mode
  * ([TransferMode.CHECKED] by default).
  * It could be stored to C variable or passed to another thread, where it could be retrieved with [attachObjectGraph].
@@ -75,11 +64,9 @@ inline fun <reified T> attachObjectGraph(stable: COpaquePointer?): T =
 
 // Private APIs.
 @PublishedApi
-@SymbolName("Kotlin_Worker_shallowCopyInternal")
-external internal fun shallowCopyInternal(value: Any?): Any?
-@PublishedApi
 @SymbolName("Kotlin_Worker_detachObjectGraphInternal")
 external internal fun detachObjectGraphInternal(mode: Int, producer: () -> Any?): COpaquePointer?
+
 @PublishedApi
 @SymbolName("Kotlin_Worker_attachObjectGraphInternal")
 external internal fun attachObjectGraphInternal(stable: COpaquePointer?): Any?
