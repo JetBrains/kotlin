@@ -25,8 +25,8 @@ class PatternSyntaxExceptionTest {
         val regex = "("
         try {
             Regex(regex)
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
             // TODO: Check the exception's properties.
         }
 
@@ -36,8 +36,8 @@ class PatternSyntaxExceptionTest {
         val regex = "[4-"
         try {
             Regex(regex)
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
     }

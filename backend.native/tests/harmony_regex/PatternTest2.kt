@@ -95,7 +95,7 @@ class PatternTest2 {
             assertNotNull(result)
             assertEquals(6, result!!.range.start)
             assertEquals(9, result.range.endInclusive + 1)
-        } catch (e: PatternSyntaxException) {
+        } catch (e: IllegalArgumentException) {
             println(e.message)
             fail()
         }
@@ -249,51 +249,51 @@ class PatternTest2 {
         // Test invalid unicode sequences // TODO: Double check it.
         try {
             regex = Regex("\\u")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\u;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\u002")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\u002;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         // Test invalid hex sequences
         try {
             regex = Regex("\\x")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\x;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\xa")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\xa;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         // Test \0 (octal) sequences (1, 2 and 3 digit)
@@ -312,20 +312,20 @@ class PatternTest2 {
         // Test invalid octal sequences
         try {
             regex = Regex("\\08")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\0")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\0;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         // Test \c (control character) sequence
@@ -364,8 +364,8 @@ class PatternTest2 {
         // Test invalid control escapes
         try {
             regex = Regex("\\c")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
     }
 
@@ -456,8 +456,8 @@ class PatternTest2 {
 
         try {
             regex = Regex("[[abc]&&")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         regex = Regex("[[abc]\\&&[xyz]]")
@@ -561,38 +561,38 @@ class PatternTest2 {
         // Invalid uses of \p{Lower}
         try {
             regex = Regex("\\p")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\p;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\p{")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\p{;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\p{Lower")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\p{Lower;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         // Test \p{Upper}
@@ -608,14 +608,14 @@ class PatternTest2 {
         // Invalid uses of \p{Upper}
         try {
             regex = Regex("\\p{Upper")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\p{Upper;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         // Test \p{ASCII}
@@ -636,14 +636,14 @@ class PatternTest2 {
         // Invalid uses of \p{ASCII}
         try {
             regex = Regex("\\p{ASCII")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         try {
             regex = Regex("\\p{ASCII;")
-            fail("PatternSyntaxException expected")
-        } catch (e: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (e: IllegalArgumentException) {
         }
 
         // Test \p{Alpha}

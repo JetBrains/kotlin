@@ -238,32 +238,32 @@ class PatternTest {
         var pattern = "b)a"
         try {
             Regex(pattern)
-            fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
-        } catch (e: PatternSyntaxException) {
+            fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
+        } catch (e: IllegalArgumentException) {
             // pass
         }
 
         pattern = "bcde)a"
         try {
             Regex(pattern)
-            fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
-        } catch (e: PatternSyntaxException) {
+            fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
+        } catch (e: IllegalArgumentException) {
             // pass
         }
 
         pattern = "bbg())a"
         try {
             Regex(pattern)
-            fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
-        } catch (e: PatternSyntaxException) {
+            fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
+        } catch (e: IllegalArgumentException) {
             // pass
         }
 
         pattern = "cdb(?i))a"
         try {
             Regex(pattern)
-            fail("Expected a PatternSyntaxException when compiling pattern: " + pattern)
-        } catch (e: PatternSyntaxException) {
+            fail("Expected a IllegalArgumentException when compiling pattern: " + pattern)
+        } catch (e: IllegalArgumentException) {
             // pass
         }
 
@@ -286,8 +286,8 @@ class PatternTest {
         for (element in patterns) {
             try {
                 Regex(element)
-                fail("PatternSyntaxException was expected, but compilation succeeds")
-            } catch (pse: PatternSyntaxException) {
+                fail("IllegalArgumentException was expected, but compilation succeeds")
+            } catch (pse: IllegalArgumentException) {
                 continue
             }
 
@@ -350,8 +350,8 @@ class PatternTest {
         for (element in neg_patterns) {
             try {
                 Regex(element)
-                fail("PatternSyntaxException was expected: " + element)
-            } catch (pse: PatternSyntaxException) {
+                fail("IllegalArgumentException was expected: " + element)
+            } catch (pse: IllegalArgumentException) {
             }
 
         }
@@ -393,8 +393,8 @@ class PatternTest {
     @Test fun testOrphanQuantifiers() {
         try {
             Regex("+++++")
-            fail("PatternSyntaxException expected")
-        } catch (pse: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (pse: IllegalArgumentException) {
         }
 
     }
@@ -402,8 +402,8 @@ class PatternTest {
     @Test fun testOrphanQuantifiers2() {
         try {
             Regex("\\d+*")
-            fail("PatternSyntaxException expected")
-        } catch (pse: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (pse: IllegalArgumentException) {
         }
 
     }
@@ -561,8 +561,8 @@ class PatternTest {
     @Test fun testIllegalEscape() {
         try {
             Regex("\\y")
-            fail("PatternSyntaxException expected")
-        } catch (pse: PatternSyntaxException) {
+            fail("IllegalArgumentException expected")
+        } catch (pse: IllegalArgumentException) {
         }
     }
 
@@ -742,7 +742,7 @@ class PatternTest {
             Regex("(?:)", setOf(RegexOption.CANON_EQ, RegexOption.IGNORE_CASE))
             Regex("(?:)", setOf(RegexOption.CANON_EQ, RegexOption.COMMENTS, RegexOption.UNIX_LINES))
             isCompiled = true
-        } catch (e: PatternSyntaxException) {
+        } catch (e: IllegalArgumentException) {
             println(e)
         }
         assertTrue(isCompiled)
