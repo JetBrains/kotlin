@@ -26,7 +26,12 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
         }
     }
 
-    private class SignatureExpectation(val header: String, val name: String, val expectedJvmSignature: String?, expectedGenericSignature: String) {
+    private class SignatureExpectation(
+        val header: String,
+        val name: String,
+        val expectedJvmSignature: String?,
+        expectedGenericSignature: String
+    ) {
         private val expectedFormattedSignature = formatSignature(header, expectedJvmSignature, expectedGenericSignature)
         private val jvmDescriptorToFormattedSignature = mutableMapOf<String, String>()
 
@@ -41,18 +46,18 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
 
         fun check() {
             val formattedActualSignature =
-                    if (expectedJvmSignature == null) {
-                        Assert.assertTrue(
-                                "Expected single declaration, but ${jvmDescriptorToFormattedSignature.keys} found",
-                                jvmDescriptorToFormattedSignature.size == 1)
+                if (expectedJvmSignature == null) {
+                    Assert.assertTrue(
+                        "Expected single declaration, but ${jvmDescriptorToFormattedSignature.keys} found",
+                        jvmDescriptorToFormattedSignature.size == 1
+                    )
 
-                        jvmDescriptorToFormattedSignature.values.single()
+                    jvmDescriptorToFormattedSignature.values.single()
+                } else {
+                    jvmDescriptorToFormattedSignature[expectedJvmSignature].sure {
+                        "Expected $expectedJvmSignature but only ${jvmDescriptorToFormattedSignature.keys} found for $name"
                     }
-                    else {
-                        jvmDescriptorToFormattedSignature[expectedJvmSignature].sure {
-                            "Expected $expectedJvmSignature but only ${jvmDescriptorToFormattedSignature.keys} found for $name"
-                        }
-                    }
+                }
 
             Assert.assertEquals(expectedFormattedSignature, formattedActualSignature)
         }
@@ -62,7 +67,7 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
         private val classSuitesByClassName = LinkedHashMap<String, ClassExpectationsSuite>()
 
         fun getOrCreateClassSuite(className: String): ClassExpectationsSuite =
-                classSuitesByClassName.getOrPut(className) { ClassExpectationsSuite(className) }
+            classSuitesByClassName.getOrPut(className) { ClassExpectationsSuite(className) }
 
         fun check() {
             Assert.assertTrue(classSuitesByClassName.isNotEmpty())
@@ -114,12 +119,25 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
         }
 
         private inner class Checker : ClassVisitor(Opcodes.ASM5) {
-            override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
+            override fun visit(
+                version: Int,
+                access: Int,
+                name: String,
+                signature: String?,
+                superName: String?,
+                interfaces: Array<out String>?
+            ) {
                 classExpectations.forEach { it.accept(name, name, signature ?: "null") }
                 super.visit(version, access, name, signature, superName, interfaces)
             }
 
-            override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+            override fun visitMethod(
+                access: Int,
+                name: String,
+                desc: String,
+                signature: String?,
+                exceptions: Array<out String>?
+            ): MethodVisitor? {
                 methodExpectations.forEach { it.accept(name, desc, signature ?: "null") }
                 return super.visitMethod(access, name, desc, signature, exceptions)
             }
@@ -158,12 +176,12 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
                 val memberName = expectationMatch.group(4)
 
                 if (kind == "class" && memberName != null) {
-                    throw AssertionError("$ktFile:${lineNo+1}: use $className\$$memberName to denote inner class")
+                    throw AssertionError("$ktFile:${lineNo + 1}: use $className\$$memberName to denote inner class")
                 }
 
                 val jvmSignatureMatch = jvmSignatureRegex.matchExact(lines[lineNo + 1])
                 val genericSignatureMatch = genericSignatureRegex.matchExact(lines[lineNo + 1])
-                                            ?: genericSignatureRegex.matchExact(lines[lineNo + 2])
+                    ?: genericSignatureRegex.matchExact(lines[lineNo + 2])
 
                 if (genericSignatureMatch != null) {
                     val jvmSignature = jvmSignatureMatch?.group(1)
@@ -175,17 +193,15 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
                         "class" -> classSuite.addClassExpectation(className, jvmSignature, genericSignature)
                         "field" -> classSuite.addFieldExpectation(className, memberName, jvmSignature, genericSignature)
                         "method" -> classSuite.addMethodExpectation(className, memberName, jvmSignature, genericSignature)
-                        else -> throw AssertionError("$ktFile:${lineNo+1}: unsupported expectation kind: $kind")
+                        else -> throw AssertionError("$ktFile:${lineNo + 1}: unsupported expectation kind: $kind")
                     }
 
                     // Expectation, skip the following 'jvm signature' and 'generic signature' lines
                     lineNo += 3
+                } else {
+                    throw AssertionError("$ktFile:${lineNo + 1}: '$kind' should be followed by 'jvm signature' and 'generic signature'")
                 }
-                else {
-                    throw AssertionError("$ktFile:${lineNo+1}: '$kind' should be followed by 'jvm signature' and 'generic signature'")
-                }
-            }
-            else {
+            } else {
                 ++lineNo
             }
         }
