@@ -5,62 +5,27 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import com.google.common.io.Closeables
 import com.google.common.io.Files
-import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.GenerationUtils
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
-import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.junit.Assert
 import java.io.File
-import java.io.FileInputStream
 import java.nio.charset.Charset
 import java.util.*
 import java.util.regex.MatchResult
 
-abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
-    private var environment: KotlinCoreEnvironment? = null
+abstract class AbstractWriteSignatureTest : CodegenTestCase() {
 
-    override fun setUp() {
-        super.setUp()
-        environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                myTestRootDisposable, ConfigurationKind.ALL, jdkKind
-        )
-    }
 
-    protected open val jdkKind: TestJdkKind
-        get() = TestJdkKind.MOCK_JDK
-
-    override fun tearDown() {
-        environment = null
-        super.tearDown()
-    }
-
-    protected fun doTest(ktFileName: String) {
-        val ktFile = File(ktFileName)
-        val text = FileUtil.loadFile(ktFile, true)
-
-        setupLanguageVersionSettingsForCompilerTests(text, environment!!)
-
-        val psiFile = KotlinTestUtils.createFile(ktFile.name, text, environment!!.project)
-
-        val fileFactory = GenerationUtils.compileFileTo(psiFile, environment!!, tmpdir)
-
-        Disposer.dispose(myTestRootDisposable)
-
-        val expectations = parseExpectations(ktFile)
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
+        //setupLanguageVersionSettingsForCompilerTests(text, environment!!)
+        compile(files, javaFilesDir)
         try {
-            expectations.check()
+            parseExpectations(wholeFile).check()
         }
         catch (e: Throwable) {
-            println(fileFactory.createText())
+            println(classFileFactory.createText())
             throw e
         }
     }
@@ -117,29 +82,27 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         fun check() {
             val checker = Checker()
-            val classFileName = "$tmpdir/${className.replace('.', '/')}.class"
-            val classFile = File(classFileName)
+            val relativeClassFileName = "${className.replace('.', '/')}.class"
 
-            processClassFile(checker, classFile)
+            val outputFile = classFileFactory.currentOutput.single { it.relativePath == relativeClassFileName }
+            processClassFile(checker, outputFile.asByteArray())
 
             if (className.endsWith("Package")) {
                 // This class is a package facade. We should also check package parts.
-                processPackageParts(checker, classFile)
+                processPackageParts(checker, relativeClassFileName)
             }
 
             checkCollectedSignatures()
         }
 
-        private fun processPackageParts(checker: Checker, classFile: File) {
+        private fun processPackageParts(checker: Checker, relativeClassFileName: String) {
             // Look for package parts in the same directory.
             // Package part file names for package SomePackage look like SomePackage$<hash>.class.
-            val classDir = classFile.parentFile
-            val classLastName = classFile.name
-            val packageFacadePrefix = classLastName.replace(".class", "\$")
-            classDir.listFiles { _, lastName ->
-                lastName.startsWith(packageFacadePrefix) && lastName.endsWith(".class")
+            val partPrefix = relativeClassFileName.replace(".class", "\$")
+            classFileFactory.currentOutput.filter {
+                it.relativePath.startsWith(partPrefix) && it.relativePath.endsWith(".class")
             }.forEach { packageFacadeFile ->
-                processClassFile(checker, packageFacadeFile)
+                processClassFile(checker, packageFacadeFile.asByteArray())
             }
         }
 
@@ -147,15 +110,11 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             (classExpectations + methodExpectations + fieldExpectations).forEach(SignatureExpectation::check)
         }
 
-        private fun processClassFile(checker: Checker, classFile: File) {
-            val classInputStream = FileInputStream(classFile)
-            try {
-                ClassReader(classInputStream).accept(checker,
-                                                     ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
-            }
-            finally {
-                Closeables.closeQuietly(classInputStream)
-            }
+        private fun processClassFile(checker: Checker, classData: ByteArray) {
+            ClassReader(classData).accept(
+                checker,
+                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+            )
         }
 
         private inner class Checker : ClassVisitor(Opcodes.ASM5) {
