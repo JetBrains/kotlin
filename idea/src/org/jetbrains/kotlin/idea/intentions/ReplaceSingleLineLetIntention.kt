@@ -21,16 +21,36 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression>(ReplaceSingleLineLetIntention::class) {
+class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression>(
+    ReplaceSingleLineLetIntention::class,
+    { element -> isApplicable(element) }
+) {
     override fun inspectionTarget(element: KtCallExpression) = element.calleeExpression
+
+    companion object {
+        fun isApplicable(element: KtCallExpression): Boolean {
+            val qualifiedExpression = element.getQualifiedExpressionForSelector() ?: return true
+            var receiver = qualifiedExpression.receiverExpression as? KtQualifiedExpression ?: return true
+            if (receiver.lineCount() > 1) return false
+            var count = 1
+            while (true) {
+                if (count > 2) return false
+                receiver = receiver.receiverExpression as? KtQualifiedExpression ?: break
+                count++
+            }
+            return true
+        }
+    }
 }
 
 class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
