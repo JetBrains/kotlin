@@ -51,6 +51,7 @@ include ":kotlin-build-common",
         ":js:js.tests",
         ":konan:konan-utils",
         ":konan:konan-metadata",
+        ":konan:konan-serializer",
         ":jps-plugin",
         ":kotlin-jps-plugin",
         ":core:descriptors",
@@ -240,6 +241,7 @@ project(':compiler:ir.backend.common').projectDir = "$rootDir/compiler/ir/backen
 project(':compiler:backend.js').projectDir = "$rootDir/compiler/ir/backend.js" as File
 project(':konan:konan-utils').projectDir = "$rootDir/konan/utils" as File
 project(':konan:konan-metadata').projectDir = "$rootDir/konan/metadata" as File
+project(':konan:konan-serializer').projectDir = "$rootDir/konan/serializer" as File
 project(':kotlin-jps-plugin').projectDir = "$rootDir/prepare/jps-plugin" as File
 project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-android/idea-android-output-parser" as File
 project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
