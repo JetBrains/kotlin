@@ -8,8 +8,7 @@ description = "Kotlin/Native metadata"
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":compiler:serialization"))
-    compile(project(":konan:konan-utils"))
+    compile(project(":core:metadata"))
 }
 
 sourceSets {
