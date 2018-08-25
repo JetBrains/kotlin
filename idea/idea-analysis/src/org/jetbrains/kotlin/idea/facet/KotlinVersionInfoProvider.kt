@@ -23,6 +23,7 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.VersionView
 
 interface KotlinVersionInfoProvider {
     companion object {
@@ -53,8 +54,8 @@ fun getLibraryLanguageLevel(
         rootModel: ModuleRootModel?,
         targetPlatform: TargetPlatformKind<*>?
 ): LanguageVersion {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM)
-            .minWith(VersionComparatorUtil.COMPARATOR)
+    val minVersion = (getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM) +
+            VersionView.RELEASED_VERSION.versionString).minWith(VersionComparatorUtil.COMPARATOR)
     return getDefaultLanguageLevel(module, minVersion)
 }
 
@@ -63,16 +64,16 @@ fun getDefaultLanguageLevel(
         explicitVersion: String? = null
 ): LanguageVersion {
     val libVersion = explicitVersion
-                     ?: KotlinVersionInfoProvider.EP_NAME.extensions
-                             .mapNotNull { it.getCompilerVersion(module) }
+                     ?: (KotlinVersionInfoProvider.EP_NAME.extensions
+                             .mapNotNull { it.getCompilerVersion(module) } + VersionView.RELEASED_VERSION.versionString)
                              .minWith(VersionComparatorUtil.COMPARATOR)
-                     ?: return LanguageVersion.LATEST_STABLE
+                     ?: return VersionView.RELEASED_VERSION
     return when {
         libVersion.startsWith("1.3") -> LanguageVersion.KOTLIN_1_3
         libVersion.startsWith("1.2") -> LanguageVersion.KOTLIN_1_2
         libVersion.startsWith("1.1") -> LanguageVersion.KOTLIN_1_1
         libVersion.startsWith("1.0") -> LanguageVersion.KOTLIN_1_0
-        else -> LanguageVersion.LATEST_STABLE
+        else -> VersionView.RELEASED_VERSION
     }
 }
 

@@ -118,7 +118,7 @@ fun Project.getLanguageVersionSettings(
     val languageVersion =
         LanguageVersion.fromVersionString(arguments.languageVersion)
             ?: contextModule?.getAndCacheLanguageLevelByDependencies()
-            ?: LanguageVersion.LATEST_STABLE
+            ?: VersionView.RELEASED_VERSION
     val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
 
