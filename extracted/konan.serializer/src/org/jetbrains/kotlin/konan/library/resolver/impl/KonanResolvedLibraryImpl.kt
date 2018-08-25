@@ -3,14 +3,14 @@ package org.jetbrains.kotlin.konan.library.resolver.impl
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.KonanResolvedLibrary
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.konan.emptyPackages
+import org.jetbrains.kotlin.serialization.konan.parseModuleHeader
 
 internal class KonanResolvedLibraryImpl(
         override val library: KonanLibrary
 ): KonanResolvedLibrary {
 
     private val _resolvedDependencies = mutableListOf<KonanResolvedLibrary>()
-    private val _emptyPackages by lazy { emptyPackages(library.moduleHeaderData) }
+    private val _emptyPackages by lazy { parseModuleHeader(library.moduleHeaderData).emptyPackageList }
 
     override val resolvedDependencies: List<KonanResolvedLibrary>
         get() = _resolvedDependencies

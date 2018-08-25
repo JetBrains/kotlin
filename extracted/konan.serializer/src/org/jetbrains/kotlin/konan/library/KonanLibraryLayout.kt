@@ -3,7 +3,9 @@ package org.jetbrains.kotlin.konan.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-// This scheme describes the Kotlin/Native Library (klib) layout.
+/**
+ * This scheme describes the Kotlin/Native Library (KLIB) layout.
+ */
 interface KonanLibraryLayout {
 
     val libraryName: String

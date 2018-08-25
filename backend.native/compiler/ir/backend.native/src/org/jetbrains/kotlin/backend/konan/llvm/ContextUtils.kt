@@ -332,7 +332,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         override fun add(origin: CompiledKonanModuleOrigin) {
             val library = when (origin) {
                 CurrentKonanModuleOrigin -> return
-                is DeserializedKonanModuleOrigin -> origin.library as KonanLibrary
+                is DeserializedKonanModuleOrigin -> origin.library
             }
 
             if (library !in allLibraries) {

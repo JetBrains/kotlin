@@ -17,34 +17,51 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.createKonanModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolveResult
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.konan.utils.KonanFactories
+import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDescriptorFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.serialization.konan.KonanResolvedModuleDescriptors
+import org.jetbrains.kotlin.storage.StorageManager
 
 object TopDownAnalyzerFacadeForKonan {
+
     fun analyzeFiles(files: Collection<KtFile>, config: KonanConfig): AnalysisResult {
         val moduleName = Name.special("<${config.moduleId}>") 
 
         val projectContext = ProjectContext(config.project)
 
-        val module = createKonanModuleDescriptor(moduleName, projectContext.storageManager, origin = CurrentKonanModuleOrigin)
+        val module = DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
+                moduleName, projectContext.storageManager, origin = CurrentKonanModuleOrigin)
         val context = MutableModuleContextImpl(module, projectContext)
 
+        val resolvedDependencies = ResolvedDependencies(
+                config.resolvedLibraries,
+                projectContext.storageManager,
+                module.builtIns,
+                config.languageVersionSettings,
+                config.friendModuleFiles)
+
         if (!module.isKonanStdlib()) {
-            val dependencies = listOf(module) + config.moduleDescriptors +
-                    config.getOrCreateForwardDeclarationsModule(module.builtIns, projectContext.storageManager)
-            module.setDependencies(dependencies, config.friends)
+            val dependencies = listOf(module) + resolvedDependencies.moduleDescriptors.resolvedDescriptors + resolvedDependencies.moduleDescriptors.forwardDeclarationsModule
+            module.setDependencies(dependencies, resolvedDependencies.friends)
         } else {
-            assert (config.moduleDescriptors.isEmpty())
+            assert (resolvedDependencies.moduleDescriptors.resolvedDescriptors.isEmpty())
             context.setDependencies(module)
         }
 
@@ -80,3 +97,32 @@ object TopDownAnalyzerFacadeForKonan {
         }
     }
 }
+
+private class ResolvedDependencies(
+        resolvedLibraries: KonanLibraryResolveResult,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns,
+        specifics: LanguageVersionSettings,
+        friendModuleFiles: Set<File>
+) {
+
+    val moduleDescriptors: KonanResolvedModuleDescriptors
+    val friends: Set<ModuleDescriptorImpl>
+
+    init {
+
+        val collectedFriends = mutableListOf<ModuleDescriptorImpl>()
+
+        val customAction: (KonanLibrary, ModuleDescriptorImpl) -> Unit = { library, moduleDescriptor ->
+            if (friendModuleFiles.contains(library.libraryFile)) {
+                collectedFriends.add(moduleDescriptor)
+            }
+        }
+
+        this.moduleDescriptors = KonanFactories.DefaultResolvedDescriptorsFactory.createResolved(
+                resolvedLibraries, storageManager, builtIns, specifics, customAction)
+
+        this.friends = collectedFriends.toSet()
+    }
+}
+

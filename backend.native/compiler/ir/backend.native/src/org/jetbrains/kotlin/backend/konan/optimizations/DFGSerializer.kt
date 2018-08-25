@@ -19,7 +19,8 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.serialization.konan.DefaultKonanModuleDescriptorFactory
+import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import sun.misc.Unsafe
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
@@ -940,6 +941,7 @@ internal object DFGSerializer {
         val publicFunctionsMap = mutableMapOf<Long, DataFlowIR.FunctionSymbol.Public>()
         val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
         val specifics = context.config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
+        val storageManager = LockBasedStorageManager()
         context.librariesWithDependencies.forEach { library ->
             val libraryDataFlowGraph = library.dataFlowGraph
 
@@ -949,7 +951,7 @@ internal object DFGSerializer {
 
             if (libraryDataFlowGraph != null) {
                 val module = DataFlowIR.Module(
-                        DefaultKonanModuleDescriptorFactory.createModuleDescriptor(library, specifics))
+                        DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, specifics, storageManager))
                 val reader = ArraySlice(libraryDataFlowGraph)
                 val dataLayoutHash = reader.readLong()
                 val expectedHash = computeDataLayoutHash(Module::class)

@@ -31,9 +31,10 @@ import org.jetbrains.kotlin.konan.library.unpackZippedKonanLibraryTo
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
-import org.jetbrains.kotlin.serialization.konan.DefaultKonanModuleDescriptorFactory
 import org.jetbrains.kotlin.serialization.konan.parseModuleHeader
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.lang.System.out
 import kotlin.system.exitProcess
 
@@ -144,9 +145,12 @@ class Library(val name: String, val requestedRepository: String?, val target: St
     }
 
     fun contents(output: Appendable = out) {
+
+        val storageManager = LockBasedStorageManager()
         val library = createKonanLibrary(libraryInRepoOrCurrentDir(repository, name), currentAbiVersion)
         val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
-        val module = DefaultKonanModuleDescriptorFactory.createModuleDescriptor(library, versionSpec)
+        val module = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(library, versionSpec, storageManager)
+
         val defaultModules = mutableListOf<ModuleDescriptorImpl>()
         if (!module.isKonanStdlib()) {
             val resolver = noTargetResolver(
@@ -155,8 +159,8 @@ class Library(val name: String, val requestedRepository: String?, val target: St
                     skipCurrentDir = true)
             resolver.defaultLinks(false, true)
                     .mapTo(defaultModules) {
-                        DefaultKonanModuleDescriptorFactory.createModuleDescriptor(
-                                createKonanLibrary(it, currentAbiVersion), versionSpec)
+                        DefaultDeserializedDescriptorFactory.createDescriptor(
+                                createKonanLibrary(it, currentAbiVersion), versionSpec, storageManager, module.builtIns)
                     }
         }
 

@@ -1,15 +1,62 @@
-package org.jetbrains.kotlin.serialization.konan
+package org.jetbrains.kotlin.serialization.konan.impl
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.exportForwardDeclarations
+import org.jetbrains.kotlin.konan.library.isInterop
+import org.jetbrains.kotlin.konan.library.packageFqName
+import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.serialization.konan.KonanDeserializedPackageFragmentsFactory
+import org.jetbrains.kotlin.serialization.konan.KonanPackageFragment
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+
+// FIXME(ddol): decouple and move interop-specific logic back to Kotlin/Native.
+internal object KonanDeserializedPackageFragmentsFactoryImpl: KonanDeserializedPackageFragmentsFactory {
+
+    override fun createDeserializedPackageFragments(
+            library: KonanLibrary,
+            packageFragmentNames: List<String>,
+            moduleDescriptor: ModuleDescriptor,
+            packageAccessedHandler: PackageAccessedHandler?,
+            storageManager: StorageManager
+    ) = packageFragmentNames.map {
+        KonanPackageFragment(FqName(it), library, packageAccessedHandler, storageManager, moduleDescriptor)
+    }
+
+    override fun createSyntheticPackageFragments(
+            library: KonanLibrary,
+            deserializedPackageFragments: List<KonanPackageFragment>,
+            moduleDescriptor: ModuleDescriptor
+    ): List<PackageFragmentDescriptor> {
+
+        if (!library.isInterop) return emptyList()
+
+        val mainPackageFqName = library.packageFqName
+                ?: error("Inconsistent manifest: interop library ${library.libraryName} should have `package` specified")
+        val exportForwardDeclarations = library.exportForwardDeclarations
+
+        val aliasedPackageFragments = deserializedPackageFragments.filter { it.fqName == mainPackageFqName }
+
+        val result = mutableListOf<PackageFragmentDescriptor>()
+        listOf(ForwardDeclarationsFqNames.cNamesStructs, ForwardDeclarationsFqNames.objCNamesClasses, ForwardDeclarationsFqNames.objCNamesProtocols).mapTo(result) { fqName ->
+            ClassifierAliasingPackageFragmentDescriptor(aliasedPackageFragments, moduleDescriptor, fqName)
+        }
+
+        result.add(ExportedForwardDeclarationsPackageFragmentDescriptor(moduleDescriptor, mainPackageFqName, exportForwardDeclarations))
+
+        return result
+    }
+}
 
 /**
  * The package fragment to export forward declarations from interop package namespace, i.e.

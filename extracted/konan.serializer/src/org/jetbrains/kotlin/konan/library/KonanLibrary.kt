@@ -22,15 +22,15 @@ interface KonanLibrary {
     val libraryName: String
     val libraryFile: File
 
-    // whether this library is default (provided by Kotlin/Native distribution)
+    // Whether this library is default (provided by Kotlin/Native distribution)?
     val isDefault: Boolean
 
-    // properties:
+    // Properties:
     val manifestProperties: Properties
     val abiVersion: String
     val linkerOpts: List<String>
 
-    // paths:
+    // Paths:
     val bitcodePaths: List<String>
     val includedPaths: List<String>
 

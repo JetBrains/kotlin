@@ -20,13 +20,23 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.descriptors.konan.interop.InteropFqNames
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
+
+object InteropFqNames {
+
+    const val cPointerName = "CPointer"
+    const val nativePointedName = "NativePointed"
+
+    val packageName = FqName("kotlinx.cinterop")
+
+    val cPointer = packageName.child(Name.identifier(cPointerName)).toUnsafe()
+    val nativePointed = packageName.child(Name.identifier(nativePointedName)).toUnsafe()
+}
 
 internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: ClassDescriptor) {
 

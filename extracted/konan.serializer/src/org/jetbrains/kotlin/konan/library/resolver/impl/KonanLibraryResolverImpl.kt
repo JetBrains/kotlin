@@ -73,8 +73,8 @@ internal class KonanLibraryResolverImpl(
 
         val rootLibraries = this.map { KonanResolvedLibraryImpl(it) }
 
-        // as far as the list of root libraries is known from the very beginning, the result can be
-        // constructed from the very beginning as well
+        // As far as the list of root libraries is known from the very beginning, the result can be
+        // constructed from the very beginning as well.
         val result = KonanLibraryResolverResultImpl(rootLibraries)
 
         val cache = mutableMapOf<File, KonanResolvedLibrary>()

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -25,18 +24,12 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_W
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.descriptors.konan.interop.createForwardDeclarationsModule
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.profile
-import org.jetbrains.kotlin.serialization.konan.DefaultKonanModuleDescriptorFactory
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
@@ -105,10 +98,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList()
     }
 
-    private val loadedDescriptors = loadLibMetadata()
-
-    internal lateinit var friends: Set<ModuleDescriptorImpl>
-
     internal val defaultNativeLibraries = 
         if (produce == CompilerOutputKind.PROGRAM) 
             File(distribution.defaultNatives(target)).listFiles.map { it.absolutePath } 
@@ -120,53 +109,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val includeBinaries: List<String> = 
         configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
 
-    fun loadLibMetadata(): List<ModuleDescriptorImpl> {
+    internal val languageVersionSettings =
+            configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
 
-        val specifics = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
-        val friendLibsSet = configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet()
-
-        val allMetadata = mutableListOf<ModuleDescriptorImpl>()
-        val friends = mutableListOf<ModuleDescriptorImpl>()
-
-        resolvedLibraries.forEach { library, packageAccessedHandler ->
-            profile("Loading ${library.libraryName}") {
-                // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
-                val moduleDescriptor = DefaultKonanModuleDescriptorFactory.createModuleDescriptor(library, specifics, packageAccessedHandler)
-                allMetadata.add(moduleDescriptor)
-                friendLibsSet?.apply {
-                    if (contains(library.libraryFile)) friends.add(moduleDescriptor)
-                }
-            }
-        }
-
-        this.friends = friends.toSet()
-
-        return allMetadata
-    }
-
-    private var forwardDeclarationsModule: ModuleDescriptorImpl? = null
-
-    internal fun getOrCreateForwardDeclarationsModule(
-            builtIns: KotlinBuiltIns, storageManager: StorageManager? = null
-    ): ModuleDescriptorImpl {
-        forwardDeclarationsModule?.let { return it }
-        val result = createForwardDeclarationsModule(
-                builtIns,
-                storageManager ?: LockBasedStorageManager()
-        )
-
-        forwardDeclarationsModule = result
-        return result
-    }
-
-    internal val moduleDescriptors: List<ModuleDescriptorImpl> by lazy {
-        for (module in loadedDescriptors) {
-            // Yes, just to all of them.
-            module.setDependencies(loadedDescriptors + getOrCreateForwardDeclarationsModule(module.builtIns))
-        }
-
-        loadedDescriptors
-    }
+    internal val friendModuleFiles: Set<File> =
+            configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 

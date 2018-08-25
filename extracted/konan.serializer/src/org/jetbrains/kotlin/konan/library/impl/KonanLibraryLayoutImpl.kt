@@ -33,10 +33,10 @@ private class UnzippedKonanLibraryLayout(override val libDir: File, override val
     override val libraryName = libDir.path
 }
 
-// This class automatically extracts pieces of
-// the library on first access. Use it if you need
-// to pass extracted files to an external tool.
-// Otherwise, stick to ZippedKonanLibrary.
+/**
+ * This class automatically extracts pieces of the library on first access. Use it if you need
+ * to pass extracted files to an external tool. Otherwise, stick to [ZippedKonanLibraryLayout].
+ */
 private class FileExtractor(zippedLibraryLayout: KonanLibraryLayout): KonanLibraryLayout by zippedLibraryLayout {
 
     override val manifestFile: File by lazy { extract(super.manifestFile) }

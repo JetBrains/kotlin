@@ -9,4 +9,3 @@ class KonanBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageMana
     override fun getSuspendFunction(parameterCount: Int) =
             getBuiltInClassByName(Name.identifier("SuspendFunction$parameterCount"))
 }
-

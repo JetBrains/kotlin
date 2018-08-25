@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.getExternalObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.isReal
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.konan.interop.InteropFqNames
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction

@@ -13,15 +13,15 @@ interface PackageAccessedHandler {
  */
 interface KonanResolvedLibrary: PackageAccessedHandler {
 
-    // the library itself
+    // The library itself.
     val library: KonanLibrary
 
-    // dependencies on other libraries
+    // Dependencies on other libraries.
     val resolvedDependencies: List<KonanResolvedLibrary>
 
-    // if it's needed to linker
+    // Whether it is needed to linker.
     val isNeededForLink: Boolean
 
-    // is provided by the distribution
+    // Is provided by the distribution?
     val isDefault: Boolean
 }

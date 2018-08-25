@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.descriptors.konan
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.konan.library.KonanLibrary
 
 sealed class KonanModuleOrigin {
 
@@ -11,8 +12,7 @@ sealed class KonanModuleOrigin {
 
 sealed class CompiledKonanModuleOrigin: KonanModuleOrigin()
 
-// FIXME(ddol): replace `Any` by `KonanLibrary` when ready
-class DeserializedKonanModuleOrigin(val library: Any) : CompiledKonanModuleOrigin()
+class DeserializedKonanModuleOrigin(val library: KonanLibrary) : CompiledKonanModuleOrigin()
 
 object CurrentKonanModuleOrigin: CompiledKonanModuleOrigin()
 

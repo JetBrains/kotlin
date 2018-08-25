@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 fun File.unpackZippedKonanLibraryTo(newDir: File) {
 
-    // first run validity checks for the given KLIB file
+    // First, run validity checks for the given KLIB file.
     zippedKonanLibraryChecks(this)
 
     if (newDir.exists) {

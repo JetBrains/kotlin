@@ -33,7 +33,6 @@ include ':performance'
 include ':platformLibs'
 
 includeBuild 'shared'
-includeBuild 'extracted/konan.descriptors'
 includeBuild 'extracted/konan.metadata'
 includeBuild 'extracted/konan.serializer'
 includeBuild 'tools/kotlin-native-gradle-plugin'
