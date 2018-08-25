@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.konan.util
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the whole file!
+
 fun defaultTargetSubstitutions(target: KonanTarget) =
         mapOf<String, String>(
             "target" to target.visibleName,

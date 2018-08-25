@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.konan.util
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the whole file!
+
 val <T : Enum<T>> T.visibleName get() = name.toLowerCase() 
 interface Named {
     val name: String

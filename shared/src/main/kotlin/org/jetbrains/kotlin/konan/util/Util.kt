@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.konan.util
 import kotlin.system.measureTimeMillis
 import org.jetbrains.kotlin.konan.file.*
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this function:
 fun printMillisec(message: String, body: () -> Unit) {
     val msec = measureTimeMillis{
         body()
@@ -26,10 +27,12 @@ fun printMillisec(message: String, body: () -> Unit) {
     println("$message: $msec msec")
 }
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this function:
 fun profile(message: String, body: () -> Unit) = profileIf(
     System.getProperty("konan.profile")?.equals("true") ?: false,
     message, body)
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this function:
 fun profileIf(condition: Boolean, message: String, body: () -> Unit) =
     if (condition) printMillisec(message, body) else body()
 

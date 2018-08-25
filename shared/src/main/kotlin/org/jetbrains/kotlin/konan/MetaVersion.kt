@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.konan
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the whole file!
+
 /**
  *  https://en.wikipedia.org/wiki/Software_versioning
  *  scheme major.minor[.build[.revision]].

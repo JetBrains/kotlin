@@ -1,3 +1,5 @@
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: drop this module completely!
+
 buildscript {
     ext.rootBuildDirectory = file('../..')
 

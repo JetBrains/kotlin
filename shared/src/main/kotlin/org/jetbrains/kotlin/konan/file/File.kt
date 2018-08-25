@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.konan.file
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the whole file!
+
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader

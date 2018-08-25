@@ -6,17 +6,20 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.konan.util.suffixIfNot
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the constants below:
 const val KLIB_FILE_EXTENSION = "klib"
 const val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
 
 const val KONAN_STDLIB_NAME = "stdlib"
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this interface!
 interface SearchPathResolver {
     val searchRoots: List<File>
     fun resolve(givenPath: String): File
     fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean): List<File>
 }
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove this interface!
 interface SearchPathResolverWithTarget: SearchPathResolver {
     val target: KonanTarget
 }

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.konan.target
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the whole file!
+
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.Named
 import java.io.Serializable

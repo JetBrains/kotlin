@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.konan.properties
 
+// FIXME(ddol): KLIB-REFACTORING-CLEANUP: remove the whole file!
+
 import org.jetbrains.kotlin.konan.file.*
 
 typealias Properties = java.util.Properties
