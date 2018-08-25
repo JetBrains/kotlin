@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import com.google.common.io.Files
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.junit.Assert
 import java.io.File
-import java.nio.charset.Charset
 import java.util.*
 import java.util.regex.MatchResult
 
@@ -19,12 +17,10 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
 
 
     override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
-        //setupLanguageVersionSettingsForCompilerTests(text, environment!!)
         compile(files, javaFilesDir)
         try {
             parseExpectations(wholeFile).check()
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             println(classFileFactory.createText())
             throw e
         }
@@ -62,7 +58,7 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
         }
     }
 
-    private inner class PackageExpectationsSuite() {
+    private inner class PackageExpectationsSuite {
         private val classSuitesByClassName = LinkedHashMap<String, ClassExpectationsSuite>()
 
         fun getOrCreateClassSuite(className: String): ClassExpectationsSuite =
@@ -150,7 +146,7 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
     private fun parseExpectations(ktFile: File): PackageExpectationsSuite {
         val expectations = PackageExpectationsSuite()
 
-        val lines = Files.readLines(ktFile, Charset.forName("utf-8"))
+        val lines = ktFile.readLines()
         var lineNo = 0
         while (lineNo < lines.size) {
             val line = lines[lineNo]
@@ -199,11 +195,11 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
 
     companion object {
         fun formatSignature(header: String, jvmSignature: String?, genericSignature: String): String {
-            return listOf(
-                    header,
-                    jvmSignature?.let { "jvm signature: $it" },
-                    "generic signature: $genericSignature"
-            ).filterNotNull().joinToString("\n") { "// $it" }
+            return listOfNotNull(
+                header,
+                jvmSignature?.let { "jvm signature: $it" },
+                "generic signature: $genericSignature"
+            ).joinToString("\n") { "// $it" }
         }
 
         val expectationRegex = Regex("^// (class|method|field): *([^:]+)(::(.+))? *(//.*)?")
@@ -212,11 +208,10 @@ abstract class AbstractWriteSignatureTest : CodegenTestCase() {
 
         fun Regex.matchExact(input: String): MatchResult? {
             val matcher = this.toPattern().matcher(input)
-            if (matcher.matches()) {
-                return matcher.toMatchResult()
-            }
-            else {
-                return null
+            return if (matcher.matches()) {
+                matcher.toMatchResult()
+            } else {
+                null
             }
         }
     }
