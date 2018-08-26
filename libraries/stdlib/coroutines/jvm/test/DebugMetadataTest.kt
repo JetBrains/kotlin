@@ -46,18 +46,18 @@ class DebugMetadataTest {
             StackTraceElement("SomeClass", "testMethod", "test.kt", 10),
             myContinuation.getStackTraceElement()
         )
-        assertEquals(listOf("L$1", "a", "L$2", "b"), myContinuation.getSpilledVariableFieldMapping().toList())
+        assertEquals(listOf("L$1", "a", "L$2", "b"), myContinuation.getSpilledVariableFieldMapping()!!.toList())
         myContinuation.label = 2
         assertEquals(
             StackTraceElement("SomeClass", "testMethod", "test1.kt", 2),
             myContinuation.getStackTraceElement()
         )
-        assertEquals(listOf("L$1", "b", "L$2", "c"), myContinuation.getSpilledVariableFieldMapping().toList())
+        assertEquals(listOf("L$1", "b", "L$2", "c"), myContinuation.getSpilledVariableFieldMapping()!!.toList())
         myContinuation.label = 3
         assertEquals(
             StackTraceElement("SomeClass", "testMethod", "test.kt", 11),
             myContinuation.getStackTraceElement()
         )
-        assertEquals(listOf("L$1", "c"), myContinuation.getSpilledVariableFieldMapping().toList())
+        assertEquals(listOf("L$1", "c"), myContinuation.getSpilledVariableFieldMapping()!!.toList())
     }
 }
