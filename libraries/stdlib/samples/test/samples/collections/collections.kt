@@ -62,11 +62,37 @@ class Collections {
         }
 
         @Sample
+        fun collectionContainsAllVararg() {
+            val collection = mutableListOf('a', 'b')
+
+            assertFalse(collection.containsAll('c', 'c'))
+
+            assertTrue(collection.containsAll('a', 'b'))
+        }
+
+        @Sample
         fun collectionToTypedArray() {
             val collection = listOf(1, 2, 3)
             val array = collection.toTypedArray()
             assertPrints(array.contentToString(), "[1, 2, 3]")
         }
+        
+        @Sample
+        fun collectionAddAllVararg() {
+            val mutableCollection = mutableListOf(1, 2, 3)
+            mutableCollection.addAll(4, 5, 6)
+            
+            assertPrints(mutableCollection.toString(), "[1, 2, 3, 4, 5, 6]")
+        }
+
+        @Sample
+        fun collectionRemoveAllVararg() {
+            val mutableCollection = mutableListOf(1,2,3,4)
+            mutableCollection.removeAll(2, 3)
+
+            assertPrints(mutableCollection.toString(), "[1, 4]")
+        }
+        
     }
 
     class Lists {

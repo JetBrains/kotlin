@@ -1559,6 +1559,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun addAll (Ljava/util/Collection;Ljava/lang/Iterable;)Z
 	public static final fun addAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun addAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
+	public static final fun addAllV (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun all (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun any (Ljava/lang/Iterable;)Z
 	public static final fun any (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
@@ -1591,6 +1592,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun collectionSizeOrDefault (Ljava/lang/Iterable;I)I
 	public static final fun collectionSizeOrNull (Ljava/lang/Iterable;)Ljava/lang/Integer;
 	public static final fun contains (Ljava/lang/Iterable;Ljava/lang/Object;)Z
+	public static final fun containsAllV (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun count (Ljava/lang/Iterable;)I
 	public static final fun count (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
 	public static final fun distinct (Ljava/lang/Iterable;)Ljava/util/List;
@@ -1707,6 +1709,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun removeAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun removeAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun removeAll (Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun removeAllV (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun requireNoNulls (Ljava/lang/Iterable;)Ljava/lang/Iterable;
 	public static final fun requireNoNulls (Ljava/util/List;)Ljava/util/List;
 	public static final fun retainAll (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z

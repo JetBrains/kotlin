@@ -10,6 +10,7 @@ package kotlin.collections
 
 import kotlin.*
 import kotlin.comparisons.compareValues
+import kotlin.jvm.JvmName
 
 internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
@@ -191,6 +192,14 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
 @kotlin.internal.InlineOnly
 public inline fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(elements: Collection<T>): Boolean = this.containsAll(elements)
+
+/**
+ * Checks if all [elements] are contained in this [Collection].
+ *
+ * @sample samples.collections.Collections.Collections.collectionContainsAllVararg
+ */
+@JvmName("containsAllV")
+public fun <T> Collection<T>.containsAll(vararg elements: T): Boolean = this.containsAll(elements.asList())
 
 internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     0 -> emptyList()
