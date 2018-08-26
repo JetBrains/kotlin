@@ -142,6 +142,22 @@ class Maps {
             val sameMap = nonEmptyMap.ifEmpty { null }
             assertTrue(nonEmptyMap === sameMap)
         }
+
+        @Sample
+        fun containsValue() {
+            val map: Map<String, Int> = mapOf("x" to 1, "y" to 2)
+
+            // member containsValue is used
+            assertTrue(map.containsValue(1))
+
+            // extension containsValue is used when the argument type is a supertype of the map value type
+            assertTrue(map.containsValue(1 as Number))
+            assertTrue(map.containsValue(2 as Any))
+
+            assertFalse(map.containsValue("string" as Any))
+
+            // map.containsValue("string") // cannot call extension when the argument type and the map value type are unrelated at all
+        }
     }
 
     class Filtering {
