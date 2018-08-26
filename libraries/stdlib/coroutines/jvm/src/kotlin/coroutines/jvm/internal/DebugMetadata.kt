@@ -31,26 +31,30 @@ internal annotation class DebugMetadata(
  * The coroutine can be either running coroutine, that calls the function on its continuation and obtaining
  * the information about current file and line number, or, more likely, the function is called to produce accurate stack traces of
  * suspended coroutine.
+ *
+ * The result is `null` when debug metadata is not available.
  */
 @SinceKotlin("1.3")
 @JvmName("getStackTraceElement")
-internal fun BaseContinuationImpl.getStackTraceElement(): StackTraceElement? {
-    val debugMetadata = getDebugMetadataAnnotation()
+internal fun BaseContinuationImpl.getStackTraceElementImpl(): StackTraceElement? {
+    val debugMetadata = getDebugMetadataAnnotation() ?: return null
     val label = getLabel()
     val fileName = if (label < 0) "" else debugMetadata.sourceFiles[label]
     val lineNumber = if (label < 0) -1 else debugMetadata.lineNumbers[label]
     return StackTraceElement(debugMetadata.className, debugMetadata.methodName, fileName, lineNumber)
 }
 
-private fun BaseContinuationImpl.getDebugMetadataAnnotation(): DebugMetadata {
-    return javaClass.annotations.filterIsInstance<DebugMetadata>()[0]
-}
+private fun BaseContinuationImpl.getDebugMetadataAnnotation(): DebugMetadata? =
+    javaClass.getAnnotation(DebugMetadata::class.java)
 
-private fun BaseContinuationImpl.getLabel(): Int {
-    val field = javaClass.getDeclaredField("label") ?: return -1
-    field.isAccessible = true
-    return (field.get(this) as? Int ?: 0) - 1
-}
+private fun BaseContinuationImpl.getLabel(): Int =
+    try {
+        val field = javaClass.getDeclaredField("label")
+        field.isAccessible = true
+        (field.get(this) as? Int ?: 0) - 1
+    } catch (e: Exception) { // NoSuchFieldException, SecurityException, or IllegalAccessException
+        -1
+    }
 
 /**
  * Returns an array of spilled variable names and continuation's field names where the variable has been spilled.
@@ -60,10 +64,13 @@ private fun BaseContinuationImpl.getLabel(): Int {
  *
  * The function is for debugger to use, thus it returns simplest data type possible.
  * This function should only be called on suspended coroutines to get accurate mapping.
+ *
+ * The result is `null` when debug metadata is not available.
  */
 @SinceKotlin("1.3")
-internal fun BaseContinuationImpl.getSpilledVariableFieldMapping(): Array<String> {
-    val debugMetadata = getDebugMetadataAnnotation()
+@JvmName("getSpilledVariableFieldMapping")
+internal fun BaseContinuationImpl.getSpilledVariableFieldMapping(): Array<String>? {
+    val debugMetadata = getDebugMetadataAnnotation() ?: return null
     val res = arrayListOf<String>()
     val label = getLabel()
     for ((i, labelOfIndex) in debugMetadata.indexToLabel.withIndex()) {
