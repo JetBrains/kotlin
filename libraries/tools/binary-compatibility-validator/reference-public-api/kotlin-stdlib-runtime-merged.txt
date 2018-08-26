@@ -2633,7 +2633,9 @@ public abstract interface class kotlin/coroutines/Continuation {
 
 public abstract interface class kotlin/coroutines/ContinuationInterceptor : kotlin/coroutines/CoroutineContext$Element {
 	public static final field Key Lkotlin/coroutines/ContinuationInterceptor$Key;
+	public abstract fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
 	public abstract fun interceptContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public abstract fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
 	public abstract fun releaseInterceptedContinuation (Lkotlin/coroutines/Continuation;)V
 }
 
