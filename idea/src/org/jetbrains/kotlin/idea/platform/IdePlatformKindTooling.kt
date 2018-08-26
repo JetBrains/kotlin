@@ -35,24 +35,27 @@ interface IdePlatformKindTooling {
 
     companion object : ApplicationExtensionDescriptor<IdePlatformKindTooling>(
         "org.jetbrains.kotlin.idePlatformKindTooling", IdePlatformKindTooling::class.java
-    )
-}
+    ) {
+        private val CACHED_TOOLING_SUPPORT by lazy {
+            val allPlatformKinds = IdePlatformKind.ALL_KINDS
+            val groupedTooling = IdePlatformKindTooling.getInstances().groupBy { it.kind }.mapValues { it.value.single() }
 
-private val CACHED_TOOLING_SUPPORT by lazy {
-    val allPlatformKinds = IdePlatformKind.ALL_KINDS
-    val groupedTooling = IdePlatformKindTooling.getInstances().groupBy { it.kind }.mapValues { it.value.single() }
+            for (kind in allPlatformKinds) {
+                if (kind !in groupedTooling) {
+                    throw IllegalStateException(
+                        "Tooling support for the platform '$kind' is missing. " +
+                                "Implement 'IdePlatformKindTooling' for it."
+                    )
+                }
+            }
 
-    for (kind in allPlatformKinds) {
-        if (kind !in groupedTooling) {
-            throw IllegalStateException(
-                "Tooling support for the platform '$kind' is missing. " +
-                        "Implement 'IdePlatformKindTooling' for it."
-            )
+            groupedTooling
+        }
+
+        fun getTooling(kind: IdePlatformKind<*>): IdePlatformKindTooling {
+            return CACHED_TOOLING_SUPPORT[kind] ?: error("Unknown platform $this")
         }
     }
-
-    groupedTooling
 }
-
 val IdePlatformKind<*>.tooling: IdePlatformKindTooling
-    get() = CACHED_TOOLING_SUPPORT[this] ?: error("Unknown platform $this")
+    get() = IdePlatformKindTooling.getTooling(this)
