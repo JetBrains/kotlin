@@ -1,3 +1,5 @@
+//FULL_JDK
+
 class KotlinMap1<K, V> : java.util.AbstractMap<K, V>() {
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
         get() = throw UnsupportedOperationException()
