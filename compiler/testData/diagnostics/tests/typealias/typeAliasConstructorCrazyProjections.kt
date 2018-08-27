@@ -8,9 +8,9 @@ typealias BInIn<T> = Bound<in List<T>, in T>
 
 fun <T> listOf(): List<T> = null!!
 
-// Unresolved reference is ok here:
+// EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED is ok here:
 // we can't create a substituted signature for type alias constructor
 // since it has 'out' type projection in 'in' position.
-val test1 = <!UNRESOLVED_REFERENCE!>BOutIn<!>(<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>listOf<!>(), null!!)
+val test1 = <!OI;EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED!><!NI;UNRESOLVED_REFERENCE!>BOutIn<!>(listOf(), null!!)<!>
 
 val test2 = <!OI;EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED!>BInIn(listOf(), null!!)<!>

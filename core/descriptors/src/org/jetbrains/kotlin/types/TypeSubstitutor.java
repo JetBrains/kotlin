@@ -40,12 +40,6 @@ public class TypeSubstitutor {
 
     public static final TypeSubstitutor EMPTY = create(TypeSubstitution.EMPTY);
 
-    private static final class SubstitutionException extends Exception {
-        public SubstitutionException(String message) {
-            super(message);
-        }
-    }
-
     @NotNull
     public static TypeSubstitutor create(@NotNull TypeSubstitution substitution) {
         return new TypeSubstitutor(substitution);
@@ -89,11 +83,7 @@ public class TypeSubstitutor {
             return type;
         }
 
-        try {
-            return unsafeSubstitute(new TypeProjectionImpl(howThisTypeIsUsed, type), 0).getType();
-        } catch (SubstitutionException e) {
-            return ErrorUtils.createErrorType(e.getMessage());
-        }
+        return unsafeSubstitute(new TypeProjectionImpl(howThisTypeIsUsed, type), 0).getType();
     }
 
     @Nullable
@@ -119,15 +109,11 @@ public class TypeSubstitutor {
             return typeProjection;
         }
 
-        try {
-            return unsafeSubstitute(typeProjection, 0);
-        } catch (SubstitutionException e) {
-            return null;
-        }
+        return unsafeSubstitute(typeProjection, 0);
     }
 
     @NotNull
-    private TypeProjection unsafeSubstitute(@NotNull TypeProjection originalProjection, int recursionDepth) throws SubstitutionException {
+    private TypeProjection unsafeSubstitute(@NotNull TypeProjection originalProjection, int recursionDepth) {
         assertRecursionDepth(recursionDepth, originalProjection, substitution);
 
         if (originalProjection.isStarProjection()) return originalProjection;
@@ -187,7 +173,7 @@ public class TypeSubstitutor {
                 //noinspection EnumSwitchStatementWhichMissesCases
                 switch (varianceConflict) {
                     case OUT_IN_IN_POSITION:
-                        throw new SubstitutionException("Out-projection in in-position");
+                        return new TypeProjectionImpl(ErrorUtils.createErrorType("Out-projection in in-position"));
                     case IN_IN_OUT_POSITION:
                         // todo use the right type parameter variance and upper bound
                         return new TypeProjectionImpl(Variance.OUT_VARIANCE, type.getConstructor().getBuiltIns().getNullableAnyType());
@@ -238,7 +224,7 @@ public class TypeSubstitutor {
     private TypeProjection substituteCompoundType(
             TypeProjection originalProjection,
             int recursionDepth
-    ) throws SubstitutionException {
+    ) {
         KotlinType type = originalProjection.getType();
         Variance projectionKind = originalProjection.getProjectionKind();
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
@@ -267,7 +253,7 @@ public class TypeSubstitutor {
 
     private List<TypeProjection> substituteTypeArguments(
             List<TypeParameterDescriptor> typeParameters, List<TypeProjection> typeArguments, int recursionDepth
-    ) throws SubstitutionException {
+    ) {
         List<TypeProjection> substitutedArguments = new ArrayList<TypeProjection>(typeParameters.size());
         boolean wereChanges = false;
         for (int i = 0; i < typeParameters.size(); i++) {

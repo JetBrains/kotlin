@@ -20768,6 +20768,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             public void testUpperBoundsSubstitutionForOverloadResolutionWithErrorTypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/substitutions/upperBoundsSubstitutionForOverloadResolutionWithErrorTypes.kt");
             }
+
+            @TestMetadata("wrongCovariantSubstitutionInSuperConstructorCall.kt")
+            public void testWrongCovariantSubstitutionInSuperConstructorCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/substitutions/wrongCovariantSubstitutionInSuperConstructorCall.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/subtyping")
