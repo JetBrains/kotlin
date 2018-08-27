@@ -14,6 +14,7 @@ import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.usageByName
@@ -43,6 +44,10 @@ open class KotlinVariant(
     override fun getUsages(): Set<UsageContext> = target.createUsageContexts()
     override fun getName(): String = target.name
 
+    // This property is declared in the parent class to allow usages to reference it without forcing the subclass to load,
+    // which is needed for compatibility with older Gradle versions
+    internal var publicationDelegate: MavenPublication? = null
+
     override val publishable: Boolean
         get() = target.publishable
 }
@@ -55,12 +60,17 @@ class KotlinVariantWithCoordinates(
     override fun getCoordinates() = object : ModuleVersionIdentifier {
         private val project get() = target.project
 
-        private val moduleName: String get() = "${project.name}-${target.name.toLowerCase()}"
-        private val moduleGroup: String get() = project.group.toString()
+        private val moduleName: String get() =
+            publicationDelegate?.artifactId ?:
+            "${project.name}-${target.name.toLowerCase()}"
+
+        private val moduleGroup: String get() =
+            publicationDelegate?.groupId ?:
+            project.group.toString()
 
         override fun getGroup() = moduleGroup
         override fun getName() = moduleName
-        override fun getVersion() = project.version.toString()
+        override fun getVersion() = publicationDelegate?.version ?: project.version.toString()
 
         override fun getModule(): ModuleIdentifier = object : ModuleIdentifier {
             override fun getGroup(): String = moduleGroup

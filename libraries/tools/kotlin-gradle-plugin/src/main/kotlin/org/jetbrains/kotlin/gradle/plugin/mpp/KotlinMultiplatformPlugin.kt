@@ -94,29 +94,33 @@ class KotlinMultiplatformPlugin(
         val targets = project.multiplatformExtension!!.targets
         val kotlinSoftwareComponent = KotlinSoftwareComponent(project, "kotlin", targets)
 
-        project.afterEvaluate { project -> // Use afterEvaluate because publications configuration is no more lazy since Gradle 4.9
-            project.extensions.configure(PublishingExtension::class.java) { publishing ->
-                // The root publication.
-                publishing.publications.create("kotlin", MavenPublication::class.java) { publication ->
-                    publication.from(kotlinSoftwareComponent)
-                    (publication as MavenPublicationInternal).publishWithOriginalFileName()
-                    publication.artifactId = project.name
-                    publication.groupId = project.group.toString()
-                }
+        project.extensions.configure(PublishingExtension::class.java) { publishing ->
+            // The root publication.
+            publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
+                from(kotlinSoftwareComponent)
+                (this as MavenPublicationInternal).publishWithOriginalFileName()
+                artifactId = project.name
+                groupId = project.group.toString()
+                version = project.version.toString()
+            }
 
-                // Create separate publications for all publishable targets
-                kotlinSoftwareComponent.variants.filter { it.publishable }.forEach { variant ->
-                    val coordinates = (variant as? KotlinVariantWithCoordinates)?.coordinates
-                    val name = variant.target.disambiguateName("kotlin")
+            // Create separate publications for all publishable targets
+            targets.matching { it.publishable }.all { target ->
+                val variant = target.component as KotlinVariant
+                val name = target.name
 
-                    publishing.publications.create(name, MavenPublication::class.java) { publication ->
-                        publication.from(variant)
-                        (publication as MavenPublicationInternal).publishWithOriginalFileName()
-                        publication.artifactId = coordinates?.name ?: "${project.name}-${variant.target.name.toLowerCase()}"
-                        publication.groupId = coordinates?.group ?: project.group.toString()
-                        publication.version = coordinates?.version ?: project.version.toString()
+                val variantPublication = publishing.publications.create(name, MavenPublication::class.java).apply {
+                    // do this in afterEvaluate since older Gradle versions seem to check the files in the variant eagerly:
+                    project.afterEvaluate {
+                        from(variant)
                     }
+                    (this as MavenPublicationInternal).publishWithOriginalFileName()
+                    artifactId = "${project.name}-${variant.target.name.toLowerCase()}"
+                    groupId = project.group.toString()
+                    version = project.version.toString()
                 }
+
+                variant.publicationDelegate = variantPublication
             }
         }
 
