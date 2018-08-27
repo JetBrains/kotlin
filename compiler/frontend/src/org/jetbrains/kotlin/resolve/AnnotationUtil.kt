@@ -31,18 +31,12 @@ val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
 
 val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
 
-private val IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME = FqName("kotlin.internal.ImplicitIntegerCoercion")
-
 fun CallableMemberDescriptor.hasJvmDefaultAnnotation() =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
 
 
 fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
     return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null
-}
-
-fun DeclarationDescriptor.hasImplicitIntegerCoercionAnnotation(): Boolean {
-    return annotations.findAnnotation(IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME) != null
 }
 
 private val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
-import org.jetbrains.kotlin.resolve.annotations.hasImplicitIntegerCoercionAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
@@ -339,7 +338,7 @@ class CallCompleter(
             updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression) ?: updatedType
         }
 
-        if (parameter?.hasImplicitIntegerCoercionAnnotation() == true) {
+        if (parameter != null && ImplicitIntegerCoercion.isEnabledForParameter(parameter)) {
             val argumentCompileTimeValue = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
             if (argumentCompileTimeValue != null && argumentCompileTimeValue.parameters.isConvertableConstVal) {
                 val generalNumberType = createTypeForConvertableConstant(argumentCompileTimeValue)
