@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -28,7 +31,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationSplitter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -48,7 +50,6 @@ import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromMo
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
-import org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -308,7 +309,7 @@ class FunctionDescriptorResolver(
     private fun KotlinType.removeParameterNameAnnotation(): KotlinType {
         if (this is TypeUtils.SpecialType) return this
         val parameterNameAnnotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.parameterName) ?: return this
-        return replaceAnnotations(AnnotationsImpl(annotations.filter { it != parameterNameAnnotation }))
+        return replaceAnnotations(Annotations.create(annotations.filter { it != parameterNameAnnotation }))
     }
 
     private fun KotlinType.functionTypeExpected() = !TypeUtils.noExpectedType(this) && isBuiltinFunctionalType

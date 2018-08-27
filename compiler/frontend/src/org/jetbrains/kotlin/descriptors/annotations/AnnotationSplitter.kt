@@ -114,7 +114,7 @@ class AnnotationSplitter(
             }
         }
 
-        map to AnnotationsImpl(other)
+        map to Annotations.create(other)
     }
 
     fun getOtherAnnotations(): Annotations = LazySplitAnnotations(storageManager, null)
@@ -129,7 +129,7 @@ class AnnotationSplitter(
             val (targeted, other) = this@AnnotationSplitter.splitAnnotations()
 
             if (target != null) {
-                targeted[target]?.let(::AnnotationsImpl) ?: Annotations.EMPTY
+                targeted[target]?.let((Annotations)::create) ?: Annotations.EMPTY
             } else {
                 other
             }

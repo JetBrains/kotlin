@@ -41,6 +41,9 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
             override fun toString() = "EMPTY"
         }
+
+        fun create(annotations: List<AnnotationDescriptor>): Annotations =
+            if (annotations.isEmpty()) EMPTY else AnnotationsImpl(annotations)
     }
 }
 

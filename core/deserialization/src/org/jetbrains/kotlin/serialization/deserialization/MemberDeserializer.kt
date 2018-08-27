@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
@@ -291,7 +290,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     fun loadTypeAlias(proto: ProtoBuf.TypeAlias): TypeAliasDescriptor {
-        val annotations = AnnotationsImpl(proto.annotationList.map { annotationDeserializer.deserializeAnnotation(it, c.nameResolver) })
+        val annotations = Annotations.create(
+            proto.annotationList.map { annotationDeserializer.deserializeAnnotation(it, c.nameResolver) }
+        )
 
         val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(proto.flags))
         val typeAlias = DeserializedTypeAliasDescriptor(
