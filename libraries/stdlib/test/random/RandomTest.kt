@@ -180,6 +180,7 @@ abstract class RandomSmokeTest {
             (1u..5u),
             (0u..31u),
             (0u..UInt.MAX_VALUE - 1u),
+            (1u..UInt.MAX_VALUE),
             (0u..UInt.MAX_VALUE)
         )) {
             repeat(1000) {
@@ -338,6 +339,7 @@ abstract class RandomSmokeTest {
             (1uL..5uL),
             (0uL..31uL),
             (0uL..(ULong.MAX_VALUE - 1uL)),
+            (1uL..ULong.MAX_VALUE),
             (0uL..ULong.MAX_VALUE)
         )) {
             repeat(1000) {

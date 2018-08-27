@@ -374,7 +374,7 @@ public fun Random.nextUInt(origin: UInt, bound: UInt): UInt {
 public fun Random.nextUInt(range: UIntRange): UInt = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
     range.last < UInt.MAX_VALUE -> nextUInt(range.first, range.last + 1u)
-    range.first > UInt.MIN_VALUE -> nextUInt(range.first, range.last + 1u)
+    range.first > UInt.MIN_VALUE -> nextUInt(range.first - 1u, range.last) + 1u
     else -> nextUInt()
 }
 
@@ -430,7 +430,7 @@ public fun Random.nextULong(origin: ULong, bound: ULong): ULong {
 public fun Random.nextULong(range: ULongRange): ULong = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
     range.last < ULong.MAX_VALUE -> nextULong(range.first, range.last + 1u)
-    range.first > ULong.MIN_VALUE -> nextULong(range.first, range.last + 1u)
+    range.first > ULong.MIN_VALUE -> nextULong(range.first - 1u, range.last) + 1u
     else -> nextULong()
 }
 
