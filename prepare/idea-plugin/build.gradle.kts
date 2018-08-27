@@ -46,7 +46,6 @@ val projectsToShadow by extra(listOf(
         ":js:js.parser",
         ":js:js.serializer",
         ":konan:konan-serializer",
-        ":konan:konan-metadata",
         ":konan:konan-utils",
         ":compiler:light-classes",
         ":compiler:plugin-api",
