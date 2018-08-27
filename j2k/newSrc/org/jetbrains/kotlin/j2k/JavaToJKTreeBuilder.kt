@@ -294,6 +294,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStub
             ).also {
+                backAnnotation[it] = this
                 symbolProvider.provideUniverseSymbol(this, it)
             }
         }

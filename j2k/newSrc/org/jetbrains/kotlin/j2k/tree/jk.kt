@@ -86,7 +86,7 @@ interface JKAccessModifier : JKModifier {
 
 interface JKModalityModifier : JKModifier {
     enum class Modality {
-        OPEN, FINAL, ABSTRACT
+        OPEN, FINAL, ABSTRACT, OVERRIDE
     }
 
     val modality: Modality
