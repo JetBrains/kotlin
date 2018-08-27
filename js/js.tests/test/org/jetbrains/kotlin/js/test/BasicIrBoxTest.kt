@@ -48,7 +48,7 @@ private val runtimeSources = listOfKtFilesFrom(
     "core/builtins/native/kotlin/Collections.kt",
     "core/builtins/native/kotlin/Iterator.kt",
 
-    "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
+    "libraries/stdlib/common/src/kotlin/JsAnnotationsH.kt",
 
     "libraries/stdlib/js/irRuntime",
     BasicBoxTest.COMMON_FILES_DIR_PATH
