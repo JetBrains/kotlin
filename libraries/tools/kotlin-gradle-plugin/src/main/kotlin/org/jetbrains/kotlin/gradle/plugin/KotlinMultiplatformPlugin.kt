@@ -21,6 +21,8 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -114,6 +116,15 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 namedSourceSetsContainer(platformProject)
             ) { commonSourceSet: Named, _ ->
                 addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
+
+                // Workaround for older versions of Kotlin/Native overriding the old signature
+                commonProject.convention.findPlugin(JavaPluginConvention::class.java)
+                    ?.sourceSets
+                    ?.findByName(commonSourceSet.name)
+                    ?.let { javaSourceSet ->
+                        @Suppress("DEPRECATION")
+                        addCommonSourceSetToPlatformSourceSet(javaSourceSet, platformProject)
+                    }
             }
         }
     }
@@ -152,11 +163,13 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         platformProject.whenEvaluated { // At the point when the source set in the platform module is created, the task does not exist
             val platformTask = platformProject.tasks
                 .filterIsInstance<AbstractKotlinCompile<*>>()
-                .single { it.sourceSetName == commonSourceSet.name }
+                .singleOrNull { it.sourceSetName == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
 
             val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)!!
-            platformTask.source(commonSources)
-            platformTask.commonSourceSet += commonSources
+            if (platformTask != null) {
+                platformTask.source(commonSources)
+                platformTask.commonSourceSet += commonSources
+            }
         }
     }
 
@@ -172,6 +185,20 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         val getKotlin = from.javaClass.getMethod("getKotlin")
         return getKotlin(from) as? SourceDirectorySet
     }
+
+    @Deprecated("Migrate to the new Kotlin source sets and use the addCommonSourceSetToPlatformSourceSet(Named, Project) overload")
+    protected open fun addCommonSourceSetToPlatformSourceSet(sourceSet: SourceSet, platformProject: Project) = Unit
+
+    @Deprecated("Retained for older Kotlin/Native MPP plugin binary compatibility")
+    protected val SourceSet.kotlin: SourceDirectorySet?
+        get() {
+            // Access through reflection, because another project's KotlinSourceSet might be loaded
+            // by a different class loader:
+            val convention = (getConvention("kotlin") ?: getConvention("kotlin2js")) ?: return null
+            val kotlinSourceSetIface = convention.javaClass.interfaces.find { it.name == KotlinSourceSet::class.qualifiedName }
+            val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
+            return getKotlin(convention) as? SourceDirectorySet
+        }
 }
 
 internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
