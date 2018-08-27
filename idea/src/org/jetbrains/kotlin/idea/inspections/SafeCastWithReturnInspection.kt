@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -22,11 +23,11 @@ class SafeCastWithReturnInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         binaryWithTypeRHSExpressionVisitor(fun(expression) {
             if (expression.right == null) return
-            if (expression.operationReference.getReferencedName() != "as?") return
+            if (expression.operationReference.getReferencedNameElementType() != KtTokens.AS_SAFE) return
 
             val parent = expression.getStrictParentOfType<KtBinaryExpression>() ?: return
             if (KtPsiUtil.deparenthesize(parent.left) != expression) return
-            if (parent.operationReference.getReferencedName() != "?:") return
+            if (parent.operationReference.getReferencedNameElementType() != KtTokens.ELVIS) return
             if (KtPsiUtil.deparenthesize(parent.right) !is KtReturnExpression) return
 
             val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
