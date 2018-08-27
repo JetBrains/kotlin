@@ -9,7 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
-import org.jetbrains.kotlin.ApplicationExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
+import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.platform.IdePlatformKind
@@ -21,6 +22,8 @@ interface IdePlatformKindTooling {
     val kind: IdePlatformKind<*>
 
     fun compilerArgumentsForProject(project: Project): CommonCompilerArguments?
+
+    val resolverForModuleFactory: ResolverForModuleFactory
 
     val mavenLibraryIds: List<String>
     val gradlePluginId: String
@@ -57,5 +60,6 @@ interface IdePlatformKindTooling {
         }
     }
 }
+
 val IdePlatformKind<*>.tooling: IdePlatformKindTooling
     get() = IdePlatformKindTooling.getTooling(this)
