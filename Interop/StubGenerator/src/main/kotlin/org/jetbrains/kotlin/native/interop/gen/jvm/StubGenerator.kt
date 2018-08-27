@@ -732,32 +732,31 @@ class StubGenerator(
     }
 
     private fun integerLiteral(size: Int, isSigned: Boolean, value: Long): String? {
-        if (!isSigned) {
-            val signedLiteral = integerLiteral(size, true, value)
-            val converter = when (size) {
-                1 -> "toUByte"
-                2 -> "toUShort"
-                4 -> "toUInt"
-                8 -> "toULong"
+        return if (isSigned) {
+            if (value == Long.MIN_VALUE) {
+                return "${value + 1} - 1" // Workaround for "The value is out of range" compile error.
+            }
+
+            val narrowedValue: Number = when (size) {
+                1 -> value.toByte()
+                2 -> value.toShort()
+                4 -> value.toInt()
+                8 -> value
                 else -> return null
             }
 
-            return "($signedLiteral).$converter()"
-        }
+            narrowedValue.toString()
+        } else {
+            val narrowedValue: Any = when (size) {
+                1 -> value.toUByte()
+                2 -> value.toUShort()
+                4 -> value.toUInt()
+                8 -> value.toULong()
+                else -> return null
+            }
 
-        if (value == Long.MIN_VALUE) {
-            return "${value + 1} - 1" // Workaround for "The value is out of range" compile error.
+            "${narrowedValue}u"
         }
-
-        val narrowedValue: Number = when (size) {
-            1 -> value.toByte()
-            2 -> value.toShort()
-            4 -> value.toInt()
-            8 -> value
-            else -> return null
-        }
-
-        return narrowedValue.toString()
     }
 
     private fun floatingLiteral(type: Type, value: Double): String? {
@@ -777,37 +776,41 @@ class StubGenerator(
         }
     }
 
+    private fun topLevelValWithGetter(name: String, type: KotlinType, expressionBody: String): String =
+            "val ${name.asSimpleName()}: ${type.render(kotlinFile)} get() = $expressionBody"
+
+    private fun topLevelConstVal(name: String, type: KotlinType, initializer: String): String =
+            "const val ${name.asSimpleName()}: ${type.render(kotlinFile)} = $initializer"
+
     private fun generateConstant(constant: ConstantDef) {
-        val literal = when (constant) {
-            is IntegerConstantDef -> integerLiteral(constant.type, constant.value) ?: return
-            is FloatingConstantDef -> floatingLiteral(constant.type, constant.value) ?: return
-            is StringConstantDef -> constant.value.quoteAsKotlinLiteral()
-            else -> {
-                // Not supported yet, ignore:
-                return
+        val kotlinName = constant.name
+        val declaration = when (constant) {
+            is IntegerConstantDef -> {
+                val literal = integerLiteral(constant.type, constant.value) ?: return
+                val kotlinType = mirror(constant.type).argType
+                when (platform) {
+                    KotlinPlatform.NATIVE -> topLevelConstVal(kotlinName, kotlinType, literal)
+                    // No reason to make it const val with backing field on Kotlin/JVM yet:
+                    KotlinPlatform.JVM -> topLevelValWithGetter(kotlinName, kotlinType, literal)
+                }
             }
+            is FloatingConstantDef -> {
+                val literal = floatingLiteral(constant.type, constant.value) ?: return
+                val kotlinType = mirror(constant.type).argType
+                topLevelValWithGetter(kotlinName, kotlinType, literal)
+            }
+            is StringConstantDef -> {
+                val literal = constant.value.quoteAsKotlinLiteral()
+                val kotlinType = KotlinTypes.string
+                topLevelValWithGetter(kotlinName, kotlinType, literal)
+            }
+            else -> return
         }
 
-        val kotlinType = when (constant) {
-            is IntegerConstantDef,
-            is FloatingConstantDef -> mirror(constant.type).argType
+        out(declaration)
 
-            is StringConstantDef -> KotlinTypes.string
-
-            else -> {
-                // Not supported yet, ignore:
-                return
-            }
-        }.render(kotlinFile)
-
-        // TODO: improve value rendering.
-
-        // TODO: consider using `const` modifier.
-        // It is not currently possible for floating literals.
-        // Also it provokes constant propagation which can reduce binary compatibility
-        // when replacing interop stubs without recompiling the application.
-
-        out("val ${constant.name.asSimpleName()}: $kotlinType get() = $literal")
+        // TODO: consider using `const` modifier in all cases.
+        // Note: It is not currently possible for floating literals.
     }
 
     private fun generateStubs(): List<KotlinStub> {

@@ -36,3 +36,9 @@ dependencies {
     compile project(':Interop:Indexer')
     compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 }
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xuse-experimental=kotlin.ExperimentalUnsignedTypes']
+    }
+}
