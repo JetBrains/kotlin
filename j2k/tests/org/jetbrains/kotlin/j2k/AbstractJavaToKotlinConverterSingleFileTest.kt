@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiJavaFile
@@ -35,7 +34,7 @@ import java.util.regex.Pattern
 abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterTest() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 
-    fun doTest(javaPath: String) {
+    open fun doTest(javaPath: String) {
         val project = LightPlatformTestCase.getProject()!!
         val javaFile = File(javaPath)
         val fileContents = FileUtil.loadFile(javaFile, true)
