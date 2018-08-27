@@ -210,9 +210,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
         val additionalDeclarations = generateGetterBodyWithGuard(refGetFunction) {
             val irClosureReference = JsIrBuilder.buildFunctionReference(functionReference.type, refClosureFunction.symbol)
 
-            val irVar = JsIrBuilder.buildVar(irClosureReference.type, initializer = irClosureReference).also {
-                it.parent = refGetFunction
-            }
+            val irVar = JsIrBuilder.buildVar(irClosureReference.type, refGetFunction, initializer = irClosureReference)
 
             // TODO: fill other fields of callable reference (returnType, parameters, isFinal, etc.)
             val irSetName = JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
@@ -261,7 +259,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
             val getterFunctionType = context.builtIns.getFunction(getterFunction.valueParameters.size + 1)
             val type = getterFunctionType.toIrType(symbolTable = context.symbolTable)
             val irGetReference = JsIrBuilder.buildFunctionReference(type, getterFunction.symbol)
-            val irVar = JsIrBuilder.buildVar(type, initializer = irGetReference).also { it.parent = refGetFunction }
+            val irVar = JsIrBuilder.buildVar(type, refGetFunction, initializer = irGetReference)
 
             statements += irVar
 
@@ -331,7 +329,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
             val getterFunctionType = context.builtIns.getFunction(getterFunction.valueParameters.size + 1)
             val type = getterFunctionType.toIrType(symbolTable = context.symbolTable)
             val irGetReference = JsIrBuilder.buildFunctionReference(type, getterFunction.symbol)
-            val irVar = JsIrBuilder.buildVar(type = type, initializer = irGetReference).also { it.parent = refGetFunction }
+            val irVar = JsIrBuilder.buildVar(type, refGetFunction, initializer = irGetReference)
             val irVarSymbol = irVar.symbol
 
             statements += irVar
@@ -374,9 +372,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
             val cacheName = "${getterFunction.name}_${Namer.KCALLABLE_CACHE_SUFFIX}"
             val type = getterFunction.returnType
             val irNull = JsIrBuilder.buildNull(context.irBuiltIns.nothingNType)
-            val cacheVar = JsIrBuilder.buildVar(type, cacheName, true, initializer = irNull).also {
-                it.parent = getterFunction.parent
-            }
+            val cacheVar = JsIrBuilder.buildVar(type, getterFunction.parent, cacheName, true, initializer = irNull)
 
             val irCacheValue = JsIrBuilder.buildGetValue(cacheVar.symbol)
             val irIfCondition = JsIrBuilder.buildCall(context.irBuiltIns.eqeqSymbol).apply {

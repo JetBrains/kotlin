@@ -178,8 +178,8 @@ class JvmSharedVariablesManager(
         )
         return IrVariableImpl(
             originalDeclaration.startOffset, originalDeclaration.endOffset, originalDeclaration.origin,
-            sharedVariableSymbol, sharedVariableDescriptor.type.toIrType()!!, refConstructorCall
-        )
+            sharedVariableSymbol, sharedVariableDescriptor.type.toIrType()!!
+        ).apply { initializer = refConstructorCall }
     }
 
     override fun defineSharedValue(

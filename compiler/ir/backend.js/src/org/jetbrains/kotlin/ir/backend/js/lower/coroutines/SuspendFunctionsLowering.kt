@@ -789,14 +789,15 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
 
                     dataArgument = function.valueParameters[0]
                     exceptionArgument = function.valueParameters[1]
-                    suspendResult = JsIrBuilder.buildVar(context.irBuiltIns.anyNType, "suspendResult", true).also {
-                        it.parent = function
-                        it.initializer = JsIrBuilder.buildGetValue(dataArgument.symbol)
-                    }
+                    suspendResult = JsIrBuilder.buildVar(
+                        context.irBuiltIns.anyNType,
+                        function,
+                        "suspendResult",
+                        true,
+                        initializer = JsIrBuilder.buildGetValue(dataArgument.symbol)
+                    )
 
-                    suspendState = JsIrBuilder.buildVar(coroutineImplLabelFieldSymbol.owner.type, "suspendState", true).also {
-                        it.parent = function
-                    }
+                    suspendState = JsIrBuilder.buildVar(coroutineImplLabelFieldSymbol.owner.type, function, "suspendState", true)
 
                     val body =
                         (originalBody as IrBlockBody).run {

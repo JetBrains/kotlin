@@ -55,7 +55,7 @@ class LocalDeclarationsLowering(
     val context: BackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val loweredConstructorVisibility: Visibility = Visibilities.PRIVATE,
-    private val isJVM: Boolean = false
+    private val isJVM: Boolean = false // TODO: remove this workaround
 ) :
     DeclarationContainerLoweringPass {
 
@@ -350,7 +350,7 @@ class LocalDeclarationsLowering(
             override fun visitReturn(expression: IrReturn): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val oldReturnTarget = expression.returnTargetSymbol.owner as IrFunction
+                val oldReturnTarget = expression.returnTargetSymbol.owner as? IrFunction ?: return expression
                 val newReturnTarget = oldReturnTarget.transformed ?: return expression
 
                 return IrReturnImpl(
@@ -503,7 +503,7 @@ class LocalDeclarationsLowering(
                 newSymbol,
                 newName,
                 // TODO: change to PRIVATE when issue with CallableReferenceLowering in Jvm BE is fixed
-                Visibilities.PUBLIC,
+                if (isJVM) Visibilities.PUBLIC else Visibilities.PRIVATE,
                 Modality.FINAL,
                 oldDeclaration.isInline,
                 oldDeclaration.isExternal,
@@ -596,8 +596,10 @@ class LocalDeclarationsLowering(
 
             newDeclaration.parent = localClassContext.declaration
             newDeclaration.returnType = oldDeclaration.returnType
+            // TODO: should dispatch receiver be copied?
             newDeclaration.dispatchReceiverParameter = oldDeclaration.dispatchReceiverParameter?.run {
-                copyTo(newDeclaration).also {
+                IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also {
+                    it.parent = newDeclaration
                     newParameterToOld.putAbsentOrSame(it, this)
                 }
             }

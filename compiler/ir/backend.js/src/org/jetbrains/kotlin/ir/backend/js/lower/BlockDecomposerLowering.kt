@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -101,7 +100,7 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
     }
 
     private fun makeTempVar(type: IrType, init: IrExpression? = null) =
-        JsIrBuilder.buildVar(type, initializer = init, isVar = true).also { it.parent = function }
+        JsIrBuilder.buildVar(type, function, initializer = init, isVar = true)
 
     private fun makeLoopLabel() = "\$l\$${tmpVarCounter++}"
 
@@ -538,8 +537,8 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
         private fun wrap(expression: IrExpression) =
             expression as? IrBlock ?: expression.let { IrBlockImpl(it.startOffset, it.endOffset, it.type, null, listOf(it)) }
 
-        private fun wrap(expression: IrExpression, variable: IrVariableSymbol) =
-            wrap(JsIrBuilder.buildSetVariable(variable, expression, unitType))
+        private fun wrap(expression: IrExpression, variable: IrVariable) =
+            wrap(JsIrBuilder.buildSetVariable(variable.symbol, expression, unitType))
 
         // try {
         //   try_block {}
@@ -561,9 +560,9 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
         override fun visitTry(aTry: IrTry): IrExpression {
             val irVar = makeTempVar(aTry.type)
 
-            val newTryResult = wrap(aTry.tryResult, irVar.symbol)
+            val newTryResult = wrap(aTry.tryResult, irVar)
             val newCatches = aTry.catches.map {
-                val newCatchBody = wrap(it.result, irVar.symbol)
+                val newCatchBody = wrap(it.result, irVar)
                 IrCatchImpl(it.startOffset, it.endOffset, it.catchParameter, newCatchBody)
             }
 
@@ -610,7 +609,7 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
                 val irVar = makeTempVar(expression.type)
 
                 val newBranches = decomposedResults.map { (branch, condition, result) ->
-                    val newResult = wrap(result, irVar.symbol)
+                    val newResult = wrap(result, irVar)
                     when (branch) {
                         is IrElseBranch -> IrElseBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)
                         else /* IrBranch */ -> IrBranchImpl(branch.startOffset, branch.endOffset, condition, newResult)

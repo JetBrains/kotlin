@@ -158,6 +158,7 @@ fun IrValueParameter.copyTo(irFunction: IrFunction, shift: Int = 0): IrValuePara
 }
 
 fun IrTypeParameter.copyTo(irFunction: IrFunction, shift: Int = 0): IrTypeParameter {
+    // TODO: Copy IrTypeParameter with type remapping
     val descriptor = WrappedTypeParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrTypeParameterSymbolImpl(descriptor)
     return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance).also {
@@ -168,7 +169,12 @@ fun IrTypeParameter.copyTo(irFunction: IrFunction, shift: Int = 0): IrTypeParame
 
 fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
 
-    dispatchReceiverParameter = from.dispatchReceiverParameter?.copyTo(this)
+    // TODO: should dispatch receiver be copied?
+    dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
+        IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType).also {
+            it.parent = this
+        }
+    }
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
 
     val shift = valueParameters.size

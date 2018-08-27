@@ -69,7 +69,7 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
 
                 val commonType = mergeTypes(aTry.catches.map { it.catchParameter.type })
 
-                val pendingExceptionDeclaration = JsIrBuilder.buildVar(commonType, "\$p").apply { parent = data }
+                val pendingExceptionDeclaration = JsIrBuilder.buildVar(commonType, data, "\$p")
                 val pendingException = JsIrBuilder.buildGetValue(pendingExceptionDeclaration.symbol)
 
                 val branches = mutableListOf<IrBranch>()

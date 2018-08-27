@@ -317,7 +317,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                     val symbol = call.symbol
                     val declaration = symbol.owner
 
-                    if (declaration.isDynamic || declaration.isEffectivelyExternal()) {
+                    if (declaration.isDynamic() || declaration.isEffectivelyExternal()) {
                         when (call.origin) {
                             IrStatementOrigin.GET_PROPERTY -> {
                                 val fieldSymbol = context.symbolTable.lazyWrapper.referenceField(
@@ -340,7 +340,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                         }
                     }
 
-                    if (declaration.isDynamic) {
+                    if (declaration.isDynamic()) {
                         dynamicCallOriginToIrFunction[call.origin]?.let {
                             return irCall(call, it.symbol, dispatchReceiverAsFirstArgument = true)
                         }
@@ -416,7 +416,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 it.name == Name.identifier("equals")
                         && it.valueParameters.size == 1
                         && rhs.isSubtypeOf(it.valueParameters[0].type)
-                        && !it./*descriptor.*/isFakeOverriddenFromAny()
+                        && !it.isFakeOverriddenFromAny()
             }
             .maxWith(  // Find the most specific function
                 Comparator { f1, f2 ->

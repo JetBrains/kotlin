@@ -46,7 +46,6 @@ class JsGenerationContext {
 
     fun getNameForSymbol(symbol: IrSymbol): JsName = staticContext.getNameForSymbol(symbol, this)
     fun getNameForType(type: IrType): JsName = staticContext.getNameForType(type, this)
-//    fun getNameForReceiver(symbol: IrValueSymbol, isExt: Boolean): JsName = staticContext.getNameForReceiver(symbol, isExt, this)
     fun getNameForLoop(loop: IrLoop): JsName? = staticContext.getNameForLoop(loop, this)
 
     val continuation

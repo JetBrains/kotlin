@@ -176,6 +176,7 @@ object JsIrBuilder {
 
     fun buildVar(
         type: IrType,
+        parent: IrDeclarationParent,
         name: String = "tmp",
         isVar: Boolean = false,
         isConst: Boolean = false,
@@ -196,6 +197,7 @@ object JsIrBuilder {
         ).also {
             descriptor.bind(it)
             it.initializer = initializer
+            it.parent = parent
         }
     }
 

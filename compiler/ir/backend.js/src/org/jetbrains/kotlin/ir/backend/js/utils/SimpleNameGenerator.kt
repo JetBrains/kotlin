@@ -93,7 +93,7 @@ class SimpleNameGenerator : NameGenerator {
 
             val descriptor = declaration.descriptor
 
-            if (declaration.isDynamic) {
+            if (declaration.isDynamic()) {
                 return@getOrPut nameDeclarator(declaration.descriptor.name.asString())
             }
 

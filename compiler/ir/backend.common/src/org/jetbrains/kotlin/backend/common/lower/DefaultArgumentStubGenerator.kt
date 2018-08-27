@@ -15,17 +15,16 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDesc
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -142,9 +141,9 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                 }
             }
             // Remove default argument initializers.
-//            irFunction.valueParameters.forEach {
-//                it.defaultValue = null
-//            }
+            irFunction.valueParameters.forEach {
+                it.defaultValue = IrExpressionBodyImpl(IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub"))
+            }
 
             return listOf(irFunction, newIrFunction)
         }
@@ -377,7 +376,9 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
     val newTypeParameters = typeParameters.map { it.copyTo(newFunction) }
 
     newFunction.returnType = returnType
-    newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(newFunction)
+    newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.run {
+        IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also { it.parent = newFunction }
+    }
     newFunction.extensionReceiverParameter = extensionReceiverParameter?.copyTo(newFunction)
     newFunction.valueParameters += newValueParameters
     newFunction.typeParameters += newTypeParameters
@@ -399,7 +400,7 @@ private fun buildFunctionDeclaration(irFunction: IrFunction): IrFunction {
                 irFunction.name,
                 irFunction.visibility,
                 irFunction.isInline,
-                irFunction.isExternal,
+                false,
                 false
             ).also {
                 descriptor.bind(it)
@@ -417,10 +418,10 @@ private fun buildFunctionDeclaration(irFunction: IrFunction): IrFunction {
                 IrSimpleFunctionSymbolImpl(descriptor),
                 name,
                 irFunction.visibility,
-                irFunction.modality,
+                Modality.FINAL,
                 irFunction.isInline,
-                irFunction.isExternal,
-                irFunction.isTailrec,
+                false,
+                false,
                 irFunction.isSuspend
             ).also {
                 descriptor.bind(it)

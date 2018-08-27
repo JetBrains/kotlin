@@ -102,8 +102,7 @@ private class ReturnableBlockTransformer(
         if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression, data)
 
         val variable by lazy {
-            JsIrBuilder.buildVar(expression.type, "tmp\$ret\$${data.labelCnt++}", true)
-                .also { it.parent = data.containingDeclaration }
+            JsIrBuilder.buildVar(expression.type, data.containingDeclaration, "tmp\$ret\$${data.labelCnt++}", true)
         }
 
         val loop by lazy {

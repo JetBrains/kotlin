@@ -30,14 +30,15 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isStatic
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -121,7 +122,10 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             IrDeclarationOrigin.BRIDGE
         ).apply {
 
-            dispatchReceiverParameter = bridge.dispatchReceiverParameter?.copyTo(this)
+            // TODO: should dispatch receiver be copied?
+            dispatchReceiverParameter = bridge.dispatchReceiverParameter?.run {
+                IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also { it.parent = this@apply }
+            }
             extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
             typeParameters += bridge.typeParameters
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
@@ -185,9 +189,8 @@ class FunctionAndSignature(val function: IrSimpleFunction) {
 
     private val signature = Signature(
         function.name,
-        // TODO: should kotlinTypes be used here?
-        function.extensionReceiverParameter?.type?.toKotlinType()?.toString(),
-        function.valueParameters.map { it.type.toKotlinType().toString() }
+        function.extensionReceiverParameter?.type?.render(),
+        function.valueParameters.map { it.type.render() }
     )
 
     override fun equals(other: Any?) =

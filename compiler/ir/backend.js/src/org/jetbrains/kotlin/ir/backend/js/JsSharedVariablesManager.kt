@@ -133,7 +133,9 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         declaration.parent = implicitDeclarationsFile
         closureBoxType = IrSimpleTypeImpl(declaration.symbol, false, emptyList(), emptyList())
         declaration.thisReceiver =
-                JsIrBuilder.buildValueParameter(Name.special("<this>"), -1, closureBoxType, IrDeclarationOrigin.INSTANCE_RECEIVER)
+                JsIrBuilder.buildValueParameter(Name.special("<this>"), -1, closureBoxType, IrDeclarationOrigin.INSTANCE_RECEIVER).apply {
+                    parent = declaration
+                }
         implicitDeclarationsFile.declarations += declaration
 
         return declaration

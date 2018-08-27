@@ -75,7 +75,7 @@ class StateMachineBuilder(
 
     val entryState = SuspendState(unit)
     val rootExceptionTrap = buildExceptionTrapState()
-    private val globalExceptionVar = JsIrBuilder.buildVar(exceptionSymbol.owner.type, "e").also { it.parent = function.owner }
+    private val globalExceptionVar = JsIrBuilder.buildVar(exceptionSymbol.owner.type, function.owner, "e")
     lateinit var globalCatch: IrCatch
 
     fun finalizeStateMachine() {
@@ -719,5 +719,5 @@ class StateMachineBuilder(
         )
 
     private fun tempVar(type: IrType, name: String = "tmp") =
-        JsIrBuilder.buildVar(type, name).also { it.parent = function.owner }
+        JsIrBuilder.buildVar(type, function.owner, name)
 }
