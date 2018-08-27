@@ -179,42 +179,14 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
         return ThrowingCaller
     }
 
-    fun isInsideClassCompanionObject(): Boolean {
-        val possibleCompanionObject = property.descriptor.containingDeclaration
-        return DescriptorUtils.isCompanionObject(possibleCompanionObject) &&
-                !DescriptorUtils.isInterface(possibleCompanionObject.containingDeclaration)
-    }
+    fun isJvmStaticProperty(): Boolean =
+        property.descriptor.annotations.hasAnnotation(JVM_STATIC)
 
-    fun isInsideJvmInterfaceCompanionObject(): Boolean {
-        val possibleCompanionObject = property.descriptor.containingDeclaration
-        return DescriptorUtils.isCompanionObject(possibleCompanionObject) &&
-                (DescriptorUtils.isInterface(possibleCompanionObject.containingDeclaration) ||
-                        DescriptorUtils.isAnnotationClass(possibleCompanionObject.containingDeclaration))
-    }
-
-    fun isInsideInterfaceCompanionObjectWithJvmField(): Boolean {
-        val propertyDescriptor = property.descriptor
-        if (propertyDescriptor !is DeserializedPropertyDescriptor || !isInsideJvmInterfaceCompanionObject()) return false
-        return JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyDescriptor.proto)
-    }
-
-    fun isJvmStaticProperty() =
-        property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
-
-    fun isNotNullProperty() =
+    fun isNotNullProperty(): Boolean =
         !TypeUtils.isNullableType(property.descriptor.type)
 
     fun computeFieldCaller(field: Field): Caller<Field> = when {
-        isInsideClassCompanionObject() || isInsideInterfaceCompanionObjectWithJvmField() -> {
-            val klass = (descriptor.containingDeclaration as ClassDescriptor).toJavaClass()!!
-            if (isGetter)
-                if (isBound) CallerImpl.BoundClassCompanionFieldGetter(field, klass)
-                else CallerImpl.ClassCompanionFieldGetter(field, klass)
-            else
-                if (isBound) CallerImpl.BoundClassCompanionFieldSetter(field, klass)
-                else CallerImpl.ClassCompanionFieldSetter(field, klass)
-        }
-        !Modifier.isStatic(field.modifiers) ->
+        property.descriptor.isJvmFieldPropertyInCompanionObject() || !Modifier.isStatic(field.modifiers) ->
             if (isGetter)
                 if (isBound) CallerImpl.BoundInstanceFieldGetter(field, property.boundReceiver)
                 else CallerImpl.InstanceFieldGetter(field)
@@ -291,5 +263,17 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
             return if (isBound) CallerImpl.BoundInstanceMethod(accessor, property.boundReceiver)
             else CallerImpl.InstanceMethod(accessor)
         }
+    }
+}
+
+private fun PropertyDescriptor.isJvmFieldPropertyInCompanionObject(): Boolean {
+    val container = containingDeclaration
+    if (!DescriptorUtils.isCompanionObject(container)) return false
+
+    val outerClass = container.containingDeclaration
+    return when {
+        DescriptorUtils.isInterface(outerClass) || DescriptorUtils.isAnnotationClass(outerClass) ->
+            this is DeserializedPropertyDescriptor && JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto)
+        else -> true
     }
 }

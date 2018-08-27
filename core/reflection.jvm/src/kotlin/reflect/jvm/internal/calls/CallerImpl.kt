@@ -128,7 +128,7 @@ internal abstract class CallerImpl<out M : Member>(
 
     abstract class FieldGetter(
         field: ReflectField,
-        requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
+        requiresInstance: Boolean
     ) : CallerImpl<ReflectField>(
         field,
         field.genericType,
@@ -144,7 +144,7 @@ internal abstract class CallerImpl<out M : Member>(
     abstract class FieldSetter(
         field: ReflectField,
         private val notNull: Boolean,
-        requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
+        requiresInstance: Boolean
     ) : CallerImpl<ReflectField>(
         field,
         Void.TYPE,
@@ -164,9 +164,9 @@ internal abstract class CallerImpl<out M : Member>(
         }
     }
 
-    class StaticFieldGetter(field: ReflectField) : FieldGetter(field)
+    class StaticFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = false)
 
-    class InstanceFieldGetter(field: ReflectField) : FieldGetter(field)
+    class InstanceFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true)
 
     class JvmStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true) {
         override fun checkArguments(args: Array<*>) {
@@ -175,18 +175,7 @@ internal abstract class CallerImpl<out M : Member>(
         }
     }
 
-    class ClassCompanionFieldGetter(field: ReflectField, klass: Class<*>) : CallerImpl<ReflectField>(
-        field, field.genericType, klass, emptyArray()
-    ) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return member.get(args.first())
-        }
-    }
-
-    class BoundInstanceFieldGetter(field: ReflectField, private val boundReceiver: Any?) : FieldGetter(
-        field, requiresInstance = false
-    ) {
+    class BoundInstanceFieldGetter(field: ReflectField, private val boundReceiver: Any?) : FieldGetter(field, requiresInstance = false) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.get(boundReceiver)
@@ -195,18 +184,9 @@ internal abstract class CallerImpl<out M : Member>(
 
     class BoundJvmStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = false)
 
-    class BoundClassCompanionFieldGetter(field: ReflectField, private val boundReceiver: Any?) : FieldGetter(
-        field, requiresInstance = false
-    ) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return member.get(boundReceiver)
-        }
-    }
+    class StaticFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = false)
 
-    class StaticFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull)
-
-    class InstanceFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull)
+    class InstanceFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true)
 
     class JvmStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true) {
         override fun checkArguments(args: Array<*>) {
@@ -215,18 +195,8 @@ internal abstract class CallerImpl<out M : Member>(
         }
     }
 
-    class ClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) : CallerImpl<ReflectField>(
-        field, Void.TYPE, klass, arrayOf(field.genericType)
-    ) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return member.set(null, args.last())
-        }
-    }
-
-    class BoundInstanceFieldSetter(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) : FieldSetter(
-        field, notNull, false
-    ) {
+    class BoundInstanceFieldSetter(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) :
+        FieldSetter(field, notNull, requiresInstance = false) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.set(boundReceiver, args.first())
@@ -235,15 +205,6 @@ internal abstract class CallerImpl<out M : Member>(
 
     class BoundJvmStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(
         field, notNull, requiresInstance = false
-    ) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return member.set(null, args.last())
-        }
-    }
-
-    class BoundClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) : CallerImpl<ReflectField>(
-        field, Void.TYPE, klass, arrayOf(field.genericType)
     ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
