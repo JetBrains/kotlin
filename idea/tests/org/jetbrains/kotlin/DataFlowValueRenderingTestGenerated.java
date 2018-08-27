@@ -26,6 +26,7 @@ public class DataFlowValueRenderingTestGenerated extends AbstractDataFlowValueRe
     }
 
     public void testAllFilesPresentInDataFlowValueRendering() throws Exception {
+        assertTrue(false);
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/dataFlowValueRendering"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
