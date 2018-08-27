@@ -133,13 +133,13 @@ internal class KFunctionImpl private constructor(
     }
 
     private fun createStaticMethodCaller(member: Method) =
-        if (isBound) CallerImpl.BoundStaticMethod(member, boundReceiver) else CallerImpl.StaticMethod(member)
+        if (isBound) CallerImpl.Method.BoundStatic(member, boundReceiver) else CallerImpl.Method.Static(member)
 
     private fun createJvmStaticInObjectCaller(member: Method) =
-        if (isBound) CallerImpl.BoundJvmStaticInObject(member) else CallerImpl.JvmStaticInObject(member)
+        if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)
 
     private fun createInstanceMethodCaller(member: Method) =
-        if (isBound) CallerImpl.BoundInstanceMethod(member, boundReceiver) else CallerImpl.InstanceMethod(member)
+        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
 
     private fun createConstructorCaller(member: Constructor<*>) =
         if (isBound) CallerImpl.BoundConstructor(member, boundReceiver) else CallerImpl.Constructor(member)
