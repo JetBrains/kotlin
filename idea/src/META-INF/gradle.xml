@@ -10,4 +10,31 @@
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
     </extensions>
+
+    <!-- NATIVE PART -->
+    <application-components>
+        <component>
+            <implementation-class>org.jetbrains.konan.gradle.internal.KotlinNativeIdeInitializer</implementation-class>
+        </component>
+    </application-components>
+
+    <project-components>
+        <component>
+            <interface-class>org.jetbrains.konan.settings.KonanProjectComponent</interface-class>
+            <implementation-class>org.jetbrains.konan.gradle.GradleKonanProjectComponent</implementation-class>
+        </component>
+    </project-components>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
+        <konanModelProvider implementation="org.jetbrains.konan.gradle.GradleKonanModelProvider"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+        <projectResolve implementation="org.jetbrains.konan.gradle.KonanProjectResolver"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"/>
+    </extensions>
+    <!-- /NATIVE PART -->
 </idea-plugin>

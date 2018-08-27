@@ -33,22 +33,32 @@ internal class KonanDeserializedModuleDescriptorFactoryImpl(
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns,
-        packageAccessedHandler: PackageAccessedHandler?
-    ) = createDescriptorOptionalBuiltIns(library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler)
+        packageAccessedHandler: PackageAccessedHandler?,
+        customCapabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    ) = createDescriptorOptionalBuiltIns(
+        library,
+        languageVersionSettings,
+        storageManager,
+        builtIns,
+        packageAccessedHandler,
+        customCapabilities
+    )
 
     override fun createDescriptorAndNewBuiltIns(
         library: KonanLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
-        packageAccessedHandler: PackageAccessedHandler?
-    ) = createDescriptorOptionalBuiltIns(library, languageVersionSettings, storageManager, null, packageAccessedHandler)
+        packageAccessedHandler: PackageAccessedHandler?,
+        customCapabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    ) = createDescriptorOptionalBuiltIns(library, languageVersionSettings, storageManager, null, packageAccessedHandler, customCapabilities)
 
     private fun createDescriptorOptionalBuiltIns(
         library: KonanLibrary,
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
-        packageAccessedHandler: PackageAccessedHandler?
+        packageAccessedHandler: PackageAccessedHandler?,
+        customCapabilities: Map<ModuleDescriptor.Capability<*>, Any?>
     ): ModuleDescriptorImpl {
 
         val libraryProto = parseModuleHeader(library.moduleHeaderData)
@@ -57,9 +67,9 @@ internal class KonanDeserializedModuleDescriptorFactoryImpl(
         val moduleOrigin = DeserializedKonanModuleOrigin(library)
 
         val moduleDescriptor = if (builtIns != null)
-            descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
+            descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin, customCapabilities)
         else
-            descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
+            descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin, customCapabilities)
 
         val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 

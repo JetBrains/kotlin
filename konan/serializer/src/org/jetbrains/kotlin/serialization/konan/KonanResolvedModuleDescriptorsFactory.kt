@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.serialization.konan
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolveResult
@@ -33,7 +34,8 @@ interface KonanResolvedModuleDescriptorsFactory {
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        customAction: ((KonanLibrary, ModuleDescriptorImpl) -> Unit)? = null
+        customAction: ((KonanLibrary, ModuleDescriptorImpl) -> Unit)? = null,
+        customCapabilitiesGenerator: ((KonanLibrary) -> Map<ModuleDescriptor.Capability<*>, Any?>)? = null
     ): KonanResolvedModuleDescriptors
 }
 
