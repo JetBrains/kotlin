@@ -40,9 +40,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.KotlinModuleKind
-import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -345,6 +343,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val commonArguments = representativeTarget.compilerArgumentsForChunk(chunk).apply {
             reportOutputFiles = true
             version = true // Always report the version to help diagnosing user issues if they submit the compiler output
+            if (languageVersion == null) languageVersion = VersionView.RELEASED_VERSION.versionString
         }
 
         if (LOG.isDebugEnabled) {
