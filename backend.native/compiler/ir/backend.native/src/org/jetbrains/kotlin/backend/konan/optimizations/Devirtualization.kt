@@ -242,6 +242,9 @@ internal object Devirtualization {
                             .filterIsInstance<DataFlowIR.Type.Public>()
                             .filter { !it.isAbstract }
                             .forEach { addInstantiatingClass(it) }
+                } else {
+                    // String is implicitly created as argument of <main>.
+                    addInstantiatingClass(symbolTable.mapType(context.irBuiltIns.stringType))
                 }
                 // Traverse call graph from the roots.
                 rootSet.forEach { dfs(it) }
@@ -690,6 +693,12 @@ internal object Devirtualization {
             private var stack = mutableListOf<DataFlowIR.FunctionSymbol>()
 
             fun build() {
+                if (entryPoint != null) {
+                    // String arguments are implicitly put into the <args> array parameter of <main>.
+                    concreteClass(symbolTable.mapType(context.irBuiltIns.stringType).resolved()).addEdge(
+                            fieldNode(constraintGraph.arrayItemField)
+                    )
+                }
                 rootSet.forEach { createFunctionConstraintGraph(it, true)!! }
                 while (stack.isNotEmpty()) {
                     val symbol = stack.pop()
