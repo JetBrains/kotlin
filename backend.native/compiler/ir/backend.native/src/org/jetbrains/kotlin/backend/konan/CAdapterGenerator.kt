@@ -28,14 +28,14 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.annotations.*
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.isChildOf
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.annotations.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 private enum class ScopeKind {
@@ -232,14 +232,22 @@ private class ExportedElement(val kind: ElementKind,
                 LLVMSetLinkage(bridge, LLVMLinkage.LLVMExternalLinkage)
             }
             isClass -> {
-                // Produce type getter.
+                val classDescriptor = declaration as ClassDescriptor
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val getTypeFunction = LLVMAddFunction(context.llvmModule, cname, owner.kGetTypeFuncType)!!
+                // Produce type getter.
+                val getTypeFunction = LLVMAddFunction(context.llvmModule, "${cname}_type", owner.kGetTypeFuncType)!!
                 val builder = LLVMCreateBuilder()!!
                 val bb = LLVMAppendBasicBlock(getTypeFunction, "")!!
                 LLVMPositionBuilderAtEnd(builder, bb)
-                LLVMBuildRet(builder, context.ir.getFromCurrentModule(declaration as ClassDescriptor).typeInfoPtr.llvm)
+                LLVMBuildRet(builder, context.ir.getFromCurrentModule(classDescriptor).typeInfoPtr.llvm)
                 LLVMDisposeBuilder(builder)
+                // Produce instance getter if needed.
+                if (isSingletonObject) {
+                    generateFunction(owner.codegen, owner.kGetObjectFuncType, "${cname}_instance") {
+                        val value = getObjectValue(context.ir.get(classDescriptor), ExceptionHandler.Caller, null)
+                        ret(value)
+                    }
+                }
             }
             isEnumEntry -> {
                 // Produce entry getter.
@@ -267,7 +275,7 @@ private class ExportedElement(val kind: ElementKind,
         }
     val isClass = declaration is ClassDescriptor && declaration.kind != ClassKind.ENUM_ENTRY
     val isEnumEntry = declaration is ClassDescriptor && declaration.kind == ClassKind.ENUM_ENTRY
-
+    val isSingletonObject = declaration is ClassDescriptor && DescriptorUtils.isObject(declaration)
 
     fun KotlinType.includeToSignature() = !this.isUnit()
 
@@ -279,7 +287,7 @@ private class ExportedElement(val kind: ElementKind,
         val original = descriptor.original as FunctionDescriptor
         val returned = when {
             original is ConstructorDescriptor -> uniqueName(original, shortName) to original.constructedClass
-        // Suspend functions actually return 'Any?'.
+            // Suspend functions actually return 'Any?'.
             original.isSuspend -> uniqueName(original, shortName) to
                     TypeUtils.getClassDescriptor(owner.context.builtIns.nullableAnyType)!!
             else -> uniqueName(original, shortName) to TypeUtils.getClassDescriptor(original.returnType!!)!!
@@ -345,7 +353,20 @@ private class ExportedElement(val kind: ElementKind,
 
     fun makeClassDeclaration(): String {
         assert(isClass)
-        return "extern \"C\" ${owner.prefix}_KType* $cname(void);"
+        val typeGetter = "extern \"C\" ${owner.prefix}_KType* ${cname}_type(void);"
+        val instanceGetter = if (isSingletonObject) {
+            val objectClassC = owner.translateType(declaration as ClassDescriptor)
+            """
+            |
+            |extern "C" KObjHeader* ${cname}_instance(KObjHeader**);
+            |static $objectClassC ${cname}_instance_impl(void) {
+            |  KObjHolder result_holder;
+            |  KObjHeader* result = ${cname}_instance(result_holder.slot());
+            |  return $objectClassC { .pinned = CreateStablePointer(result)};
+            |}
+            """.trimMargin()
+        } else ""
+        return "$typeGetter$instanceGetter"
     }
 
     fun makeEnumEntryDeclaration(): String {
@@ -416,7 +437,7 @@ private class ExportedElement(val kind: ElementKind,
             builder.append("  KObjHolder result_holder;\n")
             val clazz = scope.elements[0]
             assert(clazz.kind == ElementKind.TYPE)
-            builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}(), result_holder.slot());\n")
+            builder.append("  KObjHeader* result = AllocInstance((const KTypeInfo*)${clazz.cname}_type(), result_holder.slot());\n")
             args.add(0, "result")
         }
         if (!isVoidReturned && !isConstructor) {
@@ -669,8 +690,12 @@ internal class CAdapterGenerator(
                 when {
                     element.isFunction ->
                         output(element.makeFunctionPointerString(), indent)
-                    element.isClass ->
+                    element.isClass -> {
                         output("${prefix}_KType* (*_type)(void);", indent)
+                        if (element.isSingletonObject) {
+                            output("${translateType(element.declaration as ClassDescriptor)} (*_instance)();", indent)
+                        }
+                    }
                     element.isEnumEntry -> {
                         val enumClass = element.declaration.containingDeclaration as ClassDescriptor
                         output("${translateType(enumClass)} (*get)(); /* enum entry for ${element.name}. */", indent)
@@ -695,8 +720,11 @@ internal class CAdapterGenerator(
                 when {
                     element.isFunction ->
                         output("/* ${element.name} = */ ${element.cnameImpl}, ", indent)
-                    element.isClass ->
-                        output("/* Type for ${element.name} = */  ${element.cname}, ", indent)
+                    element.isClass -> {
+                        output("/* Type for ${element.name} = */  ${element.cname}_type, ", indent)
+                        if (element.isSingletonObject)
+                            output("/* Instance for ${element.name} = */ ${element.cname}_instance_impl, ", indent)
+                    }
                     element.isEnumEntry ->
                         output("/* enum entry getter ${element.name} = */  ${element.cname}_impl,", indent)
                 // TODO: handle properties.

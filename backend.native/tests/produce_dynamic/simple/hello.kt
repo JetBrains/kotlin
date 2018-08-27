@@ -45,6 +45,10 @@ val an_object = object : Codeable {
     override fun asCode() = 42
 }
 
+object Singleton {
+    override fun toString() = "I am single"
+}
+
 class Child : Base() {
     override fun fooParam(arg0: String, arg1: Int) = println("Child.fooParam: $arg0 $arg1")
 

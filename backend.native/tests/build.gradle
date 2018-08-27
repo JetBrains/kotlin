@@ -2896,6 +2896,7 @@ task produce_dynamic(type: DynamicKonanTest) {
                 "RW property is 239\n" +
                 "enum100 = 100\n" +
                 "object = 42\n" +
+                "singleton = I am single\n" +
                 "topLevel = 777 3\n"
 }
 
