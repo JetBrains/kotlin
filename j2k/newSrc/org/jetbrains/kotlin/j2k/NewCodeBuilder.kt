@@ -82,6 +82,7 @@ class NewCodeBuilder {
                     JKModalityModifier.Modality.OPEN -> "open"
                     JKModalityModifier.Modality.FINAL -> "final"
                     JKModalityModifier.Modality.ABSTRACT -> "abstract"
+                    JKModalityModifier.Modality.OVERRIDE -> "override"
                 }
             )
         }
