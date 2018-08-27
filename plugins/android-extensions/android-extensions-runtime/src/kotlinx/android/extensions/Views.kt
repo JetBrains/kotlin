@@ -1,4 +1,4 @@
-package gvfiqst.speso.app.util.extensions
+package kotlinx.android.extensions
 
 import android.view.View
 
