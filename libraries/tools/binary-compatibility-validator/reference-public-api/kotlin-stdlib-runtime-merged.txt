@@ -2696,11 +2696,14 @@ public final class kotlin/coroutines/EmptyCoroutineContext : java/io/Serializabl
 public abstract interface annotation class kotlin/coroutines/RestrictsSuspension : java/lang/annotation/Annotation {
 }
 
-public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation {
+public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
 	public fun <init> (Lkotlin/coroutines/Continuation;)V
+	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
 	public final fun getOrThrow ()Ljava/lang/Object;
+	public fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 	public fun resumeWith (Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class kotlin/coroutines/experimental/AbstractCoroutineContextElement : kotlin/coroutines/experimental/CoroutineContext$Element {
@@ -2849,6 +2852,11 @@ public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun createCoroutineUnintercepted (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
 	public static final fun intercepted (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+}
+
+public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFrame {
+	public abstract fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
+	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 }
 
 public final class kotlin/internal/PlatformImplementationsKt {
