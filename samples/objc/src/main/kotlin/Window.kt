@@ -32,7 +32,7 @@ private class Controller : NSObject() {
     fun onClick() {
         // Execute some async action on button click.
         dispatch_async_f(asyncQueue, DetachedObjectGraph {
-            Data(clock_gettime_nsec_np(CLOCK_REALTIME.convert()))
+            Data(clock_gettime_nsec_np(CLOCK_REALTIME))
         }.asCPointer(), staticCFunction {
             it ->
             initRuntimeIfNeeded()

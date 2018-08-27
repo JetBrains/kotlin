@@ -71,7 +71,7 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
     }
 
     private fun getTime(): Double {
-        clock_gettime(platform.posix.CLOCK_MONOTONIC.convert(), now)
+        clock_gettime(platform.posix.CLOCK_MONOTONIC, now)
         return now.pointed.tv_sec + now.pointed.tv_nsec / 1e9
     }
 
@@ -140,7 +140,7 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
         while (state == State.PAUSED) {
             audio.pause()
             input.check()
-            usleep(1u * 1000u)
+            usleep(1 * 1000)
         }
         audio.resume()
     }
@@ -152,14 +152,14 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
                 if (!decoder.audioVideoSynced()) {
                     println("Resynchronizing video with audio")
                     while (!decoder.audioVideoSynced() && state == State.PLAYING) {
-                        usleep(500u)
+                        usleep(500)
                         input.check()
                     }
                 }
             }
         } else {
             // For pure sound, playback is driven by demand.
-            usleep(10u * 1000u)
+            usleep(10 * 1000)
         }
     }
 }

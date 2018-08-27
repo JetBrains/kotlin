@@ -124,7 +124,7 @@ private class VideoDecoder(
         dispose = ::sws_freeContext
     )
     private val scaledFrameSize = avpicture_get_size(avPixelFormat, windowSize.w, windowSize.h)
-    private val buffer: UByteArray = UByteArray(scaledFrameSize) { 0u }
+    private val buffer: UByteArray = UByteArray(scaledFrameSize)
 
     private val videoQueue = Queue<VideoFrame>(100)
 
