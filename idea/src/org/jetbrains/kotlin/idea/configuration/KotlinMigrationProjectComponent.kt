@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -94,10 +93,12 @@ class KotlinMigrationProjectComponent(val project: Project) {
             if (migrationNotificationDialog.isOK) {
                 val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
 
-                val dataContext = DataManager.getInstance().dataContextFromFocus.result
-                val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
+                val dataContext = getDataContextFromDialog(migrationNotificationDialog)
+                if (dataContext != null) {
+                    val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
 
-                action.actionPerformed(actionEvent)
+                    action.actionPerformed(actionEvent)
+                }
             }
         }
     }
