@@ -50,7 +50,11 @@ public inline fun ULongRange.random(): ULong {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntRange.random(random: Random): UInt {
-    return random.nextUInt(this)
+    try {
+        return random.nextUInt(this)
+    } catch(e: IllegalArgumentException) {
+        throw NoSuchElementException(e.message)
+    }
 }
 
 /**
@@ -61,7 +65,11 @@ public fun UIntRange.random(random: Random): UInt {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongRange.random(random: Random): ULong {
-    return random.nextULong(this)
+    try {
+        return random.nextULong(this)
+    } catch(e: IllegalArgumentException) {
+        throw NoSuchElementException(e.message)
+    }
 }
 
 /**

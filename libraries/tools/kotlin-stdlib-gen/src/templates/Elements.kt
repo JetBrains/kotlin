@@ -877,7 +877,13 @@ object Elements : TemplateGroupBase() {
                     PrimitiveType.Char -> "nextInt(first.toInt(), last.toInt() + 1).toChar()"
                     else -> "next$primitive(this)"
                 }
-                """return random.$expr"""
+                """
+                try {
+                    return random.$expr
+                } catch(e: IllegalArgumentException) {
+                    throw NoSuchElementException(e.message)
+                }
+                """
             }
         }
     }
