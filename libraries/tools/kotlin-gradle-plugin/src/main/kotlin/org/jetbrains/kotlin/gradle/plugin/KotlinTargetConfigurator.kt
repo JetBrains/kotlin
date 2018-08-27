@@ -341,7 +341,7 @@ open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
 
         val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
 
-        target.disambiguationClassifier?.let { jar.classifier = it }
+        target.disambiguationClassifier?.let { jar.appendix = it.toLowerCase() }
 
         // Workaround: adding the artifact during configuration seems to interfere with the Java plugin, which results into missing
         // task dependency 'assemble -> jar' if the Java plugin is applied after this steps

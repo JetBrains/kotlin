@@ -46,9 +46,9 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTasksExecuted(*compileTasksNames.toTypedArray(), ":jvm6Jar", ":nodeJsJar", ":metadataJar")
 
                 val groupDir = projectDir.resolve("repo/com/example")
-                val jvmJarName = "sample-lib-jvm6/1.0/sample-lib-jvm6-1.0-jvm6.jar"
-                val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0-nodeJs.jar"
-                val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0-metadata.jar"
+                val jvmJarName = "sample-lib-jvm6/1.0/sample-lib-jvm6-1.0.jar"
+                val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.jar"
+                val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0.jar"
                 val wasmKlibName = "sample-lib-wasm32/1.0/sample-lib-wasm32-1.0.klib"
                 val nativeKlibName = "sample-lib-$hostTargetName/1.0/sample-lib-$hostTargetName-1.0.klib"
 
@@ -383,7 +383,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("printMetadataFiles") {
                 assertSuccessful()
 
-                val expectedFileName = "sample-lib-1.0-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}.jar"
+                val expectedFileName = "sample-lib-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}-1.0.jar"
 
                 val paths = metadataDependencyRegex.findAll(output).map { it.groupValues[1] to it.groupValues[2] }.toSet()
 
