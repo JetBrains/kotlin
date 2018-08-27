@@ -350,8 +350,8 @@ class LocalDeclarationsLowering(
             override fun visitReturn(expression: IrReturn): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val oldReturnTarget = expression.returnTargetSymbol.owner as IrFunction
-                val newReturnTarget = oldReturnTarget.transformed ?: return expression
+                val oldReturnTarget = expression.returnTargetSymbol.owner
+                val newReturnTarget = (oldReturnTarget as? IrFunction)?.transformed ?: return expression
 
                 return IrReturnImpl(
                     expression.startOffset, expression.endOffset,
@@ -502,8 +502,7 @@ class LocalDeclarationsLowering(
                 oldDeclaration.origin,
                 newSymbol,
                 newName,
-                // TODO: change to PRIVATE when issue with CallableReferenceLowering in Jvm BE is fixed
-                Visibilities.PUBLIC,
+                Visibilities.PRIVATE,
                 Modality.FINAL,
                 oldDeclaration.isInline,
                 oldDeclaration.isExternal,

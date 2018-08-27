@@ -294,6 +294,10 @@ open class WrappedClassConstructorDescriptor(
 ) : ClassConstructorDescriptor, WrappedCallableDescriptor<IrConstructor>(annotations, sourceElement) {
     override fun getContainingDeclaration() = (owner.parent as IrClass).descriptor
 
+    override fun getDispatchReceiverParameter() = owner.dispatchReceiverParameter?.run {
+        (containingDeclaration.containingDeclaration as ClassDescriptor).thisAsReceiverParameter
+    }
+
     override fun getTypeParameters() = owner.typeParameters.map { it.descriptor }
     override fun getValueParameters() = owner.valueParameters.asSequence()
         .mapNotNull { it.descriptor as? ValueParameterDescriptor }
