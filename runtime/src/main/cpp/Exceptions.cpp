@@ -172,7 +172,9 @@ void ThrowException(KRef exception) {
 #endif
 }
 
-#if KONAN_OBJC_INTEROP
+// Some libstdc++-based targets has limited support for std::current_exception and other C++11 functions.
+// This restriction can be lifted later when toolchains will be updated.
+#if KONAN_HAS_CXX11_EXCEPTION_FUNCTIONS
 
 void ReportUnhandledException(KRef e);
 
@@ -180,6 +182,7 @@ static void (*oldTerminateHandler)() = nullptr;
 
 static void KonanTerminateHandler() {
   auto currentException = std::current_exception();
+  RuntimeCheck(oldTerminateHandler != nullptr, "Underlying exception handler is not set.");
   if (!currentException) {
     // No current exception.
     oldTerminateHandler();
@@ -205,7 +208,6 @@ void SetKonanTerminateHandler() {
 
   if (oldTerminateHandler != nullptr) return; // Already initialized.
 
-  oldTerminateHandler = std::get_terminate(); // If termination happens between `set_terminate` and assignment.
   oldTerminateHandler = std::set_terminate(&KonanTerminateHandler);
 }
 

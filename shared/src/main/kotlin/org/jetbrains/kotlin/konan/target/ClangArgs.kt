@@ -120,44 +120,82 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     val clangArgsSpecificForKonanSources
         get() = when (target) {
             KonanTarget.LINUX_X64 ->
-                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64")
+                listOf("-DUSE_GCC_UNWIND=1",
+                        "-DUSE_ELF_SYMBOLS=1",
+                        "-DELFSIZE=64",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.LINUX_ARM32_HFP ->
-                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
+                listOf("-DUSE_GCC_UNWIND=1",
+                        "-DUSE_ELF_SYMBOLS=1",
+                        "-DELFSIZE=32")
 
             KonanTarget.LINUX_MIPS32 ->
-                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
+                listOf("-DUSE_GCC_UNWIND=1",
+                        "-DUSE_ELF_SYMBOLS=1",
+                        "-DELFSIZE=32")
 
             KonanTarget.LINUX_MIPSEL32 ->
-                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32")
+                listOf("-DUSE_GCC_UNWIND=1",
+                        "-DUSE_ELF_SYMBOLS=1",
+                        "-DELFSIZE=32")
 
             KonanTarget.MINGW_X64 ->
-                listOf("-DUSE_GCC_UNWIND=1", "-DUSE_PE_COFF_SYMBOLS=1", "-DKONAN_WINDOWS=1", "-DKONAN_NO_MEMMEM=1")
+                listOf("-DUSE_GCC_UNWIND=1",
+                        "-DUSE_PE_COFF_SYMBOLS=1",
+                        "-DKONAN_WINDOWS=1",
+                        "-DKONAN_NO_MEMMEM=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.MACOS_X64 ->
-                listOf("-DKONAN_OSX=1", "-DKONAN_OBJC_INTEROP=1")
+                listOf("-DKONAN_OSX=1",
+                        "-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 ->
-                listOf("-DKONAN_OBJC_INTEROP=1")
+                listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.IOS_X64 ->
-                listOf("-DKONAN_OBJC_INTEROP=1")
+                listOf("-DKONAN_OBJC_INTEROP=1",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.ANDROID_ARM32 ->
-                listOf("-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=32", "-DKONAN_ANDROID")
+                listOf("-D__ANDROID__",
+                        "-DUSE_GCC_UNWIND=1",
+                        "-DUSE_ELF_SYMBOLS=1",
+                        "-DELFSIZE=32",
+                        "-DKONAN_ANDROID")
 
             KonanTarget.ANDROID_ARM64 ->
-                listOf("-D__ANDROID__", "-DUSE_GCC_UNWIND=1", "-DUSE_ELF_SYMBOLS=1", "-DELFSIZE=64", "-DKONAN_ANDROID")
+                listOf("-D__ANDROID__",
+                        "-DUSE_GCC_UNWIND=1",
+                        "-DUSE_ELF_SYMBOLS=1",
+                        "-DELFSIZE=64",
+                        "-DKONAN_ANDROID",
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
 
             KonanTarget.WASM32 ->
-                listOf("-DKONAN_WASM=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
-                        "-DKONAN_INTERNAL_DLMALLOC=1", "-DKONAN_INTERNAL_SNPRINTF=1",
-                        "-DKONAN_INTERNAL_NOW=1", "-DKONAN_NO_MEMMEM", "-DKONAN_NO_CTORS_SECTION=1")
+                listOf("-DKONAN_WASM=1",
+                        "-DKONAN_NO_FFI=1",
+                        "-DKONAN_NO_THREADS=1",
+                        "-DKONAN_NO_EXCEPTIONS=1",
+                        "-DKONAN_INTERNAL_DLMALLOC=1",
+                        "-DKONAN_INTERNAL_SNPRINTF=1",
+                        "-DKONAN_INTERNAL_NOW=1",
+                        "-DKONAN_NO_MEMMEM",
+                        "-DKONAN_NO_CTORS_SECTION=1")
 
             is KonanTarget.ZEPHYR ->
-                listOf( "-DKONAN_ZEPHYR=1", "-DKONAN_NO_FFI=1", "-DKONAN_NO_THREADS=1", "-DKONAN_NO_EXCEPTIONS=1",
-                        "-DKONAN_NO_MATH=1", "-DKONAN_INTERNAL_SNPRINTF=1", "-DKONAN_INTERNAL_NOW=1",
-                        "-DKONAN_NO_MEMMEM=1", "-DKONAN_NO_CTORS_SECTION=1")
+                listOf( "-DKONAN_ZEPHYR=1",
+                        "-DKONAN_NO_FFI=1",
+                        "-DKONAN_NO_THREADS=1",
+                        "-DKONAN_NO_EXCEPTIONS=1",
+                        "-DKONAN_NO_MATH=1",
+                        "-DKONAN_INTERNAL_SNPRINTF=1",
+                        "-DKONAN_INTERNAL_NOW=1",
+                        "-DKONAN_NO_MEMMEM=1",
+                        "-DKONAN_NO_CTORS_SECTION=1")
         }
 
     private val host = HostManager.host
