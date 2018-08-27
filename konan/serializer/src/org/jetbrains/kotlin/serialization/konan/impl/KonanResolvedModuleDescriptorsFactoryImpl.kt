@@ -41,7 +41,8 @@ class KonanResolvedModuleDescriptorsFactoryImpl(
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
-        customAction: ((KonanLibrary, ModuleDescriptorImpl) -> Unit)?
+        customAction: ((KonanLibrary, ModuleDescriptorImpl) -> Unit)?,
+        customCapabilitiesGenerator: ((KonanLibrary) -> Map<ModuleDescriptor.Capability<*>, Any?>)?
     ): KonanResolvedModuleDescriptors {
 
         val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
@@ -52,9 +53,11 @@ class KonanResolvedModuleDescriptorsFactoryImpl(
         resolvedLibraries.forEach { library, packageAccessedHandler ->
             profile("Loading ${library.libraryName}") {
 
+                val customCapabilities = customCapabilitiesGenerator?.invoke(library) ?: emptyMap()
+
                 // MutableModuleContext needs ModuleDescriptorImpl, rather than ModuleDescriptor.
                 val moduleDescriptor = createDescriptorOptionalBuiltsIns(
-                    library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler
+                    library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler, customCapabilities
                 )
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
@@ -120,11 +123,25 @@ class KonanResolvedModuleDescriptorsFactoryImpl(
         languageVersionSettings: LanguageVersionSettings,
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns?,
-        packageAccessedHandler: PackageAccessedHandler?
+        packageAccessedHandler: PackageAccessedHandler?,
+        customCapabilities: Map<ModuleDescriptor.Capability<*>, Any?>
     ) = if (builtIns != null)
-        moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessedHandler)
+        moduleDescriptorFactory.createDescriptor(
+            library,
+            languageVersionSettings,
+            storageManager,
+            builtIns,
+            packageAccessedHandler,
+            customCapabilities
+        )
     else
-        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager, packageAccessedHandler)
+        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
+            library,
+            languageVersionSettings,
+            storageManager,
+            packageAccessedHandler,
+            customCapabilities
+        )
 }
 
 /**
