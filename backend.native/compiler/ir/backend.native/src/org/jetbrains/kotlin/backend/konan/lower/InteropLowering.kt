@@ -674,6 +674,39 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
         }
     }
 
+    override fun visitProperty(declaration: IrProperty): IrStatement {
+        val backingField = declaration.backingField
+        return if (declaration.isConst && backingField?.isStatic == true && context.config.isInteropStubs) {
+            // Transform top-level `const val x = 42` to `val x get() = 42`.
+            // Generally this transformation is just an optimization to ensure that interop constants
+            // don't require any storage and/or initialization at program startup.
+            // Also it is useful due to uncertain design of top-level stored properties in Kotlin/Native.
+            val initializer = backingField.initializer!!.expression
+            declaration.backingField = null
+
+            val getter = declaration.getter!!
+            val getterBody = getter.body!! as IrBlockBody
+            getterBody.statements.clear()
+            getterBody.statements += IrReturnImpl(
+                    declaration.startOffset,
+                    declaration.endOffset,
+                    context.irBuiltIns.nothingType,
+                    getter.symbol,
+                    initializer
+            )
+            // Note: in interop stubs const val initializer is either `IrConst` or quite simple expression,
+            // so it is ok to compute it every time.
+
+            assert(declaration.setter == null)
+            assert(!declaration.isVar)
+
+            declaration.transformChildrenVoid()
+            declaration
+        } else {
+            super.visitProperty(declaration)
+        }
+    }
+
     private fun IrBuilderWithScope.callAllocAndInit(
             classPtr: IrExpression,
             initMethodInfo: ObjCMethodInfo,

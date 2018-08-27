@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.library.libraryResolver
+import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
@@ -103,6 +104,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val friendModuleFiles: Set<File> =
             configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
+
+    internal val manifestProperties = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
+        File(it).loadProperties()
+    }
+
+    internal val isInteropStubs: Boolean get() = manifestProperties?.getProperty("interop") == "true"
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 

@@ -65,7 +65,7 @@ internal fun produceOutput(context: Context, phaser: PhaseManager) {
             val abiVersion = context.config.currentAbiVersion
             val target = context.config.target
             val nopack = config.getBoolean(KonanConfigKeys.NOPACK)
-            val manifest = config.get(KonanConfigKeys.MANIFEST_FILE)
+            val manifestProperties = context.config.manifestProperties
 
             val library = buildLibrary(
                 context.config.nativeLibraries, 
@@ -78,7 +78,7 @@ internal fun produceOutput(context: Context, phaser: PhaseManager) {
                 libraryName, 
                 llvmModule,
                 nopack,
-                manifest,
+                manifestProperties,
                 context.dataFlowGraph)
 
             context.library = library

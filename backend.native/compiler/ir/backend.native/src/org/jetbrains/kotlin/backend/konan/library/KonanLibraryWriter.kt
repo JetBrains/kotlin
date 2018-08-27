@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.library
 
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.konan.library.KonanLibrary
+import java.util.*
 
 const val KLIB_CURRENT_ABI_VERSION = 1
 
@@ -16,7 +17,7 @@ interface KonanLibraryWriter {
     fun addIncludedBinary(library: String)
     fun addKotlinBitcode(llvmModule: LLVMModuleRef)
     fun addLinkDependencies(libraries: List<KonanLibrary>)
-    fun addManifestAddend(path: String)
+    fun addManifestAddend(properties: Properties)
     fun addDataFlowGraph(dataFlowGraph: ByteArray)
     val mainBitcodeFileName: String
     fun commit()

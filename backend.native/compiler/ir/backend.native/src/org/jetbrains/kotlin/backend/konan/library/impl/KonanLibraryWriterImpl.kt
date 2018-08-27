@@ -88,8 +88,7 @@ class LibraryWriterImpl(
         }
     }
 
-    override fun addManifestAddend(path: String) {
-        val properties = File(path).loadProperties()
+    override fun addManifestAddend(properties: Properties) {
         manifestProperties.putAll(properties)
     }
 
@@ -117,7 +116,7 @@ internal fun buildLibrary(
         moduleName: String,
         llvmModule: LLVMModuleRef,
         nopack: Boolean,
-        manifest: String?,
+        manifestProperties: Properties?,
         dataFlowGraph: ByteArray?): KonanLibraryWriter {
 
     val library = LibraryWriterImpl(output, moduleName, abiVersion, target, nopack)
@@ -130,7 +129,7 @@ internal fun buildLibrary(
     included.forEach {
         library.addIncludedBinary(it)
     }
-    manifest ?.let { library.addManifestAddend(it) }
+    manifestProperties?.let { library.addManifestAddend(it) }
     library.addLinkDependencies(linkDependencies)
     dataFlowGraph?.let { library.addDataFlowGraph(it) }
 
