@@ -58,7 +58,11 @@ public inline fun CharRange.random(): Char {
  */
 @SinceKotlin("1.3")
 public fun IntRange.random(random: Random): Int {
-    return random.nextInt(this)
+    try {
+        return random.nextInt(this)
+    } catch(e: IllegalArgumentException) {
+        throw NoSuchElementException(e.message)
+    }
 }
 
 /**
@@ -68,7 +72,11 @@ public fun IntRange.random(random: Random): Int {
  */
 @SinceKotlin("1.3")
 public fun LongRange.random(random: Random): Long {
-    return random.nextLong(this)
+    try {
+        return random.nextLong(this)
+    } catch(e: IllegalArgumentException) {
+        throw NoSuchElementException(e.message)
+    }
 }
 
 /**
@@ -78,7 +86,11 @@ public fun LongRange.random(random: Random): Long {
  */
 @SinceKotlin("1.3")
 public fun CharRange.random(random: Random): Char {
-    return random.nextInt(first.toInt(), last.toInt() + 1).toChar()
+    try {
+        return random.nextInt(first.toInt(), last.toInt() + 1).toChar()
+    } catch(e: IllegalArgumentException) {
+        throw NoSuchElementException(e.message)
+    }
 }
 
 /**
