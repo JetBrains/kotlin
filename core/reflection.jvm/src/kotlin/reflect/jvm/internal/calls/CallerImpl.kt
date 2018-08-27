@@ -12,7 +12,7 @@ import java.lang.reflect.Constructor as ReflectConstructor
 import java.lang.reflect.Field as ReflectField
 import java.lang.reflect.Method as ReflectMethod
 
-internal abstract class CallerImpl<out M : Member>(
+internal sealed class CallerImpl<out M : Member>(
     final override val member: M,
     final override val returnType: Type,
     val instanceClass: Class<*>?,
@@ -26,8 +26,6 @@ internal abstract class CallerImpl<out M : Member>(
             throw IllegalArgumentException("An object member requires the object instance passed as the first argument.")
         }
     }
-
-    // Constructors
 
     class Constructor(constructor: ReflectConstructor<*>) : CallerImpl<ReflectConstructor<*>>(
         constructor,
@@ -57,9 +55,7 @@ internal abstract class CallerImpl<out M : Member>(
         }
     }
 
-    // Methods
-
-    abstract class Method(
+    sealed class Method(
         method: ReflectMethod,
         requiresInstance: Boolean = !Modifier.isStatic(method.modifiers),
         parameterTypes: Array<Type> = method.genericParameterTypes
@@ -77,56 +73,54 @@ internal abstract class CallerImpl<out M : Member>(
             // If this is a Unit function, the method returns void, Method#invoke returns null, while we should return Unit
             return if (isVoidMethod) Unit else result
         }
-    }
 
-    class StaticMethod(method: ReflectMethod) : Method(method) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return callMethod(null, args)
+        class Static(method: ReflectMethod) : Method(method) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                return callMethod(null, args)
+            }
+        }
+
+        class Instance(method: ReflectMethod) : Method(method) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                return callMethod(args[0], args.dropFirst())
+            }
+        }
+
+        class JvmStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = true) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                checkObjectInstance(args.firstOrNull())
+                return callMethod(null, args.dropFirst())
+            }
+        }
+
+        class BoundStatic(method: ReflectMethod, private val boundReceiver: Any?) : Method(
+            method, requiresInstance = false, parameterTypes = method.genericParameterTypes.dropFirst()
+        ) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                return callMethod(null, arrayOf(boundReceiver, *args))
+            }
+        }
+
+        class BoundInstance(method: ReflectMethod, private val boundReceiver: Any?) : Method(method, requiresInstance = false) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                return callMethod(boundReceiver, args)
+            }
+        }
+
+        class BoundJvmStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = false) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                return callMethod(null, args)
+            }
         }
     }
 
-    class InstanceMethod(method: ReflectMethod) : Method(method) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return callMethod(args[0], args.dropFirst())
-        }
-    }
-
-    class JvmStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = true) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            checkObjectInstance(args.firstOrNull())
-            return callMethod(null, args.dropFirst())
-        }
-    }
-
-    class BoundStaticMethod(method: ReflectMethod, private val boundReceiver: Any?) : Method(
-        method, requiresInstance = false, parameterTypes = method.genericParameterTypes.dropFirst()
-    ) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return callMethod(null, arrayOf(boundReceiver, *args))
-        }
-    }
-
-    class BoundInstanceMethod(method: ReflectMethod, private val boundReceiver: Any?) : Method(method, requiresInstance = false) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return callMethod(boundReceiver, args)
-        }
-    }
-
-    class BoundJvmStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = false) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return callMethod(null, args)
-        }
-    }
-
-    // Field accessors
-
-    abstract class FieldGetter(
+    sealed class FieldGetter(
         field: ReflectField,
         requiresInstance: Boolean
     ) : CallerImpl<ReflectField>(
@@ -139,9 +133,29 @@ internal abstract class CallerImpl<out M : Member>(
             checkArguments(args)
             return member.get(if (instanceClass != null) args.first() else null)
         }
+
+        class Static(field: ReflectField) : FieldGetter(field, requiresInstance = false)
+
+        class Instance(field: ReflectField) : FieldGetter(field, requiresInstance = true)
+
+        class JvmStaticInObject(field: ReflectField) : FieldGetter(field, requiresInstance = true) {
+            override fun checkArguments(args: Array<*>) {
+                super.checkArguments(args)
+                checkObjectInstance(args.firstOrNull())
+            }
+        }
+
+        class BoundInstance(field: ReflectField, private val boundReceiver: Any?) : FieldGetter(field, requiresInstance = false) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                return member.get(boundReceiver)
+            }
+        }
+
+        class BoundJvmStaticInObject(field: ReflectField) : FieldGetter(field, requiresInstance = false)
     }
 
-    abstract class FieldSetter(
+    sealed class FieldSetter(
         field: ReflectField,
         private val notNull: Boolean,
         requiresInstance: Boolean
@@ -162,53 +176,31 @@ internal abstract class CallerImpl<out M : Member>(
             checkArguments(args)
             return member.set(if (instanceClass != null) args.first() else null, args.last())
         }
-    }
 
-    class StaticFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = false)
+        class Static(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = false)
 
-    class InstanceFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true)
+        class Instance(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true)
 
-    class JvmStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = true) {
-        override fun checkArguments(args: Array<*>) {
-            super.checkArguments(args)
-            checkObjectInstance(args.firstOrNull())
+        class JvmStaticInObject(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true) {
+            override fun checkArguments(args: Array<*>) {
+                super.checkArguments(args)
+                checkObjectInstance(args.firstOrNull())
+            }
         }
-    }
 
-    class BoundInstanceFieldGetter(field: ReflectField, private val boundReceiver: Any?) : FieldGetter(field, requiresInstance = false) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return member.get(boundReceiver)
+        class BoundInstance(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) :
+            FieldSetter(field, notNull, requiresInstance = false) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                return member.set(boundReceiver, args.first())
+            }
         }
-    }
 
-    class BoundJvmStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = false)
-
-    class StaticFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = false)
-
-    class InstanceFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true)
-
-    class JvmStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = true) {
-        override fun checkArguments(args: Array<*>) {
-            super.checkArguments(args)
-            checkObjectInstance(args.firstOrNull())
-        }
-    }
-
-    class BoundInstanceFieldSetter(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) :
-        FieldSetter(field, notNull, requiresInstance = false) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return member.set(boundReceiver, args.first())
-        }
-    }
-
-    class BoundJvmStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(
-        field, notNull, requiresInstance = false
-    ) {
-        override fun call(args: Array<*>): Any? {
-            checkArguments(args)
-            return member.set(null, args.last())
+        class BoundJvmStaticInObject(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = false) {
+            override fun call(args: Array<*>): Any? {
+                checkArguments(args)
+                return member.set(null, args.last())
+            }
         }
     }
 
