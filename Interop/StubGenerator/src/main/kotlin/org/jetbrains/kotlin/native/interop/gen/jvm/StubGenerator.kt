@@ -518,15 +518,15 @@ class StubGenerator(
             it.name !in macroConstantsByName
         }
 
-        val typeName: String
+        val kotlinType: KotlinType
 
-        val baseKotlinType = mirror(e.baseType).argType.render(kotlinFile)
+        val baseKotlinType = mirror(e.baseType).argType
         if (e.isAnonymous) {
             if (constants.isNotEmpty()) {
                 out("// ${e.spelling}:")
             }
 
-            typeName = baseKotlinType
+            kotlinType = baseKotlinType
         } else {
             val typeMirror = mirror(EnumType(e))
             if (typeMirror !is TypeMirror.ByValue) {
@@ -538,18 +538,18 @@ class StubGenerator(
             val varTypeClassifier = typeMirror.pointedType.classifier
             val valueTypeClassifier = typeMirror.valueType.classifier
             out("typealias ${kotlinFile.declare(varTypeClassifier)} = $varTypeName")
-            out("typealias ${kotlinFile.declare(valueTypeClassifier)} = $baseKotlinType")
+            out("typealias ${kotlinFile.declare(valueTypeClassifier)} = ${baseKotlinType.render(kotlinFile)}")
 
             if (constants.isNotEmpty()) {
                 out("")
             }
 
-            typeName = typeMirror.valueType.render(kotlinFile)
+            kotlinType = typeMirror.valueType
         }
 
         for (constant in constants) {
             val literal = integerLiteral(e.baseType, constant.value) ?: continue
-            out("val ${constant.name.asSimpleName()}: $typeName = $literal")
+            out(topLevelValWithGetter(constant.name, kotlinType, literal))
         }
     }
 
