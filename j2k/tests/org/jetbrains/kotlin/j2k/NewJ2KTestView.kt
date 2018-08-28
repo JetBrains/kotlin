@@ -21,6 +21,7 @@ import java.awt.event.KeyListener
 import java.io.File
 import java.util.*
 import javax.swing.*
+import javax.swing.SwingUtilities.invokeLater
 
 object NewJ2KTestView {
 
@@ -72,7 +73,9 @@ object NewJ2KTestView {
             actionMap.put("COMPARE", object : AbstractAction() {
                 override fun actionPerformed(e: ActionEvent) {
                     val index = tabs.tabCount
-                    tabs.addTab("Select", CompareSelectTab(tabs, results))
+                    val tab = CompareSelectTab(tabs, results)
+                    tab.fillData()
+                    tabs.addTab("Select", tab)
                     tabs.selectedIndex = index
                 }
             })
@@ -80,22 +83,22 @@ object NewJ2KTestView {
     }
 
     private open class IndexTab(val tabs: JBTabbedPane) : JPanel() {
-        val list = JBList(object : AbstractListModel<String>() {
-            override fun getElementAt(index: Int): String {
-                val (date, results) = variants[index]
-                return "$index -> $date (${results.shortStat()})"
-            }
-
-            override fun getSize(): Int {
-                return variants.size
-            }
-        })
+        val model = DefaultListModel<String>()
+        val list = JBList(model)
 
         open fun action() {
             val (date, report) = variants[list.selectedIndex]
             val tabIndex = tabs.tabCount
             tabs.addTab("$date", ReportTab(tabs, tabIndex, report, report))
             tabs.selectedIndex = tabIndex
+        }
+
+        fun fillData() {
+            model.clear()
+            for ((index, variant) in variants.withIndex()) {
+                val (date, results) = variant
+                model.addElement("$index -> $date (${results.shortStat()})")
+            }
         }
 
         init {
@@ -156,51 +159,55 @@ object NewJ2KTestView {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        load()
+        invokeLater {
+            val frame = object : JFrame("New J2K Test View") {
+
+                val tabs = JBTabbedPane()
+                val index = IndexTab(tabs)
+
+                init {
+                    tabs.addTab("Index", index)
+
+                    this.rootPane.actionMap.put("ESCAPE", object : AbstractAction() {
+                        override fun actionPerformed(e: ActionEvent) {
+                            tabs.selectedIndex = 0
+                        }
+                    })
+
+                    this.rootPane.actionMap.put("CLOSE_TAB", object : AbstractAction() {
+                        override fun actionPerformed(e: ActionEvent) {
+                            if (tabs.selectedIndex != 0) {
+                                tabs.removeTabAt(tabs.selectedIndex)
+                            }
+                        }
+                    })
+
+                    this.rootPane.actionMap.put("RELOAD", object : AbstractAction() {
+                        override fun actionPerformed(e: ActionEvent) {
+                            load()
+                            index.fillData()
+                        }
+                    })
 
 
-        val frame = JFrame().apply {
-            val tabs = JBTabbedPane()
+                    this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.META_DOWN_MASK), "CLOSE_TAB")
+                    this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.META_DOWN_MASK), "RELOAD")
+                    this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ESCAPE")
 
-            fun addIndexTab() {
-                tabs.addTab("Index", IndexTab(tabs))
+                    contentPane = tabs
+                }
             }
 
-            addIndexTab()
+            frame.pack()
+            frame.setSize(800, 800)
+            frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+            frame.isVisible = true
 
 
-            this.rootPane.actionMap.put("ESCAPE", object : AbstractAction() {
-                override fun actionPerformed(e: ActionEvent) {
-                    tabs.selectedIndex = 0
-                }
-            })
-
-            this.rootPane.actionMap.put("CLOSE_TAB", object : AbstractAction() {
-                override fun actionPerformed(e: ActionEvent) {
-                    if (tabs.selectedIndex != 0) {
-                        tabs.removeTabAt(tabs.selectedIndex)
-                    }
-                }
-            })
-
-            this.rootPane.actionMap.put("RELOAD", object : AbstractAction() {
-                override fun actionPerformed(e: ActionEvent) {
-                    tabs.removeAll()
-                    load()
-                    addIndexTab()
-                }
-            })
-
-
-            this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.META_DOWN_MASK), "CLOSE_TAB")
-            this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.META_DOWN_MASK), "RELOAD")
-            this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ESCAPE")
-
-            contentPane = tabs
+            load()
+            frame.index.fillData()
         }
-
-        frame.setSize(800, 800)
-        frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        frame.isVisible = true
     }
 }
