@@ -1,4 +1,5 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
+// IGNORE_BACKEND: JVM_IR
 
 class A
 

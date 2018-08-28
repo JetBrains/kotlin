@@ -138,8 +138,9 @@ public class GenerateRangesCodegenTestData {
             throw new AssertionError(e);
         }
 
-        // Ranges are not supported in JS_IR yet
+        // Ranges are not supported in JS_IR, JVM_IR yet
         writeIgnoreBackendDirective(out, "JS_IR");
+        writeIgnoreBackendDirective(out, "JVM_IR");
 
         if (IGNORED_FOR_JS_BACKEND.contains(file.getName())) {
             writeIgnoreBackendDirective(out, "JS");
