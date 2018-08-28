@@ -15,7 +15,6 @@ import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -47,9 +46,6 @@ fun createFileStub(project: Project, text: String): PsiFileStub<*> {
 }
 
 fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
-
-fun <M : ModuleInfo> destructModuleContent(moduleContent: ModuleContent<M>) =
-    moduleContent.syntheticFiles to moduleContent.moduleContentScope
 
 fun <M : ModuleInfo> createDeclarationProviderFactory(
     project: Project,
