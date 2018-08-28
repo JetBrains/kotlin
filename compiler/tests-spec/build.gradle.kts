@@ -22,3 +22,8 @@ val printSpecTestsStatistic by smartJavaExec {
     classpath = javaPluginConvention().sourceSets.getByName("test").runtimeClasspath
     main = "org.jetbrains.kotlin.spec.tasks.PrintSpecTestsStatisticKt"
 }
+
+val generateJsonTestsMap by smartJavaExec {
+    classpath = javaPluginConvention().sourceSets.getByName("test").runtimeClasspath
+    main = "org.jetbrains.kotlin.spec.tasks.GenerateJsonTestsMapKt"
+}
