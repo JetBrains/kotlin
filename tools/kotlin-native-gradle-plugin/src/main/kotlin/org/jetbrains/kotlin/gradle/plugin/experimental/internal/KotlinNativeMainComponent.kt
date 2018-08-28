@@ -93,13 +93,10 @@ open class KotlinNativeMainComponent @Inject constructor(
     // endregion
 
     companion object {
-        @JvmStatic
-        val EXECUTABLE = OutputKind.EXECUTABLE
-
-        @JvmStatic
-        val KLIBRARY = OutputKind.KLIBRARY
-
-        @JvmStatic
-        val FRAMEWORK = OutputKind.FRAMEWORK
+        @JvmStatic val EXECUTABLE = OutputKind.EXECUTABLE
+        @JvmStatic val KLIBRARY = OutputKind.KLIBRARY
+        @JvmStatic val FRAMEWORK = OutputKind.FRAMEWORK
+        @JvmStatic val DYNAMIC = OutputKind.DYNAMIC
+        @JvmStatic val STATIC = OutputKind.STATIC
     }
 }

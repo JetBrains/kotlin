@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.gradle.plugin.addArg
 import org.jetbrains.kotlin.gradle.plugin.addKey
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
 
@@ -68,7 +70,11 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
             val baseName = getBaseName().get()
 
             var fileName = "${prefix}${baseName}${suffix}"
-            if (kind == CompilerOutputKind.FRAMEWORK) {
+            if (kind == FRAMEWORK ||
+                kind == STATIC ||
+                kind == DYNAMIC ||
+                kind == PROGRAM && konanTarget == KonanTarget.WASM32
+            ) {
                 fileName = fileName.replace('-', '_')
             }
 

@@ -54,6 +54,26 @@ enum class OutputKind(
     ) {
         override fun availableFor(target: KonanTarget) =
             target.family == Family.OSX || target.family == Family.IOS
+    },
+    DYNAMIC(
+        CompilerOutputKind.DYNAMIC,
+        KotlinNativeDynamicImpl::class.java,
+        3,
+        Usage.NATIVE_RUNTIME,
+        Usage.NATIVE_LINK,
+    false
+    ) {
+        override fun availableFor(target: KonanTarget): Boolean = target != KonanTarget.WASM32
+    },
+    STATIC(
+        CompilerOutputKind.STATIC,
+        KotlinNativeStaticImpl::class.java,
+        4,
+        Usage.NATIVE_RUNTIME,
+        Usage.NATIVE_LINK,
+        false
+    ) {
+        override fun availableFor(target: KonanTarget): Boolean = target != KonanTarget.WASM32
     };
 
     open fun availableFor(target: KonanTarget) = true

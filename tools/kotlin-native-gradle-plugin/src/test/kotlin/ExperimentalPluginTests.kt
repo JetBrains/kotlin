@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeMain
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.OutputKind
 import org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume.assumeTrue
@@ -44,6 +45,9 @@ class ExperimentalPluginTests {
         }
         project.block()
     }
+
+    private fun assertFileExists(path: String, message: String = "No such file: $path")
+        = assertTrue(projectDirectory.resolve(path).exists(), message)
 
     @Test
     fun `Plugin should compile one executable`() {
@@ -457,9 +461,6 @@ class ExperimentalPluginTests {
             }
         }
 
-        val ttt = project.createRunner().withArguments("tasks").build()
-        println(ttt.output)
-
         val result1 = project.createRunner().withArguments("assemble").build()
         assertCompileOutcome(result1, compileTasks, TaskOutcome.SUCCESS)
 
@@ -483,5 +484,73 @@ class ExperimentalPluginTests {
 
         assertEquals("test_framework_project", frameworkTask.outputFile.nameWithoutExtension)
         assertEquals("test-framework-project", klibraryTask.outputFile.nameWithoutExtension)
+    }
+
+    @Test
+    fun `Plugin should be able to build static and dynamic libraries`() {
+
+        val project = KonanProject.create(projectDirectory).apply {
+            buildFile.writeText("""
+                plugins { id 'kotlin-native' }
+
+                sourceSets.main {
+                    component {
+                        outputKinds = [ DYNAMIC, STATIC ]
+                        target 'host'
+                    }
+                }
+
+            """.trimIndent())
+            settingsFile.appendText("\nrootProject.name = 'test-library'")
+        }
+
+        val baseName = "test_library"
+        val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
+        val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
+        val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
+        val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
+
+        val libraryPaths = listOf(
+            "build/lib/main/debug/dynamic/$sharedPrefix$baseName$sharedSuffix",
+            "build/lib/main/release/dynamic/$sharedPrefix$baseName$sharedSuffix",
+            "build/lib/main/debug/static/$staticPrefix$baseName$staticSuffix",
+            "build/lib/main/release/static/$staticPrefix$baseName$staticSuffix"
+        )
+
+        val headerPaths = listOf(
+            "build/lib/main/debug/dynamic/$sharedPrefix${baseName}_api.h",
+            "build/lib/main/release/dynamic/$sharedPrefix${baseName}_api.h",
+            "build/lib/main/debug/static/$staticPrefix${baseName}_api.h",
+            "build/lib/main/release/static/$staticPrefix${baseName}_api.h"
+        )
+
+        val linkTasks = listOf(
+            ":compileDebugDynamicKotlinNative",
+            ":compileReleaseDynamicKotlinNative",
+            ":compileDebugStaticKotlinNative",
+            ":compileReleaseStaticKotlinNative"
+        )
+
+        project.createRunner().withArguments("assemble", "-i").build().let { result ->
+            libraryPaths.forEach { assertFileExists(it) }
+            headerPaths.forEach { assertFileExists(it) }
+            linkTasks.forEach { assertEquals(TaskOutcome.SUCCESS, result.task(it)!!.outcome)  }
+        }
+
+        project.createRunner().withArguments("assemble").build().let { result ->
+            linkTasks.forEach { assertEquals(TaskOutcome.UP_TO_DATE, result.task(it)!!.outcome)  }
+        }
+
+        assertTrue(projectDirectory.resolve(headerPaths[0]).delete())
+
+        project.createRunner().withArguments("assemble").build().let { result ->
+            assertEquals(TaskOutcome.SUCCESS, result.task(linkTasks[0])!!.outcome)
+            linkTasks.drop(1).forEach {
+                assertEquals(TaskOutcome.UP_TO_DATE, result.task(it)!!.outcome)
+            }
+
+            libraryPaths.forEach { assertFileExists(it) }
+            headerPaths.forEach { assertFileExists(it) }
+        }
     }
 }

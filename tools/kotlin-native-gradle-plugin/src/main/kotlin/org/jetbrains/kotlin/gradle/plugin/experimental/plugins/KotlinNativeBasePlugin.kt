@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.gradle.plugin.hasProperty
 import org.jetbrains.kotlin.gradle.plugin.konanCompilerDownloadDir
 import org.jetbrains.kotlin.gradle.plugin.setProperty
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompilerDownloadTask
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -120,6 +121,18 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
             ).apply {
                 group = BasePlugin.BUILD_GROUP
                 description = "Compiles Kotlin/Native source set '${binary.sourceSet.name}' into a ${binary.kind.name.toLowerCase()}"
+
+                // Register an API header produced for shared/static library as a task output.
+                if (binary.kind == CompilerOutputKind.DYNAMIC || binary.kind == CompilerOutputKind.STATIC) {
+                    val headerFileProvider = provider {
+                        with(binary) {
+                            val prefix = kind.prefix(konanTarget)
+                            val baseName = getBaseName().get().replace('-', '_')
+                            outputFile.parentFile.resolve("$prefix${baseName}_api.h")
+                        }
+                    }
+                    outputs.file(headerFileProvider)
+                }
             }
             binary.compileTask.set(compileTask)
             binary.outputs.from(compileTask.outputLocationProvider)

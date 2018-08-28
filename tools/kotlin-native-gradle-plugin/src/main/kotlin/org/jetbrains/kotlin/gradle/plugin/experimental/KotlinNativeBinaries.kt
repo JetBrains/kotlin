@@ -102,9 +102,19 @@ interface KotlinNativeLibrary : KotlinNativeBinary,
         ConfigurableComponentWithLinkUsage
 
 /**
- * Represents an Objective C framework compiled from KN sources.
+ * Represents an Objective C framework compiled from Kotlin/Native sources.
  */
 interface KotlinNativeFramework : KotlinNativeBinary, ComponentWithOutputs
+
+/**
+ * A shared library compiled from Kotlin/Native sources.
+ */
+interface KotlinNativeDynamic : KotlinNativeBinary, ComponentWithOutputs
+
+/**
+ * A static library compiled from Kotlin/Native sources.
+ */
+interface KotlinNativeStatic : KotlinNativeBinary, ComponentWithOutputs
 
 /**
  * Represents a test executable.
