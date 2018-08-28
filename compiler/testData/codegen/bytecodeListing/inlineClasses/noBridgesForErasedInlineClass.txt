@@ -8,7 +8,7 @@ public final static class Foo$Erased {
     public final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
     public static method constructor(p0: long): long
     public static method equals(p0: long, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
-    public static method foo(p0: long, p1: long): void
+    public static method foo-1e4ch6lh(p0: long, p1: long): void
     public static method hashCode(p0: long): int
     public static @org.jetbrains.annotations.NotNull method toString(p0: long): java.lang.String
 }
@@ -19,7 +19,7 @@ public final class Foo {
     public method <init>(p0: long): void
     public method equals(p0: java.lang.Object): boolean
     public synthetic method foo(p0: java.lang.Object): void
-    public method foo(p0: long): void
+    public method foo-1e4ch6lh(p0: long): void
     public final method getX(): long
     public method hashCode(): int
     public method toString(): java.lang.String
