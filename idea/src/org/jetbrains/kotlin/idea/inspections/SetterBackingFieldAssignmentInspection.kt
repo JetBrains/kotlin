@@ -8,19 +8,36 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return propertyAccessorVisitor(fun(accessor) {
             if (!accessor.isSetter) return
-            if (accessor.hasLowerVisibilityThanProperty()) return
             val bodyExpression = accessor.bodyExpression as? KtBlockExpression ?: return
-            if (bodyExpression.findDescendantOfType<KtBinaryExpression> {
-                    it.operationToken == KtTokens.EQ && it.left?.text == "field"
-                } != null) return
+            val parameter = accessor.valueParameters.singleOrNull()
+            val parameterDescriptor = parameter?.descriptor
+            val context = accessor.analyze(BodyResolveMode.PARTIAL)
+            if (bodyExpression.anyDescendantOfType<KtExpression> {
+                    when (it) {
+                        is KtBinaryExpression ->
+                            it.left?.text == KtTokens.FIELD_KEYWORD.value && it.operationToken in assignmentOperators
+                        is KtUnaryExpression ->
+                            it.baseExpression?.text == KtTokens.FIELD_KEYWORD.value && it.operationToken in incrementAndDecrementOperators
+                        is KtCallExpression ->
+                            it.valueArguments.any { arg ->
+                                arg.text == parameter?.text
+                                        && arg.getArgumentExpression().getResolvedCall(context)?.resultingDescriptor == parameterDescriptor
+                            }
+                        else -> false
+                    }
+                }) return
             holder.registerProblem(
                 accessor,
                 "Setter backing field should be assigned",
@@ -30,6 +47,10 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
         })
     }
 }
+
+private val assignmentOperators = listOf(KtTokens.EQ, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ, KtTokens.DIVEQ, KtTokens.PERCEQ)
+
+private val incrementAndDecrementOperators = listOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS)
 
 private class AssignBackingFieldFix : LocalQuickFix {
     override fun getName() = "Assign backing filed"
