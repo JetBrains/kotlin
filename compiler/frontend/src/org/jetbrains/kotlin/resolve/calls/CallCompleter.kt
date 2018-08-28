@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
@@ -321,10 +322,15 @@ class CallCompleter(
 
         val results = completeCallForArgument(deparenthesized, context)
 
+        val constant = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
+        val convertedConst = constant is IntegerValueTypeConstant && constant.convertedFromSigned
+        if (convertedConst) {
+            context.trace.report(Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED.on(deparenthesized))
+        }
+
         if (results != null && results.isSingleResult) {
             val resolvedCall = results.resultingCall
-            val constant = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
-            if (constant !is IntegerValueTypeConstant || !constant.convertedFromSigned) {
+            if (!convertedConst) {
                 updatedType =
                         if (resolvedCall.hasInferredReturnType())
                             resolvedCall.makeNullableTypeIfSafeReceiver(resolvedCall.resultingDescriptor?.returnType, context)
