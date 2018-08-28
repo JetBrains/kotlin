@@ -257,7 +257,8 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
             newTarget: IrSimpleFunctionSymbol
         ) = IrCallImpl(call.startOffset, call.endOffset, call.type, newTarget).apply {
 
-//            copyTypeArgumentsFrom(call)
+            // TODO: Should constructors have type arguments
+            // copyTypeArgumentsFrom(call)
 
             for (i in 0 until call.valueArgumentsCount) {
                 putValueArgument(i, call.getValueArgument(i))
