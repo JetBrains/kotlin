@@ -2,8 +2,8 @@
 // EXPECTED_REACHABLE_NODES: 1172
 // FILE: a.kt
 // WITH_RUNTIME
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
     x.resume(v)
@@ -21,9 +21,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object : Continuation<Unit> {
         override val context = EmptyCoroutineContext
 
-        override fun resume(result: Unit) {}
-
-        override fun resumeWithException(exception: Throwable) {}
+        override fun resumeWith(result: SuccessOrFailure<Unit>) {}
     })
 }
 

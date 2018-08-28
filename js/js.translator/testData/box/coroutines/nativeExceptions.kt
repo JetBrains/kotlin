@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1250
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 private var next: () -> Unit = {}
 private var stopped = false
@@ -12,11 +12,7 @@ suspend fun delay(): Unit = suspendCoroutine { c ->
 
 fun build(c: suspend () -> Unit) {
     c.startCoroutine(object : Continuation<Unit> {
-        override fun resume(x: Unit) {
-            stopped = true
-        }
-
-        override fun resumeWithException(x: Throwable) {
+        override fun resumeWith(x: SuccessOrFailure<Unit>) {
             stopped = true
         }
 
