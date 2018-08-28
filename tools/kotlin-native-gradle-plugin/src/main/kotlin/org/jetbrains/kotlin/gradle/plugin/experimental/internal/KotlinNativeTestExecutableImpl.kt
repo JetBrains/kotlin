@@ -25,7 +25,6 @@ import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeTestComponent
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeTestExecutable
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSet
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind

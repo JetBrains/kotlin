@@ -265,7 +265,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
         val mainSourceSet = sourceSets.create(MAIN_SOURCE_SET_NAME).apply {
             kotlin.srcDir("src/$MAIN_SOURCE_SET_NAME/kotlin")
             component = objectFactory
-                    .newInstance(KotlinNativeMainComponent::class.java, name, this)
+                    .newInstance(KotlinNativeMainComponent::class.java, name, this, project)
                     .apply {
                         // Override the default component base name.
                         baseName.set(project.name)
@@ -276,7 +276,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
         sourceSets.create(TEST_SOURCE_SET_NAME).apply {
             kotlin.srcDir("src/$TEST_SOURCE_SET_NAME/kotlin")
             component = objectFactory
-                    .newInstance(KotlinNativeTestSuite::class.java, name, this, mainSourceSet.component)
+                    .newInstance(KotlinNativeTestSuite::class.java, name, this, mainSourceSet.component, project)
                     .apply {
                         project.components.add(this)
                     }

@@ -16,17 +16,26 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental
 
+import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.language.BinaryCollection
+import org.gradle.language.ComponentDependencies
 import org.gradle.language.ComponentWithBinaries
 import org.gradle.language.ComponentWithDependencies
 import org.gradle.nativeplatform.test.TestSuiteComponent
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSet
 import org.jetbrains.kotlin.konan.target.KonanTarget
+
+interface KotlinNativeDependencies: ComponentDependencies {
+    fun cinterop(name: String): CInterop
+    fun cinterop(name: String, action: CInterop.() -> Unit)
+    fun cinterop(name: String, action: Closure<Unit>)
+    fun cinterop(name: String, action: Action<CInterop>)
+}
 
 /**
  *  Class representing a Kotlin/Native component: application or library (both klib and dynamic)
@@ -51,6 +60,13 @@ interface KotlinNativeComponent: ComponentWithBinaries, ComponentWithDependencie
     fun getImplementationDependencies(): Configuration
 
     // region DSL
+
+    /** Provides an access to component's dependencies including cinterop and jsinterop DSL */
+    override fun getDependencies(): KotlinNativeDependencies
+
+    fun dependencies(action: KotlinNativeDependencies.() -> Unit)
+    fun dependencies(action: Closure<Unit>)
+    fun dependencies(action: Action<KotlinNativeDependencies>)
 
     /** Set native targets for this component. */
     fun target(vararg targets: String)

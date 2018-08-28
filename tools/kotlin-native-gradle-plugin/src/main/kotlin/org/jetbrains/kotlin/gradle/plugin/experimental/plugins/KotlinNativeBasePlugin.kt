@@ -20,23 +20,21 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.component.SoftwareComponentContainer
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.HelpTasksPlugin
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.plugins.NativeBasePlugin
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
+import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.*
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.cinterop.CInteropSettingsImpl
+import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.CInteropTask
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.plugin.hasProperty
 import org.jetbrains.kotlin.gradle.plugin.konanCompilerDownloadDir
@@ -45,7 +43,6 @@ import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompilerDownloadTask
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
 
 class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
@@ -82,6 +79,18 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
     private val KonanTarget.canRunOnHost: Boolean
         get() = this == HostManager.host
+
+    private fun lowerCamelCase(vararg components: String) =
+        if (components.isEmpty()) {
+            ""
+        } else {
+            buildString {
+                append(components[0].decapitalize())
+                for (i in 1 until components.size) {
+                    append(components[i].capitalize())
+                }
+            }
+        }
 
     private fun Project.addTargetInfoTask() = tasks.create("targets").apply {
         group = HelpTasksPlugin.HELP_GROUP
@@ -174,6 +183,31 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         }
     }
 
+    private fun Project.addInteropTasks() {
+
+        val settingsToTask = mutableMapOf<CInteropSettings, CInteropTask>()
+
+        components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
+            binary.component.dependencies.cinterops.all { cinterop ->
+                val konanTarget = binary.konanTarget
+                val settings = cinterop.target(konanTarget)
+
+                val interopTask = settingsToTask.getOrPut(settings) {
+                    tasks.create(
+                        lowerCamelCase("cinterop", cinterop.name, konanTarget.name),
+                        CInteropTask::class.java,
+                        settings
+                    ).apply {
+                        group = INTEROP_GROUP
+                        description = "Generates Kotlin/Native interop library '${cinterop.name}' for target '${konanTarget.name}'"
+                    }
+                }
+
+                binary.klibraries.dependencies.add(dependencies.create(files(interopTask.outputFileProvider)))
+            }
+        }
+    }
+
     private fun ProjectInternal.checkGradleMetadataFeature() {
         val metadataEnabled = gradle.services
             .get(FeaturePreviews::class.java)
@@ -213,12 +247,15 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         addCompilerDownloadingTask()
 
         addCompilationTasks()
+        addInteropTasks()
         addTargetInfoTask()
     }
 
     companion object {
         const val LANGUAGE_NAME = "KotlinNative"
         const val SOURCE_SETS_EXTENSION = "sourceSets"
+
+        const val INTEROP_GROUP = "interop"
     }
 
 }

@@ -22,6 +22,7 @@ import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeComponent
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeDependencies
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeComponent
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -59,4 +60,10 @@ interface KotlinNativeSourceSet: Named {
     fun target(targets: Iterable<String>, configureClosure: Closure<*>): KotlinNativeSourceSet
     fun target(targets: Iterable<String>, configureAction: Action<in SourceDirectorySet>): KotlinNativeSourceSet
     fun target(targets: Iterable<String>, configureLambda: SourceDirectorySet.() -> Unit): KotlinNativeSourceSet
+
+    val dependencies: KotlinNativeDependencies
+
+    fun dependencies(action: KotlinNativeDependencies.() -> Unit)
+    fun dependencies(action: Closure<Unit>)
+    fun dependencies(action: Action<KotlinNativeDependencies>)
 }

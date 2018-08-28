@@ -31,7 +31,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.language.cpp.internal.DefaultUsageContext
 import org.gradle.nativeplatform.Linkage
-import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeFramework
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import javax.inject.Inject

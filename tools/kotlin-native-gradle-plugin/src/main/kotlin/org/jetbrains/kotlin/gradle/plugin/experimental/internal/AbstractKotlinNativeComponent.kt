@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
+import groovy.lang.Closure
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.internal.provider.LockableSetProperty
@@ -24,20 +26,23 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPom
 import org.gradle.language.internal.DefaultBinaryCollection
-import org.gradle.language.internal.DefaultComponentDependencies
 import org.gradle.language.nativeplatform.internal.ComponentWithNames
 import org.gradle.language.nativeplatform.internal.DefaultNativeComponent
 import org.gradle.language.nativeplatform.internal.Names
+import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeComponent
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeDependencies
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSetImpl
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import javax.inject.Inject
 
 abstract class AbstractKotlinNativeComponent @Inject constructor(
         private val name: String,
         override val sources: KotlinNativeSourceSetImpl,
+        val project: Project,
         val objectFactory: ObjectFactory,
         fileOperations: FileOperations
 ) : DefaultNativeComponent(fileOperations),
@@ -62,9 +67,10 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
     private val names = Names.of(name)
     override fun getNames(): Names = names
 
-    private val dependencies: DefaultComponentDependencies = objectFactory.newInstance(
-            DefaultComponentDependencies::class.java,
-            names.withSuffix("implementation"))
+    private val dependencies: KotlinNativeDependenciesImpl = objectFactory.newInstance(
+        KotlinNativeDependenciesImpl::class.java,
+        project,
+        names.withSuffix("implementation"))
     internal val poms = mutableListOf<Action<MavenPom>>()
 
     override fun getDependencies() = dependencies
@@ -91,6 +97,17 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
 
     override var publishJavadoc: Boolean = true
     override var publishSources: Boolean = true
+
+    override fun dependencies(action: KotlinNativeDependencies.() -> Unit) {
+        dependencies.action()
+    }
+
+    override fun dependencies(action: Closure<Unit>) =
+        dependencies(ConfigureUtil.configureUsing(action))
+
+    override fun dependencies(action: Action<KotlinNativeDependencies>) {
+        action.execute(dependencies)
+    }
 
     // endregion
 }

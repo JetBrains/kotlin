@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
+import org.gradle.api.Project
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -29,12 +30,13 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSo
 import javax.inject.Inject
 
 open class KotlinNativeTestSuite @Inject constructor(
-        name: String,
-        sources: KotlinNativeSourceSetImpl,
-        override val testedComponent: KotlinNativeComponent,
-        objectFactory: ObjectFactory,
-        fileOperations: FileOperations
-) : AbstractKotlinNativeComponent(name, sources, objectFactory, fileOperations),
+    name: String,
+    sources: KotlinNativeSourceSetImpl,
+    override val testedComponent: KotlinNativeComponent,
+    project: Project,
+    objectFactory: ObjectFactory,
+    fileOperations: FileOperations
+) : AbstractKotlinNativeComponent(name, sources, project, objectFactory, fileOperations),
     KotlinNativeTestComponent {
 
     init {

@@ -16,22 +16,15 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental
 
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.component.BuildableComponent
 import org.gradle.api.component.PublishableComponent
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.language.ComponentWithDependencies
 import org.gradle.language.ComponentWithOutputs
-import org.gradle.language.nativeplatform.ComponentWithLinkUsage
-import org.gradle.language.nativeplatform.internal.ComponentWithNames
 import org.gradle.language.nativeplatform.internal.ConfigurableComponentWithLinkUsage
 import org.gradle.language.nativeplatform.internal.ConfigurableComponentWithRuntimeUsage
-import org.gradle.nativeplatform.Linkage
 import org.gradle.nativeplatform.test.TestComponent
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativePlatform
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile

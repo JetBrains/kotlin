@@ -24,6 +24,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.SourceDirectorySetFactory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.util.ConfigureUtil.configure
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeDependencies
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeComponent
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -105,5 +106,13 @@ open class KotlinNativeSourceSetImpl @Inject constructor(
 
     override fun target(vararg targets: String, configureAction: Action<in SourceDirectorySet>) =
             target(targets.toList(), configureAction)
+
+    override val dependencies: KotlinNativeDependencies
+            get() = component.dependencies
+
+    override fun dependencies(action: KotlinNativeDependencies.() -> Unit) = component.dependencies(action)
+    override fun dependencies(action: Closure<Unit>) = component.dependencies(action)
+    override fun dependencies(action: Action<KotlinNativeDependencies>) = component.dependencies(action)
+
     // endregion
 }

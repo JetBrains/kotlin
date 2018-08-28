@@ -37,7 +37,6 @@ import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.nativeplatform.toolchain.NativeToolChain
 import org.jetbrains.kotlin.gradle.plugin.experimental.ComponentWithBaseName
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
-import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeComponent
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSet
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -94,8 +93,8 @@ abstract class AbstractKotlinNativeBinary(
         get() = sourceSet.getAllSources(konanTarget)
 
     private val dependencies = objects.newInstance<DefaultComponentDependencies>(
-            DefaultComponentDependencies::class.java,
-            name + "Implementation"
+        DefaultComponentDependencies::class.java,
+        name + "Implementation"
     ).apply {
         implementationDependencies.extendsFrom(componentImplementation)
     }

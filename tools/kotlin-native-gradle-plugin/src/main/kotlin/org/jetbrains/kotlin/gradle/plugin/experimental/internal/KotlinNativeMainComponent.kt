@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
+import org.gradle.api.Project
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
@@ -36,9 +37,10 @@ import javax.inject.Inject
 open class KotlinNativeMainComponent @Inject constructor(
         name: String,
         sources: KotlinNativeSourceSetImpl,
+        project: Project,
         objectFactory: ObjectFactory,
         fileOperations: FileOperations
-) : AbstractKotlinNativeComponent(name, sources, objectFactory, fileOperations),
+) : AbstractKotlinNativeComponent(name, sources, project, objectFactory, fileOperations),
     PublicationAwareComponent,
     ProductionComponent {
 
