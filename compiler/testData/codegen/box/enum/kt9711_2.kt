@@ -8,7 +8,7 @@ enum class IssueState {
 
         fun s()  = "OK"
 
-        class D {
+        inner class D {
             val k = s()
         }
     };
