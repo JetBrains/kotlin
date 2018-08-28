@@ -1,4 +1,4 @@
-// "Make variable mutable" "true"
+// "Change to var" "true"
 class A() {
     var a: Int = 0
         set(v: Int) {}
