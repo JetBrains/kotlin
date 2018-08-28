@@ -20,6 +20,7 @@ fun box() {
     Test5().Inner().test()
 
     42.test6()
+    assertEquals(inlineFunction("OK"), "OK,0,null")
 }
 
 expect fun test1(x: Int = 42): Int
@@ -66,3 +67,9 @@ expect fun Int.test6(arg: Int = this)
 actual fun Int.test6(arg: Int) {
     assertEquals(arg, this)
 }
+
+// Default parameter in inline function.
+expect inline fun inlineFunction(a: String, b: Int = 0, c: () -> Double? = { null }): String
+
+actual inline fun inlineFunction(a: String, b: Int, c: () -> Double?): String = a + "," + b + "," + c()
+

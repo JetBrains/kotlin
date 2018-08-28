@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.getDefault
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -34,11 +34,9 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.getArguments
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -313,12 +311,12 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
     //-------------------------------------------------------------------------//
 
-    private class ParameterToArgument(val parameterDescriptor: ParameterDescriptor,
+    private class ParameterToArgument(val parameter: IrValueParameter,
                                       val argumentExpression : IrExpression) {
 
         val isInlinableLambdaArgument : Boolean
             get() {
-                if (!InlineUtil.isInlineParameter(parameterDescriptor)) return false
+                if (!InlineUtil.isInlineParameter(parameter.descriptor)) return false
                 if (argumentExpression is IrFunctionReference
                         && !argumentExpression.descriptor.isSuspend) return true // Skip suspend functions for now since it's not supported by FE anyway.
 
@@ -347,21 +345,20 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     ): List<ParameterToArgument> {
 
         val parameterToArgument = mutableListOf<ParameterToArgument>()                      // Result list.
-        val functionDescriptor = irFunction.descriptor.original                             // Descriptor of function to be called.
 
         if (irCall.dispatchReceiver != null &&                                              // Only if there are non null dispatch receivers both
-            functionDescriptor.dispatchReceiverParameter != null)                           // on call site and in function declaration.
+            irFunction.dispatchReceiverParameter != null)                                   // on call site and in function declaration.
             parameterToArgument += ParameterToArgument(
-                parameterDescriptor = functionDescriptor.dispatchReceiverParameter!!,
+                parameter = irFunction.dispatchReceiverParameter!!,
                 argumentExpression  = irCall.dispatchReceiver!!
             )
 
         val valueArguments =
                 irCall.descriptor.valueParameters.map { irCall.getValueArgument(it) }.toMutableList()
 
-        if (functionDescriptor.extensionReceiverParameter != null) {
+        if (irFunction.extensionReceiverParameter != null) {
             parameterToArgument += ParameterToArgument(
-                    parameterDescriptor = functionDescriptor.extensionReceiverParameter!!,
+                    parameter = irFunction.extensionReceiverParameter!!,
                     argumentExpression = if (irCall.extensionReceiver != null) {
                         irCall.extensionReceiver!!
                     } else {
@@ -376,25 +373,25 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
 
         val parametersWithDefaultToArgument = mutableListOf<ParameterToArgument>()
         irFunction.valueParameters.forEach { parameter ->                                   // Iterate value parameters.
-            val parameterDescriptor = parameter.descriptor as ValueParameterDescriptor
-            val argument = valueArguments[parameterDescriptor.index]           // Get appropriate argument from call site.
+            val argument = valueArguments[parameter.index]                                  // Get appropriate argument from call site.
             when {
                 argument != null -> {                                                       // Argument is good enough.
                     parameterToArgument += ParameterToArgument(                             // Associate current parameter with the argument.
-                        parameterDescriptor = parameterDescriptor,
+                        parameter = parameter,
                         argumentExpression  = argument
                     )
                 }
 
-                parameterDescriptor.hasDefaultValue() -> {                                  // There is no argument - try default value.
-                    val defaultArgument = irFunction.getDefault(parameterDescriptor)!!
+                // After ExpectDeclarationsRemoving pass default values from expect declarations
+                // are represented correctly in IR.
+                parameter.defaultValue != null -> {  // There is no argument - try default value.
                     parametersWithDefaultToArgument += ParameterToArgument(
-                        parameterDescriptor = parameterDescriptor,
-                        argumentExpression  = defaultArgument.expression
+                        parameter = parameter,
+                        argumentExpression  = parameter.defaultValue!!.expression
                     )
                 }
 
-                parameterDescriptor.varargElementType != null -> {
+                parameter.varargElementType != null -> {
                     val emptyArray = IrVarargImpl(
                         startOffset       = irCall.startOffset,
                         endOffset         = irCall.endOffset,
@@ -402,14 +399,14 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                         varargElementType = parameter.varargElementType!!
                     )
                     parameterToArgument += ParameterToArgument(
-                        parameterDescriptor = parameterDescriptor,
+                        parameter = parameter,
                         argumentExpression  = emptyArray
                     )
                 }
 
                 else -> {
-                    val message = "Incomplete expression: call to $functionDescriptor " +
-                        "has no argument at index ${parameterDescriptor.index}"
+                    val message = "Incomplete expression: call to ${irFunction.descriptor} " +
+                        "has no argument at index ${parameter.index}"
                     throw Error(message)
                 }
             }
@@ -428,7 +425,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         val evaluationStatements   = mutableListOf<IrStatement>()                           // List of evaluation statements.
         val substitutor = ParameterSubstitutor()
         parameterToArgumentOld.forEach {
-            val parameterDescriptor = it.parameterDescriptor
+            val parameterDescriptor = it.parameter.descriptor
 
             /*
              * We need to create temporary variable for each argument except inlinable lambda arguments.
