@@ -1,0 +1,15 @@
+package
+
+internal val invocationKind: kotlin.contracts.InvocationKind
+internal inline fun case_1(/*0*/ invocationKind: kotlin.contracts.InvocationKind, /*1*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun </*0*/ T : kotlin.contracts.InvocationKind> case_2(/*0*/ invocationKind: T, /*1*/ block: () -> kotlin.Unit): kotlin.Unit
+internal inline fun case_3(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+internal inline fun case_4(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+
+internal object SampleObject {
+    private constructor SampleObject()
+    public final val invocationKind: kotlin.contracts.InvocationKind
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

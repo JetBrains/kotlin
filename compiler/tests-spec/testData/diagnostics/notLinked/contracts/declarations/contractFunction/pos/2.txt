@@ -1,0 +1,10 @@
+package
+
+public fun case_1_1(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun case_1_2(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String
+
+public fun case_2_1(/*0*/ x: kotlin.Number?): kotlin.Unit
+public fun case_2_2(/*0*/ x: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> x != null
+
