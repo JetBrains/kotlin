@@ -52,20 +52,24 @@ fun getRuntimeLibraryVersions(
 fun getLibraryLanguageLevel(
         module: Module,
         rootModel: ModuleRootModel?,
-        targetPlatform: TargetPlatformKind<*>?
+        targetPlatform: TargetPlatformKind<*>?,
+        coerceRuntimeLibraryVersionToReleased: Boolean = true
 ): LanguageVersion {
-    val minVersion = (getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM) +
-            VersionView.RELEASED_VERSION.versionString).minWith(VersionComparatorUtil.COMPARATOR)
-    return getDefaultLanguageLevel(module, minVersion)
+    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM)
+        .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
+        .minWith(VersionComparatorUtil.COMPARATOR)
+    return getDefaultLanguageLevel(module, minVersion, coerceRuntimeLibraryVersionToReleased)
 }
 
 fun getDefaultLanguageLevel(
         module: Module,
-        explicitVersion: String? = null
+        explicitVersion: String? = null,
+        coerceRuntimeLibraryVersionToReleased: Boolean = true
 ): LanguageVersion {
     val libVersion = explicitVersion
-                     ?: (KotlinVersionInfoProvider.EP_NAME.extensions
-                             .mapNotNull { it.getCompilerVersion(module) } + VersionView.RELEASED_VERSION.versionString)
+                     ?: KotlinVersionInfoProvider.EP_NAME.extensions
+                             .mapNotNull { it.getCompilerVersion(module) }
+                             .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
                              .minWith(VersionComparatorUtil.COMPARATOR)
                      ?: return VersionView.RELEASED_VERSION
     return when {
@@ -76,6 +80,9 @@ fun getDefaultLanguageLevel(
         else -> VersionView.RELEASED_VERSION
     }
 }
+
+private fun Iterable<String>.addReleaseVersionIfNecessary(shouldAdd: Boolean): Iterable<String> =
+    if (shouldAdd) this + VersionView.RELEASED_VERSION.versionString else this
 
 fun getRuntimeLibraryVersion(module: Module): String? {
     val targetPlatform = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module).targetPlatformKind
