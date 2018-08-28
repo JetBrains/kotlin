@@ -903,6 +903,7 @@ class StubGenerator(
                 add("WRONG_MODIFIER_CONTAINING_DECLARATION") // For `final val` in interface.
                 add("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
                 add("UNUSED_PARAMETER") // For constructors.
+                add("MANY_IMPL_MEMBER_NOT_IMPLEMENTED") // Workaround for multiple-inherited properties.
                 add("MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED") // Workaround for multiple-inherited properties.
                 add("EXTENSION_SHADOWED_BY_MEMBER") // For Objective-C categories represented as extensions.
                 add("REDUNDANT_NULLABLE") // This warning appears due to Obj-C typedef nullability incomplete support.
