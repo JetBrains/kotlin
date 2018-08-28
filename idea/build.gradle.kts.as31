@@ -61,6 +61,7 @@ dependencies {
     testCompile(project(":idea:idea-maven")) { isTransitive = false }
     testCompile(commonDep("junit:junit"))
 
+    testRuntime(commonDep("org.jetbrains", "markdown"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-preloader"))
