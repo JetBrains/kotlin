@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinLineBreakpointType
 import org.jetbrains.kotlin.idea.debugger.stepping.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
@@ -246,7 +247,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                         KotlinLambdaMethodFilter(
                                 stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline, stepTarget.isSuspend)
                     is KotlinMethodSmartStepTarget ->
-                        KotlinBasicStepMethodFilter(stepTarget.descriptor, stepTarget.getCallingExpressionLines()!!)
+                        KotlinBasicStepMethodFilter(
+                            stepTarget.declaration?.createSmartPointer(),
+                            stepTarget.isInvoke,
+                            stepTarget.targetMethodName,
+                            stepTarget.getCallingExpressionLines()!!)
                     is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.method, stepTarget.getCallingExpressionLines())
                     else -> null
                 }

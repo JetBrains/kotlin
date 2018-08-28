@@ -64,9 +64,11 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
             if (!processedRoots.contains(vfile)) {
                 processedRoots.add(vfile)
                 val root = JarFileSystem.getInstance().getJarRootForLocalFile(vfile) ?: vfile
-                root.findFileByRelativePath(templatesPath)?.takeIf { it.isDirectory }?.children?.forEach {
-                    if (it.isValid && !it.isDirectory && templates.add(it.name)) {
-                        newTemplatesFound = true
+                if (root.isValid) {
+                    root.findFileByRelativePath(templatesPath)?.takeIf { it.isDirectory }?.children?.forEach {
+                        if (it.isValid && !it.isDirectory && templates.add(it.name)) {
+                            newTemplatesFound = true
+                        }
                     }
                 }
             }

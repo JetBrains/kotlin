@@ -13,6 +13,7 @@ dependencies {
     compile(project(":compiler:daemon-common"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":compiler:frontend.java"))
+    compile(project(":js:js.frontend"))
     compile(projectRuntimeJar(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
     compileOnly(group = "org.jetbrains", name = "annotations", version = "13.0")
@@ -34,18 +35,19 @@ dependencies {
     }
     testRuntime(intellijDep())
     testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(projectDist(":kotlin-script-runtime"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        java.srcDirs("jps-tests/test"
-                     /*, "kannotator-jps-plugin-test/test"*/ // Obsolete
-        )
+        java.srcDirs("jps-tests/test")
     }
 }
 
 projectTest {
+    // do not replace with compile/runtime dependency,
+    // because it forces Intellij reindexing after each compiler change
     dependsOn(":kotlin-compiler:dist")
     workingDir = rootDir
 }

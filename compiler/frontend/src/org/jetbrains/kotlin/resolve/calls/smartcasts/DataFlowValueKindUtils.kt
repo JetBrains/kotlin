@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
@@ -33,11 +34,22 @@ internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): Da
 internal fun VariableDescriptor.variableKind(
     usageModule: ModuleDescriptor?,
     bindingContext: BindingContext,
-    accessElement: KtElement
+    accessElement: KtElement,
+    languageVersionSettings: LanguageVersionSettings
 ): DataFlowValue.Kind {
     if (this is PropertyDescriptor) {
         return propertyKind(usageModule)
     }
+
+    if (this is LocalVariableDescriptor && this.isDelegated) {
+        // Local delegated property: normally unstable, but can be treated as stable in legacy mode
+        return if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnLocalDelegatedProperty))
+            DataFlowValue.Kind.PROPERTY_WITH_GETTER
+        else
+            DataFlowValue.Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY
+
+    }
+
     if (this !is LocalVariableDescriptor && this !is ParameterDescriptor) return DataFlowValue.Kind.OTHER
     if (!isVar) return DataFlowValue.Kind.STABLE_VALUE
     if (this is SyntheticFieldDescriptor) return DataFlowValue.Kind.MUTABLE_PROPERTY

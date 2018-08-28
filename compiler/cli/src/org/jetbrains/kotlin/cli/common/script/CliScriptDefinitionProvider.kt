@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.cli.common.script
 
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.LazyScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptDefinitionsSource
+import org.jetbrains.kotlin.script.StandardScriptDefinition
 import kotlin.concurrent.write
 
 class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
@@ -25,6 +28,10 @@ class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
 
     override val currentDefinitions: Sequence<KotlinScriptDefinition> =
         definitionsFromSources.asSequence().flatMap { it } + definitions.asSequence()
+
+    override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
+        return StandardScriptDefinition
+    }
 
     fun setScriptDefinitions(newDefinitions: List<KotlinScriptDefinition>) {
         lock.write {

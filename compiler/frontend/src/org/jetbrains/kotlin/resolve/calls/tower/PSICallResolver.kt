@@ -247,7 +247,11 @@ class PSICallResolver(
         tracingStrategy: TracingStrategy,
         trace: BindingTrace
     ): ManyCandidates<D> {
-        val resolvedCalls = diagnostic.candidates.map { kotlinToResolvedCallTransformer.onlyTransform<D>(it.resolvedCall, emptyList()) }
+        val resolvedCalls = diagnostic.candidates.map {
+            kotlinToResolvedCallTransformer.onlyTransform<D>(
+                it.resolvedCall, it.diagnosticsFromResolutionParts + it.getSystem().diagnostics
+            )
+        }
 
         if (diagnostic.candidates.areAllFailed()) {
             if (diagnostic.candidates.areAllFailedWithInapplicableWrongReceiver()) {

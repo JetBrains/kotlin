@@ -25,6 +25,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    @TestMetadata("actualDerived")
+    public void testActualDerived() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/actualDerived/");
+    }
+
     @TestMetadata("actualEnumEntries")
     public void testActualEnumEntries() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/actualEnumEntries/");
@@ -42,6 +47,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
     @TestMetadata("fromActualAnnotation")
     public void testFromActualAnnotation() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/fromActualAnnotation/");
+    }
+
+    @TestMetadata("fromActualCompanion")
+    public void testFromActualCompanion() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/fromActualCompanion/");
     }
 
     @TestMetadata("fromActualPrimaryConstructor")
@@ -82,6 +92,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
     @TestMetadata("fromCommonToJvmImpl")
     public void testFromCommonToJvmImpl() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/fromCommonToJvmImpl/");
+    }
+
+    @TestMetadata("fromExpectCompanion")
+    public void testFromExpectCompanion() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/fromExpectCompanion/");
     }
 
     @TestMetadata("fromExpectedAnnotation")

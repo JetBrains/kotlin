@@ -29,13 +29,16 @@ import org.intellij.lang.annotations.MagicConstant
 import java.lang.reflect.Field
 
 internal class RequestHintWithMethodFilter(
-        stepThread: ThreadReferenceProxyImpl,
-        suspendContext: SuspendContextImpl,
-        @MagicConstant(intValues = longArrayOf(
-                StepRequest.STEP_INTO.toLong(),
-                StepRequest.STEP_OVER.toLong(),
-                StepRequest.STEP_OUT.toLong())) depth: Int,
-        methodFilter: MethodFilter
+    stepThread: ThreadReferenceProxyImpl,
+    suspendContext: SuspendContextImpl,
+    @MagicConstant(
+        intValues = longArrayOf(
+            StepRequest.STEP_INTO.toLong(),
+            StepRequest.STEP_OVER.toLong(),
+            StepRequest.STEP_OUT.toLong()
+        )
+    ) depth: Int,
+    methodFilter: MethodFilter
 ) : RequestHint(stepThread, suspendContext, methodFilter) {
     private var targetMethodMatched = false
 
@@ -71,11 +74,9 @@ internal class RequestHintWithMethodFilter(
                     return filter.onReached(context, this)
                 }
             }
-        }
-        catch (ignored: VMDisconnectedException) {
+        } catch (ignored: VMDisconnectedException) {
             return STOP
-        }
-        catch (e: EvaluateException) {
+        } catch (e: EvaluateException) {
             LOG.error(e)
             return STOP
         }

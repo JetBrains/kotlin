@@ -1,0 +1,41 @@
+// C.class
+// ------------------------------------------
+public final class C : kotlin/Any {
+
+  // signature: <init>(Ljava/lang/String;)V
+  public /* primary */ constructor(constructorParam: kotlin/String /* = ... */)
+
+  // signature: getValue(Ljava/lang/Void;Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/List;
+  public final operator fun kotlin/Nothing?.getValue(x: kotlin/Any?, y: kotlin/Any?): kotlin/collections/List<kotlin/Nothing>
+
+  // getter: getAccessorOnlyVar()I
+  // setter: setAccessorOnlyVar(I)V
+  public final var accessorOnlyVar: kotlin/Int
+    public final /* non-default */ get
+    public final /* non-default */ set(value: kotlin/Int)
+
+  // field: constructorParam:Ljava/lang/String;
+  // getter: getConstructorParam()Ljava/lang/String;
+  public final val constructorParam: kotlin/String
+    public final get
+
+  // getter: getGetterOnlyVal()D
+  public final val getterOnlyVal: kotlin/Double
+    public final /* non-default */ get
+
+  // field: withBackingField:Ljava/lang/String;
+  // getter: getWithBackingField()Ljava/lang/String;
+  // setter: setWithBackingField(Ljava/lang/String;)V
+  public final var withBackingField: kotlin/String
+    public final get
+    public final set
+
+  // field: delegated$delegate:Ljava/lang/Void;
+  // getter: getDelegated(Ljava/lang/Number;)Ljava/util/List;
+  public final /* delegated */ val <T#0 /* T */ : kotlin/Number> T#0.delegated: kotlin/collections/List<kotlin/Nothing>
+    public final /* non-default */ get
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

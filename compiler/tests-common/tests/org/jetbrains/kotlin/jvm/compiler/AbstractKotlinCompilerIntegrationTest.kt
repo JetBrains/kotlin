@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import java.io.File
@@ -112,6 +113,24 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         return File(tmpdir, "$libraryName.meta.js")
     }
 
+    /**
+     * Compiles all .kt sources under the directory named [libraryName] to a directory named "[libraryName]" in [tmpdir]
+     *
+     * @return the path to the corresponding directory
+     */
+    protected fun compileCommonLibrary(
+        libraryName: String,
+        additionalOptions: List<String> = emptyList(),
+        checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) }
+    ): File {
+        val destination = File(tmpdir, libraryName)
+        val output = compileKotlin(
+            libraryName, destination, compiler = K2MetadataCompiler(), additionalOptions = additionalOptions, expectedFileName = null
+        )
+        checkKotlinOutput(normalizeOutput(output))
+        return destination
+    }
+
     private fun normalizeOutput(output: Pair<String, ExitCode>): String {
         return AbstractCliTest.getNormalizedCompilerOutput(output.first, output.second, testDataDirectory.path)
                 .replace(FileUtil.toSystemIndependentName(tmpdir.absolutePath), "\$TMP_DIR\$")
@@ -138,16 +157,14 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             args.add("-output")
             args.add(output.path)
             args.add("-meta-info")
-        }
-        else if (compiler is K2JVMCompiler) {
+        } else if (compiler is K2JVMCompiler || compiler is K2MetadataCompiler) {
             if (classpath.isNotEmpty()) {
                 args.add("-classpath")
                 args.add(classpath.joinToString(File.pathSeparator))
             }
             args.add("-d")
             args.add(output.path)
-        }
-        else {
+        } else {
             throw UnsupportedOperationException(compiler.toString())
         }
 

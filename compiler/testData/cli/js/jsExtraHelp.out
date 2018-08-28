@@ -4,6 +4,8 @@ where advanced options include:
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
+  -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
+                             Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
@@ -11,6 +13,7 @@ where advanced options include:
   -Xexperimental=<fq.name>   Enable and propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
+  -Xmetadata-version         Change metadata version of the generated binary files
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
@@ -26,7 +29,7 @@ where advanced options include:
   -Xreport-output-files      Report source to output files mapping
   -Xreport-perf              Report detailed performance statistics
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
-  -Xuse-experimental=<fq.name> Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name
+  -Xuse-experimental=<fq.name> Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

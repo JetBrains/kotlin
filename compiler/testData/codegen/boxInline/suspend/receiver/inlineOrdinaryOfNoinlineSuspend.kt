@@ -1,8 +1,11 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: test.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
-
+// WITH_COROUTINES
+// SKIP_SOURCEMAP_REMAPPING
 import COROUTINES_PACKAGE.*
+import helpers.*
 
 // Block is allowed to be called from nested classes/lambdas (as common crossinlines)
 // Start coroutine call is possible
@@ -10,18 +13,6 @@ import COROUTINES_PACKAGE.*
 
 interface SuspendRunnable {
     suspend fun run()
-}
-
-val EmptyContinuation = object: Continuation<Unit> {
-    override val context: CoroutineContext
-        get() = EmptyCoroutineContext
-
-    override fun resume(value: Unit) {
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        throw exception
-    }
 }
 
 class Controller {

@@ -56,7 +56,8 @@ internal class PsiContractParserDispatcher(val trace: BindingTrace, val contract
         if (expression == null) return null
         if (!contractParsingServices.isContractDescriptionCall(expression, trace.bindingContext)) return null
 
-        val resolvedCall = expression.getResolvedCall(trace.bindingContext)!! // Must be non-null due to 'isContractDescriptionCall' check
+        // Must be non-null due to 'isContractDescriptionCall' check, but actually is not, see EA-124365
+        val resolvedCall = expression.getResolvedCall(trace.bindingContext) ?: return null
 
         val lambda = resolvedCall.firstArgumentAsExpressionOrNull() as? KtLambdaExpression ?: return null
 

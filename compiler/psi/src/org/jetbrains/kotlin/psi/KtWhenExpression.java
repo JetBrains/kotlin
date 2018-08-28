@@ -36,6 +36,11 @@ public class KtWhenExpression extends KtExpressionImpl {
     }
 
     @Nullable
+    public KtProperty getSubjectVariable() {
+        return findChildByClass(KtProperty.class);
+    }
+
+    @Nullable
     public KtExpression getSubjectExpression() {
         return findChildByClass(KtExpression.class);
     }

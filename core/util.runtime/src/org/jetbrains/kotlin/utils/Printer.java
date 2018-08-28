@@ -24,15 +24,16 @@ import java.util.Iterator;
 
 public class Printer {
     private static final String DEFAULT_INDENTATION_UNIT = "    ";
-    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    protected final Appendable out;
+    private final Appendable out;
     private final int maxBlankLines;
 
-    private String indent = "";
+    private String indent;
     private final String indentUnit;
     private int blankLineCountIncludingCurrent = 0;
     private boolean withholdIndentOnce = false;
+    private int length = 0;
 
     public Printer(@NotNull Appendable out) {
         this(out, Integer.MAX_VALUE);
@@ -47,14 +48,25 @@ public class Printer {
     }
 
     public Printer(@NotNull Appendable out, int maxBlankLines, @NotNull String indentUnit) {
+        this(out, maxBlankLines, indentUnit, "");
+    }
+
+    private Printer(@NotNull Appendable out, int maxBlankLines, @NotNull String indentUnit, @NotNull String indent) {
         this.out = out;
         this.maxBlankLines = maxBlankLines;
         this.indentUnit = indentUnit;
+        this.indent = indent;
+    }
+
+    public Printer(@NotNull Appendable out, @NotNull Printer parent) {
+        this(out, parent.maxBlankLines, parent.indentUnit, parent.indent);
     }
 
     private void append(Object o) {
         try {
-            out.append(o.toString());
+            String string = o.toString();
+            out.append(string);
+            length += string.length();
         }
         catch (IOException e) {
             // Do nothing
@@ -155,5 +167,14 @@ public class Printer {
             }
         }
         return this;
+    }
+
+    public boolean isEmpty() {
+        return length == 0;
+    }
+
+    @Override
+    public String toString() {
+        return out.toString();
     }
 }

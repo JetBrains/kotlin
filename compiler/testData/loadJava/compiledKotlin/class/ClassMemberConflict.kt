@@ -11,7 +11,7 @@ class ConstructorTypeParamClassObjectTypeConflict<test> {
 
 class ConstructorTypeParamClassObjectConflict<test> {
     companion object {
-        val test = 12
+        val test = { 12 }()
     }
 
     val some = test
@@ -19,7 +19,7 @@ class ConstructorTypeParamClassObjectConflict<test> {
 
 class TestConstructorParamClassObjectConflict(test: String) {
     companion object {
-        val test = 12
+        val test = { 12 }()
     }
 
     val some = test
@@ -28,7 +28,7 @@ class TestConstructorParamClassObjectConflict(test: String) {
 
 class TestConstructorValClassObjectConflict(val test: String) {
     companion object {
-        val test = 12
+        val test = { 12 }()
     }
 
     val some = test
@@ -36,10 +36,10 @@ class TestConstructorValClassObjectConflict(val test: String) {
 
 class TestClassObjectAndClassConflict {
     companion object {
-        val bla = 12
+        val bla = { 12 }()
     }
 
-    val bla = "More"
+    val bla = { "More" }()
 
     val some = bla
 }

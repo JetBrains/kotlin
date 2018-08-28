@@ -17,6 +17,8 @@ dependencies {
     testCompile project(':kotlin-gradle-plugin').sourceSets.test.output
     testCompile project(':kotlin-gradle-subplugin-example')
     testCompile project(':kotlin-allopen')
+    testCompile project(':kotlin-noarg')
+    testCompile project(':kotlin-sam-with-receiver')
     testCompile project(':kotlin-test:kotlin-test-jvm')
 
     testCompile project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
@@ -43,6 +45,8 @@ dependencies {
 test.dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
 
 test.dependsOn(":kotlin-allopen:install",
+               ":kotlin-noarg:install",
+               ":kotlin-sam-with-receiver:install",
                ":kotlin-android-extensions:install",
                ":kotlin-build-common:install",
                ":kotlin-compiler-embeddable:install",

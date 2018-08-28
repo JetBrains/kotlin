@@ -40,22 +40,27 @@ class JvmLower(val context: JvmBackendContext) {
 
         //Should be before interface lowering
         DefaultArgumentStubGenerator(context, false).runOnFilePostfix(irFile)
-        StaticDefaultFunctionLowering(context.state).runOnFilePostfix(irFile)
 
         InterfaceLowering(context.state).runOnFilePostfix(irFile)
         InterfaceDelegationLowering(context.state).runOnFilePostfix(irFile)
         SharedVariablesLowering(context).runOnFilePostfix(irFile)
-        InnerClassesLowering(context).runOnFilePostfix(irFile)
-        InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
 
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
+
         LocalDeclarationsLowering(
             context,
             object : LocalNameProvider {
                 override fun localName(descriptor: DeclarationDescriptor): String =
                     NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
-            }
+            },
+            Visibilities.PUBLIC //TODO properly figure out visibility
         ).runOnFilePostfix(irFile)
+        CallableReferenceLowering(context).lower(irFile)
+
+        InnerClassesLowering(context).runOnFilePostfix(irFile)
+        InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)
+
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
 
         EnumClassLowering(context).runOnFilePostfix(irFile)
         //Should be before SyntheticAccessorLowering cause of synthetic accessor for companion constructor
@@ -64,8 +69,12 @@ class JvmLower(val context: JvmBackendContext) {
         SingletonReferencesLowering(context).runOnFilePostfix(irFile)
         SyntheticAccessorLowering(context).lower(irFile)
         BridgeLowering(context).runOnFilePostfix(irFile)
+        JvmOverloadsAnnotationLowering(context).runOnFilePostfix(irFile)
+        JvmStaticAnnotationLowering(context).lower(irFile)
+        StaticDefaultFunctionLowering(context.state).runOnFilePostfix(irFile)
 
         TailrecLowering(context).runOnFilePostfix(irFile)
+        ToArrayLowering(context).runOnFilePostfix(irFile)
 
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
     }

@@ -1,9 +1,9 @@
 // No "unused symbol" should be reported here
-
 expect class My
 
+// But this should be reported
 actual class My
 
-// But this should be reported
+// And this too
 expect val bar: String
 

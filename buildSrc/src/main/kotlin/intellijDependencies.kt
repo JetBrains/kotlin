@@ -43,12 +43,17 @@ fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository =
 
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module].ivy.xml")
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellij.plugin.[module].ivy.xml")
+    ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/plugins-[module].ivy.xml")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellij/plugins/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/plugins-[module]/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact].jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact](-[revision])(-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/sources/[artifact]-[revision]-[classifier].[ext]")
+
+    metadataSources {
+        ivyDescriptor()
+    }
 }
 
 fun Project.intellijDep(module: String = "intellij") = "kotlin.build.custom.deps:$module:${rootProject.extra["versions.intellijSdk"]}"
@@ -118,7 +123,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
     return task<JavaExec>(name) {
         val ideaSandboxConfigDir = File(ideaSandboxDir, "config")
 
-        classpath = the<JavaPluginConvention>().sourceSets["main"].runtimeClasspath
+        classpath = mainSourceSet.runtimeClasspath
 
         main = "com.intellij.idea.Main"
 

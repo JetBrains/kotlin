@@ -42,7 +42,7 @@ open class KotlinVariableInplaceRenameHandler : VariableInplaceRenameHandler() {
             editor: Editor,
             currentName: String,
             oldName: String
-        ) : super(elementToRename, editor, editor.project, currentName, oldName)
+        ) : super(elementToRename, editor, editor.project!!, currentName, oldName)
 
         override fun acceptReference(reference: PsiReference): Boolean {
             val refElement = reference.element

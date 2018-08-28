@@ -1,0 +1,7 @@
+// "Add missing actual members" "true"
+// DISABLE-ERRORS
+
+actual class My {
+    // Incompilable function
+    actual fun foo() {}
+}

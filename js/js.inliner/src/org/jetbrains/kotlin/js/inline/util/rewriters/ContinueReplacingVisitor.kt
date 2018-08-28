@@ -26,6 +26,7 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
     override fun visit(x: JsContinue, ctx: JsContext<JsNode>): Boolean {
         val target = x.label?.name
         val shouldReplace = if (target == null) loopNestingLevel == 0 else target == loopLabelName
+        assert(loopNestingLevel >= 0)
         if (shouldReplace) {
             ctx.replaceMe(JsBreak(guardLabelName.makeRef()))
         }
@@ -33,51 +34,16 @@ class ContinueReplacingVisitor(val loopLabelName: JsName?, val guardLabelName: J
         return false
     }
 
-    override fun visit(x: JsWhile, ctx: JsContext<JsNode>): Boolean {
+    override fun visit(x: JsLoop, ctx: JsContext<JsNode>): Boolean {
         if (loopLabelName == null) return false
 
         loopNestingLevel++
         return super.visit(x, ctx)
     }
 
-    override fun endVisit(x: JsWhile, ctx: JsContext<JsNode>) {
+    override fun endVisit(x: JsLoop, ctx: JsContext<JsNode>) {
         super.endVisit(x, ctx)
-        loopNestingLevel--
-    }
-
-    override fun visit(x: JsDoWhile, ctx: JsContext<JsNode>): Boolean {
-        if (loopLabelName == null) return false
-
-        loopNestingLevel++
-        return super.visit(x, ctx)
-    }
-
-    override fun endVisit(x: JsDoWhile, ctx: JsContext<JsNode>) {
-        super.endVisit(x, ctx)
-        loopNestingLevel--
-    }
-
-    override fun visit(x: JsFor, ctx: JsContext<JsNode>): Boolean {
-        if (loopLabelName == null) return false
-
-        loopNestingLevel++
-        return super.visit(x, ctx)
-    }
-
-    override fun endVisit(x: JsFor, ctx: JsContext<JsNode>) {
-        super.endVisit(x, ctx)
-        loopNestingLevel--
-    }
-
-    override fun visit(x: JsForIn, ctx: JsContext<JsNode>): Boolean {
-        if (loopLabelName == null) return false
-
-        loopNestingLevel++
-        return super.visit(x, ctx)
-    }
-
-    override fun endVisit(x: JsForIn, ctx: JsContext<JsNode>) {
-        super.endVisit(x, ctx)
+        if (loopLabelName == null) return
         loopNestingLevel--
     }
 }

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,16 +30,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 
@@ -68,20 +63,25 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
         element?.transformChildrenVoid(object: IrElementTransformerVoid() {
             val transformer = this
 
-            private fun replaceEmptyParameterWithEmptyArray(expression: IrMemberAccessExpression) {
+            private fun replaceEmptyParameterWithEmptyArray(expression: IrFunctionAccessExpression) {
                 log { "call of: ${expression.descriptor}" }
                 context.createIrBuilder(owner, expression.startOffset, expression.endOffset).apply {
                     expression.descriptor.valueParameters.forEach {
                         log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it))}" }
                     }
-                    expression.descriptor.valueParameters.filter { it.varargElementType != null && expression.getValueArgument(it) == null }.forEach {
-                        expression.putValueArgument(it.index,
-                                IrVarargImpl(startOffset       = startOffset,
-                                             endOffset         = endOffset,
-                                             type              = it.type,
-                                             varargElementType = it.varargElementType!!)
-                        )
-                    }
+                    expression.symbol.owner.valueParameters
+                        .filter { it.varargElementType != null && expression.getValueArgument(it.index) == null }
+                        .forEach {
+                            expression.putValueArgument(
+                                it.index,
+                                IrVarargImpl(
+                                    startOffset = startOffset,
+                                    endOffset = endOffset,
+                                    type = it.type,
+                                    varargElementType = it.varargElementType!!
+                                )
+                            )
+                        }
                 }
                 expression.transformChildrenVoid(this)
             }
@@ -99,33 +99,28 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
             override fun visitVararg(expression: IrVararg): IrExpression {
                 expression.transformChildrenVoid(transformer)
                 val hasSpreadElement = hasSpreadElement(expression)
-                if (!hasSpreadElement && expression.elements.all { it is IrConst<*> && KotlinBuiltIns.isString(it.type) }) {
+                if (!hasSpreadElement && expression.elements.all { it is IrConst<*> && it.type.isString() }) {
                     log { "skipped vararg expression because it's string array literal" }
                     return expression
                 }
                 val irBuilder = context.createIrBuilder(owner, expression.startOffset, expression.endOffset)
                 irBuilder.run {
                     val type = expression.varargElementType
-                    log { "$expression: array type:$type, is array of primitives ${!KotlinBuiltIns.isArray(expression.type)}" }
+                    log { "$expression: array type:$type, is array of primitives ${!expression.type.isArray()}" }
                     val arrayHandle = arrayType(expression.type)
-                    val arrayConstructor = arrayHandle.arraySymbol.constructors.find { it.owner.valueParameters.size == 1 }!!
-                    val block = irBlock(arrayHandle.arraySymbol.owner.defaultType)
-                    val arrayConstructorCall = if (arrayConstructor.owner.typeParameters.isEmpty()) {
-                        irCall(arrayConstructor)
-                    } else {
-                        irCall(arrayConstructor, listOf(type))
-                    }
-
+                    val block = irBlock(expression.type)
 
                     val vars = expression.elements.map {
                         val initVar = scope.createTemporaryVariable(
-                                (it as? IrSpreadElement)?.expression ?: it as IrExpression,
-                                "elem".synthesizedString, true)
+                            (it as? IrSpreadElement)?.expression ?: it as IrExpression,
+                            "elem".synthesizedString, true)
                         block.statements.add(initVar)
                         it to initVar
                     }.toMap()
-                    arrayConstructorCall.putValueArgument(0, calculateArraySize(arrayHandle, hasSpreadElement, scope, expression, vars))
-                    val arrayTmpVariable = scope.createTemporaryVariable(arrayConstructorCall, "array".synthesizedString, true)
+                    val arraySize = calculateArraySize(arrayHandle, hasSpreadElement, scope, expression, vars)
+                    val array = arrayHandle.createArray(this, expression.varargElementType, arraySize)
+
+                    val arrayTmpVariable = scope.createTemporaryVariable(array, "array".synthesizedString, true)
                     val indexTmpVariable = scope.createTemporaryVariable(kIntZero, "index".synthesizedString, true)
                     block.statements.add(arrayTmpVariable)
                     if (hasSpreadElement) {
@@ -138,32 +133,31 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
                             log { "element:$i> ${ir2string(element)}" }
                             val dst = vars[element]!!
                             if (element !is IrSpreadElement) {
-                                val setArrayElementCall = irCall(arrayHandle.setMethodSymbol)
-                                setArrayElementCall.dispatchReceiver = irGet(arrayTmpVariable.symbol)
-                                setArrayElementCall.putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable.symbol) else irConstInt(i))
-                                setArrayElementCall.putValueArgument(1, irGet(dst.symbol))
+                                val setArrayElementCall = irCall(arrayHandle.setMethodSymbol.owner)
+                                setArrayElementCall.dispatchReceiver = irGet(arrayTmpVariable)
+                                setArrayElementCall.putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable) else irConstInt(i))
+                                setArrayElementCall.putValueArgument(1, irGet(dst))
                                 block.statements.add(setArrayElementCall)
                                 if (hasSpreadElement) {
-                                    block.statements.add(incrementVariable(indexTmpVariable.symbol, kIntOne))
+                                    block.statements.add(incrementVariable(indexTmpVariable, kIntOne))
                                 }
                             } else {
-                                val arraySizeVariable = scope.createTemporaryVariable(irArraySize(arrayHandle, irGet(dst.symbol)), "length".synthesizedString)
+                                val arraySizeVariable = scope.createTemporaryVariable(irArraySize(arrayHandle, irGet(dst)), "length".synthesizedString)
                                 block.statements.add(arraySizeVariable)
-                                val copyCall = irCall(arrayHandle.copyRangeToSymbol).apply {
-                                    extensionReceiver = irGet(dst.symbol)
-                                    putValueArgument(0, irGet(arrayTmpVariable.symbol))  /* destination */
+                                val copyCall = irCall(arrayHandle.copyRangeToSymbol.owner).apply {
+                                    extensionReceiver = irGet(dst)
+                                    putValueArgument(0, irGet(arrayTmpVariable))  /* destination */
                                     putValueArgument(1, kIntZero)                            /* fromIndex */
-                                    putValueArgument(2, irGet(arraySizeVariable.symbol)) /* toIndex */
-                                    putValueArgument(3, irGet(indexTmpVariable.symbol))  /* destinationIndex */
+                                    putValueArgument(2, irGet(arraySizeVariable)) /* toIndex */
+                                    putValueArgument(3, irGet(indexTmpVariable))  /* destinationIndex */
                                 }
                                 block.statements.add(copyCall)
-                                block.statements.add(incrementVariable(indexTmpVariable.symbol,
-                                        irGet(arraySizeVariable.symbol)))
+                                block.statements.add(incrementVariable(indexTmpVariable, irGet(arraySizeVariable)))
                                 log { "element:$i:spread element> ${ir2string(element.expression)}" }
                             }
                         }
                     }
-                    block.statements.add(irGet(arrayTmpVariable.symbol))
+                    block.statements.add(irGet(arrayTmpVariable))
                     return block
                 }
             }
@@ -171,24 +165,11 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
     }
 
     private val symbols = context.ir.symbols
-    private val intPlusInt = symbols.intPlusInt
+    private val intPlusInt = symbols.intPlusInt.owner
 
-    private fun arrayType(type: KotlinType): ArrayHandle = when {
-        KotlinBuiltIns.isPrimitiveArray(type) -> {
-            val primitiveType = KotlinBuiltIns.getPrimitiveArrayType(type.constructor.declarationDescriptor!!)
-            when (primitiveType) {
-                PrimitiveType.BYTE    -> kByteArrayHandler
-                PrimitiveType.SHORT   -> kShortArrayHandler
-                PrimitiveType.CHAR    -> kCharArrayHandler
-                PrimitiveType.INT     -> kIntArrayHandler
-                PrimitiveType.LONG    -> kLongArrayHandler
-                PrimitiveType.FLOAT   -> kFloatArrayHandler
-                PrimitiveType.DOUBLE  -> kDoubleArrayHandler
-                PrimitiveType.BOOLEAN -> kBooleanArrayHandler
-                else                  -> TODO("unsupported type: $primitiveType")
-            }
-        }
-        else -> kArrayHandler
+    private fun arrayType(type: IrType): ArrayHandle {
+        val arrayClass = type.classifierOrFail
+        return arrayToHandle[arrayClass] ?: error(arrayClass.descriptor)
     }
 
     private fun IrBuilderWithScope.intPlus() = irCall(intPlusInt)
@@ -199,27 +180,27 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
         }
     }
 
-    private fun IrBuilderWithScope.incrementVariable(symbol: IrVariableSymbol, value: IrExpression): IrExpression {
-        return irSetVar(symbol, intPlus().apply {
-            dispatchReceiver = irGet(symbol)
+    private fun IrBuilderWithScope.incrementVariable(variable: IrVariable, value: IrExpression): IrExpression {
+        return irSetVar(variable.symbol, intPlus().apply {
+            dispatchReceiver = irGet(variable)
             putValueArgument(0, value)
         })
     }
-    private fun calculateArraySize(arrayHandle: ArrayHandle, hasSpreadElement: Boolean, scope:Scope, expression: IrVararg, vars: Map<IrVarargElement, IrVariable>): IrExpression? {
+    private fun calculateArraySize(arrayHandle: ArrayHandle, hasSpreadElement: Boolean, scope:Scope, expression: IrVararg, vars: Map<IrVarargElement, IrVariable>): IrExpression {
         context.createIrBuilder(scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).run {
             if (!hasSpreadElement)
                 return irConstInt(expression.elements.size)
             val notSpreadElementCount = expression.elements.filter { it !is IrSpreadElement}.size
             val initialValue = irConstInt(notSpreadElementCount) as IrExpression
             return vars.filter{it.key is IrSpreadElement}.toList().fold( initial = initialValue) { result, it ->
-                val arraySize = irArraySize(arrayHandle, irGet(it.second.symbol))
+                val arraySize = irArraySize(arrayHandle, irGet(it.second))
                 increment(result, arraySize)
             }
         }
     }
 
     private fun IrBuilderWithScope.irArraySize(arrayHandle: ArrayHandle, expression: IrExpression): IrExpression {
-        val arraySize = irCall(arrayHandle.sizeGetterSymbol).apply {
+        val arraySize = irCall(arrayHandle.sizeGetterSymbol.owner).apply {
             dispatchReceiver = expression
         }
         return arraySize
@@ -232,31 +213,69 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
         context.log { "VARARG-INJECTOR:    ${msg()}" }
     }
 
-    data class ArrayHandle(val arraySymbol: IrClassSymbol,
-                           val setMethodSymbol: IrFunctionSymbol,
-                           val sizeGetterSymbol: IrFunctionSymbol,
-                           val copyRangeToSymbol: IrFunctionSymbol)
+    abstract inner class ArrayHandle(val arraySymbol: IrClassSymbol) {
+        val setMethodSymbol = arraySymbol.functions.single { it.descriptor.name == OperatorNameConventions.SET }
+        val sizeGetterSymbol = arraySymbol.getPropertyGetter("size")!!
+        val copyRangeToSymbol = symbols.copyRangeTo[arraySymbol.descriptor]!!
+        protected val singleParameterConstructor =
+            arraySymbol.owner.constructors.find { it.valueParameters.size == 1 }!!
 
-    val kByteArrayHandler    = handle(symbols.byteArray)
-    val kCharArrayHandler    = handle(symbols.charArray)
-    val kShortArrayHandler   = handle(symbols.shortArray)
-    val kIntArrayHandler     = handle(symbols.intArray)
-    val kLongArrayHandler    = handle(symbols.longArray)
-    val kFloatArrayHandler   = handle(symbols.floatArray)
-    val kDoubleArrayHandler  = handle(symbols.doubleArray)
-    val kBooleanArrayHandler = handle(symbols.booleanArray)
-    val kArrayHandler        = handle(symbols.array)
+        abstract fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression
+    }
 
-    private fun handle(symbol: IrClassSymbol) = ArrayHandle(
-            arraySymbol = symbol,
-            setMethodSymbol = symbol.functions.single { it.descriptor.name == OperatorNameConventions.SET },
-            sizeGetterSymbol = symbol.getPropertyGetter("size")!!,
-            copyRangeToSymbol = symbols.copyRangeTo[symbol.descriptor]!!
-    )
+    inner class ReferenceArrayHandle : ArrayHandle(symbols.array) {
+        override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
+            return builder.irCall(singleParameterConstructor).apply {
+                putTypeArgument(0, elementType)
+                putValueArgument(0, size)
+            }
+        }
+    }
+
+    inner class PrimitiveArrayHandle(primitiveType: PrimitiveType)
+        : ArrayHandle(symbols.primitiveArrays[primitiveType]!!) {
+
+        override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
+            return builder.irCall(singleParameterConstructor).apply {
+                putValueArgument(0, size)
+            }
+        }
+    }
+
+    inner class UnsignedArrayHandle(
+        arraySymbol: IrClassSymbol,
+        private val wrappedArrayHandle: PrimitiveArrayHandle
+    ) : ArrayHandle(arraySymbol) {
+
+        override fun createArray(builder: IrBuilderWithScope, elementType: IrType, size: IrExpression): IrExpression {
+            val wrappedArray = wrappedArrayHandle.createArray(builder, elementType, size)
+            return builder.irCall(singleParameterConstructor).apply {
+                putValueArgument(0, wrappedArray)
+            }
+        }
+    }
+
+    private val primitiveArrayHandles = PrimitiveType.values().associate { it to PrimitiveArrayHandle(it) }
+
+    private val unsignedArrayHandles = UnsignedType.values().mapNotNull { unsignedType ->
+        symbols.unsignedArrays[unsignedType]?.let {
+            val primitiveType = when (unsignedType) {
+                UnsignedType.UBYTE -> PrimitiveType.BYTE
+                UnsignedType.USHORT -> PrimitiveType.SHORT
+                UnsignedType.UINT -> PrimitiveType.INT
+                UnsignedType.ULONG -> PrimitiveType.LONG
+            }
+            UnsignedArrayHandle(it, primitiveArrayHandles[primitiveType]!!)
+        }
+    }
+
+    val arrayToHandle =
+        (primitiveArrayHandles.values + unsignedArrayHandles + ReferenceArrayHandle()).associateBy { it.arraySymbol }
 
 }
 
-private fun IrBuilderWithScope.irConstInt(value: Int): IrConst<Int> = IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, value)
-private fun IrBuilderWithScope.irBlock(type: KotlinType): IrBlock = IrBlockImpl(startOffset, endOffset, type)
+private fun IrBuilderWithScope.irConstInt(value: Int): IrConst<Int> =
+    IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
+private fun IrBuilderWithScope.irBlock(type: IrType): IrBlock = IrBlockImpl(startOffset, endOffset, type)
 private val IrBuilderWithScope.kIntZero get() = irConstInt(0)
 private val IrBuilderWithScope.kIntOne get() = irConstInt(1)

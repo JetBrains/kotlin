@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.binding;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
@@ -41,6 +43,7 @@ public class CodegenBinding {
     private static final WritableSlice<ClassDescriptor, Collection<ClassDescriptor>> INNER_CLASSES = Slices.createSimpleSlice();
 
     public static final WritableSlice<KtExpression, SamType> SAM_VALUE = Slices.createSimpleSlice();
+    public static final WritableSlice<KtExpression, Type> FUNCTION_TYPE_FOR_SUSPEND_WRAPPER = Slices.createSimpleSlice();
 
     public static final WritableSlice<KtCallElement, KtExpression> SAM_CONSTRUCTOR_TO_ARGUMENT = Slices.createSimpleSlice();
 
@@ -70,6 +73,12 @@ public class CodegenBinding {
     }
 
     private CodegenBinding() {
+    }
+
+    @Nullable
+    public static List<LocalVariableDescriptor> getLocalDelegatedProperties(@NotNull BindingContext bindingContext, @NotNull Type owner) {
+        List<VariableDescriptorWithAccessors> properties = bindingContext.get(DELEGATED_PROPERTIES, owner);
+        return properties == null ? null : CollectionsKt.filterIsInstance(properties, LocalVariableDescriptor.class);
     }
 
     public static void initTrace(@NotNull GenerationState state) {

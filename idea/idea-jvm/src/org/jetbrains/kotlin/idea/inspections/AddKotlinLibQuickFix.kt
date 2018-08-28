@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
-import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.facet.getCleanRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.psi.KtScript
 
 class AddReflectionQuickFix(element: KtElement)
         : AddKotlinLibQuickFix(element, listOf(LibraryJarDescriptor.REFLECT_JAR,
@@ -45,10 +46,33 @@ class AddReflectionQuickFix(element: KtElement)
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect",
-                                                                                       getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
+                                                                                       getCleanRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddReflectionQuickFix)
+    }
+}
+
+class AddScriptRuntimeQuickFix(element: KtElement) : AddKotlinLibQuickFix(element, listOf(LibraryJarDescriptor.SCRIPT_RUNTIME_JAR)) {
+    override fun getText() = KotlinBundle.message("add.script.runtime.to.classpath")
+    override fun getFamilyName() = text
+
+    override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor(
+        "org.jetbrains.kotlin", "kotlin-script-runtime",
+        getCleanRuntimeLibraryVersion(module) ?: bundledRuntimeVersion()
+    )
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtElement>? {
+            val ktScript = Errors.MISSING_SCRIPT_BASE_CLASS.cast(diagnostic).psiElement as? KtScript ?: return null
+            val templateClassName = ktScript.kotlinScriptDefinition.value.template.qualifiedName ?: return null
+
+            if (templateClassName.startsWith("kotlin.script.templates.standard")) {
+                return diagnostic.createIntentionForFirstParentOfType(::AddScriptRuntimeQuickFix)
+            }
+
+            return null
+        }
     }
 }
 
@@ -59,7 +83,7 @@ class AddTestLibQuickFix(element: KtElement)
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test",
-                                                                                       getRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
+                                                                                       getCleanRuntimeLibraryVersion(module) ?: bundledRuntimeVersion())
 
     companion object : KotlinSingleIntentionActionFactory() {
         val KOTLIN_TEST_UNRESOLVED = setOf(

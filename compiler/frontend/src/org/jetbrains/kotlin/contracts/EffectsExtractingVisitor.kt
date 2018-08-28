@@ -34,8 +34,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -170,14 +169,36 @@ class EffectsExtractingVisitor(
         arguments.addIfNotNull(extensionReceiver?.toComputation())
         arguments.addIfNotNull(dispatchReceiver?.toComputation())
 
-        valueArgumentsByIndex?.mapTo(arguments) {
-            val valueArgument = (it as? ExpressionValueArgument)?.valueArgument ?: return null
-            when (valueArgument) {
-                is KtLambdaArgument -> valueArgument.getLambdaExpression()?.let { ESLambda(it) } ?: return null
-                else -> extractOrGetCached(valueArgument.getArgumentExpression() ?: return null)
-            }
-        } ?: return null
+        val passedValueArguments = valueArgumentsByIndex ?: return null
+
+        passedValueArguments.mapTo(arguments) { it.toComputation() ?: return null }
 
         return arguments
+    }
+
+    private fun ResolvedValueArgument.toComputation(): Computation? {
+        return when (this) {
+            // Assume that we don't know anything about default arguments
+            // Note that we don't want to return 'null' here, because 'null' indicates that we can't
+            // analyze whole call, which is undesired for cases like `kotlin.test.assertNotNull`
+            is DefaultValueArgument -> UNKNOWN_COMPUTATION
+
+            // We prefer to throw away calls with varags completely, just to be safe
+            // Potentially, we could return UNKNOWN_COMPUTATION here too
+            is VarargValueArgument -> null
+
+            is ExpressionValueArgument -> valueArgument?.toComputation()
+
+            // Should be exhaustive
+            else -> throw IllegalStateException("Unexpected ResolvedValueArgument $this")
+        }
+    }
+
+    private fun ValueArgument.toComputation(): Computation? {
+        return when (this) {
+            is KtLambdaArgument -> getLambdaExpression()?.let { ESLambda(it) }
+            is KtValueArgument -> getArgumentExpression()?.let { extractOrGetCached(it) }
+            else -> null
+        }
     }
 }

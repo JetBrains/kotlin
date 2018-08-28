@@ -44,6 +44,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
         runTest("libraries/tools/kotlinp/testData/LocalClass.kt");
     }
 
+    @TestMetadata("LocalDelegatedProperties.kt")
+    public void testLocalDelegatedProperties() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/LocalDelegatedProperties.kt");
+    }
+
     @TestMetadata("MultiFileClass.kt")
     public void testMultiFileClass() throws Exception {
         runTest("libraries/tools/kotlinp/testData/MultiFileClass.kt");
@@ -57,6 +62,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     @TestMetadata("PlatformType.kt")
     public void testPlatformType() throws Exception {
         runTest("libraries/tools/kotlinp/testData/PlatformType.kt");
+    }
+
+    @TestMetadata("Properties.kt")
+    public void testProperties() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/Properties.kt");
     }
 
     @TestMetadata("SimpleClass.kt")

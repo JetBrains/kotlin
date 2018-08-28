@@ -58,6 +58,10 @@ open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserData
     open val implicitReceivers: List<KType> get() = emptyList()
 
     open val environmentVariables: List<Pair<String, KType>> get() = emptyList()
+
+    open val targetClassAnnotations: List<Annotation> get() = emptyList()
+
+    open val targetMethodAnnotations: List<Annotation> get() = emptyList()
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)

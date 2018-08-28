@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -9,7 +10,7 @@ suspend fun foo(x: Any): Int {
     return if (x == "56") suspendHere() else 13
 }
 
-suspend fun suspendHere(): Int = suspendCoroutineOrReturn { x ->
+suspend fun suspendHere(): Int = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(56)
     COROUTINE_SUSPENDED
 }

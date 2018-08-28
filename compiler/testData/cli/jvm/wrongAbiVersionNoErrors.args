@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/wrongAbiVersionNoErrors.kt
--classpath
-$TESTDATA_DIR$/wrongAbiVersionLib/bin
--d
-$TEMP_DIR$

@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.psi.psiUtil.ReservedCheckingKt;
 import org.jetbrains.kotlin.resolve.*;
@@ -1069,7 +1068,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             ensureNonemptyIntersectionOfOperandTypes(expression, context);
             // TODO : Check comparison pointlessness
             result = TypeInfoFactoryKt.createTypeInfo(components.builtIns.getBooleanType(), context);
-            checkIdentityOnPrimitiveTypes(expression, context);
+            checkIdentityOnPrimitiveOrInlineClassTypes(expression, context);
         }
         else if (OperatorConventions.IN_OPERATIONS.contains(operationType)) {
             ValueArgument leftArgument = CallMaker.makeValueArgument(left, left != null ? left : operationSign);
@@ -1091,15 +1090,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return components.dataFlowAnalyzer.checkType(result, expression, contextWithExpectedType);
     }
 
-    private static void checkIdentityOnPrimitiveTypes(@NotNull KtBinaryExpression expression, @NotNull ExpressionTypingContext context) {
+    private static void checkIdentityOnPrimitiveOrInlineClassTypes(
+            @NotNull KtBinaryExpression expression,
+            @NotNull ExpressionTypingContext context
+    ) {
         if (expression.getLeft() == null || expression.getRight() == null) return;
 
         KotlinType leftType = context.trace.getType(expression.getLeft());
         KotlinType rightType = context.trace.getType(expression.getRight());
         if (leftType == null || rightType == null) return;
 
-        if (KotlinTypeChecker.DEFAULT.equalTypes(leftType, rightType) && KotlinBuiltIns.isPrimitiveType(leftType)) {
-            context.trace.report(DEPRECATED_IDENTITY_EQUALS.on(expression, leftType, rightType));
+        if (KotlinTypeChecker.DEFAULT.equalTypes(leftType, rightType)) {
+            if (KotlinBuiltIns.isPrimitiveType(leftType)) {
+                context.trace.report(DEPRECATED_IDENTITY_EQUALS.on(expression, leftType, rightType));
+            }
+            else if (InlineClassesUtilsKt.isInlineClassType(leftType)) {
+                context.trace.report(FORBIDDEN_IDENTITY_EQUALS.on(expression, leftType, rightType));
+            }
         }
         else if (isIdentityComparedWithImplicitBoxing(leftType, rightType) || isIdentityComparedWithImplicitBoxing(rightType, leftType)) {
             context.trace.report(IMPLICIT_BOXING_IN_IDENTITY_EQUALS.on(expression, leftType, rightType));

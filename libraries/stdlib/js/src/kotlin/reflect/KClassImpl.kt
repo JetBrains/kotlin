@@ -60,7 +60,7 @@ internal class SimpleKClassImpl<T : Any>(jClass: JsClass<T>) : KClassImpl<T>(jCl
     override val simpleName: String? = jClass.asDynamic().`$metadata$`?.simpleName.unsafeCast<String?>()
 
     override fun isInstance(value: Any?): Boolean {
-        return js("Kotlin").isType(value, jClass)
+        return jsIsType(value, jClass)
     }
 }
 

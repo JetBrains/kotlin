@@ -14,7 +14,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -29,7 +29,8 @@ class KtLightParameter(
 ) : LightParameter(clsDelegate.name ?: "p$index", clsDelegate.type, method, KotlinLanguage.INSTANCE),
         KtLightDeclaration<KtParameter, PsiParameter> {
 
-    private val modifierList: PsiModifierList
+    private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
+
     private var lightIdentifier: KtLightIdentifier? = null
 
     override val kotlinOrigin: KtParameter?
@@ -56,16 +57,7 @@ class KtLightParameter(
             return setter?.parameter
         }
 
-    init {
-        if (method.lightMemberOrigin is LightMemberOriginForDeclaration) {
-            this.modifierList = KtLightSimpleModifierList(this, emptySet())
-        }
-        else {
-            this.modifierList = super.getModifierList()
-        }
-    }
-
-    override fun getModifierList(): PsiModifierList = modifierList
+    override fun getModifierList(): PsiModifierList = lightModifierList
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: super.getNavigationElement()
 

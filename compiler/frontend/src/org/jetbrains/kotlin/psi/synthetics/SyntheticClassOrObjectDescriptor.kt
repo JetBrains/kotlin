@@ -164,6 +164,7 @@ class SyntheticClassOrObjectDescriptor(
         // in theory `containingKtFile` is `@NotNull` but in practice EA-114080
             _parent.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $_parent of ${_parent.javaClass}")
 
+        override fun getBody(): KtClassBody? = null
     }
 }
 

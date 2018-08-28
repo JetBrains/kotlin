@@ -81,4 +81,7 @@ class SimpleKotlinRenderLogTest : AbstractKotlinRenderLogTest() {
         // disabled due to inconsistent parents for 2-receivers call (KT-22344)
         check(testName, file, false)
     }
+
+    @Test
+    fun testLambdas() = doTest("Lambdas")
 }

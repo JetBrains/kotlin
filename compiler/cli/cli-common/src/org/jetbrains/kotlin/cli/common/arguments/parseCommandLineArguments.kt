@@ -54,7 +54,10 @@ data class ArgumentParseErrors(
 
     var argumentWithoutValue: String? = null,
 
-    val argfileErrors: MutableList<String> = SmartList()
+    val argfileErrors: MutableList<String> = SmartList(),
+
+    // Reports from internal arguments parsers
+    val internalArgumentsParsingProblems: MutableList<String> = SmartList()
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
@@ -108,7 +111,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
     }
 
     val freeArgs = ArrayList<String>()
-    val internalArguments = ArrayList<String>()
+    val internalArguments = ArrayList<InternalArgument>()
 
     var i = 0
     loop@ while (i < args.size) {
@@ -132,7 +135,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
             if (parser == null) {
                 errors.unknownExtraFlags += arg
             } else {
-                internalArguments.add(arg)
+                internalArguments.add(parser.parseInternalArgument(arg, errors) ?: continue)
             }
 
             continue

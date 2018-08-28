@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
@@ -36,9 +37,12 @@ import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -58,7 +62,8 @@ import java.util.*
 fun generateIsCheck(
     v: InstructionAdapter,
     kotlinType: KotlinType,
-    asmType: Type
+    asmType: Type,
+    isReleaseCoroutines: Boolean
 ) {
     if (TypeUtils.isNullableType(kotlinType)) {
         val nope = Label()
@@ -69,7 +74,7 @@ fun generateIsCheck(
 
             ifnull(nope)
 
-            TypeIntrinsics.instanceOf(this, kotlinType, asmType)
+            TypeIntrinsics.instanceOf(this, kotlinType, asmType, isReleaseCoroutines)
 
             goTo(end)
 
@@ -80,7 +85,7 @@ fun generateIsCheck(
             mark(end)
         }
     } else {
-        TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+        TypeIntrinsics.instanceOf(v, kotlinType, asmType, isReleaseCoroutines)
     }
 }
 
@@ -88,7 +93,8 @@ fun generateAsCast(
     v: InstructionAdapter,
     kotlinType: KotlinType,
     asmType: Type,
-    isSafe: Boolean
+    isSafe: Boolean,
+    isReleaseCoroutines: Boolean
 ) {
     if (!isSafe) {
         if (!TypeUtils.isNullableType(kotlinType)) {
@@ -97,7 +103,7 @@ fun generateAsCast(
     } else {
         with(v) {
             dup()
-            TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+            TypeIntrinsics.instanceOf(v, kotlinType, asmType, isReleaseCoroutines)
             val ok = Label()
             ifne(ok)
             pop()
@@ -140,7 +146,7 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(
         return
     }
 
-    if (!JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+    if (!JvmAbi.isClassCompanionObjectWithBackingFieldsInOuter(descriptor)) {
         return
     }
     val properties = companion.declarations.filterIsInstance<KtProperty>()
@@ -322,7 +328,7 @@ fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodege
 
         val destructuringDeclaration =
             (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
-                    ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
+                ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
 
         codegen.initializeDestructuringDeclarationVariables(
             destructuringDeclaration,
@@ -415,7 +421,21 @@ fun MethodNode.textifyMethodNode(): String {
     val text = Textifier()
     val tmv = TraceMethodVisitor(text)
     this.instructions.asSequence().forEach { it.accept(tmv) }
+    localVariables.forEach { text.visitLocalVariable(it.name, it.desc, it.signature, it.start.label, it.end.label, it.index) }
     val sw = StringWriter()
     text.print(PrintWriter(sw))
     return "$sw"
 }
+
+fun KotlinType.isInlineClassTypeWithPrimitiveEquality(): Boolean {
+    if (!isInlineClassType()) return false
+
+    // Always treat unsigned types as inline classes with primitive equality
+    if (UnsignedTypes.isUnsignedType(this)) return true
+
+    // TODO support other inline classes that can be compared as underlying primitives
+    return false
+}
+
+fun CallableDescriptor.needsExperimentalCoroutinesWrapper() =
+    (this as? DeserializedMemberDescriptor)?.coroutinesExperimentalCompatibilityMode == CoroutinesCompatibilityMode.NEEDS_WRAPPER

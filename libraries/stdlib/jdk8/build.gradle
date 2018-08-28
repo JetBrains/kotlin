@@ -1,12 +1,17 @@
 description = 'Kotlin Standard Library JDK 8 extension'
 
 apply plugin: 'kotlin'
+apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_18
 ext.jvmTarget = "1.8"
+
+pill {
+    importAsLibrary = true
+}
 
 dependencies {
     compile project(':kotlin-stdlib')

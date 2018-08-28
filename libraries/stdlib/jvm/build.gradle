@@ -41,7 +41,11 @@ sourceSets {
         kotlin {
             srcDir '../coroutines/jvm/src'
         }
-        compileClasspath += sourceSets.main.output
+    }
+    coroutinesTest {
+        kotlin {
+            srcDir '../coroutines/jvm/test'
+        }
     }
     test {
         kotlin {
@@ -69,6 +73,11 @@ dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
     testCompile project(':kotlin-test:kotlin-test-junit')
+
+    coroutinesCompile sourceSets.main.output
+
+    coroutinesTestCompile sourceSets.coroutines.output
+    coroutinesTestCompile project(':kotlin-test:kotlin-test-junit')
 
     unsignedCompile sourceSets.main.output
 }
@@ -207,9 +216,33 @@ compileCoroutinesKotlin {
     }
 }
 
+compileCoroutinesTestKotlin {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = [
+                "-version",
+                "-Xallow-kotlin-package",
+                "-Xmultifile-parts-inherit",
+                "-module-name", "kotlin-stdlib-coroutines"
+        ]
+    }
+}
+
+task coroutinesTest(type: Test, dependsOn: coroutinesTestClasses) {
+    testClassesDirs = sourceSets.coroutinesTest.output.classesDirs
+    classpath = sourceSets.coroutinesTest.runtimeClasspath
+}
+
+test.dependsOn coroutinesTest
+
 compileUnsignedKotlin {
     kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
         freeCompilerArgs += [
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
                 "-XXLanguage:+InlineClasses"
         ]
     }

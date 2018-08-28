@@ -5,26 +5,33 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
-import org.jetbrains.kotlin.ir.backend.js.utils.getFunctions
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.resolve.JsPlatform.builtIns
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.Variance
 
-class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {
+class JsIntrinsics(
+    private val module: ModuleDescriptor,
+    private val irBuiltIns: IrBuiltIns,
+    val context: JsIrBackendContext
+) {
 
-    private val stubBuilder = DeclarationStubGenerator(symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
+    private val stubBuilder = DeclarationStubGenerator(
+        module, context.symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB, irBuiltIns.languageVersionSettings
+    )
 
     // Equality operations:
 
@@ -59,6 +66,12 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
     val jsDiv = binOp("jsDiv")
     val jsMod = binOp("jsMod")
 
+    val jsPlusAssign = binOp("jsPlusAssign")
+    val jsMinusAssign = binOp("jsMinusAssign")
+    val jsMultAssign = binOp("jsMultAssign")
+    val jsDivAssign = binOp("jsDivAssign")
+    val jsModAssign = binOp("jsModAssign")
+
     val jsAnd = binOp("jsAnd")
     val jsOr = binOp("jsOr")
 
@@ -81,17 +94,92 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
     val jsPropertyGet = binOp("kPropertyGet")
     val jsPropertySet = tripleOp("kPropertySet", irBuiltIns.unit)
 
-    // Other:
+
+    // Type checks:
 
     val jsInstanceOf = binOpBool("jsInstanceOf")
+    val jsTypeOf = unOp("jsTypeOf", irBuiltIns.string)
 
-    val jsObjectCreate = defineObjectCreateIntrinsic()
+    // Number conversions:
 
-    val jsSetJSField = defineSetJSPropertyIntrinsic()
+    val jsNumberToByte = getInternalFunction("numberToByte")
+    val jsNumberToDouble = getInternalFunction("numberToDouble")
+    val jsNumberToInt = getInternalFunction("numberToInt")
+    val jsNumberToShort = getInternalFunction("numberToShort")
+    val jsNumberToLong = getInternalFunction("numberToLong")
+    val jsToByte = getInternalFunction("toByte")
+    val jsToShort = getInternalFunction("toShort")
+    val jsToLong = getInternalFunction("toLong")
 
-    val jsCode = module.getFunctions(FqName("kotlin.js.js")).singleOrNull()?.let { symbolTable.referenceFunction(it) }
+
+    // RTTI:
+
+    val isInterfaceSymbol = getInternalFunction("isInterface")
+    val isArraySymbol = getInternalFunction("isArray")
+    //    val isCharSymbol = getInternalFunction("isChar")
+    val isObjectSymbol = getInternalFunction("isObject")
+
+    val isPrimitiveArray = mapOf(
+        PrimitiveType.BOOLEAN to getInternalFunction("isBooleanArray"),
+        PrimitiveType.BYTE to getInternalFunction("isByteArray"),
+        PrimitiveType.SHORT to getInternalFunction("isShortArray"),
+        PrimitiveType.CHAR to getInternalFunction("isCharArray"),
+        PrimitiveType.INT to getInternalFunction("isIntArray"),
+        PrimitiveType.FLOAT to getInternalFunction("isFloatArray"),
+        PrimitiveType.LONG to getInternalFunction("isLongArray"),
+        PrimitiveType.DOUBLE to getInternalFunction("isLongArray")
+    )
+
+    // Other:
+
+    val jsObjectCreate = defineObjectCreateIntrinsic() // Object.create
+    val jsSetJSField = defineSetJSPropertyIntrinsic() // till we don't have dynamic type we use intrinsic which sets a field with any name
+    val jsCode = getInternalFunction("js") // js("<code>")
+    val jsHashCode = getInternalFunction("hashCode")
+    val jsGetObjectHashCode = getInternalFunction("getObjectHashCode")
+    val jsToString = getInternalFunction("toString")
+    val jsAnyToString = getInternalFunction("anyToString")
+    val jsCompareTo = getInternalFunction("compareTo")
+    val jsEquals = getInternalFunction("equals")
+
+    // Coroutines
+
+    val jsCoroutineContext = context.symbolTable.referenceSimpleFunction(context.coroutineContextProperty.getter!!)
+
+    val jsGetContinuation = context.run {
+        val f = getInternalFunctions("getContinuation")
+        symbolTable.referenceSimpleFunction(f.single())
+    }
+    val jsGetKClass = getInternalWithoutPackage("getKClass")
+    val jsGetKClassFromExpression = getInternalWithoutPackage("getKClassFromExpression")
+    val jsClass = getInternalFunction("jsClass")
+
+    val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
+    val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
+
+    val longConstructor =
+        context.symbolTable.referenceConstructor(context.getClass(FqName("kotlin.Long")).constructors.single())
+    val longToDouble = context.symbolTable.referenceSimpleFunction(
+        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
+            Name.identifier("toDouble")
+        )
+    )
+    val longToFloat = context.symbolTable.referenceSimpleFunction(
+        context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
+            Name.identifier("toFloat")
+        )
+    )
+
+    val charConstructor = context.symbolTable.referenceConstructor(context.getClass(KotlinBuiltIns.FQ_NAMES._char.toSafe()).constructors.single())
 
     // Helpers:
+
+    private fun getInternalFunction(name: String) =
+        context.symbolTable.referenceSimpleFunction(context.getInternalFunctions(name).single())
+
+    private fun getInternalWithoutPackage(name: String) =
+        context.symbolTable.referenceSimpleFunction(context.getFunctions(FqName(name)).single())
+
 
     // TODO: unify how we create intrinsic symbols
     private fun defineObjectCreateIntrinsic(): IrSimpleFunction {
@@ -120,7 +208,6 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
 
         return stubBuilder.generateFunctionStub(desc)
     }
-
 
     private fun defineSetJSPropertyIntrinsic(): IrSimpleFunction {
         val returnType = irBuiltIns.unit

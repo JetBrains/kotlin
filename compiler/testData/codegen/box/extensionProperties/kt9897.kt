@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 object Test {
     var z = "0"
     var l = 0L

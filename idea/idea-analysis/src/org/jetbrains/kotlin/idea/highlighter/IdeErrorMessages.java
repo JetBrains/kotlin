@@ -34,6 +34,7 @@ import static org.jetbrains.kotlin.idea.highlighter.HtmlTabledDescriptorRenderer
 import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS;
 
 
 /**
@@ -61,6 +62,9 @@ public class IdeErrorMessages {
 
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
+                HTML_RENDER_TYPE, HTML_RENDER_TYPE);
+
+        MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
                 HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS,

@@ -1,0 +1,306 @@
+================ Step #1 create new service in cTests =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+[Module 'pJsTests' production] Expected function 'cTests_platformDependentCTestsNew' has no actual declaration in module
+
+================ Step #2 create new service in pJvmTests =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+[Module 'pJsTests' production] Expected function 'cTests_platformDependentCTestsNew' has no actual declaration in module
+
+================ Step #3 create new service in pJsTests =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJsTests/src/servicePJsTestsNewImpl.kt
+End of files
+Exit code: OK
+------------------------------------------
+Building pJvmTests
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJvmTests/src/servicePJvmTestsNewImpl.kt
+End of files
+Exit code: OK
+------------------------------------------
+Compiling files:
+  pJvmTests/src/PJvmTestsNewJavaClass.java
+End of files
+Cleaning output files:
+  out/production/pJvmTests/META-INF/pJvmTests.kotlin_module
+  out/production/pJvmTests/ServicePJvmTestsNewImplKt.class
+End of files
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJvmTests/src/servicePJvmTestsNewImpl.kt
+End of files
+Marked as dirty by Kotlin:
+  cTests/src/serviceCTestsNewHeader.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+
+================ Step #4 change new service in cTests =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Cleaning output files:
+  out/production/pJsTests/pJsTests.js
+  out/production/pJsTests/pJsTests.meta.js
+  out/production/pJsTests/pJsTests/root-package.kjsm
+End of files
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJsTests/src/servicePJsTestsNewImpl.kt
+End of files
+Marked as dirty by Kotlin:
+  pJsTests/src/servicePJsTestsNewImpl.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/pJsTests/pJsTests.js
+  out/production/pJsTests/pJsTests.meta.js
+  out/production/pJsTests/pJsTests/root-package.kjsm
+End of files
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJsTests/src/servicePJsTestsNewImpl.kt
+End of files
+Marked as dirty by Kotlin:
+  cTests/src/serviceCTestsNewHeader.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmTests
+Cleaning output files:
+  out/production/pJvmTests/META-INF/pJvmTests.kotlin_module
+  out/production/pJvmTests/ServiceCTestsNewHeaderKt.class
+End of files
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJvmTests/src/servicePJvmTestsNewImpl.kt
+End of files
+Marked as dirty by Kotlin:
+  pJvmTests/src/servicePJvmTestsNewImpl.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/pJvmTests/META-INF/pJvmTests.kotlin_module
+  out/production/pJvmTests/ServicePJvmTestsNewImplKt.class
+End of files
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJvmTests/src/servicePJvmTestsNewImpl.kt
+End of files
+Marked as dirty by Kotlin:
+  cTests/src/serviceCTestsNewHeader.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+
+================ Step #5 change new service in pJvmTests: java =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmTests
+Cleaning output files:
+  out/production/pJvmTests/PJvmTestsNewJavaClass.class
+End of files
+Exit code: NOTHING_DONE
+------------------------------------------
+Compiling files:
+  pJvmTests/src/PJvmTestsNewJavaClass.java
+End of files
+
+================ Step #6 change new service in pJvmTests: kotlin =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmTests
+Cleaning output files:
+  out/production/pJvmTests/META-INF/pJvmTests.kotlin_module
+  out/production/pJvmTests/ServicePJvmTestsNewImplKt.class
+End of files
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJvmTests/src/servicePJvmTestsNewImpl.kt
+End of files
+Marked as dirty by Kotlin:
+  cTests/src/serviceCTestsNewHeader.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+
+================ Step #7 change new service in pJsTests =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Cleaning output files:
+  out/production/pJsTests/pJsTests.js
+  out/production/pJsTests/pJsTests.meta.js
+  out/production/pJsTests/pJsTests/root-package.kjsm
+End of files
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+  pJsTests/src/servicePJsTestsNewImpl.kt
+End of files
+Marked as dirty by Kotlin:
+  cTests/src/serviceCTestsNewHeader.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmTests
+Exit code: NOTHING_DONE
+------------------------------------------
+
+================ Step #8 delete new service in pJvmTests =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Exit code: NOTHING_DONE
+------------------------------------------
+Cleaning output files:
+  out/production/pJvmTests/META-INF/pJvmTests.kotlin_module
+  out/production/pJvmTests/ServicePJvmTestsNewImplKt.class
+End of files
+Building pJvmTests
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+End of files
+Marked as dirty by Kotlin:
+  cTests/src/serviceCTestsNewHeader.kt
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+[Module 'pJvmTests' production] Expected function 'cTests_platformDependentCTestsNew' has no actual declaration in module
+
+================ Step #9 delete new service in pJsTests =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Cleaning output files:
+  out/production/pJsTests/pJsTests.js
+  out/production/pJsTests/pJsTests.meta.js
+  out/production/pJsTests/pJsTests/root-package.kjsm
+End of files
+Building pJsTests
+Compiling files:
+  cTests/src/serviceCTestsNewHeader.kt
+End of files
+Marked as dirty by Kotlin:
+  cTests/src/serviceCTestsNewHeader.kt
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+[Module 'pJsTests' production] Expected function 'cTests_platformDependentCTestsNew' has no actual declaration in module
+
+================ Step #10 delete new service in cTests =================
+
+Building cMain
+Building pJsMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pJvmMain
+Exit code: NOTHING_DONE
+------------------------------------------
+Building cTests
+Building pJsTests
+Compiling files:
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/pJvmTests/ServiceCTestsNewHeaderKt.class
+End of files
+Building pJvmTests
+Compiling files:
+End of files
+Exit code: OK
+------------------------------------------

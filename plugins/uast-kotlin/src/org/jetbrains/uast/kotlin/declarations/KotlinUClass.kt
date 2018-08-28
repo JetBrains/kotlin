@@ -17,6 +17,7 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightPsiClassBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -282,6 +283,37 @@ class KotlinScriptUClass(
         override val javaPsi = psi
         override val sourcePsi = psi.kotlinOrigin
     }
+}
+
+/**
+ * implementation of [UClass] for invalid code, when it is impossible to create a [KtLightClass]
+ */
+class KotlinInvalidUClass(
+    override val psi: PsiClass,
+    givenParent: UElement?
+) : AbstractKotlinUClass(givenParent), PsiClass by psi {
+
+    constructor(name: String, context: PsiElement, givenParent: UElement?) : this(LightPsiClassBuilder(context, name), givenParent)
+
+    override fun getContainingFile(): PsiFile? = uastParent?.getContainingUFile()?.sourcePsi as? PsiFile
+
+    override val sourcePsi: PsiElement? get() = null
+
+    override val uastAnchor: UIdentifier? get() = null
+
+    override val javaPsi: PsiClass get() = psi
+
+    override fun getFields(): Array<UField> = emptyArray()
+
+    override fun getInitializers(): Array<UClassInitializer> = emptyArray()
+
+    override fun getInnerClasses(): Array<UClass> = emptyArray()
+
+    override fun getMethods(): Array<UMethod> = emptyArray()
+
+    override fun getSuperClass(): UClass? = null
+
+    override fun getOriginalElement(): PsiElement? = null
 }
 
 private fun reportConvertFailure(psiMethod: PsiMethod): Nothing {

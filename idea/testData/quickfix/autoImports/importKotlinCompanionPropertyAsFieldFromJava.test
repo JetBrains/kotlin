@@ -1,5 +1,5 @@
 // FILE: bar/Foo.before.java
-// "/(Static import|Import static) constant 'foo.Bar.Companion.foobar'/" "true"
+// "/(Static import|Import static) constant 'foo.Bar.foobar'/" "true"
 // ERROR: Unresolved reference: foobar
 // ACTION: Rename reference
 // ACTION: Create field 'foobar'
@@ -19,14 +19,14 @@ public class Foo {
 // FILE: foo/Bar.dependency.kt
 package foo
 
-object Bar {
+class Bar {
     companion object {
         @JvmField var foobar = "foobar"
     }
 }
 
 // FILE: bar/Foo.after.java
-// "/(Static import|Import static) constant 'foo.Bar.Companion.foobar'/" "true"
+// "/(Static import|Import static) constant 'foo.Bar.foobar'/" "true"
 // ERROR: Unresolved reference: foobar
 // ACTION: Rename reference
 // ACTION: Create field 'foobar'
@@ -35,7 +35,7 @@ object Bar {
 // WITH_RUNTIME
 package bar;
 
-import static foo.Bar.Companion.foobar;
+import static foo.Bar.foobar;
 
 public class Foo {
     public void main()

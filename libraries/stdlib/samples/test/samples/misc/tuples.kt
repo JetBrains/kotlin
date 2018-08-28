@@ -20,4 +20,27 @@ class Tuples {
         assertPrints(c, "[null]")
     }
 
+    @Sample
+    fun pairToList() {
+        val mixedList: List<Any> = Pair(1, "a").toList()
+        assertPrints(mixedList, "[1, a]")
+        assertTrue(mixedList[0] is Int)
+        assertTrue(mixedList[1] is String)
+
+        val intList: List<Int> = Pair(0, 1).toList()
+        assertPrints(intList, "[0, 1]")
+    }
+
+    @Sample
+    fun tripleToList() {
+        val mixedList: List<Any> = Triple(1, "a", 0.5).toList()
+        assertPrints(mixedList, "[1, a, 0.5]")
+        assertTrue(mixedList[0] is Int)
+        assertTrue(mixedList[1] is String)
+        assertTrue(mixedList[2] is Double)
+
+        val intList: List<Int> = Triple(0, 1, 2).toList()
+        assertPrints(intList, "[0, 1, 2]")
+    }
+
 }

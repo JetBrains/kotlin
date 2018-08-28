@@ -16,38 +16,67 @@
 
 package kotlin.reflect.jvm.internal.components
 
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import java.util.concurrent.ConcurrentHashMap
+import java.io.IOException
+import java.util.*
 
 class RuntimePackagePartProvider(private val classLoader: ClassLoader) : PackagePartProvider {
-    private val module2Mapping = ConcurrentHashMap<String, ModuleMapping>()
+    // Names of modules which were registered with registerModule
+    private val visitedModules = hashSetOf<String>()
 
+    // Package FQ name -> list of JVM internal names of package parts in that package across all registered modules
+    private val packageParts = hashMapOf<String, LinkedHashSet<String>>()
+
+    @Synchronized
     fun registerModule(moduleName: String) {
-        val mapping = try {
-            val resourcePath = "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}"
-            classLoader.getResourceAsStream(resourcePath)?.use { stream ->
-                ModuleMapping.loadModuleMapping(stream.readBytes(), resourcePath, DeserializationConfiguration.Default)
-            }
-        } catch (e: Exception) {
-            // TODO: do not swallow this exception?
-            null
+        if (!visitedModules.add(moduleName)) return
+
+        val resourcePath = "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}"
+        val resources = try {
+            classLoader.getResources(resourcePath)
+        } catch (e: IOException) {
+            EmptyEnumeration
         }
-        module2Mapping.putIfAbsent(moduleName, mapping ?: ModuleMapping.EMPTY)
+
+        for (resource in resources) {
+            try {
+                resource.openStream()?.use { stream ->
+                    val mapping = ModuleMapping.loadModuleMapping(
+                        stream.readBytes(), resourcePath, DeserializationConfiguration.Default
+                    ) { version ->
+                        throw UnsupportedOperationException(
+                            "Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is $version, " +
+                                    "expected version is ${JvmMetadataVersion.INSTANCE}. Please update Kotlin to the latest version"
+                        )
+                    }
+                    for ((packageFqName, parts) in mapping.packageFqName2Parts) {
+                        packageParts.getOrPut(packageFqName) { linkedSetOf() }.addAll(parts.parts)
+                    }
+                }
+            } catch (e: UnsupportedOperationException) {
+                throw e
+            } catch (e: Exception) {
+                // TODO: do not swallow this exception?
+            }
+        }
     }
 
-    override fun findPackageParts(packageFqName: String): List<String> {
-        return module2Mapping.values.mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts }.distinct()
-    }
-
-    // TODO
-    override fun findMetadataPackageParts(packageFqName: String): List<String> = TODO()
+    @Synchronized
+    override fun findPackageParts(packageFqName: String): List<String> =
+        packageParts[packageFqName]?.toList().orEmpty()
 
     override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
         // TODO: load annotations from resource files
         return emptyList()
+    }
+
+    private object EmptyEnumeration : Enumeration<Nothing> {
+        override fun hasMoreElements(): Boolean = false
+        override fun nextElement(): Nothing = throw NoSuchElementException()
     }
 }

@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitOperatorMod
+
 class A() {
     var x = 5
 

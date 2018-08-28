@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.intentions.ConvertSecondaryConstructorToPrimaryIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class ConvertSealedSubClassToObjectFix : LocalQuickFix {
 
-    override fun getFamilyName() = "Convert Sealed Sub-class to Object"
+    override fun getFamilyName() = "Convert sealed sub-class to object"
 
     companion object {
         val JAVA_LANG = Language.findLanguageByID("JAVA")
@@ -47,9 +48,9 @@ class ConvertSealedSubClassToObjectFix : LocalQuickFix {
     }
 
     private fun KtClass.changeToObject(factory: KtPsiFactory) {
-        getClassOrInterfaceKeyword()?.replace(factory.createExpression(KtTokens.OBJECT_KEYWORD.value))
-        secondaryConstructors.forEach { delete() }
+        secondaryConstructors.forEach { ConvertSecondaryConstructorToPrimaryIntention().applyTo(it, null) }
         primaryConstructor?.delete()
+        getClassOrInterfaceKeyword()?.replace(factory.createExpression(KtTokens.OBJECT_KEYWORD.value))
     }
 
     private fun KtClass.transformToObject(factory: KtPsiFactory) {

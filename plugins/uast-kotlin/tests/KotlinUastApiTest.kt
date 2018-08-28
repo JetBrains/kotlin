@@ -7,7 +7,9 @@ import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.env.findElementByText
@@ -96,6 +98,11 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
 
             assertEquals("java.lang.Runnable",
                          file.findElementByText<ULambdaExpression>("{/* Return */}").functionalInterfaceType?.canonicalText)
+
+            assertEquals(
+                "java.lang.Runnable",
+                file.findElementByText<ULambdaExpression>("{ /* SAM */ }").functionalInterfaceType?.canonicalText
+            )
         }
     }
 
@@ -338,6 +345,114 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
         assertArguments(listOf("\"%i %i %i\"", "\"\".chunked(2).toTypedArray()"), "format(\"%i %i %i\", *\"\".chunked(2).toTypedArray())")
         assertArguments(listOf("\"def\"", "8", "7.0"), "with2Receivers(8, 7.0F)")
         assertArguments(listOf("\"foo\"", "1"), "object : Parent(b = 1, a = \"foo\")\n")
+    }
+
+    @Test
+    fun testResolvedDeserializedMethod() = doTest("Resolve") { _, file ->
+        val barMethod = file.findElementByTextFromPsi<UElement>("bar").getParentOfType<UMethod>()!!
+
+        fun UElement.assertResolveCall(callText: String, methodName: String = callText.substringBefore("(")) {
+            this.findElementByTextFromPsi<UCallExpression>(callText).let {
+                val resolve = it.resolve().sure { "resolving '$callText'" }
+                assertEquals(methodName, resolve.name)
+            }
+        }
+        barMethod.assertResolveCall("foo()")
+        barMethod.assertResolveCall("inlineFoo()")
+        barMethod.assertResolveCall("forEach { println(it) }", "forEach")
+        barMethod.assertResolveCall("joinToString()")
+        barMethod.assertResolveCall("last()")
+        barMethod.assertResolveCall("setValue(\"123\")")
+        barMethod.assertResolveCall("contains(2 as Int)", "longRangeContains")
+        barMethod.assertResolveCall("IntRange(1, 2)")
+    }
+
+    @Test
+    fun testUtilsStreamLambda() {
+        doTest("Lambdas") { _, file ->
+            val lambda = file.findElementByTextFromPsi<ULambdaExpression>("{ it.isEmpty() }")
+            assertEquals(
+                "java.util.function.Predicate<? super java.lang.String>",
+                lambda.functionalInterfaceType?.canonicalText
+            )
+            assertEquals(
+                "kotlin.jvm.functions.Function1<? super java.lang.String,? extends java.lang.Boolean>",
+                lambda.getExpressionType()?.canonicalText
+            )
+            val uCallExpression = lambda.uastParent.assertedCast<UCallExpression> { "UCallExpression expected" }
+            assertTrue(uCallExpression.valueArguments.contains(lambda))
+        }
+    }
+
+    @Test
+    fun testLambdaParamCall() {
+        doTest("Lambdas") { _, file ->
+            val lambdaCall = file.findElementByTextFromPsi<UCallExpression>("selectItemFunction()")
+            assertEquals(
+                "UIdentifier (Identifier (selectItemFunction))",
+                lambdaCall.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "selectItemFunction",
+                lambdaCall.methodIdentifier?.name
+            )
+            assertEquals(
+                "invoke",
+                lambdaCall.methodName
+            )
+            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("UParameter (name = selectItemFunction)", uParameter.asLogString())
+        }
+    }
+
+    @Test
+    fun testLocalLambdaCall() {
+        doTest("Lambdas") { _, file ->
+            val lambdaCall = file.findElementByTextFromPsi<UCallExpression>("baz()")
+            assertEquals(
+                "UIdentifier (Identifier (baz))",
+                lambdaCall.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "baz",
+                lambdaCall.methodIdentifier?.name
+            )
+            assertEquals(
+                "invoke",
+                lambdaCall.methodName
+            )
+            val receiver = lambdaCall.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("ULocalVariable (name = baz)", uParameter.asLogString())
+        }
+    }
+
+    @Test
+    fun testLocalDeclarationCall() {
+        doTest("LocalDeclarations") { _, file ->
+            val localFunction = file.findElementByTextFromPsi<UElement>("bar() == Local()").
+                findElementByText<UCallExpression>("bar()")
+            assertEquals(
+                "UIdentifier (Identifier (bar))",
+                localFunction.methodIdentifier?.asLogString()
+            )
+            assertEquals(
+                "bar",
+                localFunction.methodIdentifier?.name
+            )
+            assertEquals(
+                "bar",
+                localFunction.methodName
+            )
+            assertNull(localFunction.resolve())
+            val receiver = localFunction.receiver ?: kotlin.test.fail("receiver expected")
+            assertEquals("UReferenceExpression", receiver.asLogString())
+            val uParameter = (receiver as UReferenceExpression).resolve().toUElement() ?: kotlin.test.fail("uelement expected")
+            assertEquals("ULambdaExpression", uParameter.asLogString())
+        }
     }
 
 }

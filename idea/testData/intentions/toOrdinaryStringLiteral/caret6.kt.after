@@ -1,0 +1,1 @@
+val s = "foo bar baz<caret>"

@@ -222,13 +222,20 @@ internal open class ScopeBasedTowerLevel protected constructor(
     private val resolutionScope: ResolutionScope
 ) : AbstractScopeTowerLevel(scopeTower) {
 
+    val deprecationDiagnosticOfThisScope: ResolutionDiagnostic? =
+        if (resolutionScope is DeprecatedLexicalScope) ResolvedUsingDeprecatedVisibility(resolutionScope, location) else null
+
     internal constructor(scopeTower: ImplicitScopeTower, lexicalScope: LexicalScope) : this(scopeTower, lexicalScope as ResolutionScope)
 
     override fun getVariables(
         name: Name,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<CandidateWithBoundDispatchReceiver> = resolutionScope.getContributedVariables(name, location).map {
-        createCandidateDescriptor(it, dispatchReceiver = null)
+        createCandidateDescriptor(
+            it,
+            dispatchReceiver = null,
+            specialError = deprecationDiagnosticOfThisScope
+        )
     }
 
     override fun getObjects(
@@ -249,8 +256,13 @@ internal open class ScopeBasedTowerLevel protected constructor(
     ): Collection<CandidateWithBoundDispatchReceiver> {
         val result: ArrayList<CandidateWithBoundDispatchReceiver> = ArrayList()
 
-        resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticScopes)
-            .mapTo(result) { createCandidateDescriptor(it, dispatchReceiver = null) }
+        resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticScopes).mapTo(result) {
+            createCandidateDescriptor(
+                it,
+                dispatchReceiver = null,
+                specialError = deprecationDiagnosticOfThisScope
+            )
+        }
 
         // Add constructors of deprecated classifier with an additional diagnostic
         val descriptorWithDeprecation = resolutionScope.getContributedClassifierIncludeDeprecated(name, location)

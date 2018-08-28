@@ -44,7 +44,9 @@ class ScriptContentLoader(private val project: Project) {
                     // TODO: consider advanced matching using semantic similar to actual resolving
                     scriptDefinition.acceptedAnnotations.find { ann ->
                         psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                    }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                    }?.let {
+                        constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>, project)
+                    }
                 }
         }
     }

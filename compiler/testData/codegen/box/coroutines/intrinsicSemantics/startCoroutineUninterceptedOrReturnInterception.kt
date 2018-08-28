@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -6,22 +7,27 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 import kotlin.test.assertEquals
 
-suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
-    x.resume("OK")
-    COROUTINE_SUSPENDED
+var callback: () -> Unit = {}
+
+suspend fun suspendHere(): String = suspendCoroutine { x ->
+    callback = {
+        x.resume("OK")
+    }
 }
 
-suspend fun suspendWithException(): String = suspendCoroutineOrReturn { x ->
-    x.resumeWithException(RuntimeException("OK"))
-    COROUTINE_SUSPENDED
+suspend fun suspendWithException(): String = suspendCoroutine { x ->
+    callback = {
+        x.resumeWithException(RuntimeException("OK"))
+    }
 }
 
 fun builder(shouldSuspend: Boolean, expectedCount: Int, c: suspend () -> String): String {
+    callback = {}
     var fromSuspension: String? = null
     var counter = 0
 
     val result = try {
-        c.startCoroutineUninterceptedOrReturn(object: Continuation<String> {
+        c.startCoroutineUninterceptedOrReturn(object: ContinuationAdapter<String>() {
             override val context: CoroutineContext
                 get() =  ContinuationDispatcher { counter++ }
 
@@ -36,6 +42,8 @@ fun builder(shouldSuspend: Boolean, expectedCount: Int, c: suspend () -> String)
     } catch (e: Exception) {
         "Exception: ${e.message}"
     }
+
+    callback()
 
     if (counter != expectedCount) throw RuntimeException("fail 0")
 
@@ -56,7 +64,7 @@ class ContinuationDispatcher(val dispatcher: () -> Unit) : AbstractCoroutineCont
 private class DispatchedContinuation<T>(
         val dispatcher: () -> Unit,
         val continuation: Continuation<T>
-): Continuation<T> {
+): ContinuationAdapter<T>() {
     override val context: CoroutineContext = continuation.context
 
     override fun resume(value: T) {

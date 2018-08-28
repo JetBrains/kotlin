@@ -9,18 +9,17 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
+import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
-import org.jetbrains.kotlin.codegen.coroutines.coroutineImplAsmType
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
@@ -55,7 +54,7 @@ class AnonymousObjectTransformer(
         createClassReader().accept(object : ClassVisitor(API, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
-                if (languageVersionSettings.coroutineImplAsmType().internalName == superName) {
+                if (languageVersionSettings.isCoroutineSuperClass(superName)) {
                     inliningContext.isContinuation = true
                 }
             }
@@ -152,7 +151,7 @@ class AnonymousObjectTransformer(
             // 2) Suspend named function
             // Iff it captures crossinline suspend lambda
             val generateStateMachineForLambda =
-                next.name == "doResume" && capturesCrossinlineSuspend && inliningContext.isContinuation &&
+                languageVersionSettings.isResumeImplMethodName(next.name) && capturesCrossinlineSuspend && inliningContext.isContinuation &&
                         !isLambdaAlreadyGeneratedAndNotGoingToBeInlined && hasLambdasToInline
             val continuationClassName = findFakeContinuationConstructorClassName(next)
             val generateStateMachineForNamedFunction =
@@ -178,6 +177,12 @@ class AnonymousObjectTransformer(
         }
 
         deferringMethods.forEach { method ->
+            replaceFakeContinuationsWithRealOnes(
+                method.intermediate,
+                if (!inliningContext.isContinuation)
+                    getLastParameterIndex(method.intermediate.desc, method.intermediate.access)
+                else 0
+            )
             removeFinallyMarkers(method.intermediate)
             method.visitEnd()
 

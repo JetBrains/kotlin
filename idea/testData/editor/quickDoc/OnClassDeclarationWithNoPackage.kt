@@ -3,4 +3,4 @@
  */
 class <caret>Some
 
-//INFO: <pre><b>public</b> <b>final</b> <b>class</b> Some <i>defined in</i> root package <i>in file</i> OnClassDeclarationWithNoPackage.kt</pre><p>Usefull comment</p>
+//INFO: <div class='definition'><pre><font color="808080"><i>OnClassDeclarationWithNoPackage.kt</i></font><br>public final class <b>Some</b></pre></div><div class='content'><p>Usefull comment</p></div><table class='sections'></table>

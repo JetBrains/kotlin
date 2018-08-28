@@ -47,6 +47,3 @@ package j {
         public open fun javaM(): kotlin.Unit
     }
 }
-
-package k {
-}

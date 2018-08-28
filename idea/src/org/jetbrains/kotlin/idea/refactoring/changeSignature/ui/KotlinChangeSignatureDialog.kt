@@ -136,7 +136,7 @@ class KotlinChangeSignatureDialog(
     }
 
     private fun getColumnTextMaxLength(nameFunction: Function1<ParameterTableModelItemBase<KotlinParameterInfo>, String?>) =
-            parametersTableModel.items.map { nameFunction(it)?.length ?: 0 }.max() ?: 0
+            parametersTableModel.items.asSequence().map { nameFunction(it)?.length ?: 0 }.max() ?: 0
 
     private fun getParamNamesMaxLength() = getColumnTextMaxLength { getPresentationName(it) }
 
@@ -227,7 +227,7 @@ class KotlinChangeSignatureDialog(
                     if (editor != null) {
                         editor.addDocumentListener(
                                 object : DocumentAdapter() {
-                                    override fun documentChanged(e: DocumentEvent?) {
+                                    override fun documentChanged(e: DocumentEvent) {
                                         fireDocumentChanged(e, columnFinal)
                                     }
                                 }

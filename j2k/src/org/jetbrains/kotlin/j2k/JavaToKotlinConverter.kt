@@ -314,7 +314,8 @@ class JavaToKotlinConverter(
         }
 
         constructor() {
-            val indicator = ProgressManager.getInstance().progressIndicator
+            @Suppress("IncompatibleAPI")
+            val indicator: ProgressIndicator? = ProgressManager.getInstance().progressIndicator
             delegate = indicator ?: EmptyProgressIndicator()
         }
 

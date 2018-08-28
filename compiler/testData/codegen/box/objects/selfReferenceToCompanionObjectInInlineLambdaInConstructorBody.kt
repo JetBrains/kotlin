@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Test {
     companion object {
         fun ok() = "OK"

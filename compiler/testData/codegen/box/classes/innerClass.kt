@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 class Outer(val foo: StringBuilder) {
   inner class Inner() {
     fun len() : Int {

@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/bangbang.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:Any flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Any flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any?): Any'
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/bangbang.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:Int flags:
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Any?): Int'
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/bangbang.kt
             BLOCK type=kotlin.Int? origin=SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
                 GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
-              WHEN type=kotlin.Int? origin=SAFE_CALL
+              WHEN type=kotlin.Int? origin=null
                 BRANCH
                   if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null

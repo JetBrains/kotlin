@@ -1,3 +1,4 @@
+// !LANGUAGE: -JvmStaticInInterface
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 open class B {
     public open val base1 : Int = 1

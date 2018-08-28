@@ -54,7 +54,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
                 val descriptor = holder.manager.createProblemDescriptor(
                         function,
                         TextRange(modifierList.startOffsetInParent, funKeyword.endOffset - function.startOffset),
-                        "Redundant override",
+                        "Redundant overriding method",
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         isOnTheFly,
                         RedundantOverrideFix()
@@ -77,7 +77,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
     }
 
     private class RedundantOverrideFix : LocalQuickFix {
-        override fun getName() = "Remove redundant override"
+        override fun getName() = "Remove redundant overriding method"
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

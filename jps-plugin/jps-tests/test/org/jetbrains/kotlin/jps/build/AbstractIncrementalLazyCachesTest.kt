@@ -18,15 +18,17 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.jps.builders.BuildTarget
+import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.storage.BuildDataPaths
+import org.jetbrains.jps.incremental.CompileContextImpl
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.KOTLIN_CACHE_DIRECTORY_NAME
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
 import org.jetbrains.kotlin.incremental.testingUtils.ModifyContent
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
+import org.jetbrains.kotlin.jps.platforms.kotlinBuildTargets
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -38,12 +40,12 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
 
     override fun setUp() {
         super.setUp()
-        isICEnabledBackup = IncrementalCompilation.isEnabled()
-        IncrementalCompilation.setIsEnabled(true)
+        isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+        IncrementalCompilation.setIsEnabledForJvm(true)
     }
 
     override fun tearDown() {
-        IncrementalCompilation.setIsEnabled(isICEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
         super.tearDown()
     }
 
@@ -65,7 +67,7 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
 
             when {
                 name.endsWith("incremental-compilation") -> {
-                    IncrementalCompilation.setIsEnabled(modification.dataFile.readAsBool())
+                    IncrementalCompilation.setIsEnabledForJvm(modification.dataFile.readAsBool())
                 }
             }
         }
@@ -87,15 +89,19 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         val targets = projectDescriptor.allModuleTargets
         val dataManager = projectDescriptor.dataManager
         val paths = dataManager.dataPaths
-        val versions = CacheVersionProvider(paths)
+        val versions = CacheVersionProvider(paths, isIncrementalCompilationEnabled = true)
 
         dumpCachesForTarget(p, paths, KotlinDataContainerTarget, versions.dataContainerVersion().formatVersionFile)
 
+        // for getting kotlin platform only
+        val dummyCompileContext = CompileContextImpl.createContextForTests(CompileScopeTestBuilder.make().build(), projectDescriptor)
+
         for (target in targets.sortedBy { it.presentableName }) {
-            val jvmMetaBuildInfo = jvmBuildMetaInfoFile(target, dataManager)
+            val kotlinModuleBuildTarget = dummyCompileContext.kotlinBuildTargets[target]!!
+            val metaBuildInfo = kotlinModuleBuildTarget.buildMetaInfoFile(target, dataManager)
             dumpCachesForTarget(p, paths, target,
                                 versions.normalVersion(target).formatVersionFile,
-                                jvmMetaBuildInfo,
+                                metaBuildInfo,
                                 subdirectory = KOTLIN_CACHE_DIRECTORY_NAME)
         }
 

@@ -138,7 +138,7 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
             when (pluginUpdateStatus) {
                 PluginUpdateStatus.LatestVersionInstalled -> {
                     form.setUpdateStatus(
-                        "You have the latest version of the plugin (${KotlinPluginUtil.getPluginVersion()}) installed.",
+                        "You have the latest version of the plugin installed.",
                         false
                     )
                 }
@@ -156,6 +156,14 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
                 is PluginUpdateStatus.CheckFailed ->
                     form.setUpdateStatus("Update check failed: ${pluginUpdateStatus.message}", false)
+
+                is PluginUpdateStatus.Unverified -> {
+                    val version = pluginUpdateStatus.updateStatus.pluginDescriptor.version
+                    val generalLine = "A new version $version is found but it's not verified by ${pluginUpdateStatus.verifierName}."
+                    val reasonLine = pluginUpdateStatus.reason ?: ""
+                    val message = "<html>$generalLine<br/>$reasonLine</html>"
+                    form.setUpdateStatus(message, false)
+                }
             }
 
             false  // do not auto-retry update check

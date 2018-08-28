@@ -10,7 +10,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.libraries.Library
 
-private val MAVEN_SYSTEM_ID = ProjectSystemId("MAVEN")
+val MAVEN_SYSTEM_ID = ProjectSystemId("Maven")
 val GRADLE_SYSTEM_ID = ProjectSystemId("GRADLE")
 
 fun isExternalLibrary(library: Library): Boolean {

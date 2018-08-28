@@ -22,19 +22,19 @@ import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 
 interface ContractDeserializer {
     fun deserializeContractFromFunction(
-            proto: ProtoBuf.Function,
-            ownerFunction: FunctionDescriptor,
-            typeTable: TypeTable,
-            typeDeserializer: TypeDeserializer
+        proto: ProtoBuf.Function,
+        ownerFunction: FunctionDescriptor,
+        typeTable: TypeTable,
+        typeDeserializer: TypeDeserializer
     ): Pair<FunctionDescriptor.UserDataKey<*>, ContractProvider>?
 
     companion object {
         val DEFAULT = object : ContractDeserializer {
             override fun deserializeContractFromFunction(
-                    proto: ProtoBuf.Function,
-                    ownerFunction: FunctionDescriptor,
-                    typeTable: TypeTable,
-                    typeDeserializer: TypeDeserializer
+                proto: ProtoBuf.Function,
+                ownerFunction: FunctionDescriptor,
+                typeTable: TypeTable,
+                typeDeserializer: TypeDeserializer
             ): Pair<FunctionDescriptor.UserDataKey<*>, Nothing>? = null
         }
     }

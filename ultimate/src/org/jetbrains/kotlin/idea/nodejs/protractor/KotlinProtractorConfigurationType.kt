@@ -25,7 +25,7 @@ import icons.JavaScriptLanguageIcons
 
 class KotlinProtractorConfigurationType : ConfigurationTypeBase(
         "KotlinJavaScriptTestRunnerProtractor",
-        "Protractor",
+        "Protractor (Kotlin)",
         NAME,
         JavaScriptLanguageIcons.Protractor.Protractor
 ) {

@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -27,19 +30,17 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.IncrementalModuleEntry
-import org.jetbrains.kotlin.daemon.common.IncrementalModuleInfo
 import org.jetbrains.kotlin.gradle.incremental.GRADLE_CACHE_VERSION
 import org.jetbrains.kotlin.gradle.incremental.GRADLE_CACHE_VERSION_FILE_NAME
-import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
+import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.incremental.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -92,34 +93,32 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
     fun runJvmCompiler(
             sourcesToCompile: List<File>,
+            commonSources: List<File>,
             javaSourceRoots: Iterable<File>,
             javaPackagePrefix: String?,
             args: K2JVMCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
         val buildFile = makeModuleFile(
-                args.moduleName!!,
-                isTest = false,
-                outputDir = args.destinationAsFile,
-                sourcesToCompile = sourcesToCompile,
-                javaSourceRoots = javaSourceRoots.map { JvmSourceRoot(it, javaPackagePrefix) },
-                classpath = args.classpathAsList,
-                friendDirs = args.friendPaths?.map(::File) ?: emptyList())
+            args.moduleName!!,
+            isTest = false,
+            outputDir = args.destinationAsFile,
+            sourcesToCompile = sourcesToCompile,
+            commonSources = commonSources,
+            javaSourceRoots = javaSourceRoots.map { JvmSourceRoot(it, javaPackagePrefix) },
+            classpath = args.classpathAsList,
+            friendDirs = args.friendPaths?.map(::File).orEmpty()
+        )
         args.buildFile = buildFile.absolutePath
 
         if (environment !is GradleIncrementalCompilerEnvironment || kotlinCompilerExecutionStrategy != "daemon") {
             args.destination = null
         }
 
-        var deleteBuildFile = true
-
         try {
-            val res = runCompiler(K2JVM_COMPILER, args, environment)
-            deleteBuildFile = (res == ExitCode.OK || System.getProperty("kotlin.compiler.leave.module.file.on.error") == null)
-            return res
-        }
-        finally {
-            if (deleteBuildFile) {
+            return runCompiler(K2JVM_COMPILER, args, environment)
+        } finally {
+            if (System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {
                 buildFile.delete()
             }
         }
@@ -127,10 +126,12 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
 
     fun runJsCompiler(
             kotlinSources: List<File>,
+            kotlinCommonSources: List<File>,
             args: K2JSCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
         args.freeArgs += kotlinSources.map { it.absolutePath }
+        args.commonSources = kotlinCommonSources.map { it.absolutePath }.toTypedArray()
         return runCompiler(K2JS_COMPILER, args, environment)
     }
 
@@ -363,15 +364,22 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             val dirToModule = HashMap<File, IncrementalModuleEntry>()
             val nameToModules = HashMap<String, HashSet<IncrementalModuleEntry>>()
             val jarToClassListFile = HashMap<File, File>()
+            val jarToModule = HashMap<File, IncrementalModuleEntry>()
 
             for (project in gradle.rootProject.allprojects) {
                 for (task in project.tasks) {
                     when (task) {
-                        is KotlinCompile -> {
+                        is AbstractKotlinCompile<*> -> {
                             val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
                             dirToModule[task.destinationDir] = module
                             task.javaOutputDir?.let { dirToModule[it] = module }
                             nameToModules.getOrPut(module.name) { HashSet() }.add(module)
+
+                            if (task is Kotlin2JsCompile) {
+                                jarForSourceSet(project, task.sourceSetName)?.let {
+                                    jarToModule[it] = module
+                                }
+                            }
                         }
                         is InspectClassesForMultiModuleIC -> {
                             jarToClassListFile[File(task.archivePath)] = task.classesListFile
@@ -380,11 +388,24 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 }
             }
 
-            return IncrementalModuleInfo(gradle.rootProject.projectDir, dirToModule, nameToModules, jarToClassListFile)
-                .also {
-                    cachedGradle = WeakReference(gradle)
-                    cachedModulesInfo = it
-                }
+            return IncrementalModuleInfo(
+                projectRoot = gradle.rootProject.projectDir,
+                dirToModule = dirToModule,
+                nameToModules = nameToModules,
+                jarToClassListFile = jarToClassListFile,
+                jarToModule = jarToModule
+            ).also {
+                cachedGradle = WeakReference(gradle)
+                cachedModulesInfo = it
+            }
+        }
+
+        private fun jarForSourceSet(project: Project, sourceSetName: String): File? {
+            val javaConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
+                ?: return null
+            val sourceSet = javaConvention.sourceSets.findByName(sourceSetName) ?: return null
+            val jarTask = project.tasks.findByName(sourceSet.jarTaskName) as? Jar
+            return jarTask?.archivePath
         }
 
         @Synchronized

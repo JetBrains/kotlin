@@ -39,7 +39,7 @@ fun Project.smartJavaExec(configure: JavaExec.() -> Unit) = task<JavaExec> javaE
         main = "-jar"
 
         classpath = project.files()
-        val copyArgs = mutableListOf<Any?>().also { it.addAll(args) }
+        val copyArgs = args.orEmpty().toList()
         args(jarTask.outputs.files.singleFile)
         args(copyArgs)
 

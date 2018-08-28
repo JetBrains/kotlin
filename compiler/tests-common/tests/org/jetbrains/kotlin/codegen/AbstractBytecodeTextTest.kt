@@ -29,7 +29,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
         }
         else {
             val expected = readExpectedOccurrences(wholeFile.path)
-            val actual = generateToText()
+            val actual = generateToText("helpers/")
             checkGeneratedTextAgainstExpectedOccurrences(actual, expected)
         }
     }

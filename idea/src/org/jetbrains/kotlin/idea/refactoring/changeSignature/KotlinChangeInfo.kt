@@ -126,7 +126,7 @@ open class KotlinChangeInfo(
 
     fun hasAppendedParametersOnly(): Boolean {
         val oldParamCount = originalBaseFunctionDescriptor.valueParameters.size
-        return newParameters.withIndex().all { (i, p) -> if (i < oldParamCount) p.oldIndex == i else p.isNewParameter }
+        return newParameters.asSequence().withIndex().all { (i, p) -> if (i < oldParamCount) p.oldIndex == i else p.isNewParameter }
     }
 
     override fun getNewParameters(): Array<KotlinParameterInfo> = newParameters.toTypedArray()
@@ -334,7 +334,7 @@ open class KotlinChangeInfo(
         val mandatoryParams = parameters.toMutableList()
         val defaultValues = ArrayList<KtExpression>()
         return psiMethods.map {
-            JvmOverloadSignature(it, mandatoryParams.map(getPsi).toSet(), defaultValues.toSet()).apply {
+            JvmOverloadSignature(it, mandatoryParams.asSequence().map(getPsi).toSet(), defaultValues.toSet()).apply {
                 val param = mandatoryParams.removeLast { getDefaultValue(it) != null } ?: return@apply
                 defaultValues.add(getDefaultValue(param)!!)
             }
@@ -428,13 +428,13 @@ open class KotlinChangeInfo(
             var defaultValuesRemained = defaultValuesToRetain
             for (param in newParameterList) {
                 if (param.isNewParameter || param.defaultValueForParameter == null || defaultValuesRemained-- > 0) continue
-                newParameterList.withIndex().filter { it.value.oldIndex >= param.oldIndex }.forEach { oldIndices[it.index]-- }
+                newParameterList.asSequence().withIndex().filter { it.value.oldIndex >= param.oldIndex }.toList().forEach { oldIndices[it.index]-- }
             }
 
             defaultValuesRemained = defaultValuesToRetain
             val oldParameterCount = originalPsiMethod.parameterList.parametersCount
             var indexInCurrentPsiMethod = 0
-            return newParameterList.withIndex()
+            return newParameterList.asSequence().withIndex()
                     .mapNotNullTo(ArrayList()) map@ { pair ->
                         val (i, info) = pair
 

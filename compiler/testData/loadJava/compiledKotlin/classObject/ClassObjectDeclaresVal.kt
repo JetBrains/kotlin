@@ -3,6 +3,6 @@ package test
 
 class ClassObjectDeclaresProperty {
     companion object {
-        val i = 1
+        val i = { 1 }()
     }
 }

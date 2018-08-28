@@ -3,20 +3,14 @@ Run Java
 Connected to the target VM
 inlineOnly.kt:5
 inlineOnly.kt:7
-inlineOnly.kt:25
-inlineOnly.kt:26
+inlineOnly.kt:13
+inlineOnly.kt:14
 inlineOnly.kt:7
 inlineOnly.kt:13
 inlineOnly.kt:14
 inlineOnly.kt:7
-inlineOnly.kt:25
-inlineOnly.kt:26
-inlineOnly.kt:7
-inlineOnly.kt:13
-inlineOnly.kt:14
-inlineOnly.kt:7
-inlineOnly.kt:25
-inlineOnly.kt:28
+inlineOnly.kt:9
+PrintStream.!EXT!
 Disconnected from the target VM
 
 Process finished with exit code 0

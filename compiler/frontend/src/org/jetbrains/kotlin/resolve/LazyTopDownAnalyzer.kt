@@ -247,7 +247,7 @@ class LazyTopDownAnalyzer(
     }
 
     fun resolveImportsInFile(file: KtFile) {
-        fileScopeProvider.getImportResolver(file).forceResolveAllImports()
+        fileScopeProvider.getImportResolver(file).forceResolveNonDefaultImports()
     }
 
     private fun createTypeAliasDescriptors(
@@ -273,7 +273,6 @@ class LazyTopDownAnalyzer(
             val descriptor = lazyDeclarationResolver.resolveToDescriptor(property) as PropertyDescriptor
 
             c.properties.put(property, descriptor)
-            ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
             registerTopLevelFqName(topLevelFqNames, property, descriptor)
         }
     }

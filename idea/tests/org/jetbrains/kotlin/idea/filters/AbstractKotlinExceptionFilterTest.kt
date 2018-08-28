@@ -76,7 +76,7 @@ abstract class AbstractKotlinExceptionFilterTest : KotlinCodeInsightTestCase() {
                 }
                 moduleModel.commit()
             }
-            MockLibraryUtil.compileKotlin(path, File(outDir.path), extraClasspath = mockLibraryPath)
+            MockLibraryUtil.compileKotlin(path, File(outDir.path), extraClasspath = *arrayOf(mockLibraryPath))
             classLoader = URLClassLoader(
                     arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
                     ForTestCompileRuntime.runtimeJarClassLoader())

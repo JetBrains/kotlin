@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorChecks;
 
@@ -83,7 +84,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     @NotNull
     @Override
     public SimpleFunctionDescriptorImpl initialize(
-            @Nullable KotlinType receiverParameterType,
+            @Nullable ReceiverParameterDescriptor extensionReceiverParameter,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
@@ -93,8 +94,9 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @Nullable Map<? extends UserDataKey<?>, ?> userData
     ) {
         SimpleFunctionDescriptorImpl descriptor = super.initialize(
-                receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
-                unsubstitutedReturnType, modality, visibility, userData);
+                extensionReceiverParameter, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
+                unsubstitutedReturnType, modality, visibility, userData
+        );
         setOperator(OperatorChecks.INSTANCE.check(descriptor).isSuccess());
         return descriptor;
     }
@@ -147,11 +149,16 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         List<ValueParameterDescriptor> enhancedValueParameters =
                 UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), this);
 
+        ReceiverParameterDescriptor enhancedReceiver =
+                enhancedReceiverType == null ? null : DescriptorFactory.createExtensionReceiverParameterForCallable(
+                        this, enhancedReceiverType, Annotations.Companion.getEMPTY()
+                );
+
         JavaMethodDescriptor enhancedMethod =
                 (JavaMethodDescriptor) newCopyBuilder()
                         .setValueParameters(enhancedValueParameters)
                         .setReturnType(enhancedReturnType)
-                        .setExtensionReceiverType(enhancedReceiverType)
+                        .setExtensionReceiverParameter(enhancedReceiver)
                         .setDropOriginalInContainingParts()
                         .setPreserveSourceElement()
                         .build();

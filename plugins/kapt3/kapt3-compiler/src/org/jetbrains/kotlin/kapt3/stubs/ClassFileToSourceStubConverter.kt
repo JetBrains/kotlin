@@ -24,14 +24,20 @@ import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.kapt3.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.plus
+import org.jetbrains.kotlin.kapt3.base.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
+import org.jetbrains.kotlin.kapt3.base.mapJList
+import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
+import org.jetbrains.kotlin.kapt3.base.pairedListToMap
+import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
+import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.*
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
@@ -55,9 +61,10 @@ import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
 
 class ClassFileToSourceStubConverter(
-        val kaptContext: KaptContext<GenerationState>,
+        val kaptContext: KaptContextForStubGeneration,
         val generateNonExistentClass: Boolean,
-        val correctErrorTypes: Boolean
+        val correctErrorTypes: Boolean,
+        val strictMode: Boolean
 ) {
     private companion object {
         private val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
@@ -102,8 +109,6 @@ class ClassFileToSourceStubConverter(
 
     private val signatureParser = SignatureParser(treeMaker)
 
-    private val anonymousTypeHandler = AnonymousTypeHandler(this)
-
     private val kdocCommentKeeper = KDocCommentKeeper(kaptContext)
 
     private var done = false
@@ -146,7 +151,7 @@ class ClassFileToSourceStubConverter(
 
             val metadataFile = File(
                 forSource.parentFile,
-                forSource.nameWithoutExtension + KaptLineMappingCollector.KAPT_METADATA_EXTENSION
+                forSource.nameWithoutExtension + KaptStubLineInformation.KAPT_METADATA_EXTENSION
             )
 
             metadataFile.writeBytes(kaptMetadata)
@@ -230,7 +235,7 @@ class ClassFileToSourceStubConverter(
         // We prefer ordinary imports over aliased ones.
         val sortedImportDirectives = file.importDirectives.partition { it.aliasName == null }.run { first + second }
 
-        for (importDirective in sortedImportDirectives) {
+        loop@ for (importDirective in sortedImportDirectives) {
             // Qualified name should be valid Java fq-name
             val importedFqName = importDirective.importedFqName?.takeIf { it.pathSegments().size > 1 } ?: continue
             if (!isValidQualifiedName(importedFqName)) continue
@@ -238,11 +243,23 @@ class ClassFileToSourceStubConverter(
             val shortName = importedFqName.shortName()
             if (shortName.asString() == classDeclaration.simpleName.toString()) continue
 
-            val importedReference = getReferenceExpression(importDirective.importedReference)
-                    ?.let { kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, it] }
+            val importedReference = resolveImportReference@ run {
+                val referenceExpression = getReferenceExpression(importDirective.importedReference) ?: return@run null
 
-            if (importedReference is CallableDescriptor
-                || (importDirective.isAllUnder && importedReference is ClassifierDescriptor)) continue
+                val bindingContext = kaptContext.bindingContext
+                bindingContext[BindingContext.REFERENCE_TARGET, referenceExpression]?.let { return@run it }
+
+                val allTargets = bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression] ?: return@run null
+                allTargets.find { it is CallableDescriptor }?.let { return@run it }
+
+                return@run allTargets.firstOrNull()
+            }
+
+            val isCallableImport = importedReference is CallableDescriptor
+            val isAllUnderClassifierImport = importDirective.isAllUnder && importedReference is ClassifierDescriptor
+
+            if (isCallableImport || isAllUnderClassifierImport)
+                continue@loop
 
             val importedExpr = treeMaker.FqName(importedFqName.asString())
 
@@ -270,7 +287,7 @@ class ClassFileToSourceStubConverter(
             isTopLevel: Boolean
     ): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
-        if (checkIfShouldBeIgnored(Type.getObjectType(clazz.name))) return null
+        if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
 
         val descriptor = kaptContext.origins[clazz]?.descriptor ?: return null
         val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
@@ -378,21 +395,41 @@ class ClassFileToSourceStubConverter(
                 enumValues + fields + methods + nestedClasses).keepKdocComments(clazz)
     }
 
-    private tailrec fun checkIfShouldBeIgnored(type: Type): Boolean {
+    private tailrec fun checkIfValidTypeName(containingClass: ClassNode, type: Type): Boolean {
         if (type.sort == Type.ARRAY) {
-            return checkIfShouldBeIgnored(type.elementType)
+            return checkIfValidTypeName(containingClass, type.elementType)
         }
 
-        if (type.sort != Type.OBJECT) return false
+        if (type.sort != Type.OBJECT) return true
 
         val internalName = type.internalName
         // Ignore type names with Java keywords in it
         if (internalName.split('/', '.').any { it in JAVA_KEYWORDS }) {
-            return true
+            if (strictMode) {
+                kaptContext.reportKaptError(
+                    "Can't generate a stub for '${containingClass.className}'.",
+                    "Type name '${type.className}' contains a Java keyword."
+                )
+            }
+
+            return false
         }
 
-        val clazz = kaptContext.compiledClasses.firstOrNull { it.name == internalName } ?: return false
-        return checkIfInnerClassNameConflictsWithOuter(clazz)
+        val clazz = kaptContext.compiledClasses.firstOrNull { it.name == internalName } ?: return true
+
+        if (doesInnerClassNameConflictWithOuter(clazz)) {
+            if (strictMode) {
+                kaptContext.reportKaptError(
+                    "Can't generate a stub for '${containingClass.className}'.",
+                    "Its name '${clazz.simpleName}' is the same as one of the outer class names.",
+                    "Java forbids it. Please change one of the class names."
+                )
+            }
+
+            return false
+        }
+
+        return true
     }
 
     private fun findContainingClassNode(clazz: ClassNode): ClassNode? {
@@ -401,7 +438,7 @@ class ClassFileToSourceStubConverter(
     }
 
     // Java forbids outer and inner class names to be the same. Check if the names are different
-    private tailrec fun checkIfInnerClassNameConflictsWithOuter(
+    private tailrec fun doesInnerClassNameConflictWithOuter(
             clazz: ClassNode,
             outerClass: ClassNode? = findContainingClassNode(clazz)
     ): Boolean {
@@ -409,7 +446,7 @@ class ClassFileToSourceStubConverter(
         if (treeMaker.getSimpleName(clazz) == treeMaker.getSimpleName(outerClass)) return true
         // Try to find the containing class for outerClassNode (to check the whole tree recursively)
         val containingClassForOuterClass = findContainingClassNode(outerClass) ?: return false
-        return checkIfInnerClassNameConflictsWithOuter(clazz, containingClassForOuterClass)
+        return doesInnerClassNameConflictWithOuter(clazz, containingClassForOuterClass)
     }
 
     private fun getClassAccessFlags(clazz: ClassNode, descriptor: DeclarationDescriptor, isInner: Boolean, isNested: Boolean) = when {
@@ -454,7 +491,7 @@ class ClassFileToSourceStubConverter(
         if (!isValidIdentifier(name)) return null
 
         val type = Type.getType(field.desc)
-        if (checkIfShouldBeIgnored(type)) {
+        if (!checkIfValidTypeName(containingClass, type)) {
             return null
         }
 
@@ -462,16 +499,16 @@ class ClassFileToSourceStubConverter(
         val typeExpression = if (isEnum(field.access))
             treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
         else
-            anonymousTypeHandler.getNonAnonymousType(descriptor) {
-                getNonErrorType((descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
-                                ktTypeProvider = {
-                                    val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
-                                            ?.takeIf { it !is KtFunction }
+            getNonErrorType(
+                (descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
+                ktTypeProvider = {
+                    val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
+                        ?.takeIf { it !is KtFunction }
 
-                                    fieldOrigin?.typeReference
-                                },
-                                ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) })
-            }
+                    fieldOrigin?.typeReference
+                },
+                ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) }
+            )
 
         val value = field.value
 
@@ -522,7 +559,9 @@ class ClassFileToSourceStubConverter(
 
         val parametersInfo = method.getParametersInfo(containingClass)
 
-        if (checkIfShouldBeIgnored(asmReturnType) || parametersInfo.any { checkIfShouldBeIgnored(it.type) }) {
+        if (!checkIfValidTypeName(containingClass, asmReturnType)
+            || parametersInfo.any { !checkIfValidTypeName(containingClass, it.type) }
+        ) {
             return null
         }
 
@@ -629,19 +668,19 @@ class ClassFileToSourceStubConverter(
                     }
                 })
 
-        val returnType = anonymousTypeHandler.getNonAnonymousType(descriptor) {
-            getNonErrorType(descriptor.returnType, RETURN_TYPE,
-                            ktTypeProvider = {
-                                val element = kaptContext.origins[method]?.element
-                                when (element) {
-                                    is KtFunction -> element.typeReference
-                                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
-                                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
-                                    else -> null
-                                }
-                            },
-                            ifNonError = { genericSignature.returnType })
-        }
+        val returnType = getNonErrorType(
+            descriptor.returnType, RETURN_TYPE,
+            ktTypeProvider = {
+                val element = kaptContext.origins[method]?.element
+                when (element) {
+                    is KtFunction -> element.typeReference
+                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                    else -> null
+                }
+            },
+            ifNonError = { genericSignature.returnType }
+        )
 
         return Pair(genericSignature, returnType)
     }
@@ -788,7 +827,7 @@ class ClassFileToSourceStubConverter(
 
     private fun convertAnnotationArgument(constantValue: Any?, value: ResolvedValueArgument?): JCExpression? {
         val args = value?.arguments?.mapNotNull { it.getArgumentExpression() } ?: emptyList()
-        val singleArg by lazy { args.singleOrNull() }
+        val singleArg = args.singleOrNull()
 
         if (constantValue.isOfPrimiviteType()) {
             // Do not inline primitive constants

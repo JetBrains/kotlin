@@ -426,30 +426,15 @@ internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall
 }
 
 internal fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
-    v.iconst(if (isStartNotEnd) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID)
-    v.visitMethodInsn(
-        Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
-        "mark",
-        "(I)V", false
-    )
+    v.emitInlineMarker(if (isStartNotEnd) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID)
 }
 
 internal fun addFakeContinuationConstructorCallMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
-    v.iconst(if (isStartNotEnd) INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL else INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
-    v.visitMethodInsn(
-        Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
-        "mark",
-        "(I)V", false
-    )
+    v.emitInlineMarker(if (isStartNotEnd) INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL else INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 }
 
 private fun addReturnsUnitMarker(v: InstructionAdapter) {
-    v.iconst(INLINE_MARKER_RETURNS_UNIT)
-    v.visitMethodInsn(
-        Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
-        "mark",
-        "(I)V", false
-    )
+    v.emitInlineMarker(INLINE_MARKER_RETURNS_UNIT)
 }
 
 /* There are contexts when the continuation does not yet exist, for example, in inline lambdas, which are going to
@@ -458,13 +443,17 @@ private fun addReturnsUnitMarker(v: InstructionAdapter) {
  * See [CoroutineTransformerMethodVisitor] for more info.
  */
 internal fun addFakeContinuationMarker(v: InstructionAdapter) {
-    v.iconst(INLINE_MARKER_FAKE_CONTINUATION)
-    v.invokestatic(
+    v.emitInlineMarker(INLINE_MARKER_FAKE_CONTINUATION)
+    v.aconst(null)
+}
+
+private fun InstructionAdapter.emitInlineMarker(id: Int) {
+    iconst(id)
+    invokestatic(
         INLINE_MARKER_CLASS_NAME,
         "mark",
         "(I)V", false
     )
-    v.aconst(null)
 }
 
 internal fun isBeforeSuspendMarker(insn: AbstractInsnNode) = isSuspendMarker(insn, INLINE_MARKER_BEFORE_SUSPEND_ID)

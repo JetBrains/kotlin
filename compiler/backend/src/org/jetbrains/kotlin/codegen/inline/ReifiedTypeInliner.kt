@@ -57,7 +57,7 @@ class ReificationArgument(
     }
 }
 
-class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) {
+class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?, private val isReleaseCoroutines: Boolean) {
     enum class OperationKind {
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED;
 
@@ -168,7 +168,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(API)
-        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe)
+        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, isReleaseCoroutines)
 
         instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubCheckcast)
@@ -188,7 +188,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
         if (stubInstanceOf !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(API)
-        generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
+        generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType, isReleaseCoroutines)
 
         instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubInstanceOf)

@@ -16,11 +16,12 @@ fun test() {
     } // unbox ULong
 }
 
+// @TestKt.class:
 // 1 INVOKESTATIC UInt\$Erased.box
-// 1 INVOKEVIRTUAL UInt.unbox
+// 2 INVOKEVIRTUAL UInt.unbox
 
 // 1 INVOKESTATIC ULong\$Erased.box
-// 1 INVOKEVIRTUAL ULong.unbox
+// 2 INVOKEVIRTUAL ULong.unbox
 
 // 0 valueOf
 // 0 intValue

@@ -14,6 +14,8 @@ import kotlin.internal.*
 /**
  * A range of values of type `ULong`.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(start, endInclusive, 1), ClosedRange<ULong> {
     override val start: ULong get() = first
     override val endInclusive: ULong get() = last
@@ -40,6 +42,8 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
 /**
  * A progression of values of type `ULong`.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 public open class ULongProgression
 internal constructor(
     start: ULong,
@@ -95,6 +99,8 @@ internal constructor(
  * An iterator over a progression of values of type `ULong`.
  * @property step the number by which the value is incremented on each step.
  */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
 private class ULongProgressionIterator(first: ULong, last: ULong, step: Long) : ULongIterator() {
     private val finalElement = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last

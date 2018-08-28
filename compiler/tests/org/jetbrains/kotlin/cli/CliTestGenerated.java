@@ -206,6 +206,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/experimentalUnresolved.args");
         }
 
+        @TestMetadata("explicitlyDisableSamConversionsWithOldFlag.args")
+        public void testExplicitlyDisableSamConversionsWithOldFlag() throws Exception {
+            runTest("compiler/testData/cli/jvm/explicitlyDisableSamConversionsWithOldFlag.args");
+        }
+
+        @TestMetadata("explicitlyDisabledSamConversions.args")
+        public void testExplicitlyDisabledSamConversions() throws Exception {
+            runTest("compiler/testData/cli/jvm/explicitlyDisabledSamConversions.args");
+        }
+
         @TestMetadata("extraArgumentPassedInObsoleteForm.args")
         public void testExtraArgumentPassedInObsoleteForm() throws Exception {
             runTest("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
@@ -261,6 +271,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/internalArgMissingModificator.args");
         }
 
+        @TestMetadata("internalArgNoWarningForEnablingBugfix.args")
+        public void testInternalArgNoWarningForEnablingBugfix() throws Exception {
+            runTest("compiler/testData/cli/jvm/internalArgNoWarningForEnablingBugfix.args");
+        }
+
         @TestMetadata("internalArgUnrecognizedFeature.args")
         public void testInternalArgUnrecognizedFeature() throws Exception {
             runTest("compiler/testData/cli/jvm/internalArgUnrecognizedFeature.args");
@@ -274,6 +289,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("internalArgumentOverrideExtraArgument.args")
         public void testInternalArgumentOverrideExtraArgument() throws Exception {
             runTest("compiler/testData/cli/jvm/internalArgumentOverrideExtraArgument.args");
+        }
+
+        @TestMetadata("invalidMetadataVersion.args")
+        public void testInvalidMetadataVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/invalidMetadataVersion.args");
         }
 
         @TestMetadata("javaSrcWrongPackage.args")
@@ -376,6 +396,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/kotlinPackage.args");
         }
 
+        @TestMetadata("kt19628_12.args")
+        public void testKt19628_12() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_12.args");
+        }
+
+        @TestMetadata("kt19628_13.args")
+        public void testKt19628_13() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_13.args");
+        }
+
+        @TestMetadata("kt19628_progressive.args")
+        public void testKt19628_progressive() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_progressive.args");
+        }
+
         @TestMetadata("kt22304.args")
         public void testKt22304() throws Exception {
             runTest("compiler/testData/cli/jvm/kt22304.args");
@@ -404,6 +439,16 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
+        }
+
+        @TestMetadata("newInferenceImpliesSamConversions.args")
+        public void testNewInferenceImpliesSamConversions() throws Exception {
+            runTest("compiler/testData/cli/jvm/newInferenceImpliesSamConversions.args");
+        }
+
+        @TestMetadata("newInferenceWithOldFlagImpliesSamConversions.args")
+        public void testNewInferenceWithOldFlagImpliesSamConversions() throws Exception {
+            runTest("compiler/testData/cli/jvm/newInferenceWithOldFlagImpliesSamConversions.args");
         }
 
         @TestMetadata("noReflect.args")
@@ -459,6 +504,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("progressiveModeOn.args")
         public void testProgressiveModeOn() throws Exception {
             runTest("compiler/testData/cli/jvm/progressiveModeOn.args");
+        }
+
+        @TestMetadata("releaseCoroutinesApiVersion1.2.args")
+        public void testReleaseCoroutinesApiVersion1_2() throws Exception {
+            runTest("compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.args");
         }
 
         @TestMetadata("returnAsWhenKey.args")
@@ -549,11 +599,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("wrongAbiVersion.args")
         public void testWrongAbiVersion() throws Exception {
             runTest("compiler/testData/cli/jvm/wrongAbiVersion.args");
-        }
-
-        @TestMetadata("wrongAbiVersionNoErrors.args")
-        public void testWrongAbiVersionNoErrors() throws Exception {
-            runTest("compiler/testData/cli/jvm/wrongAbiVersionNoErrors.args");
         }
 
         @TestMetadata("wrongArgument.args")
@@ -848,6 +893,11 @@ public class CliTestGenerated extends AbstractCliTest {
 
         public void testAllFilesPresentInMetadata() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/metadata"), Pattern.compile("^(.+)\\.args$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("kotlinPackage.args")
+        public void testKotlinPackage() throws Exception {
+            runTest("compiler/testData/cli/metadata/kotlinPackage.args");
         }
 
         @TestMetadata("moduleName.args")

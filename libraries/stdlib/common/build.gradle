@@ -57,15 +57,21 @@ compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
                 "-module-name", project.name,
-                "-Xuse-experimental=kotlin.Experimental"
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xallow-kotlin-package"
         ]
     }
 }
 
 compileUnsignedKotlinCommon {
     kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
         freeCompilerArgs += [
-                "-XXLanguage:+InlineClasses"
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                "-XXLanguage:+InlineClasses",
+                "-Xallow-kotlin-package"
         ]
     }
 }
@@ -75,7 +81,8 @@ compileCoroutinesKotlinCommon {
         languageVersion = "1.3"
         apiVersion = "1.3"
         freeCompilerArgs = [
-                "-module-name", project.name
+                "-module-name", project.name,
+                "-Xallow-kotlin-package"
         ]
     }
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -25,7 +26,7 @@ class Controller {
     fun builder(c: suspend Controller.() -> String): String {
         var fromSuspension: String? = null
 
-        c.startCoroutine(this, object : Continuation<String> {
+        c.startCoroutine(this, object : ContinuationAdapter<String>() {
             override val context: CoroutineContext
                 get() = EmptyCoroutineContext
 

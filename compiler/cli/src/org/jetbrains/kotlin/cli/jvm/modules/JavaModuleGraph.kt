@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class JavaModuleGraph(finder: JavaModuleFinder) {
     private val module: (String) -> JavaModule? =
-            LockBasedStorageManager.NO_LOCKS.createMemoizedFunctionWithNullableValues(finder::findModule)
+        LockBasedStorageManager.NO_LOCKS.createMemoizedFunctionWithNullableValues(finder::findModule)
 
     fun getAllDependencies(moduleNames: List<String>): LinkedHashSet<String> {
         val visited = LinkedHashSet(moduleNames)

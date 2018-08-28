@@ -84,6 +84,11 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         runTest("idea/testData/stubs/Const.kt");
     }
 
+    @TestMetadata("Contracts.kt")
+    public void testContracts() throws Exception {
+        runTest("idea/testData/stubs/Contracts.kt");
+    }
+
     @TestMetadata("DanglingAnnotations.kt")
     public void testDanglingAnnotations() throws Exception {
         runTest("idea/testData/stubs/DanglingAnnotations.kt");

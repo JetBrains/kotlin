@@ -86,10 +86,11 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
                             kotlinCompileOptions.noStdlib.option("noStdlib")
                             kotlinCompileOptions.noReflect.option("noReflect")
                             kotlinCompileOptions.moduleName.option("moduleName")
-                            kotlinCompileOptions.languageVersion.option("languageVersion")
-                            kotlinCompileOptions.apiVersion.option("apiVersion")
+                            xml("option", "name" to "jvmTarget", "value" to platformVersion)
                             kotlinCompileOptions.addCompilerBuiltIns.option("addCompilerBuiltIns")
                             kotlinCompileOptions.loadBuiltInsFromDependencies.option("loadBuiltInsFromDependencies")
+                            kotlinCompileOptions.languageVersion.option("languageVersion")
+                            kotlinCompileOptions.apiVersion.option("apiVersion")
 
                             xml("option", "name" to "pluginOptions") { xml("array") }
                             xml("option", "name" to "pluginClasspaths") { xml("array") }
@@ -129,34 +130,39 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
 
             xml("orderEntry", "type" to "inheritedJdk")
 
+            xml("orderEntry", "type" to "sourceFolder", "forTests" to "false")
+
             for (orderRoot in module.orderRoots) {
                 val dependency = orderRoot.dependency
 
-                var args = when (dependency) {
-                    is PDependency.ModuleLibrary -> arrayOf(
+                val args = when (dependency) {
+                    is PDependency.ModuleLibrary -> mutableListOf(
                         "type" to "module-library"
                     )
-                    is PDependency.Module -> arrayOf(
+                    is PDependency.Module -> mutableListOf(
                         "type" to "module",
                         "module-name" to dependency.name
                     )
-                    is PDependency.Library -> arrayOf(
+                    is PDependency.Library -> mutableListOf(
                         "type" to "library",
                         "name" to dependency.name,
                         "level" to "project"
                     )
                 }
 
+                if (orderRoot.scope != POrderRoot.Scope.COMPILE) {
+                    args.add(1, "scope" to orderRoot.scope.toString())
+                }
+
                 if (dependency is PDependency.Module && orderRoot.isProductionOnTestDependency) {
                     args += ("production-on-test" to "")
                 }
 
-                args += ("scope" to orderRoot.scope.toString())
                 if (orderRoot.isExported) {
                     args += ("exported" to "")
                 }
 
-                xml("orderEntry", *args) {
+                xml("orderEntry", *args.toTypedArray()) {
                     if (dependency is PDependency.ModuleLibrary) {
                         add(renderLibraryToXml(dependency.library, pathContext, named = false))
                     }

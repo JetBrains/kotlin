@@ -1,8 +1,5 @@
 package
 
-package a {
-}
-
 package b {
 
     public object O {

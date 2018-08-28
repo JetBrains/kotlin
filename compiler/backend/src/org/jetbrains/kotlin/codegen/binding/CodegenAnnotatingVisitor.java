@@ -15,6 +15,7 @@ import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.cfg.WhenChecker;
 import org.jetbrains.kotlin.codegen.*;
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionsOnDeclarationBodyChecker;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -61,6 +63,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.NUMBERED_FUNCTION_PREFIX;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.name.SpecialNames.safeIdentifier;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -334,19 +337,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         nameStack.push(name);
 
         if (CoroutineUtilKt.isSuspendLambda(functionDescriptor)) {
-            SimpleFunctionDescriptor jvmSuspendFunctionView =
-                    CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                            (SimpleFunctionDescriptor) functionDescriptor,
-                            languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-                    );
-
-            bindingTrace.record(
-                    CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
-                    functionDescriptor,
-                    jvmSuspendFunctionView
-            );
-            closure.setSuspend(true);
-            closure.setSuspendLambda();
+            createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, true);
         }
         functionsStack.push(functionDescriptor);
 
@@ -404,11 +395,43 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         ClassDescriptor classDescriptor = recordClassForCallable(expression, callableDescriptor, supertypes, name);
         MutableClosure closure = recordClosure(classDescriptor, name);
 
+        if (callableDescriptor instanceof SimpleFunctionDescriptor) {
+            SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) callableDescriptor;
+            if (functionDescriptor.isSuspend()) {
+                createAndRecordSuspendFunctionView(closure, functionDescriptor, false);
+            }
+        }
+
         if (receiverType != null) {
             closure.setCaptureReceiverType(receiverType);
         }
 
         super.visitCallableReferenceExpression(expression);
+    }
+
+    private SimpleFunctionDescriptor createAndRecordSuspendFunctionView(
+            MutableClosure closure,
+            SimpleFunctionDescriptor functionDescriptor,
+            boolean isSuspendLambda
+    ) {
+        SimpleFunctionDescriptor jvmSuspendFunctionView =
+                CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                        functionDescriptor,
+                        languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+                        this.bindingContext
+                );
+
+        bindingTrace.record(
+                CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
+                functionDescriptor,
+                jvmSuspendFunctionView
+        );
+
+        closure.setSuspend(true);
+        if (isSuspendLambda) {
+            closure.setSuspendLambda();
+        }
+        return jvmSuspendFunctionView;
     }
 
     @NotNull
@@ -537,11 +560,17 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend() &&
             !functionDescriptor.getVisibility().equals(Visibilities.LOCAL)) {
+
+            if (nameForClassOrPackageMember != null) {
+                nameStack.push(nameForClassOrPackageMember);
+            }
+
+            String name = inventAnonymousClassName();
+            ClassDescriptor classDescriptor = recordClassForFunction(function, functionDescriptor, name, functionDescriptor);
+            MutableClosure closure = recordClosure(classDescriptor, name);
+
             SimpleFunctionDescriptor jvmSuspendFunctionView =
-                    CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                            (SimpleFunctionDescriptor) functionDescriptor,
-                            languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
-                    );
+                    createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, false);
 
             // This is a very subtle place (hack).
             // When generating bytecode of some suspend function, we replace the original descriptor
@@ -557,21 +586,6 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 );
             }
 
-            bindingTrace.record(
-                    CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
-                    functionDescriptor,
-                    jvmSuspendFunctionView
-            );
-
-            if (nameForClassOrPackageMember != null) {
-                nameStack.push(nameForClassOrPackageMember);
-            }
-
-            String name = inventAnonymousClassName();
-            ClassDescriptor classDescriptor =
-                    recordClassForFunction(function, functionDescriptor, name, functionDescriptor);
-            MutableClosure closure = recordClosure(classDescriptor, name);
-            closure.setSuspend(true);
             functionsStack.push(functionDescriptor);
 
             super.visitNamedFunction(function);
@@ -600,21 +614,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             nameStack.push(name);
 
             if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
-                SimpleFunctionDescriptor jvmSuspendFunctionView =
-                        CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                                (SimpleFunctionDescriptor) functionDescriptor,
-                                languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
-                                /*bindingContext*/ null,
-                                /*dropSuspend*/ true
-                        );
-
-                bindingTrace.record(
-                        CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
-                        functionDescriptor,
-                        jvmSuspendFunctionView
-                );
-                closure.setSuspend(true);
-                closure.setSuspendLambda();
+                createAndRecordSuspendFunctionView(closure, (SimpleFunctionDescriptor) functionDescriptor, true);
             }
 
             functionsStack.push(functionDescriptor);
@@ -648,6 +648,54 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         super.visitCallExpression(expression);
         checkSamCall(expression);
         checkCrossinlineSuspendCall(expression);
+        recordSuspendFunctionTypeWrapperForArguments(expression);
+    }
+
+    private void recordSuspendFunctionTypeWrapperForArguments(@NotNull KtCallExpression expression) {
+        ResolvedCall<?> call = CallUtilKt.getResolvedCall(expression, bindingContext);
+        if (call == null) return;
+
+        CallableDescriptor descriptor = call.getResultingDescriptor();
+        if (!CodegenUtilKt.needsExperimentalCoroutinesWrapper(descriptor)) return;
+
+        List<ResolvedValueArgument> argumentsByIndex = call.getValueArgumentsByIndex();
+        if (argumentsByIndex == null) return;
+
+        for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
+            ResolvedValueArgument resolvedValueArgument = argumentsByIndex.get(parameter.getIndex());
+            if (!(resolvedValueArgument instanceof ExpressionValueArgument)) continue;
+            ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
+            if (valueArgument == null) continue;
+            KtExpression argumentExpression = valueArgument.getArgumentExpression();
+            if (argumentExpression == null) continue;
+
+            recordSuspendFunctionTypeWrapperForArgument(parameter, argumentExpression);
+        }
+
+        ReceiverValue receiver = call.getExtensionReceiver();
+        if (descriptor.getExtensionReceiverParameter() != null && receiver instanceof ExpressionReceiver) {
+            recordSuspendFunctionTypeWrapperForArgument(
+                    descriptor.getExtensionReceiverParameter(),
+                    ((ExpressionReceiver) receiver).getExpression()
+            );
+        }
+    }
+
+    private void recordSuspendFunctionTypeWrapperForArgument(ParameterDescriptor parameter, KtExpression argumentExpression) {
+        if (FunctionTypesKt.isSuspendFunctionTypeOrSubtype(parameter.getType())) {
+
+            // SuspendFunctionN type is mapped to is mapped to FunctionTypeN+1, but we also need to remove an argument for return type
+            // So, it could be parameter.getType().getArguments().size() + 1 - 1
+            int functionTypeArity = parameter.getType().getArguments().size();
+
+            Type functionType = Type.getObjectType(NUMBERED_FUNCTION_PREFIX + functionTypeArity);
+
+            bindingTrace.record(
+                    FUNCTION_TYPE_FOR_SUSPEND_WRAPPER,
+                    argumentExpression,
+                    functionType
+            );
+        }
     }
 
     private void checkCrossinlineSuspendCall(@NotNull KtCallExpression expression) {

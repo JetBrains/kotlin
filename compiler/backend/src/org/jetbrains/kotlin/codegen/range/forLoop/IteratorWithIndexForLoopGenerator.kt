@@ -34,8 +34,7 @@ class IteratorWithIndexForLoopGenerator(
         indexVar = indexLoopComponent?.parameterVar ?: createLoopTempVariable(Type.INT_TYPE)
         indexType = indexLoopComponent?.parameterType ?: Type.INT_TYPE
 
-        StackValue.local(indexVar, indexType)
-            .store(StackValue.constant(0, Type.INT_TYPE), v)
+        StackValue.local(indexVar, indexType).store(StackValue.constant(0), v)
 
         iteratorVar = createLoopTempVariable(asmTypeForIterator)
         codegen.generateCallReceiver(rangeCall).put(iteratorOwnerType, v)

@@ -10,5 +10,6 @@ public const val u5: kotlin.ULong = -1.toULong()
 public const val u6: kotlin.ULong = -1.toULong()
 public const val u7: kotlin.ULong = -1.toULong()
 public val u8: kotlin.Comparable<*>
+public const val u9: kotlin.ULong = -1.toULong()
 public fun takeUByte(/*0*/ ubyte: kotlin.UByte): kotlin.Unit
 public fun test(): kotlin.Unit

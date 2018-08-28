@@ -118,7 +118,5 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
             }
             popIndent()
         }
-
-        override fun toString(): String = out.toString()
     }
 }

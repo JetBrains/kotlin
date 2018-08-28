@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
+import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3RunnerWithInners::class)
 class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testSimple() = doTest("simple")
     fun testPrimitiveTypes() = doTest("primitiveTypes")
@@ -54,6 +57,10 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testCustomSerializerWriteWith() = doTest("customSerializerWriteWith")
     fun testCustomSerializerBoxing() = doTest("customSerializerBoxing")
     fun testKt20717() = doTest("kt20717")
+    fun testEnumObject() = doTest("enumObject")
+    fun testIntArray() = doTest("intArray")
+    fun testOpenParcelize() = doTest("openParcelize")
+    fun testKt25839() = doTest("kt25839")
 }
 
 class ParcelBoxTestWithSerializableLikeExtension : AbstractParcelBoxTest() {

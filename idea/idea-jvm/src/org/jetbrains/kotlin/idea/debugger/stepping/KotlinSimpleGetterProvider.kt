@@ -32,13 +32,12 @@ class KotlinSimpleGetterProvider : SimplePropertyGetterProvider {
         if (accessor != null && accessor.isGetter) {
             val body = accessor.bodyExpression
             return when (body) {
-                // val a: Int get() { return field }
                 is KtBlockExpression -> {
+                    // val a: Int get() { return field }
                     val returnedExpression = (body.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression ?: return false
                     returnedExpression.textMatches("field")
                 }
-                // val a: Int get() = field
-                is KtExpression -> body.textMatches("field")
+                is KtExpression -> body.textMatches("field") // val a: Int get() = field
                 else -> false
             }
         }

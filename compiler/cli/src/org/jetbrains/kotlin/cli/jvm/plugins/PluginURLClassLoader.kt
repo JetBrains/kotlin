@@ -27,8 +27,7 @@ internal class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : Cla
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
         return try {
             childClassLoader.findClass(name)
-        }
-        catch (e: ClassNotFoundException) {
+        } catch (e: ClassNotFoundException) {
             super.loadClass(name, resolve)
         }
     }
@@ -45,8 +44,7 @@ internal class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : Cla
 
             return try {
                 super.findClass(name)
-            }
-            catch (e: ClassNotFoundException) {
+            } catch (e: ClassNotFoundException) {
                 onFail.loadClass(name)
             }
         }

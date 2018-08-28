@@ -1,7 +1,7 @@
 // FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: lParams$default
+// IGNORE_BACKEND: JVM_IR
 package test
-
 //A lot of blank lines [Don't delete]
 //A lot of blank lines [Don't delete]
 //A lot of blank lines [Don't delete]
@@ -123,24 +123,17 @@ Kotlin
 *F
 + 1 2.kt
 _2Kt
-+ 2 Standard.kt
-kotlin/StandardKt__StandardKt
-+ 3 ContractBuilder.kt
-kotlin/internal/contracts/ContractBuilderKt
-+ 4 1.kt
++ 2 1.kt
 test/_1Kt
-+ 5 1.kt
++ 3 1.kt
 test/_1Kt$lParams$1
 *L
 1#1,10:1
-39#2:11
-42#2:13
-32#3:12
-31#4:14
-70#4,2:15
-29#4:18
-50#5:17
-68#5:19
+31#2:11
+70#2,2:12
+29#2:15
+50#3:14
+68#3:16
 *E
 *S KotlinDebug
 *F
@@ -148,11 +141,8 @@ test/_1Kt$lParams$1
 _2Kt
 *L
 5#1:11
-5#1:13
-5#1:12
+5#1,2:12
+5#1:15
 5#1:14
-5#1,2:15
-5#1:18
-5#1:17
-5#1:19
+5#1:16
 *E

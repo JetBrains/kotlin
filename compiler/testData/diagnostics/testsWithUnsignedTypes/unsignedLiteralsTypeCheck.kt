@@ -1,5 +1,3 @@
-// !LANGUAGE: +InlineClasses
-// !SKIP_METADATA_VERSION_CHECK
 
 val a0: Any = 1u
 

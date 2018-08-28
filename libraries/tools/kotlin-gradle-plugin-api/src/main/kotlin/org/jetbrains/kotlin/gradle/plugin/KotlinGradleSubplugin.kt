@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.io.File
 
@@ -45,16 +44,19 @@ enum class FilesOptionKind {
     // such as output directories, inputs or classpath options.
 }
 
+/** Defines a subplugin option that should be excluded from Gradle input/output checks */
+open class InternalSubpluginOption(key: String, value: String) : SubpluginOption(key, value)
+
 interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun isApplicable(project: Project, task: AbstractCompile): Boolean
 
     fun apply(
-            project: Project,
-            kotlinCompile: KotlinCompile,
-            javaCompile: AbstractCompile,
-            variantData: Any?,
-            androidProjectHandler: Any?,
-            javaSourceSet: SourceSet?
+        project: Project,
+        kotlinCompile: KotlinCompile,
+        javaCompile: AbstractCompile?,
+        variantData: Any?,
+        androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation?
     ): List<SubpluginOption>
 
     fun getSubpluginKotlinTasks(
@@ -67,6 +69,6 @@ interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun getPluginArtifact(): SubpluginArtifact
 }
 
-open class SubpluginArtifact(val groupId: String, val artifactId: String)
+open class SubpluginArtifact(val groupId: String, val artifactId: String, val version: String? = null)
 
 class JetBrainsSubpluginArtifact(artifactId: String) : SubpluginArtifact(groupId = "org.jetbrains.kotlin", artifactId = artifactId)

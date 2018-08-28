@@ -56,7 +56,7 @@ class ImportAwareClassifierNamePolicy(
     }
 
     private fun shortNameWithCompanionNameSkip(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
-        if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name)
+        if (classifier is TypeParameterDescriptor) return renderer.renderName(classifier.name, false)
 
         val qualifiedNameParts = classifier.parentsWithSelf
             .takeWhile { it is ClassifierDescriptor }
@@ -70,6 +70,7 @@ class ImportAwareClassifierNamePolicy(
 
 fun getInlayHintsTypeRenderer(bindingContext: BindingContext, context: KtElement) =
     DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
+        enhancedTypes = true
         textFormat = RenderingFormat.PLAIN
         renderUnabbreviatedType = false
         classifierNamePolicy = ImportAwareClassifierNamePolicy(bindingContext, context)

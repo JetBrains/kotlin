@@ -20,6 +20,8 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -51,12 +53,16 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         val javacOptions = ArrayList<String>(0)
         var addRuntime = false
         var addReflect = false
+        var addUnsigned = false
         for (file in files) {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
                 addRuntime = true
             }
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
                 addReflect = true
+            }
+            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_UNSIGNED")) {
+                addUnsigned = true
             }
 
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"))
@@ -65,6 +71,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         val configurationKind = when {
             addReflect -> ConfigurationKind.ALL
             addRuntime -> ConfigurationKind.NO_KOTLIN_REFLECT
+            addUnsigned -> ConfigurationKind.WITH_UNSIGNED_TYPES
             else -> ConfigurationKind.JDK_ONLY
         }
 
@@ -83,7 +90,12 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     protected fun generateIrModule(ignoreErrors: Boolean = false, shouldGenerate: (KtFile) -> Boolean = { true }): IrModuleFragment {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
-        return generateIrModule(myFiles.psiFiles, myEnvironment, Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)), shouldGenerate)
+        return generateIrModule(
+            myFiles.psiFiles,
+            myEnvironment,
+            Psi2IrTranslator(myEnvironment.configuration.languageVersionSettings, Psi2IrConfiguration(ignoreErrors)),
+            shouldGenerate
+        )
     }
 
     protected fun generateIrFilesAsSingleModule(testFiles: List<TestFile>, ignoreErrors: Boolean = false): Map<TestFile, IrFile> {
@@ -128,9 +140,12 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             ktFiles: List<KtFile>,
             moduleDescriptor: ModuleDescriptor,
             bindingContext: BindingContext,
+            languageVersionSettings: LanguageVersionSettings,
             ignoreErrors: Boolean = false
         ) =
-            generateIrModule(ktFiles, moduleDescriptor, bindingContext, Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)))
+            generateIrModule(
+                ktFiles, moduleDescriptor, bindingContext, Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration(ignoreErrors))
+            )
 
         fun generateIrModule(
             ktFiles: List<KtFile>,

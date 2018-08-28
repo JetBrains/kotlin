@@ -612,4 +612,61 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         }
     }
 
+    fun testInjectionOnReturnResultWithAnnotation() = doInjectionPresentTest(
+        """
+            import org.intellij.lang.annotations.Language
+
+            @Language("HTML")
+            fun htmlProvider(): String {
+                return "<ht<caret>ml></html>"
+            }
+            """,
+        languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
+    fun testInjectionOnReturnResultWithElvisWithAnnotation() = doInjectionPresentTest(
+        """
+            import org.intellij.lang.annotations.Language
+
+            @Language("HTML")
+            fun htmlProvider(arg: String?): String {
+                return arg ?: "<ht<caret>ml></html>"
+            }
+            """,
+        languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
+    fun testInjectionOnReturnResultWithIfWithAnnotation() = doInjectionPresentTest(
+        """
+            import org.intellij.lang.annotations.Language
+
+            @Language("HTML")
+            fun htmlProvider(arg: String?): String {
+                return if (arg == null) "<div>" else "<ht<caret>ml></html>"
+            }
+            """,
+        languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
+    fun testInjectionExpressionBodyWithAnnotation() = doInjectionPresentTest(
+        """
+            import org.intellij.lang.annotations.Language
+
+            @Language("HTML")
+            fun htmlProvider() = "<ht<caret>ml></html>"
+            """,
+        languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
+    fun testInjectionExpressionBodyElvisWithAnnotation() = doInjectionPresentTest(
+        """
+            import org.intellij.lang.annotations.Language
+
+            @Language("HTML")
+            fun htmlProvider(arg: String?) = arg ?: "<ht<caret>ml></html>"
+            """,
+        languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
 }
+

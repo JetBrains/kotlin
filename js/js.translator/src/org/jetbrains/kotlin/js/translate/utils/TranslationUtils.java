@@ -174,6 +174,16 @@ public final class TranslationUtils {
     }
 
     @NotNull
+    public static JsBinaryOperation nullCheck(
+            @NotNull KotlinType expressionType,
+            @NotNull JsExpression expressionToCheck,
+            @NotNull TranslationContext context,
+            boolean isNegated
+    ) {
+        return nullCheck(coerce(context, expressionToCheck, TypeUtils.makeNullable(expressionType)), isNegated);
+    }
+
+    @NotNull
     public static JsConditional notNullConditional(
             @NotNull JsExpression expression,
             @NotNull JsExpression elseExpression,

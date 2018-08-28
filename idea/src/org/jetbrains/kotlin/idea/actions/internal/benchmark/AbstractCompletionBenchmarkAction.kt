@@ -55,8 +55,8 @@ import javax.swing.JFileChooser
 import javax.swing.JPanel
 
 abstract class AbstractCompletionBenchmarkAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent?) {
-        val project = e?.project ?: return
+    override fun actionPerformed(e: AnActionEvent) {
+        val project = e.project ?: return
 
         val benchmarkSink = CompletionBenchmarkSink.enableAndGet()
         val scenario = createBenchmarkScenario(project, benchmarkSink) ?: return

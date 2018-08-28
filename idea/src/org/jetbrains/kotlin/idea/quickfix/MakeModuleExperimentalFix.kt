@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -44,6 +45,7 @@ class MakeModuleExperimentalFix(
 
             compilerSettings.additionalArguments += " $compilerArgument"
             facetSettings.updateMergedArguments()
+            project.invalidateProjectRoots()
         } finally {
             modelsProvider.dispose()
         }

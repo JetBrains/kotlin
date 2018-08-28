@@ -2,16 +2,11 @@
 import kotlin.script.experimental.annotations.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.*
-import kotlin.script.experimental.misc.*
-import kotlin.reflect.full.starProjectedType
 
-object TestScriptWithReceiversConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
-    listOf(
-        ScriptCompileConfigurationProperties.scriptImplicitReceivers(String::class.starProjectedType)
-    )
-)
+object TestScriptWithReceiversDefinition : ScriptCompilationConfiguration(
+    {
+        implicitReceivers(String::class)
+    })
 
-@KotlinScript
-@KotlinScriptFileExtension("1.kts")
-@KotlinScriptDefaultCompilationConfiguration(TestScriptWithReceiversConfiguration::class)
+@KotlinScript(extension = "1.kts", compilationConfiguration = TestScriptWithReceiversDefinition::class)
 abstract class TestScriptWithReceivers

@@ -4,10 +4,10 @@ fun test(obj: Any): String {
     return when (obj) {
         is String -> "string" // return "string"
 
-    // it's an Int
+        // it's an Int
         is Int -> "int"
 
-    // otherwise
+        // otherwise
         else -> "unknown"
     }
 }

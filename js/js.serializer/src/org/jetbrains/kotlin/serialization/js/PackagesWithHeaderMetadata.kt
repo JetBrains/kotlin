@@ -16,4 +16,10 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-class PackagesWithHeaderMetadata(val header: ByteArray, val packages: List<ByteArray>)
+import org.jetbrains.kotlin.utils.JsMetadataVersion
+
+class PackagesWithHeaderMetadata(
+    val header: ByteArray,
+    val packages: List<ByteArray>,
+    val metadataVersion: JsMetadataVersion
+)

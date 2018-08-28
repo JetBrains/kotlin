@@ -22,12 +22,12 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
@@ -84,13 +84,13 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
                 fileAnnotationDescriptors.add(annotationDescriptor);
             }
         }
-        Annotated annotatedFile = new AnnotatedSimple(new AnnotationsImpl(fileAnnotationDescriptors));
+        Annotated annotatedFile = new AnnotatedImpl(new AnnotationsImpl(fileAnnotationDescriptors));
         AnnotationCodegen.forClass(v.getVisitor(), this,  state.getTypeMapper()).genAnnotations(annotatedFile, null);
     }
 
     @Override
     protected void generateBody() {
-        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(element)) {
+        for (KtDeclaration declaration : CodegenUtil.getDeclarationsToGenerate(element, state.getBindingContext())) {
             if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty || declaration instanceof KtTypeAlias) {
                 genSimpleMember(declaration);
             }
@@ -123,7 +123,8 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             @NotNull Type packagePartType
     ) {
         BindingContext bindingContext = codegen.bindingContext;
-        List<DeclarationDescriptor> members = CollectionsKt.mapNotNull(CodegenUtil.getActualDeclarations(codegen.element), declaration -> {
+        List<KtDeclaration> allDeclarations = CodegenUtil.getDeclarationsToGenerate(codegen.element, bindingContext);
+        List<DeclarationDescriptor> members = CollectionsKt.mapNotNull(allDeclarations, declaration -> {
             if (declaration instanceof KtNamedFunction) {
                 return bindingContext.get(BindingContext.FUNCTION, declaration);
             }

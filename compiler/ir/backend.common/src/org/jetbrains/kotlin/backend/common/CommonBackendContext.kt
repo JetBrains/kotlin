@@ -23,7 +23,7 @@ import kotlin.reflect.KProperty
 
 interface CommonBackendContext : BackendContext {
 
-    val ir: Ir<CommonBackendContext>
+    override val ir: Ir<CommonBackendContext>
 
     //TODO move to builtins
     fun getInternalClass(name: String): ClassDescriptor

@@ -30,6 +30,7 @@ import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinImplicitReceiverUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
@@ -119,6 +120,14 @@ class KotlinChangeSignatureProcessor(
         }
         finally {
             changeInfo.invalidate()
+        }
+    }
+
+    override fun doRun() {
+        try {
+            super.doRun()
+        } finally {
+            broadcastRefactoringExit(myProject, refactoringId!!)
         }
     }
 }

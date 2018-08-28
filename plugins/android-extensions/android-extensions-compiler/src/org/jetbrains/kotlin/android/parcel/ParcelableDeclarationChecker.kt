@@ -14,18 +14,22 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
@@ -83,9 +87,18 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
+        fun hasIgnoredOnParcel(): Boolean {
+            fun AnnotationDescriptor.isIgnoredOnParcel() = fqName == IGNORED_ON_PARCEL_FQNAME
+
+            fun Annotations.hasIgnoredOnParcel() = getAllAnnotations()
+                .any { (it.target == null || it.target == AnnotationUseSiteTarget.PROPERTY_GETTER) && it.annotation.isIgnoredOnParcel() }
+
+            return property.annotations.hasIgnoredOnParcel() || (property.getter?.annotations?.hasIgnoredOnParcel() ?: false)
+        }
+
         if (containingClass.isParcelize
-                && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
-                && !property.annotations.hasAnnotation(IGNORED_ON_PARCEL_FQNAME)
+            && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
+            && !hasIgnoredOnParcel()
         ) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(reportElement), DefaultErrorMessagesAndroid)
@@ -109,14 +122,13 @@ class ParcelableDeclarationChecker : DeclarationChecker {
     ) {
         if (!descriptor.isParcelize) return
 
-        if (declaration !is KtClass || (declaration.isAnnotation() || declaration.isInterface())) {
-            val reportElement = (declaration as? KtClassOrObject)?.nameIdentifier ?: declaration
-            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
+        if (declaration !is KtClassOrObject) {
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(declaration), DefaultErrorMessagesAndroid)
             return
         }
 
-        if (declaration.isEnum()) {
-            val reportElement = (declaration as? KtClass)?.nameIdentifier ?: declaration
+        if (declaration is KtClass && (declaration.isAnnotation() || declaration.isInterface())) {
+            val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
             return
         }
@@ -133,7 +145,7 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(sealedOrAbstract), DefaultErrorMessagesAndroid)
         }
 
-        if (declaration.isInner()) {
+        if (declaration is KtClass && declaration.isInner()) {
             val reportElement = declaration.modifierList?.getModifier(KtTokens.INNER_KEYWORD) ?: declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_CANT_BE_INNER_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
         }
@@ -173,8 +185,9 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             ClassBuilderMode.FULL,
             IncompatibleClassTracker.DoNothing,
             descriptor.module.name.asString(),
-            /* isJvm8Target */ false,
-            /* isReleaseCoroutines */ KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT
+            JvmTarget.DEFAULT,
+            KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT,
+            false
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {

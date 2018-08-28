@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
-import java.util.*
+import java.io.File
 import java.util.regex.Pattern
+import kotlin.collections.HashMap
 
 const val LANGUAGE_DIRECTIVE = "LANGUAGE"
 const val API_VERSION_DIRECTIVE = "API_VERSION"
@@ -28,7 +29,7 @@ data class CompilerTestLanguageVersionSettings(
         private val analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap()
 ) : LanguageVersionSettings {
     private val languageFeatures = specificFeaturesForTests() + initialLanguageFeatures
-    private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
+    private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion, emptyMap(), languageFeatures)
 
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
             languageFeatures[feature] ?: delegate.getFeatureSupport(feature)
@@ -46,7 +47,10 @@ private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.Sta
         emptyMap()
 }
 
-fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVersionSettings? {
+fun parseLanguageVersionSettingsOrDefault(directiveMap: Map<String, String>): CompilerTestLanguageVersionSettings =
+    parseLanguageVersionSettings(directiveMap) ?: defaultLanguageVersionSettings()
+
+fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTestLanguageVersionSettings? {
     val apiVersionString = directiveMap[API_VERSION_DIRECTIVE]
     val languageFeaturesString = directiveMap[LANGUAGE_DIRECTIVE]
     val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.experimental to it }
@@ -74,10 +78,20 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
     )
 }
 
+fun defaultLanguageVersionSettings(): CompilerTestLanguageVersionSettings =
+    CompilerTestLanguageVersionSettings(emptyMap(), ApiVersion.LATEST_STABLE, LanguageVersion.LATEST_STABLE)
+
+fun setupLanguageVersionSettingsForMultifileCompilerTests(files: List<File>, environment: KotlinCoreEnvironment) {
+    val allDirectives = HashMap<String, String>()
+    for (file in files) {
+        allDirectives.putAll(KotlinTestUtils.parseDirectives(file.readText()))
+    }
+    environment.configuration.languageVersionSettings = parseLanguageVersionSettingsOrDefault(allDirectives)
+}
+
 fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, environment: KotlinCoreEnvironment) {
     val directives = KotlinTestUtils.parseDirectives(originalFileText)
-    val languageVersionSettings = parseLanguageVersionSettings(directives) ?:
-                                  CompilerTestLanguageVersionSettings(emptyMap(), ApiVersion.LATEST_STABLE, LanguageVersion.LATEST_STABLE)
+    val languageVersionSettings = parseLanguageVersionSettingsOrDefault(directives)
     environment.configuration.languageVersionSettings = languageVersionSettings
 }
 

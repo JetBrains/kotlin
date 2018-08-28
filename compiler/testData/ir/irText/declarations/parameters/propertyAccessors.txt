@@ -1,161 +1,145 @@
 FILE fqName:<root> fileName:/propertyAccessors.kt
-  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
-    FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
+  PROPERTY name:test1 visibility:public modality:FINAL flags:val
+    FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           CONST Int type=kotlin.Int value=42
-  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
-    FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
-      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
+  PROPERTY name:test2 visibility:public modality:FINAL flags:var
+    FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           CONST Int type=kotlin.Int value=42
-    FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:Unit flags:
-      correspondingProperty: PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit flags:
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
-  PROPERTY name:testExt1 type:kotlin.Int visibility:public modality:FINAL flags:val
-    FUN name:<get-testExt1> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
-      correspondingProperty: PROPERTY name:testExt1 type:kotlin.Int visibility:public modality:FINAL flags:val
+  PROPERTY name:testExt1 visibility:public modality:FINAL flags:val
+    FUN name:<get-testExt1> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:testExt1 visibility:public modality:FINAL flags:val
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testExt1>() on String: Int'
           CONST Int type=kotlin.Int value=42
-  PROPERTY name:testExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
-    FUN name:<get-testExt2> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:Int flags:
-      correspondingProperty: PROPERTY name:testExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
+  PROPERTY name:testExt2 visibility:public modality:FINAL flags:var
+    FUN name:<get-testExt2> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:testExt2 visibility:public modality:FINAL flags:var
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testExt2>() on String: Int'
           CONST Int type=kotlin.Int value=42
-    FUN name:<set-testExt2> visibility:public modality:FINAL <> ($receiver:kotlin.String, value:kotlin.Int) returnType:Unit flags:
-      correspondingProperty: PROPERTY name:testExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
+    FUN name:<set-testExt2> visibility:public modality:FINAL <> ($receiver:kotlin.String, value:kotlin.Int) returnType:kotlin.Unit flags:
+      correspondingProperty: PROPERTY name:testExt2 visibility:public modality:FINAL flags:var
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
-  PROPERTY name:testExt3 type:kotlin.Int visibility:public modality:FINAL flags:val
-    FUN name:<get-testExt3> visibility:public modality:FINAL <T> ($receiver:T) returnType:Int flags:
-      correspondingProperty: PROPERTY name:testExt3 type:kotlin.Int visibility:public modality:FINAL flags:val
-      TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
-        superClassifiers:
-          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+  PROPERTY name:testExt3 visibility:public modality:FINAL flags:val
+    FUN name:<get-testExt3> visibility:public modality:FINAL <T> ($receiver:T) returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:testExt3 visibility:public modality:FINAL flags:val
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
       $receiver: VALUE_PARAMETER name:<this> type:T flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testExt3>() on T: Int'
           CONST Int type=kotlin.Int value=42
-  PROPERTY name:testExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
-    FUN name:<get-testExt4> visibility:public modality:FINAL <T> ($receiver:T) returnType:Int flags:
-      correspondingProperty: PROPERTY name:testExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
-      TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
-        superClassifiers:
-          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+  PROPERTY name:testExt4 visibility:public modality:FINAL flags:var
+    FUN name:<get-testExt4> visibility:public modality:FINAL <T> ($receiver:T) returnType:kotlin.Int flags:
+      correspondingProperty: PROPERTY name:testExt4 visibility:public modality:FINAL flags:var
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
       $receiver: VALUE_PARAMETER name:<this> type:T flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testExt4>() on T: Int'
           CONST Int type=kotlin.Int value=42
-    FUN name:<set-testExt4> visibility:public modality:FINAL <T> ($receiver:T, value:kotlin.Int) returnType:Unit flags:
-      correspondingProperty: PROPERTY name:testExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
-      TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
-        superClassifiers:
-          CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    FUN name:<set-testExt4> visibility:public modality:FINAL <T> ($receiver:T, value:kotlin.Int) returnType:kotlin.Unit flags:
+      correspondingProperty: PROPERTY name:testExt4 visibility:public modality:FINAL flags:var
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
       $receiver: VALUE_PARAMETER name:<this> type:T flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
-  CLASS CLASS name:Host modality:FINAL visibility:public flags:
+  CLASS CLASS name:Host modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host<T> flags:
-    superClasses:
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
-      superClassifiers:
-        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> () returnType:Host<T> flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    PROPERTY name:testMem1 type:kotlin.Int visibility:public modality:FINAL flags:val
-      FUN name:<get-testMem1> visibility:public modality:FINAL <> ($this:Host<T>) returnType:Int flags:
-        correspondingProperty: PROPERTY name:testMem1 type:kotlin.Int visibility:public modality:FINAL flags:val
+    PROPERTY name:testMem1 visibility:public modality:FINAL flags:val
+      FUN name:<get-testMem1> visibility:public modality:FINAL <> ($this:Host<T>) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:testMem1 visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-testMem1>(): Int'
             CONST Int type=kotlin.Int value=42
-    PROPERTY name:testMem2 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FUN name:<get-testMem2> visibility:public modality:FINAL <> ($this:Host<T>) returnType:Int flags:
-        correspondingProperty: PROPERTY name:testMem2 type:kotlin.Int visibility:public modality:FINAL flags:var
+    PROPERTY name:testMem2 visibility:public modality:FINAL flags:var
+      FUN name:<get-testMem2> visibility:public modality:FINAL <> ($this:Host<T>) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:testMem2 visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-testMem2>(): Int'
             CONST Int type=kotlin.Int value=42
-      FUN name:<set-testMem2> visibility:public modality:FINAL <> ($this:Host<T>, value:kotlin.Int) returnType:Unit flags:
-        correspondingProperty: PROPERTY name:testMem2 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FUN name:<set-testMem2> visibility:public modality:FINAL <> ($this:Host<T>, value:kotlin.Int) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:testMem2 visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
-    PROPERTY name:testMemExt1 type:kotlin.Int visibility:public modality:FINAL flags:val
-      FUN name:<get-testMemExt1> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String) returnType:Int flags:
-        correspondingProperty: PROPERTY name:testMemExt1 type:kotlin.Int visibility:public modality:FINAL flags:val
+    PROPERTY name:testMemExt1 visibility:public modality:FINAL flags:val
+      FUN name:<get-testMemExt1> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:testMemExt1 visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-testMemExt1>() on String: Int'
             CONST Int type=kotlin.Int value=42
-    PROPERTY name:testMemExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FUN name:<get-testMemExt2> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String) returnType:Int flags:
-        correspondingProperty: PROPERTY name:testMemExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
+    PROPERTY name:testMemExt2 visibility:public modality:FINAL flags:var
+      FUN name:<get-testMemExt2> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:testMemExt2 visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-testMemExt2>() on String: Int'
             CONST Int type=kotlin.Int value=42
-      FUN name:<set-testMemExt2> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String, value:kotlin.Int) returnType:Unit flags:
-        correspondingProperty: PROPERTY name:testMemExt2 type:kotlin.Int visibility:public modality:FINAL flags:var
+      FUN name:<set-testMemExt2> visibility:public modality:FINAL <> ($this:Host<T>, $receiver:kotlin.String, value:kotlin.Int) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:testMemExt2 visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
-    PROPERTY name:testMemExt3 type:kotlin.Int visibility:public modality:FINAL flags:val
-      FUN name:<get-testMemExt3> visibility:public modality:FINAL <TT> ($this:Host<T>, $receiver:TT) returnType:Int flags:
-        correspondingProperty: PROPERTY name:testMemExt3 type:kotlin.Int visibility:public modality:FINAL flags:val
-        TYPE_PARAMETER name:TT index:0 variance: upperBounds:[kotlin.Any?]
-          superClassifiers:
-            CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    PROPERTY name:testMemExt3 visibility:public modality:FINAL flags:val
+      FUN name:<get-testMemExt3> visibility:public modality:FINAL <TT> ($this:Host<T>, $receiver:TT) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:testMemExt3 visibility:public modality:FINAL flags:val
+        TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?]
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:TT flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-testMemExt3>() on TT: Int'
             CONST Int type=kotlin.Int value=42
-    PROPERTY name:testMemExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FUN name:<get-testMemExt4> visibility:public modality:FINAL <TT> ($this:Host<T>, $receiver:TT) returnType:Int flags:
-        correspondingProperty: PROPERTY name:testMemExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
-        TYPE_PARAMETER name:TT index:0 variance: upperBounds:[kotlin.Any?]
-          superClassifiers:
-            CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    PROPERTY name:testMemExt4 visibility:public modality:FINAL flags:var
+      FUN name:<get-testMemExt4> visibility:public modality:FINAL <TT> ($this:Host<T>, $receiver:TT) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:testMemExt4 visibility:public modality:FINAL flags:var
+        TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?]
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:TT flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-testMemExt4>() on TT: Int'
             CONST Int type=kotlin.Int value=42
-      FUN name:<set-testMemExt4> visibility:public modality:FINAL <TT> ($this:Host<T>, $receiver:TT, value:kotlin.Int) returnType:Unit flags:
-        correspondingProperty: PROPERTY name:testMemExt4 type:kotlin.Int visibility:public modality:FINAL flags:var
-        TYPE_PARAMETER name:TT index:0 variance: upperBounds:[kotlin.Any?]
-          superClassifiers:
-            CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+      FUN name:<set-testMemExt4> visibility:public modality:FINAL <TT> ($this:Host<T>, $receiver:TT, value:kotlin.Int) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:testMemExt4 visibility:public modality:FINAL flags:var
+        TYPE_PARAMETER name:TT index:0 variance: superTypes:[kotlin.Any?]
         $this: VALUE_PARAMETER name:<this> type:Host<T> flags:
         $receiver: VALUE_PARAMETER name:<this> type:TT flags:
         VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
         BLOCK_BODY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

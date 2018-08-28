@@ -14,9 +14,8 @@ internal expect class SafeContinuation<in T> : Continuation<T> {
     internal constructor(delegate: Continuation<T>)
 
     @PublishedApi
-    internal fun getResult(): Any?
+    internal fun getOrThrow(): Any?
 
     override val context: CoroutineContext
-    override fun resume(value: T): Unit
-    override fun resumeWithException(exception: Throwable): Unit
+    override fun resumeWith(result: SuccessOrFailure<T>): Unit
 }

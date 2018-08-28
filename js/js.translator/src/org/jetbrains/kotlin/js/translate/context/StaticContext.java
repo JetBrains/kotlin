@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
@@ -94,10 +93,10 @@ public final class StaticContext {
     private final Generator<JsName> objectInstanceNames = new ObjectInstanceNameGenerator();
 
     @NotNull
-    private final Map<JsScope, JsFunction> scopeToFunction = Maps.newHashMap();
+    private final Map<JsScope, JsFunction> scopeToFunction = new HashMap<>();
 
     @NotNull
-    private final Map<MemberDescriptor, List<DeclarationDescriptor>> classOrConstructorClosure = Maps.newHashMap();
+    private final Map<MemberDescriptor, List<DeclarationDescriptor>> classOrConstructorClosure = new HashMap<>();
 
     @NotNull
     private final Map<ClassDescriptor, List<DeferredCallSite>> deferredCallSites = new HashMap<>();

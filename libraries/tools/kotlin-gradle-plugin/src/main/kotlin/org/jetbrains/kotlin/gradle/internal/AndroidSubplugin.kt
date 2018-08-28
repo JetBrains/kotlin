@@ -25,17 +25,19 @@ import com.android.build.gradle.internal.variant.TestVariantData
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
-import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
+import javax.inject.Inject
 import javax.xml.parsers.DocumentBuilderFactory
 
 // Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
-class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
+class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
 
@@ -44,15 +46,15 @@ class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
                 addAndroidExtensionsRuntimeIfNeeded(project)
             }
         }
+
+        registry.register(KotlinAndroidExtensionModelBuilder())
     }
 
     private fun addAndroidExtensionsRuntimeIfNeeded(project: Project) {
-        val kotlinPluginWrapper = project.plugins.findPlugin(KotlinAndroidPluginWrapper::class.java) ?: run {
-            project.logger.error("'kotlin-android' plugin should be enabled before 'kotlin-android-extensions'")
+        val kotlinPluginVersion = project.getKotlinPluginVersion() ?: run {
+            project.logger.error("Kotlin plugin should be enabled before 'kotlin-android-extensions'")
             return
         }
-
-        val kotlinPluginVersion = kotlinPluginWrapper.kotlinPluginVersion
 
         project.configurations.all { configuration ->
             val name = configuration.name
@@ -87,12 +89,12 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     override fun apply(
-            project: Project,
-            kotlinCompile: KotlinCompile,
-            javaCompile: AbstractCompile,
-            variantData: Any?,
-            androidProjectHandler: Any?,
-            javaSourceSet: SourceSet?
+        project: Project,
+        kotlinCompile: KotlinCompile,
+        javaCompile: AbstractCompile?,
+        variantData: Any?,
+        androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation?
     ): List<SubpluginOption> {
         val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
@@ -105,6 +107,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val sourceSets = androidExtension.sourceSets
 
         val pluginOptions = arrayListOf<SubpluginOption>()
+        pluginOptions += SubpluginOption("features", AndroidExtensionsFeature.VIEWS.featureName)
 
         val mainSourceSet = sourceSets.getByName("main")
         val manifestFile = mainSourceSet.manifest.srcFile
@@ -128,7 +131,9 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         addVariant(mainSourceSet)
 
-        val flavorSourceSets = AndroidGradleWrapper.getProductFlavorsSourceSets(androidExtension).filterNotNull()
+        val flavorSourceSets = androidExtension.productFlavors
+            .mapNotNull { androidExtension.sourceSets.findByName(it.name) }
+
         for (sourceSet in flavorSourceSets) {
             addVariant(sourceSet)
         }
@@ -156,6 +161,8 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         androidProjectHandler as? AbstractAndroidProjectHandler<Any?> ?: return emptyList()
 
         val pluginOptions = arrayListOf<SubpluginOption>()
+        pluginOptions += SubpluginOption("features",
+                AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
 
         pluginOptions += SubpluginOption("experimental", "true")
         pluginOptions += SubpluginOption("defaultCacheImplementation",

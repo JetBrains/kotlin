@@ -24,7 +24,7 @@ fun test() {
     <caret>testMethod(1, "value")
 }
 
-//INFO: <pre><b>public</b> <b>fun</b> testMethod(): Unit <i>defined in</i> root package <i>in file</i> OnMethodUsageWithCodeBlock.kt</pre><p>Some documentation.</p>
+//INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageWithCodeBlock.kt</i></font><br>public fun <b>testMethod</b>(): Unit</pre></div><div class='content'><p>Some documentation.</p>
 //INFO: <pre><code>
 //INFO: Code block
 //INFO:     Second line
@@ -32,4 +32,4 @@ fun test() {
 //INFO: Third line
 //INFO: </code></pre><p>Text between code blocks.</p>
 //INFO: <pre><code>
-//INFO: </code></pre><p>Text after code block.</p>
+//INFO: </code></pre><p>Text after code block.</p></div><table class='sections'></table>

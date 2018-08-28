@@ -21,6 +21,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.idea.core.formatter.CompatibilityKt;
+import org.jetbrains.kotlin.idea.util.FormatterUtilKt;
 import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
@@ -33,6 +35,12 @@ import java.util.Set;
 public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     @ReflectionUtil.SkipInEquals
     public String CODE_STYLE_DEFAULTS = null;
+
+    /**
+     * Load settings with previous IDEA defaults to have an ability to restore them.
+     */
+    @Nullable
+    private KotlinCommonCodeStyleSettings settingsAgainstPreviousDefaults = null;
 
     private final boolean isTempForDeserialize;
 
@@ -59,8 +67,16 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         KotlinCommonCodeStyleSettings tempDeserialize = createForTempDeserialize();
         tempDeserialize.readExternal(element);
 
-        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(tempDeserialize.CODE_STYLE_DEFAULTS)) {
+        String customDefaults = tempDeserialize.CODE_STYLE_DEFAULTS;
+        if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
             KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(this, true);
+        } else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
+            KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(this, true);
+        } else if (customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle()) {
+            // Temporary load settings against previous defaults
+            settingsAgainstPreviousDefaults = createForTempDeserialize();
+            KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(settingsAgainstPreviousDefaults, true);
+            settingsAgainstPreviousDefaults.readExternal(element);
         }
 
         readExternalBase(element);
@@ -70,8 +86,12 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     public void writeExternal(Element element) throws WriteExternalException {
         CommonCodeStyleSettings defaultSettings = getDefaultSettings();
 
-        if (defaultSettings != null && KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
-            KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(defaultSettings, false);
+        if (defaultSettings != null) {
+            if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
+                KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(defaultSettings, false);
+            } else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
+                KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(defaultSettings, false);
+            }
         }
 
         writeExternalBase(element, defaultSettings);
@@ -90,7 +110,7 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         }
         //noinspection deprecation
         DefaultJDOMExternalizer.writeExternal(this, element, new SupportedFieldsDiffFilter(this, supportedFields, defaultSettings));
-        @SuppressWarnings("IncompatibleAPI") List<Integer> softMargins = getSoftMargins();
+        List<Integer> softMargins = getSoftMargins();
         serializeInto(softMargins, element);
 
         IndentOptions myIndentOptions = getIndentOptions();
@@ -115,7 +135,10 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
 
     @Override
     public CommonCodeStyleSettings clone(@NotNull CodeStyleSettings rootSettings) {
-        CommonCodeStyleSettings commonSettings = new KotlinCommonCodeStyleSettings();
+        KotlinCommonCodeStyleSettings commonSettings = new KotlinCommonCodeStyleSettings();
+
+        commonSettings.settingsAgainstPreviousDefaults = settingsAgainstPreviousDefaults;
+
         copyPublicFieldsOwn(this, commonSettings);
 
         try {
@@ -148,7 +171,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
             if (setRootSettingsMethod != null) {
                 // Method was introduced in 173
                 setRootSettingsMethod.setAccessible(true);
-                //noinspection IncompatibleAPI
                 setRootSettingsMethod.invoke(commonSettings, getSoftMargins());
             }
         }
@@ -170,7 +192,6 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         }
 
         CommonCodeStyleSettings other = (CommonCodeStyleSettings) obj;
-        //noinspection IncompatibleAPI
         if (!getSoftMargins().equals(other.getSoftMargins())) {
             return false;
         }
@@ -208,6 +229,16 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
     private Set<String> getSupportedFields() {
         final LanguageCodeStyleSettingsProvider provider = LanguageCodeStyleSettingsProvider.forLanguage(myLanguage);
         return provider == null ? null : provider.getSupportedFields();
+    }
+
+    public boolean canRestore() {
+        return settingsAgainstPreviousDefaults != null;
+    }
+
+    public void restore() {
+        if (settingsAgainstPreviousDefaults != null) {
+            CompatibilityKt.copyFromEx(this, settingsAgainstPreviousDefaults);
+        }
     }
 
     private static class SupportedFieldsDiffFilter extends DifferenceFilter<CommonCodeStyleSettings> {

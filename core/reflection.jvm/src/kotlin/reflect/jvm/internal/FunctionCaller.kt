@@ -24,14 +24,13 @@ import java.lang.reflect.Field as ReflectField
 import java.lang.reflect.Method as ReflectMethod
 
 internal abstract class FunctionCaller<out M : Member?>(
-        internal val member: M,
-        internal val returnType: Type,
-        internal val instanceClass: Class<*>?,
-        valueParameterTypes: Array<Type>
+    internal val member: M,
+    internal val returnType: Type,
+    internal val instanceClass: Class<*>?,
+    valueParameterTypes: Array<Type>
 ) {
     val parameterTypes: List<Type> =
-            instanceClass?.let { listOf(it, *valueParameterTypes) } ?:
-            valueParameterTypes.toList()
+        instanceClass?.let { listOf(it, *valueParameterTypes) } ?: valueParameterTypes.toList()
 
     val arity: Int
         get() = parameterTypes.size
@@ -53,13 +52,13 @@ internal abstract class FunctionCaller<out M : Member?>(
     // Constructors
 
     class Constructor(constructor: ReflectConstructor<*>) : FunctionCaller<ReflectConstructor<*>>(
-            constructor,
-            constructor.declaringClass,
-            constructor.declaringClass.let { klass ->
-                val outerClass = klass.declaringClass
-                if (outerClass != null && !Modifier.isStatic(klass.modifiers)) outerClass else null
-            },
-            constructor.genericParameterTypes
+        constructor,
+        constructor.declaringClass,
+        constructor.declaringClass.let { klass ->
+            val outerClass = klass.declaringClass
+            if (outerClass != null && !Modifier.isStatic(klass.modifiers)) outerClass else null
+        },
+        constructor.genericParameterTypes
     ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
@@ -70,10 +69,10 @@ internal abstract class FunctionCaller<out M : Member?>(
     // TODO fix 'callBy' for bound (and non-bound) inner class constructor references
     // See https://youtrack.jetbrains.com/issue/KT-14990
     class BoundConstructor(constructor: ReflectConstructor<*>, private val boundReceiver: Any?) :
-            FunctionCaller<ReflectConstructor<*>>(
-                    constructor, constructor.declaringClass, null,
-                    constructor.genericParameterTypes
-            ) {
+        FunctionCaller<ReflectConstructor<*>>(
+            constructor, constructor.declaringClass, null,
+            constructor.genericParameterTypes
+        ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.newInstance(*argsWithReceiver(boundReceiver, args))
@@ -83,14 +82,14 @@ internal abstract class FunctionCaller<out M : Member?>(
     // Methods
 
     abstract class Method(
-            method: ReflectMethod,
-            requiresInstance: Boolean = !Modifier.isStatic(method.modifiers),
-            parameterTypes: Array<Type> = method.genericParameterTypes
+        method: ReflectMethod,
+        requiresInstance: Boolean = !Modifier.isStatic(method.modifiers),
+        parameterTypes: Array<Type> = method.genericParameterTypes
     ) : FunctionCaller<ReflectMethod>(
-            method,
-            method.genericReturnType,
-            if (requiresInstance) method.declaringClass else null,
-            parameterTypes
+        method,
+        method.genericReturnType,
+        if (requiresInstance) method.declaringClass else null,
+        parameterTypes
     ) {
         private val isVoidMethod = returnType == Void.TYPE
 
@@ -124,24 +123,23 @@ internal abstract class FunctionCaller<out M : Member?>(
         }
     }
 
-    class BoundStaticMethod(method: ReflectMethod, private val boundReceiver: Any?) :
-            Method(method, requiresInstance = false, parameterTypes = method.genericParameterTypes.dropFirst()) {
+    class BoundStaticMethod(method: ReflectMethod, private val boundReceiver: Any?) : Method(
+        method, requiresInstance = false, parameterTypes = method.genericParameterTypes.dropFirst()
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return callMethod(null, argsWithReceiver(boundReceiver, args))
         }
     }
 
-    class BoundInstanceMethod(method: ReflectMethod, private val boundReceiver: Any?) :
-            Method(method, requiresInstance = false) {
+    class BoundInstanceMethod(method: ReflectMethod, private val boundReceiver: Any?) : Method(method, requiresInstance = false) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return callMethod(boundReceiver, args)
         }
     }
 
-    class BoundJvmStaticInObject(method: ReflectMethod) :
-            Method(method, requiresInstance = false) {
+    class BoundJvmStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = false) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return callMethod(null, args)
@@ -151,13 +149,13 @@ internal abstract class FunctionCaller<out M : Member?>(
     // Field accessors
 
     abstract class FieldGetter(
-            field: ReflectField,
-            requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
+        field: ReflectField,
+        requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
     ) : FunctionCaller<ReflectField>(
-            field,
-            field.genericType,
-            if (requiresInstance) field.declaringClass else null,
-            emptyArray()
+        field,
+        field.genericType,
+        if (requiresInstance) field.declaringClass else null,
+        emptyArray()
     ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
@@ -166,14 +164,14 @@ internal abstract class FunctionCaller<out M : Member?>(
     }
 
     abstract class FieldSetter(
-            field: ReflectField,
-            private val notNull: Boolean,
-            requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
+        field: ReflectField,
+        private val notNull: Boolean,
+        requiresInstance: Boolean = !Modifier.isStatic(field.modifiers)
     ) : FunctionCaller<ReflectField>(
-            field,
-            Void.TYPE,
-            if (requiresInstance) field.declaringClass else null,
-            arrayOf(field.genericType)
+        field,
+        Void.TYPE,
+        if (requiresInstance) field.declaringClass else null,
+        arrayOf(field.genericType)
     ) {
         override fun checkArguments(args: Array<*>) {
             super.checkArguments(args)
@@ -199,16 +197,18 @@ internal abstract class FunctionCaller<out M : Member?>(
         }
     }
 
-    class ClassCompanionFieldGetter(field: ReflectField, klass: Class<*>) :
-            FunctionCaller<ReflectField>(field, field.genericType, klass, emptyArray()) {
+    class ClassCompanionFieldGetter(field: ReflectField, klass: Class<*>) : FunctionCaller<ReflectField>(
+        field, field.genericType, klass, emptyArray()
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.get(args.first())
         }
     }
 
-    class BoundInstanceFieldGetter(field: ReflectField, private val boundReceiver: Any?) :
-            FieldGetter(field, requiresInstance = false) {
+    class BoundInstanceFieldGetter(field: ReflectField, private val boundReceiver: Any?) : FieldGetter(
+        field, requiresInstance = false
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.get(boundReceiver)
@@ -217,8 +217,9 @@ internal abstract class FunctionCaller<out M : Member?>(
 
     class BoundJvmStaticInObjectFieldGetter(field: ReflectField) : FieldGetter(field, requiresInstance = false)
 
-    class BoundClassCompanionFieldGetter(field: ReflectField, private val boundReceiver: Any?) :
-            FieldGetter(field, requiresInstance = false) {
+    class BoundClassCompanionFieldGetter(field: ReflectField, private val boundReceiver: Any?) : FieldGetter(
+        field, requiresInstance = false
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.get(boundReceiver)
@@ -236,32 +237,36 @@ internal abstract class FunctionCaller<out M : Member?>(
         }
     }
 
-    class ClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) :
-            FunctionCaller<ReflectField>(field, Void.TYPE, klass, arrayOf(field.genericType)) {
+    class ClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) : FunctionCaller<ReflectField>(
+        field, Void.TYPE, klass, arrayOf(field.genericType)
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.set(null, args.last())
         }
     }
 
-    class BoundInstanceFieldSetter(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) :
-            FieldSetter(field, notNull, false) {
+    class BoundInstanceFieldSetter(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) : FieldSetter(
+        field, notNull, false
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.set(boundReceiver, args.first())
         }
     }
 
-    class BoundJvmStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) :
-            FieldSetter(field, notNull, requiresInstance = false) {
+    class BoundJvmStaticInObjectFieldSetter(field: ReflectField, notNull: Boolean) : FieldSetter(
+        field, notNull, requiresInstance = false
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.set(null, args.last())
         }
     }
 
-    class BoundClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) :
-            FunctionCaller<ReflectField>(field, Void.TYPE, klass, arrayOf(field.genericType)) {
+    class BoundClassCompanionFieldSetter(field: ReflectField, klass: Class<*>) : FunctionCaller<ReflectField>(
+        field, Void.TYPE, klass, arrayOf(field.genericType)
+    ) {
         override fun call(args: Array<*>): Any? {
             checkArguments(args)
             return member.set(null, args.last())
@@ -277,17 +282,17 @@ internal abstract class FunctionCaller<out M : Member?>(
     companion object {
         // TODO lazily allocate array at bound callers?
         fun argsWithReceiver(receiver: Any?, args: Array<out Any?>): Array<out Any?> =
-                arrayOfNulls<Any?>(args.size + 1).apply {
-                    this[0] = receiver
-                    System.arraycopy(args, 0, this, 1, args.size)
-                }
+            arrayOfNulls<Any?>(args.size + 1).apply {
+                this[0] = receiver
+                System.arraycopy(args, 0, this, 1, args.size)
+            }
 
         @Suppress("UNCHECKED_CAST")
         inline fun <reified T> Array<out T>.dropFirst(): Array<T> =
-                if (size <= 1) emptyArray<T>() else copyOfRange(1, size) as Array<T>
+            if (size <= 1) emptyArray() else copyOfRange(1, size) as Array<T>
 
         @Suppress("UNCHECKED_CAST")
         fun Array<*>.dropFirstArg(): Array<Any?> =
-                (this as Array<Any?>).dropFirst()
+            (this as Array<Any?>).dropFirst()
     }
 }

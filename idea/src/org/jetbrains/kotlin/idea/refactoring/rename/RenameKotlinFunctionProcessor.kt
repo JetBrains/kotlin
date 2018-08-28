@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.Pass
@@ -187,25 +188,28 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         if (element is FunctionWithSupersWrapper) {
             allRenames.remove(element)
         }
+        val originalName = (element.unwrapped as? KtNamedFunction)?.name ?: return
         for (declaration in ((element as? FunctionWithSupersWrapper)?.supers ?: listOf(element))) {
             val psiMethod = wrapPsiMethod(declaration) ?: continue
             allRenames[declaration] = newName
+            val baseName = psiMethod.name
+            val newBaseName = if (demangleInternalName(baseName) == originalName) {
+                mangleInternalName(newName, getModuleNameSuffix(baseName)!!)
+            } else newName
             if (psiMethod.containingClass != null) {
-                psiMethod.forEachOverridingMethod { it ->
+                psiMethod.forEachOverridingMethod(scope) { it ->
                     val overrider = (it as? PsiMirrorElement)?.prototype as? PsiMethod ?: it
 
                     if (overrider is SyntheticElement) return@forEachOverridingMethod true
 
                     val overriderName = overrider.name
-                    val baseName = psiMethod.name
-                    val newOverriderName = RefactoringUtil.suggestNewOverriderName(overriderName, baseName, newName)
+                    val newOverriderName = RefactoringUtil.suggestNewOverriderName(overriderName, baseName, newBaseName)
                     if (newOverriderName != null) {
                         RenameProcessor.assertNonCompileElement(overrider)
                         allRenames.put(overrider, newOverriderName)
                     }
                     return@forEachOverridingMethod true
                 }
-                javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)
             }
         }
     }
@@ -223,7 +227,9 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
                 ambiguousImportUsages += usage
             }
             else {
-                simpleUsages += usage
+                if (!renameMangledUsageIfPossible(usage, element, newName)) {
+                    simpleUsages += usage
+                }
             }
         }
         element.ambiguousImportUsages = ambiguousImportUsages

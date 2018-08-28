@@ -31,16 +31,22 @@ import javax.swing.Icon
 class KotlinModuleBuilder(
         val targetPlatform: TargetPlatform, val builderName: String, val builderDescription: String, val icon: Icon
 ) : JavaModuleBuilder() {
+    private var wizardContext: WizardContext? = null
+
     override fun getBuilderId() = "kotlin.module.builder"
     override fun getName() = builderName
     override fun getPresentableName() = builderName
     override fun getDescription() = builderDescription
     override fun getNodeIcon() = icon
     override fun getGroupName() = KotlinTemplatesFactory.KOTLIN_GROUP_NAME
-    override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider) = ModuleWizardStep.EMPTY_ARRAY
+
+    override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<out ModuleWizardStep>? {
+        this.wizardContext = wizardContext
+        return ModuleWizardStep.EMPTY_ARRAY
+    }
 
     override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep {
-        return KotlinModuleSettingStep(targetPlatform, this, settingsStep)
+        return KotlinModuleSettingStep(targetPlatform, this, settingsStep, wizardContext)
     }
 
     override fun isSuitableSdkType(sdkType: SdkTypeId?) = when (targetPlatform) {

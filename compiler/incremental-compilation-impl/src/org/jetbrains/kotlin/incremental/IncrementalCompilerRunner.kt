@@ -41,6 +41,7 @@ abstract class IncrementalCompilerRunner<
         cacheDirName: String,
         protected val cacheVersions: List<CacheVersion>,
         protected val reporter: ICReporter,
+        private val buildHistoryFile: File,
         private val localStateDirs: Collection<File> = emptyList()
 ) {
 
@@ -117,11 +118,9 @@ abstract class IncrementalCompilerRunner<
 
     protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
 
-    protected fun getDirtyFiles(changedFiles: ChangedFiles.Known): HashSet<File> {
-        val dirtyFiles = HashSet<File>(with(changedFiles) { modified.size + removed.size })
-        with(changedFiles) {
-            modified.asSequence() + removed.asSequence()
-        }.filterTo(dirtyFiles, File::isKotlinFile)
+    protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: ChangedFiles.Known) {
+        dirtyFiles.add(changedFiles.modified)
+        dirtyFiles.add(changedFiles.removed)
 
         if (dirtySourcesSinceLastTimeFile.exists()) {
             val files = dirtySourcesSinceLastTimeFile.readLines().map(::File)
@@ -129,14 +128,12 @@ abstract class IncrementalCompilerRunner<
                 reporter.report { "Source files added since last compilation: ${reporter.pathsAsString(files)}" }
             }
 
-            dirtyFiles.addAll(files)
+            dirtyFiles.add(files)
         }
-
-        return dirtyFiles
     }
 
     protected sealed class CompilationMode {
-        class Incremental(val dirtyFiles: Set<File>) : CompilationMode()
+        class Incremental(val dirtyFiles: DirtyFilesContainer) : CompilationMode()
         class Rebuild(getReason: () -> String = { "" }) : CompilationMode() {
             val reason: String by lazy(getReason)
         }
@@ -188,7 +185,7 @@ abstract class IncrementalCompilerRunner<
         preBuildHook(args, compilationMode)
 
         val dirtySources = when (compilationMode) {
-            is CompilationMode.Incremental -> ArrayList(compilationMode.dirtyFiles)
+            is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableList()
             is CompilationMode.Rebuild -> allKotlinSources.toMutableList()
         }
 
@@ -200,7 +197,7 @@ abstract class IncrementalCompilerRunner<
         var exitCode = ExitCode.OK
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
-            val complementaryFiles = caches.inputsCache.clearComplementaryFilesMapping(dirtySources)
+            val complementaryFiles = caches.platformCache.clearComplementaryFilesMapping(dirtySources)
             dirtySources.addAll(complementaryFiles)
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
@@ -239,7 +236,7 @@ abstract class IncrementalCompilerRunner<
                 }
             }
 
-            caches.inputsCache.registerComplementaryFiles(expectActualTracker)
+            caches.platformCache.registerComplementaryFiles(expectActualTracker)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
             val changesCollector = ChangesCollector()
@@ -303,11 +300,20 @@ abstract class IncrementalCompilerRunner<
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
-    protected open fun processChangesAfterBuild(
+    private fun processChangesAfterBuild(
         compilationMode: CompilationMode,
         currentBuildInfo: BuildInfo,
         dirtyData: DirtyData
     ) {
+        val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: emptyList()
+        val newDiff = if (compilationMode is CompilationMode.Incremental) {
+            BuildDifference(currentBuildInfo.startTS, true, dirtyData)
+        } else {
+            val emptyDirtyData = DirtyData()
+            BuildDifference(currentBuildInfo.startTS, false, emptyDirtyData)
+        }
+
+        BuildDiffsStorage.writeToFile(buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff), reporter)
     }
 
     companion object {

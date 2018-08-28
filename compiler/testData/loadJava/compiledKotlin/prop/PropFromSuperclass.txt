@@ -2,7 +2,7 @@ package test
 
 public open class BaseClass {
     /*primary*/ public constructor BaseClass()
-    public final val exactly: kotlin.Int = 17
+    public final val exactly: kotlin.Int
         public final fun <get-exactly>(): kotlin.Int
 }
 

@@ -23,12 +23,14 @@ import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 @State(
-        name = "KotlinCompilerWorkspaceSettings",
-        storages = arrayOf(
-                Storage(file = StoragePathMacros.WORKSPACE_FILE)
-        )
-) class KotlinCompilerWorkspaceSettings : PersistentStateComponent<KotlinCompilerWorkspaceSettings> {
+    name = "KotlinCompilerWorkspaceSettings",
+    storages = arrayOf(
+        Storage(file = StoragePathMacros.WORKSPACE_FILE)
+    )
+)
+class KotlinCompilerWorkspaceSettings : PersistentStateComponent<KotlinCompilerWorkspaceSettings> {
     var preciseIncrementalEnabled: Boolean = true
+    var incrementalCompilationForJsEnabled: Boolean = false
     var enableDaemon: Boolean = true
 
     override fun getState(): KotlinCompilerWorkspaceSettings {

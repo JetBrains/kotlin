@@ -20,17 +20,17 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider;
+import org.jetbrains.kotlin.idea.KotlinFileType;
+import org.jetbrains.kotlin.psi.KtFile;
 
 public class KotlinParser implements PsiParser {
 
-    private final ScriptDefinitionProvider scriptDefinitionProvider;
 
     public KotlinParser(Project project) {
-        scriptDefinitionProvider = ScriptDefinitionProvider.Companion.getInstance(project);
     }
 
     @Override
@@ -43,12 +43,12 @@ public class KotlinParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder, PsiFile psiFile) {
         KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        if (scriptDefinitionProvider != null && scriptDefinitionProvider.isScript(psiFile.getName())
-            || psiFile.getName().endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)) {
-            ktParsing.parseScript();
+        String extension = FileUtilRt.getExtension(psiFile.getName());
+        if (extension.isEmpty() || extension.equals(KotlinFileType.EXTENSION) || (psiFile instanceof KtFile && ((KtFile) psiFile).isCompiled())) {
+            ktParsing.parseFile();
         }
         else {
-            ktParsing.parseFile();
+            ktParsing.parseScript();
         }
         return psiBuilder.getTreeBuilt();
     }

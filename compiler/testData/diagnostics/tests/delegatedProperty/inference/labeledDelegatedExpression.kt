@@ -1,7 +1,7 @@
 import kotlin.reflect.KProperty
 
 class A3 {
-    val a: String by l@ MyProperty()
+    val a: String by <!REDUNDANT_LABEL_WARNING!>l@<!> MyProperty()
 
     class MyProperty<T> {}
 

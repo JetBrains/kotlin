@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 open class JClass() {
     fun test(): String {
         return "OK"

@@ -36,7 +36,13 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
             if (defaultContext!! && !defaultStart!!) return
 
             var replacement = conversion.replacement
-            if (defaultContext!! && defaultStart!!) replacement += "($defaultAsyncArgument)"
+            if (defaultContext!! && defaultStart!!) {
+                if (conversion === conversions[0]) {
+                    replacement += "($defaultAsyncArgument)"
+                } else {
+                    replacement += "($defaultAsyncArgumentExperimental)"
+                }
+            }
 
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
@@ -57,11 +63,20 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
                 "$COROUTINE_PACKAGE.async",
                 "$COROUTINE_PACKAGE.Deferred.await",
                 "$COROUTINE_PACKAGE.withContext"
+            ),
+            Conversion(
+                "$COROUTINE_EXPERIMENTAL_PACKAGE.async",
+                "$COROUTINE_EXPERIMENTAL_PACKAGE.Deferred.await",
+                "$COROUTINE_EXPERIMENTAL_PACKAGE.withContext"
             )
         )
 
-        private val defaultAsyncArgument = "$COROUTINE_PACKAGE.DefaultDispatcher"
+        private const val defaultAsyncArgument = "$COROUTINE_PACKAGE.DefaultDispatcher"
+
+        private const val defaultAsyncArgumentExperimental = "$COROUTINE_EXPERIMENTAL_PACKAGE.DefaultDispatcher"
     }
 }
 
-internal const val COROUTINE_PACKAGE = "kotlinx.coroutines.experimental"
+internal const val COROUTINE_PACKAGE = "kotlinx.coroutines"
+
+internal const val COROUTINE_EXPERIMENTAL_PACKAGE = "kotlinx.coroutines.experimental"

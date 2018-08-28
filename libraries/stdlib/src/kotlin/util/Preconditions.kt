@@ -106,7 +106,12 @@ public inline fun check(value: Boolean, lazyMessage: () -> Any): Unit {
  * @sample samples.misc.Preconditions.failCheckWithLazyMessage
  */
 @kotlin.internal.InlineOnly
-public inline fun <T : Any> checkNotNull(value: T?): T = checkNotNull(value) { "Required value was null." }
+public inline fun <T : Any> checkNotNull(value: T?): T {
+    contract {
+        returns() implies (value != null)
+    }
+    return checkNotNull(value) { "Required value was null." }
+}
 
 /**
  * Throws an [IllegalStateException] with the result of calling [lazyMessage]  if the [value] is null. Otherwise

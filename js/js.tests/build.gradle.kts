@@ -53,6 +53,9 @@ projectTest {
     dependsOn(":dist")
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
+    if (findProperty("kotlin.compiler.js.ir.tests.skip")?.toString()?.toBoolean() == true) {
+        exclude("org/jetbrains/kotlin/js/test/semantics/Ir*")
+    }
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
@@ -74,9 +77,8 @@ projectTest("quickTest") {
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
-val install by task<NpmTask> {
+val npmInstall by tasks.getting(NpmTask::class) {
     setWorkingDir(testDataDir)
-    setArgs(listOf("install"))
 }
 
 val runMocha by task<NpmTask> {
@@ -85,7 +87,9 @@ val runMocha by task<NpmTask> {
     val target = if (project.hasProperty("teamcity")) "runOnTeamcity" else "test"
     setArgs(listOf("run", target))
 
-    dependsOn(install, "test")
+    setIgnoreExitValue(rootProject.getBooleanProperty("ignoreTestFailures") ?: false)
+
+    dependsOn(npmInstall, "test")
 
     val check by tasks
     check.dependsOn(this)

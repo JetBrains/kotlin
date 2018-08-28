@@ -83,7 +83,7 @@ fun main(a: test.A) {
     a.field?.length
     a.field.length
 
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz()<!>.get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz()<!>.get(0)
     a.baz()!!.get(0).get(0)
     a.baz()!!.get(0)?.get(0)
 }

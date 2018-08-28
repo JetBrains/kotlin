@@ -63,7 +63,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                     builder.append(nextSibling.text)
                     nextSibling = nextSibling.nextSibling ?: break
                 }
-                KtPsiFactory(ifExpression).createBlock(builder.toString())
+                KtPsiFactory(ifExpression).createBlock(builder.toString()).takeIf { it.statements.isNotEmpty() }
             }
         }
     }

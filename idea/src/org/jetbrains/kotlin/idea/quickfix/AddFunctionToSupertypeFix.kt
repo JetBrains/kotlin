@@ -164,8 +164,10 @@ class AddFunctionToSupertypeFix private constructor(
 
             // TODO: filter out impossible supertypes (for example when argument's type isn't visible in a superclass).
             return getSuperClasses(containingClass)
+                .asSequence()
                 .filterNot { KotlinBuiltIns.isAnyOrNullableAny(it.defaultType) }
                 .map { generateFunctionSignatureForType(functionDescriptor, it) }
+                .toList()
         }
 
         private fun MutableList<KotlinType>.sortSubtypesFirst(): List<KotlinType> {

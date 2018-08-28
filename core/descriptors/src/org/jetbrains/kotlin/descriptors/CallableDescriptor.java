@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.descriptors;
 
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;

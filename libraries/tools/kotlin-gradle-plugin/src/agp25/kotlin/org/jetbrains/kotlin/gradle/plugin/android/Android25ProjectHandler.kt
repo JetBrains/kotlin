@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.internal.KaptVariantData
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.io.File
 
 @Suppress("unused")
@@ -36,13 +38,15 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         }
     }
 
-    override fun wireKotlinTasks(project: Project,
-                                 androidPlugin: BasePlugin,
-                                 androidExt: BaseExtension,
-                                 variantData: BaseVariant,
-                                 javaTask: AbstractCompile,
-                                 kotlinTask: KotlinCompile) {
-
+    override fun wireKotlinTasks(
+        project: Project,
+        compilation: KotlinJvmAndroidCompilation,
+        androidPlugin: BasePlugin,
+        androidExt: BaseExtension,
+        variantData: BaseVariant,
+        javaTask: AbstractCompile,
+        kotlinTask: KotlinCompile
+    ) {
         val preJavaKotlinOutputFiles = mutableListOf<File>().apply {
             add(kotlinTask.destinationDir)
             if (Kapt3GradleSubplugin.isEnabled(project)) {
@@ -92,7 +96,38 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
             variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
 
     override fun getResDirectories(variantData: BaseVariant): List<File> {
+        val getAllResourcesMethod =
+            variantData::class.java.methods.firstOrNull { it.name == "getAllRawAndroidResources" }
+        if (getAllResourcesMethod != null) {
+            val allResources = getAllResourcesMethod.invoke(variantData) as FileCollection
+            return allResources.files.toList()
+        }
+
         return variantData.mergeResources?.computeResourceSetList0() ?: emptyList()
+    }
+
+    override fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) {
+        val project = compilation.target.project
+
+        AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, compilation.target, project.configurations)
+
+        compilation.compileDependencyFiles = variant.compileConfiguration.apply {
+            usesPlatformOf(compilation.target)
+            project.addExtendsFromRelation(name, compilation.compileDependencyConfigurationName)
+        }
+
+        compilation.runtimeDependencyFiles = variant.runtimeConfiguration.apply {
+            usesPlatformOf(compilation.target)
+            project.addExtendsFromRelation(name, compilation.runtimeDependencyConfigurationName)
+        }
+
+        // TODO this code depends on the convention that is present in the Android plugin as there's no public API
+        // We should request such API in the Android plugin
+        val apiElementsConfigurationName = "${variant.name}ApiElements"
+        val runtimeElementsConfigurationName = "${variant.name}RuntimeElements"
+        listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).forEach { outputConfigurationName ->
+            project.configurations.findByName(outputConfigurationName)?.usesPlatformOf(compilation.target)
+        }
     }
 
     private inner class KaptVariant(variantData: BaseVariant) : KaptVariantData<BaseVariant>(variantData) {

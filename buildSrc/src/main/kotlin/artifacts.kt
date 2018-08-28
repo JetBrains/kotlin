@@ -23,7 +23,7 @@ fun Project.classesDirsArtifact(): FileCollection {
 
     val classesDirsCfg = configurations.getOrCreate("classes-dirs")
 
-    val classesDirs = the<JavaPluginConvention>().sourceSets["main"].output.classesDirs
+    val classesDirs = mainSourceSet.output.classesDirs
 
     val classesTask = tasks["classes"]
 
@@ -44,7 +44,7 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     return task<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
         dependsOn("testClasses")
         pluginManager.withPlugin("java") {
-            from(project.the<JavaPluginConvention>().sourceSets.getByName("test").output)
+            from(testSourceSet.output)
         }
         classifier = "tests"
         body()
@@ -72,7 +72,7 @@ fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
         configurations.getOrCreate("archives").artifacts.removeAll { (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false }
     }
     return task.apply {
-        setupPublicJar()
+        setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
         project.runtimeJarArtifactBy(this, this)
@@ -88,7 +88,7 @@ fun Project.sourcesJar(sourceSet: String? = "main", body: Jar.() -> Unit = {}): 
             try {
                 if (sourceSet != null) {
                     project.pluginManager.withPlugin("java-base") {
-                        from(project.the<JavaPluginConvention>().sourceSets[sourceSet].allSource)
+                        from(project.javaPluginConvention().sourceSets[sourceSet].allSource)
                     }
                 }
             } catch (e: UnknownDomainObjectException) {
@@ -181,12 +181,15 @@ private fun Project.runtimeJarTaskIfExists(): Task? =
 
 fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
 
-fun Jar.setupPublicJar(classifier: String = "") {
+fun Jar.setupPublicJar(baseName: String, classifier: String = "") {
+    val buildNumber = project.rootProject.extra["buildNumber"] as String
+    this.baseName = baseName
+    this.version = buildNumber
     this.classifier = classifier
     manifest.attributes.apply {
         put("Implementation-Vendor", "JetBrains")
-        put("Implementation-Title", project.the<BasePluginConvention>().archivesBaseName)
-        put("Implementation-Version", project.rootProject.extra["buildNumber"])
+        put("Implementation-Title", baseName)
+        put("Implementation-Version", buildNumber)
         put("Build-Jdk", System.getProperty("java.version"))
     }
 }

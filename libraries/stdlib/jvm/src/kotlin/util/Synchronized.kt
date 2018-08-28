@@ -7,6 +7,7 @@
 @file:kotlin.jvm.JvmName("StandardKt")
 package kotlin
 
+import kotlin.internal.contracts.*
 import kotlin.jvm.internal.unsafe.*
 
 /**
@@ -14,6 +15,10 @@ import kotlin.jvm.internal.unsafe.*
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <R> synchronized(lock: Any, block: () -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+
     @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE", "INVISIBLE_MEMBER")
     monitorEnter(lock)
     try {

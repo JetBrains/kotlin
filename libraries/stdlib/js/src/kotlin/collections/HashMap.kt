@@ -66,10 +66,11 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this() {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual constructor(initialCapacity: Int, loadFactor: Float = 0.0f) : this() {
         // This implementation of HashMap has no need of load factors or capacities.
-        require(initialCapacity >= 0) { "Negative initial capacity" }
-        require(loadFactor >= 0) { "Non-positive load factor" }
+        require(initialCapacity >= 0) { "Negative initial capacity: $initialCapacity" }
+        require(loadFactor >= 0) { "Non-positive load factor: $loadFactor" }
     }
 
     actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)

@@ -1,0 +1,60 @@
+public final class test/SomeClass$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (in)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+          NEW
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFEQ (L2)
+          NEW
+          DUP
+          INVOKESPECIAL (test/SomeClass, <init>, ()V)
+          GOTO (L3)
+        LABEL (L2)
+          ACONST_NULL
+        LABEL (L3)
+          ARETURN
+        LABEL (L4)
+    }
+
+    public final java.lang.Object[] newArray(int p0)
+}
+
+public final class test/SomeClass : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    static void <clinit>()
+
+    public void <init>()
+
+    public int describeContents()
+
+    public void writeToParcel(android.os.Parcel p0, int p1) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkParameterIsNotNull, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          DUP
+          IFNULL (L1)
+          ALOAD (1)
+          LDC (1)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          POP2
+          GOTO (L2)
+        LABEL (L1)
+          POP
+          LDC (0)
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+        LABEL (L2)
+          RETURN
+        LABEL (L3)
+    }
+}

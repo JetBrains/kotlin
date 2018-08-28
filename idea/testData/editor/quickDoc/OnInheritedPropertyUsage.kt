@@ -14,4 +14,4 @@ fun test() {
     D().f<caret>oo
 }
 
-//INFO: <pre><b>public</b> <b>open</b> <b>val</b> foo: Int <i>defined in</i> D</pre><p>This property returns zero.</p>
+//INFO: <div class='definition'><pre><a href="psi_element://D"><code>D</code></a><br>public open val <b>foo</b>: Int</pre></div><div class='content'><p>This property returns zero.</p></div><table class='sections'></table>

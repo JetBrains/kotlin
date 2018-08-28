@@ -30,10 +30,6 @@ public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }
 
-    // roots, including dependencies and own source
-    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS =
-            CompilerConfigurationKey.create("content roots");
-
     public static final CompilerConfigurationKey<File> OUTPUT_DIRECTORY =
             CompilerConfigurationKey.create("output directory");
     public static final CompilerConfigurationKey<File> OUTPUT_JAR =

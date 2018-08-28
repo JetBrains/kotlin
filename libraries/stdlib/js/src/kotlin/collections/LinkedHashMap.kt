@@ -174,7 +174,8 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : super(initialCapacity, loadFactor) {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    actual constructor(initialCapacity: Int, loadFactor: Float = 0.0f) : super(initialCapacity, loadFactor) {
         map = HashMap<K, ChainEntry<K, V>>()
     }
 

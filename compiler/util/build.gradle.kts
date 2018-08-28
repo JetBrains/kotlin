@@ -17,7 +17,7 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        resources.srcDir(File(rootDir, "resources")).apply { include("**") }
+        resources.srcDir(File(rootDir, "resources"))
     }
     "test" {}
 }

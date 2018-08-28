@@ -68,7 +68,7 @@ class InitializersLowering(
                 if (declaration.descriptor.dispatchReceiverParameter != null) // TODO isStaticField
                     IrGetValueImpl(
                         irFieldInitializer.startOffset, irFieldInitializer.endOffset,
-                        irClass.thisReceiver!!.symbol
+                        irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol
                     )
                 else null
             val irSetField = IrSetFieldImpl(
@@ -76,6 +76,7 @@ class InitializersLowering(
                 declaration.symbol,
                 receiver,
                 irFieldInitializer,
+                context.irBuiltIns.unitType,
                 null, null
             )
 
@@ -93,7 +94,7 @@ class InitializersLowering(
         fun transformInstanceInitializerCallsInConstructors(irClass: IrClass) {
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression {
-                    return IrBlockImpl(irClass.startOffset, irClass.endOffset, context.builtIns.unitType, null,
+                    return IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null,
                                        instanceInitializerStatements.map { it.copy(irClass) })
                 }
             })

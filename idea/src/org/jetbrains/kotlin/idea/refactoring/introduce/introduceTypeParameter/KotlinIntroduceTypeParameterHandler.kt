@@ -74,6 +74,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                 file,
                 "Introduce type parameter to declaration",
                 listOf(CodeInsightUtils.ElementKind.TYPE_ELEMENT),
+                { null },
                 { _, parent -> getPossibleTypeParameterContainers(parent) },
                 continuation
         )
@@ -116,14 +117,16 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                 val parameterRefElement = KtPsiFactory(project).createType(restoredTypeParameter.name ?: "_").typeElement!!
 
                 val duplicateRanges = restoredOriginalTypeElement
-                        .toRange()
-                        .match(restoredOwner, KotlinPsiUnifier.DEFAULT)
-                        .filterNot {
-                            val textRange = it.range.getTextRange()
-                            restoredOriginalTypeElement.textRange.intersects(textRange)
-                            || restoredOwner.typeParameterList?.textRange?.intersects(textRange) ?: false
-                        }
-                        .map { it.range.elements.toRange() }
+                    .toRange()
+                    .match(restoredOwner, KotlinPsiUnifier.DEFAULT)
+                    .asSequence()
+                    .filterNot {
+                        val textRange = it.range.getTextRange()
+                        restoredOriginalTypeElement.textRange.intersects(textRange)
+                                || restoredOwner.typeParameterList?.textRange?.intersects(textRange) ?: false
+                    }
+                    .map { it.range.elements.toRange() }
+                    .toList()
 
                 runWriteAction {
                     restoredOriginalTypeElement.replace(parameterRefElement)

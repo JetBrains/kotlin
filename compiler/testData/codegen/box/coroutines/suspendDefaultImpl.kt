@@ -1,12 +1,13 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
 import helpers.*
-import COROUTINES_PACKAGE.startCoroutine
+import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 interface TestInterface {
-    suspend fun toInt(): Int = suspendCoroutineOrReturn { x ->
+    suspend fun toInt(): Int = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(56)
         COROUTINE_SUSPENDED
     }

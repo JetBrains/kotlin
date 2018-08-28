@@ -87,7 +87,8 @@ abstract class KtCodeFragment(
     override fun getContext(): PsiElement? {
         if (fakeContextForJavaFile != null) return fakeContextForJavaFile
         if (context !is KtElement) {
-            LOG.warn("CodeFragment with non-kotlin context should have fakeContextForJavaFile set: \noriginalContext = ${context?.getElementTextWithContext()}")
+            val logInfoForContextElement = (context as? PsiFile)?.virtualFile?.path ?: context?.getElementTextWithContext()
+            LOG.warn("CodeFragment with non-kotlin context should have fakeContextForJavaFile set: \noriginalContext = $logInfoForContextElement")
             return null
         }
 
@@ -99,7 +100,7 @@ abstract class KtCodeFragment(
     override fun clone(): KtCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as KtCodeFragment
         clone.isPhysical = false
-        clone.originalFile = this
+        clone.myOriginalFile = this
         clone.imports = imports
         clone.viewProvider =
                 SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), false)
@@ -166,7 +167,7 @@ abstract class KtCodeFragment(
 
     override fun getExceptionHandler() = exceptionHandler
 
-    override fun importClass(aClass: PsiClass?): Boolean {
+    override fun importClass(aClass: PsiClass): Boolean {
         return true
     }
 

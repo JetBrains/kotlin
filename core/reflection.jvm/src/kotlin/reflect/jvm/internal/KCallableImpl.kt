@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.javaType
 
 internal abstract class KCallableImpl<out R> : KCallable<R> {
@@ -38,11 +37,11 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
 
     abstract val isBound: Boolean
 
-    private val annotations_ = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
+    private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
-    override val annotations: List<Annotation> get() = annotations_()
+    override val annotations: List<Annotation> get() = _annotations()
 
-    private val parameters_ = ReflectProperties.lazySoft {
+    private val _parameters = ReflectProperties.lazySoft {
         val descriptor = descriptor
         val result = ArrayList<KParameter>()
         var index = 0
@@ -71,21 +70,21 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
     }
 
     override val parameters: List<KParameter>
-        get() = parameters_()
+        get() = _parameters()
 
-    private val returnType_ = ReflectProperties.lazySoft {
+    private val _returnType = ReflectProperties.lazySoft {
         KTypeImpl(descriptor.returnType!!) { caller.returnType }
     }
 
     override val returnType: KType
-        get() = returnType_()
+        get() = _returnType()
 
-    private val typeParameters_ = ReflectProperties.lazySoft {
+    private val _typeParameters = ReflectProperties.lazySoft {
         descriptor.typeParameters.map(::KTypeParameterImpl)
     }
 
     override val typeParameters: List<KTypeParameter>
-        get() = typeParameters_()
+        get() = _typeParameters()
 
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
@@ -184,19 +183,18 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
     }
 
     private fun defaultPrimitiveValue(type: Type): Any? =
-            if (type is Class<*> && type.isPrimitive) {
-                when (type) {
-                    Boolean::class.java -> false
-                    Char::class.java -> 0.toChar()
-                    Byte::class.java -> 0.toByte()
-                    Short::class.java -> 0.toShort()
-                    Int::class.java -> 0
-                    Float::class.java -> 0f
-                    Long::class.java -> 0L
-                    Double::class.java -> 0.0
-                    Void.TYPE -> throw IllegalStateException("Parameter with void type is illegal")
-                    else -> throw UnsupportedOperationException("Unknown primitive: $type")
-                }
+        if (type is Class<*> && type.isPrimitive) {
+            when (type) {
+                Boolean::class.java -> false
+                Char::class.java -> 0.toChar()
+                Byte::class.java -> 0.toByte()
+                Short::class.java -> 0.toShort()
+                Int::class.java -> 0
+                Float::class.java -> 0f
+                Long::class.java -> 0L
+                Double::class.java -> 0.0
+                Void.TYPE -> throw IllegalStateException("Parameter with void type is illegal")
+                else -> throw UnsupportedOperationException("Unknown primitive: $type")
             }
-            else null
+        } else null
 }

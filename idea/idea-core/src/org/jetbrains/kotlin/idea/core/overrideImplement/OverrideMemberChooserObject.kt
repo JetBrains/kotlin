@@ -24,6 +24,7 @@ import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.TemplateKind
 import org.jetbrains.kotlin.idea.core.getFunctionBodyTextFromTemplate
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.j2k.IdeaDocCommentConverter
 import org.jetbrains.kotlin.idea.kdoc.KDocElementFactory
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.idea.util.expectedDescriptors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
+import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
 interface OverrideMemberChooserObject : ClassMember {
     sealed class BodyType {
@@ -102,9 +105,14 @@ interface OverrideMemberChooserObject : ClassMember {
 fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, copyDoc: Boolean): KtCallableDeclaration {
     val project = targetClass.project
 
-    val bodyType = if (targetClass.hasExpectModifier()) OverrideMemberChooserObject.BodyType.NO_BODY else bodyType
-
     val descriptor = immediateSuper
+
+    val bodyType = when {
+        targetClass.hasExpectModifier() -> OverrideMemberChooserObject.BodyType.NO_BODY
+        descriptor.extensionReceiverParameter != null -> OverrideMemberChooserObject.BodyType.EMPTY
+        else -> bodyType
+    }
+
     if (preferConstructorParameter && descriptor is PropertyDescriptor) return generateConstructorParameter(project, descriptor)
 
     val newMember: KtCallableDeclaration = when (descriptor) {
@@ -113,7 +121,17 @@ fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, cop
         else -> error("Unknown member to override: $descriptor")
     }
 
-    if (!targetClass.hasActualModifier()) {
+    if (targetClass.hasActualModifier()) {
+        val expectClassDescriptors =
+            targetClass.resolveToDescriptorIfAny()?.expectedDescriptors()?.filterIsInstance<ClassDescriptor>().orEmpty()
+        if (expectClassDescriptors.any { expectClassDescriptor ->
+                val expectMemberDescriptor = expectClassDescriptor.findCallableMemberBySignature(immediateSuper)
+                expectMemberDescriptor?.isExpect == true && expectMemberDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+            }
+        ) {
+            newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
+        }
+    } else {
         newMember.removeModifier(KtTokens.IMPL_KEYWORD)
         newMember.removeModifier(KtTokens.ACTUAL_KEYWORD)
     }
@@ -144,11 +162,13 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
     classifierNamePolicy = ClassifierNamePolicy.SOURCE_CODE_QUALIFIED
     overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
     unitReturnType = false
+    enhancedTypes = true
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
     renderUnabbreviatedType = false
     annotationFilter = {
         it.type.constructor.declarationDescriptor?.annotations?.hasAnnotation(ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME) ?: false
     }
+    presentableUnresolvedTypes = true
 }
 
 private fun PropertyDescriptor.wrap(): PropertyDescriptor {

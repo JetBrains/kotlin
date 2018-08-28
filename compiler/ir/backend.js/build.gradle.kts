@@ -11,6 +11,7 @@ dependencies {
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:ir.tree"))
     compile(project(":compiler:ir.psi2ir"))
+    compile(project(":compiler:ir.backend.common"))
     compile(project(":js:js.ast"))
     compile(project(":js:js.frontend"))
 

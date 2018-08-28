@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -41,12 +38,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultVisibility
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromModifiers
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
+import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils
+import org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -197,18 +197,31 @@ class FunctionDescriptorResolver(
             function, getDefaultModality(container, visibility, function.hasBody()),
             trace.bindingContext, container
         )
+
         val contractProvider = getContractProvider(functionDescriptor, trace, scope, dataFlowInfo, function)
+        val userData = mutableMapOf<FunctionDescriptor.UserDataKey<*>, Any>().apply {
+            if (contractProvider != null) {
+                put(ContractProviderKey, contractProvider)
+            }
+
+            if (receiverType != null && expectedFunctionType.functionTypeExpected() && !expectedFunctionType.annotations.isEmpty()) {
+                put(DslMarkerUtils.FunctionTypeAnnotationsKey, expectedFunctionType.annotations)
+            }
+        }
 
         functionDescriptor.initialize(
-            receiverType,
+            receiverType?.let {
+                DescriptorFactory.createExtensionReceiverParameterForCallable(functionDescriptor, it, Annotations.EMPTY)
+            },
             getDispatchReceiverParameterIfNeeded(container),
             typeParameterDescriptors,
             valueParameterDescriptors,
             returnType,
             modality,
             visibility,
-            mapOf(ContractProviderKey to contractProvider)
+            userData.takeIf { it.isNotEmpty() }
         )
+
         functionDescriptor.isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
         functionDescriptor.isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
         functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
@@ -231,17 +244,16 @@ class FunctionDescriptorResolver(
         scope: LexicalScope,
         dataFlowInfo: DataFlowInfo,
         function: KtFunction
-    ): LazyContractProvider {
+    ): LazyContractProvider? {
         val provideByDeferredForceResolve = LazyContractProvider {
             expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
         }
-        val emptyContract = LazyContractProvider.createInitialized(null)
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
                 languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
 
-        if (!isContractsEnabled || !contractParsingServices.fastCheckIfContractPresent(function)) return emptyContract
+        if (!isContractsEnabled || !function.isContractPresentPsiCheck()) return null
 
         return provideByDeferredForceResolve
     }

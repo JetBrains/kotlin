@@ -53,7 +53,7 @@ class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
 
         val resolutionFacade = expressionToCompute.getResolutionFacade()
         val evaluator = FrontendConstantExpressionEvaluator(
-            resolutionFacade.moduleDescriptor, expressionToCompute.languageVersionSettings
+            resolutionFacade.moduleDescriptor, expressionToCompute.languageVersionSettings, resolutionFacade.project
         )
         val evaluatorTrace = DelegatingBindingTrace(resolutionFacade.analyze(expressionToCompute), "Evaluating annotation argument")
 

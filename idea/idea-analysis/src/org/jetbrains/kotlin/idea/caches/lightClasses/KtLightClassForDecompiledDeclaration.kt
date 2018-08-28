@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassBase
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
-import org.jetbrains.kotlin.idea.util.qualifiedNameEx
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -34,7 +33,7 @@ class KtLightClassForDecompiledDeclaration(
     override val kotlinOrigin: KtClassOrObject?,
     private val file: KtClsFile
 ) : KtLightClassBase(clsDelegate.manager) {
-    val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedNameEx.orEmpty())
+    val fqName = kotlinOrigin?.fqName ?: FqName(clsDelegate.qualifiedName.orEmpty())
 
     override fun copy() = this
 

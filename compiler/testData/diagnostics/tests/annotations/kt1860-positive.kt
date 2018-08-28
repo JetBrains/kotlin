@@ -1,5 +1,6 @@
 // !WITH_NEW_INFERENCE
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class test
 
 fun foo(@test <!UNUSED_PARAMETER!>f<!> : Int) {}

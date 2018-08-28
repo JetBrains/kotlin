@@ -30,7 +30,7 @@ class ForInRangeInstanceLoopGenerator(
     override fun storeRangeStartAndEnd() {
         val loopRangeType = codegen.bindingContext.getType(rangeExpression)!!
         val asmLoopRangeType = codegen.asmType(loopRangeType)
-        codegen.gen(rangeExpression, asmLoopRangeType)
+        codegen.gen(rangeExpression, asmLoopRangeType, loopRangeType)
         v.dup()
 
         // ranges inherit first and last from corresponding progressions

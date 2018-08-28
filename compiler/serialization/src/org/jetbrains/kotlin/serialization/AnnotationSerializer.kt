@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -127,21 +128,25 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
             override fun visitUByteValue(value: UByteValue, data: Unit?) {
                 type = Type.BYTE
                 intValue = value.value.toLong()
+                flags = Flags.IS_UNSIGNED.toFlags(true)
             }
 
             override fun visitUShortValue(value: UShortValue, data: Unit?) {
                 type = Type.SHORT
                 intValue = value.value.toLong()
+                flags = Flags.IS_UNSIGNED.toFlags(true)
             }
 
             override fun visitUIntValue(value: UIntValue, data: Unit?) {
                 type = Type.INT
                 intValue = value.value.toLong()
+                flags = Flags.IS_UNSIGNED.toFlags(true)
             }
 
             override fun visitULongValue(value: ULongValue, data: Unit?) {
                 type = Type.LONG
                 intValue = value.value
+                flags = Flags.IS_UNSIGNED.toFlags(true)
             }
         }, Unit)
     }

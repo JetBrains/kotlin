@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.org.objectweb.asm.Type
 
 enum class ValueKind {
@@ -46,17 +47,35 @@ interface CallGenerator {
         }
 
         override fun genValueAndPut(
-                valueParameterDescriptor: ValueParameterDescriptor,
-                argumentExpression: KtExpression,
-                parameterType: Type,
-                parameterIndex: Int) {
+            valueParameterDescriptor: ValueParameterDescriptor,
+            argumentExpression: KtExpression,
+            parameterType: Type,
+            parameterIndex: Int
+        ) {
+            val container = valueParameterDescriptor.containingDeclaration
+            val isVarargInvoke = JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(container)
+
+            val v = codegen.v
+            if (isVarargInvoke) {
+                if (parameterIndex == 0) {
+                    v.iconst(container.valueParameters.size)
+                    v.newarray(OBJECT_TYPE)
+                }
+                v.dup()
+                v.iconst(parameterIndex)
+            }
+
             val value = codegen.gen(argumentExpression)
-            value.put(parameterType, valueParameterDescriptor.original.type, codegen.v)
+            value.put(parameterType, valueParameterDescriptor.original.type, v)
+
+            if (isVarargInvoke) {
+                v.astore(OBJECT_TYPE)
+            }
         }
 
         override fun putCapturedValueOnStack(
                 stackValue: StackValue, valueType: Type, paramIndex: Int) {
-            stackValue.put(stackValue.type, codegen.v)
+            stackValue.put(stackValue.type, stackValue.kotlinType, codegen.v)
         }
 
         override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {

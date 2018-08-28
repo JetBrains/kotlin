@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -32,6 +33,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
 
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.getStrictParentOfType<KtValueArgument>() == null) return false
+        if (element.getStrictParentOfType<KtFunction>()?.hasModifier(KtTokens.INLINE_KEYWORD) == true) return false
         val descriptor = element.functionLiteral.descriptor as? AnonymousFunctionDescriptor ?: return false
         if (descriptor.valueParameters.any { it.name.isSpecial }) return false
         val lastElement = element.functionLiteral.arrow ?: element.functionLiteral.lBrace

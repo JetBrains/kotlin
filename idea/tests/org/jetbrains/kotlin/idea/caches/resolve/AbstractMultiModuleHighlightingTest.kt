@@ -16,17 +16,20 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiHighlightingTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.allJavaFiles
+import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import java.io.File
 
 abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTest() {
 
-    protected open fun checkHighlightingInAllFiles(
-        shouldCheckFile: () -> Boolean = { !file.text.contains("// !CHECK_HIGHLIGHTING") }
+    protected open fun checkHighlightingInProject(
+        findFiles: () -> List<PsiFile> = { project.allKotlinFiles().excludeByDirective() }
     ) {
-        checkFiles(shouldCheckFile) {
+        checkFiles(findFiles) {
             checkHighlighting(myEditor, true, false)
         }
     }
@@ -36,8 +39,12 @@ abstract class AbstractMultiPlatformHighlightingTest : AbstractMultiModuleHighli
 
     protected open fun doTest(path: String) {
         setupMppProjectFromDirStructure(File(path))
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject {
+            (project.allKotlinFiles() + project.allJavaFiles()).excludeByDirective()
+        }
     }
 
     override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleHighlighting/multiplatform/"
 }
+
+private fun List<PsiFile>.excludeByDirective() = filter { !it.text.contains("// !CHECK_HIGHLIGHTING") }

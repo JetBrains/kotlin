@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -95,7 +96,10 @@ open class AccessorForPropertyDescriptor private constructor(
     )
 
     init {
-        setType(propertyType, emptyList<TypeParameterDescriptorImpl>(), dispatchReceiverParameter, receiverType)
+        setType(
+            propertyType, emptyList<TypeParameterDescriptorImpl>(), dispatchReceiverParameter,
+            DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverType, Annotations.EMPTY)
+        )
 
         val getterDescriptor =
             if (isWithSyntheticGetterAccessor) Getter(this, accessorKind) else calleeDescriptor.getter as PropertyGetterDescriptorImpl?

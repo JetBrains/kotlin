@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
@@ -205,8 +204,18 @@ open class LazyClassMemberScope(
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location, fromSupertypes)
+        generateFunctionsFromAnyForInlineClass(result, name, fromSupertypes)
         c.syntheticResolveExtension.generateSyntheticMethods(thisDescriptor, name, trace.bindingContext, fromSupertypes, result)
         generateFakeOverrides(name, fromSupertypes, result, SimpleFunctionDescriptor::class.java)
+    }
+
+    private fun generateFunctionsFromAnyForInlineClass(
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        name: Name,
+        fromSupertypes: List<SimpleFunctionDescriptor>
+    ) {
+        if (!thisDescriptor.isInline) return
+        addFunctionFromAnyIfNeeded(result, name, fromSupertypes)
     }
 
     private fun generateDataClassMethods(
@@ -256,26 +265,25 @@ open class LazyClassMemberScope(
         }
 
         if (c.languageVersionSettings.supportsFeature(LanguageFeature.DataClassInheritance)) {
-            fun shouldAddFunctionFromAny(checkParameters: (FunctionDescriptor) -> Boolean): Boolean {
-                // Add 'equals', 'hashCode', 'toString' iff there is no such declared member AND there is no such final member in supertypes
-                return result.none(checkParameters) &&
-                        fromSupertypes.none { checkParameters(it) && it.modality == Modality.FINAL }
-            }
+            addFunctionFromAnyIfNeeded(result, name, fromSupertypes)
+        }
+    }
 
-            if (name == DataClassDescriptorResolver.EQUALS_METHOD_NAME && shouldAddFunctionFromAny { function ->
-                    val parameters = function.valueParameters
-                    parameters.size == 1 && KotlinBuiltIns.isNullableAny(parameters.first().type)
-                }) {
-                result.add(DataClassDescriptorResolver.createEqualsFunctionDescriptor(thisDescriptor))
-            }
+    private fun addFunctionFromAnyIfNeeded(
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        name: Name,
+        fromSupertypes: List<SimpleFunctionDescriptor>
+    ) {
+        if (FunctionsFromAny.shouldAddEquals(name, result, fromSupertypes)) {
+            result.add(FunctionsFromAny.createEqualsFunctionDescriptor(thisDescriptor))
+        }
 
-            if (name == DataClassDescriptorResolver.HASH_CODE_METHOD_NAME && shouldAddFunctionFromAny { it.valueParameters.isEmpty() }) {
-                result.add(DataClassDescriptorResolver.createHashCodeFunctionDescriptor(thisDescriptor))
-            }
+        if (FunctionsFromAny.shouldAddHashCode(name, result, fromSupertypes)) {
+            result.add(FunctionsFromAny.createHashCodeFunctionDescriptor(thisDescriptor))
+        }
 
-            if (name == DataClassDescriptorResolver.TO_STRING_METHOD_NAME && shouldAddFunctionFromAny { it.valueParameters.isEmpty() }) {
-                result.add(DataClassDescriptorResolver.createToStringFunctionDescriptor(thisDescriptor))
-            }
+        if (FunctionsFromAny.shouldAddToString(name, result, fromSupertypes)) {
+            result.add(FunctionsFromAny.createToStringFunctionDescriptor(thisDescriptor))
         }
     }
 

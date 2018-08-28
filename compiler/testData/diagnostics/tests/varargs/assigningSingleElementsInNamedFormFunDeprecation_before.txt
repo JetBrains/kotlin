@@ -1,0 +1,18 @@
+package
+
+public fun anyFoo(/*0*/ vararg a: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
+public fun foo(/*0*/ vararg s: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+public fun </*0*/ T> genFoo(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Unit
+public fun manyFoo(/*0*/ vararg s: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
+public fun manyFoo(/*0*/ vararg v: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+public fun test(/*0*/ i: kotlin.IntArray): kotlin.Unit
+public fun testAny(): kotlin.Unit
+public fun testGen(): kotlin.Unit
+public fun testMany(/*0*/ a: kotlin.Any): kotlin.Unit
+
+public open class Cls {
+    public constructor Cls(/*0*/ vararg p: kotlin.Long /*kotlin.LongArray*/)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

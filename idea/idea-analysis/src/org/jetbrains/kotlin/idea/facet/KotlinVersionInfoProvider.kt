@@ -81,3 +81,21 @@ fun getRuntimeLibraryVersion(module: Module): String? {
     val versions = getRuntimeLibraryVersions(module, null, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM)
     return versions.toSet().singleOrNull()
 }
+
+fun getCleanRuntimeLibraryVersion(module: Module) = getRuntimeLibraryVersion(module)?.cleanUpVersion()
+
+private fun String.cleanUpVersion(): String {
+    return StringBuilder(this)
+        .apply {
+            val parIndex = indexOf("(")
+            if (parIndex >= 0) {
+                delete(parIndex, length)
+            }
+            val releaseIndex = indexOf("-release-")
+            if (releaseIndex >= 0) {
+                delete(releaseIndex, length)
+            }
+        }
+        .toString()
+        .trim()
+}

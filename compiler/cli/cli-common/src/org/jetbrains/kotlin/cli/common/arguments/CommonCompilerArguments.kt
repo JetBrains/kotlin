@@ -44,7 +44,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<version>",
         description = "Provide source compatibility with specified language version"
     )
-    var languageVersion: String? by FreezableVar(null)
+    var languageVersion: String? by NullableStringFreezableVar(null)
 
     @get:Transient
     var autoAdvanceApiVersion: Boolean by FreezableVar(true)
@@ -55,14 +55,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<version>",
         description = "Allow to use declarations only from the specified version of bundled libraries"
     )
-    var apiVersion: String? by FreezableVar(null)
+    var apiVersion: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-kotlin-home",
         valueDescription = "<path>",
         description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
     )
-    var kotlinHome: String? by FreezableVar(null)
+    var kotlinHome: String? by NullableStringFreezableVar(null)
 
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
     var pluginOptions: Array<String>? by FreezableVar(null)
@@ -101,14 +101,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<path>",
         description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
     )
-    var intellijPluginRoot: String? by FreezableVar(null)
+    var intellijPluginRoot: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-Xcoroutines",
         valueDescription = "{enable|warn|error}",
         description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
     )
-    var coroutinesState: String? by FreezableVar(WARN)
+    var coroutinesState: String? by NullableStringFreezableVar(WARN)
 
     @Argument(
         value = "-Xnew-inference",
@@ -144,7 +144,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xuse-experimental",
         valueDescription = "<fq.name>",
-        description = "Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name"
+        description = "Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name"
     )
     var useExperimental: Array<String>? by FreezableVar(null)
 
@@ -162,7 +162,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         valueDescription = "<path>",
         description = "Dump detailed performance statistics to the specified file"
     )
-    var dumpPerf: String? by FreezableVar(null)
+    var dumpPerf: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-Xprogressive",
@@ -173,6 +173,20 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 "non-progressive mode may cause compilation errors in progressive mode."
     )
     var progressiveMode by FreezableVar(false)
+
+    @Argument(
+        value = "-Xmetadata-version",
+        description = "Change metadata version of the generated binary files"
+    )
+    var metadataVersion: String? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xcommon-sources",
+        valueDescription = "<path>",
+        description = "Sources of the common module that need to be compiled together with this module in the multi-platform mode.\n" +
+                "Should be a subset of sources passed as free arguments"
+    )
+    var commonSources: Array<String>? by FreezableVar(null)
 
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -204,6 +218,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (newInference) {
                 put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
+                put(LanguageFeature.SamConversionForKotlinFunctions, LanguageFeature.State.ENABLED)
             }
 
             if (legacySmartCastAfterTry) {
@@ -239,15 +254,22 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
-        val languageSettingsParser = LanguageSettingsParser()
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
 
-        for (argument in internalArguments) {
-            val (feature, state) = languageSettingsParser.parseInternalArgument(argument, collector) ?: continue
+        var samConversionsExplicitlyPassed = false
+        for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
+            if (feature == LanguageFeature.SamConversionForKotlinFunctions) {
+                samConversionsExplicitlyPassed = true
+            }
+
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature
             }
+        }
+
+        if (!samConversionsExplicitlyPassed && this[LanguageFeature.NewInference] == LanguageFeature.State.ENABLED) {
+            put(LanguageFeature.SamConversionForKotlinFunctions, LanguageFeature.State.ENABLED)
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {

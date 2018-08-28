@@ -11,6 +11,7 @@ import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
 abstract class CommonCompilerPerformanceManager(private val presentableName: String) {
+    @Suppress("MemberVisibilityCanBePrivate")
     protected val measurements: MutableList<PerformanceMeasurement> = mutableListOf()
     protected var isEnabled: Boolean = false
     private var initStartNanos = PerformanceCounter.currentTime()

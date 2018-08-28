@@ -8,7 +8,7 @@ import kotlin.coroutines.experimental.intrinsics.*
     <!UNRESOLVED_REFERENCE!>it<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>resume<!>(Unit)
 }
 
-<!UNSUPPORTED_FEATURE!>suspend<!> fun bar(): Unit = <!UNRESOLVED_REFERENCE!>suspendCoroutineOrReturn<!> {
+<!UNSUPPORTED_FEATURE!>suspend<!> fun bar(): Unit = <!UNRESOLVED_REFERENCE!>suspendCoroutineUninterceptedOrReturn<!> {
     <!UNRESOLVED_REFERENCE!>it<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>resume<!>(Unit)
     <!UNRESOLVED_REFERENCE!>COROUTINE_SUSPENDED<!>
 }

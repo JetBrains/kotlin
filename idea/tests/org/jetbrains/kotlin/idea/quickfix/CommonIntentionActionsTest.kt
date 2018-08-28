@@ -17,23 +17,24 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.lang.jvm.JvmClass
 import com.intellij.lang.jvm.JvmElement
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.lang.jvm.actions.*
 import com.intellij.lang.jvm.types.JvmSubstitutor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair.pair
-import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiJvmSubstitutor
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.PsiType
 import com.intellij.psi.codeStyle.SuggestedNameInfo
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.UastContext
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.uast.toUElement
 import org.junit.Assert
 
@@ -44,9 +45,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         private val modifiers: Collection<JvmModifier> = emptyList(),
         private val returnType: ExpectedTypes = emptyList(),
         private val annotations: Collection<AnnotationRequest> = emptyList(),
-        private val parameters: List<Pair<SuggestedNameInfo, List<ExpectedType>>> = emptyList(),
+        parameters: List<ExpectedParameter> = emptyList(),
         private val targetSubstitutor: JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
     ) : CreateMethodRequest {
+        private val expectedParameters = parameters
+
         override fun getTargetSubstitutor(): JvmSubstitutor = targetSubstitutor
 
         override fun getModifiers() = modifiers
@@ -55,7 +58,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         override fun getAnnotations() = annotations
 
-        override fun getParameters() = parameters
+        override fun getExpectedParameters(): List<ExpectedParameter> = expectedParameters
 
         override fun getReturnType() = returnType
 
@@ -178,6 +181,71 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             """class Foo {
               |    fun <caret>bar(){}
               |}""".trim().trimMargin(), true
+        )
+    }
+
+    fun testAddAnnotation() {
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |   fun <caret>bar(){}
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("bar", KtModifierListOwner::class.java).toLightElements().single() as PsiMethod,
+                annotationRequest("kotlin.jvm.JvmName", stringAttribute("name", "foo"))
+            ).single()
+        )
+        myFixture.checkResult(
+            """class Foo {
+              |   @JvmName(name = "foo")
+              |   fun <caret>bar(){}
+              |}""".trim().trimMargin(), true
+        )
+    }
+
+    fun testAddJavaAnnotationValue() {
+
+        myFixture.addFileToProject(
+            "pkg/myannotation/JavaAnnotation.java", """
+            package pkg.myannotation
+
+            public @interface JavaAnnotation {
+                String value();
+                int param() default 0;
+            }
+        """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |   fun bar(){}
+                        |   fun baz(){}
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("bar", KtModifierListOwner::class.java).toLightElements().single() as PsiMethod,
+                annotationRequest("pkg.myannotation.JavaAnnotation", stringAttribute("value", "foo"), intAttribute("param", 2))
+            ).single()
+        )
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("baz", KtModifierListOwner::class.java).toLightElements().single() as PsiMethod,
+                annotationRequest("pkg.myannotation.JavaAnnotation", intAttribute("param", 2), stringAttribute("value", "foo"))
+            ).single()
+        )
+        myFixture.checkResult(
+            """import pkg.myannotation.JavaAnnotation
+                |
+                |class Foo {
+                |   @JavaAnnotation("foo", param = 2)
+                |   fun bar(){}
+                |   @JavaAnnotation(param = 2, value = "foo")
+                |   fun baz(){}
+                |}""".trim().trimMargin(), true
         )
     }
 
@@ -332,16 +400,16 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = true
-                        )
-                ).findWithText("Add 'var' property 'baz' to 'Foo'")
+            createMethodActions(
+                myFixture.atCaret(),
+                SimpleMethodRequest(
+                    project,
+                    methodName = "setBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(),
+                    parameters = expectedParams(PsiType.getTypeByName("java.lang.String", project, project.allScope()))
+                )
+            ).findWithText("Add 'var' property 'baz' to 'Foo'")
         )
         myFixture.checkResult("""
         |class Foo {
@@ -360,16 +428,16 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = true
-                        )
-                ).findWithText("Add 'lateinit var' property 'baz' to 'Foo'")
+            createMethodActions(
+                myFixture.atCaret(),
+                SimpleMethodRequest(
+                    project,
+                    methodName = "setBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(),
+                    parameters = expectedParams(PsiType.getTypeByName("java.lang.String", project, project.allScope()))
+                )
+            ).findWithText("Add 'lateinit var' property 'baz' to 'Foo'")
         )
         myFixture.checkResult("""
         |class Foo {
@@ -380,6 +448,64 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
+    fun testAddStringVarField() {
+        myFixture.configureByText(
+            "foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin()
+        )
+        myFixture.launchAction(
+            createFieldActions(
+                myFixture.atCaret(),
+                FieldRequest(project, emptyList(), "java.util.Date", "baz")
+            ).findWithText("Add 'var' property 'baz' to 'Foo'")
+        )
+        myFixture.checkResult(
+            """
+        |import java.util.Date
+        |
+        |class Foo {
+        |    @JvmField
+        |    var baz: Date = TODO("initialize me")
+        |
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin(), true
+        )
+    }
+
+    fun testAddLateInitStringVarField() {
+        myFixture.configureByText(
+            "foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createFieldActions(
+                myFixture.atCaret(),
+                FieldRequest(project, listOf(JvmModifier.PRIVATE), "java.lang.String", "baz")
+            ).findWithText("Add 'lateinit var' property 'baz' to 'Foo'")
+        )
+        myFixture.checkResult(
+            """
+        |class Foo {
+        |    private lateinit var baz: String
+        |
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin(), true
+        )
+    }
+
+
+    private fun createFieldActions(atCaret: JvmClass, fieldRequest: CreateFieldRequest): List<IntentionAction> =
+        com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddFieldActions(atCaret, fieldRequest) }
+
     fun testAddStringValProperty() {
         myFixture.configureByText("foo.kt", """
         |class Foo<caret> {
@@ -388,16 +514,16 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
-                        myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = false
-                        )
-                ).findWithText("Add 'val' property 'baz' to 'Foo'")
+            createMethodActions(
+                myFixture.atCaret(),
+                SimpleMethodRequest(
+                    project,
+                    methodName = "getBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(PsiType.getTypeByName("java.lang.String", project, project.allScope())),
+                    parameters = expectedParams()
+                )
+            ).findWithText("Add 'val' property 'baz' to 'Foo'")
         )
         myFixture.checkResult("""
         |class Foo {
@@ -408,17 +534,10 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
-    private fun makeParams(vararg psyTypes: PsiType): List<UParameter> {
-        val uastContext = UastContext(myFixture.project)
-        val factory = JavaPsiFacade.getElementFactory(myFixture.project)
-        val parameters = psyTypes.mapIndexed { index, psiType -> factory.createParameter("param$index", psiType) }
-        return parameters.map { uastContext.convertElement(it, null, UParameter::class.java) as UParameter }
-    }
-
     private fun expectedTypes(vararg psiTypes: PsiType) = psiTypes.map { expectedType(it) }
 
     private fun expectedParams(vararg psyTypes: PsiType) =
-            psyTypes.mapIndexed { index, psiType -> NameInfo("param$index") to expectedTypes(psiType) }
+        psyTypes.mapIndexed { index, psiType -> expectedParameter(expectedTypes(psiType), "param$index") }
 
     private inline fun <reified T : JvmElement> CodeInsightTestFixture.atCaret() = elementAtCaret.toUElement() as T
 
@@ -426,5 +545,28 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     private fun List<IntentionAction>.findWithText(text: String): IntentionAction =
             this.firstOrNull { it.text == text } ?:
             Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
+
+    class FieldRequest(
+        private val project: Project,
+        val modifiers: List<JvmModifier>,
+        val type: String,
+        val name: String
+    ) : CreateFieldRequest {
+        override fun getTargetSubstitutor(): JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
+
+        override fun getModifiers(): Collection<JvmModifier> = modifiers
+
+        override fun isConstant(): Boolean = false
+
+        override fun getFieldType(): List<ExpectedType> =
+            com.intellij.lang.jvm.actions.expectedTypes(PsiType.getTypeByName(type, project, project.allScope()))
+
+        override fun getFieldName(): String = name
+
+        override fun isValid(): Boolean = true
+    }
+
+
 }
+
 

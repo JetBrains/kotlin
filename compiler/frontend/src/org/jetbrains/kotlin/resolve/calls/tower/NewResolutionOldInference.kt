@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -596,6 +597,8 @@ internal fun reportResolvedUsingDeprecatedVisibility(
     val descriptorToLookup: DeclarationDescriptor = when (candidateDescriptor) {
         is ClassConstructorDescriptor -> candidateDescriptor.containingDeclaration
         is FakeCallableDescriptorForObject -> candidateDescriptor.classDescriptor
+        is SyntheticMemberDescriptor<*> -> candidateDescriptor.baseDescriptorForSynthetic
+        is PropertyDescriptor, is FunctionDescriptor -> candidateDescriptor
         else -> error(
             "Unexpected candidate descriptor of resolved call with " +
                     "ResolvedUsingDeprecatedVisibility-diagnostic: $candidateDescriptor\n" +

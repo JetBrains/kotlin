@@ -1,0 +1,97 @@
+<problems>
+    <problem>
+        <file>ambiguousConstructors.kt</file>
+        <line>52</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/ambiguousConstructors/ambiguousConstructors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Class doesn't contain matching constructor for autowiring</description>
+    </problem>
+    <problem>
+        <file>ambiguousConstructors.kt</file>
+        <line>58</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/ambiguousConstructors/ambiguousConstructors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Class doesn't contain matching constructor for autowiring</description>
+    </problem>
+
+    <problem>
+        <file>multipleAutowiredConstructors.kt</file>
+        <line>30</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/multipleAutowiredConstructors/multipleAutowiredConstructors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Only one constructor can have @Autowired annotation</description>
+    </problem>
+    <problem>
+        <file>multipleAutowiredConstructors.kt</file>
+        <line>31</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/multipleAutowiredConstructors/multipleAutowiredConstructors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Only one constructor can have @Autowired annotation</description>
+    </problem>
+    <problem>
+        <file>multipleAutowiredConstructors.kt</file>
+        <line>35</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/multipleAutowiredConstructors/multipleAutowiredConstructors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Only one constructor can have @Autowired annotation</description>
+    </problem>
+    <problem>
+        <file>multipleAutowiredConstructors.kt</file>
+        <line>36</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/multipleAutowiredConstructors/multipleAutowiredConstructors.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Only one constructor can have @Autowired annotation</description>
+    </problem>
+
+    <problem>
+        <file>invalidAutowiredResource.kt</file>
+        <line>24</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/mismatchedType/mismatchedType.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Could not autowire. Bean should be of 'invalidAutowiredResource.BarBean' type</description>
+    </problem>
+    <problem>
+        <file>invalidAutowiredResource.kt</file>
+        <line>31</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/invalidAutowiredResource/invalidAutowiredResource.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Cannot resolve bean 'fooBeannn'</description>
+    </problem>
+
+    <problem>
+        <file>invalidAutowiredQualifier.kt</file>
+        <line>23</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/invalidAutowiredQualifier/invalidAutowiredQualifier.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Could not autowire. Qualified bean must be of 'BarBean' type.</description>
+    </problem>
+    <problem>
+        <file>invalidAutowiredQualifier.kt</file>
+        <line>30</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/invalidAutowiredQualifier/invalidAutowiredQualifier.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Cannot find bean with qualifier 'fooBeannn'</description>
+    </problem>
+    <problem>
+        <file>invalidAutowiredQualifier.kt</file>
+        <line>37</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/invalidAutowiredQualifier/invalidAutowiredQualifier.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Cannot find bean qualified with @Qualifier</description>
+    </problem>
+
+    <problem>
+        <file>invalidAutowiredByType.kt</file>
+        <line>23</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/invalidAutowiredByType/invalidAutowiredByType.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Could not autowire. No beans of 'String' type found.</description>
+    </problem>
+    <problem>
+        <file>invalidAutowiredByType.kt</file>
+        <line>29</line>
+        <entry_point TYPE="file" FQNAME="temp:///src/invalidAutowiredByType/invalidAutowiredByType.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>&lt;html&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Could not autowire. There is more than one bean of 'AbstractBarBean' type.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;table&gt;&lt;tr&gt;&lt;td valign='top'&gt;Beans:&lt;/td&gt;&lt;td&gt;abstractBarBean&amp;nbsp;&amp;nbsp; (invalidAutowiredByType.kt)&lt;br&gt;barBean1&amp;nbsp;&amp;nbsp; (invalidAutowiredByType.kt)&lt;br&gt;barBean2&amp;nbsp;&amp;nbsp; (invalidAutowiredByType.kt)&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/html&gt;</description>
+    </problem>
+</problems>

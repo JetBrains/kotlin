@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.core.script.scriptDependencies
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.getScriptDefinition
+import org.jetbrains.kotlin.script.findScriptDefinition
 import kotlin.script.experimental.dependencies.ScriptReport
 
 object KotlinHighlightingUtil {
@@ -67,7 +67,7 @@ object KotlinHighlightingUtil {
             return false
         }
 
-        val scriptDefinition = getScriptDefinition(ktFile) ?: return false
+        val scriptDefinition = findScriptDefinition(ktFile) ?: return false
         return ScriptDefinitionsManager.getInstance(ktFile.project).isInExpectedLocation(ktFile, scriptDefinition)
     }
 }

@@ -1,50 +1,46 @@
 FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
-  CLASS CLASS name:A modality:FINAL visibility:public flags:
+  CLASS CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A<Q> flags:
-    superClasses:
-      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    TYPE_PARAMETER name:Q index:0 variance: upperBounds:[kotlin.Any?]
-      superClassifiers:
-        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
+    TYPE_PARAMETER name:Q index:0 variance: superTypes:[kotlin.Any?]
     CONSTRUCTOR visibility:public <> (q:Q) returnType:A<Q> flags:primary
       VALUE_PARAMETER name:q index:0 type:Q flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    PROPERTY name:q type:Q visibility:public modality:FINAL flags:val
+    PROPERTY name:q visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:q type:Q visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter q: Q' type=Q origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:A<Q>) returnType:Q flags:
-        correspondingProperty: PROPERTY name:q type:Q visibility:public modality:FINAL flags:val
+        correspondingProperty: PROPERTY name:q visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A<Q> flags:
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-q>(): Q'
             GET_FIELD 'q: Q' type=Q origin=null
               receiver: GET_VAR 'this@A: A<Q>' type=A<Q> origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   TYPEALIAS typealias B = A<X> type=A<X>
   TYPEALIAS typealias B2 = A<A<T>> type=A<A<T>>
-  FUN name:bar visibility:public modality:FINAL <> () returnType:Unit flags:
+  FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       VAR name:b type:B<kotlin.Int> /* = A<kotlin.Int> */ flags:val
         CALL 'constructor A(Int)' type=A<kotlin.Int> origin=null
-          <Q>: Int
+          <Q>: kotlin.Int
           q: CONST Int type=kotlin.Int value=2
       VAR name:b2 type:B2<kotlin.Int> /* = A<A<kotlin.Int>> */ flags:val
         CALL 'constructor A(A<Int>)' type=A<A<kotlin.Int>> origin=null
-          <Q>: A<Int>
+          <Q>: A<kotlin.Int>
           q: GET_VAR 'b: B<Int> /* = A<Int> */' type=B<kotlin.Int> /* = A<kotlin.Int> */ origin=null
 

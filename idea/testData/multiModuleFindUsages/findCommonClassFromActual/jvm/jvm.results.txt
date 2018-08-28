@@ -1,0 +1,2 @@
+[common.kt] New instance creation 2 My("a").boo()
+[common.kt] New instance creation 3 My("b").boo()

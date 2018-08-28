@@ -26,4 +26,31 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Deferred result is never used</problem_class>
         <description>Deferred result is never used</description>
     </problem>
+    <problem>
+        <file>experimental.kt</file>
+        <line>30</line>
+        <module>light_idea_test_case</module>
+        <package>&lt;default&gt;</package>
+        <entry_point TYPE="file" FQNAME="temp:///src/experimental.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Deferred result is never used</problem_class>
+        <description>Deferred result is never used</description>
+    </problem>
+    <problem>
+        <file>experimental.kt</file>
+        <line>49</line>
+        <module>light_idea_test_case</module>
+        <package>&lt;default&gt;</package>
+        <entry_point TYPE="file" FQNAME="temp:///src/experimental.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Deferred result is never used</problem_class>
+        <description>Deferred result is never used</description>
+    </problem>
+    <problem>
+        <file>experimental.kt</file>
+        <line>51</line>
+        <module>light_idea_test_case</module>
+        <package>&lt;default&gt;</package>
+        <entry_point TYPE="file" FQNAME="temp:///src/experimental.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Deferred result is never used</problem_class>
+        <description>Deferred result is never used</description>
+    </problem>
 </problems>

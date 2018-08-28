@@ -14,5 +14,9 @@ import java.io.File
  */
 @Suppress("IncompatibleAPI")
 fun BaseDecompiler.addSpaceEx(file: File, isOwn: Boolean) {
-    addSpace(file, isOwn)
+    if (isOwn) {
+        addSource(file)
+    } else {
+        addLibrary(file)
+    }
 }

@@ -54,6 +54,7 @@ class ProgressionLastElementTest {
         doTest(MIN + 1, MAX, MAX, MAX)
         doTest(MAX - 7, MAX, 3, MAX - 1)
         doTest(MAX - 7, MAX, MAX, MAX - 7)
+        doTest(0, MAX, -3, MAX)
 
         // end == MIN
         doTest(0, MIN, MIN, MIN)
@@ -61,6 +62,7 @@ class ProgressionLastElementTest {
         doTest(MAX, MIN, MIN, -1)
         doTest(MIN + 7, MIN, -3, MIN + 1)
         doTest(MIN + 7, MIN, MIN, MIN + 7)
+        doTest(0, MIN, 3, MIN)
     }
 
     @Test fun iterateToFinalElement() {

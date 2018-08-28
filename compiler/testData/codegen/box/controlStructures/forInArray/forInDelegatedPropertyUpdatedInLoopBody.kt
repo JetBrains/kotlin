@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 class Del<T>(var x: T) {
     operator fun getValue(thisRef: Any?, kProp: Any) = x
 

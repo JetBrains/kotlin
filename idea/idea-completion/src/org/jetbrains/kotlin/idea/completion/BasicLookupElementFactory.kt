@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -50,7 +51,10 @@ class BasicLookupElementFactory(
 ) {
     companion object {
         // we skip parameter names in functional types in most of cases for shortness
-        val SHORT_NAMES_RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions { parameterNamesInFunctionalTypes = false }
+        val SHORT_NAMES_RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
+            enhancedTypes = true
+            parameterNamesInFunctionalTypes = false
+        }
     }
 
     fun createLookupElement(
@@ -124,15 +128,14 @@ class BasicLookupElementFactory(
             includeClassTypeArguments: Boolean,
             parametersAndTypeGrayed: Boolean
     ): LookupElement {
-        val declarationLazy by lazy { DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) }
-
-        if (descriptor is JavaClassDescriptor &&
-            declarationLazy is PsiClass &&
-            declarationLazy !is KtLightClass) {
-            // for java classes we create special lookup elements
-            // because they must be equal to ones created in TypesCompletion
-            // otherwise we may have duplicates
-            return createLookupElementForJavaClass(declarationLazy, qualifyNestedClasses, includeClassTypeArguments)
+        if (descriptor is JavaClassDescriptor) {
+            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+            if (declaration is PsiClass && declaration !is KtLightClass) {
+                // for java classes we create special lookup elements
+                // because they must be equal to ones created in TypesCompletion
+                // otherwise we may have duplicates
+                return createLookupElementForJavaClass(declaration, qualifyNestedClasses, includeClassTypeArguments)
+            }
         }
 
         if (descriptor is PackageViewDescriptor) {
@@ -164,7 +167,10 @@ class BasicLookupElementFactory(
 
             else -> {
                 lookupObject = object : DeclarationLookupObjectImpl(descriptor) {
-                    override val psiElement by lazy { DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) }
+                    override val psiElement by lazy {
+                        DescriptorToSourceUtils.getSourceFromDescriptor(descriptor)
+                                ?: DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+                    }
 
                     override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(descriptor, psiElement, flags)
                 }
@@ -232,6 +238,7 @@ class BasicLookupElementFactory(
             }
         }
 
+        var isMarkedAsDsl = false
         if (descriptor is CallableDescriptor) {
             appendContainerAndReceiverInformation(descriptor) { element = element.appendTailText(it, true) }
 
@@ -239,6 +246,7 @@ class BasicLookupElementFactory(
                 EditorColorsManager.getInstance().globalScheme.getAttributes(it)
             }
             if (dslTextAttributes != null) {
+                isMarkedAsDsl = true
                 element = element.withBoldness(dslTextAttributes.fontType == Font.BOLD)
                 dslTextAttributes.foregroundColor?.let { element = element.withItemTextForeground(it) }
             }
@@ -262,7 +270,9 @@ class BasicLookupElementFactory(
             element.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, Unit)
         }
 
-        return element.withIconFromLookupObject()
+        val result = element.withIconFromLookupObject()
+        result.isDslMember = isMarkedAsDsl
+        return result
     }
 
     fun appendContainerAndReceiverInformation(descriptor: CallableDescriptor, appendTailText: (String) -> Unit) {

@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 
 object TopDownAnalyzerFacadeForJS {
     @JvmStatic
@@ -36,19 +36,7 @@ object TopDownAnalyzerFacadeForJS {
         files: Collection<KtFile>,
         config: JsConfig
     ): JsAnalysisResult {
-        val configuration = config.configuration
-
-        // The hack to avoid adding lookups for builtins:
-        // save current lookup tracker and temporarily provide dummy version instead.
-        val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
-        configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING)
-
         config.init()
-
-        // The second part of hack to avoid adding lookups for builtins:
-        // restore previous lookup tracker.
-        lookupTracker?.let { configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it) }
-
         return analyzeFiles(files, config.project, config.configuration, config.moduleDescriptors, config.friendModuleDescriptors)
     }
 
@@ -56,8 +44,8 @@ object TopDownAnalyzerFacadeForJS {
         files: Collection<KtFile>,
         project: Project,
         configuration: CompilerConfiguration,
-        moduleDescriptors: List<JsModuleDescriptor<ModuleDescriptorImpl>>,
-        friendModuleDescriptors: List<JsModuleDescriptor<ModuleDescriptorImpl>>
+        moduleDescriptors: List<ModuleDescriptorImpl>,
+        friendModuleDescriptors: List<ModuleDescriptorImpl>
     ): JsAnalysisResult {
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
@@ -65,9 +53,9 @@ object TopDownAnalyzerFacadeForJS {
 
         context.module.setDependencies(
             listOf(context.module) +
-                    moduleDescriptors.map { it.data } +
+                    moduleDescriptors +
                     listOf(JsPlatform.builtIns.builtInsModule),
-            friendModuleDescriptors.map { it.data }.toSet()
+            friendModuleDescriptors.toSet()
         )
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
@@ -86,8 +74,12 @@ object TopDownAnalyzerFacadeForJS {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
         val languageVersionSettings = configuration.languageVersionSettings
-        val packageFragment = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let {
-            val metadata = PackagesWithHeaderMetadata(it.headerMetadata, it.compiledPackageParts.values.map { it.metadata })
+        val packageFragment = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let { incrementalData ->
+            val metadata = PackagesWithHeaderMetadata(
+                incrementalData.headerMetadata,
+                incrementalData.compiledPackageParts.values.map { it.metadata },
+                JsMetadataVersion(*incrementalData.metadataVersion)
+            )
             KotlinJavascriptSerializationUtil.readDescriptors(
                     metadata, moduleContext.storageManager, moduleContext.module,
                     CompilerDeserializationConfiguration(languageVersionSettings), lookupTracker

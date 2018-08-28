@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
@@ -69,7 +70,11 @@ class AnnotationSplitter(
         fun getTargetSet(
             parameter: Boolean, isVar: Boolean, hasBackingField: Boolean, hasDelegate: Boolean
         ): Set<AnnotationUseSiteTarget> = hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
-            if (parameter) add(CONSTRUCTOR_PARAMETER)
+            if (parameter) {
+                add(CONSTRUCTOR_PARAMETER)
+                add(PROPERTY_GETTER)
+                add(PROPERTY_SETTER)
+            }
             if (hasBackingField) add(FIELD)
             if (isVar) add(PROPERTY_SETTER)
             if (hasDelegate) add(PROPERTY_DELEGATE_FIELD)
@@ -120,7 +125,10 @@ class AnnotationSplitter(
         return CompositeAnnotations(targets.map { getAnnotationsForTarget(it) })
     }
 
-    private inner class LazySplitAnnotations(storageManager: StorageManager, val target: AnnotationUseSiteTarget?) : Annotations {
+    private inner class LazySplitAnnotations(
+        storageManager: StorageManager,
+        val target: AnnotationUseSiteTarget?
+    ) : Annotations, LazyEntity {
         private val annotations by storageManager.createLazyValue {
             val splitAnnotations = this@AnnotationSplitter.splitAnnotations()
 
@@ -128,6 +136,10 @@ class AnnotationSplitter(
                 AnnotationsImpl.create(splitAnnotations.first[target] ?: emptyList())
             else
                 splitAnnotations.second
+        }
+
+        override fun forceResolveAllContents() {
+            getAllAnnotations()
         }
 
         override fun isEmpty() = annotations.isEmpty()

@@ -16,13 +16,19 @@
 
 package org.jetbrains.kotlin.cli.common;
 
+import org.jetbrains.kotlin.cli.common.config.ContentRoot;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 
 import java.io.File;
+import java.util.List;
 
 public class CLIConfigurationKeys {
+    // Roots, including dependencies and own sources
+    public static final CompilerConfigurationKey<List<ContentRoot>> CONTENT_ROOTS =
+            CompilerConfigurationKey.create("content roots");
+
     public static final CompilerConfigurationKey<MessageCollector> MESSAGE_COLLECTOR_KEY =
             CompilerConfigurationKey.create("message collector");
     public static final CompilerConfigurationKey<Boolean> ALLOW_KOTLIN_PACKAGE =

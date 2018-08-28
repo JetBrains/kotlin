@@ -11,3 +11,7 @@ public final class PlatformType : kotlin/Any {
   // signature: nullability()Ljava/io/File;
   public final fun nullability(): java/io/File!
 }
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

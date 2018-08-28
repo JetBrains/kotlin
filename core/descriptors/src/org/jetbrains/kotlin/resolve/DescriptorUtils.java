@@ -30,15 +30,13 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class DescriptorUtils {
     public static final Name ENUM_VALUES = Name.identifier("values");
     public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
-    public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
-    private static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
-    private static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
     public static final FqName COROUTINES_PACKAGE_FQ_NAME_RELEASE = new FqName("kotlin.coroutines");
     public static final FqName COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL =
             COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("experimental"));
@@ -48,6 +46,10 @@ public class DescriptorUtils {
             COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("Continuation"));
     public static final FqName CONTINUATION_INTERFACE_FQ_NAME_RELEASE =
             COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"));
+    public static final FqName SUCCESS_OR_FAILURE_FQ_NAME = new FqName("kotlin.SuccessOrFailure");
+
+    // This JVM-specific class FQ name is declared here only because it's used in MainFunctionDetector which is in frontend
+    public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
 
     private DescriptorUtils() {
     }
@@ -182,6 +184,14 @@ public class DescriptorUtils {
             descriptor = descriptor.getContainingDeclaration();
         }
         return null;
+    }
+
+    @Nullable
+    public static ModuleDescriptor getContainingModuleOrNull(@NotNull KotlinType kotlinType) {
+        ClassifierDescriptor descriptor = kotlinType.getConstructor().getDeclarationDescriptor();
+        if (descriptor == null) return null;
+
+        return getContainingModuleOrNull(descriptor);
     }
 
     @NotNull
@@ -554,16 +564,6 @@ public class DescriptorUtils {
         return getAnnotationByFqName(annotated.getAnnotations(), JVM_NAME);
     }
 
-    @Nullable
-    public static AnnotationDescriptor getVolatileAnnotation(@NotNull Annotated annotated) {
-        return getAnnotationByFqName(annotated.getAnnotations(), VOLATILE);
-    }
-
-    @Nullable
-    public static AnnotationDescriptor getSynchronizedAnnotation(@NotNull Annotated annotated) {
-        return getAnnotationByFqName(annotated.getAnnotations(), SYNCHRONIZED);
-    }
-
     @NotNull
     public static SourceFile getContainingSourceFile(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof PropertySetterDescriptor) {
@@ -624,4 +624,15 @@ public class DescriptorUtils {
                : descriptor;
     }
 
+    public static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
+        String name = descriptor.getName().asString();
+        List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
+        if (parameters.isEmpty()) {
+            return name.equals("hashCode") || name.equals("toString");
+        }
+        else if (parameters.size() == 1 && name.equals("equals")) {
+            return isNullableAny(parameters.get(0).getType());
+        }
+        return false;
+    }
 }

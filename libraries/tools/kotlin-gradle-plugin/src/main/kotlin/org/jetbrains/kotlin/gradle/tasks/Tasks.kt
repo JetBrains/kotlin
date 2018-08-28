@@ -27,15 +27,16 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
-import org.jetbrains.kotlin.gradle.incremental.GradleICReporter
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
+import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.classpathAsList
+import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
@@ -111,9 +112,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         cacheOnlyIfEnabledForKotlin()
     }
 
+    // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
     internal val taskBuildDirectory: File
-        get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
+        get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name)
 
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
@@ -147,7 +149,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     protected val additionalClasspath = arrayListOf<File>()
 
     @get:Internal // classpath already participates in the checks
-    protected val compileClasspath: Iterable<File>
+    internal val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
 
@@ -189,6 +191,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal
     internal var sourceSetName: String by Delegates.notNull()
 
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal var commonSourceSet: Iterable<File> = emptyList()
+
     @get:Input
     internal val moduleName: String
         get() {
@@ -200,7 +206,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @Suppress("UNCHECKED_CAST")
     @get:Internal
-    protected val friendTask: AbstractKotlinCompile<T>?
+    internal val friendTask: AbstractKotlinCompile<T>?
             get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
 
     /** Classes directories that are not produced by this task but should be consumed by
@@ -249,6 +255,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
+        taskBuildDirectory.mkdirs()
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 
@@ -270,7 +277,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             args.verbose = true
         }
 
-        args.multiPlatform = project.plugins.any { it is KotlinPlatformPluginBase }
+        args.multiPlatform = project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper }
 
         setupPlugins(args)
     }
@@ -384,11 +391,13 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         try {
             val exitCode = compilerRunner.runJvmCompiler(
-                    sourceRoots.kotlinSourceFiles,
-                    sourceRoots.javaSourceRoots,
-                    javaPackagePrefix,
-                    args,
-                    environment)
+                sourceRoots.kotlinSourceFiles,
+                commonSourceSet.toList(),
+                sourceRoots.javaSourceRoots,
+                javaPackagePrefix,
+                args,
+                environment
+            )
 
             disableMultiModuleICIfNeeded()
             processCompilerExitCode(exitCode)
@@ -516,7 +525,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = GradleCompilerRunner(project)
-        val reporter = GradleICReporter(project.rootProject.projectDir)
 
         val environment = when {
             incremental -> {
@@ -525,7 +533,9 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                         computedCompilerClasspath,
                         if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                         taskBuildDirectory,
-                        messageCollector, outputItemCollector, args,
+                        messageCollector,
+                        outputItemCollector,
+                        args,
                         multiModuleICSettings = multiModuleICSettings
                 )
             }
@@ -534,7 +544,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
             }
         }
 
-        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, environment)
+        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
         throwGradleExceptionIfError(exitCode)
     }
 }

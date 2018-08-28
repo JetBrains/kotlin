@@ -1,10 +1,10 @@
 package test
 
-public val f1: kotlin.Int = 1
+public val f1: kotlin.Int
     public fun <get-f1>(): kotlin.Int
-public val f3: kotlin.Int = 1
+public val f3: kotlin.Int
     public fun <get-f3>(): kotlin.Int
-public val f5: kotlin.Int = 1
+public val f5: kotlin.Int
     public fun <get-f5>(): kotlin.Int
 public fun f2(): kotlin.Int
 public fun f4(): kotlin.Int

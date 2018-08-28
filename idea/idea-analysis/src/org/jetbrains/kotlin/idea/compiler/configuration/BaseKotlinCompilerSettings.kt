@@ -17,15 +17,14 @@
 package org.jetbrains.kotlin.idea.compiler.configuration
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR
+import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
-import com.intellij.util.messages.Topic
 import com.intellij.util.ReflectionUtil
+import com.intellij.util.messages.Topic
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.config.SettingConstants
 import kotlin.reflect.KClass
 
 abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(private val project: Project) : PersistentStateComponent<Element>, Cloneable {
@@ -40,7 +39,8 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
         set(value) {
             validateNewSettings(value)
             _settings = value
-            project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
+
+            BackgroundTaskUtil.syncPublisher(project, KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
         }
 
     fun update(changer: T.() -> Unit) {
@@ -73,14 +73,13 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
             }
             XmlSerializer.deserializeInto(this, state)
         }
-        project.messageBus.syncPublisher(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
+
+        BackgroundTaskUtil.syncPublisher(project, KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
     }
 
     public override fun clone(): Any = super.clone()
 
     companion object {
-        const val KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
-
         private val SKIP_DEFAULT_VALUES = SkipDefaultValuesSerializationFilters(
                 CommonCompilerArguments.DummyImpl(),
                 K2JVMCompilerArguments(),

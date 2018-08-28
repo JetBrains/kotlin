@@ -10,12 +10,16 @@ repositories {
 
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
+    compile project(':kotlin-gradle-plugin-model')
 
     compile project(':kotlin-stdlib')
     compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
     compileOnly project(':kotlin-allopen-compiler-plugin')
 
     compileOnly gradleApi()
+
+    testCompile gradleApi()
+    testCompile "junit:junit:4.12"
 }
 
 evaluationDependsOn(":kotlin-allopen-compiler-plugin")
@@ -45,3 +49,5 @@ pluginBundle {
         }
     }
 }
+
+test.executable = "${JDK_18}/bin/java"

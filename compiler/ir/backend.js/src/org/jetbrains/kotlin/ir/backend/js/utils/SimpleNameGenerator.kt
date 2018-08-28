@@ -6,15 +6,17 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class SimpleNameGenerator : NameGenerator {
 
@@ -30,6 +32,20 @@ class SimpleNameGenerator : NameGenerator {
     private fun getNameForDescriptor(descriptor: DeclarationDescriptor, context: JsGenerationContext): JsName =
         nameCache.getOrPut(descriptor) {
             var nameDeclarator: (String) -> JsName = context.currentScope::declareName
+
+            if (descriptor.isDynamic()) {
+                return@getOrPut nameDeclarator(descriptor.name.asString())
+            }
+
+            if (descriptor is MemberDescriptor && descriptor.isEffectivelyExternal()) {
+                val descriptorForName = when (descriptor) {
+                    is ConstructorDescriptor -> descriptor.constructedClass
+                    is PropertyAccessorDescriptor -> descriptor.correspondingProperty
+                    else -> descriptor
+                }
+                return@getOrPut nameDeclarator(descriptorForName.name.asString())
+            }
+
             val nameBuilder = StringBuilder()
             when (descriptor) {
                 is ReceiverParameterDescriptor -> {
@@ -42,13 +58,10 @@ class SimpleNameGenerator : NameGenerator {
                 is ValueParameterDescriptor -> {
                     val declaredName = descriptor.name.asString()
                     nameBuilder.append(declaredName)
-                    if (declaredName.startsWith("\$")) {
-                        nameBuilder.append('_')
-                        nameBuilder.append(descriptor.index)
-                    }
+                    nameDeclarator = context.currentScope::declareFreshName
                 }
                 is PropertyDescriptor -> {
-                    nameBuilder.append(descriptor.name.identifier)
+                    nameBuilder.append(descriptor.name.asString())
                     if (descriptor.visibility == Visibilities.PRIVATE || descriptor.modality != Modality.FINAL) {
                         nameBuilder.append('$')
                         nameBuilder.append(getNameForDescriptor(descriptor.containingDeclaration, context))
@@ -59,7 +72,13 @@ class SimpleNameGenerator : NameGenerator {
                         is PropertyGetterDescriptor -> nameBuilder.append(Namer.GETTER_PREFIX)
                         is PropertySetterDescriptor -> nameBuilder.append(Namer.SETTER_PREFIX)
                     }
+
                     nameBuilder.append(descriptor.correspondingProperty.name.asString())
+
+                    descriptor.extensionReceiverParameter?.let {
+                        nameBuilder.append("_r$${it.type}")
+                    }
+
                     if (descriptor.visibility == Visibilities.PRIVATE) {
                         nameBuilder.append('$')
                         nameBuilder.append(getNameForDescriptor(descriptor.containingDeclaration, context))
@@ -77,14 +96,22 @@ class SimpleNameGenerator : NameGenerator {
                 is ConstructorDescriptor -> {
                     nameBuilder.append(getNameForDescriptor(descriptor.constructedClass, context))
                 }
-                is LocalVariableDescriptor -> {
+                is VariableDescriptor -> {
                     nameBuilder.append(descriptor.name.identifier)
                     nameDeclarator = context.currentScope::declareFreshName
                 }
                 is CallableDescriptor -> {
                     nameBuilder.append(descriptor.name.asString())
-                    descriptor.typeParameters.forEach { nameBuilder.append("_${it.name.asString()}") }
-                    descriptor.valueParameters.forEach { nameBuilder.append("_${it.type}") }
+                    descriptor.typeParameters.ifNotEmpty {
+                        nameBuilder.append("_\$t")
+                        joinTo(nameBuilder, "") { "_${it.name}" }
+                    }
+                    descriptor.extensionReceiverParameter?.let {
+                        nameBuilder.append("_r$${it.type}")
+                    }
+                    descriptor.valueParameters.ifNotEmpty {
+                        joinTo(nameBuilder, "") { "_${it.type}" }
+                    }
                 }
 
             }

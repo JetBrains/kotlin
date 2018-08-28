@@ -74,7 +74,13 @@ class PrimitiveComparison(
 
         return object : IrIntrinsicFunction(expression, signature, context, listOf(parameterType, parameterType)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                StackValue.cmp(operatorToken, parameterType, StackValue.onStack(parameterType), StackValue.onStack(parameterType))
+                StackValue
+                    .cmp(
+                        operatorToken,
+                        parameterType,
+                        StackValue.onStack(parameterType, primitiveNumberType),
+                        StackValue.onStack(parameterType, primitiveNumberType)
+                    )
                     .put(Type.BOOLEAN_TYPE, v)
             }
         }

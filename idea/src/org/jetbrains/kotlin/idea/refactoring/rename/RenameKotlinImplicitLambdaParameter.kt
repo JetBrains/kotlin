@@ -40,7 +40,7 @@ class RenameKotlinImplicitLambdaParameter : KotlinVariableInplaceRenameHandler()
         }
     }
 
-    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         // Do nothing: this method is called not from editor
     }
 }

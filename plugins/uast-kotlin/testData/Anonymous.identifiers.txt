@@ -29,3 +29,7 @@ foo -> UAnnotationMethod (name = foo)
     read -> UAnnotationMethod (name = read)
     Int -> USimpleNameReferenceExpression (identifier = Int)
     run -> UAnnotationMethod (name = run)
+withErr -> UAnnotationMethod (name = withErr)
+    runnable -> ULocalVariable (name = runnable)
+    object -> UastEmptyExpression
+    Runnable -> null

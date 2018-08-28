@@ -8,10 +8,10 @@ public const val ui1: kotlin.UInt = 0.toUInt()
 public const val ui2: kotlin.UInt = 42.toUInt()
 public const val ul0: kotlin.ULong = 3.toULong()
 public const val us0: kotlin.UShort = 2.toUShort()
-@AnnoUB(ub0 = 1.toUByte(), ub1 = 1.toByte()) public fun f0(): kotlin.Unit
-@AnnoUS(us0 = 7.toUShort(), us1 = 2.toShort()) public fun f1(): kotlin.Unit
-@AnnoUI(ui0 = -1, ui1 = 0, ui2 = 42, ui3 = 100.toUInt()) public fun f2(): kotlin.Unit
-@AnnoUL(ul0 = 3.toLong(), ul1 = 5.toULong()) public fun f3(): kotlin.Unit
+@AnnoUB(ub0 = 1.toUByte(), ub1 = 1.toUByte()) public fun f0(): kotlin.Unit
+@AnnoUS(us0 = 7.toUShort(), us1 = 2.toUShort()) public fun f1(): kotlin.Unit
+@AnnoUI(ui0 = -1.toUInt(), ui1 = 0.toUInt(), ui2 = 42.toUInt(), ui3 = 100.toUInt()) public fun f2(): kotlin.Unit
+@AnnoUL(ul0 = 3.toULong(), ul1 = 5.toULong()) public fun f3(): kotlin.Unit
 
 public final annotation class AnnoUB : kotlin.Annotation {
     public constructor AnnoUB(/*0*/ ub0: kotlin.UByte, /*1*/ ub1: kotlin.UByte)
@@ -64,77 +64,32 @@ package kotlin {
     public final inline class UByte {
         public constructor UByte(/*0*/ b: kotlin.Byte)
         private final val b: kotlin.Byte
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
     }
 
     public final inline class UInt {
         public constructor UInt(/*0*/ i: kotlin.Int)
         private final val i: kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
     }
 
     public final inline class ULong {
         public constructor ULong(/*0*/ l: kotlin.Long)
         private final val l: kotlin.Long
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
     }
 
     public final inline class UShort {
         public constructor UShort(/*0*/ s: kotlin.Short)
         private final val s: kotlin.Short
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
-    package kotlin.annotation {
-    }
-
-    package kotlin.collections {
-    }
-
-    package kotlin.internal {
-
-        package kotlin.internal.contracts {
-        }
-    }
-
-    package kotlin.ranges {
-    }
-
-    package kotlin.reflect {
-    }
-
-    package kotlin.script {
-
-        package kotlin.script.dependencies {
-        }
-
-        package kotlin.script.experimental {
-
-            package kotlin.script.experimental.dependencies {
-            }
-
-            package kotlin.script.experimental.location {
-            }
-        }
-
-        package kotlin.script.extensions {
-        }
-
-        package kotlin.script.templates {
-
-            package kotlin.script.templates.standard {
-            }
-        }
-    }
-
-    package kotlin.text {
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
     }
 }

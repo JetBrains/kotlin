@@ -97,7 +97,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
     }
 
     companion object {
-        private fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = arrayOf(
+        fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = arrayOf(
                 PropertiesHighlightingVisitor(holder, bindingContext),
                 FunctionsHighlightingVisitor(holder, bindingContext),
                 VariablesHighlightingVisitor(holder, bindingContext),

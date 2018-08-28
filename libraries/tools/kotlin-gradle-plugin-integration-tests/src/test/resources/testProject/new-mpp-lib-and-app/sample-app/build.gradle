@@ -1,0 +1,70 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		jcenter()
+	}
+	dependencies {
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+	}
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    // NB: Build of this module depends on 'sample-lib' publication. You need to add the local
+    // repository where 'sample-lib' artifacts are published.
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation 'com.example:sample-lib:1.0'
+            }
+        }
+        allJvm {
+            dependsOn commonMain
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+            }
+        }
+        jvm6Main {
+            dependsOn allJvm
+        }
+        jvm8Main {
+            dependsOn allJvm
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+            }
+        }
+        nodeJsMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+            }
+        }
+    }
+
+    targets {
+        fromPreset(presets.jvm, 'jvm6')
+        fromPreset(presets.jvm, 'jvm8') {
+             compilations.main {
+                tasks.getByName(compileKotlinTaskName) {
+                    kotlinOptions {
+                        jvmTarget = '1.8'
+                    }
+                }
+             }
+        }
+        fromPreset(presets.js, 'nodeJs')
+    }
+}
+
+task resolveRuntimeDependencies(type: DefaultTask) {
+    doFirst { 
+        // KT-26301
+        def configName = kotlin.targets.jvm6.compilations.main.runtimeDependencyConfigurationName
+        configurations[configName].resolve()
+    }
+}

@@ -24,13 +24,13 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.completion.test.assertInstanceOf
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
-import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
@@ -85,7 +85,10 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
                 .expectAnnotations(2).single { it.qualifiedName == "Qualifier" }
         val annotationAttributeVal = annotation.findAttributeValue("value") as PsiExpression
         assertTextRangeAndValue("\"foo\"", "foo", annotationAttributeVal)
-        TestCase.assertEquals(PsiType.getJavaLangString(psiManager, GlobalSearchScope.projectScope(project)), annotationAttributeVal.type)
+        TestCase.assertEquals(
+            PsiType.getJavaLangString(psiManager, GlobalSearchScope.everythingScope(project)),
+            annotationAttributeVal.type
+        )
     }
 
     fun testAnnotationsInAnnotationsDeclarations() {
@@ -106,6 +109,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
         val annotationAttributeVal = annotations.first().findAttributeValue("attribute") as PsiElement
         assertTextAndRange("InnerAnnotation()", annotationAttributeVal)
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
     }
 
     fun testConstants() {
@@ -139,7 +143,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         assertTextAndRange("Constants.MY_CONSTANT", annotationAttributeVal)
         TestCase.assertEquals("67", annotationAttributeVal.value)
         TestCase.assertEquals(
-            PsiType.getJavaLangString(psiManager, GlobalSearchScope.projectScope(project)),
+            PsiType.getJavaLangString(psiManager, GlobalSearchScope.everythingScope(project)),
             (annotationAttributeVal as PsiExpression).type
         )
     }
@@ -230,7 +234,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotationAttributeVal = annotations.first().findAttributeValue("cls") as PsiClassObjectAccessExpression
         assertTextAndRange("String::class", annotationAttributeVal)
         TestCase.assertEquals(
-            PsiType.getJavaLangString(myFixture.psiManager, myFixture.project.projectScope()),
+            PsiType.getJavaLangString(myFixture.psiManager, GlobalSearchScope.everythingScope(project)),
             annotationAttributeVal.operand.type
         )
     }
@@ -275,6 +279,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
         val annotationAttributeVal = annotations.first().findAttributeValue("attribute") as PsiElement
         assertTextAndRange("InnerAnnotation()", annotationAttributeVal)
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
     }
 
     fun testAnnotationsInAnnotationsInAnnotationsDeclarations() {
@@ -335,6 +340,8 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
         val annotationAttributeVal = annotations.first().findAttributeValue("params") as PsiElement
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
+        TestCase.assertTrue(annotations.first().parameterList.attributes.any { (it.value == annotationAttributeVal) })
         assertTextAndRange("arrayOf(\"abc\", \"def\")", annotationAttributeVal)
 
         annotationAttributeVal as PsiArrayInitializerMemberValue
@@ -422,6 +429,8 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
                 assertTextAndRange("Inner()", innerAnnotationAttributeVal)
                 assertIsKtLightAnnotation("Inner()", innerAnnotationAttributeVal)
             }
+            UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
+            TestCase.assertTrue(annotation.parameterList.attributes.any { it.value == annotationAttributeVal })
         }
 
     }
@@ -442,6 +451,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
         val annotationAttributeVal = annotations.first().findAttributeValue("value") as PsiArrayInitializerMemberValue
         assertTextAndRange("arrayOf(\"a\", \"b\", \"c\")", annotationAttributeVal)
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
         for ((i, arg) in listOf("\"a\"", "\"b\"", "\"c\"").withIndex()) {
             assertTextAndRange(arg, annotationAttributeVal.initializers[i])
         }
@@ -463,6 +473,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
         val annotationAttributeVal = annotations.first().findAttributeValue("value") as PsiArrayInitializerMemberValue
         assertTextAndRange("arrayOf(*arrayOf(\"a\", \"b\"), \"c\", *arrayOf(\"d\", \"e\"))", annotationAttributeVal)
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
         for ((i, arg) in listOf("arrayOf(\"a\", \"b\")", "\"c\"", "arrayOf(\"d\", \"e\")").withIndex()) {
             assertTextAndRange(arg, annotationAttributeVal.initializers[i])
         }
@@ -484,6 +495,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
         val annotationAttributeVal = annotations.first().findAttributeValue("value") as PsiArrayInitializerMemberValue
         assertTextAndRange("[\"a\", \"b\", \"c\"]", annotationAttributeVal)
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
         for ((i, arg) in listOf("\"a\"", "\"b\"", "\"c\"").withIndex()) {
             assertTextAndRange(arg, annotationAttributeVal.initializers[i])
         }
@@ -505,6 +517,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
         val annotationAttributeVal = annotations.first().findAttributeValue("value") as PsiArrayInitializerMemberValue
         assertTextAndRange("\"a\"", annotationAttributeVal)
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
         for ((i, arg) in listOf("\"a\"").withIndex()) {
             assertTextAndRange(arg, annotationAttributeVal.initializers[i])
         }
@@ -673,10 +686,12 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun PsiModifierListOwner.expectAnnotations(number: Int): Array<PsiAnnotation> =
-            this.modifierList!!.annotations.apply {
-                TestCase.assertEquals("expected one annotation, found ${this.joinToString(", ") { it.qualifiedName ?: "unknown" }}",
-                                      number, size)
-            }
+        this.modifierList!!.annotations.apply {
+            assertEquals(
+                "expected $number annotation(s), found [${this.joinToString(", ") { it.qualifiedName ?: "unknown" }}]",
+                number, size
+            )
+        }
 
     private fun configureKotlinVersion(version: String) {
         WriteAction.run<Throwable> {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 var xs: IntArray = intArrayOf(1, 2, 3)
     get() = field
     set(ys) {

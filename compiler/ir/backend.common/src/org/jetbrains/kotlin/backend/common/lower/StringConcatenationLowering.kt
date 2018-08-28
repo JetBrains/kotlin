@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -60,33 +62,33 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     private val nameToString = Name.identifier("toString")
     private val nameAppend = Name.identifier("append")
 
-    private val stringBuilder = context.ir.symbols.stringBuilder
+    private val stringBuilder = context.ir.symbols.stringBuilder.owner
 
     //TODO: calculate and pass string length to the constructor.
     private val constructor = stringBuilder.constructors.single {
-        it.owner.valueParameters.size == 0
+        it.valueParameters.size == 0
     }
 
     private val toStringFunction = stringBuilder.functions.single {
-        it.owner.valueParameters.size == 0 && it.descriptor.name == nameToString
+        it.valueParameters.size == 0 && it.name == nameToString
     }
     private val defaultAppendFunction = stringBuilder.functions.single {
         it.descriptor.name == nameAppend &&
-                it.owner.valueParameters.size == 1 &&
-                it.owner.valueParameters.single().type == builtIns.nullableAnyType
+                it.valueParameters.size == 1 &&
+                it.valueParameters.single().type.isNullableAny()
     }
 
 
-    private val appendFunctions: Map<KotlinType, IrFunctionSymbol?> =
+    private val appendFunctions: Map<KotlinType, IrSimpleFunction?> =
         typesWithSpecialAppendFunction.map { type ->
             type to stringBuilder.functions.toList().atMostOne {
                 it.descriptor.name == nameAppend &&
-                        it.owner.valueParameters.size == 1 &&
-                        it.owner.valueParameters.single().type == type
+                        it.valueParameters.size == 1 &&
+                        it.valueParameters.single().type.toKotlinType() == type
             }
         }.toMap()
 
-    private fun typeToAppendFunction(type: KotlinType): IrFunctionSymbol {
+    private fun typeToAppendFunction(type: KotlinType): IrSimpleFunction {
         return appendFunctions[type] ?: defaultAppendFunction
     }
 
@@ -96,9 +98,9 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
         expression.transformChildrenVoid(this)
         val blockBuilder = buildersStack.last()
         return blockBuilder.irBlock(expression) {
-            val stringBuilderImpl = irTemporary(irCall(constructor)).symbol
+            val stringBuilderImpl = irTemporary(irCall(constructor))
             expression.arguments.forEach { arg ->
-                val appendFunction = typeToAppendFunction(arg.type)
+                val appendFunction = typeToAppendFunction(arg.type.toKotlinType())
                 +irCall(appendFunction).apply {
                     dispatchReceiver = irGet(stringBuilderImpl)
                     putValueArgument(0, arg)

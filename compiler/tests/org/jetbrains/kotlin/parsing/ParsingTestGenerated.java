@@ -711,6 +711,21 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/When.kt");
         }
 
+        @TestMetadata("WhenWithSubjectVariable.kt")
+        public void testWhenWithSubjectVariable() throws Exception {
+            runTest("compiler/testData/psi/WhenWithSubjectVariable.kt");
+        }
+
+        @TestMetadata("WhenWithSubjectVariable_ERR.kt")
+        public void testWhenWithSubjectVariable_ERR() throws Exception {
+            runTest("compiler/testData/psi/WhenWithSubjectVariable_ERR.kt");
+        }
+
+        @TestMetadata("WhenWithSubjectVariable_SoftModifierName.kt")
+        public void testWhenWithSubjectVariable_SoftModifierName() throws Exception {
+            runTest("compiler/testData/psi/WhenWithSubjectVariable_SoftModifierName.kt");
+        }
+
         @TestMetadata("When_ERR.kt")
         public void testWhen_ERR() throws Exception {
             runTest("compiler/testData/psi/When_ERR.kt");

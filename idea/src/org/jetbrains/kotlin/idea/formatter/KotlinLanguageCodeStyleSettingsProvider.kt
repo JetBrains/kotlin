@@ -339,6 +339,11 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                         CodeStyleSettingsCustomizable.WRAP_VALUES_FOR_SINGLETON
                     )
                 )
+                showCustomOption(
+                    KotlinCodeStyleSettings::CONTINUATION_INDENT_IN_ELVIS,
+                    title = "Use continuation indent",
+                    groupName = "Elvis expressions"
+                )
                 @Suppress("InvalidBundleOrProperty")
                 showCustomOption(
                     KotlinCodeStyleSettings::IF_RPAREN_ON_NEW_LINE,

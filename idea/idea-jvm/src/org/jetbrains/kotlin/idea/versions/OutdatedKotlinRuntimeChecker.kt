@@ -16,12 +16,6 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationListener
-import com.intellij.notification.NotificationType
-import com.intellij.notification.Notifications
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.LibraryOrderEntry
@@ -32,20 +26,13 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
-import javax.swing.event.HyperlinkEvent
 
 data class VersionedLibrary(val library: Library, val version: String?, val usedInModules: Collection<Module>)
 
 fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
-    val pluginVersion = KotlinPluginUtil.getPluginVersion()
     if (KotlinPluginUtil.isSnapshotVersion()) return emptyList() // plugin is run from sources, can't compare versions
     if (KotlinPluginUtil.isDevVersion()) return emptyList()
     if (project.isDisposed) return emptyList()
-
-    // user already clicked suppress
-    if (pluginVersion == PropertiesComponent.getInstance(project).getValue(SUPPRESSED_PROPERTY_NAME)) {
-        return emptyList()
-    }
 
     val outdatedLibraries = arrayListOf<VersionedLibrary>()
 
@@ -85,59 +72,6 @@ private fun isKotlinJsRuntime(library: Library, project: Project) =
 
 fun collectModulesWithOutdatedRuntime(libraries: List<VersionedLibrary>): List<Module> =
     libraries.flatMap { it.usedInModules }
-
-fun notifyOutdatedKotlinRuntime(project: Project, outdatedLibraries: Collection<VersionedLibrary>) {
-    val pluginVersion = KotlinPluginUtil.getPluginVersion()
-    val message: String = if (outdatedLibraries.size == 1) {
-        val versionedLibrary = outdatedLibraries.first()
-
-        val version = versionedLibrary.version
-        val readableVersion = version ?: "unknown"
-        val libraryName = versionedLibrary.library.name
-
-        "<p>Your version of Kotlin runtime in '$libraryName' library is $readableVersion, while plugin version is $pluginVersion.</p>" +
-                "<p>Runtime library should be updated to avoid compatibility problems.</p>" +
-                "<p><a href=\"update\">Update Runtime</a> <a href=\"ignore\">Ignore</a></p>"
-    } else {
-        val libraryNames = outdatedLibraries.joinToString { it.library.name ?: "unknown library" }
-
-        "<p>Version of Kotlin runtime is outdated in several libraries ($libraryNames). Plugin version is $pluginVersion.</p>" +
-                "<p>Runtime libraries should be updated to avoid compatibility problems.</p>" +
-                "<p><a href=\"update\">Update All</a> <a href=\"ignore\">Ignore</a></p>"
-    }
-
-
-    Notifications.Bus.notify(
-        Notification(
-            OUTDATED_RUNTIME_GROUP_DISPLAY_ID, "Outdated Kotlin Runtime", message,
-            NotificationType.WARNING, NotificationListener { notification, event ->
-                if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-                    when {
-                        "update" == event.description -> {
-                            val updatedOutdatedLibraries = findOutdatedKotlinLibraries(project).map { it.library }
-                            ApplicationManager.getApplication().invokeLater {
-                                updateLibraries(project, updatedOutdatedLibraries)
-                            }
-                        }
-                        "ignore" == event.description -> {
-                            if (!project.isDisposed) {
-                                PropertiesComponent.getInstance(project).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion)
-                            }
-                        }
-                        else -> {
-                            throw AssertionError()
-                        }
-                    }
-                    notification.expire()
-                }
-            }
-        ),
-        project
-    )
-}
-
-private const val SUPPRESSED_PROPERTY_NAME = "oudtdated.runtime.suppressed.plugin.version"
-private const val OUTDATED_RUNTIME_GROUP_DISPLAY_ID = "Outdated Kotlin Runtime"
 
 fun isRuntimeOutdated(libraryVersion: String?, runtimeVersion: String): Boolean {
     return libraryVersion == null || libraryVersion.startsWith("internal-") != runtimeVersion.startsWith("internal-") ||

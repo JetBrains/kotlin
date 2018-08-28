@@ -89,6 +89,8 @@ class KotlinToResolvedCallTransformer(
                     psiKotlinCall.psiCall
 
                 context.trace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, baseResolvedCall)
+                context.trace.record(BindingContext.PARTIAL_CALL_RESOLUTION_CONTEXT, psiCall, context)
+
                 context.inferenceSession.addPartialCallInfo(
                     PSIPartialCallInfo(baseResolvedCall, context, tracingStrategy)
                 )
@@ -114,7 +116,7 @@ class KotlinToResolvedCallTransformer(
 
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
-                    resultSubstitutor, context.trace, context, this, expressionTypingServices, argumentTypeResolver,
+                    resultSubstitutor, context, this, expressionTypingServices, argumentTypeResolver,
                     doubleColonExpressionResolver, builtIns, deprecationResolver, moduleDescriptor, dataFlowValueFactory
                 )
 

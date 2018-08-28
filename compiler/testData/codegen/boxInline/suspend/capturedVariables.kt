@@ -1,8 +1,11 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: test.kt
 // COMMON_COROUTINES_TEST
 // WITH_RUNTIME
+// WITH_COROUTINES
 
 import COROUTINES_PACKAGE.*
+import helpers.*
 
 suspend inline fun test1(c: suspend () -> Unit) {
     c()
@@ -18,22 +21,13 @@ suspend inline fun test2(crossinline c: suspend () -> Unit) {
 
 import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
+import helpers.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: Continuation<Unit> {
-        override val context: CoroutineContext
-            get() = EmptyCoroutineContext
-
-        override fun resume(value: Unit) {
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
-        }
-    })
+    c.startCoroutine(EmptyContinuation)
 }
 
-suspend fun calculate() = suspendCoroutineOrReturn<String> {
+suspend fun calculate() = suspendCoroutineUninterceptedOrReturn<String> {
     it.resume("OK")
     COROUTINE_SUSPENDED
 }

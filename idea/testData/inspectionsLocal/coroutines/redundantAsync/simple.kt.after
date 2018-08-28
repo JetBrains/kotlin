@@ -1,6 +1,7 @@
 // WITH_RUNTIME
+// FIX: Merge call chain to 'withContext'
 
-package kotlinx.coroutines.experimental
+package kotlinx.coroutines
 
 interface Deferred<T> {
     suspend fun await(): T

@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // LANGUAGE_VERSION: 1.0
 
 data class Foo(val s: String)

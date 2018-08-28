@@ -49,53 +49,6 @@ open class KtClass : KtClassOrObject {
     fun isSealed(): Boolean = hasModifier(KtTokens.SEALED_KEYWORD)
     fun isInner(): Boolean = hasModifier(KtTokens.INNER_KEYWORD)
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (this === another) {
-            return true
-        }
-
-        if (another !is KtClass) {
-            return false
-        }
-
-        val fq1 = getQualifiedName() ?: return false
-        val fq2 = another.getQualifiedName() ?: return false
-        if (fq1 == fq2) {
-            val thisLocal = isLocal
-            if (thisLocal != another.isLocal) {
-                return false
-            }
-
-            // For non-local classes same fqn is enough
-            // Consider different instances of local classes non-equivalent
-            return !thisLocal
-        }
-
-        return false
-    }
-
-    protected fun getQualifiedName(): String? {
-        val stub = stub
-        if (stub != null) {
-            val fqName = stub.getFqName()
-            return fqName?.asString()
-        }
-
-        val parts = ArrayList<String>()
-        var current: KtClassOrObject? = this
-        while (current != null) {
-            parts.add(current.name!!)
-            current = PsiTreeUtil.getParentOfType<KtClassOrObject>(current, KtClassOrObject::class.java)
-        }
-        val file = containingFile as? KtFile ?: return null
-        val fileQualifiedName = file.packageFqName.asString()
-        if (!fileQualifiedName.isEmpty()) {
-            parts.add(fileQualifiedName)
-        }
-        Collections.reverse(parts)
-        return StringUtil.join(parts, ".")
-    }
-
     override fun getCompanionObjects(): List<KtObjectDeclaration> = getBody()?.allCompanionObjects.orEmpty()
 
     fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD))

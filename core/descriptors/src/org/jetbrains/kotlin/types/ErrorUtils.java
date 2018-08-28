@@ -76,6 +76,12 @@ public class ErrorUtils {
 
             @NotNull
             @Override
+            public Name getStableName() {
+                return Name.special("<ERROR MODULE>");
+            }
+
+            @NotNull
+            @Override
             public PackageViewDescriptor getPackage(@NotNull FqName fqName) {
                 throw new IllegalStateException("Should not be called!");
             }
@@ -425,11 +431,7 @@ public class ErrorUtils {
                 SourceElement.NO_SOURCE,
                 false, false, false, false, false, false
         );
-        descriptor.setType(ERROR_PROPERTY_TYPE,
-                           Collections.<TypeParameterDescriptor>emptyList(),
-                           null,
-                           (KotlinType) null
-        );
+        descriptor.setType(ERROR_PROPERTY_TYPE, Collections.<TypeParameterDescriptor>emptyList(), null, null);
 
         return descriptor;
     }

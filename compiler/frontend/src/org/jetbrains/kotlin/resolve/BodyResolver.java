@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
@@ -133,7 +132,7 @@ public class BodyResolver {
             resolveSecondaryConstructorBody(c.getOuterDataFlowInfo(), trace, entry.getKey(), entry.getValue(), declaringScope);
         }
         if (c.getSecondaryConstructors().isEmpty()) return;
-        Set<ConstructorDescriptor> visitedConstructors = Sets.newHashSet();
+        Set<ConstructorDescriptor> visitedConstructors = new HashSet<>();
         for (Map.Entry<KtSecondaryConstructor, ClassConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
             checkCyclicConstructorDelegationCall(entry.getValue(), visitedConstructors);
         }
@@ -191,7 +190,7 @@ public class BodyResolver {
 
         // if visit constructor that is already in current chain
         // such constructor is on cycle
-        Set<ConstructorDescriptor> visitedInCurrentChain = Sets.newHashSet();
+        Set<ConstructorDescriptor> visitedInCurrentChain = new HashSet<>();
         ConstructorDescriptor currentConstructorDescriptor = constructorDescriptor;
         while (true) {
             visitedInCurrentChain.add(currentConstructorDescriptor);
@@ -373,7 +372,6 @@ public class BodyResolver {
                 if (descriptor.getKind() != ClassKind.INTERFACE &&
                     descriptor.getUnsubstitutedPrimaryConstructor() != null &&
                     superClass.getKind() != ClassKind.INTERFACE &&
-                    !superClass.getConstructors().isEmpty() &&
                     !descriptor.isExpect() && !isEffectivelyExternal(descriptor) &&
                     !ErrorUtils.isError(superClass)
                 ) {
@@ -520,7 +518,7 @@ public class BodyResolver {
             @NotNull KtClassOrObject ktClassOrObject
     ) {
         Set<TypeConstructor> allowedFinalSupertypes = getAllowedFinalSupertypes(supertypeOwner, supertypes, ktClassOrObject);
-        Set<TypeConstructor> typeConstructors = Sets.newHashSet();
+        Set<TypeConstructor> typeConstructors = new HashSet<>();
         boolean classAppeared = false;
         for (Map.Entry<KtTypeReference, KotlinType> entry : supertypes.entrySet()) {
             KtTypeReference typeReference = entry.getKey();
@@ -692,6 +690,18 @@ public class BodyResolver {
             PropertyDescriptor descriptor = trace.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
             if (descriptor != null) {
                 ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
+
+                if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets)) {
+                    PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
+                    if (getterDescriptor != null) {
+                        ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
+                    }
+
+                    PropertySetterDescriptor setterDescriptor = descriptor.getSetter();
+                    if (setterDescriptor != null) {
+                        ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
+                    }
+                }
             }
         }
     }
@@ -732,12 +742,14 @@ public class BodyResolver {
         }
 
         resolvePropertyAccessors(c, property, propertyDescriptor);
+
+        ForceResolveUtil.forceResolveAllContents(propertyDescriptor.getAnnotations());
     }
 
     private void resolvePropertyDeclarationBodies(@NotNull BodiesResolveContext c) {
 
         // Member properties
-        Set<KtProperty> processed = Sets.newHashSet();
+        Set<KtProperty> processed = new HashSet<>();
         for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             if (!(entry.getKey() instanceof KtClass)) continue;
             KtClass ktClass = (KtClass) entry.getKey();
@@ -782,18 +794,33 @@ public class BodyResolver {
 
         KtPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-        if (getter != null && getterDescriptor != null) {
-            LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
-            ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
-            resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+
+        boolean forceResolveAnnotations =
+                languageVersionSettings.supportsFeature(LanguageFeature.ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets);
+
+        if (getterDescriptor != null) {
+            if (getter != null) {
+                LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+            }
+
+            if (getter != null || forceResolveAnnotations) {
+                ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
+            }
         }
 
         KtPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-        if (setter != null && setterDescriptor != null) {
-            LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
-            ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
-            resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+
+        if (setterDescriptor != null) {
+            if (setter != null) {
+                LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+            }
+
+            if (setter != null || forceResolveAnnotations) {
+                ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
+            }
         }
     }
 

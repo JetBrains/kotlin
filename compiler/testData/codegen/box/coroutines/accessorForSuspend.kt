@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // COMMON_COROUTINES_TEST
@@ -10,7 +11,7 @@ fun builder(c: suspend () -> Unit) {
 }
 
 class A {
-    suspend private fun a(): String = suspendCoroutineOrReturn { x ->
+    suspend private fun a(): String = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume("OK")
         COROUTINE_SUSPENDED
     }

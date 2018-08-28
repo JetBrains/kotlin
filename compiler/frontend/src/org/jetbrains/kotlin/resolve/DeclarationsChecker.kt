@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.resolve
 import com.google.common.collect.ImmutableSet
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.isInlineOnly
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -44,6 +46,7 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 internal class DeclarationsCheckerBuilder(
@@ -265,7 +268,10 @@ class DeclarationsChecker(
             trace.report(EXPECTED_ENUM_CONSTRUCTOR.on(declaration))
         }
 
-        if (declaration is KtPrimaryConstructor && !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass)) {
+        if (declaration is KtPrimaryConstructor &&
+            !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass) &&
+            !constructorDescriptor.constructedClass.isInline
+        ) {
             for (parameter in declaration.valueParameters) {
                 if (parameter.hasValOrVar()) {
                     trace.report(EXPECTED_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(parameter))
@@ -400,6 +406,8 @@ class DeclarationsChecker(
                 // Otherwise report the diagnostic on the type parameter declaration
                 declaration
             }
+
+            if (descriptor.containingDeclaration.safeAs<MemberDescriptor>()?.isInlineOnly() == true) return
 
             trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(reportOn))
         }
@@ -918,7 +926,9 @@ class DeclarationsChecker(
         val nullableNothing = callableDescriptor.builtIns.nullableNothingType
         for (parameter in varargParameters) {
             val varargElementType = parameter.varargElementType!!.upperIfFlexible()
-            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(varargElementType, nullableNothing) || varargElementType.isInlineClassType()) {
+            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(varargElementType, nullableNothing) ||
+                (varargElementType.isInlineClassType() && !UnsignedTypes.isUnsignedType(varargElementType))
+            ) {
                 val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter ?: continue
                 trace.report(FORBIDDEN_VARARG_PARAMETER_TYPE.on(parameterDeclaration, varargElementType))
             }

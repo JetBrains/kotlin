@@ -102,6 +102,11 @@ extend Function {
 
 extend Property {
   optional JvmPropertySignature property_signature = 100;
+
+  /**
+    isMovedFromInterfaceCompanion   true if this property is declared in an interface companion, and the field is stored in the interface
+   */
+  optional int32 flags = 101 [default = 0];
 }
 
 extend Type {

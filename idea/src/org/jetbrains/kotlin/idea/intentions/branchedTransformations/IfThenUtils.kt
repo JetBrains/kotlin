@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
@@ -33,16 +34,21 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -64,7 +70,9 @@ fun KtExpression.unwrapBlockOrParenthesis(): KtExpression {
     val innerExpression = KtPsiUtil.safeDeparenthesize(this, true)
     if (innerExpression is KtBlockExpression) {
         val statement = innerExpression.statements.singleOrNull() ?: return this
-        return KtPsiUtil.safeDeparenthesize(statement, true)
+        val deparenthesized = KtPsiUtil.safeDeparenthesize(statement, true)
+        if (deparenthesized is KtLambdaExpression) return this
+        return deparenthesized
     }
     return innerExpression
 }
@@ -211,18 +219,50 @@ data class IfThenToSelectData(
                         hasImplicitReceiver() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
                             factory
                         )
+                        baseClause is KtCallExpression -> replacedBaseClauseWithLet(baseClause, newReceiver!!, factory)
                         else -> error("Illegal state")
                     }
                 }
                 hasImplicitReceiver() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
+                baseClause is KtCallExpression -> replacedBaseClauseWithLet(baseClause, receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
         }
     }
 
-    internal fun getImplicitReceiver(): ImplicitReceiver? = baseClause.getResolvedCall(context)?.getImplicitReceiverValue()
+    internal fun getImplicitReceiver(): ImplicitReceiver? {
+        val resolvedCall = baseClause.getResolvedCall(context) ?: return null
+        if (resolvedCall.getExplicitReceiverValue() != null) return null
+        return resolvedCall.getImplicitReceiverValue()
+    }
 
     internal fun hasImplicitReceiver(): Boolean = getImplicitReceiver() != null
+
+    private fun replacedBaseClauseWithLet(baseClause: KtCallExpression, receiver: KtExpression, factory: KtPsiFactory): KtExpression {
+        val needExplicitParameter = baseClause.valueArguments.any { it.getArgumentExpression()?.text == "it" }
+        val parameterName = if (needExplicitParameter) {
+            val scope = baseClause.getResolutionScope()
+            KotlinNameSuggester.suggestNameByName("it") { scope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
+        } else {
+            "it"
+        }
+        return factory.buildExpression {
+            appendExpression(receiver)
+            appendFixedText("?.let {")
+            if (needExplicitParameter) appendFixedText(" $parameterName ->")
+            appendExpression(baseClause.calleeExpression)
+            appendFixedText("(")
+            baseClause.valueArguments.forEachIndexed { index, arg ->
+                if (index != 0) appendFixedText(", ")
+                val argExpression = arg.getArgumentExpression()
+                if (argExpression?.evaluatesTo(receiverExpression) == true)
+                    appendFixedText(parameterName)
+                else
+                    appendExpression(argExpression)
+            }
+            appendFixedText(") }")
+        }
+    }
 }
 
 internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData? {
@@ -256,15 +296,22 @@ internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData?
     return IfThenToSelectData(context, condition, receiverExpression, baseClause, negatedClause)
 }
 
+internal fun KtExpression?.isClauseTransformableToLetOnly() =
+    this is KtCallExpression && resolveToCall()?.getImplicitReceiverValue() == null
+
 internal fun KtIfExpression.shouldBeTransformed(): Boolean {
     val condition = condition
     return when (condition) {
-        is KtBinaryExpression -> true
+        is KtBinaryExpression -> {
+            val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
+            !baseClause.isClauseTransformableToLetOnly()
+        }
         is KtIsExpression -> {
-            if (!isMultiLine()) true
-            else {
-                val baseClause = (if (condition.isNegated) `else` else then)?.unwrapBlockOrParenthesis()
-                baseClause !is KtDotQualifiedExpression
+            val baseClause = (if (condition.isNegated) `else` else then)?.unwrapBlockOrParenthesis()
+            when {
+                baseClause.isClauseTransformableToLetOnly() -> false
+                !isMultiLine() -> true
+                else -> baseClause !is KtDotQualifiedExpression
             }
         }
         else -> false

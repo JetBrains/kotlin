@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -62,7 +63,7 @@ class FindImplicitNothingAction : AnAction() {
     }
 
     private fun find(files: Collection<KtFile>, project: Project) {
-        val progressIndicator = ProgressManager.getInstance().progressIndicator
+        val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable
         val found = ArrayList<KtCallExpression>()
         for ((i, file) in files.withIndex()) {
             progressIndicator?.text = "Scanning files: $i of ${files.size} file. ${found.size} occurences found"

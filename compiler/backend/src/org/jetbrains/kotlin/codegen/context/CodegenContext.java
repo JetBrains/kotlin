@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.codegen.context;
 
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -27,8 +28,8 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
-import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.isCallableMemberWithJvmDefaultAnnotation;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.isCallableMemberWithJvmDefaultAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -44,12 +45,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private Map<DeclarationDescriptor, CodegenContext> childContexts;
     private Map<AccessorKey, AccessorForCallableDescriptor<?>> accessors;
     private Map<AccessorKey, AccessorForPropertyDescriptorFactory> propertyAccessorFactories;
+    private AccessorForCompanionObjectInstanceFieldDescriptor accessorForCompanionObjectInstanceFieldDescriptor = null;
 
     private static class AccessorKey {
         public final DeclarationDescriptor descriptor;
         public final ClassDescriptor superCallLabelTarget;
         public final AccessorKind accessorKind;
-
         public AccessorKey(
                 @NotNull DeclarationDescriptor descriptor,
                 @Nullable ClassDescriptor superCallLabelTarget,
@@ -742,4 +743,30 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public LocalLookup getEnclosingLocalLookup() {
         return enclosingLocalLookup;
     }
+
+    @NotNull
+    public AccessorForCompanionObjectInstanceFieldDescriptor markCompanionObjectDescriptorWithAccessorRequired(@NotNull ClassDescriptor companionObjectDescriptor) {
+        assert DescriptorUtils.isCompanionObject(companionObjectDescriptor) : "Companion object expected: " + companionObjectDescriptor;
+
+        assert accessorForCompanionObjectInstanceFieldDescriptor == null
+               || accessorForCompanionObjectInstanceFieldDescriptor.getCompanionObjectDescriptor() == companionObjectDescriptor
+                : "Unexpected companion object descriptor with accessor required: " + companionObjectDescriptor +
+                  "; should be " + accessorForCompanionObjectInstanceFieldDescriptor.getCompanionObjectDescriptor();
+
+        if (accessorForCompanionObjectInstanceFieldDescriptor == null) {
+            accessorForCompanionObjectInstanceFieldDescriptor =
+                    new AccessorForCompanionObjectInstanceFieldDescriptor(
+                            companionObjectDescriptor,
+                            Name.identifier(JvmCodegenUtil.getCompanionObjectAccessorName(companionObjectDescriptor))
+                    );
+        }
+
+        return accessorForCompanionObjectInstanceFieldDescriptor;
+    }
+
+    @Nullable
+    public AccessorForCompanionObjectInstanceFieldDescriptor getAccessorForCompanionObjectDescriptorIfRequired() {
+        return accessorForCompanionObjectInstanceFieldDescriptor;
+    }
+
 }

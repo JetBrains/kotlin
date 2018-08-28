@@ -1,14 +1,14 @@
 public final class FileFacadeKt {
     @org.jetbrains.annotations.Nullable
-    private static final java.lang.String nullableVal = "";
+    private static final java.lang.String nullableVal;
     @org.jetbrains.annotations.Nullable
     private static java.lang.String nullableVar;
     @org.jetbrains.annotations.NotNull
-    private static final java.lang.String notNullVal = "";
+    private static final java.lang.String notNullVal;
     @org.jetbrains.annotations.NotNull
     private static java.lang.String notNullVar;
-    private static final java.lang.String privateNn = "";
-    private static final java.lang.String privateN = "";
+    private static final java.lang.String privateNn;
+    private static final java.lang.String privateN;
 
     @org.jetbrains.annotations.NotNull
     public static final java.lang.String notNull(@org.jetbrains.annotations.NotNull java.lang.String a) { /* compiled code */ }

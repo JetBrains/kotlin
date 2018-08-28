@@ -43,7 +43,7 @@ class KotlinUBinaryExpression(
     override val rightOperand by lz { KotlinConverter.convertOrEmpty(psi.right, this) }
 
     override val operatorIdentifier: UIdentifier?
-        get() = KotlinUIdentifier(psi.operationReference, this)
+        get() = KotlinUIdentifier(psi.operationReference.getReferencedNameElement(), this)
 
     override fun resolveOperator() = psi.operationReference.resolveCallToDeclaration(context = this) as? PsiMethod
 

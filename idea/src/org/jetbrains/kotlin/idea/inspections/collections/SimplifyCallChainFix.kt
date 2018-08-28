@@ -24,8 +24,12 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
-    override fun getName() = "Merge call chain to '$newName'"
+class SimplifyCallChainFix(private val newCallText: String) : LocalQuickFix {
+    private val shortenedText = newCallText.split("(").joinToString(separator = "(") {
+        it.substringAfterLast(".")
+    }
+
+    override fun getName() = "Merge call chain to '$shortenedText'"
 
     override fun getFamilyName() = name
 
@@ -45,7 +49,7 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
             val firstCallExpression = AbstractCallChainChecker.getCallExpression(firstExpression) ?: return
             val secondCallExpression = secondQualifiedExpression.selectorExpression as? KtCallExpression ?: return
 
-            val lastArgumentName = if (newName.startsWith("joinTo")) Name.identifier("transform") else null
+            val lastArgumentName = if (newCallText.startsWith("joinTo")) Name.identifier("transform") else null
             if (lastArgumentName != null) {
                 val lastArgument = firstCallExpression.valueArgumentList?.arguments?.singleOrNull()
                 lastArgument?.getArgumentExpression()?.also { lastArgument.replace(factory.createArgument(it, lastArgumentName)) }
@@ -67,7 +71,7 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
                 "$0$1$2 $3 $4",
                 receiverExpression ?: "",
                 operationSign,
-                newName,
+                newCallText,
                 argumentsText,
                 lambdaExpression.text
             )
@@ -75,7 +79,7 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
                 "$0$1$2 $3",
                 receiverExpression ?: "",
                 operationSign,
-                newName,
+                newCallText,
                 argumentsText
             )
 

@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -30,10 +31,11 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.annotations.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(protected val owner: T)
@@ -94,6 +96,9 @@ private fun computeAnnotations(lightModifierList: KtLightModifierList<*>): List<
 
 private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>): List<KtLightAnnotationForSourceEntry> {
     val lightModifierListOwner = lightModifierList.parent
+
+    if (!isFromSources(lightModifierList)) return emptyList()
+
     val annotatedKtDeclaration = lightModifierListOwner.kotlinOrigin as? KtDeclaration
 
     if (annotatedKtDeclaration == null || !annotatedKtDeclaration.isValid || !hasAnnotationsInSource(annotatedKtDeclaration)) {
@@ -116,6 +121,15 @@ private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>
                     }
                 }
             }
+}
+
+fun isFromSources(lightElement: KtLightElement<*, *>): Boolean {
+    if (lightElement is KtLightClassForSourceDeclaration) return true
+    if (lightElement.parent is KtLightClassForSourceDeclaration) return true
+
+    val ktLightMember = lightElement.getParentOfType<KtLightMember<*>>(false) ?: return true // hope it will never happen
+    if (ktLightMember.lightMemberOrigin !is LightMemberOriginForDeclaration) return false
+    return true
 }
 
 private fun getAnnotationDescriptors(declaration: KtDeclaration, annotatedLightElement: KtLightElement<*, *>): List<AnnotationDescriptor> {

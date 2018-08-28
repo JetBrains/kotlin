@@ -74,7 +74,9 @@ class SurroundWithNullCheckFix(
 
             if (!nullableExpression.isStableSimpleExpression(context)) return null
 
-            val expressionTarget = expressionParent.getParentOfTypesAndPredicate(strict = false, parentClasses = KtExpression::class.java) {
+            val expressionTarget = expressionParent.getParentOfTypesAndPredicate(
+                strict = false, parentClasses = *arrayOf(KtExpression::class.java)
+            ) {
                 !it.isUsedAsExpression(context) && it.hasAcceptableParent()
             } ?: return null
             // Surround declaration (even of local variable) with null check is generally a bad idea

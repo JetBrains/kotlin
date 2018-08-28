@@ -13,5 +13,5 @@ public val m1: kotlin.UInt
 public val n0: kotlin.Number = 1.toUInt()
 public val u0: kotlin.UInt = 1.toUInt()
 public val u1: kotlin.UInt? = 1.toUInt()
-public val u2: kotlin.UInt? = 1
-public val u3: kotlin.UInt? = 1
+public val u2: kotlin.UInt? = 1.toUInt()
+public val u3: kotlin.UInt? = 1.toUInt()

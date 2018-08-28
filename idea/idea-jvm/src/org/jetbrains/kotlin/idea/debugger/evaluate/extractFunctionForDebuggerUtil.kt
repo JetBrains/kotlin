@@ -20,6 +20,7 @@ import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.diagnostic.LogMessageEx
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Attachment
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -97,20 +98,25 @@ fun getFunctionForExtractedFragment(
                                         allowSpecialClassNames = true,
                                         captureLocalFunctions = true,
                                         canWrapInWith = true)
-        val analysisResult = ExtractionData(tmpFile, newDebugExpressions.toRange(), targetSibling, null, options).performAnalysis()
-        if (analysisResult.status != Status.SUCCESS) {
-            throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult, tmpFile))
-        }
+        val extractionData = ExtractionData(tmpFile, newDebugExpressions.toRange(), targetSibling, null, options)
+        try {
+            val analysisResult = extractionData.performAnalysis()
+            if (analysisResult.status != Status.SUCCESS) {
+                throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult, tmpFile))
+            }
 
-        val validationResult = analysisResult.descriptor!!.validate()
-        if (!validationResult.conflicts.isEmpty) {
-            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().joinToString(",") { it.text }}")
-        }
+            val validationResult = analysisResult.descriptor!!.validate()
+            if (!validationResult.conflicts.isEmpty) {
+                throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().joinToString(",") { it.text }}")
+            }
 
-        val generatorOptions = ExtractionGeneratorOptions(inTempFile = true,
-                                                          dummyName = GENERATED_FUNCTION_NAME,
-                                                          allowExpressionBody = false)
-        return ExtractionGeneratorConfiguration(validationResult.descriptor, generatorOptions).generateDeclaration()
+            val generatorOptions = ExtractionGeneratorOptions(inTempFile = true,
+                                                              dummyName = GENERATED_FUNCTION_NAME,
+                                                              allowExpressionBody = false)
+            return ExtractionGeneratorConfiguration(validationResult.descriptor, generatorOptions).generateDeclaration()
+        } finally {
+            Disposer.dispose(extractionData)
+        }
     }
 
     return runReadAction { generateFunction() }

@@ -280,7 +280,8 @@ val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.versions.KotlinRuntimeLi
 
 data class LibInfo(
     val groupId: String,
-    val name: String
+    val name: String,
+    val version: String = "0.0.0"
 )
 
 data class DeprecatedLibInfo(

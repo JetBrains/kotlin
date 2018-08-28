@@ -594,7 +594,7 @@ public class CallResolver {
             return results;
         }
 
-        DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
+        DelegatingBindingTrace deltasTraceForTypeInference = results.getTrace();
         if (deltasTraceForTypeInference != null) {
             deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
         }

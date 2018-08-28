@@ -7,9 +7,9 @@ class A {
     fun g(i: Int, s: Double): Int {}
     fun g(s: Int, i: Double): String {}
 
-    private val i: Int = 0
-    private val i: String = ""
+    private val i: Int = { 0 }()
+    private val i: String = { "" }()
 
-    private val j: String = "a"
-    private val j: String = "b"
+    private val j: String = { "a" }()
+    private val j: String = { "b" }()
 }

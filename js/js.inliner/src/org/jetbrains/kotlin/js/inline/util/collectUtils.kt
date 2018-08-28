@@ -104,6 +104,11 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
             super.visitExpressionStatement(x)
         }
 
+        override fun visitCatch(x: JsCatch) {
+            names += x.parameter.name
+            super.visitCatch(x)
+        }
+
         // Skip function expression, since it does not introduce name in scope of containing function.
         // The only exception is function statement, that is handled with the code above.
         override fun visitFunction(x: JsFunction) { }
@@ -221,6 +226,16 @@ fun collectAccessors(fragments: List<JsProgramFragment>): Map<String, FunctionWi
     val result = mutableMapOf<String, FunctionWithWrapper>()
     for (fragment in fragments) {
         result += collectAccessors(fragment.declarationBlock)
+    }
+    return result
+}
+
+fun collectNameBindings(fragments: List<JsProgramFragment>): Map<JsName, String> {
+    val result = mutableMapOf<JsName, String>()
+    for (fragment in fragments) {
+        for (binding in fragment.nameBindings) {
+            result[binding.name] = binding.key
+        }
     }
     return result
 }

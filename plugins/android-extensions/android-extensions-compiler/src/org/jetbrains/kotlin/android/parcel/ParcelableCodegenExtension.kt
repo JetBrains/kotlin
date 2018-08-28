@@ -60,6 +60,8 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
     private companion object {
         private val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
         private val CREATOR_NAME = Name.identifier("CREATOR")
+
+        private val ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
     }
 
     protected open fun isExperimental(element: KtElement) = true
@@ -74,7 +76,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val sourceElement = (codegen.myClass as? KtClassOrObject) ?: return
         if (!isExperimental(sourceElement)) return
 
-        if (parcelableClass.kind != ClassKind.CLASS && parcelableClass.kind != ClassKind.OBJECT) return
+        if (parcelableClass.kind !in ALLOWED_CLASS_KINDS) return
 
         val propertiesToSerialize = getPropertiesToSerialize(codegen, parcelableClass)
 
@@ -163,15 +165,30 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
                 val globalContext = ParcelSerializer.ParcelSerializerContext(codegen.typeMapper, containerAsmType, emptyList(), frameMap)
 
-                for ((fieldName, type, parcelers) in properties) {
-                    val asmType = codegen.typeMapper.mapType(type)
+                if (properties.isEmpty()) {
+                    val entityType = this@writeWriteToParcel.defaultType
+                    val asmType = codegen.state.typeMapper.mapType(entityType)
+                    val serializer = if (this@writeWriteToParcel.kind == ClassKind.CLASS) {
+                        NullAwareParcelSerializerWrapper(ZeroParameterClassSerializer(asmType, entityType))
+                    } else {
+                        ParcelSerializer.get(entityType, asmType, globalContext, strict = true)
+                    }
 
                     v.load(1, parcelAsmType)
                     v.load(0, containerAsmType)
-                    v.getfield(containerAsmType.internalName, fieldName, asmType.descriptor)
-
-                    val serializer = ParcelSerializer.get(type, asmType, globalContext.copy(typeParcelers = parcelers))
                     serializer.writeValue(v)
+                } else {
+                    for ((fieldName, type, parcelers) in properties) {
+                        val asmType = codegen.typeMapper.mapType(type)
+
+                        v.load(1, parcelAsmType)
+                        v.load(0, containerAsmType)
+                        v.getfield(containerAsmType.internalName, fieldName, asmType.descriptor)
+
+                        val serializer = ParcelSerializer.get(type, asmType, globalContext.copy(typeParcelers = parcelers))
+                        serializer.writeValue(v)
+                    }
+
                 }
             }
 
@@ -208,6 +225,10 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
             codegen: ImplementationBodyCodegen,
             parcelableClass: ClassDescriptor
     ): List<PropertyToSerialize> {
+        if (parcelableClass.kind != ClassKind.CLASS) {
+            return emptyList()
+        }
+
         val constructor = parcelableClass.constructors.firstOrNull { it.isPrimary } ?: return emptyList()
 
         val propertiesToSerialize = constructor.valueParameters.mapNotNull { param ->
@@ -233,7 +254,10 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val containerAsmType = codegen.typeMapper.mapType(parcelableClass)
         val creatorAsmType = codegen.typeMapper.mapType(creatorClass)
 
-        createMethod(creatorClass, CREATE_FROM_PARCEL, parcelableClass.builtIns.anyType, "in" to parcelClassType).write(codegen) {
+        createMethod(
+            creatorClass, CREATE_FROM_PARCEL, Modality.FINAL,
+            parcelableClass.builtIns.anyType, "in" to parcelClassType
+        ).write(codegen) {
             if (parcelerObject != null) {
                 val (companionAsmType, companionFieldName) = getCompanionClassType(containerAsmType, parcelerObject)
 
@@ -253,16 +277,28 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
                 val globalContext = ParcelSerializer.ParcelSerializerContext(codegen.typeMapper, containerAsmType, emptyList(), frameMap)
 
-                for ((_, type, parcelers) in properties) {
-                    val asmType = codegen.typeMapper.mapType(type)
-                    asmConstructorParameters.append(asmType.descriptor)
-
-                    val serializer = ParcelSerializer.get(type, asmType, globalContext.copy(typeParcelers = parcelers))
+                if (properties.isEmpty()) {
+                    val entityType = parcelableClass.defaultType
+                    val asmType = codegen.state.typeMapper.mapType(entityType)
+                    val serializer = if (parcelableClass.kind == ClassKind.CLASS) {
+                        NullAwareParcelSerializerWrapper(ZeroParameterClassSerializer(asmType, entityType))
+                    } else {
+                        ParcelSerializer.get(entityType, asmType, globalContext, strict = true)
+                    }
                     v.load(1, parcelAsmType)
                     serializer.readValue(v)
-                }
+                } else {
+                    for ((_, type, parcelers) in properties) {
+                        val asmType = codegen.typeMapper.mapType(type)
+                        asmConstructorParameters.append(asmType.descriptor)
 
-                v.invokespecial(containerAsmType.internalName, "<init>", "($asmConstructorParameters)V", false)
+                        val serializer = ParcelSerializer.get(type, asmType, globalContext.copy(typeParcelers = parcelers))
+                        v.load(1, parcelAsmType)
+                        serializer.readValue(v)
+                    }
+
+                    v.invokespecial(containerAsmType.internalName, "<init>", "($asmConstructorParameters)V", false)
+                }
             }
 
             v.areturn(containerAsmType)
@@ -341,7 +377,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         val builtIns = parcelableClass.builtIns
         val parcelableAsmType = codegen.typeMapper.mapType(parcelableClass)
 
-        createMethod(creatorClass, NEW_ARRAY,
+        createMethod(creatorClass, NEW_ARRAY, Modality.FINAL,
                 builtIns.getArrayType(Variance.INVARIANT, builtIns.anyType),
                 "size" to builtIns.intType
         ).write(codegen) {

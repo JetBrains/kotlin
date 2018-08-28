@@ -24,14 +24,10 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.compatibility.ExecutorProcessor
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.synthetic.JavaSyntheticPropertiesScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.synthetic.canBePropertyAccessor
 
 class KotlinPropertyAccessorsReferenceSearcher : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
     override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
@@ -39,26 +35,23 @@ class KotlinPropertyAccessorsReferenceSearcher : QueryExecutorBase<PsiReference,
         val onlyKotlinFiles = queryParameters.effectiveSearchScope.restrictToKotlinSources()
         if (onlyKotlinFiles == GlobalSearchScope.EMPTY_SCOPE) return
 
-        val propertyName = propertyName(method) ?: return
-
-        queryParameters.optimizer!!.searchWord(
+        for (propertyName in propertyNames(method)) {
+            queryParameters.optimizer!!.searchWord(
                 propertyName,
                 onlyKotlinFiles,
                 UsageSearchContext.IN_CODE,
                 true,
-                method)
+                method
+            )
+        }
     }
 
-    private fun propertyName(method: PsiMethod): String? {
+    private fun propertyNames(method: PsiMethod): List<String> {
         val unwrapped = method.namedUnwrappedElement
         if (unwrapped is KtProperty) {
-            return unwrapped.getName()
+            return listOfNotNull(unwrapped.getName())
         }
 
-        if (!canBePropertyAccessor(method.name)) return null
-        val functionDescriptor = method.getJavaMethodDescriptor() ?: return null
-        val syntheticExtensionsScope = JavaSyntheticPropertiesScope(LockBasedStorageManager(), LookupTracker.DO_NOTHING)
-        val property = SyntheticJavaPropertyDescriptor.findByGetterOrSetter(functionDescriptor, syntheticExtensionsScope) ?: return null
-        return property.name.asString()
+        return SyntheticJavaPropertyDescriptor.propertyNamesByAccessorName(Name.identifier(method.name)).map(Name::asString)
     }
 }

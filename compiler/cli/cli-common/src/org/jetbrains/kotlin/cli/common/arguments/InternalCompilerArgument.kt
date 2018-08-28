@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.InternalArgumentParser.Companion.INTERNAL_ARGUMENT_PREFIX
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageFeature
 
 /**
@@ -25,7 +23,7 @@ interface InternalArgumentParser<A : InternalArgument> {
     // Should be fast
     fun canParse(arg: String): Boolean
 
-    fun parseInternalArgument(arg: String, messageCollector: MessageCollector): A?
+    fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): A?
 
     companion object {
         internal const val INTERNAL_ARGUMENT_PREFIX = "-XX"
@@ -41,13 +39,13 @@ abstract class AbstractInternalArgumentParser<A : InternalArgument>(familyName: 
 
     override fun canParse(arg: String): Boolean = arg.startsWith(wholePrefix)
 
-    override fun parseInternalArgument(arg: String, messageCollector: MessageCollector): A? {
+    override fun parseInternalArgument(arg: String, errors: ArgumentParseErrors): A? {
         if (!arg.startsWith(wholePrefix)) return null
 
-        return parseTail(arg.removePrefix(wholePrefix), arg, messageCollector)
+        return parseTail(arg.removePrefix(wholePrefix), arg, errors)
     }
 
-    abstract fun parseTail(tail: String, wholeArgument: String, messageCollector: MessageCollector): A?
+    abstract fun parseTail(tail: String, wholeArgument: String, errors: ArgumentParseErrors): A?
 }
 
 
@@ -55,9 +53,9 @@ abstract class AbstractInternalArgumentParser<A : InternalArgument>(familyName: 
 class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeatureSetting>("Language") {
 
     // Expected tail form: ':(+|-)<language feature name>'
-    override fun parseTail(tail: String, wholeArgument: String, messageCollector: MessageCollector): ManualLanguageFeatureSetting? {
+    override fun parseTail(tail: String, wholeArgument: String, errors: ArgumentParseErrors): ManualLanguageFeatureSetting? {
         fun reportAndReturnNull(message: String): Nothing? {
-            messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, message)
+            errors.internalArgumentsParsingProblems += message
             return null
         }
 
@@ -76,12 +74,18 @@ class LanguageSettingsParser : AbstractInternalArgumentParser<ManualLanguageFeat
         if (languageFeatureName.isEmpty()) return reportAndReturnNull("Empty language feature name for internal argument '$wholeArgument'")
 
         val languageFeature = LanguageFeature.fromString(languageFeatureName)
-                ?: return reportAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
+            ?: return reportAndReturnNull("Unknown language feature '$languageFeatureName' in passed internal argument '$wholeArgument'")
 
-        return ManualLanguageFeatureSetting(languageFeature, languageFeatureState)
+        return ManualLanguageFeatureSetting(languageFeature, languageFeatureState, wholeArgument)
     }
 }
 
-interface InternalArgument
+interface InternalArgument {
+    val stringRepresentation: String
+}
 
-data class ManualLanguageFeatureSetting(val languageFeature: LanguageFeature, val state: LanguageFeature.State) : InternalArgument
+data class ManualLanguageFeatureSetting(
+    val languageFeature: LanguageFeature,
+    val state: LanguageFeature.State,
+    override val stringRepresentation: String
+) : InternalArgument

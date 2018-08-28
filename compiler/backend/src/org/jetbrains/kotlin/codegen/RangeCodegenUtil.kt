@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.backend.common.isTopLevelInPackage
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -222,14 +223,6 @@ fun getClosedFloatingPointRangeElementType(rangeType: KotlinType): KotlinType? {
     val classDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
     if (!classDescriptor.isTopLevelInPackage("ClosedFloatingPointRange", "kotlin.ranges")) return null
     return rangeType.arguments.singleOrNull()?.type
-}
-
-fun DeclarationDescriptor.isTopLevelInPackage(name: String, packageName: String): Boolean {
-    if (name != this.name.asString()) return false
-
-    val containingDeclaration = containingDeclaration as? PackageFragmentDescriptor ?: return false
-    val packageFqName = containingDeclaration.fqName.asString()
-    return packageName == packageFqName
 }
 
 fun getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCallee: CallableDescriptor): Type {

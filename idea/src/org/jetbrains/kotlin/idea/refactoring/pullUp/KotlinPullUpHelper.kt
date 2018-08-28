@@ -64,6 +64,11 @@ class KotlinPullUpHelper(
     private val javaData: PullUpData,
     private val data: KotlinPullUpData
 ) : PullUpHelper<MemberInfoBase<PsiMember>> {
+    companion object {
+        private val MODIFIERS_TO_LIFT_IN_SUPERCLASS = listOf(KtTokens.PRIVATE_KEYWORD)
+        private val MODIFIERS_TO_LIFT_IN_INTERFACE = listOf(KtTokens.PRIVATE_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.INTERNAL_KEYWORD)
+    }
+
     private fun KtExpression.isMovable(): Boolean {
         return accept(
             object : KtVisitor<Boolean, Nothing?>() {
@@ -271,13 +276,18 @@ class KotlinPullUpHelper(
         }
     }
 
-    private fun liftToProtected(declaration: KtNamedDeclaration, ignoreUsages: Boolean = false) {
-        if (!declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) return
-        if (ignoreUsages || willBeUsedInSourceClass(
-                declaration,
-                data.sourceClass,
-                data.membersToMove
-            )) declaration.addModifier(KtTokens.PROTECTED_KEYWORD)
+    private fun liftVisibility(declaration: KtNamedDeclaration, ignoreUsages: Boolean = false) {
+        val newModifier = if (data.isInterfaceTarget) KtTokens.PUBLIC_KEYWORD else KtTokens.PROTECTED_KEYWORD
+        val modifiersToLift = if (data.isInterfaceTarget) MODIFIERS_TO_LIFT_IN_INTERFACE else MODIFIERS_TO_LIFT_IN_SUPERCLASS
+        val currentModifier = declaration.visibilityModifierTypeOrDefault()
+        if (currentModifier !in modifiersToLift) return
+        if (ignoreUsages || willBeUsedInSourceClass(declaration, data.sourceClass, data.membersToMove)) {
+            if (newModifier != KtTokens.DEFAULT_VISIBILITY_KEYWORD) {
+                declaration.addModifier(newModifier)
+            } else {
+                declaration.removeModifier(currentModifier)
+            }
+        }
     }
 
     override fun setCorrectVisibility(info: MemberInfoBase<PsiMember>) {
@@ -285,20 +295,20 @@ class KotlinPullUpHelper(
 
         if (data.isInterfaceTarget) {
             member.removeModifier(KtTokens.PUBLIC_KEYWORD)
-            return
         }
 
-        if (member.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+        val modifiersToLift = if (data.isInterfaceTarget) MODIFIERS_TO_LIFT_IN_INTERFACE else MODIFIERS_TO_LIFT_IN_SUPERCLASS
+        if (member.visibilityModifierTypeOrDefault() in modifiersToLift) {
             member.accept(
                 object : KtVisitorVoid() {
                     override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
                         when (declaration) {
                             is KtClass -> {
-                                liftToProtected(declaration)
+                                liftVisibility(declaration)
                                 declaration.declarations.forEach { it.accept(this) }
                             }
                             is KtNamedFunction, is KtProperty -> {
-                                liftToProtected(declaration, declaration == member && info.isToAbstract)
+                                liftVisibility(declaration, declaration == member && info.isToAbstract)
                             }
                         }
                     }

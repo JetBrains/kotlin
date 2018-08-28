@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.project
 
-import com.intellij.facet.FacetManager
-import com.intellij.facet.FacetTypeRegistry
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
@@ -19,6 +16,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.ResolveScopeEnlarger
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.PathUtil
@@ -34,11 +32,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
-import org.jetbrains.kotlin.idea.facet.KotlinFacetType
-import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.getStableName
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -60,6 +57,14 @@ interface IdeaModuleInfo : org.jetbrains.kotlin.idea.caches.resolve.IdeaModuleIn
         get() = super.capabilities + mapOf(OriginCapability to moduleOrigin)
 
     override fun dependencies(): List<IdeaModuleInfo>
+}
+
+private fun enlargedSearchScope(searchScope: GlobalSearchScope, moduleFile: VirtualFile?): GlobalSearchScope {
+    if (moduleFile == null) return searchScope
+    return ResolveScopeEnlarger.EP_NAME.extensions.fold(searchScope) { scope, enlarger ->
+        val extra = enlarger.getAdditionalResolveScope(moduleFile, scope.project)
+        if (extra != null) scope.union(extra) else scope
+    }
 }
 
 private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, forProduction: Boolean): List<IdeaModuleInfo> {
@@ -121,24 +126,6 @@ private fun ideaModelDependencies(
     return result.filterNot { it is LibraryInfo && it.platform != platform }
 }
 
-fun Module.findImplementedModuleNames(): List<String> {
-    val facet = FacetManager.getInstance(this).findFacet(
-            KotlinFacetType.TYPE_ID,
-            FacetTypeRegistry.getInstance().findFacetType(ID)!!.defaultFacetName
-    )
-    return facet?.configuration?.settings?.implementedModuleNames ?: emptyList()
-}
-
-fun Module.findImplementedModules() = this.cached<List<Module>>(
-    CachedValueProvider {
-        val modelsProvider = IdeModelsProviderImpl(project)
-        CachedValueProvider.Result(
-                findImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) },
-                ProjectRootModificationTracker.getInstance(project)
-        )
-    }
-)
-
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     val module: Module
 
@@ -159,7 +146,7 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
 sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) : ModuleSourceInfo {
     override val expectedBy: List<ModuleSourceInfo>
         get() {
-            val expectedByModules = module.findImplementedModules()
+            val expectedByModules = module.implementedModules
             return expectedByModules.mapNotNull { if (forProduction) it.productionSourceInfo() else it.testSourceInfo() }
         }
 
@@ -181,7 +168,9 @@ data class ModuleProductionSourceInfo internal constructor(
 
     override val name = Name.special("<production sources for module ${module.name}>")
 
-    override fun contentScope(): GlobalSearchScope = ModuleProductionSourceScope(module)
+    override val stableName: Name = module.getStableName()
+
+    override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleProductionSourceScope(module), module.moduleFile)
 
     override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
 }
@@ -193,9 +182,11 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
 
     override val name = Name.special("<test sources for module ${module.name}>")
 
+    override val stableName: Name = module.getStableName()
+
     override val displayedName get() = module.name + " (test)"
 
-    override fun contentScope(): GlobalSearchScope = ModuleTestSourceScope(module)
+    override fun contentScope(): GlobalSearchScope = enlargedSearchScope(ModuleTestSourceScope(module), module.moduleFile)
 
     override fun modulesWhoseInternalsAreVisible() = module.cached(CachedValueProvider {
         val list = SmartList<ModuleInfo>()
@@ -423,9 +414,9 @@ interface SourceForBinaryModuleInfo : IdeaModuleInfo {
         get() = ModuleOrigin.OTHER
 }
 
-class PlatformModuleInfo(
+data class PlatformModuleInfo(
     internal val platformModule: ModuleSourceInfo,
-    private val commonModules: List<ModuleSourceInfo>
+    private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
 ) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = platformModule.capabilities

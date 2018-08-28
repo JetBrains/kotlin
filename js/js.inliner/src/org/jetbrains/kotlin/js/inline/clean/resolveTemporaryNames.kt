@@ -106,7 +106,7 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
 private fun Scope.liftUsedNames(): Scope {
     fun traverse(scope: Scope) {
         scope.children.forEach { child ->
-            scope.usedNames += scope.declaredNames
+            scope.usedNames += child.declaredNames
             traverse(child)
             scope.usedNames += child.usedNames
         }

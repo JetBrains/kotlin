@@ -32,6 +32,6 @@ abstract class AbstractMultiModuleLineMarkerTest : AbstractMultiModuleHighlighti
 
     protected fun doTest(path: String) {
         setupMppProjectFromDirStructure(File(path))
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 }

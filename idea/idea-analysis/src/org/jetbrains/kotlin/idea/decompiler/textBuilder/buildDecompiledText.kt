@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.ByDescriptorIndexer
 import org.jetbrains.kotlin.name.FqName
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.types.isFlexible
 private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
 private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
+private val DECOMPILED_CONTRACT_STUB = "contract { /* compiled contract */ }"
 
 fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     withDefinedIn = false
@@ -89,7 +91,13 @@ fun buildDecompiledText(
         if (descriptor is FunctionDescriptor || descriptor is PropertyDescriptor) {
             if ((descriptor as MemberDescriptor).modality != Modality.ABSTRACT) {
                 if (descriptor is FunctionDescriptor) {
-                    builder.append(" { ").append(DECOMPILED_CODE_COMMENT).append(" }")
+                    with(builder) {
+                        append(" { ")
+                        if (descriptor.getUserData(ContractProviderKey)?.getContractDescription() != null) {
+                            append(DECOMPILED_CONTRACT_STUB).append("; ")
+                        }
+                        append(DECOMPILED_CODE_COMMENT).append(" }")
+                    }
                 }
                 else {
                     // descriptor instanceof PropertyDescriptor

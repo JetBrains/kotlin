@@ -19,9 +19,13 @@ import com.intellij.execution.JavaRunConfigurationExtensionManager
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.junit.PatternConfigurationProducer
+import com.intellij.ide.plugins.PluginManager
+import com.intellij.openapi.extensions.PluginId.getId
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.component1
+import com.intellij.openapi.util.component2
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -29,13 +33,44 @@ import org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigu
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationProducer() {
+private val IS_JUNIT_ENABLED by lazy { isPluginEnabled("JUnit") }
+private val IS_TESTNG_ENABLED by lazy { isPluginEnabled("TestNG-J") }
+private val IS_TEST_FRAMEWORK_PLUGIN_ENABLED by lazy { IS_JUNIT_ENABLED || IS_TESTNG_ENABLED }
 
+private fun isPluginEnabled(id: String): Boolean {
+    return PluginManager.isPluginInstalled(getId(id)) && id !in PluginManager.getDisabledPlugins()
+}
+
+private fun getTestClass(leaf: PsiElement): PsiClass? {
+    if (IS_JUNIT_ENABLED) {
+        KotlinJUnitRunConfigurationProducer.getTestClass(leaf)?.let { return it }
+    }
+    if (IS_TESTNG_ENABLED) {
+        KotlinTestNgConfigurationProducer.getTestClassAndMethod(leaf)?.let { (testClass, testMethod) ->
+            return if (testMethod == null) testClass else null
+        }
+    }
+    return null
+}
+
+private fun getTestMethod(leaf: PsiElement): PsiMethod? {
+    if (IS_JUNIT_ENABLED) {
+        KotlinJUnitRunConfigurationProducer.getTestMethodLocation(leaf)?.psiElement?.let { return it }
+    }
+    if (IS_TESTNG_ENABLED) {
+        KotlinTestNgConfigurationProducer.getTestClassAndMethod(leaf)?.second?.let { return it }
+    }
+    return null
+}
+
+class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationProducer() {
     override fun doSetupConfigurationFromContext(
         configuration: ExternalSystemRunConfiguration,
         context: ConfigurationContext,
         sourceElement: Ref<PsiElement>
     ): Boolean {
+        if (!IS_TEST_FRAMEWORK_PLUGIN_ENABLED) return false
+
         val contextLocation = context.location ?: return false
         val module = context.module ?: return false
 
@@ -43,7 +78,7 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
             return false
         }
         val leaf = context.location?.psiElement ?: return false
-        val testClass = KotlinJUnitRunConfigurationProducer.getTestClass(leaf) ?: return false
+        val testClass = getTestClass(leaf) ?: return false
         sourceElement.set(testClass)
 
         if (!ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module)) return false
@@ -63,6 +98,8 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
     }
 
     override fun doIsConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
+        if (!IS_TEST_FRAMEWORK_PLUGIN_ENABLED) return false
+
         val leaf = context.location?.psiElement ?: return false
         if (context.module == null) return false
 
@@ -70,10 +107,9 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
             return false
         }
 
-        val methodLocation = KotlinJUnitRunConfigurationProducer.getTestMethodLocation(leaf)
-        if (methodLocation != null) return false
+        if (getTestMethod(leaf) != null) return false
 
-        val testClass = KotlinJUnitRunConfigurationProducer.getTestClass(leaf)
+        val testClass = getTestClass(leaf)
         if (testClass == null || testClass.qualifiedName == null) return false
 
 
@@ -92,14 +128,14 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
     }
 }
 
-class KotlinTestMethodGradleConfigurationProducer
-    : TestMethodGradleConfigurationProducer() {
-
+class KotlinTestMethodGradleConfigurationProducer : TestMethodGradleConfigurationProducer() {
     override fun doSetupConfigurationFromContext(
         configuration: ExternalSystemRunConfiguration,
         context: ConfigurationContext,
         sourceElement: Ref<PsiElement>
     ): Boolean {
+        if (!IS_TEST_FRAMEWORK_PLUGIN_ENABLED) return false
+
         val contextLocation = context.location ?: return false
         if (context.module == null) return false
 
@@ -107,8 +143,7 @@ class KotlinTestMethodGradleConfigurationProducer
             return false
         }
 
-        val methodLocation = KotlinJUnitRunConfigurationProducer.getTestMethodLocation(contextLocation.psiElement) ?: return false
-        val psiMethod = methodLocation.psiElement
+        val psiMethod = getTestMethod(contextLocation.psiElement) ?: return false
         sourceElement.set(psiMethod)
 
         val containingClass = psiMethod.containingClass ?: return false
@@ -121,6 +156,8 @@ class KotlinTestMethodGradleConfigurationProducer
     }
 
     override fun doIsConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
+        if (!IS_TEST_FRAMEWORK_PLUGIN_ENABLED) return false
+
         if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
         }
@@ -128,8 +165,7 @@ class KotlinTestMethodGradleConfigurationProducer
         val contextLocation = context.location ?: return false
         val module = context.module ?: return false
 
-        val methodLocation = KotlinJUnitRunConfigurationProducer.getTestMethodLocation(contextLocation.psiElement) ?: return false
-        val psiMethod = methodLocation.psiElement
+        val psiMethod = getTestMethod(contextLocation.psiElement) ?: return false
 
         val containingClass = psiMethod.containingClass ?: return false
 

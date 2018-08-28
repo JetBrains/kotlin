@@ -22,6 +22,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.Alarm
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
@@ -29,15 +30,17 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.join
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -234,6 +237,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             val state: GenerationState
             try {
                 state = compileSingleFile(ktFile, configuration)
+                        ?: return BytecodeGenerationResult.Error("Cannot compile ${ktFile.name} to bytecode.")
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Exception) {
@@ -271,8 +275,13 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         fun compileSingleFile(
             ktFile: KtFile,
             configuration: CompilerConfiguration
-        ): GenerationState {
-            val resolutionFacade = ktFile.getResolutionFacade()
+        ): GenerationState? {
+            val platform = ktFile.platform
+            if (platform != TargetPlatform.Common && platform != JvmPlatform) return null
+
+            val resolutionFacade = KotlinCacheService.getInstance(ktFile.project)
+                .getResolutionFacadeByFile(ktFile, JvmPlatform)
+                    ?: return null
 
             val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext
 

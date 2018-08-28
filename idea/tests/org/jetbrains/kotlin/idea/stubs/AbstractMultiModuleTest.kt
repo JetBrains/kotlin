@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
@@ -111,14 +111,15 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         facetSettings.coroutineSupport = LanguageFeature.State.ENABLED
     }
 
-    protected fun checkFiles(shouldCheckFile: () -> Boolean = { true }, check: () -> Unit) {
+    protected fun checkFiles(
+        findFiles: () -> List<PsiFile>,
+        check: () -> Unit
+    ) {
         var atLeastOneFile = false
-        myProject.allKotlinFiles().forEach { file ->
+        findFiles().forEach { file ->
             configureByExistingFile(file.virtualFile!!)
-            if (shouldCheckFile()) {
-                atLeastOneFile = true
-                check()
-            }
+            atLeastOneFile = true
+            check()
         }
         Assert.assertTrue(atLeastOneFile)
     }

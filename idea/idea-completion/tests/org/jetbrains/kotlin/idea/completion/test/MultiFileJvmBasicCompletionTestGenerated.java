@@ -74,6 +74,11 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         runTest("idea/idea-completion/testData/basic/multifile/DoNotCompleteWithConstraints/");
     }
 
+    @TestMetadata("EnhancementFlexibleTypes")
+    public void testEnhancementFlexibleTypes() throws Exception {
+        runTest("idea/idea-completion/testData/basic/multifile/EnhancementFlexibleTypes/");
+    }
+
     @TestMetadata("EntriesOfNotImportedEnumFromKotlin")
     public void testEntriesOfNotImportedEnumFromKotlin() throws Exception {
         runTest("idea/idea-completion/testData/basic/multifile/EntriesOfNotImportedEnumFromKotlin/");

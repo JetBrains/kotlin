@@ -4,47 +4,47 @@
         <line>8</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
-        <problem_class severity="INFORMATION" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class should be changed To Object</problem_class>
-        <description>Sealed Sub-class should be changed To Object</description>
+        <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Sealed sub-class without state and overridden equals</problem_class>
+        <description>Sealed sub-class has no state and no overridden equals</description>
     </problem>
     <problem>
         <file>sealed.kt</file>
         <line>10</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
-        <problem_class severity="INFORMATION" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class should be changed To Object</problem_class>
-        <description>Sealed Sub-class should be changed To Object</description>
+        <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Sealed sub-class without state and overridden equals</problem_class>
+        <description>Sealed sub-class has no state and no overridden equals</description>
     </problem>
     <problem>
         <file>sealed.kt</file>
         <line>13</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
-        <problem_class severity="INFORMATION" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class should be changed To Object</problem_class>
-        <description>Sealed Sub-class should be changed To Object</description>
+        <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Sealed sub-class without state and overridden equals</problem_class>
+        <description>Sealed sub-class has no state and no overridden equals</description>
     </problem>
     <problem>
         <file>sealed.kt</file>
         <line>15</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
-        <problem_class severity="INFORMATION" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class should be changed To Object</problem_class>
-        <description>Sealed Sub-class should be changed To Object</description>
+        <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Sealed sub-class without state and overridden equals</problem_class>
+        <description>Sealed sub-class has no state and no overridden equals</description>
     </problem>
     <problem>
         <file>sealed.kt</file>
         <line>41</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
-        <problem_class severity="INFORMATION" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class should be changed To Object</problem_class>
-        <description>Sealed Sub-class should be changed To Object</description>
+        <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Sealed sub-class without state and overridden equals</problem_class>
+        <description>Sealed sub-class has no state and no overridden equals</description>
     </problem>
     <problem>
         <file>sealed.kt</file>
         <line>45</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/sealed.kt" />
-        <problem_class severity="INFORMATION" attribute_key="INFO_ATTRIBUTES">Sealed Sub-class should be changed To Object</problem_class>
-        <description>Sealed Sub-class should be changed To Object</description>
+        <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Sealed sub-class without state and overridden equals</problem_class>
+        <description>Sealed sub-class has no state and no overridden equals</description>
     </problem>
 </problems>

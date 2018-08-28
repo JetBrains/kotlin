@@ -5,6 +5,7 @@ import kotlin.script.templates.*
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
+import kotlin.script.experimental.location.*
 
 class TestDependenciesResolver : ScriptDependenciesResolver {
     override fun resolve(
@@ -20,6 +21,7 @@ class TestDependenciesResolver : ScriptDependenciesResolver {
     }
 }
 
+@ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])
 @ScriptTemplateDefinition(TestDependenciesResolver::class, scriptFilePattern = "script.kts")
 class Template: Base()
 

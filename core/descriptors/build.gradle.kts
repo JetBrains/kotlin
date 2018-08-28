@@ -9,6 +9,7 @@ javaHome = rootProject.extra["JDK_16"] as String
 dependencies {
     compile(project(":core:util.runtime"))
     compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-annotations-jvm"))
 }
 
 sourceSets {

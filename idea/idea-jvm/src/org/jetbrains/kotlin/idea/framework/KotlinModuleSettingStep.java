@@ -20,10 +20,7 @@ import com.intellij.CommonBundle;
 import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
 import com.intellij.facet.impl.ui.libraries.LibraryOptionsPanel;
 import com.intellij.framework.library.FrameworkLibraryVersionFilter;
-import com.intellij.ide.util.projectWizard.JavaSettingsStep;
-import com.intellij.ide.util.projectWizard.ModuleBuilder;
-import com.intellij.ide.util.projectWizard.ModuleWizardStep;
-import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.ide.util.projectWizard.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
@@ -64,6 +61,8 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
     private final CustomLibraryDescription customLibraryDescription;
     private final LibrariesContainer librariesContainer;
 
+    private boolean isNewProject;
+
     private LibraryOptionsPanel libraryOptionsPanel;
     private JPanel panel;
 
@@ -71,7 +70,14 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
 
     private final String basePath;
 
-    public KotlinModuleSettingStep(TargetPlatform targetPlatform, ModuleBuilder moduleBuilder, @NotNull SettingsStep settingsStep) {
+    public KotlinModuleSettingStep(
+            TargetPlatform targetPlatform,
+            ModuleBuilder moduleBuilder,
+            @NotNull SettingsStep settingsStep,
+            @Nullable WizardContext wizardContext
+    ) {
+        isNewProject = wizardContext != null && wizardContext.isCreatingNewProject();
+
         if (!(targetPlatform instanceof JvmPlatform)) {
             KotlinSdkType.Companion.setUpIfNeeded();
         }
@@ -98,7 +104,7 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
                     libraryCompositionSettings.addLibraries(rootModel, new ArrayList<Library>(), librariesContainer);
 
                     if (customLibraryDescription instanceof CustomLibraryDescriptorWithDeferredConfig) {
-                        ((CustomLibraryDescriptorWithDeferredConfig) customLibraryDescription).finishLibConfiguration(module, rootModel);
+                        ((CustomLibraryDescriptorWithDeferredConfig) customLibraryDescription).finishLibConfiguration(module, rootModel, isNewProject);
                     }
                 }
             }

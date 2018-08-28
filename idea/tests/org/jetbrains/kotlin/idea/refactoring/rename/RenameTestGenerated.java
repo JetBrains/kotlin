@@ -214,6 +214,16 @@ public class RenameTestGenerated extends AbstractRenameTest {
         runTest("idea/testData/refactoring/rename/importAliasByRef/importAliasByRef.test");
     }
 
+    @TestMetadata("internalFunWithOverrides/internalFunWithOverrides.test")
+    public void testInternalFunWithOverrides_InternalFunWithOverrides() throws Exception {
+        runTest("idea/testData/refactoring/rename/internalFunWithOverrides/internalFunWithOverrides.test");
+    }
+
+    @TestMetadata("internalVarWithOverrides/internalFunWithOverrides.test")
+    public void testInternalVarWithOverrides_InternalFunWithOverrides() throws Exception {
+        runTest("idea/testData/refactoring/rename/internalVarWithOverrides/internalFunWithOverrides.test");
+    }
+
     @TestMetadata("javaClassImportAliasByRef/javaClassImportAliasByRef.test")
     public void testJavaClassImportAliasByRef_JavaClassImportAliasByRef() throws Exception {
         runTest("idea/testData/refactoring/rename/javaClassImportAliasByRef/javaClassImportAliasByRef.test");
@@ -222,6 +232,16 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("javaEnumValueOf/javaEnumValueOf.test")
     public void testJavaEnumValueOf_JavaEnumValueOf() throws Exception {
         runTest("idea/testData/refactoring/rename/javaEnumValueOf/javaEnumValueOf.test");
+    }
+
+    @TestMetadata("javaGetterToOrdinaryMethod/javaGetterToOrdinaryMethod.test")
+    public void testJavaGetterToOrdinaryMethod_JavaGetterToOrdinaryMethod() throws Exception {
+        runTest("idea/testData/refactoring/rename/javaGetterToOrdinaryMethod/javaGetterToOrdinaryMethod.test");
+    }
+
+    @TestMetadata("javaSetterToOrdinaryMethod/javaSetterToOrdinaryMethod.test")
+    public void testJavaSetterToOrdinaryMethod_JavaSetterToOrdinaryMethod() throws Exception {
+        runTest("idea/testData/refactoring/rename/javaSetterToOrdinaryMethod/javaSetterToOrdinaryMethod.test");
     }
 
     @TestMetadata("labeledAnonymousFunByLabel/labeledLambdaByLabel.test")

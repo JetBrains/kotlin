@@ -39,14 +39,14 @@ fun copyTestSources(testDataDir: File, sourceDestinationDir: File, filePrefix: S
         if (!file.isFile) continue
 
         val renamedFile =
-                if (filePrefix.isEmpty()) {
-                    file
+            if (filePrefix.isEmpty()) {
+                file
+            }
+            else {
+                File(sourceDestinationDir, file.name.removePrefix(filePrefix)).apply {
+                    file.renameTo(this)
                 }
-                else {
-                    File(sourceDestinationDir, file.name.removePrefix(filePrefix)).apply {
-                        file.renameTo(this)
-                    }
-                }
+            }
 
         mapping[renamedFile] = File(testDataDir, file.name)
     }
@@ -55,10 +55,10 @@ fun copyTestSources(testDataDir: File, sourceDestinationDir: File, filePrefix: S
 }
 
 fun getModificationsToPerform(
-        testDataDir: File,
-        moduleNames: Collection<String>?,
-        allowNoFilesWithSuffixInTestData: Boolean,
-        touchPolicy: TouchPolicy
+    testDataDir: File,
+    moduleNames: Collection<String>?,
+    allowNoFilesWithSuffixInTestData: Boolean,
+    touchPolicy: TouchPolicy
 ): List<List<Modification>> {
 
     fun getModificationsForIteration(newSuffix: String, touchSuffix: String, deleteSuffix: String): List<Modification> {
@@ -80,9 +80,9 @@ fun getModificationsToPerform(
         }
 
         val rules = mapOf<String, (String, File) -> Modification>(
-                newSuffix to { path, file -> ModifyContent(path, file) },
-                touchSuffix to { path, _ -> TouchFile(path, touchPolicy) },
-                deleteSuffix to { path, _ -> DeleteFile(path) }
+            newSuffix to { path, file -> ModifyContent(path, file) },
+            touchSuffix to { path, _ -> TouchFile(path, touchPolicy) },
+            deleteSuffix to { path, _ -> DeleteFile(path) }
         )
 
         val modifications = ArrayList<Modification>()
@@ -122,8 +122,8 @@ fun getModificationsToPerform(
     }
     else {
         return (1..10)
-                .map { getModificationsForIteration(".new.$it", ".touch.$it", ".delete.$it") }
-                .filter { it.isNotEmpty() }
+            .map { getModificationsForIteration(".new.$it", ".touch.$it", ".delete.$it") }
+            .filter { it.isNotEmpty() }
     }
 }
 

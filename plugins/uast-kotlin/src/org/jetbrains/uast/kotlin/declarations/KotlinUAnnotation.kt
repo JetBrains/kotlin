@@ -118,7 +118,7 @@ class KotlinUAnnotation(
 
     override val uastAnchor by lazy {
         KotlinUIdentifier(
-            javaPsi?.nameReferenceElement?.referenceNameElement,
+            javaPsi?.nameReferenceElement,
             annotationEntry.typeReference?.typeElement?.let {
                 (it as? KtUserType)?.referenceExpression?.getReferencedNameElement() ?: it.navigationElement
             },

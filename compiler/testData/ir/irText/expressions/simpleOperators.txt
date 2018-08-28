@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/simpleOperators.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'minus(Int): Int' type=kotlin.Int origin=MINUS
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'times(Int): Int' type=kotlin.Int origin=MUL
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'div(Int): Int' type=kotlin.Int origin=DIV
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'rem(Int): Int' type=kotlin.Int origin=PERC
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:IntRange flags:
+  FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.ranges.IntRange flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'rangeTo(Int): IntRange' type=kotlin.ranges.IntRange origin=RANGE
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test1x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test1x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'plus(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test2x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test2x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'minus(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test3x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test3x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'times(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test4x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test4x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
         CALL 'div(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
-  FUN name:test5x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:Int flags:
+  FUN name:test5x visibility:public modality:FINAL <> (a:kotlin.Int, b:kotlin.Int) returnType:kotlin.Int flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Int flags:
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY

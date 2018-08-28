@@ -1,5 +1,558 @@
 # CHANGELOG
 
+## 1.2.60
+
+### Compiler
+
+- [`KT-13762`](https://youtrack.jetbrains.com/issue/KT-13762) Prohibit annotations with target 'EXPRESSION' and retention 'BINARY' or 'RUNTIME'
+- [`KT-18882`](https://youtrack.jetbrains.com/issue/KT-18882) Allow code to have platform specific annotations when compiled for different platforms
+- [`KT-20356`](https://youtrack.jetbrains.com/issue/KT-20356) Internal compiler error - This method shouldn't be invoked for INVISIBLE_FAKE visibility
+- [`KT-22517`](https://youtrack.jetbrains.com/issue/KT-22517) Deprecate smartcasts for local delegated properties
+- [`KT-23153`](https://youtrack.jetbrains.com/issue/KT-23153) Compiler allows to set non constant value as annotation parameter
+- [`KT-23413`](https://youtrack.jetbrains.com/issue/KT-23413) IndexOutOfBoundsException on local delegated properties from `provideDelegate` if there's at least one non-local delegated property
+- [`KT-23742`](https://youtrack.jetbrains.com/issue/KT-23742) Optimise inline class redundant boxing on return from inlined lambda
+- [`KT-24513`](https://youtrack.jetbrains.com/issue/KT-24513) High memory usage in Kotlin and 2018.1
+- [`KT-24617`](https://youtrack.jetbrains.com/issue/KT-24617) Optional expected annotation is unresolved in a dependent platform module
+- [`KT-24679`](https://youtrack.jetbrains.com/issue/KT-24679) KotlinUCallExpression doesn't resolve callee if it is an inline method
+- [`KT-24808`](https://youtrack.jetbrains.com/issue/KT-24808) NI: nested `withContext` call is reported with `Suspension functions can be called only within coroutine body` error
+- [`KT-24825`](https://youtrack.jetbrains.com/issue/KT-24825) NoClassDefFoundError on SAM adapter in a nested call in inlined lambda since 1.2.40
+- [`KT-24859`](https://youtrack.jetbrains.com/issue/KT-24859) Disallow calls of functions annotated with receiver annotated with @RestrictsSuspension in foreign suspension context
+- [`KT-24911`](https://youtrack.jetbrains.com/issue/KT-24911) Kotlin 1.2.50: UI for @RecentlyNonNull looks strange in the editor
+- [`KT-25333`](https://youtrack.jetbrains.com/issue/KT-25333) Restrict visibility of Java static members from supertypes of companion object
+
+### IDE
+
+#### Performance Improvements
+
+- [`KT-20924`](https://youtrack.jetbrains.com/issue/KT-20924) Slow KtLightAbstractAnnotation.getClsDelegate() lightAnnotations.kt 
+- [`KT-23844`](https://youtrack.jetbrains.com/issue/KT-23844) Kotlin property accessor searcher consumes CPU when invoked on a scope consisting only of Java files
+
+#### Fixes
+
+- [`KT-4311`](https://youtrack.jetbrains.com/issue/KT-4311) "Override members" works wrong when function is extension
+- [`KT-13948`](https://youtrack.jetbrains.com/issue/KT-13948) IDE plugins: improve description
+- [`KT-15300`](https://youtrack.jetbrains.com/issue/KT-15300) "INFO - project.TargetPlatformDetector - Using default platform" flood in log
+- [`KT-17350`](https://youtrack.jetbrains.com/issue/KT-17350) Implement members from interface fails when one of the generic types is unresolved
+- [`KT-17668`](https://youtrack.jetbrains.com/issue/KT-17668) Edit Configuration dialog doesn't have a button for choosing the "Main class" field
+- [`KT-19102`](https://youtrack.jetbrains.com/issue/KT-19102) Wrong equals() and hashCode() code generated for arrays of arrays
+- [`KT-20056`](https://youtrack.jetbrains.com/issue/KT-20056) TCE on creating object of an anonymous class in Kotlin script
+- [`KT-21863`](https://youtrack.jetbrains.com/issue/KT-21863) Imported typealias to object declared as "Unused import directive" when only referring to methods
+- [`KT-23272`](https://youtrack.jetbrains.com/issue/KT-23272) Git commit not working
+- [`KT-23407`](https://youtrack.jetbrains.com/issue/KT-23407) Pasting callable reference from different package suggests imports, but inserts incompilable FQN
+- [`KT-23456`](https://youtrack.jetbrains.com/issue/KT-23456) UAST: Enum constant constructor call arguments missing from Kotlin enums
+- [`KT-23942`](https://youtrack.jetbrains.com/issue/KT-23942) Fix building light-classes for MPP project containing multi-file facades
+- [`KT-24072`](https://youtrack.jetbrains.com/issue/KT-24072) Kotlin SDK appears as many times as there are modules in the project
+- [`KT-24412`](https://youtrack.jetbrains.com/issue/KT-24412) Kotlin create project wizard: Kotlin/JS no SDK
+- [`KT-24933`](https://youtrack.jetbrains.com/issue/KT-24933) please remove usages of com.intellij.psi.search.searches.DirectClassInheritorsSearch#search(com.intellij.psi.PsiClass, com.intellij.psi.search.SearchScope, boolean, boolean) deprecated long ago
+- [`KT-24943`](https://youtrack.jetbrains.com/issue/KT-24943) Project leak via LibraryEffectiveKindProviderImpl
+- [`KT-24979`](https://youtrack.jetbrains.com/issue/KT-24979) IndexNotReadyException in KtLightClassForSourceDeclaration#isInheritor
+- [`KT-24958`](https://youtrack.jetbrains.com/issue/KT-24958) Escaping goes insane when editing interpolated string in injected fragment editor
+- [`KT-25024`](https://youtrack.jetbrains.com/issue/KT-25024) Wrong resolve scope while resolving java.lang.String PsiClassReferenceType
+- [`KT-25092`](https://youtrack.jetbrains.com/issue/KT-25092) SourcePsi should be physical leaf element but got OPERATION_REFERENCE
+- [`KT-25242`](https://youtrack.jetbrains.com/issue/KT-25242) 'Resolved to error element' highlighting is confusingly similar to an active live template
+- [`KT-25249`](https://youtrack.jetbrains.com/issue/KT-25249) Uast operates "Unit" type instead of "void"
+- [`KT-25255`](https://youtrack.jetbrains.com/issue/KT-25255) Preferences | Languages & Frameworks | Kotlin Updates: show currently installed version
+- [`KT-25297`](https://youtrack.jetbrains.com/issue/KT-25297) Inconsistency in `KotlinULambdaExpression` and `KotlinLocalFunctionULambdaExpression`
+- [`KT-25414`](https://youtrack.jetbrains.com/issue/KT-25414) Support checking eap-1.3 channel for updates
+- [`KT-25524`](https://youtrack.jetbrains.com/issue/KT-25524) UAST: proper resolve for function variable call
+- [`KT-25546`](https://youtrack.jetbrains.com/issue/KT-25546) Create popup in 1.2.x plugin if user upgrade version in gradle or maven to kotlin 1.3
+
+### IDE. Android
+
+- [`KT-17946`](https://youtrack.jetbrains.com/issue/KT-17946) Android Studio: remove Gradle configurator on configuring Kotlin
+- [`KT-23040`](https://youtrack.jetbrains.com/issue/KT-23040) Wrong run configuration classpath in a mixed Java/Android project
+- [`KT-24321`](https://youtrack.jetbrains.com/issue/KT-24321) Actual implementations from Android platform module are wrongly reported with `no corresponding expected declaration` in IDE
+- [`KT-25018`](https://youtrack.jetbrains.com/issue/KT-25018) Exception `Dependencies for org.jetbrains.kotlin.resolve.calls.* cannot be satisfied` on a simple project in AS 3.2 Canary
+
+### IDE. Code Style, Formatting
+
+- [`KT-14066`](https://youtrack.jetbrains.com/issue/KT-14066) Comments on when branches are misplaced
+- [`KT-25008`](https://youtrack.jetbrains.com/issue/KT-25008) Formatter: Use single indent for multiline elvis operator
+
+### IDE. Completion
+
+- [`KT-23627`](https://youtrack.jetbrains.com/issue/KT-23627) Autocompletion inserts FQN of stdlib functions inside of scoping lambda called on explicit `this`
+- [`KT-25239`](https://youtrack.jetbrains.com/issue/KT-25239) Add postfix template for listOf/setOf/etc
+
+### IDE. Debugger
+
+- [`KT-23162`](https://youtrack.jetbrains.com/issue/KT-23162) Evaluate expression in multiplatform common test fails with JvmName missing when run in JVM
+- [`KT-24903`](https://youtrack.jetbrains.com/issue/KT-24903) Descriptors leak from `KotlinMethodSmartStepTarget`
+
+### IDE. Decompiler
+
+- [`KT-23981`](https://youtrack.jetbrains.com/issue/KT-23981) Kotlin bytecode decompiler works in AWT thread
+
+### IDE. Gradle
+
+- [`KT-24614`](https://youtrack.jetbrains.com/issue/KT-24614) Gradle can't get published versions until commenting repositories in settings.gradle
+
+### IDE. Gradle. Script
+
+- [`KT-24588`](https://youtrack.jetbrains.com/issue/KT-24588) Multiple Gradle Kotlin DSL script files dependencies lifecycle is flawed
+
+### IDE. Hints
+
+- [`KT-22432`](https://youtrack.jetbrains.com/issue/KT-22432) Type hints: Don't include ".Companion" in the names of types defined inside companion object
+- [`KT-22653`](https://youtrack.jetbrains.com/issue/KT-22653) Lambda return hint is duplicated for increment/decrement expressions
+- [`KT-24828`](https://youtrack.jetbrains.com/issue/KT-24828) Double return hints on labeled expressions
+
+### IDE. Inspections and Intentions
+
+#### New Features
+
+- [`KT-7710`](https://youtrack.jetbrains.com/issue/KT-7710) Intention to convert lambda to anonymous function
+- [`KT-11850`](https://youtrack.jetbrains.com/issue/KT-11850) Add `nested lambdas with implicit parameters` warning
+- [`KT-13688`](https://youtrack.jetbrains.com/issue/KT-13688) Add 'Change to val' quickfix for delegates without setValue
+- [`KT-13782`](https://youtrack.jetbrains.com/issue/KT-13782) Intention (and may be inspection) to convert toString() call to string template
+- [`KT-14779`](https://youtrack.jetbrains.com/issue/KT-14779) Inspection to replace String.format with string templates
+- [`KT-15666`](https://youtrack.jetbrains.com/issue/KT-15666) Unused symbol: delete header & its implementations together
+- [`KT-18810`](https://youtrack.jetbrains.com/issue/KT-18810) Quick-fix for 'is' absence in when
+- [`KT-22871`](https://youtrack.jetbrains.com/issue/KT-22871) Add quickfix to move const val into companion object
+- [`KT-23082`](https://youtrack.jetbrains.com/issue/KT-23082) Add quick-fix for type variance conflict
+- [`KT-23306`](https://youtrack.jetbrains.com/issue/KT-23306) Add intention of putting remaining when-values even in end, and even if there is "else"
+- [`KT-23897`](https://youtrack.jetbrains.com/issue/KT-23897) Inspections: report extension functions declared in same class 
+- [`KT-24295`](https://youtrack.jetbrains.com/issue/KT-24295) Add "Remove 'lateinit'" quickfix
+- [`KT-24509`](https://youtrack.jetbrains.com/issue/KT-24509) Inspection "JUnit tests should return Unit" 
+- [`KT-24815`](https://youtrack.jetbrains.com/issue/KT-24815) Add Quick fix to remove illegal "const" modifier
+- [`KT-25238`](https://youtrack.jetbrains.com/issue/KT-25238) Add quickfix wrapping expression into listOf/setOf/etc in case of type mismatch
+
+#### Fixes
+
+- [`KT-12298`](https://youtrack.jetbrains.com/issue/KT-12298) Fix override signature doesn't remove bogus reciever
+- [`KT-20523`](https://youtrack.jetbrains.com/issue/KT-20523) Don't mark as unused functions with `@kotlin.test.*` annotations  and classes with such members
+- [`KT-20583`](https://youtrack.jetbrains.com/issue/KT-20583) Report "redundant let" even for `it` in argument position
+- [`KT-21556`](https://youtrack.jetbrains.com/issue/KT-21556) "Call chain on collection type may be simplified" generates uncompiled code on IntArray
+- [`KT-22030`](https://youtrack.jetbrains.com/issue/KT-22030) Invalid Function can be private inspection
+- [`KT-22041`](https://youtrack.jetbrains.com/issue/KT-22041) "Convert lambda to reference" suggested incorrectly
+- [`KT-22089`](https://youtrack.jetbrains.com/issue/KT-22089) Explict This inspection false negative with synthetic Java property
+- [`KT-22094`](https://youtrack.jetbrains.com/issue/KT-22094) Can be private false positive with function called from lambda inside inline function
+- [`KT-22162`](https://youtrack.jetbrains.com/issue/KT-22162) Add indices to loop fails on destructing declarator
+- [`KT-22180`](https://youtrack.jetbrains.com/issue/KT-22180) "Can be private" false positive when function is called by inline function inside property initializer
+- [`KT-22371`](https://youtrack.jetbrains.com/issue/KT-22371) "Create secondary constructor" quick fix is not suggested for supertype constructor reference
+- [`KT-22758`](https://youtrack.jetbrains.com/issue/KT-22758) "Create ..." and "Import" quick fixes are not available on unresolved class name in primary constructor
+- [`KT-23105`](https://youtrack.jetbrains.com/issue/KT-23105) Create actual implementation shouldn't generate default parameter values
+- [`KT-23106`](https://youtrack.jetbrains.com/issue/KT-23106) Implement methods should respect actual modifier as well
+- [`KT-23326`](https://youtrack.jetbrains.com/issue/KT-23326) "Add missing actual members" quick fix fails with AE at KtPsiFactory.createDeclaration() with _wrong_ expect code
+- [`KT-23452`](https://youtrack.jetbrains.com/issue/KT-23452) "Remove unnecessary parentheses" reports parens of returned function
+- [`KT-23686`](https://youtrack.jetbrains.com/issue/KT-23686) "Add missing actual members" should not add primary actual constructor if it's present as secondary one
+- [`KT-23697`](https://youtrack.jetbrains.com/issue/KT-23697) Android project with 'org.jetbrains.kotlin.platform.android' plugin: all multiplatform IDE features are absent
+- [`KT-23752`](https://youtrack.jetbrains.com/issue/KT-23752) False positive "Remove variable" quick fix on property has lambda or anonymous function initializer
+- [`KT-23762`](https://youtrack.jetbrains.com/issue/KT-23762) Add missing actual members quick fix adds actual declaration for val/var again if it was in the primary constructor
+- [`KT-23788`](https://youtrack.jetbrains.com/issue/KT-23788) Can't convert long char literal to string if it starts with backslash
+- [`KT-23860`](https://youtrack.jetbrains.com/issue/KT-23860) Import quick fix is not available in class constructor containing transitive dependency parameters
+- [`KT-24349`](https://youtrack.jetbrains.com/issue/KT-24349) False positive "Call on collection type may be reduced"
+- [`KT-24374`](https://youtrack.jetbrains.com/issue/KT-24374) "Class member can have private visibility" inspection reports `expect` members
+- [`KT-24422`](https://youtrack.jetbrains.com/issue/KT-24422) Android Studio erroneously reporting that `@Inject lateinit var` can be made private
+- [`KT-24423`](https://youtrack.jetbrains.com/issue/KT-24423) False inspection warning "redundant type checks for object"
+- [`KT-24425`](https://youtrack.jetbrains.com/issue/KT-24425) wrong hint remove redundant Companion
+- [`KT-24537`](https://youtrack.jetbrains.com/issue/KT-24537) False positive `property can be private` on actual properties in a multiplatform project 
+- [`KT-24557`](https://youtrack.jetbrains.com/issue/KT-24557) False warning "Remove redundant call" for nullable.toString
+- [`KT-24562`](https://youtrack.jetbrains.com/issue/KT-24562) actual extension function implementation warns Receiver type unused
+- [`KT-24632`](https://youtrack.jetbrains.com/issue/KT-24632) Quick fix to add getter and setter shouldn't use `field` when it is not allowed
+- [`KT-24816`](https://youtrack.jetbrains.com/issue/KT-24816) Inspection: Sealed subclass can be object shouldn't be reported on classes with state 
+
+### IDE. JS
+
+- [`KT-5948`](https://youtrack.jetbrains.com/issue/KT-5948) JS: project shouldn't have "Java file" in new item menu
+
+### IDE. Multiplatform
+
+- [`KT-23722`](https://youtrack.jetbrains.com/issue/KT-23722) MPP: Run tests from common modules should recompile correspond JVM implementation module
+- [`KT-24159`](https://youtrack.jetbrains.com/issue/KT-24159) MPP: Show Kotlin Bytecode does not work for common code
+- [`KT-24839`](https://youtrack.jetbrains.com/issue/KT-24839) freeCompilerArgs are not imported into Kotlin facet of Android module in IDEA
+
+### IDE. Navigation
+
+- [`KT-11477`](https://youtrack.jetbrains.com/issue/KT-11477) Kotlin searchers consume CPU in a project without any Kotlin files
+- [`KT-17512`](https://youtrack.jetbrains.com/issue/KT-17512) Finding usages of actual declarations in common modules
+- [`KT-20825`](https://youtrack.jetbrains.com/issue/KT-20825) Header icon on actual class is lost on new line adding
+- [`KT-21011`](https://youtrack.jetbrains.com/issue/KT-21011) Difference in information shown for "Is subclassed by" gutter on mouse hovering and clicking
+- [`KT-21113`](https://youtrack.jetbrains.com/issue/KT-21113) Expected gutter icon on companion object is unstable
+- [`KT-21710`](https://youtrack.jetbrains.com/issue/KT-21710) Override gutter markers are missing for types in sources jar
+- [`KT-22177`](https://youtrack.jetbrains.com/issue/KT-22177) Double "A" icon for an expect class with constructor
+- [`KT-23685`](https://youtrack.jetbrains.com/issue/KT-23685) Navigation from expect part to actual with ctrl+alt+B shortcut should provide a choice to what actual part to go
+- [`KT-24812`](https://youtrack.jetbrains.com/issue/KT-24812) Search suggestion text overlaps for long names
+
+### IDE. Refactorings
+
+- [`KT-15159`](https://youtrack.jetbrains.com/issue/KT-15159) Introduce typealias: Incorrect applying of a typealias in constructor calls in val/var and AssertionError
+- [`KT-15351`](https://youtrack.jetbrains.com/issue/KT-15351) Extract Superclass/Interface: existent target file name is rejected; TCE: "null cannot be cast to non-null type org.jetbrains.kotlin.psi.KtFile" at ExtractSuperRefactoring.createClass()
+- [`KT-16281`](https://youtrack.jetbrains.com/issue/KT-16281) Extract Interface: private member with Make Abstract = Yes produces incompilable code
+- [`KT-16284`](https://youtrack.jetbrains.com/issue/KT-16284) Extract Interface/Superclass: reference to private member turns incompilable, when referring element is made abstract
+- [`KT-17235`](https://youtrack.jetbrains.com/issue/KT-17235) Introduce Parameter leaks listener if refactoring is cancelled while in progress
+- [`KT-17742`](https://youtrack.jetbrains.com/issue/KT-17742) Refactor / Rename Java getter to `get()` does not update Kotlin references
+- [`KT-18555`](https://youtrack.jetbrains.com/issue/KT-18555) Refactor / Extract Interface, Superclass: Throwable: "Refactorings should be invoked inside transaction" at RefactoringDialog.show()
+- [`KT-18736`](https://youtrack.jetbrains.com/issue/KT-18736) Extract interface: import for property type is omitted
+- [`KT-20260`](https://youtrack.jetbrains.com/issue/KT-20260) AE “Unexpected container” on calling Refactor → Move for class in Kotlin script
+- [`KT-20465`](https://youtrack.jetbrains.com/issue/KT-20465) "Introduce variable" in build.gradle.kts creates a variable with no template to change its name
+- [`KT-20467`](https://youtrack.jetbrains.com/issue/KT-20467) Refactor → Extract Function: CCE “KtNamedFunction cannot be cast to KtClassOrObject” on calling refactoring for constructor
+- [`KT-20469`](https://youtrack.jetbrains.com/issue/KT-20469) NDFDE “Descriptor wasn't found for declaration VALUE_PARAMETER” on calling Refactor → Extract Function on constructor argument
+- [`KT-22931`](https://youtrack.jetbrains.com/issue/KT-22931) Converting a scoping function with receiver into one with parameter may change the semantics
+- [`KT-23983`](https://youtrack.jetbrains.com/issue/KT-23983) Extract function: Reified type parameters are not extracted properly
+- [`KT-24460`](https://youtrack.jetbrains.com/issue/KT-24460) Rename refactoring does not update super call
+- [`KT-24574`](https://youtrack.jetbrains.com/issue/KT-24574) Changing Java constructor signature from Kotlin usage is totally broken
+- [`KT-24712`](https://youtrack.jetbrains.com/issue/KT-24712) Extract Function Parameter misses 'suspend' for lambda type
+- [`KT-24763`](https://youtrack.jetbrains.com/issue/KT-24763) "Change signature" refactoring breaks Kotlin code
+- [`KT-24968`](https://youtrack.jetbrains.com/issue/KT-24968) Type hints disappear after "Copy" refactoring
+- [`KT-24992`](https://youtrack.jetbrains.com/issue/KT-24992) The IDE got stuck showing a modal dialog (kotlin refactoring) and doesn’t react to any actions
+
+### IDE. Script
+
+- [`KT-25373`](https://youtrack.jetbrains.com/issue/KT-25373) Deadlock in idea plugin
+
+### IDE. Tests Support
+
+- [`KT-18319`](https://youtrack.jetbrains.com/issue/KT-18319) Gradle: Run tests action does not work when test name contains spaces
+- [`KT-22306`](https://youtrack.jetbrains.com/issue/KT-22306) Empty gutter menu for main() and test methods in Kotlin/JS project
+- [`KT-23672`](https://youtrack.jetbrains.com/issue/KT-23672) JUnit test runner is unaware of @kotlin.test.Test tests when used in common multiplatform module, even if looked from JVM multiplatform module
+- [`KT-25253`](https://youtrack.jetbrains.com/issue/KT-25253) No “run” gutter icons for tests in Kotlin/JS project
+
+### JavaScript
+
+- [`KT-22376`](https://youtrack.jetbrains.com/issue/KT-22376) JS: TranslationRuntimeException on 'for (x in ("a"))'
+- [`KT-23458`](https://youtrack.jetbrains.com/issue/KT-23458) ClassCastException when compiling when statements to JS
+
+### Libraries
+
+- [`KT-24204`](https://youtrack.jetbrains.com/issue/KT-24204) Empty progression last value overflows resulting in progression being non-empty
+- [`KT-25351`](https://youtrack.jetbrains.com/issue/KT-25351) `TestNGAsserter` needs to swap expected/actual
+
+### Reflection
+
+- [`KT-16616`](https://youtrack.jetbrains.com/issue/KT-16616) KotlinReflectionInternalError: Reflection on built-in Kotlin types is not yet fully supported in getMembersOfStandardJavaClasses.kt
+- [`KT-17542`](https://youtrack.jetbrains.com/issue/KT-17542) KotlinReflectionInternalError on ::values of enum class 
+- [`KT-20442`](https://youtrack.jetbrains.com/issue/KT-20442) ReflectJvmMapping.getJavaConstructor() fails with Call is not yet supported for anonymous class
+- [`KT-21973`](https://youtrack.jetbrains.com/issue/KT-21973) Method.kotlinFunction for top level extension function returns null when app is started from test sources
+- [`KT-22048`](https://youtrack.jetbrains.com/issue/KT-22048) Reflection explodes when attempting to get constructors of an enum with overridden method
+
+### Tools. Android Extensions
+
+- [`KT-22576`](https://youtrack.jetbrains.com/issue/KT-22576) Parcelable: Allow Parcelize to work with object and enum types
+- [`KT-24459`](https://youtrack.jetbrains.com/issue/KT-24459) @IgnoredOnParcel annotation doesn't work for @Parcelize
+- [`KT-24720`](https://youtrack.jetbrains.com/issue/KT-24720) Parcelable: java.lang.LinkageError
+
+### Tools. Compiler Plugins
+
+- [`KT-23808`](https://youtrack.jetbrains.com/issue/KT-23808) Array<Int> in @Parcelize class generates an java.lang.VerifyError
+
+### Tools. Gradle
+
+- [`KT-18621`](https://youtrack.jetbrains.com/issue/KT-18621) org.jetbrains.kotlin.incremental.fileUtils.kt conflicts when compiler and gradle plugin in classpath
+- [`KT-24497`](https://youtrack.jetbrains.com/issue/KT-24497) Externalized all-open plugin is not applied to a project
+- [`KT-24559`](https://youtrack.jetbrains.com/issue/KT-24559) Multiple Kotlin daemon instances are started when building MPP with Gradle
+- [`KT-24560`](https://youtrack.jetbrains.com/issue/KT-24560) Multiple Kotlin daemon instances are started when Gradle parallel build is used
+- [`KT-24653`](https://youtrack.jetbrains.com/issue/KT-24653) Kotlin plugins don't work when classpath dependency is not declared in current or root project
+- [`KT-24675`](https://youtrack.jetbrains.com/issue/KT-24675) Use Gradle dependency resolution to get compiler classpath
+- [`KT-24676`](https://youtrack.jetbrains.com/issue/KT-24676) Use Gradle dependency resolution to form compiler plugin classpath
+- [`KT-24946`](https://youtrack.jetbrains.com/issue/KT-24946) ISE: "The provided plugin org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar is not compatible with this version of compiler" when build simple Gradle with Zulu JDK  
+
+### Tools. Incremental Compile
+
+- [`KT-25051`](https://youtrack.jetbrains.com/issue/KT-25051) Change in "kotlin-android" project w/o package parts causes non-incremental compilation of dependent modules
+
+### Tools. J2K
+
+- [`KT-9945`](https://youtrack.jetbrains.com/issue/KT-9945) converting java to kotlin confuses git
+
+### Tools. JPS
+
+- [`KT-19957`](https://youtrack.jetbrains.com/issue/KT-19957) Support incremental compilation to JS in JPS
+- [`KT-22611`](https://youtrack.jetbrains.com/issue/KT-22611) Support compiling scripts in JPS
+- [`KT-23558`](https://youtrack.jetbrains.com/issue/KT-23558) JPS: Support multiplatform projects
+- [`KT-23757`](https://youtrack.jetbrains.com/issue/KT-23757) JPS: Incremental multiplatform projects compilation 
+- [`KT-24936`](https://youtrack.jetbrains.com/issue/KT-24936) Don't use internal terms in compiler progress messages
+- [`KT-25218`](https://youtrack.jetbrains.com/issue/KT-25218) Build fails as Javac doesn't see Kotlin classes
+
+### Tools. Scripts
+
+- [`KT-24926`](https://youtrack.jetbrains.com/issue/KT-24926) NoSuchElementException in TemplateAnnotationVisitor when upgrading the Gradle Kotlin DSL to Kotlin 1.2.50
+
+### Tools. kapt
+
+- [`KT-24313`](https://youtrack.jetbrains.com/issue/KT-24313) Unable to use KAPT when dependency to it is added to buildSrc
+- [`KT-24449`](https://youtrack.jetbrains.com/issue/KT-24449) 'kapt.kotlin.generated' is not marked as source root in Android Studio 3.1 and 3.2
+- [`KT-24538`](https://youtrack.jetbrains.com/issue/KT-24538) Kapt performs Kotlin compilation when annotation processors are not configured
+- [`KT-24919`](https://youtrack.jetbrains.com/issue/KT-24919) Caused by: org.gradle.api.InvalidUserDataException: 'projectDir' is not a file
+- [`KT-24963`](https://youtrack.jetbrains.com/issue/KT-24963) gradle kapt plugin's assumption on build dir causing duplicate class error
+- [`KT-24985`](https://youtrack.jetbrains.com/issue/KT-24985) Kapt: Allow to disable info->warning mapping in logger
+- [`KT-25071`](https://youtrack.jetbrains.com/issue/KT-25071) kapt sometimes emits java stubs with imports that should be static imports
+- [`KT-25131`](https://youtrack.jetbrains.com/issue/KT-25131) Kapt should not load annotation processors when generating stubs
+
+## 1.2.51
+
+### Backend. JVM
+
+- [`KT-23943`](https://youtrack.jetbrains.com/issue/KT-23943) Wrong autoboxing for non-null inline class inside elvis with `null` constant
+- [`KT-24952`](https://youtrack.jetbrains.com/issue/KT-24952) EnumConstantNotPresentExceptionProxy from Java reflection on annotation class with target TYPE on JVM < 8
+- [`KT-24986`](https://youtrack.jetbrains.com/issue/KT-24986) Android project release build with ProGuard enabled crashes with IllegalAccessError: Final field cannot be written to by method
+
+### Binary Metadata
+
+- [`KT-24944`](https://youtrack.jetbrains.com/issue/KT-24944) Exception from stubs: "Unknown type parameter with id = 1" (EA-120997)
+
+### Reflection
+
+- [`KT-23962`](https://youtrack.jetbrains.com/issue/KT-23962) MalformedParameterizedTypeException when reflecting GeneratedMessageLite.ExtendableMessage
+
+### Tools. Gradle
+
+- [`KT-24956`](https://youtrack.jetbrains.com/issue/KT-24956) Kotlin Gradle plugin's inspectClassesForKotlinIC task for the new 1.2.50 release takes incredibly long
+- [`KT-23866`](https://youtrack.jetbrains.com/issue/KT-23866) Kapt plugin should pass arguments from compiler argument providers to annotation processors
+- [`KT-24716`](https://youtrack.jetbrains.com/issue/KT-24716) 1.2.50 emits warning "Classpath entry points to a non-existent location:"
+- [`KT-24832`](https://youtrack.jetbrains.com/issue/KT-24832) Inter-project IC does not work when "kotlin-android" project depends on "kotlin" project
+- [`KT-24938`](https://youtrack.jetbrains.com/issue/KT-24938) Gradle parallel execution fails on multi-module Gradle Project
+- [`KT-25027`](https://youtrack.jetbrains.com/issue/KT-25027) Kapt plugin: Kapt and KaptGenerateStubs tasks have some incorrect inputs
+
+### Tools. Scripts
+
+- [`KT-24926`](https://youtrack.jetbrains.com/issue/KT-24926) NoSuchElementException in TemplateAnnotationVisitor when upgrading the Gradle Kotlin DSL to Kotlin 1.2.50
+
+## 1.2.50
+
+### Compiler
+
+- [`KT-23360`](https://youtrack.jetbrains.com/issue/KT-23360) Do not serialize annotations with retention SOURCE to metadata
+- [`KT-24278`](https://youtrack.jetbrains.com/issue/KT-24278) Hard-code to kotlin compiler annotation for android library migration
+- [`KT-24472`](https://youtrack.jetbrains.com/issue/KT-24472) Support argfiles in kotlinc with -Xargfile
+- [`KT-24593`](https://youtrack.jetbrains.com/issue/KT-24593) Support -XXLanguage:{+|-}LanguageFeature compiler arguments to enable/disable specific features
+- [`KT-24637`](https://youtrack.jetbrains.com/issue/KT-24637) Introduce "progressive" mode of compiler
+
+#### Backend. JS
+
+- [`KT-23094`](https://youtrack.jetbrains.com/issue/KT-23094) JS compiler: Delegation fails to pass the continuation parameter to child suspend function
+- [`KT-23582`](https://youtrack.jetbrains.com/issue/KT-23582) JS: Fails to inline, produces bad code
+- [`KT-24335`](https://youtrack.jetbrains.com/issue/KT-24335) JS: Invalid implement of external interface
+
+#### Backend. JVM
+
+- [`KT-12330`](https://youtrack.jetbrains.com/issue/KT-12330) Slightly improve generated bytecode for data class equals/hashCode methods
+- [`KT-18576`](https://youtrack.jetbrains.com/issue/KT-18576) Debugger fails to show decomposed suspend lambda parameters
+- [`KT-22063`](https://youtrack.jetbrains.com/issue/KT-22063) Add intrinsics for javaObjectType and javaPrimitiveType
+- [`KT-23402`](https://youtrack.jetbrains.com/issue/KT-23402) Internal error: Couldn't inline method call because the compiler couldn't obtain compiled body for inline function with reified type parameter
+- [`KT-23704`](https://youtrack.jetbrains.com/issue/KT-23704) Unstable `checkExpressionValueIsNotNull()` generation in bytecode
+- [`KT-23707`](https://youtrack.jetbrains.com/issue/KT-23707) Unstable bridge generation order
+- [`KT-23857`](https://youtrack.jetbrains.com/issue/KT-23857) Annotation with target TYPE is not applicable to TYPE_USE in Java sources
+- [`KT-23910`](https://youtrack.jetbrains.com/issue/KT-23910) @JvmOverloads doesn't work with default arguments in common code
+- [`KT-24427`](https://youtrack.jetbrains.com/issue/KT-24427) Protected function having toArray-like signature from collection becomes public in bytecode
+- [`KT-24661`](https://youtrack.jetbrains.com/issue/KT-24661) Support binary compatibility mode for @JvmDefault
+
+#### Frontend
+
+- [`KT-21129`](https://youtrack.jetbrains.com/issue/KT-21129) Unused parameter in property setter is not reported
+- [`KT-21157`](https://youtrack.jetbrains.com/issue/KT-21157) Kotlin script: engine can take forever to eval certain code after several times
+- [`KT-22740`](https://youtrack.jetbrains.com/issue/KT-22740) REPL slows down during extensions compiling
+- [`KT-23124`](https://youtrack.jetbrains.com/issue/KT-23124) Kotlin multiplatform project causes IntelliJ build errors
+- [`KT-23209`](https://youtrack.jetbrains.com/issue/KT-23209) Compiler throwing frontend exception
+- [`KT-23589`](https://youtrack.jetbrains.com/issue/KT-23589) Report a warning on local annotation classes
+- [`KT-23760`](https://youtrack.jetbrains.com/issue/KT-23760) Unable to implement common interface with fun member function with typealiased parameter
+
+### Android
+
+- [`KT-23244`](https://youtrack.jetbrains.com/issue/KT-23244) Option to Disable View Binding generation in Kotlin Android Extensions Plugin
+
+### IDE
+
+- [`KT-8407`](https://youtrack.jetbrains.com/issue/KT-8407) TestNG: running tests from context creates new run configuration every time
+- [`KT-9218`](https://youtrack.jetbrains.com/issue/KT-9218) Searching for compilable files takes too long
+- [`KT-15019`](https://youtrack.jetbrains.com/issue/KT-15019) Editor: `args` reference in .kts file is red
+- [`KT-18769`](https://youtrack.jetbrains.com/issue/KT-18769) Expand Selection on opening curly brace should select the entire block right away
+- [`KT-19055`](https://youtrack.jetbrains.com/issue/KT-19055) Idea hangs on copy-paste big Kotlin files
+- [`KT-20605`](https://youtrack.jetbrains.com/issue/KT-20605) Unresolved reference on instance from common module function
+- [`KT-20824`](https://youtrack.jetbrains.com/issue/KT-20824) Type mismatch for common function taking a non-mapped Kotlin's expected class from stdlib-common, with actual typealias on JVM
+- [`KT-20897`](https://youtrack.jetbrains.com/issue/KT-20897) Can't navigate to declaration after PsiInvalidElementAccessException exception
+- [`KT-22527`](https://youtrack.jetbrains.com/issue/KT-22527) Kotlin UAST does not evaluate values inside delegation expressions
+- [`KT-22868`](https://youtrack.jetbrains.com/issue/KT-22868) Implementing an `expected class` declaration using `actual typealias` produces "good code that is red"
+- [`KT-22922`](https://youtrack.jetbrains.com/issue/KT-22922) Override Members should add experimental annotation when required
+- [`KT-23384`](https://youtrack.jetbrains.com/issue/KT-23384) Hotspot in org.jetbrains.kotlin.idea.caches.resolve.IDELightClassGenerationSupport.getKotlinInternalClasses(FqName, GlobalSearchScope) IDELightClassGenerationSupport.kt ?
+- [`KT-23408`](https://youtrack.jetbrains.com/issue/KT-23408) Don't render @NonNull and @Nullable annotations in parameter info for Java methods
+- [`KT-23557`](https://youtrack.jetbrains.com/issue/KT-23557) Expression Bodies should have implicit `return` in Uast
+- [`KT-23745`](https://youtrack.jetbrains.com/issue/KT-23745) Unable to implement common interface
+- [`KT-23746`](https://youtrack.jetbrains.com/issue/KT-23746) Logger$EmptyThrowable "[kts] cannot find a valid script definition annotation on the class class ScriptTemplateWithArgs" with LivePlugin enabled
+- [`KT-23975`](https://youtrack.jetbrains.com/issue/KT-23975) Move Kotlin internal actions under Idea Internal actions menu
+- [`KT-24268`](https://youtrack.jetbrains.com/issue/KT-24268) Other main menu item
+- [`KT-24438`](https://youtrack.jetbrains.com/issue/KT-24438) ISE “The provided plugin org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar is not compatible with this version of compiler” after rebuilding simple Gradle-based project via JPS.
+
+#### IDE. Configuration
+
+- [`KT-10935`](https://youtrack.jetbrains.com/issue/KT-10935) Add menu entry to create new kotlin .kts scripts
+- [`KT-20511`](https://youtrack.jetbrains.com/issue/KT-20511) Library added from maven (using IDEA UI) is not detected as Kotlin/JS library (since type="repository")
+- [`KT-20665`](https://youtrack.jetbrains.com/issue/KT-20665) Kotlin Gradle script created by New Project/Module wizard fails with Gradle 4.1+
+- [`KT-21844`](https://youtrack.jetbrains.com/issue/KT-21844) Create Kotlin class dialog: make class abstract automatically
+- [`KT-22305`](https://youtrack.jetbrains.com/issue/KT-22305) Language and API versions of Kotlin compiler are “Latest” by default in some ways of creating new project
+- [`KT-23261`](https://youtrack.jetbrains.com/issue/KT-23261) New MPP design: please show popup with error message if module name is not set
+- [`KT-23638`](https://youtrack.jetbrains.com/issue/KT-23638) Kotlin plugin breaks project opening for PhpStorm/WebStorm
+- [`KT-23658`](https://youtrack.jetbrains.com/issue/KT-23658) Unclear options “Gradle” and “Gradle (Javascript)” on configuring Kotlin in Gradle- and Maven-based projects
+- [`KT-23845`](https://youtrack.jetbrains.com/issue/KT-23845) IntelliJ Maven Plugin does not pass javaParameters option to Kotlin facet
+- [`KT-23980`](https://youtrack.jetbrains.com/issue/KT-23980) Move "Update Channel" from "Configure Kotlin Plugin Updates" to settings
+- [`KT-24504`](https://youtrack.jetbrains.com/issue/KT-24504) Existent JPS-based Kotlin/JS module is converted to new format, while New Project wizard and facet manipulations still create old format
+
+#### IDE. Debugger
+
+- [`KT-23886`](https://youtrack.jetbrains.com/issue/KT-23886) Both java and kotlin breakpoints in kotlin files
+- [`KT-24136`](https://youtrack.jetbrains.com/issue/KT-24136) Debugger: update drop-down menu for the line with lambdas
+
+#### IDE. Editing
+
+- [`KT-2582`](https://youtrack.jetbrains.com/issue/KT-2582) When user inputs triple quote, add matching triple quote automatically
+- [`KT-5206`](https://youtrack.jetbrains.com/issue/KT-5206) Long lists of arguments are not foldable
+- [`KT-23457`](https://youtrack.jetbrains.com/issue/KT-23457) Auto-import and Import quick fix do not suggest classes from common module [Common test can't find class with word `Abstract` in name.]
+- [`KT-23235`](https://youtrack.jetbrains.com/issue/KT-23235) Super slow editing with auto imports enabled
+
+#### IDE. Gradle
+
+- [`KT-23234`](https://youtrack.jetbrains.com/issue/KT-23234) Test names for tests containing inner classes are sporadically reported to teamcity runs.
+- [`KT-23383`](https://youtrack.jetbrains.com/issue/KT-23383) Optional plugin dependency for kotlin gradle plugin 'java' subsystem dependent features
+- [`KT-22588`](https://youtrack.jetbrains.com/issue/KT-22588) Resolver for 'project source roots and libraries for platform JVM' does not know how to resolve on Gradle Kotlin DSL project without Java and Kotlin
+- [`KT-23616`](https://youtrack.jetbrains.com/issue/KT-23616) Synchronize script dependencies not at Gradle Sync
+- [`KT-24444`](https://youtrack.jetbrains.com/issue/KT-24444) Do not store proxy objects from Gradle importer in the project model
+- [`KT-24586`](https://youtrack.jetbrains.com/issue/KT-24586) MVNFE “Cannot resolve external dependency org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41 because no repositories are defined.” on creating Gradle project with Kotlin only (probably due to lack of repositories block)
+- [`KT-24671`](https://youtrack.jetbrains.com/issue/KT-24671) dependencies missed in buildscript block after creating new Gradle-based project in 173 IDEA
+
+#### IDE. Inspections and Intentions
+
+##### New Features
+
+- [`KT-7822`](https://youtrack.jetbrains.com/issue/KT-7822) Convert foreach to for loop should place caret on the variable declaration
+- [`KT-9943`](https://youtrack.jetbrains.com/issue/KT-9943) Quick fix/Intention to indent a raw string
+- [`KT-15063`](https://youtrack.jetbrains.com/issue/KT-15063) Inspection for coroutine: unused Deferred result
+- [`KT-16085`](https://youtrack.jetbrains.com/issue/KT-16085) Inspection "main should return Unit"
+- [`KT-20305`](https://youtrack.jetbrains.com/issue/KT-20305) Inspection: Refactor sealed sub-class to object
+- [`KT-21413`](https://youtrack.jetbrains.com/issue/KT-21413) Missing inspection: parentheses can be deleted when the only constructor parameter is a function not existing
+- [`KT-23137`](https://youtrack.jetbrains.com/issue/KT-23137) Intention for converting to block comment and vise versa
+- [`KT-23266`](https://youtrack.jetbrains.com/issue/KT-23266) Add intention(s) to put arguments / parameters on one line
+- [`KT-23419`](https://youtrack.jetbrains.com/issue/KT-23419) Intention to replace vararg with array and vice versa
+- [`KT-23617`](https://youtrack.jetbrains.com/issue/KT-23617) Add inspection: redundant internal in local anonymous object / class
+- [`KT-23775`](https://youtrack.jetbrains.com/issue/KT-23775) IntelliJ plugin: improve "accessor call that can be replaced with property"
+- [`KT-24235`](https://youtrack.jetbrains.com/issue/KT-24235) Inspection to replace async.await with withContext
+- [`KT-24263`](https://youtrack.jetbrains.com/issue/KT-24263) Add `Make variable immutable` quickfix for const
+- [`KT-24433`](https://youtrack.jetbrains.com/issue/KT-24433) Inspection for coroutines: unused async result
+
+##### Performance Improvements
+
+- [`KT-23566`](https://youtrack.jetbrains.com/issue/KT-23566) "Can be private" works on ResolutionResultsCache.kt (from Kotlin project) enormously slow
+
+##### Fixes
+
+- [`KT-6364`](https://youtrack.jetbrains.com/issue/KT-6364) Incorrect quick-fixes are suggested for nullable extension function call
+- [`KT-11156`](https://youtrack.jetbrains.com/issue/KT-11156) Incorrect highlighting for nested class in "Redundant SAM-constructor" inspection
+- [`KT-11427`](https://youtrack.jetbrains.com/issue/KT-11427) "Replace if with when" does not take break / continue into account
+- [`KT-11740`](https://youtrack.jetbrains.com/issue/KT-11740) Invert if condition intention should not remove line breaks
+- [`KT-12042`](https://youtrack.jetbrains.com/issue/KT-12042) "Merge with next when" is not applicable when the statements delimited by semicolon or comment
+- [`KT-12168`](https://youtrack.jetbrains.com/issue/KT-12168) "Remove explicit type specification" intention produce incompilable code in case of function type
+- [`KT-14391`](https://youtrack.jetbrains.com/issue/KT-14391) RemoveUnnecessaryParenthesesIntention lost comment on closing parenthesis
+- [`KT-14556`](https://youtrack.jetbrains.com/issue/KT-14556) Quickfix to suggest use of spread operator does not work with mapOf
+- [`KT-15195`](https://youtrack.jetbrains.com/issue/KT-15195) Redundant parentheses shouldn't be reported if lambda is not on the same line
+- [`KT-16770`](https://youtrack.jetbrains.com/issue/KT-16770) Change type of function quickfix does not propose most idiomatic solutions
+- [`KT-19629`](https://youtrack.jetbrains.com/issue/KT-19629) "Convert to primary constructor" quick fix should not move  `init{...}` section down
+- [`KT-20123`](https://youtrack.jetbrains.com/issue/KT-20123) Kotlin Gradle script: “Refactoring cannot be performed. Cannot modify build.gradle.kts” for some refactorings and intentions
+- [`KT-20332`](https://youtrack.jetbrains.com/issue/KT-20332) Unused property declaration suppression by annotation doesn't work if annotation is targeted to getter
+- [`KT-21878`](https://youtrack.jetbrains.com/issue/KT-21878) "arrayOf() call can be replaced by array litteral [...]" quick fix inserts extra parentheses
+- [`KT-22092`](https://youtrack.jetbrains.com/issue/KT-22092) Intention "Specify return type explicitly": Propose types from overriden declarations
+- [`KT-22615`](https://youtrack.jetbrains.com/issue/KT-22615) "Replace with" intention does not work for equal names
+- [`KT-22632`](https://youtrack.jetbrains.com/issue/KT-22632) Gutter icon "go to actual declaration" is absent for enum values on actual side 
+- [`KT-22741`](https://youtrack.jetbrains.com/issue/KT-22741) Wrong suggestion for `Replace 'if' expression with elvis expression`
+- [`KT-22831`](https://youtrack.jetbrains.com/issue/KT-22831) Inspection for converting to elvis operator does not work for local vars
+- [`KT-22860`](https://youtrack.jetbrains.com/issue/KT-22860) "Add annotation target" quick fix does not take into account existent annotations in Java source
+- [`KT-22918`](https://youtrack.jetbrains.com/issue/KT-22918) Create interface quickfix is missing 'current class' container
+- [`KT-23133`](https://youtrack.jetbrains.com/issue/KT-23133) "Remove redundant calls of the conversion method" wrongly shown for Boolan to Int conversion
+- [`KT-23167`](https://youtrack.jetbrains.com/issue/KT-23167) Report "use expression body" also on left brace
+- [`KT-23194`](https://youtrack.jetbrains.com/issue/KT-23194) Inspection "map.put() should be converted to assignment" leads to red code in case of labled return
+- [`KT-23303`](https://youtrack.jetbrains.com/issue/KT-23303) "Might be const" inspection does not check explicit type specification
+- [`KT-23320`](https://youtrack.jetbrains.com/issue/KT-23320) Quick fix to add constructor invocation doesn't work for sealed classes
+- [`KT-23321`](https://youtrack.jetbrains.com/issue/KT-23321) Intention to move type to separate file shouldn't be available for sealed classes
+- [`KT-23346`](https://youtrack.jetbrains.com/issue/KT-23346) Lift Assignment quick fix incorrectly processes block assignments
+- [`KT-23377`](https://youtrack.jetbrains.com/issue/KT-23377) Simplify boolean expression produces incorrect results when mixing nullable and non-nullable variables
+- [`KT-23465`](https://youtrack.jetbrains.com/issue/KT-23465) False positive `suspicious callable reference` on lambda invoke with parameters
+- [`KT-23511`](https://youtrack.jetbrains.com/issue/KT-23511) "Remove parameter" quick fix makes generic function call incompilable when type could be inferred from removed parameter only
+- [`KT-23513`](https://youtrack.jetbrains.com/issue/KT-23513) "Remove parameter" quick fix makes caret jump to the top of the editor
+- [`KT-23559`](https://youtrack.jetbrains.com/issue/KT-23559) Wrong hint text for "assignment can be replaced with operator assignment"
+- [`KT-23608`](https://youtrack.jetbrains.com/issue/KT-23608) AE “Failed to create expression from text” after applying quick fix “Convert too long character literal to string”
+- [`KT-23620`](https://youtrack.jetbrains.com/issue/KT-23620)  False positive `Redundant Companion reference` on calling object from companion
+- [`KT-23634`](https://youtrack.jetbrains.com/issue/KT-23634) 'Add use-site target' intention drops annotation arguments
+- [`KT-23753`](https://youtrack.jetbrains.com/issue/KT-23753) "Remove variable" quick fix should not remove comment
+- [`KT-23756`](https://youtrack.jetbrains.com/issue/KT-23756) Bogus "Might be const" warning in object expression
+- [`KT-23778`](https://youtrack.jetbrains.com/issue/KT-23778) "Convert function to property" intention shows broken warning
+- [`KT-23796`](https://youtrack.jetbrains.com/issue/KT-23796) "Create extension function/property" quick fix suggests one for nullable type while creates for not-null
+- [`KT-23801`](https://youtrack.jetbrains.com/issue/KT-23801) "Convert to constructor" (IntelliJ) quick fix uses wrong use-site target for annotating properties
+- [`KT-23977`](https://youtrack.jetbrains.com/issue/KT-23977) wrong hint Unit redundant
+- [`KT-24066`](https://youtrack.jetbrains.com/issue/KT-24066) 'Remove redundant Unit' false positive when Unit is returned as Any
+- [`KT-24165`](https://youtrack.jetbrains.com/issue/KT-24165) @Deprecated ReplaceWith Constant gets replaced with nothing
+- [`KT-24207`](https://youtrack.jetbrains.com/issue/KT-24207) Add parameter intent/red bulb should use auto casted type.
+- [`KT-24215`](https://youtrack.jetbrains.com/issue/KT-24215) ReplaceWith produces broken code for lambda following default parameter
+
+#### IDE. Multiplatform
+
+- [`KT-20406`](https://youtrack.jetbrains.com/issue/KT-20406) Overload resolution ambiguity in IDE on expect class / actual typealias from kotlin-stdlib-common / kotlin-stdlib
+- [`KT-24316`](https://youtrack.jetbrains.com/issue/KT-24316) Missing dependencies in Kotlin MPP when using gradle composite builds
+
+#### IDE. Navigation
+
+- [`KT-7622`](https://youtrack.jetbrains.com/issue/KT-7622) Searching usages of a field/constructor parameter in a private class seems to scan through the whole project
+- [`KT-23182`](https://youtrack.jetbrains.com/issue/KT-23182) Find Usages checks whether there are unused variables in functions which contain search result candidates
+- [`KT-23223`](https://youtrack.jetbrains.com/issue/KT-23223) Navigate to actual declaration from actual usage
+
+#### IDE. Refactorings
+
+- [`KT-12078`](https://youtrack.jetbrains.com/issue/KT-12078) Introduce Variable adds explicit type when invoked on anonymous object
+- [`KT-15517`](https://youtrack.jetbrains.com/issue/KT-15517) Change signature refactoring shows confusing warning dialog
+- [`KT-22387`](https://youtrack.jetbrains.com/issue/KT-22387) Change signature reports "Type cannot be resolved" for class from different package
+- [`KT-22669`](https://youtrack.jetbrains.com/issue/KT-22669) Refactor / Copy Kotlin source to plain text causes CCE: "PsiPlainTextFileImpl cannot be cast to KtFile" at CopyKotlinDeclarationsHandler$doCopy$2$1$1.invoke()
+- [`KT-22888`](https://youtrack.jetbrains.com/issue/KT-22888) Rename completion cuts off all characters except letters from existent name
+- [`KT-23298`](https://youtrack.jetbrains.com/issue/KT-23298) AE: "2 declarations in null..." on rename of a field to `object` or `class`
+- [`KT-23563`](https://youtrack.jetbrains.com/issue/KT-23563) null by org.jetbrains.kotlin.idea.refactoring.rename.KotlinMemberInplaceRenameHandler$RenamerImpl exception on trying in-place Rename of non-scratch functions
+- [`KT-23613`](https://youtrack.jetbrains.com/issue/KT-23613) Kotlin safe delete processor handles java code when it should not
+- [`KT-23644`](https://youtrack.jetbrains.com/issue/KT-23644) Named parameters in generated Kotlin Annotations
+- [`KT-23714`](https://youtrack.jetbrains.com/issue/KT-23714) Add Parameter quickfix not working when the called method is in java. 
+- [`KT-23838`](https://youtrack.jetbrains.com/issue/KT-23838) Do not search for usages in other files when renaming local variable
+- [`KT-24069`](https://youtrack.jetbrains.com/issue/KT-24069) 'Create from usage' doesn't use type info with smart casts
+
+#### IDE. Scratch
+
+- [`KT-6928`](https://youtrack.jetbrains.com/issue/KT-6928) Support Kotlin scratch files
+- [`KT-23441`](https://youtrack.jetbrains.com/issue/KT-23441) Scratch options reset on IDE restart
+- [`KT-23480`](https://youtrack.jetbrains.com/issue/KT-23480) java.util.NoSuchElementException: "Collection contains no element matching the predicate" on run of a scratch file with unresolved function parameter
+- [`KT-23587`](https://youtrack.jetbrains.com/issue/KT-23587) Scratch: references from scratch file aren't taken into account
+- [`KT-24016`](https://youtrack.jetbrains.com/issue/KT-24016) Make long scratch output lines readable
+- [`KT-24315`](https://youtrack.jetbrains.com/issue/KT-24315) Checkbox labels aren't aligned in scratch panel
+- [`KT-24636`](https://youtrack.jetbrains.com/issue/KT-24636) Run Scratch when there are compilation errors in module
+
+#### Tools. J2K
+
+- [`KT-22989`](https://youtrack.jetbrains.com/issue/KT-22989) Exception "Assertion failed: Refactorings should be invoked inside transaction"  on creating UI Component/Notification
+
+### Libraries
+
+- [`KT-10456`](https://youtrack.jetbrains.com/issue/KT-10456) Common Int.toString(radix: Int) method
+- [`KT-22298`](https://youtrack.jetbrains.com/issue/KT-22298) Improve docs for Array.copyOf(newSize: Int)
+- [`KT-22400`](https://youtrack.jetbrains.com/issue/KT-22400) coroutineContext shall be in kotlin.coroutines.experimental package
+- [`KT-23356`](https://youtrack.jetbrains.com/issue/KT-23356) Cross-platform function to convert CharArray slice to String
+- [`KT-23920`](https://youtrack.jetbrains.com/issue/KT-23920) CharSequence.trimEnd calls substring instead of subSequence
+- [`KT-24353`](https://youtrack.jetbrains.com/issue/KT-24353) Add support for junit 5 in kotlin.test
+- [`KT-24371`](https://youtrack.jetbrains.com/issue/KT-24371) Invalid @returns tag does not display in Android Studio popup properly
+
+### Gradle plugin
+
+- [`KT-20214`](https://youtrack.jetbrains.com/issue/KT-20214) NoClassDefFound from Gradle (should report missing tools.jar)
+- [`KT-20608`](https://youtrack.jetbrains.com/issue/KT-20608) Cannot reference operator overloads across submodules (.kotlin_module not loaded when a module name has a slash)
+- [`KT-22431`](https://youtrack.jetbrains.com/issue/KT-22431) Inter-project incremental compilation does not work with Android plugin 2.3+
+- [`KT-22510`](https://youtrack.jetbrains.com/issue/KT-22510) Common sources aren't added when compiling custom source set with Gradle multiplatform plugin
+- [`KT-22623`](https://youtrack.jetbrains.com/issue/KT-22623) Kotlin JVM tasks in independent projects are not executed in parallel with Gradle 4.2+ and Kotlin 1.2.20+
+- [`KT-23092`](https://youtrack.jetbrains.com/issue/KT-23092) Gradle plugin for MPP common modules should not remove the 'compileJava' task from `project.tasks`
+- [`KT-23574`](https://youtrack.jetbrains.com/issue/KT-23574) 'archivesBaseName' does not affect module name in common modules
+- [`KT-23719`](https://youtrack.jetbrains.com/issue/KT-23719) Incorrect Gradle Warning for expectedBy in kotlin-platform-android module
+- [`KT-23878`](https://youtrack.jetbrains.com/issue/KT-23878) Kapt: Annotation processors are run when formatting is changed
+- [`KT-24420`](https://youtrack.jetbrains.com/issue/KT-24420) Kapt plugin: Kapt task has overlapping outputs (and inputs) with Gradle's JavaCompile task
+- [`KT-24440`](https://youtrack.jetbrains.com/issue/KT-24440) Gradle daemon OOM due to function descriptors stuck forever
+
+### Tools. kapt
+
+- [`KT-23286`](https://youtrack.jetbrains.com/issue/KT-23286) kapt + nonascii = weird pathes
+- [`KT-23427`](https://youtrack.jetbrains.com/issue/KT-23427) kapt: for element with multiple annotations,  annotation values erroneously use default when first annotation uses default
+- [`KT-23721`](https://youtrack.jetbrains.com/issue/KT-23721) Warning informing user that 'tools.jar' is absent in the plugin classpath is not show when there is also an error
+- [`KT-23898`](https://youtrack.jetbrains.com/issue/KT-23898) Kapt: Do now show a warning for APs from 'annotationProcessor' configuration also declared in 'kapt' configuration
+- [`KT-23964`](https://youtrack.jetbrains.com/issue/KT-23964) Kotlin Gradle plugin does not define inputs and outputs of annotation processors
+
 ## 1.2.41
 
 ### Compiler – Fixes

@@ -11,6 +11,7 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.methodSignature);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.lambdaClassOriginName);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.propertySignature);
+    registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.flags);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.typeParameterAnnotation);
@@ -4558,6 +4559,22 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.JvmPropertySignature.class,
         org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.JvmPropertySignature.getDefaultInstance());
+  public static final int FLAGS_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   *
+   * <pre>
+   **
+   *isMovedFromInterfaceCompanion   true if this property is declared in an interface companion, and the field is stored in the interface
+   * </pre>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.Property,
+      java.lang.Integer> flags = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
   public static final int TYPE_ANNOTATION_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Type { ... }</code>
@@ -4726,25 +4743,27 @@ public final class DebugJvmProtoBuf {
       "perty_signature\022\'.org.jetbrains.kotlin.m" +
       "etadata.Property\030d \001(\01327.org.jetbrains.k" +
       "otlin.metadata.jvm.JvmPropertySignature:" +
-      "g\n\017type_annotation\022#.org.jetbrains.kotli" +
-      "n.metadata.Type\030d \003(\0132).org.jetbrains.ko" +
-      "tlin.metadata.Annotation:3\n\006is_raw\022#.org",
-      ".jetbrains.kotlin.metadata.Type\030e \001(\010:z\n" +
-      "\031type_parameter_annotation\022,.org.jetbrai" +
-      "ns.kotlin.metadata.TypeParameter\030d \003(\0132)" +
-      ".org.jetbrains.kotlin.metadata.Annotatio" +
-      "n:E\n\021class_module_name\022$.org.jetbrains.k" +
-      "otlin.metadata.Class\030e \001(\005B\004\230\265\030\001:k\n\024clas" +
-      "s_local_variable\022$.org.jetbrains.kotlin." +
-      "metadata.Class\030f \003(\0132\'.org.jetbrains.kot" +
-      "lin.metadata.Property:P\n\034anonymous_objec" +
-      "t_origin_name\022$.org.jetbrains.kotlin.met",
-      "adata.Class\030g \001(\005B\004\230\265\030\001:I\n\023package_modul" +
-      "e_name\022&.org.jetbrains.kotlin.metadata.P" +
-      "ackage\030e \001(\005B\004\230\265\030\001:o\n\026package_local_vari" +
-      "able\022&.org.jetbrains.kotlin.metadata.Pac" +
-      "kage\030f \003(\0132\'.org.jetbrains.kotlin.metada" +
-      "ta.PropertyB\022B\020DebugJvmProtoBuf"
+      "9\n\005flags\022\'.org.jetbrains.kotlin.metadata" +
+      ".Property\030e \001(\005:\0010:g\n\017type_annotation\022#." +
+      "org.jetbrains.kotlin.metadata.Type\030d \003(\013",
+      "2).org.jetbrains.kotlin.metadata.Annotat" +
+      "ion:3\n\006is_raw\022#.org.jetbrains.kotlin.met" +
+      "adata.Type\030e \001(\010:z\n\031type_parameter_annot" +
+      "ation\022,.org.jetbrains.kotlin.metadata.Ty" +
+      "peParameter\030d \003(\0132).org.jetbrains.kotlin" +
+      ".metadata.Annotation:E\n\021class_module_nam" +
+      "e\022$.org.jetbrains.kotlin.metadata.Class\030" +
+      "e \001(\005B\004\230\265\030\001:k\n\024class_local_variable\022$.or" +
+      "g.jetbrains.kotlin.metadata.Class\030f \003(\0132" +
+      "\'.org.jetbrains.kotlin.metadata.Property",
+      ":P\n\034anonymous_object_origin_name\022$.org.j" +
+      "etbrains.kotlin.metadata.Class\030g \001(\005B\004\230\265" +
+      "\030\001:I\n\023package_module_name\022&.org.jetbrain" +
+      "s.kotlin.metadata.Package\030e \001(\005B\004\230\265\030\001:o\n" +
+      "\026package_local_variable\022&.org.jetbrains." +
+      "kotlin.metadata.Package\030f \003(\0132\'.org.jetb" +
+      "rains.kotlin.metadata.PropertyB\022B\020DebugJ" +
+      "vmProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4794,14 +4813,15 @@ public final class DebugJvmProtoBuf {
     methodSignature.internalInit(descriptor.getExtensions().get(1));
     lambdaClassOriginName.internalInit(descriptor.getExtensions().get(2));
     propertySignature.internalInit(descriptor.getExtensions().get(3));
-    typeAnnotation.internalInit(descriptor.getExtensions().get(4));
-    isRaw.internalInit(descriptor.getExtensions().get(5));
-    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(6));
-    classModuleName.internalInit(descriptor.getExtensions().get(7));
-    classLocalVariable.internalInit(descriptor.getExtensions().get(8));
-    anonymousObjectOriginName.internalInit(descriptor.getExtensions().get(9));
-    packageModuleName.internalInit(descriptor.getExtensions().get(10));
-    packageLocalVariable.internalInit(descriptor.getExtensions().get(11));
+    flags.internalInit(descriptor.getExtensions().get(4));
+    typeAnnotation.internalInit(descriptor.getExtensions().get(5));
+    isRaw.internalInit(descriptor.getExtensions().get(6));
+    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(7));
+    classModuleName.internalInit(descriptor.getExtensions().get(8));
+    classLocalVariable.internalInit(descriptor.getExtensions().get(9));
+    anonymousObjectOriginName.internalInit(descriptor.getExtensions().get(10));
+    packageModuleName.internalInit(descriptor.getExtensions().get(11));
+    packageLocalVariable.internalInit(descriptor.getExtensions().get(12));
     org.jetbrains.kotlin.protobuf.ExtensionRegistry registry =
         org.jetbrains.kotlin.protobuf.ExtensionRegistry.newInstance();
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.stringIdInTable);

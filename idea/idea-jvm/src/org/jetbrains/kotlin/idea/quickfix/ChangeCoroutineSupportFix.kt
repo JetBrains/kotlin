@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
 import org.jetbrains.kotlin.psi.KtFile
 
 sealed class ChangeCoroutineSupportFix(
@@ -54,7 +55,7 @@ sealed class ChangeCoroutineSupportFix(
                     LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR
                 }
             }
-            ProjectRootManagerEx.getInstanceEx(project).makeRootsChange({}, false, true)
+            project.invalidateProjectRoots()
         }
 
     }

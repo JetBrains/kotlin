@@ -98,7 +98,7 @@ public class PackageCodegenImpl implements PackageCodegen {
 
         List<KtClassOrObject> classOrObjects = new ArrayList<>();
 
-        for (KtDeclaration declaration : CodegenUtil.getActualDeclarations(file)) {
+        for (KtDeclaration declaration : CodegenUtil.getDeclarationsToGenerate(file, state.getBindingContext())) {
             if (isFilePartDeclaration(declaration)) {
                 generatePackagePart = true;
             }

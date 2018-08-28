@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.annotation.WrappedAnnotated;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
@@ -28,8 +29,10 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -62,13 +65,13 @@ public abstract class AnnotationCodegen {
     }
 
     public static final List<JvmFlagAnnotation> FIELD_FLAGS = Arrays.asList(
-            new JvmFlagAnnotation("kotlin.jvm.Volatile", Opcodes.ACC_VOLATILE),
+            new JvmFlagAnnotation(JvmAnnotationUtilKt.VOLATILE_ANNOTATION_FQ_NAME.asString(), Opcodes.ACC_VOLATILE),
             new JvmFlagAnnotation("kotlin.jvm.Transient", Opcodes.ACC_TRANSIENT)
     );
 
     public static final List<JvmFlagAnnotation> METHOD_FLAGS = Arrays.asList(
-            new JvmFlagAnnotation("kotlin.jvm.Strictfp", Opcodes.ACC_STRICT),
-            new JvmFlagAnnotation("kotlin.jvm.Synchronized", Opcodes.ACC_SYNCHRONIZED)
+            new JvmFlagAnnotation(JvmAnnotationUtilKt.STRICTFP_ANNOTATION_FQ_NAME.asString(), Opcodes.ACC_STRICT),
+            new JvmFlagAnnotation(JvmAnnotationUtilKt.SYNCHRONIZED_ANNOTATION_FQ_NAME.asString(), Opcodes.ACC_SYNCHRONIZED)
     );
 
     private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {
@@ -86,9 +89,9 @@ public abstract class AnnotationCodegen {
     private final InnerClassConsumer innerClassConsumer;
     private final KotlinTypeMapper typeMapper;
 
-    private AnnotationCodegen(@NotNull InnerClassConsumer innerClassConsumer, @NotNull KotlinTypeMapper mapper) {
+    private AnnotationCodegen(@NotNull InnerClassConsumer innerClassConsumer, @NotNull KotlinTypeMapper typeMapper) {
         this.innerClassConsumer = innerClassConsumer;
-        this.typeMapper = mapper;
+        this.typeMapper = typeMapper;
     }
 
     /**
@@ -216,25 +219,37 @@ public abstract class AnnotationCodegen {
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass);
     }
 
-    private static final Map<KotlinTarget, ElementType> annotationTargetMap = new EnumMap<>(KotlinTarget.class);
+    private static final Map<JvmTarget, Map<KotlinTarget, ElementType>> annotationTargetMaps = new EnumMap<>(JvmTarget.class);
 
     static {
-        annotationTargetMap.put(KotlinTarget.CLASS, ElementType.TYPE);
-        annotationTargetMap.put(KotlinTarget.ANNOTATION_CLASS, ElementType.ANNOTATION_TYPE);
-        annotationTargetMap.put(KotlinTarget.CONSTRUCTOR, ElementType.CONSTRUCTOR);
-        annotationTargetMap.put(KotlinTarget.LOCAL_VARIABLE, ElementType.LOCAL_VARIABLE);
-        annotationTargetMap.put(KotlinTarget.FUNCTION, ElementType.METHOD);
-        annotationTargetMap.put(KotlinTarget.PROPERTY_GETTER, ElementType.METHOD);
-        annotationTargetMap.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
-        annotationTargetMap.put(KotlinTarget.FIELD, ElementType.FIELD);
-        annotationTargetMap.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
-        annotationTargetMap.put(KotlinTarget.TYPE_PARAMETER, ElementType.TYPE_PARAMETER);
-        annotationTargetMap.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
+        Map<KotlinTarget, ElementType> jvm6 = new EnumMap<>(KotlinTarget.class);
+        jvm6.put(KotlinTarget.CLASS, ElementType.TYPE);
+        jvm6.put(KotlinTarget.ANNOTATION_CLASS, ElementType.ANNOTATION_TYPE);
+        jvm6.put(KotlinTarget.CONSTRUCTOR, ElementType.CONSTRUCTOR);
+        jvm6.put(KotlinTarget.LOCAL_VARIABLE, ElementType.LOCAL_VARIABLE);
+        jvm6.put(KotlinTarget.FUNCTION, ElementType.METHOD);
+        jvm6.put(KotlinTarget.PROPERTY_GETTER, ElementType.METHOD);
+        jvm6.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
+        jvm6.put(KotlinTarget.FIELD, ElementType.FIELD);
+        jvm6.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
+
+        Map<KotlinTarget, ElementType> jvm8 = new EnumMap<>(jvm6);
+        jvm8.put(KotlinTarget.TYPE_PARAMETER, ElementType.TYPE_PARAMETER);
+        jvm8.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
+
+        annotationTargetMaps.put(JvmTarget.JVM_1_6, jvm6);
+        annotationTargetMaps.put(JvmTarget.JVM_1_8, jvm8);
     }
 
-    private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
+    private void generateTargetAnnotation(
+            @NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent
+    ) {
         String descriptor = Type.getType(Target.class).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
+
+        Map<KotlinTarget, ElementType> annotationTargetMap = annotationTargetMaps.get(typeMapper.getJvmTarget());
+        if (annotationTargetMap == null) throw new AssertionError("No annotation target map for JVM target " + typeMapper.getJvmTarget());
+
         Set<KotlinTarget> targets = AnnotationChecker.Companion.applicableTargetSet(classDescriptor);
         Set<ElementType> javaTargets;
         if (targets == null) {
@@ -244,8 +259,10 @@ public abstract class AnnotationCodegen {
         else {
             javaTargets = EnumSet.noneOf(ElementType.class);
             for (KotlinTarget target : targets) {
-                if (annotationTargetMap.get(target) == null) continue;
-                javaTargets.add(annotationTargetMap.get(target));
+                ElementType elementType = annotationTargetMap.get(target);
+                if (elementType != null) {
+                    javaTargets.add(elementType);
+                }
             }
         }
         AnnotationVisitor visitor = visitAnnotation(descriptor, true);
@@ -302,7 +319,10 @@ public abstract class AnnotationCodegen {
             return null;
         }
 
-        if (classDescriptor.isExpect()) {
+        // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
+        // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
+        // (Otherwise we would've resolved the entry to the actual annotation class.)
+        if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(classDescriptor)) {
             return null;
         }
 

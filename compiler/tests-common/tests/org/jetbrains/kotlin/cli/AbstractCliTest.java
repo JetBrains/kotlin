@@ -49,6 +49,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
 
     private static final String EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX = "-Xargfile=";
+    private static final String BUILD_FILE_ARGUMENT_PREFIX = "-Xbuild-file=";
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
         StringBuilder output = new StringBuilder();
@@ -78,6 +79,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(testDataAbsoluteDir, TESTDATA_DIR)
                 .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR)
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
+                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getParentFile().getAbsolutePath(), "$DIST_DIR$")
                 .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
@@ -185,7 +187,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static List<String> readArgs(@NotNull String testArgsFilePath, @NotNull String tempDir) {
         File testArgsFile = new File(testArgsFilePath);
         List<String> lines = FilesKt.readLines(testArgsFile, Charsets.UTF_8);
-        return CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParent(), tempDir));
+        return CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParentFile().getAbsolutePath(), tempDir));
     }
 
     private static String readArg(String arg, @NotNull String testDataDir, @NotNull String tempDir) {
@@ -200,29 +202,38 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
         String argWithTestPathsReplaced = replaceTestPaths(argWithColonsReplaced, testDataDir, tempDir);
 
+        if (arg.startsWith(BUILD_FILE_ARGUMENT_PREFIX)) {
+            return createTempFileWithPathsReplaced(argWithTestPathsReplaced, BUILD_FILE_ARGUMENT_PREFIX, ".xml", testDataDir, tempDir);
+        }
+
         if (arg.startsWith(EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX)) {
-            return mockArgfile(argWithTestPathsReplaced, testDataDir, tempDir);
+            return createTempFileWithPathsReplaced(
+                    argWithTestPathsReplaced, EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX, "", testDataDir, tempDir
+            );
         }
-        else {
-            return argWithTestPathsReplaced;
-        }
+
+        return argWithTestPathsReplaced;
     }
 
-    // Create new temp. argfile with all test paths replaced and return argfile-argument pointing to that file
-    private static String mockArgfile(@NotNull String argfileArgument, @NotNull String testDataDir, @NotNull String tempDir) {
-        String argfilePath = kotlin.text.StringsKt.substringAfter(argfileArgument, EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX, argfileArgument);
-        File argfile = new File(argfilePath);
+    // Create new temporary file with all test paths replaced and return the new argument value with the new file path
+    @NotNull
+    private static String createTempFileWithPathsReplaced(
+            @NotNull String argument,
+            @NotNull String argumentPrefix,
+            @NotNull String tempFileSuffix,
+            @NotNull String testDataDir,
+            @NotNull String tempDir
+    ) {
+        String filePath = kotlin.text.StringsKt.substringAfter(argument, argumentPrefix, argument);
+        File file = new File(filePath);
+        if (!file.exists()) return argument;
 
-        if (argfile.exists()) {
-            File mockArgfile = FilesKt.createTempFile(argfile.getAbsolutePath(), "", new File(tempDir));
-            String oldArgfileContent = FilesKt.readText(argfile, Charsets.UTF_8);
-            String newArgfileContent = replaceTestPaths(oldArgfileContent, testDataDir, tempDir);
-            FilesKt.writeText(mockArgfile, newArgfileContent, Charsets.UTF_8);
-            return EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX + mockArgfile.getAbsolutePath();
-        } else {
-            return argfileArgument;
-        }
+        File result = FilesKt.createTempFile(file.getAbsolutePath(), tempFileSuffix, new File(tempDir));
+        String oldContent = FilesKt.readText(file, Charsets.UTF_8);
+        String newContent = replaceTestPaths(oldContent, testDataDir, tempDir);
+        FilesKt.writeText(result, newContent, Charsets.UTF_8);
 
+        return argumentPrefix + result.getAbsolutePath();
     }
 
     private static String replaceTestPaths(@NotNull String str, @NotNull String testDataDir, @NotNull String tempDir) {

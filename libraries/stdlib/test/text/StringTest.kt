@@ -9,6 +9,7 @@ import kotlin.test.*
 import test.*
 import test.collections.behaviors.iteratorBehavior
 import test.collections.compare
+import kotlin.math.sign
 
 
 fun createString(content: String): CharSequence = content
@@ -755,6 +756,59 @@ class StringTest {
         assertTrue(null.equals(null, ignoreCase = false))
     }
 
+    @Test fun compareToIgnoreCase() {
+
+        fun assertCompareResult(expectedResult: Int, v1: String, v2: String, ignoreCase: Boolean) {
+            val result = v1.compareTo(v2, ignoreCase = ignoreCase).sign
+            assertEquals(expectedResult, result, "Comparing '$v1' with '$v2', ignoreCase = $ignoreCase")
+            if (expectedResult == 0)
+                assertTrue(v1.equals(v2, ignoreCase = ignoreCase))
+            if (!ignoreCase)
+                assertEquals(v1.compareTo(v2).sign, result)
+        }
+
+        fun assertCompareResult(expectedResult: Int, expectedResultIgnoreCase: Int, v1: String, v2: String) {
+            assertCompareResult(expectedResult, v1, v2, false)
+            assertCompareResult(expectedResultIgnoreCase, v1, v2, true)
+        }
+
+        val (EQ, LT, GT) = listOf(0, -1, 1)
+
+        assertCompareResult(EQ, EQ, "ABC", "ABC")
+        assertCompareResult(LT, EQ, "ABC", "ABc")
+        assertCompareResult(GT, EQ, "ABc", "ABC")
+
+        assertCompareResult(LT, LT, "ABC", "ABx")
+        assertCompareResult(LT, GT, "ABX", "ABc")
+
+        assertCompareResult(LT, LT, "[", "aa")
+        assertCompareResult(GT, LT, "[", "AA")
+        assertCompareResult(EQ, EQ, "", "")
+        assertCompareResult(LT, LT, "", "A")
+        assertCompareResult(GT, GT, "A", "")
+
+        run {
+            val a32 = "A".repeat(32)
+            assertCompareResult(LT, EQ, a32 + "B", a32 + "b")
+            assertCompareResult(LT, GT, a32 + "BB", a32 + "b")
+            assertCompareResult(LT, GT, a32 + "C", a32 + "b")
+
+        }
+
+        val equalIgnoringCase = listOf("ABC", "ABc", "aBC", "AbC", "abc")
+        for (item1 in equalIgnoringCase) {
+            for (item2 in equalIgnoringCase) {
+                assertCompareResult(EQ, item1, item2, ignoreCase = true)
+            }
+        }
+    }
+
+
+    @Test fun orderIgnoringCase() {
+        val list = listOf("Beast", "Ast", "asterisk", "[]")
+        assertEquals(listOf("Ast", "Beast", "[]", "asterisk"), list.sorted())
+        assertEquals(listOf("[]", "Ast", "asterisk", "Beast"), list.sortedWith(String.CASE_INSENSITIVE_ORDER))
+    }
 
     @Test fun replace() {
         val input = "abbAb"

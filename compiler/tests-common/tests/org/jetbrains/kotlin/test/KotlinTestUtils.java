@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -37,11 +35,15 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.kotlin.CoroutineTestUtilKt;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
+import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -610,11 +612,11 @@ public class KotlinTestUtils {
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<String> paths = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
-        if (paths.isEmpty()) return;
+        List<KotlinSourceRoot> roots = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
+        if (roots.isEmpty()) return;
         List<KtFile> ktFiles = new ArrayList<>();
-        for (String path : paths) {
-            File file = new File(path);
+        for (KotlinSourceRoot root : roots) {
+            File file = new File(root.getPath());
             if (file.isFile()) {
                 ktFiles.add(loadJetFile(environment.getProject(), file));
             }
@@ -680,6 +682,7 @@ public class KotlinTestUtils {
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
             KotlinCoreEnvironment environment = createEnvironmentWithFullJdkAndIdeaAnnotations(disposable);
+            CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettingsForMultifileCompilerTests(ktFiles, environment);
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
         }
         else {
@@ -787,33 +790,15 @@ public class KotlinTestUtils {
             if (coroutinesPackage.isEmpty()) {
                 coroutinesPackage = "kotlin.coroutines.experimental";
             }
+
+            boolean isReleaseCoroutines =
+                    !coroutinesPackage.contains("experimental") ||
+                    isDirectiveDefined(expectedText, "LANGUAGE_VERSION: 1.3") ||
+                    isDirectiveDefined(expectedText, "!LANGUAGE: +ReleaseCoroutines");
+
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
-                                             "package helpers\n" +
-                                             "import " + coroutinesPackage + ".*\n" +
-                                             "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +
-                                             "    override val context = EmptyCoroutineContext\n" +
-                                             "    override fun resumeWithException(exception: Throwable) {\n" +
-                                             "        throw exception\n" +
-                                             "    }\n" +
-                                             "\n" +
-                                             "    override fun resume(data: T) = x(data)\n" +
-                                             "}\n" +
-                                             "\n" +
-                                             "fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {\n" +
-                                             "    override val context = EmptyCoroutineContext\n" +
-                                             "    override fun resumeWithException(exception: Throwable) {\n" +
-                                             "        x(exception)\n" +
-                                             "    }\n" +
-                                             "\n" +
-                                             "    override fun resume(data: Any?) { }\n" +
-                                             "}\n" +
-                                             "\n" +
-                                             "open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {\n" +
-                                             "    companion object : EmptyContinuation()\n" +
-                                             "    override fun resume(data: Any?) {}\n" +
-                                             "    override fun resumeWithException(exception: Throwable) { throw exception }\n" +
-                                             "}",
+                                             CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines),
                                              directives
             ));
         }
@@ -848,7 +833,7 @@ public class KotlinTestUtils {
 
     @NotNull
     public static Map<String, String> parseDirectives(String expectedText) {
-        Map<String, String> directives = Maps.newHashMap();
+        Map<String, String> directives = new HashMap<>();
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
         int start = 0;
         while (directiveMatcher.find()) {
@@ -1062,8 +1047,25 @@ public class KotlinTestUtils {
 
             if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
                 String text = doLoadFile(testDataFile);
-                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
-                String newText = directive + "\n" + text;
+                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
+
+                String newText;
+                if (text.startsWith("// !")) {
+                    StringBuilder prefixBuilder = new StringBuilder();
+                    int l = 0;
+                    while (text.startsWith("// !", l)) {
+                        int r = text.indexOf("\n", l) + 1;
+                        if (r <= 0) r = text.length();
+                        prefixBuilder.append(text.substring(l, r));
+                        l = r;
+                    }
+                    prefixBuilder.append(directive);
+                    prefixBuilder.append(text.substring(l));
+
+                    newText = prefixBuilder.toString();
+                } else {
+                    newText = directive + text;
+                }
 
                 if (!newText.equals(text)) {
                     System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
@@ -1183,7 +1185,7 @@ public class KotlinTestUtils {
     }
 
     private static Set<String> collectMethodsMetadata(Class<?> testCaseClass) {
-        Set<String> filePaths = Sets.newHashSet();
+        Set<String> filePaths = new HashSet<>();
         for (Method method : testCaseClass.getDeclaredMethods()) {
             String path = getMethodMetadata(method);
             if (path != null) {
