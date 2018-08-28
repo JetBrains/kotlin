@@ -607,3 +607,84 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
 public fun <T : Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
     GeneratorSequence(seedFunction, nextFunction)
 
+private class CycleSequence<T>(private val iterable: Iterable<T>, private val cycleCount: Int): Sequence<T> {
+    override fun iterator(): Iterator<T> {
+        return object : Iterator<T> {
+            private var currentCycleCount = 1
+            private var currentIterator = iterable.iterator()
+            override fun hasNext(): Boolean {
+                return currentIterator.hasNext() || currentCycleCount < cycleCount
+            }
+
+            override fun next(): T {
+                //while and not if because new iterator could be empty which would raise an exception at line 24
+                while (!currentIterator.hasNext()) {
+                    startFromBeginning()
+                }
+                return currentIterator.next()
+            }
+
+            private fun startFromBeginning() {
+                if (currentCycleCount < cycleCount) {
+                    ++currentCycleCount
+                    currentIterator = iterable.iterator()
+                } else {
+                    throw NoSuchElementException("Maximum cycle count is reached")
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Returns a sequence cycling through the iterable [cycleCount] times
+ * * If the cycle count is exceeded a [NoSuchElementException] is thrown
+ * @sample samples.collections.Sequences.Cycle.cycleNTimes
+ */
+fun <T> Iterable<T>.cycle(cycleCount: Int): Sequence<T> {
+    return CycleSequence(this, cycleCount)
+}
+
+/**
+ * Returns a sequence cycling through the specified sequence [cycleCount] times
+ * * If the cycle count is exceeded a [NoSuchElementException] is thrown
+ * @sample samples.collections.Sequences.Cycle.cycleNTimes
+ */
+fun <T> Sequence<T>.cycle(cycleCount: Int): Sequence<T> {
+    return asIterable().cycle(cycleCount)
+}
+
+private class InfiniteCycleSequence<T>(private val iterable: Iterable<T>) : Sequence<T> {
+    override fun iterator(): Iterator<T> {
+        return object : Iterator<T> {
+            private var currentIterator = iterable.iterator()
+            override fun hasNext(): Boolean = true
+
+            override fun next(): T {
+                //while and not if because new iterator could be empty which would raise an exception at line 59
+                while (!currentIterator.hasNext()) {
+                    currentIterator = iterable.iterator()
+                }
+                return currentIterator.next()
+            }
+        }
+    }
+
+}
+
+/**
+ * Returns an infinite sequence which over and over repeats the iterable
+ * @sample samples.collections.Sequences.Cycle.cycleNTimes
+ */
+fun <T> Iterable<T>.cycle(): Sequence<T> {
+    return InfiniteCycleSequence(this)
+}
+
+/**
+ * Returns an infinite sequence which over and over repeats the sequence
+ * @sample samples.collections.Sequences.Cycle.cycleInfinitely
+ */
+fun <T> Sequence<T>.cycle(): Sequence<T> {
+    return asIterable().cycle()
+}
+
