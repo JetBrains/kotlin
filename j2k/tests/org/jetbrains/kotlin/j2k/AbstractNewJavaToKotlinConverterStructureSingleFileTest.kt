@@ -14,6 +14,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
+import org.jetbrains.kotlin.j2k.NewJ2KTestView.stat
 
 
 abstract class AbstractNewJavaToKotlinConverterStructureSingleFileTest : AbstractNewJavaToKotlinConverterSingleFileTest() {
@@ -85,38 +86,8 @@ abstract class AbstractNewJavaToKotlinConverterStructureSingleFileTest : Abstrac
             var totalExpected: Int = 0,
             var totalActual: Int = 0
         ) {
-
-            fun stat(original: TestResults = this): String {
-                fun Int.percentOf(b: Int): String = String.format("%.2f%%", this * 100F / b)
-                return """
-                        +++ $totalDiffPlus(${totalDiffPlus.percentOf(original.totalExpected)}, ${totalDiffPlus.percentOf(original.totalActual)})
-                        --- $totalDiffMinus(${totalDiffMinus.percentOf(original.totalExpected)}, ${totalDiffMinus.percentOf(original.totalActual)})
-                        Expected: $totalExpected ${"(${original.totalExpected})".takeIf { original != this } ?: ""}
-                        Actual: $totalActual ${"(${original.totalActual})".takeIf { original != this } ?: ""}
-                        ${shortStat()}
-                """.trimIndent()
-            }
-
-            fun shortStat(): String {
-                return "P: ${passes.size}, A: ${assertionFailures.size}, E: ${exceptionFailures.size}"
-            }
-
-
             fun serialize(): String {
                 return Gson().toJson(this)
-            }
-
-            operator fun minus(before: TestResults): TestResults {
-                return TestResults().also {
-                    it.passes += passes - before.passes
-                    it.assertionFailures += assertionFailures - before.assertionFailures
-                    it.exceptionFailures += exceptionFailures - before.exceptionFailures
-
-                    it.totalDiffPlus = totalDiffPlus - before.totalDiffPlus
-                    it.totalDiffMinus = totalDiffMinus - before.totalDiffMinus
-                    it.totalExpected = totalExpected - before.totalExpected
-                    it.totalActual = totalActual - before.totalActual
-                }
             }
         }
 

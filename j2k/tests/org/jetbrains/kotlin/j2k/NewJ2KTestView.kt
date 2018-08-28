@@ -15,6 +15,8 @@ import com.intellij.uiDesigner.core.GridLayoutManager
 import org.jetbrains.kotlin.j2k.AbstractNewJavaToKotlinConverterStructureSingleFileTest.Companion.TestResults
 import org.jetbrains.kotlin.j2k.AbstractNewJavaToKotlinConverterStructureSingleFileTest.Companion.dateFormat
 import org.jetbrains.kotlin.j2k.AbstractNewJavaToKotlinConverterStructureSingleFileTest.Companion.loadTestResults
+import java.awt.Component
+import java.awt.Graphics
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
@@ -22,24 +24,224 @@ import java.io.File
 import java.util.*
 import javax.swing.*
 import javax.swing.SwingUtilities.invokeLater
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 
 object NewJ2KTestView {
 
+    private fun Int.percentOf(b: Int, format: String = "%.2f%%"): String = String.format(format, this * 100F / b)
+    private infix fun Int.signedPercentOf(b: Int): String = this.percentOf(b, "%+.2f%%")
+    private val Int.signedStr get() = String.format("%+d", this)
+
+    fun TestResults.stat(): String {
+        return """
+                    +++ $totalDiffPlus(${totalDiffPlus.percentOf(totalExpected)}, ${totalDiffPlus.percentOf(totalActual)})
+                    --- $totalDiffMinus(${totalDiffMinus.percentOf(totalExpected)}, ${totalDiffMinus.percentOf(totalActual)})
+                    Expected: $totalExpected
+                    Actual: $totalActual
+                    ${shortStat()}
+        """.trimIndent()
+    }
+
+    fun TestResults.shortStat(): String {
+        return "P: ${passes.size}, A: ${assertionFailures.size}, E: ${exceptionFailures.size}"
+    }
+
+    private enum class TestState(val s: String? = null) {
+        Removed("-"),
+        New("+"),
+        Passed("P"),
+        Assert("A"),
+        Exception("E");
+
+        override fun toString(): String {
+            return s ?: this.name
+        }
+    }
+
+    private val TestResults.tests: Map<String, TestState>
+        get() {
+            return (passes.map { it to TestState.Passed } +
+                    assertionFailures.map { it to TestState.Assert } +
+                    exceptionFailures.map { it to TestState.Exception }).toMap()
+        }
+
+    private data class TestResultsDiff(val before: TestResults, val after: TestResults) {
+
+        val testsDiff: List<Pair<String, Pair<TestState, TestState>>>
+
+        val minusDiff = after.totalDiffMinus - before.totalDiffMinus
+        val plusDiff = after.totalDiffPlus - before.totalDiffPlus
+        val actualDiff = after.totalActual - before.totalActual
+        val expectedDiff = after.totalExpected - before.totalExpected
+
+        val testsAfter = after.tests
+        val testsBefore = before.tests
+
+        init {
+            val removedTests =
+                testsBefore.entries.asSequence()
+                    .filter { it.key !in testsAfter.keys }
+                    .mapNotNull { (name, oldState) -> name to (TestState.Removed to oldState) }
+
+            testsDiff =
+                    (testsAfter.entries - testsBefore.entries)
+                        .map { (name, newState) ->
+                            name to (newState to (testsBefore[name] ?: TestState.New))
+                        } + removedTests
+        }
+
+        val testDiffByState =
+            testsDiff
+                .groupBy({ (_, state) -> state }, { (name, _) -> name })
+                .toSortedMap(Comparator { (f1, s1), (f2, s2) ->
+                    if (f1 != f2) return@Comparator f1.compareTo(f2)
+                    return@Comparator s1.compareTo(s2)
+                })
+                .map { (stateDiff, names) -> stateDiff to names.sorted() }
+    }
+
     private class CompareSelectTab(tabs: JBTabbedPane, val after: TestResults) : IndexTab(tabs) {
         override fun action() {
-            val diff = after - variants[list.selectedIndex].second
+            val before = variants[list.selectedIndex].second
             tabs.removeTabAt(tabs.selectedIndex)
             val tabIndex = tabs.tabCount
-            tabs.addTab("Compare", ReportTab(tabs, tabIndex, diff, after))
+            tabs.addTab("Compare", DiffTab(tabs, TestResultsDiff(before, after)))
             tabs.selectedIndex = tabIndex
         }
     }
 
-    private class ReportTab(val tabs: JBTabbedPane, val index: Int, results: TestResults, original: TestResults) : JPanel() {
+    private class DiffTab(tabs: JBTabbedPane, val diff: TestResultsDiff) : BaseReportTab(tabs) {
 
         init {
+            initComponents()
+        }
+
+        override fun listTests(): String {
+            return diff.testDiffByState.joinToString(separator = "\n") { (stateDiff, names) ->
+                val (a, b) = stateDiff
+                names.joinToString(separator = "\n") { "$b/$a: $it" }
+            }
+        }
+
+
+        private inline fun countTestDiffWithStates(crossinline predicate: (Pair<TestState, TestState>) -> Boolean): Int {
+            return diff.testDiffByState
+                .filter { (stateDiff, _) -> predicate(stateDiff) }
+                .sumBy { (_, names) -> names.size }
+        }
+
+        override fun stat(): String {
+
+
+            fun countTestDiffPlusMinus(state: TestState): Pair<Int, Int> =
+                countTestDiffWithStates { (a, _) -> a == state } to countTestDiffWithStates { (_, b) -> b == state }
+
+            fun testCountLine(state: TestState): String {
+                val (has, had) = countTestDiffPlusMinus(state)
+                val testCountAfter = diff.testsAfter.size
+                val testCountBefore = diff.testsBefore.size
+                return "$state: " +
+                        "${(-had).signedStr} (${had.percentOf(testCountBefore)}), " +
+                        "${has.signedStr} (${has.percentOf(testCountAfter)})"
+            }
+
+            return """
+                +++ ${diff.plusDiff.signedStr} (${diff.plusDiff signedPercentOf diff.after.totalExpected}, ${diff.plusDiff signedPercentOf diff.after.totalActual})
+                --- ${diff.minusDiff.signedStr} (${diff.minusDiff signedPercentOf diff.after.totalExpected}, ${diff.minusDiff signedPercentOf diff.after.totalActual})
+                Expected: ${diff.expectedDiff.signedStr} (${diff.expectedDiff signedPercentOf diff.after.totalExpected}) (${diff.after.totalExpected})
+                Actual: ${diff.actualDiff.signedStr} (${diff.actualDiff signedPercentOf diff.after.totalActual}) (${diff.after.totalActual})
+                ${testCountLine(TestState.Passed)}
+                ${testCountLine(TestState.Assert)}
+                ${testCountLine(TestState.Exception)}
+            """.trimIndent()
+        }
+
+
+        override fun fillTests(addWithIcon: (List<String>, icon: Icon) -> Unit) {
+
+
+            fun iconFor(state: TestState): Icon = when (state) {
+                TestState.New -> AllIcons.General.Add
+                TestState.Removed -> AllIcons.General.Remove
+                TestState.Passed -> AllIcons.RunConfigurations.TestPassed
+                TestState.Assert -> AllIcons.RunConfigurations.TestFailed
+                TestState.Exception -> AllIcons.RunConfigurations.TestError
+            }
+
+            fun iconFor(stateChange: Pair<TestState, TestState>): Icon {
+                val (after, before) = stateChange
+                val icon1 = iconFor(before)
+                val icon2 = iconFor(after)
+                return object : Icon {
+                    override fun getIconHeight(): Int {
+                        return maxOf(icon1.iconHeight, icon2.iconHeight)
+                    }
+
+                    override fun paintIcon(c: Component?, g: Graphics?, x: Int, y: Int) {
+                        icon1.paintIcon(c, g, x, y)
+                        icon2.paintIcon(c, g, x + icon1.iconWidth, y)
+                    }
+
+                    override fun getIconWidth(): Int {
+                        return icon1.iconWidth + icon2.iconWidth
+                    }
+
+                }
+            }
+
+
+            diff.testDiffByState.forEach { (state, names) ->
+                addWithIcon(names, iconFor(state))
+            }
+        }
+    }
+
+    private class ReportTab(tabs: JBTabbedPane, val results: TestResults) : BaseReportTab(tabs) {
+
+        init {
+            initComponents()
+            getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0), "COMPARE")
+            actionMap.put("COMPARE", object : AbstractAction() {
+                override fun actionPerformed(e: ActionEvent) {
+                    val index = tabs.tabCount
+                    val tab = CompareSelectTab(tabs, results)
+                    tab.fillData()
+                    tabs.addTab("Select", tab)
+                    tabs.selectedIndex = index
+                }
+            })
+        }
+
+        override fun listTests(): String {
+            return results.tests
+                .entries
+                .groupBy({ it.value }, { it.key }).toSortedMap()
+                .entries
+                .joinToString(separator = "\n") { (state, names) ->
+                    names.sorted().joinToString(separator = "\n") { "$state: $it" }
+                }
+        }
+
+        override fun stat(): String {
+            return results.stat()
+        }
+
+        override fun fillTests(addWithIcon: (List<String>, icon: Icon) -> Unit) {
+            addWithIcon(results.passes.sorted(), AllIcons.RunConfigurations.TestState.Green2)
+            addWithIcon(results.assertionFailures.sorted(), AllIcons.RunConfigurations.TestState.Yellow2)
+            addWithIcon(results.exceptionFailures.sorted(), AllIcons.RunConfigurations.TestState.Red2)
+        }
+    }
+
+    private abstract class BaseReportTab(val tabs: JBTabbedPane) : JPanel() {
+        abstract fun stat(): String
+        abstract fun fillTests(addWithIcon: (List<String>, icon: Icon) -> Unit)
+        abstract fun listTests(): String
+
+        fun initComponents() {
             layout = GridLayoutManager(2, 1)
-            val report = JBLabel("<html>" + results.stat(original).replace("\n", "<br>") + "</html>")
+            val report = JBLabel("<html>" + stat().replace("\n", "<br>") + "</html>")
             add(report, GridConstraints().also {
                 it.row = 0
                 it.fill = GridConstraints.FILL_HORIZONTAL
@@ -55,9 +257,7 @@ object NewJ2KTestView {
                     }
                 }
 
-                addWithIcon(results.passes.sorted(), AllIcons.RunConfigurations.TestState.Green2)
-                addWithIcon(results.assertionFailures.sorted(), AllIcons.RunConfigurations.TestState.Yellow2)
-                addWithIcon(results.exceptionFailures.sorted(), AllIcons.RunConfigurations.TestState.Red2)
+                fillTests(addWithIcon = ::addWithIcon)
 
                 val list = JBList(model)
                 list.cellRenderer = ListCellRenderer<JBLabel> { list, value, index, isSelected, cellHasFocus -> value!! }
@@ -69,14 +269,12 @@ object NewJ2KTestView {
                 it.fill = GridConstraints.FILL_BOTH
             })
 
-            getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0), "COMPARE")
-            actionMap.put("COMPARE", object : AbstractAction() {
+            getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_E, 0), "EXPORT")
+            actionMap.put("EXPORT", object : AbstractAction() {
                 override fun actionPerformed(e: ActionEvent) {
-                    val index = tabs.tabCount
-                    val tab = CompareSelectTab(tabs, results)
-                    tab.fillData()
-                    tabs.addTab("Select", tab)
-                    tabs.selectedIndex = index
+                    val selection = StringSelection("${stat()}\nTests:\n${listTests()}")
+                    val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+                    clipboard.setContents(selection, selection)
                 }
             })
         }
@@ -89,7 +287,7 @@ object NewJ2KTestView {
         open fun action() {
             val (date, report) = variants[list.selectedIndex]
             val tabIndex = tabs.tabCount
-            tabs.addTab("$date", ReportTab(tabs, tabIndex, report, report))
+            tabs.addTab("$date", ReportTab(tabs, report))
             tabs.selectedIndex = tabIndex
         }
 
@@ -194,7 +392,8 @@ object NewJ2KTestView {
                         .put(KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.META_DOWN_MASK), "CLOSE_TAB")
                     this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                         .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.META_DOWN_MASK), "RELOAD")
-                    this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ESCAPE")
+                    this.rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ESCAPE")
 
                     contentPane = tabs
                 }
