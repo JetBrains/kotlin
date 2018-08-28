@@ -8,7 +8,7 @@ package org.jetbrains.konan.analyser
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.util.io.exists
 import org.jetbrains.konan.KONAN_CURRENT_ABI_VERSION
 import org.jetbrains.konan.settings.KonanPaths
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
@@ -45,20 +45,19 @@ class KonanPlatformSupport : IdePlatformSupport() {
 private fun createKonanBuiltIns(sdkContext: GlobalContextImpl): KotlinBuiltIns {
 
     // TODO: it depends on a random project's stdlib, propagate the actual project here
-    val stdlibLocation = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
-        val stdlibPath = KonanPaths.getInstance(it).konanStdlib() ?: return@mapNotNull null
-        val stdlibVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(stdlibPath.toFile()) ?: return@mapNotNull null
-        stdlibPath to stdlibVirtualFile
+    val stdlibPath = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
+        KonanPaths.getInstance(it).konanStdlib()?.takeIf { it.exists() }
     }.firstOrNull()
 
-    if (stdlibLocation != null) {
-        val library = createKonanLibrary(stdlibLocation.first.File(), KONAN_CURRENT_ABI_VERSION)
+    if (stdlibPath != null) {
+        val library = createKonanLibrary(stdlibPath.File(), KONAN_CURRENT_ABI_VERSION)
 
         val builtInsModule = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
             library,
             LanguageVersionSettingsImpl.DEFAULT,
             sdkContext.storageManager
         )
+        builtInsModule.setDependencies(listOf(builtInsModule))
 
         return builtInsModule.builtIns
     }

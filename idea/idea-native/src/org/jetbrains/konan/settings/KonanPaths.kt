@@ -30,7 +30,7 @@ open class KonanPaths(protected val project: Project) : ProjectComponent {
 
     open fun konanDist(): Path? {
         for (provider in KonanModelProvider.EP_NAME.extensions) {
-            return provider.getKonanHome(project)
+            provider.getKonanHome(project)?.let { return it }
         }
         return bundledKonanDist()
     }

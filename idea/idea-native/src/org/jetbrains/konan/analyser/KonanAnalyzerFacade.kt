@@ -7,7 +7,6 @@ package org.jetbrains.konan.analyser
 
 import org.jetbrains.konan.createDeclarationProviderFactory
 import org.jetbrains.konan.createResolvedModuleDescriptors
-import org.jetbrains.konan.destructModuleContent
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
@@ -41,15 +40,12 @@ class KonanAnalyzerFacade : ResolverForModuleFactory() {
         targetPlatformVersion: TargetPlatformVersion
     ): ResolverForModule {
 
-        val (syntheticFiles, moduleContentScope) = destructModuleContent(moduleContent)
-        val project = moduleContext.project
-
         val declarationProviderFactory = createDeclarationProviderFactory(
-            project,
+            moduleContext.project,
             moduleContext,
-            syntheticFiles,
+            moduleContent.syntheticFiles,
             moduleContent.moduleInfo,
-            moduleContentScope
+            moduleContent.moduleContentScope
         )
 
         val container = createContainerForLazyResolve(
