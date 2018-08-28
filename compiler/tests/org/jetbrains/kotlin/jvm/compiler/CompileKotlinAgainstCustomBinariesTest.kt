@@ -433,7 +433,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testObsoleteInlineSuspend() {
         val version = intArrayOf(1, 0, 1) // legacy coroutines metadata
-        val options = listOf("-Xcoroutines=enable")
+        val options = listOf("-language-version", "1.2", "-Xcoroutines=enable")
         val library = transformJar(
             compileLibrary("library", additionalOptions = options),
             { _, bytes ->

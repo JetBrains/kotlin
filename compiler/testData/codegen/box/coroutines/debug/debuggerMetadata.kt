@@ -87,7 +87,7 @@ fun box(): String {
     builder {
         suspended()
     }
-    res = (continuation!! as BaseContinuationImpl).getSpilledVariableFieldMapping().toMap()["L$0"] ?: "suspended fail"
+    res = (continuation!! as BaseContinuationImpl).getSpilledVariableFieldMapping()!!.toMap()["L$0"] ?: "suspended fail"
     if (res != "ss") {
         return "" + res
     }
@@ -95,12 +95,12 @@ fun box(): String {
     builder {
         multipleLocalsInOneSlot()
     }
-    res = (continuation!! as BaseContinuationImpl).getSpilledVariableFieldMapping().toMap()["I$0"] ?: "multipleLocalsInOneSlot fail 1"
+    res = (continuation!! as BaseContinuationImpl).getSpilledVariableFieldMapping()!!.toMap()["I$0"] ?: "multipleLocalsInOneSlot fail 1"
     if (res != "first") {
         return "" + res
     }
     continuation!!.resumeWith(SuccessOrFailure.success(Unit))
-    res = (continuation!! as BaseContinuationImpl).getSpilledVariableFieldMapping().toMap()["I$0"] ?: "multipleLocalsInOneSlot fail 2"
+    res = (continuation!! as BaseContinuationImpl).getSpilledVariableFieldMapping()!!.toMap()["I$0"] ?: "multipleLocalsInOneSlot fail 2"
     if (res != "second") {
         return "" + res
     }
