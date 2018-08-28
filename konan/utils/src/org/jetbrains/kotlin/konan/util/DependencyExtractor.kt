@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.konan.file.unzipTo
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 internal class DependencyExtractor {
     private val useZip = System.getProperty("os.name").startsWith("Windows")
@@ -21,10 +22,22 @@ internal class DependencyExtractor {
         val tarProcess = ProcessBuilder().apply {
             command("tar", "-xzf", tarGz.canonicalPath)
             directory(targetDirectory)
+            inheritIO()
         }.start()
-        tarProcess.waitFor()
-        if (tarProcess.exitValue() != 0) {
-            throw RuntimeException("Cannot extract archive with dependency: ${tarGz.canonicalPath}")
+        val finished = tarProcess.waitFor(extractionTimeout, extractionTimeoutUntis)
+        when {
+            finished && tarProcess.exitValue() != 0 ->
+                throw RuntimeException(
+                    "Cannot extract archive with dependency: ${tarGz.canonicalPath}.\n" +
+                    "Tar exit code: ${tarProcess.exitValue()}."
+                )
+            !finished -> {
+                tarProcess.destroy()
+                throw RuntimeException(
+                    "Cannot extract archive with dependency: ${tarGz.canonicalPath}.\n" +
+                    "Tar process hasn't finished in ${extractionTimeoutUntis.toSeconds(extractionTimeout)} sec."
+                )
+            }
         }
     }
 
@@ -34,5 +47,10 @@ internal class DependencyExtractor {
         } else {
             extractTarGz(archive, targetDirectory)
         }
+    }
+
+    companion object {
+        val extractionTimeout = 3600L
+        val extractionTimeoutUntis = TimeUnit.SECONDS
     }
 }
