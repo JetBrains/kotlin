@@ -281,8 +281,12 @@ fun applyCompilerArgumentsToFacet(
         val defaultCompilerArguments = defaultArguments?.let { copyBean(it) } ?: compilerArguments::class.java.newInstance()
         defaultCompilerArguments.convertPathsToSystemIndependent()
 
+        val oldPluginOptions = compilerArguments.pluginOptions
+
         val emptyArgs = compilerArguments::class.java.newInstance()
         copyBeanTo(arguments, compilerArguments) { property, value -> value != property.get(emptyArgs) }
+        compilerArguments.pluginOptions = joinPluginOptions(oldPluginOptions, arguments.pluginOptions)
+
         compilerArguments.convertPathsToSystemIndependent()
 
         // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.
@@ -320,4 +324,16 @@ fun applyCompilerArgumentsToFacet(
 
         updateMergedArguments()
     }
+}
+
+private fun joinPluginOptions(old: Array<String>?, new: Array<String>?): Array<String>? {
+    if (old == null && new == null) {
+        return old
+    } else if (new == null) {
+        return old
+    } else if (old == null) {
+        return new
+    }
+
+    return (old + new).distinct().toTypedArray()
 }
