@@ -288,8 +288,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                 return
             }
 
-            getManipulator(buildScript)
-                .addKotlinLibraryToModuleBuildScript(scope, libraryDescriptor, module.getBuildSystemType() == AndroidGradle)
+            getManipulator(buildScript).addKotlinLibraryToModuleBuildScript(scope, libraryDescriptor)
 
             buildScript.virtualFile?.let {
                 createConfigureKotlinNotificationCollector(buildScript.project)
