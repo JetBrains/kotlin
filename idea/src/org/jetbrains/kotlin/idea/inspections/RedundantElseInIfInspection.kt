@@ -35,7 +35,7 @@ class RedundantElseInIfInspection : AbstractKotlinInspection() {
                     ifExpression,
                     rangeInElement,
                     "Redundant 'else'",
-                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly,
                     RemoveRedundantElseFix()
                 )
@@ -61,8 +61,8 @@ private class RemoveRedundantElseFix : LocalQuickFix {
         val added = ifExpression.parent.addAfter(copy, ifExpression)
         elseExpression.delete()
         elseKeyword.delete()
-        val nextSibling = added.nextSibling
 
+        val nextSibling = added.nextSibling
         if (nextSibling != null) {
             val editor = ifExpression.findExistingEditor()
             if (editor != null) {
