@@ -47,7 +47,7 @@ class SimplifyComparisonFix(element: KtExpression, val value: Boolean) : KotlinQ
         }
 
         val ifExpression = result.getStrictParentOfType<KtIfExpression>()?.takeIf { it.condition == result }
-        if (ifExpression != null) ConstantConditionIfInspection().applyFixIfNeed(ifExpression)
+        if (ifExpression != null) ConstantConditionIfInspection.applyFixIfSingle(ifExpression)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

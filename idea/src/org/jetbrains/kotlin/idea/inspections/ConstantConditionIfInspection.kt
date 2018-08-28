@@ -26,37 +26,39 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class ConstantConditionIfInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return ifExpressionVisitor { expression -> registerProblem(expression, holder) }
+        return ifExpressionVisitor { expression -> collectFixesAndRegisterProblem(expression, holder) }
     }
 
-    private fun registerProblem(expression: KtIfExpression, holder: ProblemsHolder?): List<ConstantConditionIfFix> {
-        val condition = expression.condition ?: return emptyList()
+    companion object {
+        private fun collectFixesAndRegisterProblem(expression: KtIfExpression, holder: ProblemsHolder?): List<ConstantConditionIfFix> {
+            val condition = expression.condition ?: return emptyList()
 
-        val context = condition.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-        val constantValue = condition.constantBooleanValue(context) ?: return emptyList()
+            val context = condition.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
+            val constantValue = condition.constantBooleanValue(context) ?: return emptyList()
 
-        val fixes = mutableListOf<ConstantConditionIfFix>()
+            val fixes = mutableListOf<ConstantConditionIfFix>()
 
-        if (expression.branch(constantValue) != null) {
-            val keepBraces = expression.isElseIf() && expression.branch(constantValue) is KtBlockExpression
-            fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context), keepBraces)
+            if (expression.branch(constantValue) != null) {
+                val keepBraces = expression.isElseIf() && expression.branch(constantValue) is KtBlockExpression
+                fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context), keepBraces)
+            }
+
+            if (!constantValue && expression.`else` == null) {
+                fixes += RemoveFix()
+            }
+
+            holder?.registerProblem(
+                condition,
+                "Condition is always '$constantValue'",
+                *fixes.toTypedArray()
+            )
+
+            return fixes
         }
 
-        if (!constantValue && expression.`else` == null) {
-            fixes += RemoveFix()
+        fun applyFixIfSingle(ifExpression: KtIfExpression) {
+            collectFixesAndRegisterProblem(ifExpression, null).singleOrNull()?.applyFix(ifExpression)
         }
-
-        holder?.registerProblem(
-            condition,
-            "Condition is always '$constantValue'",
-            *fixes.toTypedArray()
-        )
-
-        return fixes
-    }
-
-    fun applyFixIfNeed(ifExpression: KtIfExpression) {
-        registerProblem(ifExpression, null).singleOrNull()?.applyFix(ifExpression)
     }
 
     private interface ConstantConditionIfFix : LocalQuickFix {
