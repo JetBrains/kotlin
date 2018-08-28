@@ -44,7 +44,7 @@ internal sealed class CallerImpl<out M : Member>(
 
     // TODO fix 'callBy' for bound (and non-bound) inner class constructor references
     // See https://youtrack.jetbrains.com/issue/KT-14990
-    class BoundConstructor(constructor: ReflectConstructor<*>, private val boundReceiver: Any?) :
+    class BoundConstructor(constructor: ReflectConstructor<*>, private val boundReceiver: Any?) : BoundCaller,
         CallerImpl<ReflectConstructor<*>>(
             constructor, constructor.declaringClass, null,
             constructor.genericParameterTypes
@@ -96,7 +96,7 @@ internal sealed class CallerImpl<out M : Member>(
             }
         }
 
-        class BoundStatic(method: ReflectMethod, private val boundReceiver: Any?) : Method(
+        class BoundStatic(method: ReflectMethod, private val boundReceiver: Any?) : BoundCaller, Method(
             method, requiresInstance = false, parameterTypes = method.genericParameterTypes.dropFirst()
         ) {
             override fun call(args: Array<*>): Any? {
@@ -105,14 +105,15 @@ internal sealed class CallerImpl<out M : Member>(
             }
         }
 
-        class BoundInstance(method: ReflectMethod, private val boundReceiver: Any?) : Method(method, requiresInstance = false) {
+        class BoundInstance(method: ReflectMethod, private val boundReceiver: Any?) : BoundCaller,
+            Method(method, requiresInstance = false) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
                 return callMethod(boundReceiver, args)
             }
         }
 
-        class BoundJvmStaticInObject(method: ReflectMethod) : Method(method, requiresInstance = false) {
+        class BoundJvmStaticInObject(method: ReflectMethod) : BoundCaller, Method(method, requiresInstance = false) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
                 return callMethod(null, args)
@@ -145,14 +146,15 @@ internal sealed class CallerImpl<out M : Member>(
             }
         }
 
-        class BoundInstance(field: ReflectField, private val boundReceiver: Any?) : FieldGetter(field, requiresInstance = false) {
+        class BoundInstance(field: ReflectField, private val boundReceiver: Any?) : BoundCaller,
+            FieldGetter(field, requiresInstance = false) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
                 return member.get(boundReceiver)
             }
         }
 
-        class BoundJvmStaticInObject(field: ReflectField) : FieldGetter(field, requiresInstance = false)
+        class BoundJvmStaticInObject(field: ReflectField) : BoundCaller, FieldGetter(field, requiresInstance = false)
     }
 
     sealed class FieldSetter(
@@ -188,7 +190,7 @@ internal sealed class CallerImpl<out M : Member>(
             }
         }
 
-        class BoundInstance(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) :
+        class BoundInstance(field: ReflectField, notNull: Boolean, private val boundReceiver: Any?) : BoundCaller,
             FieldSetter(field, notNull, requiresInstance = false) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
@@ -196,7 +198,8 @@ internal sealed class CallerImpl<out M : Member>(
             }
         }
 
-        class BoundJvmStaticInObject(field: ReflectField, notNull: Boolean) : FieldSetter(field, notNull, requiresInstance = false) {
+        class BoundJvmStaticInObject(field: ReflectField, notNull: Boolean) : BoundCaller,
+            FieldSetter(field, notNull, requiresInstance = false) {
             override fun call(args: Array<*>): Any? {
                 checkArguments(args)
                 return member.set(null, args.last())

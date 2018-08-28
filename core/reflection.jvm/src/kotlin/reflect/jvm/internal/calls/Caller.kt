@@ -26,3 +26,8 @@ internal interface Caller<out M : Member?> {
 
 internal val Caller<*>.arity: Int
     get() = parameterTypes.size
+
+/**
+ * A marker interface that signifies that this caller has a "bound receiver" object which should be used as the dispatch receiver instance.
+ */
+interface BoundCaller
