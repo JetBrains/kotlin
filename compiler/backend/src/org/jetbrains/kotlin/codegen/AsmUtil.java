@@ -726,7 +726,7 @@ public class AsmUtil {
             if (descriptor.isOperator()) {
                 ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
-                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver");
+                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver", descriptor);
                 }
             }
             return;
@@ -734,11 +734,11 @@ public class AsmUtil {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver");
+            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver", descriptor);
         }
 
         for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
-            genParamAssertion(v, state.getTypeMapper(), frameMap, parameter, parameter.getName().asString());
+            genParamAssertion(v, state.getTypeMapper(), frameMap, parameter, parameter.getName().asString(), descriptor);
         }
     }
 
@@ -747,7 +747,8 @@ public class AsmUtil {
             @NotNull KotlinTypeMapper typeMapper,
             @NotNull FrameMap frameMap,
             @NotNull ParameterDescriptor parameter,
-            @NotNull String name
+            @NotNull String name,
+            @NotNull FunctionDescriptor containingDeclaration
     ) {
         KotlinType type = parameter.getType();
         if (isNullableType(type) || InlineClassesUtilsKt.isNullableUnderlyingType(type)) return;
@@ -755,7 +756,8 @@ public class AsmUtil {
         Type asmType = typeMapper.mapType(type);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
             StackValue value;
-            if (JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(parameter.getContainingDeclaration())) {
+            if (JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(containingDeclaration) ||
+                JvmCodegenUtil.isDeclarationOfBigArityCreateCoroutineMethod(containingDeclaration)) {
                 int index = getIndexOfParameterInVarargInvokeArray(parameter);
                 value = StackValue.arrayElement(
                         OBJECT_TYPE, null, StackValue.local(1, getArrayType(OBJECT_TYPE)), StackValue.constant(index)

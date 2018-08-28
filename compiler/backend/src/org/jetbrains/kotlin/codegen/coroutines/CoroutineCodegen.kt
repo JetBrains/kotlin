@@ -338,6 +338,7 @@ class CoroutineCodegenForLambda private constructor(
         val owner = typeMapper.mapClass(classDescriptor)
 
         val thisInstance = StackValue.thisOrOuter(codegen, classDescriptor, false, false)
+        val isBigArity = JvmCodegenUtil.isDeclarationOfBigArityCreateCoroutineMethod(createCoroutineDescriptor)
 
         with(codegen.v) {
             anew(owner)
@@ -350,10 +351,16 @@ class CoroutineCodegenForLambda private constructor(
             }
 
             // load resultContinuation
-            if (generateErasedCreate) {
-                load(allFunctionParameters().size + 1, AsmTypes.OBJECT_TYPE)
+            if (isBigArity) {
+                load(1, AsmTypes.OBJECT_TYPE)
+                iconst(allFunctionParameters().size)
+                aload(AsmTypes.OBJECT_TYPE)
             } else {
-                load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+                if (generateErasedCreate) {
+                    load(allFunctionParameters().size + 1, AsmTypes.OBJECT_TYPE)
+                } else {
+                    load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+                }
             }
 
             invokespecial(owner.internalName, constructorToUseFromInvoke.name, constructorToUseFromInvoke.descriptor, false)
@@ -365,20 +372,33 @@ class CoroutineCodegenForLambda private constructor(
             var index = 1
             for (parameter in allFunctionParameters()) {
                 val fieldInfoForCoroutineLambdaParameter = parameter.getFieldInfoForCoroutineLambdaParameter()
-                if (generateErasedCreate) {
-                    load(index, AsmTypes.OBJECT_TYPE)
+                if (isBigArity) {
+                    load(cloneIndex, fieldInfoForCoroutineLambdaParameter.ownerType)
+                    load(1, AsmTypes.OBJECT_TYPE)
+                    iconst(index - 1)
+                    aload(AsmTypes.OBJECT_TYPE)
                     StackValue.coerce(AsmTypes.OBJECT_TYPE, fieldInfoForCoroutineLambdaParameter.fieldType, this)
+                    putfield(
+                        fieldInfoForCoroutineLambdaParameter.ownerInternalName,
+                        fieldInfoForCoroutineLambdaParameter.fieldName,
+                        fieldInfoForCoroutineLambdaParameter.fieldType.descriptor
+                    )
                 } else {
-                    load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
+                    if (generateErasedCreate) {
+                        load(index, AsmTypes.OBJECT_TYPE)
+                        StackValue.coerce(AsmTypes.OBJECT_TYPE, fieldInfoForCoroutineLambdaParameter.fieldType, this)
+                    } else {
+                        load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
+                    }
+                    AsmUtil.genAssignInstanceFieldFromParam(
+                        fieldInfoForCoroutineLambdaParameter,
+                        index,
+                        this,
+                        cloneIndex,
+                        generateErasedCreate
+                    )
                 }
-                AsmUtil.genAssignInstanceFieldFromParam(
-                    fieldInfoForCoroutineLambdaParameter,
-                    index,
-                    this,
-                    cloneIndex,
-                    generateErasedCreate
-                )
-                index += fieldInfoForCoroutineLambdaParameter.fieldType.size
+                index += if (isBigArity || generateErasedCreate) 1 else fieldInfoForCoroutineLambdaParameter.fieldType.size
             }
 
             load(cloneIndex, AsmTypes.OBJECT_TYPE)

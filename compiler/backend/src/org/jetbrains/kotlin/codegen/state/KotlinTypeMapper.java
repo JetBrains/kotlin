@@ -1203,7 +1203,7 @@ public class KotlinTypeMapper {
                                 skipGenericSignature);
         }
 
-        if (isDeclarationOfBigArityFunctionInvoke(f)) {
+        if (isDeclarationOfBigArityFunctionInvoke(f) || isDeclarationOfBigArityCreateCoroutineMethod(f)) {
             KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(f);
             KotlinType arrayOfNullableAny = builtIns.getArrayType(Variance.INVARIANT, builtIns.getNullableAnyType());
             return mapSignatureWithCustomParameters(f, kind, Stream.of(arrayOfNullableAny), false, false);
