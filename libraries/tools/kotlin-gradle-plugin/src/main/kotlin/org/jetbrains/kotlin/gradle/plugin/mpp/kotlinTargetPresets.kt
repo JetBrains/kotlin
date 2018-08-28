@@ -11,7 +11,11 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask
 import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask.Companion.KONAN_DOWNLOAD_TASK_NAME
@@ -23,9 +27,12 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
     protected val project: Project,
     private val instantiator: Instantiator,
     private val fileResolver: FileResolver,
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
+    protected val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     protected val kotlinPluginVersion: String
 ) : KotlinTargetPreset<KotlinOnlyTarget<T>> {
+
+    protected open fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<T> =
+        KotlinTargetConfigurator(buildOutputCleanupRegistry, createDefaultSourceSets = true, createTestCompilation = true)
 
     override fun createTarget(name: String): KotlinOnlyTarget<T> {
         val result = KotlinOnlyTarget<T>(project, platformType).apply {
@@ -36,7 +43,7 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
         }
 
-        KotlinTargetConfigurator<T>(buildOutputCleanupRegistry).configureTarget(result)
+        createKotlinTargetConfigurator().configureTarget(result)
 
         result.compilations.all { compilation ->
             buildCompilationProcessor(compilation).run()
@@ -84,6 +91,23 @@ class KotlinMetadataTargetPreset(
     companion object {
         const val PRESET_NAME = "metadata"
     }
+
+    override fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<KotlinCommonCompilation> =
+        KotlinTargetConfigurator(buildOutputCleanupRegistry, createDefaultSourceSets = false, createTestCompilation = false)
+
+    override fun createTarget(name: String): KotlinOnlyTarget<KotlinCommonCompilation> =
+        super.createTarget(name).apply {
+            val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+            val commonMainSourceSet = project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+
+            mainCompilation.source(commonMainSourceSet)
+
+            project.afterEvaluate {
+                // Since there's no default source set, apply language settings from commonMain:
+                val compileKotlinMetadata = project.tasks.getByName(mainCompilation.compileKotlinTaskName) as KotlinCompile<*>
+                applyLanguageSettingsToKotlinTask(commonMainSourceSet.languageSettings, compileKotlinMetadata)
+            }
+        }
 }
 
 class KotlinJvmTargetPreset(

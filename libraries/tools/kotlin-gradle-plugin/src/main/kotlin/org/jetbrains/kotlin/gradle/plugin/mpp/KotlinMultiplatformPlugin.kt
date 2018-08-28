@@ -115,11 +115,11 @@ class KotlinMultiplatformPlugin(
 
         targets.all { target ->
             target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                sourceSets.maybeCreate(mainCompilation.defaultSourceSetName).dependsOn(production)
+                sourceSets.findByName(mainCompilation.defaultSourceSetName)?.dependsOn(production)
             }
 
             target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
-                sourceSets.maybeCreate(testCompilation.defaultSourceSetName).dependsOn(test)
+                sourceSets.findByName(testCompilation.defaultSourceSetName)?.dependsOn(test)
             }
         }
     }

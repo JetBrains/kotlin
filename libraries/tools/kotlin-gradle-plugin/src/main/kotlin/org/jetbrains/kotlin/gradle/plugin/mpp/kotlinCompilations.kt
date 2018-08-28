@@ -85,13 +85,15 @@ abstract class AbstractKotlinCompilation(
                         }
 
                         if (sourceSet.name != defaultSourceSetName) {
-                            // Temporary solution for checking consistency across source sets participating in a compilation that may
-                            // not be interconnected with the dependsOn relation: check the settings as if the default source set of
-                            // the compilation depends on the one added to the compilation:
-                            defaultSourceSetLanguageSettingsChecker.runAllChecks(
-                                kotlinExtension.sourceSets.getByName(defaultSourceSetName),
-                                sourceSet
-                            )
+                            kotlinExtension.sourceSets.findByName(defaultSourceSetName)?.let { defaultSourceSet ->
+                                // Temporary solution for checking consistency across source sets participating in a compilation that may
+                                // not be interconnected with the dependsOn relation: check the settings as if the default source set of
+                                // the compilation depends on the one added to the compilation:
+                                defaultSourceSetLanguageSettingsChecker.runAllChecks(
+                                    defaultSourceSet,
+                                    sourceSet
+                                )
+                            }
                         }
                     }
                 }
