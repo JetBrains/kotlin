@@ -258,7 +258,10 @@ internal fun Long.divide(other: Long): Long {
         // We will tweak the approximate result by changing it in the 48-th digit or
         // the smallest non-fractional digit, whichever is larger.
         val log2 = js("Math.ceil(Math.log(approx2) / Math.LN2)").unsafeCast<Int>()
-        val delta = if (log2 <= 48) 1.0 else js("Math.pow(2, log2 - 48)").unsafeCast<Double>()
+
+        // TODO: log2 is renamed but usage in js() functions is not
+        val log2_minus48 = log2 - 48
+        val delta = if (log2 <= 48) 1.0 else js("Math.pow(2, log2_minus48)").unsafeCast<Double>()
 
         // Decrease the approximation until it is smaller than the remainder.  Note
         // that if it is too large, the product overflows and is negative.

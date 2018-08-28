@@ -16,6 +16,65 @@ import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
 private val runtimeSources = listOfKtFilesFrom(
+    "core/builtins/src/kotlin",
+    "libraries/stdlib/common/src",
+    "libraries/stdlib/src/kotlin/",
+    "libraries/stdlib/js/src/kotlin",
+    "libraries/stdlib/js/src/generated",
+    "libraries/stdlib/js/irRuntime",
+    "libraries/stdlib/js/runtime",
+
+    "core/builtins/native/kotlin/Annotation.kt",
+    "core/builtins/native/kotlin/Number.kt",
+    "core/builtins/native/kotlin/Comparable.kt",
+    "core/builtins/native/kotlin/Collections.kt",
+    "core/builtins/native/kotlin/Iterator.kt",
+    "core/builtins/native/kotlin/CharSequence.kt",
+
+    BasicBoxTest.COMMON_FILES_DIR_PATH
+) - listOfKtFilesFrom(
+    // TODO: Unify exceptions
+    "libraries/stdlib/common/src/kotlin/ExceptionsH.kt",
+
+    // Fails with: EXPERIMENTAL_IS_NOT_ENABLED
+    "libraries/stdlib/common/src/kotlin/annotations/Annotations.kt",
+
+    // Conflicts with libraries/stdlib/js/src/kotlin/annotations.kt
+    "libraries/stdlib/js/runtime/hacks.kt",
+
+    // TODO: Reuse in IR BE
+    "libraries/stdlib/js/runtime/Enum.kt",
+
+    // JS-specific optimized version of emptyArray() already defined
+    "core/builtins/src/kotlin/ArrayIntrinsics.kt",
+
+    // Unnecessary for now
+    "libraries/stdlib/js/src/kotlin/dom",
+    "libraries/stdlib/js/src/kotlin/browser",
+
+    // TODO: Unify exceptions
+    "libraries/stdlib/js/src/kotlin/exceptions.kt",
+
+    // TODO: fix compilation issues in arrayPlusCollection
+    // Replaced with irRuntime/kotlinHacks.kt
+    "libraries/stdlib/js/src/kotlin/kotlin.kt",
+
+    // Full version is defined in stdlib
+    // This file is useful for smaller subset of runtime sources
+    "libraries/stdlib/js/irRuntime/rangeExtensions.kt",
+
+    // TODO: Reuse coroutine code from common (and current JS BE?)
+    "libraries/stdlib/js/src/kotlin/coroutines.kt",
+    "libraries/stdlib/js/src/kotlin/coroutinesIntrinsics.kt",
+    "libraries/stdlib/src/kotlin/coroutines"
+) + listOfKtFilesFrom(
+    "libraries/stdlib/src/kotlin/coroutines/experimental/SequenceBuilder.kt",
+    "libraries/stdlib/src/kotlin/coroutines/experimental/Coroutines.kt"
+)
+
+// Smaller set of sources missing a big part of stdlib
+// Intended to be used with coroutine tests where runtime is not cached
+private val smallerRuntimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/core.kt",
     "libraries/stdlib/js/src/kotlin/js.core.kt",
     "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
@@ -30,6 +89,7 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/src/kotlin/contracts",
     "libraries/stdlib/src/kotlin/annotations/Experimental.kt",
     "libraries/stdlib/src/kotlin/util/Standard.kt",
+    "libraries/stdlib/src/kotlin/coroutines/experimental/Coroutines.kt",
     "core/builtins/native/kotlin/Annotation.kt",
     "core/builtins/native/kotlin/Number.kt",
     "core/builtins/native/kotlin/Comparable.kt",
@@ -45,13 +105,19 @@ private val runtimeSources = listOfKtFilesFrom(
     "core/builtins/src/kotlin/reflect",
     "core/builtins/src/kotlin/Function.kt",
 
+
     "core/builtins/native/kotlin/Collections.kt",
     "core/builtins/native/kotlin/Iterator.kt",
 
     "libraries/stdlib/common/src/kotlin/JsAnnotationsH.kt",
 
+    "libraries/stdlib/common/src/kotlin/CoroutinesH.kt",
+    "libraries/stdlib/common/src/kotlin/CoroutinesIntrinsicsH.kt",
+
     "libraries/stdlib/js/irRuntime",
     BasicBoxTest.COMMON_FILES_DIR_PATH
+) - listOfKtFilesFrom(
+    "libraries/stdlib/js/irRuntime/kotlinHacks.kt"
 )
 
 private var runtimeResult: Result? = null
@@ -144,7 +210,7 @@ private fun listOfKtFilesFrom(vararg paths: String): List<String> {
             .filter { it.extension == "kt" }
             .map { it.relativeToOrSelf(currentDir).path }
             .asIterable()
-    }
+    }.distinct()
 }
 
 private fun File.write(text: String) {
