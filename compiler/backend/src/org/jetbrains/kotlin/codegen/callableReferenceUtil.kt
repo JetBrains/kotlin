@@ -47,7 +47,7 @@ fun CalculatedClosure.isForCallableReference(): Boolean =
         closureClass.isSyntheticClassForCallableReference()
 
 fun CalculatedClosure.isForBoundCallableReference(): Boolean =
-        isForCallableReference() && captureReceiverType != null
+        isForCallableReference() && capturedReceiverFromOuterContext != null
 
 fun InstructionAdapter.loadBoundReferenceReceiverParameter(index: Int, type: Type) {
     load(index, type)

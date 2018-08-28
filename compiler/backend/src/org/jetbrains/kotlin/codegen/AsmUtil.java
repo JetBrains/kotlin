@@ -513,12 +513,12 @@ public class AsmUtil {
     public static void genClosureFields(@NotNull CalculatedClosure closure, ClassBuilder v, KotlinTypeMapper typeMapper) {
         List<Pair<String, Type>> allFields = new ArrayList<>();
 
-        ClassifierDescriptor captureThis = closure.getCaptureThis();
+        ClassifierDescriptor captureThis = closure.getCapturedOuterClassDescriptor();
         if (captureThis != null) {
             allFields.add(Pair.create(CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis)));
         }
 
-        KotlinType captureReceiverType = closure.getCaptureReceiverType();
+        KotlinType captureReceiverType = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiverType != null && !CallableReferenceUtilKt.isForCallableReference(closure)) {
             allFields.add(Pair.create(CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType)));
         }

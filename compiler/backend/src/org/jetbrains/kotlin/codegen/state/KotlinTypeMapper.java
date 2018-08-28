@@ -1573,7 +1573,7 @@ public class KotlinTypeMapper {
             writeParameter(sw, JvmMethodParameterKind.OUTER, captureThis.getDefaultType(), descriptor);
         }
 
-        KotlinType captureReceiverType = closure != null ? closure.getCaptureReceiverType() : null;
+        KotlinType captureReceiverType = closure != null ? closure.getCapturedReceiverFromOuterContext() : null;
         if (captureReceiverType != null) {
             writeParameter(sw, JvmMethodParameterKind.RECEIVER, captureReceiverType, descriptor);
         }

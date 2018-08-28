@@ -486,12 +486,12 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             @NotNull Type ownerType
     ) {
         List<FieldInfo> args = Lists.newArrayList();
-        ClassDescriptor captureThis = closure.getCaptureThis();
+        ClassDescriptor captureThis = closure.getCapturedOuterClassDescriptor();
         if (captureThis != null) {
             Type type = typeMapper.mapType(captureThis);
             args.add(FieldInfo.createForHiddenField(ownerType, type, CAPTURED_THIS_FIELD));
         }
-        KotlinType captureReceiverType = closure.getCaptureReceiverType();
+        KotlinType captureReceiverType = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiverType != null) {
             args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), CAPTURED_RECEIVER_FIELD));
         }

@@ -668,14 +668,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
 
                 private void pushCapturedFieldsOnStack(InstructionAdapter iv, MutableClosure closure) {
-                    ClassDescriptor captureThis = closure.getCaptureThis();
+                    ClassDescriptor captureThis = closure.getCapturedOuterClassDescriptor();
                     if (captureThis != null) {
                         iv.load(0, classAsmType);
                         Type type = typeMapper.mapType(captureThis);
                         iv.getfield(classAsmType.getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
                     }
 
-                    KotlinType captureReceiver = closure.getCaptureReceiverType();
+                    KotlinType captureReceiver = closure.getCapturedReceiverFromOuterContext();
                     if (captureReceiver != null) {
                         iv.load(0, classAsmType);
                         Type type = typeMapper.mapType(captureReceiver);

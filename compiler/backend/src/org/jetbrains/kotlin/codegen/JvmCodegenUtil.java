@@ -86,10 +86,10 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isConst(@NotNull CalculatedClosure closure) {
-        return closure.getCaptureThis() == null &&
-                    closure.getCaptureReceiverType() == null &&
-                    closure.getCaptureVariables().isEmpty() &&
-                    !closure.isSuspend();
+        return closure.getCapturedOuterClassDescriptor() == null &&
+               closure.getCapturedReceiverFromOuterContext() == null &&
+               closure.getCaptureVariables().isEmpty() &&
+               !closure.isSuspend();
     }
 
     private static boolean isCallInsideSameClassAsFieldRepresentingProperty(
@@ -259,7 +259,7 @@ public class JvmCodegenUtil {
     ) {
         //for compilation against sources
         if (closure != null) {
-            return closure.getCaptureThis();
+            return closure.getCapturedOuterClassDescriptor();
         }
 
         //for compilation against binaries

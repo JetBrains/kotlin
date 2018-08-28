@@ -138,16 +138,19 @@ public interface LocalLookup {
                     MutableClosure closure,
                     Type classType
             ) {
-                if (closure.getEnclosingReceiverDescriptor() != d) {
+                ReceiverParameterDescriptor enclosingReceiverDescriptor = closure.getEnclosingReceiverDescriptor();
+                if (enclosingReceiverDescriptor != d) {
                     return null;
                 }
 
-                KotlinType receiverType = closure.getEnclosingReceiverDescriptor().getType();
+                assert(enclosingReceiverDescriptor != null);
+
+                KotlinType receiverType = enclosingReceiverDescriptor.getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
                 StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(
                         type, receiverType, classType, CAPTURED_RECEIVER_FIELD, false, StackValue.LOCAL_0, d
                 );
-                closure.setCaptureReceiver();
+                closure.setNeedsCaptureReceiverFromOuterContext();
 
                 return innerValue;
             }

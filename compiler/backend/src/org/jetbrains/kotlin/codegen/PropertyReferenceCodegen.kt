@@ -72,9 +72,9 @@ class PropertyReferenceCodegen(
     private val wrapperMethod = getWrapperMethodForPropertyReference(target, getFunction.valueParameters.size)
 
     private val closure = bindingContext.get(CodegenBinding.CLOSURE, classDescriptor)!!.apply {
-        assert((captureReceiverType != null) == (receiverType != null)) {
+        assert((capturedReceiverFromOuterContext != null) == (receiverType != null)) {
             "Bound property reference can only be generated with the type of the receiver. " +
-                    "Captured type = $captureReceiverType, actual type = $receiverType"
+            "Captured type = $capturedReceiverFromOuterContext, actual type = $receiverType"
         }
     }
 

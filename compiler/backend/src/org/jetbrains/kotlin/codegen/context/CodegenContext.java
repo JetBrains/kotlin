@@ -224,7 +224,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (closure == null) {
                 throw new IllegalStateException("Can't capture this for context without closure: " + this);
             }
-            closure.setCaptureThis();
+            closure.setNeedsCaptureOuterClass();
         }
         return StackValue.changeReceiverForFieldAndSharedVar(outerExpression.invoke(), prefix);
     }
@@ -567,7 +567,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         if (myOuter != null && resultValue != null && !isStaticField(resultValue)) {
-            closure.setCaptureThis();
+            closure.setNeedsCaptureOuterClass();
         }
         return resultValue;
     }
