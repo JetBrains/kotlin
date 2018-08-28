@@ -102,7 +102,7 @@ abstract class AbstractCoroutineCodegen(
         )
 
     override fun generateConstructor(): Method {
-        val args = calculateConstructorParameters(typeMapper, closure, asmType)
+        val args = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, asmType)
         val argTypes = args.map { it.fieldType }.plus(languageVersionSettings.continuationAsmType()).toTypedArray()
 
         val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
@@ -345,7 +345,7 @@ class CoroutineCodegenForLambda private constructor(
             dup()
 
             // pass captured closure to constructor
-            val constructorParameters = calculateConstructorParameters(typeMapper, closure, owner)
+            val constructorParameters = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, owner)
             for (parameter in constructorParameters) {
                 StackValue.field(parameter, thisInstance).put(parameter.fieldType, this)
             }

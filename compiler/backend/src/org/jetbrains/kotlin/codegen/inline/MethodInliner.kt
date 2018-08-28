@@ -328,7 +328,7 @@ class MethodInliner(
                                 resultNode.desc.endsWith(")" + languageVersionSettings.continuationAsmType().descriptor)
 
                         for (capturedParamDesc in info.allRecapturedParameters) {
-                            if (capturedParamDesc.fieldName == THIS && isContinuationCreate) {
+                            if (capturedParamDesc.fieldName == AsmUtil.THIS && isContinuationCreate) {
                                 // Common inliner logic doesn't support cases when transforming anonymous object can
                                 // be instantiated by itself.
                                 // To support such cases workaround with 'oldInfo' is used.
@@ -336,7 +336,7 @@ class MethodInliner(
                                 // 'This' in outer context corresponds to outer instance in current
                                 visitFieldInsn(
                                     Opcodes.GETSTATIC, owner,
-                                    CAPTURED_FIELD_FOLD_PREFIX + THIS_0, capturedParamDesc.type.descriptor
+                                    CAPTURED_FIELD_FOLD_PREFIX + AsmUtil.CAPTURED_THIS_FIELD, capturedParamDesc.type.descriptor
                                 )
                             } else {
                                 visitFieldInsn(
@@ -948,6 +948,7 @@ class MethodInliner(
         private fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
             val analyzer = object : Analyzer<SourceValue>(SourceInterpreter()) {
                 override fun newFrame(nLocals: Int, nStack: Int): Frame<SourceValue> {
+
                     return object : Frame<SourceValue>(nLocals, nStack) {
                         @Throws(AnalyzerException::class)
                         override fun execute(insn: AbstractInsnNode, interpreter: Interpreter<SourceValue>) {

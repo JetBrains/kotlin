@@ -1,0 +1,1 @@
+fun String.foo(a: Int) {}

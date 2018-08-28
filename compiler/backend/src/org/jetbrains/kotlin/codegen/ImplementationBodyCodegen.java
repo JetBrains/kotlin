@@ -431,7 +431,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
 
         if (context.closure != null)
-            genClosureFields(context.closure, v, typeMapper);
+            genClosureFields(context.closure, v, typeMapper, state.getLanguageVersionSettings());
 
         for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Companion.getInstances(state.getProject())) {
             if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES
@@ -679,7 +679,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     if (captureReceiver != null) {
                         iv.load(0, classAsmType);
                         Type type = typeMapper.mapType(captureReceiver);
-                        iv.getfield(classAsmType.getInternalName(), CAPTURED_RECEIVER_FIELD, type.getDescriptor());
+                        String fieldName = closure.getCapturedReceiverFieldName(bindingContext, state.getLanguageVersionSettings());
+                        iv.getfield(classAsmType.getInternalName(), fieldName, type.getDescriptor());
                     }
 
                     for (Map.Entry<DeclarationDescriptor, EnclosedValueDescriptor> entry : closure.getCaptureVariables().entrySet()) {

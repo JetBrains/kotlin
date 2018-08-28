@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
@@ -30,11 +31,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.isInlineClassType
@@ -439,3 +442,26 @@ fun KotlinType.isInlineClassTypeWithPrimitiveEquality(): Boolean {
 
 fun CallableDescriptor.needsExperimentalCoroutinesWrapper() =
     (this as? DeserializedMemberDescriptor)?.coroutinesExperimentalCompatibilityMode == CoroutinesCompatibilityMode.NEEDS_WRAPPER
+
+fun recordCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingTrace: BindingTrace) {
+    fun storeLabelName(labelName: String) {
+        val functionDescriptor = bindingTrace[BindingContext.FUNCTION, declaration] ?: return
+        bindingTrace.record(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, functionDescriptor, labelName)
+    }
+
+    val lambdaExpression = declaration.parent as? KtLambdaExpression ?: return
+    val lambdaExpressionParent = lambdaExpression.parent
+
+    if (lambdaExpressionParent is KtLabeledExpression) {
+        lambdaExpressionParent.name?.let { labelName ->
+            storeLabelName(labelName)
+            return
+        }
+    }
+
+    val lambdaArgument = lambdaExpression.parent as? KtLambdaArgument ?: return
+    val callExpression = lambdaArgument.parent as? KtCallExpression ?: return
+    val call = callExpression.getResolvedCall(bindingTrace.bindingContext) ?: return
+
+    storeLabelName(call.resultingDescriptor.name.asString())
+}

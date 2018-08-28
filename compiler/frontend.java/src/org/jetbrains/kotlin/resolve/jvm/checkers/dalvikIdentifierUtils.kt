@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 fun isValidDalvikIdentifier(identifier: String) = identifier.all { isValidDalvikCharacter(it) }
 
 // https://source.android.com/devices/tech/dalvik/dex-format.html#string-syntax
-private fun isValidDalvikCharacter(c: Char) = when (c) {
+fun isValidDalvikCharacter(c: Char) = when (c) {
     in 'A'..'Z' -> true
     in 'a'..'z' -> true
     in '0'..'9' -> true

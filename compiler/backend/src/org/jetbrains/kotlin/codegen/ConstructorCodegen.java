@@ -286,7 +286,9 @@ public class ConstructorCodegen {
     private void generateClosureInitialization(@NotNull InstructionAdapter iv) {
         MutableClosure closure = context.closure;
         if (closure != null) {
-            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, classAsmType);
+            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(
+                    typeMapper, state.getLanguageVersionSettings(), closure, classAsmType);
+
             int k = 1;
             for (FieldInfo info : argsFromClosure) {
                 k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);

@@ -50,4 +50,7 @@ object NameUtils {
     @JvmStatic
     fun getScriptNameForFile(filePath: String): Name =
             Name.identifier(NameUtils.getPackagePartClassNamePrefix(filePath.substringAfterLast('/').substringBeforeLast('.')))
+
+    @JvmStatic
+    fun hasName(name: Name) = name != SpecialNames.NO_NAME_PROVIDED && name != SpecialNames.ANONYMOUS_FUNCTION
 }

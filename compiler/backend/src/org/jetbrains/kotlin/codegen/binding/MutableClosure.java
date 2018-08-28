@@ -21,8 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.name.NameUtils;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -101,12 +102,19 @@ public final class MutableClosure implements CalculatedClosure {
 
     @NotNull
     @Override
-    public String getCapturedReceiverLabel(BindingContext bindingContext) {
+    public String getCapturedReceiverFieldName(BindingContext bindingContext, LanguageVersionSettings languageVersionSettings) {
         if (captureReceiverType != null) {
             // Should effectively be returned only for callable references
             return AsmUtil.CAPTURED_RECEIVER_FIELD;
         } else if (enclosingFunWithReceiverDescriptor != null) {
-            return AsmUtil.CAPTURED_RECEIVER_FIELD;
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+                return AsmUtil.CAPTURED_RECEIVER_FIELD;
+            }
+
+            String labeledThis = AsmUtil.getLabeledThisNameForReceiver(
+                    enclosingFunWithReceiverDescriptor, bindingContext, languageVersionSettings);
+
+            return AsmUtil.getCapturedFieldName(labeledThis);
         } else {
             throw new IllegalStateException("Closure does not capture an outer receiver");
         }
