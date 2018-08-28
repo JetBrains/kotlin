@@ -412,7 +412,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                     if (!it.isThreadLocal) {
                                         val initialization = evaluateExpression(it.initializer!!.expression)
                                         val address = context.llvmDeclarations.forStaticField(it).storage
-                                        freeze(initialization, currentCodeContext.exceptionHandler)
+                                        if (it.isShared)
+                                            freeze(initialization, currentCodeContext.exceptionHandler)
                                         storeAny(initialization, address)
                                     }
                                 }
