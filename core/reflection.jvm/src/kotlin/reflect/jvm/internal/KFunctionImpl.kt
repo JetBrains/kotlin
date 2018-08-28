@@ -87,7 +87,7 @@ internal class KFunctionImpl private constructor(
                     createStaticMethodCaller(member)
             }
             else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
-        }
+        }.createInlineClassAwareCallerIfNeeded(descriptor)
     }
 
     override val defaultCaller: Caller<*>? by ReflectProperties.lazySoft defaultCaller@{
@@ -129,7 +129,7 @@ internal class KFunctionImpl private constructor(
                     createStaticMethodCaller(member)
             }
             else -> null
-        }
+        }?.createInlineClassAwareCallerIfNeeded(descriptor, isDefault = true)
     }
 
     private fun createStaticMethodCaller(member: Method) =
