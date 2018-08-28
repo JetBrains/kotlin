@@ -303,7 +303,6 @@ class ConstantExpressionEvaluator(
 
         if (!UnsignedTypes.isUnsignedType(constantType)) return
 
-
         with(ExperimentalUsageChecker) {
             val descriptor = constantType.constructor.declarationDescriptor ?: return
             val experimentalities = descriptor.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings)
@@ -986,6 +985,15 @@ private class ConstantExpressionEvaluatorVisitor(
         parameters: CompileTimeConstant.Parameters,
         expectedType: KotlinType
     ): CompileTimeConstant<*>? {
+        if (parameters.isUnsignedNumberLiteral &&
+            !checkAccessibilityOfUnsignedTypes(
+                constantExpressionEvaluator.module,
+                constantExpressionEvaluator.languageVersionSettings
+            )
+        ) {
+            return UnsignedErrorValueTypeConstant(value, parameters)
+        }
+
         if (parameters.isUnsignedLongNumberLiteral) {
             return ULongValue(value).wrap(parameters)
         }
@@ -1011,6 +1019,13 @@ private class ConstantExpressionEvaluatorVisitor(
                 else -> LongValue(value)
             }
         }.wrap(parameters)
+    }
+
+    private fun checkAccessibilityOfUnsignedTypes(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean {
+        val uInt = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt) ?: return false
+        val accessibility = uInt.checkSinceKotlinVersionAccessibility(languageVersionSettings)
+        // Case `NotAccessibleButWasExperimental` will be checked later in `checkExperimentalityOfConstantLiteral`
+        return accessibility is SinceKotlinAccessibility.Accessible
     }
 
     private fun <T> ConstantValue<T>.wrap(parameters: CompileTimeConstant.Parameters): TypedCompileTimeConstant<T> =

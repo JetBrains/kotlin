@@ -329,6 +329,7 @@ public interface Errors {
     DiagnosticFactory1<KtTypeReference, KotlinType> INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> INLINE_CLASS_CANNOT_EXTEND_CLASSES = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> INLINE_CLASS_CANNOT_BE_RECURSIVE = DiagnosticFactory0.create(ERROR);
 
     // Secondary constructors
 
@@ -632,6 +633,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> OPTIONAL_EXPECTATION_NOT_ON_EXPECTED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

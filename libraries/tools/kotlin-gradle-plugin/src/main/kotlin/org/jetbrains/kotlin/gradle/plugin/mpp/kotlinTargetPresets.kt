@@ -10,9 +10,14 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask
+import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask.Companion.KONAN_DOWNLOAD_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
     protected val project: Project,
@@ -31,7 +36,7 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
         }
 
-        KotlinTargetConfigurator(buildOutputCleanupRegistry).configureTarget(result)
+        KotlinTargetConfigurator<T>(buildOutputCleanupRegistry).configureTarget(result)
 
         result.compilations.all { compilation ->
             buildCompilationProcessor(compilation).run()
@@ -45,7 +50,7 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
     internal abstract fun buildCompilationProcessor(compilation: T): KotlinSourceSetProcessor<*>
 }
 
-class KotlinUniversalTargetPreset(
+class KotlinMetadataTargetPreset(
     project: Project,
     instantiator: Instantiator,
     fileResolver: FileResolver,
@@ -77,7 +82,7 @@ class KotlinUniversalTargetPreset(
         )
 
     companion object {
-        const val PRESET_NAME = "universal"
+        const val PRESET_NAME = "metadata"
     }
 }
 
@@ -184,7 +189,7 @@ class KotlinJvmWithJavaTargetPreset(
 
         target.compilations.all { compilation ->
             // Set up dependency resolution using platforms:
-            KotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, target, project.configurations)
+            AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, target, project.configurations)
         }
 
         target.compilations.getByName("test").run {
@@ -201,3 +206,42 @@ class KotlinJvmWithJavaTargetPreset(
         const val PRESET_NAME = "jvmWithJava"
     }
 }
+
+class KotlinNativeTargetPreset(
+    private val name: String,
+    val project: Project,
+    val konanTarget: KonanTarget,
+    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
+) : KotlinTargetPreset<KotlinNativeTarget> {
+
+    override fun getName(): String = name
+
+    private fun createCompilerDownloadingTask() = with(project) {
+        if (!hasProperty(KotlinNativeProjectProperty.KONAN_HOME)) {
+            setProperty(KotlinNativeProjectProperty.KONAN_HOME, KonanCompilerDownloadTask.compilerDirectory)
+            setProperty(KotlinNativeProjectProperty.DOWNLOAD_COMPILER, true)
+        }
+        tasks.maybeCreate(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
+    }
+
+    override fun createTarget(name: String): KotlinNativeTarget {
+        val result = KotlinNativeTarget(project, konanTarget).apply {
+            targetName = name
+            disambiguationClassifier = name
+
+            val compilationFactory = KotlinNativeCompilationFactory(project, this)
+            compilations = project.container(compilationFactory.itemClass, compilationFactory)
+        }
+
+        createCompilerDownloadingTask()
+        KotlinNativeTargetConfigurator(buildOutputCleanupRegistry).configureTarget(result)
+        return result
+    }
+}
+
+internal val KonanTarget.presetName: String
+    get() = when(this) {
+        KonanTarget.ANDROID_ARM32 -> "androidNativeArm32"
+        KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
+        else -> lowerCamelCaseName(*this.name.split('_').toTypedArray())
+    }

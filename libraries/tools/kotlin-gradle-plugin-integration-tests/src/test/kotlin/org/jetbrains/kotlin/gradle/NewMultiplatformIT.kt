@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.modify
@@ -27,12 +29,16 @@ class NewMultiplatformIT : BaseGradleIT() {
         with(libProject) {
             build("publish") {
                 assertSuccessful()
-                assertTasksExecuted(":compileKotlinJvm6", ":compileKotlinNodeJs", ":jvm6Jar", ":nodeJsJar")
-                val repoDir = projectDir.resolve("repo")
-                val moduleDir = repoDir.resolve("com/example/sample-lib/1.0")
+                assertTasksExecuted(
+                    ":compileKotlinJvm6", ":compileKotlinNodeJs", ":compileKotlinMetadata",
+                    ":jvm6Jar", ":nodeJsJar", ":metadataJar"
+                )
+                val moduleDir = projectDir.resolve("repo/com/example/sample-lib/1.0")
                 val jvmJarName = "sample-lib-1.0-jvm6.jar"
                 val jsJarName = "sample-lib-1.0-nodeJs.jar"
-                listOf(jvmJarName, jsJarName, "sample-lib-1.0.module").forEach {
+                val metadataJarName = "sample-lib-1.0-metadata.jar"
+
+                listOf(jvmJarName, jsJarName, metadataJarName, "sample-lib-1.0.module").forEach {
                     Assert.assertTrue(moduleDir.resolve(it).exists())
                 }
 
@@ -46,6 +52,9 @@ class NewMultiplatformIT : BaseGradleIT() {
                 Assert.assertTrue("function idUsage(" in compiledJs)
                 Assert.assertTrue("function expectedFun(" in compiledJs)
                 Assert.assertTrue("function main(" in compiledJs)
+
+                val metadataJarEntries = ZipFile(moduleDir.resolve(metadataJarName)).entries().asSequence().map { it.name }.toSet()
+                Assert.assertTrue("com/example/lib/CommonKt.kotlin_metadata" in metadataJarEntries)
             }
         }
 
@@ -57,11 +66,11 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             fun CompiledProject.checkAppBuild() {
                 assertSuccessful()
-                assertTasksExecuted(":compileKotlinJvm6", ":compileKotlinJvm8", ":compileKotlinNodeJs")
+                assertTasksExecuted(":compileKotlinJvm6", ":compileKotlinJvm8", ":compileKotlinNodeJs", ":compileKotlinMetadata")
 
                 projectDir.resolve(targetClassesDir("jvm6")).run {
                     Assert.assertTrue(resolve("com/example/app/AKt.class").exists())
-                    Assert.assertTrue(this.resolve("com/example/app/UseBothIdsKt.class").exists())
+                    Assert.assertTrue(resolve("com/example/app/UseBothIdsKt.class").exists())
                 }
 
                 projectDir.resolve(targetClassesDir("jvm8")).run {
@@ -70,14 +79,19 @@ class NewMultiplatformIT : BaseGradleIT() {
                     Assert.assertTrue(resolve("com/example/app/Jdk8ApiUsageKt.class").exists())
                 }
 
+                projectDir.resolve(targetClassesDir("metadata")).run {
+                    Assert.assertTrue(resolve("com/example/app/AKt.kotlin_metadata").exists())
+                }
+
                 projectDir.resolve(targetClassesDir("nodeJs")).resolve("sample-app.js").readText().run {
                     Assert.assertTrue(contains("console.info"))
                     Assert.assertTrue(contains("function nodeJsMain("))
                 }
             }
 
-            build("assemble") {
+            build("assemble", "resolveRuntimeDependencies") {
                 checkAppBuild()
+                assertTasksExecuted(":resolveRuntimeDependencies") // KT-26301
             }
 
             // Now run again with a project dependency instead of a module one:
@@ -96,7 +110,9 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             build("assemble") {
                 assertSuccessful()
-                assertTasksExecuted(":app-js:compileKotlin2Js", ":app-jvm:compileKotlin")
+                assertTasksExecuted(":app-js:compileKotlin2Js", ":app-jvm:compileKotlin", ":app-common:compileKotlinCommon")
+
+                assertFileExists(kotlinClassesDir("app-common") + "com/example/app/CommonAppKt.kotlin_metadata")
 
                 val jvmClassFile = projectDir.resolve(kotlinClassesDir("app-jvm") + "com/example/app/JvmAppKt.class")
                 checkBytecodeContains(jvmClassFile, "CommonKt.id", "MainKt.expectedFun")
@@ -290,6 +306,67 @@ class NewMultiplatformIT : BaseGradleIT() {
         )
         build("tasks") {
             assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testResolveMppLibDependencyToMetadata() {
+        val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+        val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
+
+        libProject.build("publish") { assertSuccessful() }
+        val localRepo = libProject.projectDir.resolve("repo")
+        val localRepoUri = localRepo.toURI()
+
+        with(appProject) {
+            setupWorkingDir()
+
+            val pathPrefix = "metadataDependency: "
+
+            gradleBuildScript().appendText(
+                "\n" + """
+                    repositories { maven { url '$localRepoUri' } }
+
+                    kotlin.sourceSets {
+                        commonMain {
+                            dependencies {
+                                // add these dependencies to check that they are resolved to metadata
+                                api 'com.example:sample-lib:1.0'
+                                compileOnly 'com.example:sample-lib:1.0'
+                                runtimeOnly 'com.example:sample-lib:1.0'
+                            }
+                        }
+                    }
+
+                    task('printMetadataFiles') {
+                        doFirst {
+                            ['Api', 'Implementation', 'CompileOnly', 'RuntimeOnly'].each { kind ->
+                                def configuration = configurations.getByName("commonMain${'$'}kind" + '$METADATA_CONFIGURATION_NAME_SUFFIX')
+                                configuration.files.each { println '$pathPrefix' + configuration.name + '->' + it.absolutePath }
+                            }
+                        }
+                    }
+                """.trimIndent()
+            )
+            val metadataDependencyRegex = "$pathPrefix(.*?)->(.*)".toRegex()
+
+            build("printMetadataFiles") {
+                assertSuccessful()
+
+                val expectedPath =
+                    localRepo.resolve(
+                        "com/example/sample-lib/1.0/sample-lib-1.0-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}.jar"
+                    ).absolutePath
+
+                val paths = metadataDependencyRegex.findAll(output).map { it.groupValues[1] to it.groupValues[2] }.toSet()
+
+                Assert.assertEquals(
+                    listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
+                        "commonMain$it$METADATA_CONFIGURATION_NAME_SUFFIX" to expectedPath
+                    }.toSet(),
+                    paths
+                )
+            }
         }
     }
 }

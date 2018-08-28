@@ -14,11 +14,12 @@ import java.io.InputStream
  * of the core protobuf messages (metadata.proto).
  */
 class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
-    override fun isCompatible() = this.isCompatibleTo(INSTANCE)
+    override fun isCompatible(): Boolean =
+        this.isCompatibleTo(INSTANCE)
 
     companion object {
         @JvmField
-        val INSTANCE = BuiltInsBinaryVersion(1, 0, 4)
+        val INSTANCE = BuiltInsBinaryVersion(1, 0, 5)
 
         @JvmField
         val INVALID_VERSION = BuiltInsBinaryVersion()

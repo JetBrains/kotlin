@@ -15,6 +15,7 @@ import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.cfg.WhenChecker;
 import org.jetbrains.kotlin.codegen.*;
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionsOnDeclarationBodyChecker;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -61,6 +63,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.NUMBERED_FUNCTION_PREFIX;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.name.SpecialNames.safeIdentifier;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -645,6 +648,54 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         super.visitCallExpression(expression);
         checkSamCall(expression);
         checkCrossinlineSuspendCall(expression);
+        recordSuspendFunctionTypeWrapperForArguments(expression);
+    }
+
+    private void recordSuspendFunctionTypeWrapperForArguments(@NotNull KtCallExpression expression) {
+        ResolvedCall<?> call = CallUtilKt.getResolvedCall(expression, bindingContext);
+        if (call == null) return;
+
+        CallableDescriptor descriptor = call.getResultingDescriptor();
+        if (!CodegenUtilKt.needsExperimentalCoroutinesWrapper(descriptor)) return;
+
+        List<ResolvedValueArgument> argumentsByIndex = call.getValueArgumentsByIndex();
+        if (argumentsByIndex == null) return;
+
+        for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
+            ResolvedValueArgument resolvedValueArgument = argumentsByIndex.get(parameter.getIndex());
+            if (!(resolvedValueArgument instanceof ExpressionValueArgument)) continue;
+            ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
+            if (valueArgument == null) continue;
+            KtExpression argumentExpression = valueArgument.getArgumentExpression();
+            if (argumentExpression == null) continue;
+
+            recordSuspendFunctionTypeWrapperForArgument(parameter, argumentExpression);
+        }
+
+        ReceiverValue receiver = call.getExtensionReceiver();
+        if (descriptor.getExtensionReceiverParameter() != null && receiver instanceof ExpressionReceiver) {
+            recordSuspendFunctionTypeWrapperForArgument(
+                    descriptor.getExtensionReceiverParameter(),
+                    ((ExpressionReceiver) receiver).getExpression()
+            );
+        }
+    }
+
+    private void recordSuspendFunctionTypeWrapperForArgument(ParameterDescriptor parameter, KtExpression argumentExpression) {
+        if (FunctionTypesKt.isSuspendFunctionTypeOrSubtype(parameter.getType())) {
+
+            // SuspendFunctionN type is mapped to is mapped to FunctionTypeN+1, but we also need to remove an argument for return type
+            // So, it could be parameter.getType().getArguments().size() + 1 - 1
+            int functionTypeArity = parameter.getType().getArguments().size();
+
+            Type functionType = Type.getObjectType(NUMBERED_FUNCTION_PREFIX + functionTypeArity);
+
+            bindingTrace.record(
+                    FUNCTION_TYPE_FOR_SUSPEND_WRAPPER,
+                    argumentExpression,
+                    functionType
+            );
+        }
     }
 
     private void checkCrossinlineSuspendCall(@NotNull KtCallExpression expression) {

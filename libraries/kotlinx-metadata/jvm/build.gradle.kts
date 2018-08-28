@@ -4,6 +4,7 @@ description = "Kotlin JVM metadata manipulation library"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 /*

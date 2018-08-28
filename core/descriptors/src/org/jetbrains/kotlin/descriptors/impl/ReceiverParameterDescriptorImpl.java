@@ -19,13 +19,19 @@ package org.jetbrains.kotlin.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 public class ReceiverParameterDescriptorImpl extends AbstractReceiverParameterDescriptor {
     private final DeclarationDescriptor containingDeclaration;
     private final ReceiverValue value;
 
-    public ReceiverParameterDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, @NotNull ReceiverValue value) {
+    public ReceiverParameterDescriptorImpl(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull ReceiverValue value,
+            @NotNull Annotations annotations
+    ) {
+        super(annotations);
         this.containingDeclaration = containingDeclaration;
         this.value = value;
     }
@@ -40,5 +46,11 @@ public class ReceiverParameterDescriptorImpl extends AbstractReceiverParameterDe
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;
+    }
+
+    @NotNull
+    @Override
+    public ReceiverParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
+        return new ReceiverParameterDescriptorImpl(newOwner, value, getAnnotations());
     }
 }

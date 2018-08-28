@@ -210,7 +210,9 @@ class FunctionDescriptorResolver(
         }
 
         functionDescriptor.initialize(
-            receiverType,
+            receiverType?.let {
+                DescriptorFactory.createExtensionReceiverParameterForCallable(functionDescriptor, it, Annotations.EMPTY)
+            },
             getDispatchReceiverParameterIfNeeded(container),
             typeParameterDescriptors,
             valueParameterDescriptors,

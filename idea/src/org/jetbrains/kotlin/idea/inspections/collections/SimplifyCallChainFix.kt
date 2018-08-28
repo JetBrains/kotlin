@@ -24,8 +24,12 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
-    override fun getName() = "Merge call chain to '$newName'"
+class SimplifyCallChainFix(private val newCallText: String) : LocalQuickFix {
+    private val shortenedText = newCallText.split("(").joinToString(separator = "(") {
+        it.substringAfterLast(".")
+    }
+
+    override fun getName() = "Merge call chain to '$shortenedText'"
 
     override fun getFamilyName() = name
 
@@ -45,7 +49,7 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
             val firstCallExpression = AbstractCallChainChecker.getCallExpression(firstExpression) ?: return
             val secondCallExpression = secondQualifiedExpression.selectorExpression as? KtCallExpression ?: return
 
-            val lastArgumentPrefix = if (newName.startsWith("joinTo")) "transform = " else ""
+            val lastArgumentPrefix = if (newCallText.startsWith("joinTo")) "transform = " else ""
             val arguments = secondCallExpression.valueArgumentList?.arguments.orEmpty().map { it.text } +
                     firstCallExpression.valueArgumentList?.arguments.orEmpty().map { "$lastArgumentPrefix${it.text}" }
             val lambdaExpression = firstCallExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()
@@ -55,7 +59,7 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
                 "$0$1$2 $3 $4",
                 receiverExpression ?: "",
                 operationSign,
-                newName,
+                newCallText,
                 argumentsText,
                 lambdaExpression.text
             )
@@ -63,7 +67,7 @@ class SimplifyCallChainFix(val newName: String) : LocalQuickFix {
                 "$0$1$2 $3",
                 receiverExpression ?: "",
                 operationSign,
-                newName,
+                newCallText,
                 argumentsText
             )
 

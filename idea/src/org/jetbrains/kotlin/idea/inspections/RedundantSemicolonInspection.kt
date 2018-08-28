@@ -23,6 +23,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -57,6 +58,8 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
             }
             return false
         }
+
+        if (semicolon.prevLeaf()?.node?.elementType == KtNodeTypes.ELSE) return false
 
         if (semicolon.parent is KtEnumEntry) return false
 

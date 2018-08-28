@@ -402,14 +402,14 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
+            createMethodActions(
                         myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = true
+                SimpleMethodRequest(
+                    project,
+                    methodName = "setBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(),
+                    parameters = expectedParams(PsiType.getTypeByName("java.lang.String", project, project.allScope()))
                         )
                 ).findWithText("Add 'var' property 'baz' to 'Foo'")
         )
@@ -430,14 +430,14 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
+            createMethodActions(
                         myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = true
+                SimpleMethodRequest(
+                    project,
+                    methodName = "setBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(),
+                    parameters = expectedParams(PsiType.getTypeByName("java.lang.String", project, project.allScope()))
                         )
                 ).findWithText("Add 'lateinit var' property 'baz' to 'Foo'")
         )
@@ -505,10 +505,6 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 
 
-
-    private fun createPropertyActions(atCaret: JvmClass, property: MemberRequest.Property): List<IntentionAction> =
-        com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddPropertyActions(atCaret, property) }
-
     private fun createFieldActions(atCaret: JvmClass, fieldRequest: CreateFieldRequest): List<IntentionAction> =
         com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddFieldActions(atCaret, fieldRequest) }
 
@@ -520,14 +516,14 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin())
 
         myFixture.launchAction(
-                createPropertyActions(
+            createMethodActions(
                         myFixture.atCaret(),
-                        MemberRequest.Property(
-                                propertyName = "baz",
-                                visibilityModifier = JvmModifier.PUBLIC,
-                                propertyType = PsiType.getTypeByName("java.lang.String", project, project.allScope()),
-                                getterRequired = true,
-                                setterRequired = false
+                SimpleMethodRequest(
+                    project,
+                    methodName = "getBaz",
+                    modifiers = listOf(JvmModifier.PUBLIC),
+                    returnType = expectedTypes(PsiType.getTypeByName("java.lang.String", project, project.allScope())),
+                    parameters = expectedParams()
                         )
                 ).findWithText("Add 'val' property 'baz' to 'Foo'")
         )

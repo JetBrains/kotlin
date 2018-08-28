@@ -4203,6 +4203,16 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
         }
 
+        @TestMetadata("addRemainingBranchesAnotherPackage.before.Main.kt")
+        public void testAddRemainingBranchesAnotherPackage() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesAnotherPackage.before.Main.kt");
+        }
+
+        @TestMetadata("addRemainingBranchesAnotherPackageAll.before.Main.kt")
+        public void testAddRemainingBranchesAnotherPackageAll() throws Exception {
+            runTest("idea/testData/quickfix/when/addRemainingBranchesAnotherPackageAll.before.Main.kt");
+        }
+
         public void testAllFilesPresentInWhen() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/when"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
         }

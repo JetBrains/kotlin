@@ -1,68 +1,44 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("unused")
-
 package kotlin.script.experimental.jvm
 
+import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
+import java.io.File
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.util.PropertiesCollection
 
-open class JvmScriptCompiler(
-    val compilerProxy: KJVMCompilerProxy,
-    val cache: CompiledJvmScriptsCache
-) : ScriptCompiler {
-
-    override suspend fun compile(
-        script: ScriptSource,
-        configurator: ScriptCompilationConfigurator?,
-        additionalConfiguration: ScriptCompileConfiguration?
-    ): ResultWithDiagnostics<CompiledScript<*>> {
-        val baseConfiguration = additionalConfiguration?.cloneWithNewParent(configurator?.defaultConfiguration)
-                ?: configurator?.defaultConfiguration
-                ?: ScriptCompileConfiguration()
-        val refinedConfiguration =
-            if (baseConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineBeforeParsing) == true) {
-                if (configurator == null) {
-                    return ResultWithDiagnostics.Failure("Non-null configurator expected".asErrorDiagnostics())
-                }
-                configurator.refineConfiguration(script, baseConfiguration).let {
-                    when (it) {
-                        is ResultWithDiagnostics.Failure -> return it
-                        is ResultWithDiagnostics.Success -> it.value
-                    }
-                }
-            } else {
-                baseConfiguration
-            }
-        val cached = cache.get(script, refinedConfiguration)
-
-        if (cached != null) return cached.asSuccess()
-
-        return compilerProxy.compile(script, configurator, refinedConfiguration).also {
-            if (it is ResultWithDiagnostics.Success) {
-                cache.store(it.value, refinedConfiguration)
-            }
-        }
-    }
+data class JvmDependency(val classpath: List<File>) : ScriptDependency {
+    @Suppress("unused")
+    constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
 }
 
-interface CompiledJvmScriptsCache {
-    fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>?
-    fun store(compiledScript: CompiledScript<*>, configuration: ScriptCompileConfiguration)
+interface JvmScriptCompilationConfigurationKeys
+
+open class JvmScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptCompilationConfigurationKeys {
+    companion object : JvmScriptCompilationConfigurationKeys
 }
 
-interface KJVMCompilerProxy {
-    fun compile(
-        script: ScriptSource,
-        configurator: ScriptCompilationConfigurator?,
-        additionalConfiguration: ScriptCompileConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>>
+fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
+    dependenciesFromClassloader(*libraries, wholeClasspath = wholeClasspath)
 }
 
-class DummyCompiledJvmScriptCache : CompiledJvmScriptsCache {
-    override fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>? = null
-    override fun store(compiledScript: CompiledScript<*>, configuration: ScriptCompileConfiguration) {}
+fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassloader(
+    vararg libraries: String,
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
+    wholeClasspath: Boolean = false
+) {
+    ScriptCompilationConfiguration.dependencies.append(
+        JvmDependency(scriptCompilationClasspathFromContext(*libraries, classLoader = classLoader, wholeClasspath = wholeClasspath))
+    )
 }
+
+val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCopy(ScriptingHostConfiguration.jvm.javaHome)
+
+@Suppress("unused")
+val ScriptCompilationConfigurationKeys.jvm
+    get() = JvmScriptCompilationConfigurationBuilder()
 

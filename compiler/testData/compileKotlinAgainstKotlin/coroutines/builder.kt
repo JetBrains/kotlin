@@ -1,8 +1,17 @@
 // FILE: A.kt
 // LANGUAGE_VERSION: 1.2
 // TODO: Unmute when automatic conversion experimental <-> release will be implemented
-// IGNORE_BACKEND: JVM, JS, NATIVE, JVM_IR, JS_IR
+// IGNORE_BACKEND: JS, NATIVE, JVM_IR, JS_IR
 import kotlin.coroutines.experimental.*
+
+var callback: (() -> Unit)? = null
+fun join() {
+    while (callback != null) {
+        val x = callback!!
+        callback = null
+        x()
+    }
+}
 
 fun builder1(c: suspend () -> String): String {
     var res = "FAIL"
@@ -15,6 +24,7 @@ fun builder1(c: suspend () -> String): String {
             throw exception
         }
     })
+    join()
     return res
 }
 
@@ -29,23 +39,31 @@ fun builder2(c: suspend String.() -> String): String {
             throw exception
         }
     })
+    join()
     return res
 }
 
 // FILE: B.kt
 // LANGUAGE_VERSION: 1.3
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
-fun ok(continuation: Continuation<String>): Any? {
-    return "OK"
+suspend fun ok(): String {
+    return o() + k()
+}
+
+suspend fun o(): String = suspendCoroutine { continuation ->
+    callback = { continuation.resume("O") }
+}
+
+suspend fun k(): String = suspendCoroutine { continuation ->
+    callback = { continuation.resume("K") }
 }
 
 fun box(): String {
-//    if (builder1(::ok) != "OK") return "FAIL 1"
-//    if (builder1 { cont: Continuation<String> -> "OK" } != "OK") return "FAIL 2"
-//    if (builder1(fun (cont: Continuation<String>): Any? = "OK") != "OK") return "FAIL 3"
-//
-//    if (builder2 { cont: Continuation<String> -> this + "K" } != "OK") return "FAIL 5"
-//    if (builder2(fun String.(cont: Continuation<String>): Any? = this + "K") != "OK") return "FAIL 6"
+    if (builder1(::ok) != "OK") return "FAIL 1"
+    if (builder1 { ok() } != "OK") return "FAIL 2"
+
+    if (builder2 { this + k() } != "OK") return "FAIL 5"
     return "OK"
 }

@@ -26,6 +26,7 @@ import com.intellij.util.ExceptionUtil;
 import com.intellij.util.SmartList;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
+import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -175,7 +176,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 
-        ContentRootsKt.addKotlinSourceRoots(configuration, arguments.getFreeArgs());
+        String[] commonSourcesArray = arguments.getCommonSources();
+        Set<String> commonSources = commonSourcesArray == null ? Collections.emptySet() : SetsKt.setOf(commonSourcesArray);
+        for (String arg : arguments.getFreeArgs()) {
+            ContentRootsKt.addKotlinSourceRoot(configuration, arg, commonSources.contains(arg));
+        }
+
         KotlinCoreEnvironment environmentForJS =
                 KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES);
 

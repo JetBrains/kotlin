@@ -1,0 +1,41 @@
+// FIX: Add '.getOrThrow()' to function result (breaks use-sites!)
+// WITH_RUNTIME
+
+package kotlin
+
+class SuccessOrFailure<T>(val value: T?) {
+    fun getOrThrow(): T = value ?: throw AssertionError("")
+}
+
+fun incorrectBlock(arg: Boolean, arg2: Boolean?): Int {
+    if (arg) {
+        class Local {
+            fun foo(): SuccessOrFailure<String> {
+                return SuccessOrFailure("NO")
+            }
+        }
+        return SuccessOrFailure(1).getOrThrow()
+    } else {
+        when (arg2) {
+            true -> {
+                val x = fun(): SuccessOrFailure<Boolean> {
+                    return SuccessOrFailure(false)
+                }
+                if (x().getOrThrow()) {
+                    return SuccessOrFailure(2).getOrThrow()
+                } else {
+                    return SuccessOrFailure(0).getOrThrow()
+                }
+            }
+            else -> {
+                if (arg2 == false) {
+                    listOf(1, 2, 3).forEach {
+                        if (it == 2) return@forEach
+                    }
+                    return SuccessOrFailure(3).getOrThrow()
+                }
+                return SuccessOrFailure(4).getOrThrow()
+            }
+        }
+    }
+}

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -650,14 +651,17 @@ class ExpressionCodegen(
                     StackValue.putUnitInstance(mv)
                 }
                 val boxedType = boxType(asmType)
-                generateAsCast(mv, expression.typeOperand.toKotlinType(), boxedType, expression.operator == IrTypeOperator.SAFE_CAST)
+                generateAsCast(
+                    mv, expression.typeOperand.toKotlinType(), boxedType, expression.operator == IrTypeOperator.SAFE_CAST,
+                    state.languageVersionSettings.isReleaseCoroutines()
+                )
                 return onStack(boxedType)
             }
 
             IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF -> {
                 gen(expression.argument, OBJECT_TYPE, data)
                 val type = boxType(asmType)
-                generateIsCheck(mv, expression.typeOperand.toKotlinType(), type)
+                generateIsCheck(mv, expression.typeOperand.toKotlinType(), type, state.languageVersionSettings.isReleaseCoroutines())
                 if (IrTypeOperator.NOT_INSTANCEOF == expression.operator) {
                     StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(Type.BOOLEAN_TYPE, mv)
                 }

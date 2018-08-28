@@ -464,6 +464,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                     symbol      = symbol).apply {
 
+                    parent = coroutineClass
                     returnType  = coroutineClass.defaultType
 
                     this.valueParameters += constructorParameters
@@ -525,6 +526,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                     symbol      = symbol).apply {
 
+                    parent = coroutineClass
                     returnType = coroutineClass.defaultType
 
                     this.valueParameters += constructorParameters

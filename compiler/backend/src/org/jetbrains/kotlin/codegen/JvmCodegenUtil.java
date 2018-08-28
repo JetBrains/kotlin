@@ -52,8 +52,8 @@ import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmFieldAnnotation;
 
 public class JvmCodegenUtil {
 

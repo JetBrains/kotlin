@@ -29,7 +29,9 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
         val containingDeclaration: KtDeclaration = element.getParentOfTypesAndPredicate(
             true,
             KtDeclarationWithBody::class.java,
-            KtClassOrObject::class.java
+            KtClassOrObject::class.java,
+            KtProperty::class.java,
+            KtTypeAlias::class.java
         ) {
             !KtPsiUtil.isLocal(it)
         } ?: return emptyList()

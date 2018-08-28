@@ -103,6 +103,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
                 newSymbol,
                 null
             ).apply {
+                parent = irConstructor.parent
                 returnType = irConstructor.returnType
             }
 

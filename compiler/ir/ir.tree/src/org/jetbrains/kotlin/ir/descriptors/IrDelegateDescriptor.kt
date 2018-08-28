@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import java.lang.UnsupportedOperationException
 
 interface IrDelegateDescriptor : PropertyDescriptor
 
@@ -68,13 +67,7 @@ abstract class IrDelegateDescriptorBase(
         /* isDelegated = */ true
     ) {
     init {
-        val typeParameters: List<TypeParameterDescriptor> = emptyList()
-        val extensionReceiverParameter: ReceiverParameterDescriptor? = null
-        val dispatchReceiverParameter =
-            if (containingDeclaration is ClassDescriptor)
-                containingDeclaration.thisAsReceiverParameter
-            else null
-        setType(delegateType, typeParameters, dispatchReceiverParameter, extensionReceiverParameter)
+        setType(delegateType, emptyList(), (containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter, null)
     }
 
     final override fun setOutType(outType: KotlinType?) {

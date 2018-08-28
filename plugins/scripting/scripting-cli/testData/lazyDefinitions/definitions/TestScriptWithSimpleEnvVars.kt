@@ -2,17 +2,12 @@
 import kotlin.script.experimental.annotations.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.*
-import kotlin.script.experimental.misc.*
-import kotlin.reflect.full.starProjectedType
 
-object TestScriptWithSimpleEnvVarsConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
-    listOf(
-        ScriptCompileConfigurationProperties.contextVariables("stringVar1" to String::class.starProjectedType)
-    )
-)
+object TestScriptWithSimpleEnvVarsDefinition : ScriptCompilationConfiguration(
+    {
+        providedProperties("stringVar1" to String::class)
+    })
 
-@KotlinScript
-@KotlinScriptFileExtension("2.kts")
-@KotlinScriptDefaultCompilationConfiguration(TestScriptWithSimpleEnvVarsConfiguration::class)
+@KotlinScript(extension = "2.kts", compilationConfiguration = TestScriptWithSimpleEnvVarsDefinition::class)
 abstract class TestScriptWithSimpleEnvVars
 

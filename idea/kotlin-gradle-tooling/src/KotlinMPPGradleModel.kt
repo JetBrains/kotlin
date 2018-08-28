@@ -12,7 +12,6 @@ import java.io.Serializable
 typealias KotlinDependency = ExternalDependency
 
 interface KotlinModule : Serializable {
-    val isAndroid: Boolean
     val name: String
     val platform: KotlinPlatform
     val dependencies: Set<KotlinDependency>
@@ -20,9 +19,17 @@ interface KotlinModule : Serializable {
 }
 
 interface KotlinSourceSet : KotlinModule {
+    val languageSettings: KotlinLanguageSettings
     val sourceDirs: Set<File>
     val resourceDirs: Set<File>
     val dependsOnSourceSets: Set<String>
+}
+
+interface KotlinLanguageSettings : Serializable {
+    val languageVersion: String?
+    val apiVersion: String?
+    val isProgressiveMode: Boolean
+    val enabledLanguageFeatures: Set<String>
 }
 
 interface KotlinCompilationOutput : Serializable {
@@ -52,7 +59,8 @@ interface KotlinCompilation : KotlinModule {
 enum class KotlinPlatform(val id: String) {
     COMMON("common"),
     JVM("jvm"),
-    JS("js");
+    JS("js"),
+    ANDROID("androidJvm");
 
     companion object {
         fun byId(id: String) = values().firstOrNull { it.id == id }
@@ -64,7 +72,6 @@ interface KotlinTargetJar : Serializable {
 }
 
 interface KotlinTarget : Serializable {
-    val isAndroid: Boolean
     val name: String
     val disambiguationClassifier: String?
     val platform: KotlinPlatform

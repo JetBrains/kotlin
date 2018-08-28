@@ -19,18 +19,23 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
-import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 
 class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker {

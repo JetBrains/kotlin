@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class SimpleNameGenerator : NameGenerator {
 
@@ -71,7 +72,13 @@ class SimpleNameGenerator : NameGenerator {
                         is PropertyGetterDescriptor -> nameBuilder.append(Namer.GETTER_PREFIX)
                         is PropertySetterDescriptor -> nameBuilder.append(Namer.SETTER_PREFIX)
                     }
+
                     nameBuilder.append(descriptor.correspondingProperty.name.asString())
+
+                    descriptor.extensionReceiverParameter?.let {
+                        nameBuilder.append("_r$${it.type}")
+                    }
+
                     if (descriptor.visibility == Visibilities.PRIVATE) {
                         nameBuilder.append('$')
                         nameBuilder.append(getNameForDescriptor(descriptor.containingDeclaration, context))
@@ -95,8 +102,16 @@ class SimpleNameGenerator : NameGenerator {
                 }
                 is CallableDescriptor -> {
                     nameBuilder.append(descriptor.name.asString())
-                    descriptor.typeParameters.forEach { nameBuilder.append("_${it.name.asString()}") }
-                    descriptor.valueParameters.forEach { nameBuilder.append("_${it.type}") }
+                    descriptor.typeParameters.ifNotEmpty {
+                        nameBuilder.append("_\$t")
+                        joinTo(nameBuilder, "") { "_${it.name}" }
+                    }
+                    descriptor.extensionReceiverParameter?.let {
+                        nameBuilder.append("_r$${it.type}")
+                    }
+                    descriptor.valueParameters.ifNotEmpty {
+                        joinTo(nameBuilder, "") { "_${it.type}" }
+                    }
                 }
 
             }

@@ -168,10 +168,11 @@ public class DescriptorFactory {
     @Nullable
     public static ReceiverParameterDescriptor createExtensionReceiverParameterForCallable(
             @NotNull CallableDescriptor owner,
-            @Nullable KotlinType receiverParameterType
+            @Nullable KotlinType receiverParameterType,
+            @NotNull Annotations annotations
     ) {
         return receiverParameterType == null
                ? null
-               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null));
+               : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null), annotations);
     }
 }

@@ -84,7 +84,7 @@ object JsSymbolBuilder {
 
 
 fun IrSimpleFunctionSymbol.initialize(
-    receiverParameterType: IrType? = null,
+    extensionReceiverParameter: ReceiverParameterDescriptor? = null,
     dispatchParameterDescriptor: ReceiverParameterDescriptor? = null,
     typeParameters: List<TypeParameterDescriptor> = emptyList(),
     valueParameters: List<ValueParameterDescriptor> = emptyList(),
@@ -93,7 +93,7 @@ fun IrSimpleFunctionSymbol.initialize(
     visibility: Visibility = Visibilities.LOCAL
 ) = this.apply {
     (descriptor as FunctionDescriptorImpl).initialize(
-        receiverParameterType?.toKotlinType(),
+        extensionReceiverParameter,
         dispatchParameterDescriptor,
         typeParameters,
         valueParameters,

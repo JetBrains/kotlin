@@ -7,8 +7,6 @@ plugins {
 }
 
 dependencies {
-    testRuntime(intellijDep())
-
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:backend"))

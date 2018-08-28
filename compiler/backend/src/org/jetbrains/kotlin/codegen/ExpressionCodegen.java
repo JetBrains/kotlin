@@ -298,6 +298,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             StackValue stackValue = selector.accept(visitor, receiver);
 
+            stackValue = suspendFunctionTypeWrapperIfNeeded(selector, stackValue);
+
             RuntimeAssertionInfo runtimeAssertionInfo = null;
             if (selector instanceof KtExpression) {
                 KtExpression expression = (KtExpression) selector;
@@ -319,6 +321,32 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             String message = error.getMessage();
             throw new CompilationException(message != null ? message : "null", error, selector);
         }
+    }
+
+    private StackValue suspendFunctionTypeWrapperIfNeeded(KtElement selector, StackValue stackValue) {
+        Type functionTypeForWrapper =
+                selector instanceof KtExpression
+                ? bindingContext.get(CodegenBinding.FUNCTION_TYPE_FOR_SUSPEND_WRAPPER, (KtExpression) selector)
+                : null;
+
+        if (functionTypeForWrapper == null) return stackValue;
+
+        StackValue stackValueToWrap = stackValue;
+        stackValue = new StackValue(stackValue.type, stackValue.kotlinType) {
+            @Override
+            public void putSelector(
+                    @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v
+            ) {
+                stackValueToWrap.put(functionTypeForWrapper, null, v);
+                invokeCoroutineMigrationMethod(
+                        v,
+                        "toExperimentalSuspendFunction",
+                        Type.getMethodDescriptor(functionTypeForWrapper, functionTypeForWrapper)
+                );
+                coerce(functionTypeForWrapper, type, v);
+            }
+        };
+        return stackValue;
     }
 
     public StackValue gen(KtElement expr) {
@@ -2299,7 +2327,41 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 coroutineInstanceValueForSuspensionPoint != null
                 ? coroutineInstanceValueForSuspensionPoint
                 : getContinuationParameterFromEnclosingSuspendFunction(resolvedCall);
+
+        if (coroutineInstanceValue != null && needsExperimentalCoroutinesWrapper(resolvedCall.getCandidateDescriptor())) {
+            StackValue releaseContinuation = coroutineInstanceValue;
+            coroutineInstanceValue = new StackValue(CoroutineCodegenUtilKt.EXPERIMENTAL_CONTINUATION_ASM_TYPE) {
+                @Override
+                public void putSelector(
+                        @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v
+                ) {
+                    releaseContinuation.put(CoroutineCodegenUtilKt.RELEASE_CONTINUATION_ASM_TYPE, v);
+                    invokeCoroutineMigrationMethod(
+                            v,
+                            "toExperimentalContinuation",
+                            Type.getMethodDescriptor(
+                                    CoroutineCodegenUtilKt.EXPERIMENTAL_CONTINUATION_ASM_TYPE,
+                                    CoroutineCodegenUtilKt.RELEASE_CONTINUATION_ASM_TYPE
+                            )
+                    );
+                }
+            };
+        }
+
         tempVariables.put(continuationExpression, coroutineInstanceValue);
+    }
+
+    private static void invokeCoroutineMigrationMethod(
+            @NotNull InstructionAdapter v,
+            String methodName,
+            String descriptor
+    ) {
+        v.invokestatic(
+                "kotlin/coroutines/experimental/migration/CoroutinesMigrationKt",
+                methodName,
+                descriptor,
+                false
+        );
     }
 
     private StackValue getContinuationParameterFromEnclosingSuspendFunction(@NotNull ResolvedCall<?> resolvedCall) {
@@ -4543,7 +4605,8 @@ The "returned" value of try expression with no finally is either the last expres
                 return Unit.INSTANCE;
             }
 
-            CodegenUtilKt.generateAsCast(v, rightKotlinType, boxedRightType, safeAs);
+            CodegenUtilKt.generateAsCast(v, rightKotlinType, boxedRightType, safeAs,
+                                         state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
 
             return Unit.INSTANCE;
         });
@@ -4596,7 +4659,7 @@ The "returned" value of try expression with no finally is either the last expres
                 return null;
             }
 
-            CodegenUtilKt.generateIsCheck(v, rhsKotlinType, type);
+            CodegenUtilKt.generateIsCheck(v, rhsKotlinType, type, state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
             return null;
         });
     }

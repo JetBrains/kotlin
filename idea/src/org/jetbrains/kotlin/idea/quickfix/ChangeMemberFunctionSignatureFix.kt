@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
@@ -219,7 +219,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
             return descriptor.apply {
                 initialize(
-                    function.extensionReceiverParameter?.type, function.dispatchReceiverParameter,
+                    function.extensionReceiverParameter?.copy(this), function.dispatchReceiverParameter,
                     function.typeParameters, parameters, function.returnType, function.modality, function.visibility
                 )
                 isOperator = function.isOperator

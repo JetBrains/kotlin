@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.annotations.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(protected val owner: T)

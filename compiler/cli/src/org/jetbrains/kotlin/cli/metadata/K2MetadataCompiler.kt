@@ -60,7 +60,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         for (arg in arguments.freeArgs) {
-            configuration.addKotlinSourceRoot(arg)
+            configuration.addKotlinSourceRoot(arg, isCommon = true)
         }
         if (arguments.classpath != null) {
             configuration.addJvmClasspathRoots(arguments.classpath!!.split(File.pathSeparatorChar).map(::File))

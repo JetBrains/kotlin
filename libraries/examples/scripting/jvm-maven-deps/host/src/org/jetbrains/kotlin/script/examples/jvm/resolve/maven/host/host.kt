@@ -6,34 +6,18 @@
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven.host
 
 import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.MyScriptWithMavenDeps
-import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.myJvmConfigParams
 import java.io.File
-import kotlin.script.experimental.api.*
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.api.EvaluationResult
+import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.DummyCompiledJvmScriptCache
-import kotlin.script.experimental.jvm.JvmBasicScriptingHost
-import kotlin.script.experimental.jvm.JvmGetScriptingClass
-import kotlin.script.experimental.jvm.JvmScriptCompiler
-import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
-import kotlin.script.experimental.misc.*
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.createBasicScriptCompilationConfigurationFromAnnotatedBaseClass
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
-    val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
-        ScriptingEnvironment(
-            ScriptingEnvironmentProperties.baseClass<MyScriptWithMavenDeps>(),
-            ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
-        )
-    )
 
-    val host = JvmBasicScriptingHost(
-        scriptDefinition.compilationConfigurator,
-        scriptCompiler,
-        scriptDefinition.evaluator
-    )
+    val compilationConfiguration = createBasicScriptCompilationConfigurationFromAnnotatedBaseClass<MyScriptWithMavenDeps>()
 
-    return host.eval(scriptFile.toScriptSource(), ScriptCompileConfiguration(myJvmConfigParams), ScriptEvaluationEnvironment())
+    return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), compilationConfiguration, null)
 }
 
 fun main(vararg args: String) {

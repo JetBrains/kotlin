@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.DescriptorFactory;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.utils.SmartSet;
 
@@ -104,16 +104,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         return new PropertyDescriptorImpl(containingDeclaration, null, annotations,
                                           modality, visibility, isVar, name, kind, source, lateInit, isConst,
                                           isExpect, isActual, isExternal, isDelegated);
-    }
-
-    public void setType(
-            @NotNull KotlinType outType,
-            @ReadOnly @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
-            @Nullable KotlinType receiverType
-    ) {
-        ReceiverParameterDescriptor extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverType);
-        setType(outType, typeParameters, dispatchReceiverParameter, extensionReceiverParameter);
     }
 
     public void setType(
@@ -365,16 +355,21 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             substitutedDispatchReceiver = null;
         }
 
-        KotlinType substitutedReceiverType;
+        ReceiverParameterDescriptor substitutedExtensionReceiver;
         if (extensionReceiverParameter != null) {
-            substitutedReceiverType = substitutor.substitute(extensionReceiverParameter.getType(), Variance.IN_VARIANCE);
+            KotlinType substitutedReceiverType = substitutor.substitute(extensionReceiverParameter.getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverType == null) return null;
+            substitutedExtensionReceiver = new ReceiverParameterDescriptorImpl(
+                    substitutedDescriptor,
+                    new ExtensionReceiver(substitutedDescriptor, substitutedReceiverType, extensionReceiverParameter.getValue()),
+                    extensionReceiverParameter.getAnnotations()
+            );
         }
         else {
-            substitutedReceiverType = null;
+            substitutedExtensionReceiver = null;
         }
 
-        substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedDispatchReceiver, substitutedReceiverType);
+        substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedDispatchReceiver, substitutedExtensionReceiver);
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, getter.getAnnotations(), copyConfiguration.modality, normalizeVisibility(getter.getVisibility(), copyConfiguration.kind),

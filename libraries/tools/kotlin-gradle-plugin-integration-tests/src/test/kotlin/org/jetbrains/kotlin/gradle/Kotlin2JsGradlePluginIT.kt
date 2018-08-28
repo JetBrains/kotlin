@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
@@ -334,7 +335,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         build("build") {
             assertSuccessful()
             assertContains(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
-            assertCompiledKotlinSources(project.relativize(allKotlinFiles - projectFile("DummyInLibMain.kt")))
+            val affectedFiles = project.projectDir.getFilesByNames("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt")
+            assertCompiledKotlinSources(project.relativize(affectedFiles))
         }
     }
 }

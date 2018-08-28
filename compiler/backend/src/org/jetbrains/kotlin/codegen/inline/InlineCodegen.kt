@@ -13,11 +13,15 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
-import org.jetbrains.kotlin.codegen.coroutines.*
+import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
+import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
+import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
+import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnly
 import org.jetbrains.kotlin.name.Name
@@ -71,7 +75,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     private val initialFrameSize = codegen.frameMap.currentSize
 
-    private val reifiedTypeInliner = ReifiedTypeInliner(typeParameterMappings)
+    private val reifiedTypeInliner = ReifiedTypeInliner(typeParameterMappings, state.languageVersionSettings.isReleaseCoroutines())
 
     protected val functionDescriptor: FunctionDescriptor =
         if (InlineUtil.isArrayConstructorWithLambda(function))
@@ -322,13 +326,14 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     ) {
         val isDefaultParameter = kind === ValueKind.DEFAULT_PARAMETER
         val jvmType = jvmKotlinType.type
-        if (!isDefaultParameter && shouldPutGeneralValue(jvmType, stackValue)) {
-            stackValue.put(jvmType, jvmKotlinType.kotlinType, codegen.v)
+        val kotlinType = jvmKotlinType.kotlinType
+        if (!isDefaultParameter && shouldPutGeneralValue(jvmType, kotlinType, stackValue)) {
+            stackValue.put(jvmType, kotlinType, codegen.v)
         }
 
         if (!asFunctionInline && Type.VOID_TYPE !== jvmType) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
-            val couldBeRemapped = !shouldPutGeneralValue(jvmType, stackValue) && kind !== ValueKind.DEFAULT_PARAMETER
+            val couldBeRemapped = !shouldPutGeneralValue(jvmType, kotlinType, stackValue) && kind !== ValueKind.DEFAULT_PARAMETER
             val remappedValue = if (couldBeRemapped) stackValue else null
 
             val info: ParameterInfo
@@ -500,7 +505,8 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             else
                 mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
 
-            val methodId = MethodId(DescriptorUtils.getFqNameSafe(functionDescriptor.containingDeclaration), asmMethod)
+            val owner = state.typeMapper.mapImplementationOwner(functionDescriptor)
+            val methodId = MethodId(owner.internalName, asmMethod)
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
             if (!isBuiltInArrayIntrinsic(functionDescriptor) && directMember !is DeserializedCallableMemberDescriptor) {
                 return sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
@@ -598,11 +604,17 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
 
         /*descriptor is null for captured vars*/
-        private fun shouldPutGeneralValue(type: Type, stackValue: StackValue): Boolean {
+        private fun shouldPutGeneralValue(type: Type, kotlinType: KotlinType?, stackValue: StackValue): Boolean {
             //remap only inline functions (and maybe non primitives)
-            //TODO - clean asserion and remapping logic
+            //TODO - clean assertion and remapping logic
+
+            // don't remap boxing/unboxing primitives
             if (isPrimitive(type) != isPrimitive(stackValue.type)) {
-                //don't remap boxing/unboxing primitives - lost identity and perfomance
+                return true
+            }
+
+            // don't remap boxing/unboxing inline classes
+            if (StackValue.requiresInlineClassBoxingOrUnboxing(stackValue.type, stackValue.kotlinType, type, kotlinType)) {
                 return true
             }
 

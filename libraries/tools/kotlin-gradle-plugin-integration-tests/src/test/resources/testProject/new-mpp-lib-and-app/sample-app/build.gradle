@@ -60,3 +60,11 @@ kotlin {
         fromPreset(presets.js, 'nodeJs')
     }
 }
+
+task resolveRuntimeDependencies(type: DefaultTask) {
+    doFirst { 
+        // KT-26301
+        def configName = kotlin.targets.jvm6.compilations.main.runtimeDependencyConfigurationName
+        configurations[configName].resolve()
+    }
+}

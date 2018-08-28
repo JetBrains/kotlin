@@ -37,9 +37,6 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 public class DescriptorUtils {
     public static final Name ENUM_VALUES = Name.identifier("values");
     public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
-    public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
-    private static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
-    private static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
     public static final FqName COROUTINES_PACKAGE_FQ_NAME_RELEASE = new FqName("kotlin.coroutines");
     public static final FqName COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL =
             COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("experimental"));
@@ -49,8 +46,10 @@ public class DescriptorUtils {
             COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("Continuation"));
     public static final FqName CONTINUATION_INTERFACE_FQ_NAME_RELEASE =
             COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"));
-
     public static final FqName SUCCESS_OR_FAILURE_FQ_NAME = new FqName("kotlin.SuccessOrFailure");
+
+    // This JVM-specific class FQ name is declared here only because it's used in MainFunctionDetector which is in frontend
+    public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
 
     private DescriptorUtils() {
     }
@@ -563,16 +562,6 @@ public class DescriptorUtils {
     @Nullable
     public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated annotated) {
         return getAnnotationByFqName(annotated.getAnnotations(), JVM_NAME);
-    }
-
-    @Nullable
-    public static AnnotationDescriptor getVolatileAnnotation(@NotNull Annotated annotated) {
-        return getAnnotationByFqName(annotated.getAnnotations(), VOLATILE);
-    }
-
-    @Nullable
-    public static AnnotationDescriptor getSynchronizedAnnotation(@NotNull Annotated annotated) {
-        return getAnnotationByFqName(annotated.getAnnotations(), SYNCHRONIZED);
     }
 
     @NotNull

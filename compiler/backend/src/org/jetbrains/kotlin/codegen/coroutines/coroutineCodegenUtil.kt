@@ -295,7 +295,7 @@ fun <D : FunctionDescriptor> D.createCustomCopy(
 }
 
 private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction(isReleaseCoroutines: Boolean) =
-    module.getContinuationOfTypeOrAny(returnType!!, isReleaseCoroutines)
+    module.getContinuationOfTypeOrAny(returnType!!, if (this.needsExperimentalCoroutinesWrapper()) false else isReleaseCoroutines)
 
 fun ModuleDescriptor.getSuccessOrFailure(kotlinType: KotlinType) =
     module.resolveTopLevelClass(
@@ -496,3 +496,11 @@ fun FunctionDescriptor.isSuspendLambdaOrLocalFunction() = this.isSuspend && when
     is SimpleFunctionDescriptor -> this.visibility == Visibilities.LOCAL
     else -> false
 }
+
+fun FunctionDescriptor.isLocalSuspendFunctionNotSuspendLambda() = isSuspendLambdaOrLocalFunction() && this !is AnonymousFunctionDescriptor
+
+@JvmField
+val EXPERIMENTAL_CONTINUATION_ASM_TYPE = DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL.topLevelClassAsmType()
+
+@JvmField
+val RELEASE_CONTINUATION_ASM_TYPE = DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.topLevelClassAsmType()

@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
@@ -104,10 +100,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun maybeGenerateObjectInstance(): List<JsStatement> {
-        val instanceVarName = "${className.ident}_instance"
+        val instanceVarName = className.objectInstanceName()
         val getInstanceFunName = "${className.ident}_getInstance"
         val jsVarNode = context.currentScope.declareName(instanceVarName)
-        val varStmt = JsVars(JsVars.JsVar(jsVarNode, JsNullLiteral()))
+        val varStmt = JsVars(JsVars.JsVar(jsVarNode))
         val function = generateGetInstanceFunction(jsVarNode, getInstanceFunName)
         return listOf(varStmt, function.makeStmt())
     }
@@ -118,8 +114,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         func.name = context.currentScope.declareName(instanceFunName)
 
         functionBody.statements += JsIf(
-            JsBinaryOperation(JsBinaryOperator.REF_EQ, instanceVar.makeRef(), JsNullLiteral()),
-            // TODO: Fix initialization order
+            JsBinaryOperation(JsBinaryOperator.REF_EQ, instanceVar.makeRef(), JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(0))),
             jsAssignment(instanceVar.makeRef(), JsNew(classNameRef)).makeStmt()
         )
         functionBody.statements += JsReturn(instanceVar.makeRef())

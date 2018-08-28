@@ -289,6 +289,7 @@ public class DefaultErrorMessages {
 
         MAP.put(OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, "'@OptionalExpectation' can only be used on an expected annotation class");
         MAP.put(OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry");
+        MAP.put(OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, "Declaration annotated with '@OptionalExpectation' can only be used in common module sources");
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
@@ -658,6 +659,7 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "Inline class cannot have value parameter of type ''{0}''", RENDER_TYPE);
         MAP.put(INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Inline class cannot implement an interface by delegation");
         MAP.put(INLINE_CLASS_CANNOT_EXTEND_CLASSES, "Inline class cannot extend classes");
+        MAP.put(INLINE_CLASS_CANNOT_BE_RECURSIVE, "Inline class cannot be recursive");
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, "Variance annotations are only allowed for type parameters of classes and interfaces");
         MAP.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters");

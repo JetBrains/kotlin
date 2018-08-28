@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.util.addAnnotation
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 open class AddAnnotationFix(
     element: KtDeclaration,
@@ -26,6 +27,13 @@ open class AddAnnotationFix(
     override fun getFamilyName(): String = "Add annotation"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        element?.addAnnotation(annotationFqName, annotationInnerText = argumentClassFqName?.let { "$it::class" })
+        val factory = KtPsiFactory(project)
+        val annotationInnerText = argumentClassFqName?.let { "$it::class" }
+        val annotationText = when (annotationInnerText) {
+            null -> "@${annotationFqName.asString()}"
+            else -> "@${annotationFqName.asString()}($annotationInnerText)"
+        }
+        val addedAnnotation = element?.addAnnotationEntry(factory.createAnnotationEntry(annotationText))
+        addedAnnotation?.let { ShortenReferences.DEFAULT.process(it) }
     }
 }

@@ -10,8 +10,9 @@ import kotlin.coroutines.experimental.CoroutineContext as ExperimentalCoroutineC
 import kotlin.coroutines.experimental.AbstractCoroutineContextElement as ExperimentalAbstractCoroutineContextElement
 import kotlin.coroutines.experimental.EmptyCoroutineContext as ExperimentalEmptyCoroutineContext
 import kotlin.coroutines.experimental.ContinuationInterceptor as ExperimentalContinuationInterceptor
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED as EXPERIMENTAL_COROUTINE_SUSPENDED
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
+
 
 /**
  * Converts [Continuation] to [ExperimentalContinuation].
@@ -109,3 +110,35 @@ private class ContinuationInterceptorMigration(val interceptor: ExperimentalCont
         interceptor.interceptContinuation(continuation.toExperimentalContinuation()).toContinuation()
 }
 
+internal fun <R> ((Continuation<R>) -> Any?).toExperimentalSuspendFunction(): (ExperimentalContinuation<R>) -> Any? =
+    ExperimentalSuspendFunction0Migration(this)
+
+internal fun <T1, R> ((T1, Continuation<R>) -> Any?).toExperimentalSuspendFunction(): (T1, ExperimentalContinuation<R>) -> Any? =
+    ExperimentalSuspendFunction1Migration(this)
+
+internal fun <T1, T2, R> ((T1, T2, Continuation<R>) -> Any?).toExperimentalSuspendFunction(): (T1, T2, ExperimentalContinuation<R>) -> Any? =
+    ExperimentalSuspendFunction2Migration(this)
+
+private class ExperimentalSuspendFunction0Migration<R>(
+    val function: (Continuation<R>) -> Any?
+) : (ExperimentalContinuation<R>) -> Any? {
+    override fun invoke(continuation: ExperimentalContinuation<R>): Any? {
+        return function(continuation.toContinuation())
+    }
+}
+
+private class ExperimentalSuspendFunction1Migration<T1, R>(
+    val function: (T1, Continuation<R>) -> Any?
+) : (T1, ExperimentalContinuation<R>) -> Any? {
+    override fun invoke(t1: T1, continuation: ExperimentalContinuation<R>): Any? {
+        return function(t1, continuation.toContinuation())
+    }
+}
+
+private class ExperimentalSuspendFunction2Migration<T1, T2, R>(
+    val function: (T1, T2, Continuation<R>) -> Any?
+) : (T1, T2, ExperimentalContinuation<R>) -> Any? {
+    override fun invoke(t1: T1, t2: T2, continuation: ExperimentalContinuation<R>): Any? {
+        return function(t1, t2, continuation.toContinuation())
+    }
+}

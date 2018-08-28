@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.containers.HashMap
 import com.intellij.util.containers.StringInterner
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -78,13 +77,14 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
 
     override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
         val moduleFile = makeModuleFile(
-                name = "test",
-                isTest = true,
-                outputDir = outDir,
-                sourcesToCompile = filesToCompile.toList(),
-                javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
-                classpath = listOf(outDir, ForTestCompileRuntime.runtimeJarForTests()).filter { it.exists() },
-                friendDirs = emptyList()
+            name = "test",
+            isTest = true,
+            outputDir = outDir,
+            sourcesToCompile = filesToCompile.toList(),
+            commonSources = emptyList(),
+            javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
+            classpath = listOf(outDir, ForTestCompileRuntime.runtimeJarForTests()).filter { it.exists() },
+            friendDirs = emptyList()
         )
 
         val args = K2JVMCompilerArguments().apply {

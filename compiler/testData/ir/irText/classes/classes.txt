@@ -122,4 +122,3 @@ FILE fqName:<root> fileName:/classes.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:TestEnumClass flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.storage.StorageManager
@@ -337,7 +338,10 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
                 val propertyType = typeSubstitutor.safeSubstitute(type, Variance.INVARIANT)
                 val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
-                descriptor.setType(propertyType, typeParameters, null, receiverType)
+                descriptor.setType(
+                    propertyType, typeParameters, null,
+                    DescriptorFactory.createExtensionReceiverParameterForCallable(descriptor, receiverType, Annotations.EMPTY)
+                )
 
                 val getter = PropertyGetterDescriptorImpl(
                     descriptor,

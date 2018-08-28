@@ -55,24 +55,24 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
 
         val result = buildString {
             appendln("-- Common --")
-            appendln(K2MetadataCompiler().compile(listOf(commonSrc), "-d", commonDest, *optionalStdlibCommon))
+            appendln(K2MetadataCompiler().compile(commonSrc, null, "-d", commonDest, *optionalStdlibCommon))
 
             if (jvmSrc != null) {
                 appendln()
                 appendln("-- JVM --")
-                appendln(K2JVMCompiler().compileBothWays(commonSrc, jvmSrc, "-d", jvmDest!!))
+                appendln(K2JVMCompiler().compile(jvmSrc, commonSrc, "-d", jvmDest!!))
             }
 
             if (jsSrc != null) {
                 appendln()
                 appendln("-- JS --")
-                appendln(K2JSCompiler().compileBothWays(commonSrc, jsSrc, "-output", jsDest!!))
+                appendln(K2JSCompiler().compile(jsSrc, commonSrc, "-output", jsDest!!))
             }
 
             if (common2Src != null) {
                 appendln()
                 appendln("-- Common (2) --")
-                appendln(K2MetadataCompiler().compile(listOf(common2Src), "-d", common2Dest!!, "-cp", commonDest, *optionalStdlibCommon))
+                appendln(K2MetadataCompiler().compile(common2Src, null, "-d", common2Dest!!, "-cp", commonDest, *optionalStdlibCommon))
             }
 
             if (jvm2Src != null) {
@@ -80,7 +80,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
                 appendln("-- JVM (2) --")
                 appendln(
                     K2JVMCompiler().compile(
-                        listOf(jvm2Src), "-d", jvm2Dest!!,
+                        jvm2Src, common2Src, "-d", jvm2Dest!!,
                         "-cp", listOfNotNull(commonDest, common2Dest, jvmDest).joinToString(File.pathSeparator)
                     )
                 )
@@ -100,28 +100,12 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         }?.toFile() ?: error("kotlin-stdlib-common is not found in $stdlibCommonLibsDir")
     }
 
-    private fun CLICompiler<*>.compileBothWays(commonSource: File, platformSource: File, vararg mainArguments: String): String {
-        val configurations = listOf(
-            listOf(platformSource, commonSource),
-            listOf(commonSource, platformSource)
-        )
-
-        val (platformFirst, commonFirst) = configurations.map { compile(it, *mainArguments) }
-
-        if (platformFirst != commonFirst) {
-            assertEquals(
-                "Compilation results are different when compiling [platform-specific, common] compared to when compiling [common, platform-specific]",
-                "// Compiling [platform-specific, common]\n\n$platformFirst",
-                "// Compiling [common, platform-specific]\n\n$commonFirst"
-            )
-        }
-        return platformFirst
-    }
-
-    private fun CLICompiler<*>.compile(sources: List<File>, vararg mainArguments: String): String = buildString {
+    private fun CLICompiler<*>.compile(sources: File, commonSources: File?, vararg mainArguments: String): String = buildString {
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
             this@compile,
-            sources.map(File::getAbsolutePath) + listOf("-Xmulti-platform") + mainArguments + loadExtraArguments(sources)
+            listOfNotNull(sources.absolutePath, commonSources?.absolutePath, commonSources?.absolutePath?.let("-Xcommon-sources="::plus)) +
+                    "-Xmulti-platform" + mainArguments +
+                    loadExtraArguments(listOfNotNull(sources, commonSources))
         )
         appendln("Exit code: $exitCode")
         appendln("Output:")

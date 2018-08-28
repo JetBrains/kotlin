@@ -95,7 +95,7 @@ class JvmDescriptorsFactory(
         // Call the long version of `initialize()`, because otherwise default implementation inserts
         // an unwanted `dispatchReceiverParameter`
         newDescriptor.initialize(
-            oldDescriptor.extensionReceiverParameter?.type,
+            oldDescriptor.extensionReceiverParameter?.copy(newDescriptor),
             null,
             oldDescriptor.typeParameters,
             newValueParameters,

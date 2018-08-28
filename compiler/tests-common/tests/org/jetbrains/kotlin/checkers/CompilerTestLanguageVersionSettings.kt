@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
-import java.util.*
+import java.io.File
 import java.util.regex.Pattern
+import kotlin.collections.HashMap
 
 const val LANGUAGE_DIRECTIVE = "LANGUAGE"
 const val API_VERSION_DIRECTIVE = "API_VERSION"
@@ -79,6 +80,14 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTes
 
 fun defaultLanguageVersionSettings(): CompilerTestLanguageVersionSettings =
     CompilerTestLanguageVersionSettings(emptyMap(), ApiVersion.LATEST_STABLE, LanguageVersion.LATEST_STABLE)
+
+fun setupLanguageVersionSettingsForMultifileCompilerTests(files: List<File>, environment: KotlinCoreEnvironment) {
+    val allDirectives = HashMap<String, String>()
+    for (file in files) {
+        allDirectives.putAll(KotlinTestUtils.parseDirectives(file.readText()))
+    }
+    environment.configuration.languageVersionSettings = parseLanguageVersionSettingsOrDefault(allDirectives)
+}
 
 fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, environment: KotlinCoreEnvironment) {
     val directives = KotlinTestUtils.parseDirectives(originalFileText)

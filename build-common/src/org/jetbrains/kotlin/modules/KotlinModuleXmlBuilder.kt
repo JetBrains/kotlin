@@ -34,16 +34,18 @@ class KotlinModuleXmlBuilder {
     }
 
     fun addModule(
-            moduleName: String,
-            outputDir: String,
-            sourceFiles: Iterable<File>,
-            javaSourceRoots: Iterable<JvmSourceRoot>,
-            classpathRoots: Iterable<File>,
-            modularJdkRoot: File?,
-            targetTypeId: String,
-            isTests: Boolean,
-            directoriesToFilterOut: Set<File>,
-            friendDirs: Iterable<File>): KotlinModuleXmlBuilder {
+        moduleName: String,
+        outputDir: String,
+        sourceFiles: Iterable<File>,
+        javaSourceRoots: Iterable<JvmSourceRoot>,
+        classpathRoots: Iterable<File>,
+        commonSourceFiles: Iterable<File>,
+        modularJdkRoot: File?,
+        targetTypeId: String,
+        isTests: Boolean,
+        directoriesToFilterOut: Set<File>,
+        friendDirs: Iterable<File>
+    ): KotlinModuleXmlBuilder {
         assert(!done) { "Already done" }
 
         p.println("<!-- Module script for ${if (isTests) "tests" else "production"} -->")
@@ -60,6 +62,10 @@ class KotlinModuleXmlBuilder {
 
         for (sourceFile in sourceFiles) {
             p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>")
+        }
+
+        for (commonSourceFile in commonSourceFiles) {
+            p.println("<", COMMON_SOURCES, " ", PATH, "=\"", getEscapedPath(commonSourceFile), "\"/>")
         }
 
         processJavaSourceRoots(javaSourceRoots)

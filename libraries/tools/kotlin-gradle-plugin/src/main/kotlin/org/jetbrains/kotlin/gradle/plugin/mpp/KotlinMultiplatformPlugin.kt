@@ -13,8 +13,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.plugins.ReportingBasePlugin
+import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
@@ -25,11 +24,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.konan.target.HostManager
 
 internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension? =
     project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
-internal class KotlinMultiplatformPlugin(
+class KotlinMultiplatformPlugin(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val fileResolver: FileResolver,
     private val instantiator: Instantiator,
@@ -50,8 +50,7 @@ internal class KotlinMultiplatformPlugin(
     }
 
     override fun apply(project: Project) {
-        project.plugins.apply(BasePlugin::class.java)
-        project.plugins.apply(ReportingBasePlugin::class.java)
+        project.plugins.apply(JavaBasePlugin::class.java)
 
         val targetsContainer = project.container(KotlinTarget::class.java)
         val targetsFromPreset = TargetFromPresetExtension(targetsContainer)
@@ -72,15 +71,23 @@ internal class KotlinMultiplatformPlugin(
 
         setUpConfigurationAttributes(project)
         configurePublishingWithMavenPublish(project)
+
+        // set up metadata publishing
+        targetsFromPreset.fromPreset(
+            KotlinMetadataTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion),
+            METADATA_TARGET_NAME
+        )
     }
 
     fun setupDefaultPresets(project: Project) {
         with((project.kotlinExtension as KotlinMultiplatformExtension).presets) {
-            add(KotlinUniversalTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
             add(KotlinJvmTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
             add(KotlinJsTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
+            HostManager().targets.forEach { _, target ->
+                add(KotlinNativeTargetPreset(target.presetName, project, target, buildOutputCleanupRegistry))
+            }
         }
     }
 
@@ -103,7 +110,6 @@ internal class KotlinMultiplatformPlugin(
     }
 
     private fun configureSourceSets(project: Project) = with (project.kotlinExtension as KotlinMultiplatformExtension) {
-        sourceSets.all { defineSourceSetConfigurations(project, it) }
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
@@ -157,9 +163,7 @@ internal class KotlinMultiplatformPlugin(
         }
     }
 
-    private fun defineSourceSetConfigurations(project: Project, sourceSet: KotlinSourceSet) = with (project.configurations) {
-        sourceSet.relatedConfigurationNames.forEach { configurationName ->
-            maybeCreate(configurationName)
-        }
+    companion object {
+        const val METADATA_TARGET_NAME = "metadata"
     }
 }

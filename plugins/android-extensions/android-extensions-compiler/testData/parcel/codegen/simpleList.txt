@@ -15,11 +15,11 @@ public final class Test : java/lang/Object {
 
     public void <init>(java.util.List p0)
 
-    public final int describeContents()
+    public int describeContents()
 
     public final java.util.List getNames()
 
-    public final void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel p0, int p1) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

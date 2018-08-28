@@ -33,8 +33,8 @@ import java.util.List;
 public abstract class AbstractReceiverParameterDescriptor extends DeclarationDescriptorImpl implements ReceiverParameterDescriptor {
     private static final Name RECEIVER_PARAMETER_NAME = Name.special("<this>");
 
-    public AbstractReceiverParameterDescriptor() {
-        super(Annotations.Companion.getEMPTY(), RECEIVER_PARAMETER_NAME);
+    public AbstractReceiverParameterDescriptor(@NotNull Annotations annotations) {
+        super(annotations, RECEIVER_PARAMETER_NAME);
     }
 
     @Nullable
@@ -58,7 +58,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
         if (substitutedType == null) return null;
         if (substitutedType == getType()) return this;
 
-        return new ReceiverParameterDescriptorImpl(getContainingDeclaration(), new TransientReceiver(substitutedType));
+        return new ReceiverParameterDescriptorImpl(getContainingDeclaration(), new TransientReceiver(substitutedType), getAnnotations());
     }
 
     @Override

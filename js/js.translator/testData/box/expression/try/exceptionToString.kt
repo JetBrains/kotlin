@@ -5,7 +5,6 @@ package foo
 class MyException(m: String? = null): Exception(m)
 class MyException2(m: String? = null): Throwable(m)
 // TODO: add direct inheritors of Throwable:
-// - with secondary constructors
 // - with cause only, in the primary constructor
 
 fun check(e: Throwable, expectedString: String) {

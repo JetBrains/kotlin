@@ -1,0 +1,57 @@
+FILE fqName:<root> fileName:/genericClassInDifferentModule_m1.kt
+  CLASS CLASS name:Base modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Base<T> flags:
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (x:T) returnType:Base<T> flags:primary
+      VALUE_PARAMETER name:x index:0 type:T flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Base'
+    PROPERTY name:x visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:T visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Base<T>) returnType:T flags:
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:Base<T> flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): T'
+            GET_FIELD 'x: T' type=T origin=null
+              receiver: GET_VAR 'this@Base: Base<T>' type=Base<T> origin=null
+    FUN name:foo visibility:public modality:ABSTRACT <Y> ($this:Base<T>, y:Y) returnType:T flags:
+      TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?]
+      $this: VALUE_PARAMETER name:<this> type:Base<T> flags:
+      VALUE_PARAMETER name:y index:0 type:Y flags:
+    PROPERTY name:bar visibility:public modality:ABSTRACT flags:var
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:ABSTRACT <> ($this:Base<T>) returnType:T flags:
+        correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT flags:var
+        $this: VALUE_PARAMETER name:<this> type:Base<T> flags:
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-bar> visibility:public modality:ABSTRACT <> ($this:Base<T>, <set-?>:T) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:bar visibility:public modality:ABSTRACT flags:var
+        $this: VALUE_PARAMETER name:<this> type:Base<T> flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:T flags:
+    PROPERTY name:exn visibility:public modality:ABSTRACT flags:var
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-exn> visibility:public modality:ABSTRACT <Z> ($this:Base<T>, $receiver:Z) returnType:T flags:
+        correspondingProperty: PROPERTY name:exn visibility:public modality:ABSTRACT flags:var
+        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:Base<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:Z flags:
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-exn> visibility:public modality:ABSTRACT <Z> ($this:Base<T>, $receiver:Z, <set-?>:T) returnType:kotlin.Unit flags:
+        correspondingProperty: PROPERTY name:exn visibility:public modality:ABSTRACT flags:var
+        TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?]
+        $this: VALUE_PARAMETER name:<this> type:Base<T> flags:
+        $receiver: VALUE_PARAMETER name:<this> type:Z flags:
+        VALUE_PARAMETER name:<set-?> index:0 type:T flags:
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:

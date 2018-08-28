@@ -7,7 +7,6 @@ plugins {
 dependencies {
     compile(project(":examples:scripting-jvm-simple-script"))
     compile(project(":kotlin-scripting-jvm-host"))
-    compile(project(":kotlin-scripting-misc"))
     compile(project(":kotlin-script-util"))
     runtime(projectRuntimeJar(":kotlin-compiler"))
     testCompile(commonDep("junit"))

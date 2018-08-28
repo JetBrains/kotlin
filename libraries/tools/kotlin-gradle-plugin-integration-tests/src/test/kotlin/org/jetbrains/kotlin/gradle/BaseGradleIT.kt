@@ -529,7 +529,10 @@ abstract class BaseGradleIT {
             }
 
             add("-Pkotlin_version=" + options.kotlinVersion)
-            options.incremental?.let { add("-Pkotlin.incremental=$it") }
+            options.incremental?.let {
+                add("-Pkotlin.incremental=$it")
+                add("-Pkotlin.incremental.js=$it")
+            }
             options.usePreciseJavaTracking?.let { add("-Pkotlin.incremental.usePreciseJavaTracking=$it") }
             options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it") }
             if (options.debug) {

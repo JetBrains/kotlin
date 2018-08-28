@@ -72,7 +72,7 @@ fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
         configurations.getOrCreate("archives").artifacts.removeAll { (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false }
     }
     return task.apply {
-        setupPublicJar()
+        setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
         project.runtimeJarArtifactBy(this, this)
@@ -181,12 +181,15 @@ private fun Project.runtimeJarTaskIfExists(): Task? =
 
 fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
 
-fun Jar.setupPublicJar(classifier: String = "") {
+fun Jar.setupPublicJar(baseName: String, classifier: String = "") {
+    val buildNumber = project.rootProject.extra["buildNumber"] as String
+    this.baseName = baseName
+    this.version = buildNumber
     this.classifier = classifier
     manifest.attributes.apply {
         put("Implementation-Vendor", "JetBrains")
-        put("Implementation-Title", project.the<BasePluginConvention>().archivesBaseName)
-        put("Implementation-Version", project.rootProject.extra["buildNumber"])
+        put("Implementation-Title", baseName)
+        put("Implementation-Version", buildNumber)
         put("Build-Jdk", System.getProperty("java.version"))
     }
 }

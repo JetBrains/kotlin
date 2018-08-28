@@ -22,26 +22,20 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.*
 
-abstract class BasicScriptingHost<ScriptBase : Any>(
-    val configurator: ScriptCompilationConfigurator,
+abstract class BasicScriptingHost(
     val compiler: ScriptCompiler,
-    val evaluator: ScriptEvaluator<ScriptBase>
+    val evaluator: ScriptEvaluator
 ) {
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
 
     open fun eval(
         script: ScriptSource,
-        compileConfiguration: ScriptCompileConfiguration,
-        environment: ScriptEvaluationEnvironment
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
+        configuration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
-            val compiled = compiler.compile(script, configurator, compileConfiguration)
-            when (compiled) {
-                is ResultWithDiagnostics.Failure -> compiled
-                is ResultWithDiagnostics.Success -> {
-                    val compiledScript = compiled.value!! as CompiledScript<ScriptBase>
-                    evaluator.eval(compiledScript, environment)
-                }
+            compiler(script, scriptCompilationConfiguration).onSuccess {
+                evaluator(it, configuration)
             }
         }
 }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.useTmpVar
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -56,7 +57,7 @@ internal class TypeParcelerParcelSerializer(
         boxTypeIfNeeded(v) // -> parcel, (boxed)value
 
         v.swap() // -> value, parcel
-        putObjectInstanceOnStack(parcelerType, parcelerAsmType, typeMapper, v) // -> value, parcel, parceler
+        putObjectOrClassInstanceOnStack(parcelerType, parcelerAsmType, typeMapper, v) // -> value, parcel, parceler
         v.dupX2() // -> parceler, value, parcel, parceler
         v.pop() // -> parceler, value, parcel
         v.load(2, Type.INT_TYPE) // -> parceler, value, parcel, flags
@@ -65,7 +66,7 @@ internal class TypeParcelerParcelSerializer(
 
     override fun readValue(v: InstructionAdapter) {
         // -> parcel
-        putObjectInstanceOnStack(parcelerType, parcelerAsmType, typeMapper, v) // -> parcel, parceler
+        putObjectOrClassInstanceOnStack(parcelerType, parcelerAsmType, typeMapper, v) // -> parcel, parceler
         v.swap() // -> parceler, parcel
         v.invokeinterface(PARCELER_TYPE.internalName, "create", "(Landroid/os/Parcel;)Ljava/lang/Object;") // -> obj
         unboxTypeIfNeeded(v)
@@ -475,17 +476,45 @@ internal class ObjectParcelSerializer(
 
     override fun readValue(v: InstructionAdapter) {
         v.pop()
-        putObjectInstanceOnStack(type, asmType, typeMapper, v)
+        putObjectOrClassInstanceOnStack(type, asmType, typeMapper, v)
     }
 }
 
-private fun putObjectInstanceOnStack(type: KotlinType, asmType: Type, typeMapper: KotlinTypeMapper, v: InstructionAdapter) {
+internal class ZeroParameterClassSerializer(
+    override val asmType: Type,
+    type: KotlinType
+) : ParcelSerializer {
+    val clazz = type.constructor.declarationDescriptor as ClassDescriptor
+
+    init {
+        assert(clazz.kind == ClassKind.CLASS)
+    }
+
+    override fun writeValue(v: InstructionAdapter) {
+        v.pop2()
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        v.pop()
+
+        val constructor = clazz.unsubstitutedPrimaryConstructor
+        assert(constructor == null || constructor.valueParameters.isEmpty())
+        v.anew(asmType)
+        v.dup()
+        v.invokespecial(asmType.internalName, "<init>", "()V", false)
+    }
+}
+
+private fun putObjectOrClassInstanceOnStack(type: KotlinType, asmType: Type, typeMapper: KotlinTypeMapper, v: InstructionAdapter) {
     val clazz = type.constructor.declarationDescriptor as? ClassDescriptor
-    if (clazz != null && clazz.isCompanionObject) {
-        val outerClass = clazz.containingDeclaration as? ClassDescriptor
-        if (outerClass != null) {
-            v.getstatic(typeMapper.mapType(outerClass.defaultType).internalName, clazz.name.asString(), asmType.descriptor)
-            return
+
+    if (clazz != null) {
+        if (clazz.isCompanionObject) {
+            val outerClass = clazz.containingDeclaration as? ClassDescriptor
+            if (outerClass != null) {
+                v.getstatic(typeMapper.mapType(outerClass.defaultType).internalName, clazz.name.asString(), asmType.descriptor)
+                return
+            }
         }
     }
 

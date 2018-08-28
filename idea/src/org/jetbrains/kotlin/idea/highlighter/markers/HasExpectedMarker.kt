@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
 import org.jetbrains.kotlin.idea.util.hasDeclarationOf
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-fun getExpectedDeclarationTooltip(declaration: KtDeclaration?): String? {
-    val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
+fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
+    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val commonModuleDescriptors = platformModuleDescriptor.implementedDescriptors ?: return null
+    val commonModuleDescriptors = platformModuleDescriptor.implementedDescriptors
     if (!commonModuleDescriptors.any { it.hasDeclarationOf(descriptor) }) return null
 
     return "Has declaration in common module"
 }
 
-fun navigateToExpectedDeclaration(declaration: KtDeclaration?) {
-    declaration?.expectedDeclarationIfAny()?.navigate(false)
+fun navigateToExpectedDeclaration(declaration: KtDeclaration) {
+    declaration.expectedDeclarationIfAny()?.navigate(false)
 }

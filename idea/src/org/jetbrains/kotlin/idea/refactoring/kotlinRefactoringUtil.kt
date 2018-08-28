@@ -726,7 +726,7 @@ internal abstract class CompositeRefactoringRunner(
 fun invokeOnceOnCommandFinish(action: () -> Unit) {
     val commandProcessor = CommandProcessor.getInstance()
     val listener = object : CommandAdapter() {
-        override fun beforeCommandFinished(event: CommandEvent?) {
+        override fun beforeCommandFinished(event: CommandEvent) {
             action()
             commandProcessor.removeCommandListener(this)
         }

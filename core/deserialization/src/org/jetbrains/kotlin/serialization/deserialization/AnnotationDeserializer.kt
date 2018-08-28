@@ -118,8 +118,10 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
         return if (result.getType(module).isSubtypeOf(expectedType)) {
             result
         } else {
-            // This means that an annotation class has been changed incompatibly without recompiling clients
-            ErrorValue.create("Unexpected argument value")
+            // This usually means that an annotation class has been changed incompatibly without recompiling clients
+            ErrorValue.create(
+                "Unexpected argument value: type ${result.getType(module)} is not a subtype of $expectedType (value.type = ${value.type})"
+            )
         }
     }
 

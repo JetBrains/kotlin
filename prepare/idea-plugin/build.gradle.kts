@@ -7,6 +7,10 @@ plugins {
     `java-base`
 }
 
+repositories {
+    maven("https://dl.bintray.com/jetbrains/markdown")
+}
+
 // Do not rename, used in JPS importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",

@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -80,10 +77,15 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
-        if (baseParameterType != null && baseParameterType.isInapplicableParameterType()) {
-            val typeReference = baseParameter.typeReference
-            if (typeReference != null) {
-                trace.report(Errors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(typeReference, baseParameterType))
+        val baseParameterTypeReference = baseParameter.typeReference
+        if (baseParameterType != null && baseParameterTypeReference != null) {
+            if (baseParameterType.isInapplicableParameterType()) {
+                trace.report(Errors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(baseParameterTypeReference, baseParameterType))
+                return
+            }
+
+            if (baseParameterType.isRecursiveInlineClassType()) {
+                trace.report(Errors.INLINE_CLASS_CANNOT_BE_RECURSIVE.on(baseParameterTypeReference))
                 return
             }
         }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.inline.context.FunctionContext;
 import org.jetbrains.kotlin.js.inline.context.InliningContext;
 import org.jetbrains.kotlin.js.inline.context.NamingContext;
 import org.jetbrains.kotlin.js.inline.util.*;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
@@ -62,7 +61,13 @@ public class JsInliner extends JsVisitorWithContextImpl {
             node -> node instanceof JsInvocation && hasToBeInlined((JsInvocation) node);
     private int inlineFunctionDepth;
 
-    private final Map<JsWrapperKey, Map<JsName, JsExpression>> replacementsInducedByWrappers = new HashMap<>();
+    private final Map<JsWrapperKey, Map<JsName, JsNameRef>> replacementsInducedByWrappers = new HashMap<>();
+
+    private final Map<JsName, String> inverseNameBindings;
+
+    private Map<JsName, String> existingNameBindings = new HashMap<>();
+
+    private final List<JsNameBinding> additionalNameBindings = new ArrayList<>();
 
     public static void process(
             @NotNull JsConfig.Reporter reporter,
@@ -75,6 +80,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     ) {
         Map<JsName, FunctionWithWrapper> functions = CollectUtilsKt.collectNamedFunctionsAndWrappers(fragments);
         Map<String, FunctionWithWrapper> accessors = CollectUtilsKt.collectAccessors(fragments);
+        Map<JsName, String> inverseNameBindings = CollectUtilsKt.collectNameBindings(fragments);
 
         DummyAccessorInvocationTransformer accessorInvocationTransformer = new DummyAccessorInvocationTransformer();
         for (JsProgramFragment fragment : fragmentsToProcess) {
@@ -82,7 +88,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             accessorInvocationTransformer.accept(fragment.getInitializerBlock());
         }
         FunctionReader functionReader = new FunctionReader(reporter, config, currentModuleName, fragments);
-        JsInliner inliner = new JsInliner(config, functions, accessors, functionReader, trace);
+        JsInliner inliner = new JsInliner(config, functions, accessors, inverseNameBindings, functionReader, trace);
 
         for (JsStatement statement : importStatements) {
             inliner.processImportStatement(statement);
@@ -90,8 +96,9 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
         for (JsProgramFragment fragment : fragmentsToProcess) {
             inliner.existingImports.clear();
+            inliner.additionalNameBindings.clear();
+            inliner.existingNameBindings = CollectUtilsKt.collectNameBindings(Collections.singletonList(fragment));
 
-            inliner.inliningContexts.push(inliner.new JsInliningContext(inliner.new ListContext<JsStatement>()));
             inliner.acceptStatement(fragment.getDeclarationBlock());
 
             // There can be inlined function in top-level initializers, we need to optimize them as well
@@ -101,8 +108,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
             inliner.accept(initWrapper);
             initWrapper.getStatements().remove(initWrapper.getStatements().size() - 1);
 
-            inliner.inliningContexts.pop();
             fragment.getInitializerBlock().getStatements().addAll(0, initWrapper.getStatements());
+            fragment.getNameBindings().addAll(inliner.additionalNameBindings);
         }
 
         for (JsProgramFragment fragment : fragmentsToProcess) {
@@ -117,6 +124,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             @NotNull JsConfig config,
             @NotNull Map<JsName, FunctionWithWrapper> functions,
             @NotNull Map<String, FunctionWithWrapper> accessors,
+            @NotNull Map<JsName, String> inverseNameBindings,
             @NotNull FunctionReader functionReader,
             @NotNull DiagnosticSink trace
     ) {
@@ -127,6 +135,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             namedFunctionsSet.add(functionWithWrapper.getFunction());
         }
         this.accessors = accessors;
+        this.inverseNameBindings = inverseNameBindings;
         this.functionReader = functionReader;
         this.trace = trace;
 
@@ -157,8 +166,16 @@ public class JsInliner extends JsVisitorWithContextImpl {
             return false;
         }
         else {
-            startFunction(function);
-            return super.visit(function, context);
+            if (statementContextForInline == null) {
+                statementContextForInline = getLastStatementLevelContext();
+                startFunction(function);
+                boolean result = super.visit(function, context);
+                statementContextForInline = null;
+                return result;
+            } else {
+                startFunction(function);
+                return super.visit(function, context);
+            }
         }
     }
 
@@ -171,10 +188,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     private void startFunction(@NotNull JsFunction function) {
-        JsContext<JsStatement> statementContext = statementContextForInline != null ? statementContextForInline :
-                                                  getLastStatementLevelContext();
-
-        inliningContexts.push(new JsInliningContext(statementContext));
+        inliningContexts.push(new JsInliningContext(statementContextForInline));
 
         assert !inProcessFunctions.contains(function): "Inliner has revisited function";
         inProcessFunctions.add(function);
@@ -236,9 +250,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
             innerContext.traverse(statements);
             statementContexts.pop();
-        }
-        else {
-            statementContextForInline = getLastStatementLevelContext();
+        } else {
+            if (statementContextForInline == null) statementContextForInline = getLastStatementLevelContext();
         }
 
         startFunction(functionWithWrapper.getFunction());
@@ -396,10 +409,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
             @NotNull InliningContext inliningContext
     ) {
         // Apparently we should avoid this trick when we implement fair support for crossinline
-        Function<JsWrapperKey, Map<JsName, JsExpression>> replacementGen = k -> {
+        Function<JsWrapperKey, Map<JsName, JsNameRef>> replacementGen = k -> {
             JsContext ctx = k.context;
 
-            Map<JsName, JsExpression> newReplacements = new HashMap<>();
+            Map<JsName, JsNameRef> newReplacements = new HashMap<>();
 
             List<JsStatement> copiedStatements = new ArrayList<>();
             for (JsStatement statement : wrapper.getStatements()) {
@@ -427,7 +440,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
                         }
 
                         if (name != existingName) {
-                            JsExpression replacement = pureFqn(existingName, null);
+                            JsNameRef replacement = pureFqn(existingName, null);
                             newReplacements.put(name, replacement);
                         }
 
@@ -445,7 +458,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             for (JsName name : definedNames) {
                 JsName alias = JsScope.declareTemporaryName(name.getIdent());
                 alias.copyMetadataFrom(name);
-                JsExpression replacement = pureFqn(alias, null);
+                JsNameRef replacement = pureFqn(alias, null);
                 newReplacements.put(name, replacement);
             }
 
@@ -464,9 +477,21 @@ public class JsInliner extends JsVisitorWithContextImpl {
         };
 
         JsWrapperKey key = new JsWrapperKey(inliningContext.getStatementContextBeforeCurrentFunction(), originalFunction);
-        Map<JsName, JsExpression> replacements = replacementsInducedByWrappers.computeIfAbsent(key, replacementGen);
+        Map<JsName, JsNameRef> replacements = replacementsInducedByWrappers.computeIfAbsent(key, replacementGen);
 
         RewriteUtilsKt.replaceNames(function, replacements);
+
+        // Copy nameBinding's for inlined localAlias'es
+        for (JsNameRef nameRef : replacements.values()) {
+            JsName name = nameRef.getName();
+            if (name != null && !existingNameBindings.containsKey(name)) {
+                String tag = inverseNameBindings.get(name);
+                if (tag != null) {
+                    existingNameBindings.put(name, tag);
+                    additionalNameBindings.add(new JsNameBinding(tag, name));
+                }
+            }
+        }
     }
 
     private static void replaceExpressionsWithLocalAliases(@NotNull JsStatement statement) {

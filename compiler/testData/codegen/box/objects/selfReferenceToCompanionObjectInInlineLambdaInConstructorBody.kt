@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 class Test {
     companion object {
         fun ok() = "OK"

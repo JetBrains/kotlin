@@ -1395,6 +1395,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/stubs/builtinMap.kt");
         }
 
+        @TestMetadata("genericClassInDifferentModule.kt")
+        public void testGenericClassInDifferentModule() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/genericClassInDifferentModule.kt");
+        }
+
         @TestMetadata("javaEnum.kt")
         public void testJavaEnum() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/javaEnum.kt");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,13 +16,11 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultConfiguration
-import kotlin.script.experimental.jvm.mapToLegacyScriptReportPosition
-import kotlin.script.experimental.jvm.mapToLegacyScriptReportSeverity
+import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportPosition
+import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
 
 class BridgeDependenciesResolver(
-    val scriptConfigurator: ScriptCompilationConfigurator?,
-    val baseScriptCompilerConfiguration: ScriptCompileConfiguration = scriptConfigurator.defaultConfiguration,
+    val scriptCompilationConfiguration: ScriptCompilationConfiguration,
     val onClasspathUpdated: (List<File>) -> Unit = {}
 ) : AsyncDependenciesResolver {
 
@@ -35,30 +33,35 @@ class BridgeDependenciesResolver(
         return try {
 
             val diagnostics = arrayListOf<ScriptReport>()
-            val processedScriptData =
-                ProcessedScriptData(ProcessedScriptDataProperties.foundAnnotations to scriptContents.annotations)
-
-            val refinedConfiguration = scriptConfigurator?.let {
-                val res = scriptConfigurator.refineConfiguration(
-                    scriptContents.toScriptSource(),
-                    baseScriptCompilerConfiguration,
-                    processedScriptData
+            val processedScriptData = ScriptCollectedData(
+                mapOf(
+                    ScriptCollectedData.foundAnnotations to scriptContents.annotations
                 )
-                when (res) {
-                    is ResultWithDiagnostics.Failure ->
-                        return@resolveAsync DependenciesResolver.ResolveResult.Failure(res.reports.mapScriptReportsToDiagnostics())
-                    is ResultWithDiagnostics.Success -> {
-                        diagnostics.addAll(res.reports.mapScriptReportsToDiagnostics())
-                        res.value
+            )
+
+            val refineFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler
+            val refinedConfiguration =
+                if (refineFn == null) null
+                else {
+                    val res = refineFn(
+                        ScriptConfigurationRefinementContext(scriptContents.toScriptSource(), scriptCompilationConfiguration, processedScriptData)
+                    )
+                    when (res) {
+                        is ResultWithDiagnostics.Failure ->
+                            return@resolveAsync DependenciesResolver.ResolveResult.Failure(res.reports.mapScriptReportsToDiagnostics())
+                        is ResultWithDiagnostics.Success -> {
+                            diagnostics.addAll(res.reports.mapScriptReportsToDiagnostics())
+                            res.value
+                        }
                     }
                 }
-            } ?: baseScriptCompilerConfiguration
 
-            val newClasspath = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
+            val newClasspath = refinedConfiguration?.get(ScriptCompilationConfiguration.dependencies)
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
-            if (refinedConfiguration != baseScriptCompilerConfiguration) {
-                val oldClasspath = baseScriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
-                    ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
+            if (newClasspath.isNotEmpty()) {
+                val oldClasspath =
+                    scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]
+                        ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
                 if (newClasspath != oldClasspath) {
                     onClasspathUpdated(newClasspath)
                 }
@@ -66,8 +69,7 @@ class BridgeDependenciesResolver(
             DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
-                    imports = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.defaultImports)?.toList()
-                            ?: emptyList()
+                    imports = scriptCompilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
                 ),
                 diagnostics
             )

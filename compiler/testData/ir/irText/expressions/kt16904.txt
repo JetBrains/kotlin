@@ -94,12 +94,18 @@ FILE fqName:<root> fileName:/kt16904.kt
                 $this: GET_VAR 'tmp1_this: Test1' type=Test1 origin=null
               other: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
+      FIELD FAKE_OVERRIDE name:x type:B visibility:public flags:final
+        overridden:
+          FIELD PROPERTY_BACKING_FIELD name:x type:B visibility:public flags:final
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:B flags:
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
         overridden:
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:B flags:
         $this: VALUE_PARAMETER name:<this> type:A flags:
     PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL flags:var
+      FIELD FAKE_OVERRIDE name:y type:kotlin.Int visibility:public flags:
+        overridden:
+          FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public flags:
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:kotlin.Int flags:
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL flags:var
         overridden:
@@ -137,6 +143,8 @@ FILE fqName:<root> fileName:/kt16904.kt
           value: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL flags:var
       FIELD FAKE_OVERRIDE name:field type:kotlin.Int visibility:public flags:
+        overridden:
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:field type:kotlin.Int visibility:public flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
@@ -150,4 +158,3 @@ FILE fqName:<root> fileName:/kt16904.kt
       overridden:
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-
