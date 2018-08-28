@@ -367,19 +367,19 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             val jarToModule = HashMap<File, IncrementalModuleEntry>()
 
             for (project in gradle.rootProject.allprojects) {
-                project.tasks.withType(AbstractKotlinCompile::class.java).configureEach {
-                    val module = IncrementalModuleEntry(project.path, moduleName, project.buildDir, buildHistoryFile)
+                project.tasks.withType(AbstractKotlinCompile::class.java).forEach { task ->
+                    val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
                     dirToModule[task.destinationDir] = module
                     task.javaOutputDir?.let { dirToModule[it] = module }
                     nameToModules.getOrPut(module.name) { HashSet() }.add(module)
 
-                    if (this is Kotlin2JsCompile) {
-                        jarForSourceSet(project, sourceSetName)?.let {
+                    if (task is Kotlin2JsCompile) {
+                        jarForSourceSet(project, task.sourceSetName)?.let {
                             jarToModule[it] = module
                         }
                     }
                 }
-                project.tasks.withType(InspectClassesForMultiModuleIC::class.java).configureEach {
+                project.tasks.withType(InspectClassesForMultiModuleIC::class.java).forEach { task ->
                     jarToClassListFile[File(task.archivePath)] = task.classesListFile
                 }
             }
