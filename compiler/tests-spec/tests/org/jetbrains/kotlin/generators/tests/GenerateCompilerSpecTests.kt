@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestSpec
 fun main(args: Array<String>) {
     testGroup("compiler/tests-spec/tests", "compiler/tests-spec/testData") {
         testClass<AbstractDiagnosticsTestSpec> {
-            model("diagnostics")
+            model("diagnostics", excludeDirs = listOf("helpers"))
         }
     }
 }
