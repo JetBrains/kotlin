@@ -40,3 +40,11 @@ fun DeclarationDescriptor.hasImplicitIntegerCoercionAnnotation(): Boolean {
 fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>? {
     return allValueArguments[Name.identifier(parameterName)].takeUnless { it is ErrorValue }
 }
+
+@Deprecated(
+    "Use org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME or " +
+            "org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation instead.",
+    ReplaceWith("org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME"),
+    DeprecationLevel.ERROR
+)
+val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
