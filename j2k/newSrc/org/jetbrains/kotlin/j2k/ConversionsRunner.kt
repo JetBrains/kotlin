@@ -28,6 +28,7 @@ object ConversionsRunner {
         TypeMappingConversion(context),
         FieldToPropertyConversion(),
         PrintlnConversion(context),
+        BlockToRunConversion(context),
         AssignmentAsExpressionToAlsoConversion(context),
         AssignmentStatementValCreationConversion(context),
         AssignmentStatementOperatorConversion(),

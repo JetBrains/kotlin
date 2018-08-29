@@ -426,12 +426,20 @@ class NewCodeBuilder {
         }
 
         override fun visitLambdaExpression(lambdaExpression: JKLambdaExpression) {
-            printer.printWithNoIndent("{")
-            lambdaExpression.parameters.firstOrNull()?.accept(this)
-            lambdaExpression.parameters.asSequence().drop(1).forEach { printer.printWithNoIndent(", "); it.accept(this) }
-            printer.printWithNoIndent(" -> ")
-            lambdaExpression.statement.accept(this)
-            printer.printWithNoIndent("}")
+            printer.par(CURVED_MULTILINE) {
+                lambdaExpression.parameters.firstOrNull()?.accept(this)
+                lambdaExpression.parameters.asSequence().drop(1).forEach { printer.printWithNoIndent(", "); it.accept(this) }
+                if (lambdaExpression.parameters.isNotEmpty()) {
+                    printer.printWithNoIndent(" -> ")
+                }
+
+                val statement = lambdaExpression.statement
+                if (statement is JKBlockStatement) {
+                    statement.block.statements.forEach { it.accept(this) }
+                } else {
+                    statement.accept(this)
+                }
+            }
         }
 
         override fun visitBlockStatement(blockStatement: JKBlockStatement) {

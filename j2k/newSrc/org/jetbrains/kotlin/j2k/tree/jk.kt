@@ -197,7 +197,7 @@ interface JKLoopStatement : JKStatement {
     var body: JKStatement
 }
 
-interface JKBlockStatement : JKStatement {
+interface JKBlockStatement : JKStatement, JKBranchElement {
     var block: JKBlock
 }
 
