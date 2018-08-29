@@ -28,12 +28,11 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
             val context = lambda.analyze(BodyResolveMode.PARTIAL)
             val implicitParameter = lambda.functionDescriptor(context)?.valueParameters?.singleOrNull() ?: return
             if (lambda.getParentImplicitParameterLambda(context) == null) return
-            if (lambda.findDescendantOfType<KtNameReferenceExpression> {
-                    it.text == "it" && it.getResolvedCall(context)?.resultingDescriptor == implicitParameter
-                } == null) return
-            val callee = lambda.getStrictParentOfType<KtCallExpression>()?.calleeExpression ?: return
+            val implicitParameterReference = lambda.findDescendantOfType<KtNameReferenceExpression> {
+                it.text == "it" && it.getResolvedCall(context)?.resultingDescriptor == implicitParameter
+            } ?: return
             holder.registerProblem(
-                callee,
+                implicitParameterReference,
                 "Implicit parameter 'it' of enclosing lambda is shadowed",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 AddExplicitParameterNameFix()
@@ -47,7 +46,9 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val parentLambda = (descriptor.psiElement as? KtExpression)?.getParentImplicitParameterLambda() ?: return
+            val implicitParameterReference = descriptor.psiElement as? KtNameReferenceExpression ?: return
+            val lambda = implicitParameterReference.getStrictParentOfType<KtLambdaExpression>() ?: return
+            val parentLambda = lambda.getParentImplicitParameterLambda() ?: return
             val parameter = parentLambda.functionLiteral.getOrCreateParameterList().addParameterBefore(
                 KtPsiFactory(project).createLambdaParameterList("it").parameters.first(), null
             )

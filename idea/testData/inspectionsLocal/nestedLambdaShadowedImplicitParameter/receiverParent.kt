@@ -2,10 +2,12 @@
 
 fun foo(f: (String) -> Unit) {}
 fun bar(f: String.() -> Unit) {}
+fun baz(s: String) {}
 
 fun test() {
     bar {
-        <caret>foo {
+        foo {
+            baz(it<caret>)
         }
     }
 }
