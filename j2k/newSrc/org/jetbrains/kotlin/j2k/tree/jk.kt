@@ -47,7 +47,7 @@ interface JKClass : JKDeclaration, JKModifierListOwner, JKBranchElement {
     var classKind: ClassKind
 
     enum class ClassKind {
-        ABSTRACT, ANNOTATION, CLASS, ENUM, INTERFACE, OBJECT, COMPANION
+        ANNOTATION, CLASS, ENUM, INTERFACE, OBJECT, COMPANION
     }
 }
 

@@ -32,7 +32,6 @@ class NewCodeBuilder {
     val printer = Printer(builder)
 
     private fun classKindString(kind: JKClass.ClassKind): String = when (kind) {
-        JKClass.ClassKind.ABSTRACT -> "abstract class"
         JKClass.ClassKind.ANNOTATION -> "annotation class"
         JKClass.ClassKind.CLASS -> "class"
         JKClass.ClassKind.ENUM -> "enum class"
