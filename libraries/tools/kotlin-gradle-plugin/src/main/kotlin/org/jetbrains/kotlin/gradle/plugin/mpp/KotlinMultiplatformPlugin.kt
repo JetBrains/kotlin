@@ -19,6 +19,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
+import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -70,6 +71,7 @@ class KotlinMultiplatformPlugin(
 
         setUpConfigurationAttributes(project)
         configurePublishingWithMavenPublish(project)
+        configureSourceJars(project)
 
         // set up metadata publishing
         targetsFromPreset.fromPreset(
@@ -110,9 +112,12 @@ class KotlinMultiplatformPlugin(
                 val name = target.name
 
                 val variantPublication = publishing.publications.create(name, MavenPublication::class.java).apply {
-                    // do this in afterEvaluate since older Gradle versions seem to check the files in the variant eagerly:
-                    project.afterEvaluate {
+                    // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
+                    project.whenEvaluated {
                         from(variant)
+                        (project.tasks.findByName(target.sourcesJarTaskName) as Jar?)?.let { sourcesJar ->
+                            artifact(sourcesJar)
+                        }
                     }
                     (this as MavenPublicationInternal).publishWithOriginalFileName()
                     artifactId = "${project.name}-${variant.target.name.toLowerCase()}"
@@ -127,6 +132,29 @@ class KotlinMultiplatformPlugin(
         project.components.add(kotlinSoftwareComponent)
         targets.all {
             project.components.add(it.component)
+        }
+    }
+
+    private val KotlinTarget.sourcesJarTaskName get() = disambiguateName("sourcesJar")
+
+    private fun configureSourceJars(project: Project) = with(project.kotlinExtension as KotlinMultiplatformExtension) {
+        targets.all { target ->
+            val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                ?: return@all
+
+            val sourcesJar = project.tasks.create(target.sourcesJarTaskName, Jar::class.java) { sourcesJar ->
+                sourcesJar.appendix = target.targetName.toLowerCase()
+                sourcesJar.classifier = "sources"
+            }
+
+            project.afterEvaluate { _ ->
+                val compiledSourceSets = mainCompilation.allKotlinSourceSets
+                compiledSourceSets.forEach { sourceSet ->
+                    sourcesJar.from(sourceSet.kotlin) { copySpec ->
+                        copySpec.into(sourceSet.name)
+                    }
+                }
+            }
         }
     }
 
