@@ -7,6 +7,7 @@ fun testWithSubject(x: Any?) =
             null -> "null"
             A -> "A"
             is String -> "String"
+            !is Number -> "!Number"
             in setOf<Nothing>() -> "nothingness?"
             else -> "something"
         }
@@ -16,6 +17,7 @@ fun test(x: Any?) =
             x == null -> "null"
             x == A -> "A"
             x is String -> "String"
+            x !is Number -> "!Number"
             x in setOf<Nothing>() -> "nothingness?"
             else -> "something"
         }
