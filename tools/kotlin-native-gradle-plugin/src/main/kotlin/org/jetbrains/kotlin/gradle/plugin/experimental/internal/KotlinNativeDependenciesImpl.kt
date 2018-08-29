@@ -35,7 +35,11 @@ open class KotlinNativeDependenciesImpl @Inject constructor(
     KotlinNativeDependencies {
 
     internal val cinterops = project.container(CInteropImpl::class.java) { name ->
-        CInteropImpl(project, name)
+        CInteropImpl(project, name).apply {
+            dependencies.implementationDependencies.extendsFrom(
+                this@KotlinNativeDependenciesImpl.implementationDependencies
+            )
+        }
     }
 
     override fun cinterop(name: String) = cinterops.maybeCreate(name)

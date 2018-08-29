@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle.plugin.experimental.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -75,6 +76,9 @@ open class CInteropTask @Inject constructor(val settings: CInteropSettingsImpl):
     val headerFilterDirs: Set<File>
         @Input get() = settings.includeDirs.headerFilterDirs.files
 
+    val libraries: Configuration
+        @InputFiles get() = settings.dependencies.implementationDependencies
+
     val extraOpts: List<String>
         @Input get() = settings.extraOpts
 
@@ -102,15 +106,10 @@ open class CInteropTask @Inject constructor(val settings: CInteropSettingsImpl):
             addArgs("-copt", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
-            /* TODO: Support dependencies
-            addArgs("-repo", libraries.repos.map { it.canonicalPath })
-
-            addFileArgs("-library", libraries.files)
-            addArgs("-library", libraries.namedKlibs)
-            addArgs("-library", libraries.artifacts.map { it.artifact.canonicalPath })
-
-            addKey("-nodefaultlibs", noDefaultLibs)
-            */
+            libraries.files.forEach { library ->
+                library.parent?.let { addArg("-r", it) }
+                addArg("-l", library.nameWithoutExtension)
+            }
 
             addAll(extraOpts)
         }

@@ -20,10 +20,19 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
+import org.gradle.language.ComponentDependencies
+import org.gradle.language.cpp.CppBinary
+import org.gradle.language.internal.DefaultComponentDependencies
+import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings.IncludeDirectories
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeUsage
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.getGradleOSFamily
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
@@ -64,6 +73,25 @@ open class CInteropSettingsImpl @Inject constructor(
 
     // DSL methods.
 
+    override val dependencies = DefaultComponentDependencies(
+        project.configurations,
+        name + "InteropImplementation"
+    ).apply {
+        with(implementationDependencies) {
+            val objects = project.objects
+            isCanBeConsumed = false
+            isCanBeResolved = true
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinNativeUsage.KLIB))
+            attributes.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, KotlinNativeBuildType.DEBUG.debuggable)
+            attributes.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, KotlinNativeBuildType.DEBUG.optimized)
+            attributes.attribute(KotlinNativeBinary.KONAN_TARGET_ATTRIBUTE, konanTarget.name)
+            attributes.attribute(
+                OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE,
+                konanTarget.getGradleOSFamily(objects)
+            )
+        }
+    }
+
     override fun defFile(file: Any) {
         defFile = project.file(file)
     }
@@ -96,5 +124,14 @@ open class CInteropSettingsImpl @Inject constructor(
     override fun extraOpts(vararg values: Any) = extraOpts(values.toList())
     override fun extraOpts(values: List<Any>) {
         extraOpts.addAll(values.map { it.toString() })
+    }
+
+    override fun dependencies(action: ComponentDependencies.() -> Unit) {
+        dependencies.action()
+    }
+    override fun dependencies(action: Closure<Unit>) =
+        dependencies(ConfigureUtil.configureUsing(action))
+    override fun dependencies(action: Action<ComponentDependencies>) {
+        action.execute(dependencies)
     }
 }

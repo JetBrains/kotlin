@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.gradle.plugin.experimental.internal.cinterop
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.DomainObjectCollection
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.language.ComponentDependencies
+import org.gradle.language.internal.DefaultComponentDependencies
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInterop
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
@@ -46,12 +47,19 @@ open class CInteropImpl @Inject constructor(
     private val targetToSettings: MutableMap<KonanTarget, CInteropSettingsImpl> = mutableMapOf()
 
     // DSL.
+
+    override val dependencies =
+        DefaultComponentDependencies(project.configurations, name + "InteropImplementation")
+
     override fun target(target: String): CInteropSettings = target(target.konanTarget)
 
     override fun target(target: KonanTarget): CInteropSettings =
         targetToSettings.getOrPut(target) {
             CInteropSettingsImpl(project, name, target).also {
                 platformSettings.add(it)
+                it.dependencies.implementationDependencies.extendsFrom(
+                    this.dependencies.implementationDependencies
+                )
             }
         }
 
@@ -93,4 +101,13 @@ open class CInteropImpl @Inject constructor(
 
     override fun extraOpts(vararg values: Any) = platformSettings.all { it.extraOpts(*values) }
     override fun extraOpts(values: List<Any>) = platformSettings.all { it.extraOpts(values) }
+
+    override fun dependencies(action: ComponentDependencies.() -> Unit) {
+        dependencies.action()
+    }
+    override fun dependencies(action: Closure<Unit>) =
+        dependencies(ConfigureUtil.configureUsing(action))
+    override fun dependencies(action: Action<ComponentDependencies>) {
+        action.execute(dependencies)
+    }
 }

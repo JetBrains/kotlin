@@ -203,7 +203,9 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
                 binary.klibraries.dependencies.add(dependencies.create(files(interopTask.outputFileProvider)))
                 if (binary is KotlinNativeLibrary) {
-                    binary.linkElements.get().outgoing.artifact(interopTask.outputFileProvider)
+                    binary.linkElements.get().outgoing.artifact(interopTask.outputFileProvider) {
+                        it.classifier = "interop-${cinterop.name}"
+                    }
                 }
             }
         }

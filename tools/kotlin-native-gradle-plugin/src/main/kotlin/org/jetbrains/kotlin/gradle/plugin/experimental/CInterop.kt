@@ -20,6 +20,7 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
+import org.gradle.language.ComponentDependencies
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 interface CInteropSettings {
@@ -53,6 +54,11 @@ interface CInteropSettings {
 
     fun extraOpts(vararg values: Any)
     fun extraOpts(values: List<Any>)
+
+    val dependencies: ComponentDependencies
+    fun dependencies(action: ComponentDependencies.() -> Unit)
+    fun dependencies(action: Closure<Unit>)
+    fun dependencies(action: Action<ComponentDependencies>)
 }
 
 interface CInterop : Named, CInteropSettings {
