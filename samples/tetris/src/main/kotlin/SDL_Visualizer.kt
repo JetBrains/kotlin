@@ -23,7 +23,7 @@ import sdl.*
 fun get_SDL_Error() = SDL_GetError()!!.toKString()
 
 fun sleep(millis: Int) {
-    SDL_Delay(millis)
+    SDL_Delay(millis.toUInt())
 }
 
 class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, UserInput {
@@ -396,13 +396,13 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
 
     private fun drawGamePad() {
         if (gamePadButtons == null) return
-        SDL_SetRenderDrawColor(renderer, 127, 127, 127, SDL_ALPHA_OPAQUE.toByte())
+        SDL_SetRenderDrawColor(renderer, 127, 127, 127, SDL_ALPHA_OPAQUE.toUByte())
         fillRect(gamePadButtons.leftRect)
         fillRect(gamePadButtons.downRect)
         fillRect(gamePadButtons.dropRect)
         fillRect(gamePadButtons.rightRect)
         fillRect(gamePadButtons.rotateRect)
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE.toByte())
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE.toUByte())
     }
 
     private fun fillRect(rect: SDL_Rect) {

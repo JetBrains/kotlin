@@ -272,7 +272,7 @@ class GameField(val width: Int, val height: Int, val visualizer: GameFieldVisual
         for (i in 0..height - 1)
             for (j in 0..width - 1)
                 field[i + MARGIN][j + MARGIN] = 0
-        srand(time(null).toInt())
+        srand(time(null).toUInt())
         nextPiece = getNextPiece(false)
         switchCurrentPiece()
     }
