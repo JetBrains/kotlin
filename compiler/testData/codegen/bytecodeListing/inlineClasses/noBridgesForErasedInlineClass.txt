@@ -4,7 +4,8 @@ public interface A {
 }
 
 @kotlin.Metadata
-public final static class Foo$Erased {
+public static class Foo$Erased {
+    method <init>(): void
     public final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
     public static method constructor(p0: long): long
     public static method equals(p0: long, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean

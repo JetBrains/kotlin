@@ -1,5 +1,6 @@
 @kotlin.Metadata
-public final static class Foo$Erased {
+public static class Foo$Erased {
+    method <init>(): void
     public final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
     public static method constructor(p0: int): int
     public static method equals(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean

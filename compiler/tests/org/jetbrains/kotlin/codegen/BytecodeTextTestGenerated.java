@@ -2088,6 +2088,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassBoxingUnboxingInsideInlinedLambda.kt");
         }
 
+        @TestMetadata("inlineClassExtendsErasedClass.kt")
+        public void testInlineClassExtendsErasedClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassExtendsErasedClass.kt");
+        }
+
         @TestMetadata("inlineClassesUnboxingAfterAssertionOperator.kt")
         public void testInlineClassesUnboxingAfterAssertionOperator() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassesUnboxingAfterAssertionOperator.kt");

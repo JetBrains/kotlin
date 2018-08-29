@@ -11331,6 +11331,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt");
         }
 
+        @TestMetadata("overridingFunCallingPrivateFun.kt")
+        public void testOverridingFunCallingPrivateFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFun.kt");
+        }
+
         @TestMetadata("passInlineClassAsVararg.kt")
         public void testPassInlineClassAsVararg() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt");
@@ -11359,6 +11364,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("secondaryConstructorsInsideInlineClass.kt")
         public void testSecondaryConstructorsInsideInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClass.kt");
+        }
+
+        @TestMetadata("toStringCallingPrivateFun.kt")
+        public void testToStringCallingPrivateFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt");
         }
 
         @TestMetadata("typeChecksForInlineClasses.kt")

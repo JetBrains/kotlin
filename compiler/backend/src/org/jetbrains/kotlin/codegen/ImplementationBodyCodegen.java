@@ -131,7 +131,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDeclaration() {
-        getSuperClass();
+        superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper);
+        superClassAsmType = superClassInfo.getType();
 
         JvmClassSignature signature = signature();
 
@@ -402,11 +403,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         return new JvmClassSignature(classAsmType.getInternalName(), superClassInfo.getType().getInternalName(),
                                      new ArrayList<>(superInterfaces), sw.makeJavaGenericSignature());
-    }
-
-    private void getSuperClass() {
-        superClassInfo = SuperClassInfo.getSuperClassInfo(descriptor, typeMapper);
-        superClassAsmType = superClassInfo.getType();
     }
 
     @Override

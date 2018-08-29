@@ -14,11 +14,14 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErasedInlineClassOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ErasedInlineClassBodyCodegen(
     aClass: KtClass,
@@ -28,9 +31,8 @@ class ErasedInlineClassBodyCodegen(
     parentCodegen: MemberCodegen<*>?
 ) : ClassBodyCodegen(aClass, context, v, state, parentCodegen) {
 
-    private val superClassAsmType: Type by lazy {
-        SuperClassInfo.getSuperClassInfo(descriptor, typeMapper).type
-    }
+    private val wrapperSuperClassAsmType = AsmTypes.OBJECT_TYPE
+    private val erasedSuperClassAsmType = AsmTypes.OBJECT_TYPE
 
     private val classAsmType = typeMapper.mapErasedInlineClass(descriptor)
 
@@ -40,7 +42,7 @@ class ErasedInlineClassBodyCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(
-            myClass.psiOrParent, state.classFileVersion, Opcodes.ACC_FINAL or Opcodes.ACC_STATIC or Opcodes.ACC_PUBLIC,
+            myClass.psiOrParent, state.classFileVersion, Opcodes.ACC_STATIC or Opcodes.ACC_PUBLIC,
             classAsmType.internalName, null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
         v.visitSource(myClass.containingKtFile.name, null)
@@ -49,13 +51,28 @@ class ErasedInlineClassBodyCodegen(
     override fun generateConstructors() {
         val delegationFieldsInfo = DelegationFieldsInfo(classAsmType, descriptor, state, bindingContext)
 
-        constructorCodegen.generatePrimaryConstructor(
-            delegationFieldsInfo.getDelegationFieldsInfo(myClass.superTypeListEntries), superClassAsmType
-        )
+        generateDefaultConstructorForErasedInlineClass()
+
+        constructorCodegen.generatePrimaryConstructor(delegationFieldsInfo, wrapperSuperClassAsmType)
 
         for (secondaryConstructor in descriptor.secondaryConstructors) {
-            constructorCodegen.generateSecondaryConstructor(secondaryConstructor, superClassAsmType)
+            constructorCodegen.generateSecondaryConstructor(secondaryConstructor, wrapperSuperClassAsmType)
         }
+    }
+
+    private fun generateDefaultConstructorForErasedInlineClass() {
+        val mv = v.newMethod(
+            ErasedInlineClassOrigin(myClass.psiOrParent, descriptor), 0,
+            "<init>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY
+        )
+        mv.visitCode()
+        InstructionAdapter(mv).apply {
+            load(0, AsmTypes.OBJECT_TYPE)
+            invokespecial(erasedSuperClassAsmType.internalName, "<init>", "()V", false)
+            areturn(Type.VOID_TYPE)
+        }
+        mv.visitMaxs(1, 1)
+        mv.visitEnd()
     }
 
     override fun generateSyntheticPartsAfterBody() {
