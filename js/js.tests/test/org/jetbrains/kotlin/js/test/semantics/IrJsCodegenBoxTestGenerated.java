@@ -16871,6 +16871,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/reflection/mapping/types/supertypes.kt");
                 }
 
+                @TestMetadata("suspendFun.kt")
+                public void testSuspendFun() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/mapping/types/suspendFun.kt");
+                }
+
                 @TestMetadata("topLevelFunctions.kt")
                 public void testTopLevelFunctions() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/mapping/types/topLevelFunctions.kt");

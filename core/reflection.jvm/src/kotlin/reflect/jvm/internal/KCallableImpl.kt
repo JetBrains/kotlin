@@ -6,9 +6,12 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import java.lang.reflect.WildcardType
 import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.reflect.*
@@ -63,7 +66,9 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         get() = _parameters()
 
     private val _returnType = ReflectProperties.lazySoft {
-        KTypeImpl(descriptor.returnType!!) { caller.returnType }
+        KTypeImpl(descriptor.returnType!!) {
+            extractContinuationArgument() ?: caller.returnType
+        }
     }
 
     override val returnType: KType
@@ -191,4 +196,19 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                 else -> throw UnsupportedOperationException("Unknown primitive: $type")
             }
         } else null
+
+    private fun extractContinuationArgument(): Type? {
+        if ((descriptor as? FunctionDescriptor)?.isSuspend == true) {
+            // kotlin.coroutines.Continuation<? super java.lang.String>
+            val continuationType = caller.parameterTypes.lastOrNull() as? ParameterizedType
+            if (continuationType?.rawType == Continuation::class.java) {
+                // ? super java.lang.String
+                val wildcard = continuationType.actualTypeArguments.single() as? WildcardType
+                // java.lang.String
+                return wildcard?.lowerBounds?.first()
+            }
+        }
+
+        return null
+    }
 }
