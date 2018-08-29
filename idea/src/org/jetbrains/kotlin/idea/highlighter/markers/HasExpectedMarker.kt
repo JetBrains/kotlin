@@ -35,5 +35,5 @@ fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
 }
 
 fun navigateToExpectedDeclaration(declaration: KtDeclaration) {
-    declaration.expectedDeclarationIfAny()?.navigate(false)
+    declaration.expectedDeclarationIfAny()?.navigate(/* request focus = */true)
 }
