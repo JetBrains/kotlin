@@ -32,6 +32,37 @@ val nanFloatVal: Float = Float.NaN
 val infDoubleVal: Double = Double.POSITIVE_INFINITY
 val infFloatVal: Float = Float.NEGATIVE_INFINITY
 
+private fun <T> T.toNullable(): T? = this
+
+fun box(booleanValue: Boolean) = booleanValue.toNullable()
+fun box(byteValue: Byte) = byteValue.toNullable()
+fun box(shortValue: Short) = shortValue.toNullable()
+fun box(intValue: Int) = intValue.toNullable()
+fun box(longValue: Long) = longValue.toNullable()
+fun box(uByteValue: UByte) = uByteValue.toNullable()
+fun box(uShortValue: UShort) = uShortValue.toNullable()
+fun box(uIntValue: UInt) = uIntValue.toNullable()
+fun box(uLongValue: ULong) = uLongValue.toNullable()
+fun box(floatValue: Float) = floatValue.toNullable()
+fun box(doubleValue: Double) = doubleValue.toNullable()
+
+private inline fun <reified T> ensureEquals(actual: T?, expected: T) {
+    if (actual !is T) error(T::class)
+    if (actual != expected) error(T::class)
+}
+
+fun ensureEqualBooleans(actual: Boolean?, expected: Boolean) = ensureEquals(actual, expected)
+fun ensureEqualBytes(actual: Byte?, expected: Byte) = ensureEquals(actual, expected)
+fun ensureEqualShorts(actual: Short?, expected: Short) = ensureEquals(actual, expected)
+fun ensureEqualInts(actual: Int?, expected: Int) = ensureEquals(actual, expected)
+fun ensureEqualLongs(actual: Long?, expected: Long) = ensureEquals(actual, expected)
+fun ensureEqualUBytes(actual: UByte?, expected: UByte) = ensureEquals(actual, expected)
+fun ensureEqualUShorts(actual: UShort?, expected: UShort) = ensureEquals(actual, expected)
+fun ensureEqualUInts(actual: UInt?, expected: UInt) = ensureEquals(actual, expected)
+fun ensureEqualULongs(actual: ULong?, expected: ULong) = ensureEquals(actual, expected)
+fun ensureEqualFloats(actual: Float?, expected: Float) = ensureEquals(actual, expected)
+fun ensureEqualDoubles(actual: Double?, expected: Double) = ensureEquals(actual, expected)
+
 // Boolean
 val boolVal: Boolean = true
 val boolAnyVal: Any = false

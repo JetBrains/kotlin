@@ -134,7 +134,7 @@ class StdlibTests : TestProvider {
             print("MAP: \(k) - \(v)")
         }
 
-        var smd = StdlibMutableDictionary<NSString, NSNumber>()
+        var smd = StdlibMutableDictionary<NSString, StdlibInt>()
         smd.setObject(333, forKey: "333" as NSString)
         try assertEquals(actual: smd.object(forKey: "333" as NSString) as! Int, expected: 333, "Add element to dict")
         

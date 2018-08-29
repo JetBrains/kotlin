@@ -169,6 +169,9 @@ internal class ObjCExportCodeGenerator(
             dataGenerator.emitEmptyClass(namer.getPackageName(fqName), namer.kotlinAnyName)
         }
 
+        NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
+            dataGenerator.exportClass("Kotlin${it.shortClassName}")
+        }
         dataGenerator.exportClass("KotlinMutableSet")
         dataGenerator.exportClass("KotlinMutableDictionary")
 
@@ -345,7 +348,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverters() {
     emitBoxConverter(irBuiltIns.shortClass, ObjCValueType.SHORT, "numberWithShort:")
     emitBoxConverter(irBuiltIns.intClass, ObjCValueType.INT, "numberWithInt:")
     emitBoxConverter(irBuiltIns.longClass, ObjCValueType.LONG_LONG, "numberWithLongLong:")
-    emitBoxConverter(symbols.uByte, ObjCValueType.UNSIGNED_CHAR, "numberWithUnsignedChar")
+    emitBoxConverter(symbols.uByte, ObjCValueType.UNSIGNED_CHAR, "numberWithUnsignedChar:")
     emitBoxConverter(symbols.uShort, ObjCValueType.UNSIGNED_SHORT, "numberWithUnsignedShort:")
     emitBoxConverter(symbols.uInt, ObjCValueType.UNSIGNED_INT, "numberWithUnsignedInt:")
     emitBoxConverter(symbols.uLong, ObjCValueType.UNSIGNED_LONG_LONG, "numberWithUnsignedLongLong:")
@@ -371,8 +374,8 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
 
         val value = kotlinToObjC(kotlinValue, objCValueType)
 
-        val nsNumber = genGetSystemClass("NSNumber")
-        ret(genSendMessage(int8TypePtr, nsNumber, nsNumberFactorySelector, value))
+        val nsNumberSubclass = genGetLinkedClass("Kotlin${boxClass.name}")
+        ret(genSendMessage(int8TypePtr, nsNumberSubclass, nsNumberFactorySelector, value))
     }
 
     LLVMSetLinkage(converter, LLVMLinkage.LLVMPrivateLinkage)

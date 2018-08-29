@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -214,4 +217,50 @@ internal fun ObjCExportMapper.bridgePropertyType(descriptor: PropertyDescriptor)
     assert(isBaseProperty(descriptor))
 
     return bridgeType(descriptor.type)
+}
+
+internal enum class NSNumberKind(val mappedKotlinClassId: ClassId?, val objCType: ObjCType) {
+    CHAR(PrimitiveType.BYTE, "char"),
+    UNSIGNED_CHAR(UnsignedType.UBYTE, "unsigned char"),
+    SHORT(PrimitiveType.SHORT, "short"),
+    UNSIGNED_SHORT(UnsignedType.USHORT, "unsigned short"),
+    INT(PrimitiveType.INT, "int"),
+    UNSIGNED_INT(UnsignedType.UINT, "unsigned int"),
+    LONG("long"),
+    UNSIGNED_LONG("unsigned long"),
+    LONG_LONG(PrimitiveType.LONG, "long long"),
+    UNSIGNED_LONG_LONG(UnsignedType.ULONG, "unsigned long long"),
+    FLOAT(PrimitiveType.FLOAT, "float"),
+    DOUBLE(PrimitiveType.DOUBLE, "double"),
+    BOOL(PrimitiveType.BOOLEAN, "BOOL"),
+    INTEGER("NSInteger"),
+    UNSIGNED_INTEGER("NSUInteger")
+
+    ;
+
+    // UNSIGNED_SHORT -> unsignedShort
+    private val kindName = this.name.split('_')
+            .joinToString("") { it.toLowerCase().capitalize() }.decapitalize()
+
+
+    val valueSelector = kindName // unsignedShort
+    val initSelector = "initWith${kindName.capitalize()}:" // initWithUnsignedShort:
+    val factorySelector = "numberWith${kindName.capitalize()}:" // numberWithUnsignedShort:
+
+    constructor(
+            mappedKotlinClassId: ClassId?,
+            objCPrimitiveTypeName: String
+    ) : this(mappedKotlinClassId, ObjCPrimitiveType(objCPrimitiveTypeName))
+
+    constructor(
+            primitiveType: PrimitiveType,
+            objCPrimitiveTypeName: String
+    ) : this(ClassId.topLevel(primitiveType.typeFqName), objCPrimitiveTypeName)
+
+    constructor(
+            unsignedType: UnsignedType,
+            objCPrimitiveTypeName: String
+    ) : this(unsignedType.classId, objCPrimitiveTypeName)
+
+    constructor(objCPrimitiveTypeName: String) : this(null, ObjCPrimitiveType(objCPrimitiveTypeName))
 }

@@ -20,7 +20,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
         return load(selectorRef.llvm)
     }
 
-    fun FunctionGenerationContext.genGetSystemClass(name: String): LLVMValueRef {
+    fun FunctionGenerationContext.genGetLinkedClass(name: String): LLVMValueRef {
         val classRef = dataGenerator.genClassRef(name)
         return load(classRef.llvm)
     }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -44,6 +45,16 @@ abstract class ObjCExportHeaderGenerator(
     internal val generatedClasses = mutableSetOf<ClassDescriptor>()
     internal val topLevel = mutableMapOf<FqName, MutableList<CallableMemberDescriptor>>()
 
+    private val mappedToNSNumber: List<ClassDescriptor> = with(builtIns) {
+        val result = mutableListOf(boolean, byte, short, int, long, float, double)
+
+        UnsignedType.values().mapTo(result) { unsignedType ->
+            moduleDescriptor.findClassAcrossModuleDependencies(unsignedType.classId)!!
+        }
+
+        result
+    }
+
     private val customTypeMappers: Map<ClassDescriptor, CustomTypeMapper> = with(builtIns) {
         val result = mutableListOf<CustomTypeMapper>()
 
@@ -56,16 +67,13 @@ abstract class ObjCExportHeaderGenerator(
         result += CustomTypeMapper.Collection(generator, map, "NSDictionary")
         result += CustomTypeMapper.Collection(generator, mutableMap, namer.mutableMapName)
 
-        for (descriptor in listOf(boolean, byte, short, int, long, float, double)) {
-            // TODO: Kotlin code doesn't have any checkcasts on unboxing,
-            // so it is possible that it expects boxed number of other type and unboxes it incorrectly.
+        NSNumberKind.values().forEach {
             // TODO: NSNumber seem to have different equality semantics.
-            result += CustomTypeMapper.Simple(descriptor, "NSNumber")
-        }
+            if (it.mappedKotlinClassId != null) {
+                val descriptor = moduleDescriptor.findClassAcrossModuleDependencies(it.mappedKotlinClassId)!!
+                result += CustomTypeMapper.Simple(descriptor, namer.numberBoxName(descriptor))
+            }
 
-        for (unsignedType in UnsignedType.values()) {
-            val descriptor = moduleDescriptor.findClassAcrossModuleDependencies(unsignedType.classId)!!
-            result += CustomTypeMapper.Simple(descriptor, "NSNumber")
         }
 
         result += CustomTypeMapper.Simple(string, "NSString")
@@ -121,7 +129,7 @@ abstract class ObjCExportHeaderGenerator(
                 namer.mutableSetName,
                 generics = listOf("ObjectType"),
                 superClass = "NSMutableSet<ObjectType>",
-                attributes = listOf("objc_runtime_name(\"KotlinMutableSet\")")
+                attributes = listOf(objcRuntimeNameAttribute("KotlinMutableSet"))
         ))
 
         // TODO: only if appears
@@ -129,12 +137,14 @@ abstract class ObjCExportHeaderGenerator(
                 namer.mutableMapName,
                 generics = listOf("KeyType", "ObjectType"),
                 superClass = "NSMutableDictionary<KeyType, ObjectType>",
-                attributes = listOf("objc_runtime_name(\"KotlinMutableDictionary\")")
+                attributes = listOf(objcRuntimeNameAttribute("KotlinMutableDictionary"))
         ))
 
         stubs.add(ObjCInterface("NSError", categoryName = "NSErrorKotlinException", members = buildMembers {
             +ObjCProperty("kotlinException", null, ObjCNullableReferenceType(ObjCIdType), listOf("readonly"))
         }))
+
+        genKotlinNumbers()
 
         val packageFragments = moduleDescriptor.getPackageFragments()
 
@@ -193,6 +203,67 @@ abstract class ObjCExportHeaderGenerator(
         }
 
         return stubs
+    }
+
+    private fun genKotlinNumbers() {
+        val members = buildMembers {
+            NSNumberKind.values().forEach {
+                +nsNumberFactory(it, listOf("unavailable"))
+            }
+            NSNumberKind.values().forEach {
+                +nsNumberInit(it, listOf("unavailable"))
+            }
+        }
+        stubs.add(ObjCInterface(
+                namer.kotlinNumberName,
+                superClass = "NSNumber",
+                members = members,
+                attributes = listOf(objcRuntimeNameAttribute("KotlinNumber"))
+        ))
+
+        NSNumberKind.values().forEach {
+            if (it.mappedKotlinClassId != null) {
+                stubs += genKotlinNumber(it.mappedKotlinClassId, it)
+            }
+        }
+    }
+
+    private fun genKotlinNumber(kotlinClassId: ClassId, kind: NSNumberKind): ObjCInterface {
+        val descriptor = moduleDescriptor.findClassAcrossModuleDependencies(kotlinClassId)!!
+        val name = namer.numberBoxName(descriptor)
+
+        val members = buildMembers {
+            +nsNumberFactory(kind)
+            +nsNumberInit(kind)
+        }
+        return ObjCInterface(
+                name,
+                superClass = namer.kotlinNumberName,
+                members = members,
+                attributes = listOf(objcRuntimeNameAttribute("Kotlin${kotlinClassId.shortClassName}"))
+        )
+    }
+
+    private fun nsNumberInit(kind: NSNumberKind, attributes: List<String> = emptyList()): ObjCMethod {
+        return ObjCMethod(
+                null,
+                false,
+                ObjCInstanceType,
+                listOf(kind.factorySelector),
+                listOf(ObjCParameter("value", null, kind.objCType)),
+                attributes
+        )
+    }
+
+    private fun nsNumberFactory(kind: NSNumberKind, attributes: List<String> = emptyList()): ObjCMethod {
+        return ObjCMethod(
+                null,
+                true,
+                ObjCInstanceType,
+                listOf(kind.initSelector),
+                listOf(ObjCParameter("value", null, kind.objCType)),
+                attributes
+        )
     }
 
     private fun translateClassName(descriptor: ClassDescriptor): String = classOrInterfaceToName.getOrPut(descriptor) {
@@ -549,6 +620,7 @@ abstract class ObjCExportHeaderGenerator(
     }
 
     private fun swiftNameAttribute(swiftName: String) = "swift_name(\"$swiftName\")"
+    private fun objcRuntimeNameAttribute(name: String) = "objc_runtime_name(\"$name\")"
 
     private val methodsWithThrowAnnotationConsidered = mutableSetOf<FunctionDescriptor>()
 

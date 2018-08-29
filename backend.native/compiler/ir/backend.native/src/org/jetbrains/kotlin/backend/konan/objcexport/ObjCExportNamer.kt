@@ -29,6 +29,9 @@ internal class ObjCExportNamer(val moduleDescriptor: ModuleDescriptor,
     val mutableSetName = "${topLevelNamePrefix}MutableSet"
     val mutableMapName = "${topLevelNamePrefix}MutableDictionary"
 
+    fun numberBoxName(descriptor: ClassDescriptor): String = "$topLevelNamePrefix${descriptor.name.asString()}"
+    val kotlinNumberName = "${topLevelNamePrefix}Number"
+
     private val methodSelectors = object : Mapping<FunctionDescriptor, String>() {
 
         // Try to avoid clashing with critical NSObject instance methods:

@@ -91,6 +91,116 @@ func testDoubles() throws {
     try assertEquals(actual: Values.infFloatVal, expected: -Float.infinity, "-Inf float")
 }
 
+func testNumbers() throws {
+    try assertEquals(actual: ValuesBoolean(value: true).boolValue, expected: true)
+    try assertEquals(actual: ValuesBoolean(value: false).intValue, expected: 0)
+    try assertEquals(actual: ValuesBoolean(value: true), expected: true)
+    try assertFalse(ValuesBoolean(value: false) as! Bool)
+
+    try assertEquals(actual: ValuesByte(value: -1).int8Value, expected: -1)
+    try assertEquals(actual: ValuesByte(value: -1).int32Value, expected: -1)
+    try assertEquals(actual: ValuesByte(value: -1).doubleValue, expected: -1.0)
+    try assertEquals(actual: ValuesByte(value: -1), expected: NSNumber(value: Int64(-1)))
+    try assertFalse(ValuesByte(value: -1) == NSNumber(value: -1.5))
+    try assertEquals(actual: ValuesByte(value: -1), expected: -1)
+    try assertTrue(ValuesByte(value: -1) == -1)
+    try assertFalse(ValuesByte(value: -1) == 1)
+    try assertEquals(actual: ValuesByte(value: -1) as! Int32, expected: -1)
+
+    try assertEquals(actual: ValuesShort(value: 111).int16Value, expected: 111)
+    try assertEquals(actual: ValuesShort(value: -15) as! Int16, expected: -15)
+    try assertEquals(actual: ValuesShort(value: 47), expected: 47)
+
+    try assertEquals(actual: ValuesInt(value: 99).int32Value, expected: 99)
+    try assertEquals(actual: ValuesInt(value: -1) as! Int32, expected: -1)
+    try assertEquals(actual: ValuesInt(value: 72), expected: 72)
+
+    try assertEquals(actual: ValuesLong(value: 65).int64Value, expected: 65)
+    try assertEquals(actual: ValuesLong(value: 10000000000) as! Int64, expected: 10000000000)
+    try assertEquals(actual: ValuesLong(value: 8), expected: 8)
+
+    try assertEquals(actual: ValuesUByte(value: 17).uint8Value, expected: 17)
+    try assertEquals(actual: ValuesUByte(value: 42) as! UInt8, expected: 42)
+    try assertEquals(actual: 88, expected: ValuesUByte(value: 88))
+
+    try assertEquals(actual: ValuesUShort(value: 40000).uint16Value, expected: 40000)
+    try assertEquals(actual: ValuesUShort(value: 1) as! UInt16, expected: UInt16(1))
+    try assertEquals(actual: ValuesUShort(value: 65000), expected: 65000)
+
+    try assertEquals(actual: ValuesUInt(value: 3).uint32Value, expected: 3)
+    try assertEquals(actual: ValuesUInt(value: UInt32.max) as! UInt32, expected: UInt32.max)
+    try assertEquals(actual: ValuesUInt(value: 2), expected: 2)
+
+    try assertEquals(actual: ValuesULong(value: 55).uint64Value, expected: 55)
+    try assertEquals(actual: ValuesULong(value: 0) as! UInt64, expected: 0)
+    try assertEquals(actual: ValuesULong(value: 7), expected: 7)
+
+    try assertEquals(actual: ValuesFloat(value: 1.0).floatValue, expected: 1.0)
+    try assertEquals(actual: ValuesFloat(value: 22.0) as! Float, expected: 22)
+    try assertEquals(actual: ValuesFloat(value: 41.0), expected: 41)
+    try assertEquals(actual: ValuesFloat(value: -5.5), expected: -5.5)
+
+    try assertEquals(actual: ValuesDouble(value: 0.5).doubleValue, expected: 0.5)
+    try assertEquals(actual: ValuesDouble(value: 45.0) as! Double, expected: 45)
+    try assertEquals(actual: ValuesDouble(value: 89.0), expected: 89)
+    try assertEquals(actual: ValuesDouble(value: -3.7), expected: -3.7)
+
+    Values.ensureEqualBooleans(actual: ValuesBoolean(value: true), expected: true)
+    Values.ensureEqualBooleans(actual: false, expected: false)
+
+    Values.ensureEqualBytes(actual: ValuesByte(value: 42), expected: 42)
+    Values.ensureEqualBytes(actual: -11, expected: -11)
+
+    Values.ensureEqualShorts(actual: ValuesShort(value: 256), expected: 256)
+    Values.ensureEqualShorts(actual: -1, expected: -1)
+
+    Values.ensureEqualInts(actual: ValuesInt(value: 100000), expected: 100000)
+    Values.ensureEqualInts(actual: -7, expected: -7)
+
+    Values.ensureEqualLongs(actual: ValuesLong(value: Int64.max), expected: Int64.max)
+    Values.ensureEqualLongs(actual: 17, expected: 17)
+
+    Values.ensureEqualUBytes(actual: ValuesUByte(value: 6), expected: 6)
+    Values.ensureEqualUBytes(actual: 255, expected: 255)
+
+    Values.ensureEqualUShorts(actual: ValuesUShort(value: 300), expected: 300)
+    Values.ensureEqualUShorts(actual: 65535, expected: UInt16.max)
+
+    Values.ensureEqualUInts(actual: ValuesUInt(value: 70000), expected: 70000)
+    Values.ensureEqualUInts(actual: 48, expected: 48)
+
+    Values.ensureEqualULongs(actual: ValuesULong(value: UInt64.max), expected: UInt64.max)
+    Values.ensureEqualULongs(actual: 39, expected: 39)
+
+    Values.ensureEqualFloats(actual: ValuesFloat(value: 36.6), expected: 36.6)
+    Values.ensureEqualFloats(actual: 49.5, expected: 49.5)
+    Values.ensureEqualFloats(actual: 18, expected: 18.0)
+
+    Values.ensureEqualDoubles(actual: ValuesDouble(value: 12.34), expected: 12.34)
+    Values.ensureEqualDoubles(actual: 56.78, expected: 56.78)
+    Values.ensureEqualDoubles(actual: 3, expected: 3)
+
+    func checkBox<T: Equatable, B : NSObject>(_ value: T, _ boxFunction: (T) -> B?) throws {
+        let box = boxFunction(value)!
+        try assertEquals(actual: box as! T, expected: value)
+        print(type(of: box))
+        print(B.self)
+        try assertTrue(box.isKind(of: B.self))
+    }
+
+    try checkBox(true, Values.box)
+    try checkBox(Int8(-1), Values.box)
+    try checkBox(Int16(-2), Values.box)
+    try checkBox(Int32(-3), Values.box)
+    try checkBox(Int64(-4), Values.box)
+    try checkBox(UInt8(5), Values.box)
+    try checkBox(UInt16(6), Values.box)
+    try checkBox(UInt32(7), Values.box)
+    try checkBox(UInt64(8), Values.box)
+    try checkBox(Float(8.7), Values.box)
+    try checkBox(Double(9.4), Values.box)
+}
+
 func testLists() throws {
     let numbersList = Values.numbersList
     let gold = [1, 2, 13]
@@ -307,6 +417,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestValues", method: withAutorelease(testVals)),
             TestCase(name: "TestVars", method: withAutorelease(testVars)),
             TestCase(name: "TestDoubles", method: withAutorelease(testDoubles)),
+            TestCase(name: "TestNumbers", method: withAutorelease(testNumbers)),
             TestCase(name: "TestLists", method: withAutorelease(testLists)),
             TestCase(name: "TestLazyValues", method: withAutorelease(testLazyVal)),
             TestCase(name: "TestDelegatedProperties", method: withAutorelease(testDelegatedProp)),
