@@ -239,6 +239,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addAnnotationTarget/expression.kt");
         }
 
+        @TestMetadata("expression2.kt")
+        public void testExpression2() throws Exception {
+            runTest("idea/testData/quickfix/addAnnotationTarget/expression2.kt");
+        }
+
+        @TestMetadata("expression3.kt")
+        public void testExpression3() throws Exception {
+            runTest("idea/testData/quickfix/addAnnotationTarget/expression3.kt");
+        }
+
         @TestMetadata("file.kt")
         public void testFile() throws Exception {
             runTest("idea/testData/quickfix/addAnnotationTarget/file.kt");
