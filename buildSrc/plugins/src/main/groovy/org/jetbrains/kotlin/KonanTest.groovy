@@ -150,31 +150,6 @@ abstract class KonanTest extends JavaExec {
         return sourceFiles
     }
 
-    void createCoroutineUtil(String file) {
-        StringBuilder text = new StringBuilder("import kotlin.coroutines.*\n")
-        text.append(
-                """
-open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
-    companion object : EmptyContinuation()
-    override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
-}
-
-fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {
-    override val context = EmptyCoroutineContext
-    override fun resumeWith(result: SuccessOrFailure<T>) { x(result.getOrThrow()) }
-}
-
-fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {
-    override val context = EmptyCoroutineContext
-    override fun resumeWith(result: SuccessOrFailure<Any?>) {
-        val exception = result.exceptionOrNull() ?: return
-        x(exception)
-    }
-}
-"""     )
-        createFile(file, text.toString())
-    }
-
     String createTextForHelpers() {
         def coroutinesPackage = "kotlin.coroutines"
 
@@ -239,13 +214,8 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
         def matcher = filePattern.matcher(srcText)
 
         if (srcText.contains('// WITH_COROUTINES')) {
-            def coroutineUtilFileName = "$outputDirectory/CoroutineUtil.kt"
-            createCoroutineUtil(coroutineUtilFileName)
-
             def coroutineHelpersFileName = "$outputDirectory/helpers.kt"
             createFile(coroutineHelpersFileName, createTextForHelpers())
-
-            result.add(coroutineUtilFileName)
             result.add(coroutineHelpersFileName)
         }
 
@@ -756,7 +726,9 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
             }
 
             // Find mutable objects that should be marked as ThreadLocal
-            text = markMutableObjects(text)
+            if (filePath != "$outputDirectory/helpers.kt") {
+                text = markMutableObjects(text)
+            }
 
             createFile(filePath, text)
         }
