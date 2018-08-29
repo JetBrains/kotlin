@@ -52,7 +52,7 @@ class SignatureEnhancement(
     private fun AnnotationDescriptor.extractNullabilityTypeFromArgument(): NullabilityQualifierWithMigrationStatus? {
         val enumValue = firstArgument() as? EnumValue
         // if no argument is specified, use default value: NOT_NULL
-                ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+            ?: return NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
 
         return when (enumValue.enumEntryName.asString()) {
             "ALWAYS" -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
@@ -67,7 +67,7 @@ class SignatureEnhancement(
 
         val typeQualifierAnnotation =
             annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
-                    ?: return null
+                ?: return null
 
         val jsr305State = annotationTypeQualifierResolver.resolveJsr305AnnotationState(annotationDescriptor)
         if (jsr305State.isIgnore) return null
@@ -268,12 +268,12 @@ class SignatureEnhancement(
 
             val nullabilityInfo =
                 composedAnnotation.extractNullability()
-                        ?: defaultTypeQualifier?.nullability?.let {
-                            NullabilityQualifierWithMigrationStatus(
-                                defaultTypeQualifier.nullability,
-                                defaultTypeQualifier.isNullabilityQualifierForWarning
-                            )
-                        }
+                    ?: defaultTypeQualifier?.nullability?.let {
+                        NullabilityQualifierWithMigrationStatus(
+                            defaultTypeQualifier.nullability,
+                            defaultTypeQualifier.isNullabilityQualifierForWarning
+                        )
+                    }
 
             return JavaTypeQualifiers(
                 nullabilityInfo?.qualifier,
