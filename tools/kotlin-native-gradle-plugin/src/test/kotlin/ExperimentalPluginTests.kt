@@ -553,4 +553,178 @@ class ExperimentalPluginTests {
             headerPaths.forEach { assertFileExists(it) }
         }
     }
+
+    @Test
+    fun `Plugin should support cinterop dependencies`() {
+        // region Project set up.
+        val rootProject = KonanProject.createEmpty(projectDirectory).apply {
+            buildFile.writeText("""
+                plugins {
+                    id 'kotlin-native'
+                }
+
+                group 'test'
+                version '1.0'
+
+                repositories {
+                    maven { url = 'repo' }
+                }
+
+                sourceSets.main.component {
+                    outputKinds = [ KLIBRARY ]
+                    targets = ['host']
+                }
+
+                dependencies {
+                    implementation project('libFoo')
+                }
+            """.trimIndent())
+
+            settingsFile.writeText("""
+                enableFeaturePreview('GRADLE_METADATA')
+
+                rootProject.name = 'interop-test'
+
+                include 'libFoo'
+                include 'libBar'
+            """.trimIndent())
+
+            generateSrcFile("main.kt", """
+                import kotlinx.cinterop.*
+                import mystdio.*
+
+                fun main(args: Array<String>) {
+                    printf(foo())
+                }
+            """.trimIndent())
+
+            generateSrcFile(listOf("src", "test", "kotlin"), "test.kt", """
+                import kotlin.test.*
+
+                @Test
+                fun mainTest() {
+                    main(emptyArray<String>())
+                }
+            """.trimIndent())
+        }
+
+        val libFooProject = KonanProject.createEmpty(rootProject.createSubDir("libFoo")).apply {
+            buildFile.writeText("""
+                plugins {
+                    id 'kotlin-native'
+                    id 'maven-publish'
+                }
+
+                group 'test'
+                version '1.0'
+
+                sourceSets.main {
+
+                    component {
+                        targets = ['host']
+                        outputKinds = [ KLIBRARY ]
+                    }
+
+                    dependencies {
+                        implementation project(':libBar')
+                        cinterop('mystdio') {
+                            extraOpts '-nodefaultlibs'
+                        }
+                    }
+                }
+
+                publishing {
+                    repositories {
+                        maven {
+                            url = '../repo'
+                        }
+                    }
+                }
+            """.trimIndent())
+
+            generateSrcFile("lib.kt", """
+                fun foo() = "Interop is here!\n${'$'}{bar()}\n"
+            """.trimIndent())
+
+            generateDefFile("mystdio.def", """
+                headers = stdio.h
+                compilerOpts.osx = -D_ANSI_SOURCE
+            """.trimIndent())
+        }
+
+        val libBarProject = KonanProject.createEmpty(rootProject.createSubDir("libBar")).apply {
+            buildFile.writeText("""
+                plugins {
+                    id 'kotlin-native'
+                    id 'maven-publish'
+                }
+
+                group 'test'
+                version '1.0'
+
+                sourceSets.main {
+                    component {
+                        targets = ['host']
+                        outputKinds = [ KLIBRARY ]
+                    }
+                }
+
+                publishing {
+                    repositories {
+                        maven {
+                            url = '../repo'
+                        }
+                    }
+                }
+            """.trimIndent())
+
+            generateSrcFile("lib.kt", """
+                fun bar() = "Transitive call!"
+            """.trimIndent())
+        }
+        // endregion.
+
+        rootProject.createRunner().withArguments(":build").build().apply {
+            output.contains("Interop is here!")
+            output.contains("Transitive call!")
+        }
+
+        assertFileExists("libFoo/build/cinterop/mystdio/${HostManager.hostName}/mystdio.klib")
+
+        rootProject.createRunner().withArguments(":libFoo:publish", ":libBar:publish").build()
+        assertFileExists("repo/test/libFoo_debug/1.0/libFoo_debug-1.0-interop-mystdio.klib")
+        assertFileExists("repo/test/libFoo_release/1.0/libFoo_release-1.0-interop-mystdio.klib")
+
+        // A dependency on a published library
+        rootProject.buildFile.writeText("""
+            plugins {
+                id 'kotlin-native'
+            }
+
+            group 'test'
+            version '1.0'
+
+            repositories {
+                maven { url = 'repo' }
+            }
+
+            sourceSets.main.component {
+                outputKinds = [ KLIBRARY ]
+                targets = ['host']
+            }
+
+            dependencies {
+                implementation 'test:libFoo:1.0'
+            }
+        """.trimIndent())
+
+        assertTrue(projectDirectory.resolve("build").deleteRecursively())
+        assertTrue(projectDirectory.resolve("libFoo/build").deleteRecursively())
+        assertTrue(projectDirectory.resolve("libBar/build").deleteRecursively())
+
+        rootProject.createRunner().withArguments(":build").build().apply {
+            output.contains("Interop is here!")
+            output.contains("Transitive call!")
+        }
+    }
 }
