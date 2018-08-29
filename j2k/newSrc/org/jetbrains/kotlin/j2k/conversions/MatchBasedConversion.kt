@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.j2k.conversions
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.impl.JKBranchElementBase
 
-abstract class MatchBasedConversion : BaseConversion() {
+abstract class MatchBasedConversion : SequentialBaseConversion {
 
-    fun <T> applyRecursive(element: JKTreeElement, data: T, func: (JKTreeElement, T) -> JKTreeElement): JKTreeElement {
+    fun <R : JKTreeElement, T> applyRecursive(element: R, data: T, func: (JKTreeElement, T) -> JKTreeElement): R {
         if (element is JKBranchElementBase) {
             val iter = element.children.listIterator()
             while (iter.hasNext()) {
@@ -34,7 +34,7 @@ abstract class MatchBasedConversion : BaseConversion() {
         return element
     }
 
-    inline fun applyRecursive(element: JKTreeElement, crossinline func: (JKTreeElement) -> JKTreeElement): JKTreeElement {
+    inline fun <R : JKTreeElement> applyRecursive(element: R, crossinline func: (JKTreeElement) -> JKTreeElement): R {
         return applyRecursive(element, null) { it, _ -> func(it) }
     }
 

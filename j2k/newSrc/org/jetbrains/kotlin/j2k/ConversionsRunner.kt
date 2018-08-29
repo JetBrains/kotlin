@@ -21,34 +21,33 @@ import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 
 object ConversionsRunner {
 
-    private fun createConversions(context: ConversionContext) = listOf(
-        ModalityConversion(context),
-        ImplicitInitializerConversion(),
-        DefaultArgumentsConversion(context),
-        TypeMappingConversion(context),
-        FieldToPropertyConversion(),
-        PrintlnConversion(context),
-        BlockToRunConversion(context),
-        AssignmentAsExpressionToAlsoConversion(context),
-        AssignmentStatementValCreationConversion(context),
-        AssignmentStatementOperatorConversion(),
-        ConstructorConversion(context),
-        PrimaryConstructorDetectConversion(context),
-        JavaMethodToKotlinFunctionConversion(),
-        LiteralConversion(),
-        InnerClassConversion(),
-        ModifiersConversion(context),
-        StaticsToCompanionExtractConversion(),
-        ClassToObjectPromotionConversion(),
-        PolyadicExpressionConversion(),
-        BinaryExpressionConversion()
-    )
+    private fun createRootConversion(context: ConversionContext) =
+        batchPipe {
+            +ModalityConversion(context)
+            +ImplicitInitializerConversion()
+            +DefaultArgumentsConversion(context)
+            +TypeMappingConversion(context)
+            +FieldToPropertyConversion()
+            +PrintlnConversion(context)
+            +BlockToRunConversion(context)
+            +AssignmentAsExpressionToAlsoConversion(context)
+            +AssignmentStatementValCreationConversion(context)
+            +AssignmentStatementOperatorConversion()
+            +ConstructorConversion(context)
+            +PrimaryConstructorDetectConversion(context)
+            +JavaMethodToKotlinFunctionConversion()
+            +LiteralConversion()
+            +InnerClassConversion()
+            +ModifiersConversion(context)
+            +StaticsToCompanionExtractConversion()
+            +ClassToObjectPromotionConversion()
+            +PolyadicExpressionConversion()
+            +BinaryExpressionConversion()
+        }
 
     fun doApply(trees: List<JKTreeElement>, context: ConversionContext) {
-        val conversions = createConversions(context)
-        trees.forEach { tree ->
-            conversions.forEach { it.runConversion(tree, context) }
-        }
+        val conversion = createRootConversion(context)
+        conversion.runConversion(trees, context)
     }
 
 }

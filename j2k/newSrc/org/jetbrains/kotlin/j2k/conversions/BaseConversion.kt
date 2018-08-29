@@ -19,10 +19,14 @@ package org.jetbrains.kotlin.j2k.conversions
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 
-abstract class BaseConversion {
-    /**
-     * @return true if something changed
-     */
-    abstract fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean
+interface BatchBaseConversion {
+    fun runConversion(treeRoots: List<JKTreeElement>, context: ConversionContext): Boolean
+}
 
+interface SequentialBaseConversion : BatchBaseConversion {
+    fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean
+
+    override fun runConversion(treeRoots: List<JKTreeElement>, context: ConversionContext): Boolean {
+        return treeRoots.asSequence().map { runConversion(it, context) }.max() ?: false
+    }
 }

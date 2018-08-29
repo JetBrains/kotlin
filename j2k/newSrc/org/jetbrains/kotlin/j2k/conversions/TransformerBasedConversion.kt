@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 
-abstract class TransformerBasedConversion : BaseConversion(), JKVisitorVoid {
+abstract class TransformerBasedConversion : SequentialBaseConversion, JKVisitorVoid {
     protected var somethingChanged = false
 
     override fun runConversion(treeRoot: JKTreeElement, context: ConversionContext): Boolean {
