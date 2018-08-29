@@ -120,7 +120,7 @@ class NewCodeBuilder {
             printer.printWithNoIndent(klass.name.value)
 
             val primaryConstructor = klass.primaryConstructor()
-            if (primaryConstructor != null) {
+            if (primaryConstructor != null && primaryConstructor.parameters.isNotEmpty()) {
                 renderParameterList(primaryConstructor.parameters)
             }
 
@@ -138,7 +138,7 @@ class NewCodeBuilder {
                 }
             }
 
-            if (klass.declarationList.isNotEmpty()) {
+            if (klass.declarationList.any { it !is JKKtPrimaryConstructor }) {
                 printer.block(multiline = true) {
                     klass.declarationList.forEach { it.accept(this) }
                 }

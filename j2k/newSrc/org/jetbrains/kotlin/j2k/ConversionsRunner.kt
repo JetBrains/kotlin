@@ -35,6 +35,7 @@ object ConversionsRunner {
             +AssignmentStatementOperatorConversion()
             +ConstructorConversion(context)
             +PrimaryConstructorDetectConversion(context)
+            +InsertDefaultPrimaryConstructorConversion(context)
             +JavaMethodToKotlinFunctionConversion()
             +LiteralConversion()
             +InnerClassConversion()
