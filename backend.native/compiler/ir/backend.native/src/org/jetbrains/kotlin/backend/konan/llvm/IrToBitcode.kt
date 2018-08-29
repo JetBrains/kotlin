@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -41,24 +43,38 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 private val threadLocalAnnotationFqName = FqName("kotlin.native.ThreadLocal")
 private val sharedAnnotationFqName = FqName("kotlin.native.SharedImmutable")
 
+
+val IrField.propertyDescriptor: PropertyDescriptor
+    get() {
+        val descriptor = this.descriptor
+        return if (descriptor is IrPropertyDelegateDescriptor)
+            descriptor.correspondingProperty
+        else
+            descriptor
+    }
+
+internal enum class FieldStorage {
+    MAIN_THREAD,
+    SHARED,
+    THREAD_LOCAL
+}
+
 // TODO: maybe unannotated singleton objects shall be accessed from main thread only as well?
 val IrClass.objectIsShared get() =
     !descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName)
 
-val IrField.isThreadLocal get() =
-    descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName)
-
-val IrField.isShared get() =
-    descriptor.annotations.hasAnnotation(sharedAnnotationFqName)
-
-val IrField.isMainOnly get() =
-    !descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName) &&
-    !descriptor.annotations.hasAnnotation(sharedAnnotationFqName) &&
-    !descriptor.isDelegated
+internal val IrField.storageClass: FieldStorage get() {
+    val descriptor = propertyDescriptor
+    return when {
+        descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName) -> FieldStorage.THREAD_LOCAL
+        descriptor.annotations.hasAnnotation(sharedAnnotationFqName) -> FieldStorage.SHARED
+        else -> FieldStorage.MAIN_THREAD
+    }
+}
 
 val IrField.isMainOnlyNonPrimitive get() = when  {
         KotlinBuiltIns.isPrimitiveType(descriptor.type) -> false
-        else -> isMainOnly
+        else -> storageClass == FieldStorage.MAIN_THREAD
     }
 
 internal fun emitLLVM(context: Context, phaser: PhaseManager) {
@@ -409,10 +425,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     context.llvm.fileInitializers
                             .forEach {
                                 if (it.initializer?.expression !is IrConst<*>?) {
-                                    if (!it.isThreadLocal) {
+                                    if (it.storageClass != FieldStorage.THREAD_LOCAL) {
                                         val initialization = evaluateExpression(it.initializer!!.expression)
                                         val address = context.llvmDeclarations.forStaticField(it).storage
-                                        if (it.isShared)
+                                        if (it.storageClass == FieldStorage.SHARED)
                                             freeze(initialization, currentCodeContext.exceptionHandler)
                                         storeAny(initialization, address)
                                     }
@@ -425,7 +441,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     context.llvm.fileInitializers
                             .forEach {
                                 if (it.initializer?.expression !is IrConst<*>?) {
-                                   if (it.isThreadLocal) {
+                                   if (it.storageClass == FieldStorage.THREAD_LOCAL) {
                                        val initialization = evaluateExpression(it.initializer!!.expression)
                                        val address = context.llvmDeclarations.forStaticField(it).storage
                                        storeAny(initialization, address)
@@ -438,7 +454,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 appendingTo(bbLocalDeinit) {
                     context.llvm.fileInitializers.forEach {
                         // Only if a subject for memory management.
-                        if (it.type.binaryTypeIsReference() && it.isThreadLocal) {
+                        if (it.type.binaryTypeIsReference() && it.storageClass == FieldStorage.THREAD_LOCAL) {
                             val address = context.llvmDeclarations.forStaticField(it).storage
                             storeAny(codegen.kNullObjHeaderPtr, address)
                         }
@@ -451,7 +467,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     context.llvm.fileInitializers
                             // Only if a subject for memory management.
                             .forEach {
-                                if (it.type.binaryTypeIsReference() && !it.isThreadLocal) {
+                                if (it.type.binaryTypeIsReference() && it.storageClass != FieldStorage.THREAD_LOCAL) {
                                     val address = context.llvmDeclarations.forStaticField(it).storage
                                     storeAny(codegen.kNullObjHeaderPtr, address)
                                 }
@@ -1467,7 +1483,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val globalValue = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
             if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive)
                 functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
-            if (value.symbol.owner.isShared)
+            if (value.symbol.owner.storageClass == FieldStorage.SHARED)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
             functionGenerationContext.storeAny(valueToAssign, globalValue)
         }

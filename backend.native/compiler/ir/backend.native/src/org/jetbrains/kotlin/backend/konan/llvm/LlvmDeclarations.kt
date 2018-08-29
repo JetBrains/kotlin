@@ -376,7 +376,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(descriptor)
             val storage = addGlobal(
-                    name, getLLVMType(descriptor.type), isExported = false, threadLocal = declaration.isThreadLocal)
+                    name, getLLVMType(descriptor.type), isExported = false,
+                    threadLocal = declaration.storageClass == FieldStorage.THREAD_LOCAL)
 
             this.staticFields[descriptor] = StaticFieldLlvmDeclarations(storage)
         }
