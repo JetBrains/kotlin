@@ -1,0 +1,9 @@
+depends = CoreFoundation CoreGraphics CoreVideo IOSurface darwin posix
+language = Objective-C
+package = platform.Accelerate
+headers = Accelerate/Accelerate.h
+
+headerFilter = Accelerate/** vecLib/** **/vecLib.h vImage/**
+
+compilerOpts = -framework Accelerate
+linkerOpts = -framework Accelerate
