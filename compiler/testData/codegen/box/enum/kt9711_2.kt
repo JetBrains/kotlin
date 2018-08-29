@@ -1,4 +1,6 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: JS
+// LANGUAGE_VERSION: 1.2
 
 enum class IssueState {
 
