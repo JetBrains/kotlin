@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
 import org.junit.Test
+import java.util.jar.JarFile
 import java.util.zip.ZipFile
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class NewMultiplatformIT : BaseGradleIT() {
@@ -412,10 +414,11 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertFileExists("repo/com/example/sample-lib-$publishedVariant/1.0/sample-lib-$publishedVariant-1.0.klib")
             assertNoSuchFile("repo/com/example/sample-lib-$nonPublishedVariant") // check that no artifacts are published for that variant
 
-            // but check that the module metadata contains both variants:
+            // but check that the module metadata contains all variants:
             val gradleModuleMetadata = projectDir.resolve("repo/com/example/sample-lib/1.0/sample-lib-1.0.module").readText()
             assertTrue(""""name": "linux64-api"""" in gradleModuleMetadata)
             assertTrue(""""name": "mingw64-api"""" in gradleModuleMetadata)
+            assertTrue(""""name": "macos64-api"""" in gradleModuleMetadata)
         }
     }
 
@@ -510,6 +513,37 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksUpToDate(linkTasks.drop(1))
             assertTasksExecuted(linkTasks[0])
+        }
+    }
+
+    @Test
+    fun testSourceJars() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+
+        build("publish") {
+            assertSuccessful()
+
+            val nativeHostTargetName = when {
+                HostManager.hostIsMingw -> "mingw64"
+                HostManager.hostIsLinux -> "linux64"
+                HostManager.hostIsMac -> "macos64"
+                else -> error("Unknown host")
+            }
+
+            val groupDir = projectDir.resolve("repo/com/example/")
+            val targetArtifactIdAppendices = listOf("metadata", "jvm6", "nodejs", "wasm32", nativeHostTargetName)
+
+            val sourceJarSourceRoots = targetArtifactIdAppendices.associate { artifact ->
+                val sourcesJar = JarFile(groupDir.resolve("sample-lib-$artifact/1.0/sample-lib-$artifact-1.0-sources.jar"))
+                val sourcesDirs = sourcesJar.entries().asSequence().map { it.name.substringBefore("/") }.toSet() - "META-INF"
+                artifact to sourcesDirs
+            }
+
+            assertEquals(setOf("commonMain"), sourceJarSourceRoots["metadata"])
+            assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
+            assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["nodejs"])
+            assertEquals(setOf("commonMain", "wasm32Main"), sourceJarSourceRoots["wasm32"])
+            assertEquals(setOf("commonMain", "${nativeHostTargetName}Main"), sourceJarSourceRoots[nativeHostTargetName])
         }
     }
 }
