@@ -713,8 +713,8 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         lines.forEach { line ->
             // FIXME: find only those who has vars inside
             // Find object declarations and companion objects
-            if (line.matches("(?m)^\\s*object [a-zA-Z_][a-zA-Z0-9_]*\\s*.*")
-                    || line.matches("(?m)^\\s*companion object.*")) {
+            if (line.matches("\\s*(private|public|internal)?\\s*object [a-zA-Z_][a-zA-Z0-9_]*\\s*.*")
+                    || line.matches("\\s*(private|public|internal)?\\s*companion object.*")) {
                 result += "@kotlin.native.ThreadLocal"
             }
             result += line
@@ -868,15 +868,18 @@ fun runTest() {
     boolean isEnabledForNativeBackend(String fileName) {
         def text = project.file(fileName).text
 
-        def inproperIeee754Comparisons = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
-        if (inproperIeee754Comparisons.contains('-ProperIeee754Comparisons')) {
+        def languageSettings = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
+        if (languageSettings.contains('-ProperIeee754Comparisons')) {
             // K/N supports only proper IEEE754 comparisons
+            return false
+        }
+        if (languageSettings.contains('+NewInference')) {
             return false
         }
 
         def version = findLinesWithPrefixesRemoved(text, '// LANGUAGE_VERSION: ')
-        if (version.size() != 0 && version.contains("1.3")) {
-            // 1.3 is not yet supported
+        if (version.size() != 0 && version.contains("1.2")) {
+            // Support tests for 1.3 and exclude 1.2
             return false
         }
 
