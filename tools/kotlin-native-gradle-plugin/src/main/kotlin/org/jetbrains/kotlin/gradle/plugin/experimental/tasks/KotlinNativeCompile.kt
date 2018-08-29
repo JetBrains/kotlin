@@ -24,10 +24,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.plugin.KonanCompilerRunner
-import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
-import org.jetbrains.kotlin.gradle.plugin.addArg
-import org.jetbrains.kotlin.gradle.plugin.addKey
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
@@ -58,6 +55,9 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
     val target: String @Input get() = binary.konanTarget.name
 
     val additionalCompilerOptions: Collection<String> @Input get() = binary.additionalCompilerOptions
+
+    val linkerOpts: List<String>
+        @Input get() = binary.linkerOpts
 
     val outputFile: File
         get() = outputLocationProvider.get().asFile
@@ -119,6 +119,8 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
                 library.parent?.let { addArg("-r", it) }
                 addArg("-l", library.nameWithoutExtension)
             }
+
+            addListArg("-linkerOpts", linkerOpts)
 
             addAll(sources.files.map { it.absolutePath })
         }

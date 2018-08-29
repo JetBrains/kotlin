@@ -77,11 +77,35 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
 
     override fun getImplementationDependencies(): Configuration = dependencies.implementationDependencies
 
-    // region DSL
+    // region DSL.
 
+    override var targets: List<String>
+        get() = konanTargets.get().map { it.name }
+        set(value) {
+            val hostManager = HostManager()
+            konanTargets.set(targets.map { hostManager.targetByName(it) })
+        }
+
+    override fun target(target: String, action: KotlinNativeBinary.() -> Unit) =
+        binaries.whenElementKnown {
+            if (it.konanTarget == HostManager().targetByName(target)) {
+                it.action()
+            }
+        }
+
+    override fun target(target: String, action: Closure<Unit>) =
+        target(target, ConfigureUtil.configureUsing(action))
+
+    override fun target(target: String, action: Action<KotlinNativeBinary>) =
+        target(target) { action.execute(this) }
+
+    @Deprecated("Use the 'targets' property instead. E.g. targets = ['macos_x64', 'linux_x64']")
     override fun target(vararg targets: String) {
-        val hostManager = HostManager()
-        konanTargets.set(targets.map { hostManager.targetByName(it) })
+        project.logger.warn("""
+            Kotlin/Native component's method 'target' is deprecated. Use the 'targets' property instead.
+            E.g. targets = ['macos_x64', 'linux_x64']
+        """.trimIndent())
+        this.targets = targets.toList()
     }
 
     override val extraOpts = mutableListOf<String>()

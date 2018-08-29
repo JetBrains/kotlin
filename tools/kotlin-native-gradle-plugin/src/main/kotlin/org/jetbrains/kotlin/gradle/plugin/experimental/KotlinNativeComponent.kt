@@ -61,6 +61,9 @@ interface KotlinNativeComponent: ComponentWithBinaries, ComponentWithDependencie
 
     // region DSL
 
+    /** Allows a user to specify targets this component is built for. */
+    var targets: List<String>
+
     /** Provides an access to component's dependencies including cinterop and jsinterop DSL */
     override fun getDependencies(): KotlinNativeDependencies
 
@@ -69,7 +72,13 @@ interface KotlinNativeComponent: ComponentWithBinaries, ComponentWithDependencie
     fun dependencies(action: Action<KotlinNativeDependencies>)
 
     /** Set native targets for this component. */
+    @Deprecated("Use the 'targets' property instead. E.g. targets = ['macos_x64', 'linux_x64']")
     fun target(vararg targets: String)
+
+    /** Provide a way to configure binaries included in this component for a particular target. */
+    fun target(target: String, action: KotlinNativeBinary.() -> Unit)
+    fun target(target: String, action: Closure<Unit>)
+    fun target(target: String, action: Action<KotlinNativeBinary>)
 
     /** Set additional compiler options for this component. */
     val extraOpts: Collection<String>

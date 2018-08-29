@@ -71,6 +71,14 @@ interface KotlinNativeBinary: ComponentWithDependencies, BuildableComponent {
      */
     val additionalCompilerOptions: Collection<String>
 
+    // DSL.
+    /**
+     * Additional options passed to a linker when this binary is built.
+     */
+    val linkerOpts: MutableList<String>
+    fun linkerOpts(values: List<String>)
+    fun linkerOpts(vararg values: String)
+
     companion object {
         val KONAN_TARGET_ATTRIBUTE = Attribute.of("org.gradle.native.kotlin.platform", String::class.java)
     }

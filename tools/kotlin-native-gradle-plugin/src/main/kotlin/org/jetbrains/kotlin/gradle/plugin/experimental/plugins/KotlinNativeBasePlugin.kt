@@ -32,8 +32,8 @@ import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
+import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.*
-import org.jetbrains.kotlin.gradle.plugin.experimental.internal.cinterop.CInteropSettingsImpl
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.CInteropTask
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.plugin.hasProperty
@@ -184,9 +184,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
     }
 
     private fun Project.addInteropTasks() {
-
         val settingsToTask = mutableMapOf<CInteropSettings, CInteropTask>()
-
         components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
             binary.component.dependencies.cinterops.all { cinterop ->
                 val konanTarget = binary.konanTarget
@@ -204,6 +202,9 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                 }
 
                 binary.klibraries.dependencies.add(dependencies.create(files(interopTask.outputFileProvider)))
+                if (binary is KotlinNativeLibrary) {
+                    binary.linkElements.get().outgoing.artifact(interopTask.outputFileProvider)
+                }
             }
         }
     }

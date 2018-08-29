@@ -135,4 +135,10 @@ abstract class AbstractKotlinNativeBinary(
 
     override val additionalCompilerOptions: Collection<String>
         get() = component.extraOpts
+
+    override val linkerOpts = mutableListOf<String>()
+    override fun linkerOpts(values: List<String>) = linkerOpts(*values.toTypedArray())
+    override fun linkerOpts(vararg values: String) {
+        linkerOpts.addAll(values)
+    }
 }
