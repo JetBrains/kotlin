@@ -73,7 +73,7 @@ internal fun ThrowIllegalCharacterConversionException(): Nothing {
 @ExportForCppRuntime
 internal fun ThrowIncorrectDereferenceException() {
     throw IncorrectDereferenceException(
-            "Trying to access top level value not marked as @ThreadLocal or @ImmutableShared from non-main thread")
+            "Trying to access top level value not marked as @ThreadLocal or @SharedImmutable from non-main thread")
 }
 
 @ExportForCppRuntime

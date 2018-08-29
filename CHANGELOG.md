@@ -1,3 +1,13 @@
+# v0.9 (Sep 2018)
+  * Support Kotlin 1.3M2
+  * Major standard library (native parts) rework and rename
+  * New Gradle plugin with multiplatform integration and reworked DSL
+  * Support unsigned types in Kotlin and interop
+  * Support non-experimental coroutines API (kotlin.coroutines)
+  * Top level object var/val can only be accessed from the main thread
+  * Support lazy properties in singleton objects
+  * Update LLVM to 6.0.1
+
 ## v0.8 (Jul 2018)
   * Singleton objects are frozen after creation, and shared between threads
   * String and primitives types are frozen by default

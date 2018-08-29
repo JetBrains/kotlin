@@ -15,9 +15,16 @@ an `InvalidMutabilityException` is thrown.
 
  To achieve `mutable XOR global` invariant all globally visible state (currently,
 `object` singletons and enums) are automatically frozen. If an object freezing
-is not desirable, `konan.ThreadLocal` annotation could be used, which will make
+is not desirable, `kotlin.native.ThreadLocal` annotation could be used, which will make
 object state thread local, and thus, mutable (but changed state not visible to
 other threads).
+
+ Top level/global variables of non-primitive types are by default accessible in the
+main thread (i.e. thread which initialized _Kotlin/Native_ runtime first) only.
+Access from another thread leads to an `IncorrectDereferenceException` being thrown.
+To make such variables accessible in other threads either `@ThreadLocal` annotation,
+marking value thread local or `@SharedImmutable`, making value frozen, and accessible
+from other threads, can be used.
 
  Class `AtomicReference` could be used to publish changed frozen state to
 other threads, and thus build patterns like shared caches.
