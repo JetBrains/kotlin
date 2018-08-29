@@ -2622,6 +2622,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/java/functionN.kt");
         }
 
+        @TestMetadata("inheritedFunctionN.kt")
+        public void testInheritedFunctionN() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/java/inheritedFunctionN.kt");
+        }
+
         @TestMetadata("patternCompileCallableReference.kt")
         public void testPatternCompileCallableReference() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/java/patternCompileCallableReference.kt");
