@@ -234,7 +234,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             ) as ClassDescriptor
     )
 
-    val scheduleImpl = symbolTable.referenceSimpleFunction(context.interopBuiltIns.scheduleImplFunction)
+    val executeImpl = symbolTable.referenceSimpleFunction(context.interopBuiltIns.executeImplFunction)
 
     val areEqualByValue = context.getInternalFunctions("areEqualByValue").map {
         symbolTable.referenceSimpleFunction(it)

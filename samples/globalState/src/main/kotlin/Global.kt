@@ -50,9 +50,9 @@ fun main(args: Array<String>) {
     sharedData.f = 0.5f
     sharedData.string = "Hello Kotlin!".cstr.getPointer(arena)
     // Here we create detached mutable object, which could be later reattached by another thread.
-    sharedData.kotlinObject = detachObjectGraph {
+    sharedData.kotlinObject = DetachedObjectGraph {
         SharedData("A string", 42, SharedDataMember(2.39))
-    }
+    }.asCPointer()
     // Here we create shared frozen object reference,
     val stableRef = StableRef.create(SharedData("Shared", 239, SharedDataMember(2.71)).freeze())
     sharedData.frozenKotlinObject = stableRef.asCPointer()
@@ -67,12 +67,12 @@ fun main(args: Array<String>) {
             argC ->
             initRuntimeIfNeeded()
             dumpShared("thread2")
-            val kotlinObject = attachObjectGraph<SharedData>(sharedData.kotlinObject)
-            val arg = attachObjectGraph<SharedDataMember>(argC)
+            val kotlinObject = DetachedObjectGraph<SharedData>(sharedData.kotlinObject).attach()
+            val arg = DetachedObjectGraph<SharedDataMember>(argC).attach()
             println("thread arg is $arg Kotlin object is $kotlinObject frozen is $globalObject")
             // Workaround for compiler issue.
             null as COpaquePointer?
-        }, detachObjectGraph { SharedDataMember(3.14)} ).ensureUnixCallResult("pthread_create")
+        }, DetachedObjectGraph { SharedDataMember(3.14)}.asCPointer() ).ensureUnixCallResult("pthread_create")
         pthread_join(thread.value, null).ensureUnixCallResult("pthread_join")
     }
 

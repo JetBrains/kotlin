@@ -19,13 +19,13 @@ public abstract class NativeRandom {
          * Random generator seed value.
          */
         var seed: Long
-            get() = _seed.get()
+            get() = _seed.value
             set(value) = update(mult(value))
 
         private fun mult(value: Long) = (value xor MULTIPLIER) and ((1L shl 48) - 1)
 
-        private fun update(seed: Long) {
-            _seed.compareAndSwap(_seed.get(), seed)
+        private fun update(seed: Long): Unit {
+            _seed.value = seed
         }
 
         /**

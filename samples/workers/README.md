@@ -9,15 +9,13 @@ and connected to other worker. This relies on fact that memory management
 engine can ensure, that one worker doesn't keep references to certain object and
 whatever it refers to, and so the object could be safely transferred to another worker.
 
-Workers do not share any state (i.e. globals and Kotlin static objects have different
-values in different workers), but share executable code of the program and some
-immutable data, such as immutable binary blobs. But Kotlin objects can be transferred
+Workers do not share mutable state, but share executable code of the program and some
+immutable data, such as immutable blobs. But Kotlin objects can be transferred
 between workers, as long, as they do not refer to objects, having external references.
 
-The transfer is implemented with the function `schedule()` having the following signature
+The transfer is implemented with the function `execute()` having the following signature
 
-    fun <T1, T2>
-    schedule(mode: TransferMode,
+    fun <T1, T2> execute(mode: TransferMode,
              producer: () -> T1,
              @VolatileLambda job: (T1) -> T2): Future<T2>
 

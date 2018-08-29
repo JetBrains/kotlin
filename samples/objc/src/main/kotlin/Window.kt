@@ -1,5 +1,4 @@
-import kotlin.native.concurrent.attachObjectGraph
-import kotlin.native.concurrent.detachObjectGraph
+import kotlin.native.concurrent.*
 import kotlinx.cinterop.*
 import platform.AppKit.*
 import platform.Foundation.*
@@ -32,12 +31,12 @@ private class Controller : NSObject() {
     @ObjCAction
     fun onClick() {
         // Execute some async action on button click.
-        dispatch_async_f(asyncQueue, detachObjectGraph {
+        dispatch_async_f(asyncQueue, DetachedObjectGraph {
             Data(clock_gettime_nsec_np(CLOCK_REALTIME.convert()))
-        }, staticCFunction {
+        }.asCPointer(), staticCFunction {
             it ->
             initRuntimeIfNeeded()
-            val data = attachObjectGraph<Data>(it)
+            val data = DetachedObjectGraph<Data>(it).attach()
             println("in async: $data")
         })
     }

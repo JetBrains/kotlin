@@ -325,19 +325,14 @@ private class Decoder(
     fun audioVideoSynced() = (audio?.isSynced() ?: true) || done()
 }
 
-class DecoderWorker : Disposable {
+class DecoderWorker(val worker: Worker) : Disposable {
     // This class must have no other state, but this worker object.
     // All the real state must be stored on the worker's side.
-    private val worker: Worker
-
-    constructor() { worker = startWorker() }
-    constructor(id: WorkerId) { worker = Worker(id) }
+    constructor() : this(Worker.start())
 
     override fun dispose() {
-        worker.requestTermination().result()
+        worker.requestTermination().result
     }
-    
-    val workerId get() = worker.id
 
     fun initDecode(context: AVFormatContext, useVideo: Boolean = true, useAudio: Boolean = true): CodecInfo {
         // Find the first video/audio streams.
@@ -362,7 +357,7 @@ class DecoderWorker : Disposable {
         }
 
         // Pack all state and pass it to the worker.
-        worker.schedule(TransferMode.CHECKED, {
+        worker.execute(TransferMode.SAFE, {
                 Decoder(context.ptr,
                     videoStreamIndex, audioStreamIndex,
                     videoContext, audioContext)
@@ -371,7 +366,7 @@ class DecoderWorker : Disposable {
     }
 
     fun start(videoOutput: VideoOutput, audioOutput: AudioOutput) {
-        worker.schedule(TransferMode.CHECKED,
+        worker.execute(TransferMode.SAFE,
             { Pair(
                 videoOutput.toVideoDecoderOutput(),
                 audioOutput.toAudioDecoderOutput())
@@ -381,27 +376,26 @@ class DecoderWorker : Disposable {
     }
 
     fun stop() {
-        worker.schedule(TransferMode.CHECKED, { null }) {
+        worker.execute(TransferMode.SAFE, { null }) {
             decoder?.run {
                 dispose()
                 decoder = null
             }
-        }.result()
+        }.result
     }
 
     fun done(): Boolean =
-        worker.schedule(TransferMode.CHECKED, { null }) { decoder?.done() ?: true }.result()
+            worker.execute(TransferMode.SAFE, { null }) { decoder?.done() ?: true }.result
 
-    fun requestDecodeChunk() {
-        worker.schedule(TransferMode.CHECKED, { null }) { decoder?.decodeIfNeeded() }.result()
-    }
+    fun requestDecodeChunk() =
+            worker.execute(TransferMode.SAFE, { null }) { decoder?.decodeIfNeeded() }.result
 
     fun nextVideoFrame(): VideoFrame? =
-        worker.schedule(TransferMode.CHECKED, { null }) { decoder?.nextVideoFrame() }.result()
+        worker.execute(TransferMode.SAFE, { null }) { decoder?.nextVideoFrame() }.result
 
     fun nextAudioFrame(size: Int): AudioFrame? =
-        worker.schedule(TransferMode.CHECKED, { size }) { decoder?.nextAudioFrame(it) }.result()
+        worker.execute(TransferMode.SAFE, { size }) { decoder?.nextAudioFrame(it) }.result
 
     fun audioVideoSynced(): Boolean =
-        worker.schedule(TransferMode.CHECKED, { null }) { decoder?.audioVideoSynced() ?: true }.result()
+        worker.execute(TransferMode.SAFE, { null }) { decoder?.audioVideoSynced() ?: true }.result
 }

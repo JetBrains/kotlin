@@ -10,13 +10,13 @@ import kotlin.test.*
 import kotlin.native.concurrent.*
 
 @Test fun runTest() {
-    val worker = startWorker()
-    val future = worker.schedule(TransferMode.CHECKED, { 41 }) {
+    val worker = Worker.start()
+    val future = worker.execute(TransferMode.SAFE, { 41 }) {
         input -> input + 1
     }
     future.consume {
         result -> println("Got $result")
     }
-    worker.requestTermination().consume { _ -> }
+    worker.requestTermination().result
     println("OK")
 }

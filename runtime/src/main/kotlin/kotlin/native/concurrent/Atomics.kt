@@ -10,124 +10,166 @@ import kotlin.native.internal.NoReorderFields
 import kotlin.native.SymbolName
 import kotlinx.cinterop.NativePtr
 
+/**
+ * Atomic values and freezing: atomics [AtomicInt], [AtomicLong], [AtomicNativePtr] and [AtomicReference]
+ * are unique types with regard to freezing. Namely, they provide mutating operations, while can participate
+ * in frozen subgraphs. So shared frozen objects can have fields of atomic types.
+ */
 @Frozen
-class AtomicInt(private var value: Int = 0) {
+public class AtomicInt(private var value_: Int) {
+
+    public var value: Int
+            get() = getImpl()
+            set(new) = setImpl(new)
 
     /**
      * Increments the value by [delta] and returns the new value.
      */
     @SymbolName("Kotlin_AtomicInt_addAndGet")
-    external fun addAndGet(delta: Int): Int
+    external public fun addAndGet(delta: Int): Int
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
      * Returns the old value.
      */
     @SymbolName("Kotlin_AtomicInt_compareAndSwap")
-    external fun compareAndSwap(expected: Int, new: Int): Int
+    external public fun compareAndSwap(expected: Int, new: Int): Int
 
     /**
-     * Sets the new atomic value.
+     * Compares value with [expected] and replaces it with [new] value if values matches.
+     * Returns true if successful.
      */
-    @SymbolName("Kotlin_AtomicInt_set")
-    external fun set(new: Int): Unit
+    @SymbolName("Kotlin_AtomicInt_compareAndSet")
+    external public fun compareAndSet(expected: Int, new: Int): Boolean
 
     /**
      * Increments value by one.
      */
-    fun increment(): Int = addAndGet(1)
+    public fun increment(): Unit {
+        addAndGet(1)
+    }
 
     /**
      * Decrements value by one.
      */
-    fun decrement(): Int = addAndGet(-1)
-
-    /**
-     * Returns the current value.
-     */
-    fun get(): Int = value
+    public fun decrement(): Unit {
+        addAndGet(-1)
+    }
 
     /**
      * Returns the string representation of this object.
      */
-    public override fun toString(): String = "AtomicInt $value"
+    public override fun toString(): String = value.toString()
+
+    // Implementation details.
+    @SymbolName("Kotlin_AtomicInt_set")
+    private external fun setImpl(new: Int): Unit
+
+    @SymbolName("Kotlin_AtomicInt_get")
+    private external fun getImpl(): Int
 }
 
 @Frozen
-class AtomicLong(private var value: Long = 0)  {
+public class AtomicLong(private var value_: Long = 0)  {
+
+    public var value: Long
+        get() = getImpl()
+        set(new) = setImpl(new)
 
     /**
      * Increments the value by [delta] and returns the new value.
      */
     @SymbolName("Kotlin_AtomicLong_addAndGet")
-    external fun addAndGet(delta: Long): Long
+    external public fun addAndGet(delta: Long): Long
 
     /**
      * Increments the value by [delta] and returns the new value.
      */
-    fun addAndGet(delta: Int): Long = addAndGet(delta.toLong())
+    public fun addAndGet(delta: Int): Long = addAndGet(delta.toLong())
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
      * Returns the old value.
      */
     @SymbolName("Kotlin_AtomicLong_compareAndSwap")
-    external fun compareAndSwap(expected: Long, new: Long): Long
+    external public fun compareAndSwap(expected: Long, new: Long): Long
 
     /**
-     * Sets the new atomic value.
+     * Compares value with [expected] and replaces it with [new] value if values matches.
+     * Returns true if successful.
      */
-    @SymbolName("Kotlin_AtomicLong_set")
-    external fun set(new: Long): Unit
+    @SymbolName("Kotlin_AtomicLong_compareAndSet")
+    external public fun compareAndSet(expected: Long, new: Long): Boolean
 
     /**
      * Increments value by one.
      */
-    fun increment(): Long = addAndGet(1L)
+    public fun increment(): Unit {
+        addAndGet(1L)
+    }
 
     /**
      * Decrements value by one.
      */
-    fun decrement(): Long = addAndGet(-1L)
-
-    /**
-     * Returns the current value.
-     */
-    fun get(): Long = value
+    fun decrement(): Unit {
+        addAndGet(-1L)
+    }
 
     /**
      * Returns the string representation of this object.
      */
-    public override fun toString(): String = "AtomicLong $value"
+    public override fun toString(): String = value.toString()
+
+    // Implementation details.
+    @SymbolName("Kotlin_AtomicLong_set")
+    private external fun setImpl(new: Long): Unit
+
+    @SymbolName("Kotlin_AtomicLong_get")
+    private external fun getImpl(): Long
 }
 
 @Frozen
-class AtomicNativePtr(private var value: NativePtr) {
+public class AtomicNativePtr(private var value_: NativePtr) {
+
+    public var value: NativePtr
+        get() = getImpl()
+        set(new) = setImpl(new)
+
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
      * Returns the old value.
      */
     @SymbolName("Kotlin_AtomicNativePtr_compareAndSwap")
-    external fun compareAndSwap(expected: NativePtr, new: NativePtr): NativePtr
+    external public fun compareAndSwap(expected: NativePtr, new: NativePtr): NativePtr
 
     /**
-     * Returns the current value.
+     * Compares value with [expected] and replaces it with [new] value if values matches.
      */
-    fun get(): NativePtr = value
-}
+    @SymbolName("Kotlin_AtomicNativePtr_compareAndSet")
+    external public fun compareAndSet(expected: NativePtr, new: NativePtr): Boolean
 
-@SymbolName("Kotlin_AtomicReference_checkIfFrozen")
-external private fun checkIfFrozen(ref: Any?)
+    /**
+     * Returns the string representation of this object.
+     */
+    public override fun toString(): String = value.toString()
+
+    // Implementation details.
+    @SymbolName("Kotlin_AtomicNativePtr_set")
+    private external fun setImpl(new: NativePtr): Unit
+
+    @SymbolName("Kotlin_AtomicNativePtr_get")
+    private external fun getImpl(): NativePtr
+}
 
 /**
  * An atomic reference to a frozen Kotlin object. Can be used in concurrent scenarious
- * and must be zeroed out (with `compareAndSwap(get(), null)`) once no longer needed.
- * Otherwise memory leak could happen.
+ * but frequently shall be of nullable type and be zeroed out (with `compareAndSwap(get(), null)`)
+ * once no longer needed. Otherwise memory leak could happen.
  */
 @Frozen
 @NoReorderFields
-class AtomicReference<T>(private var value: T? = null) {
-    // A spinlock to fix potential ARC race. Not an AtomicInt just for the effeciency sake.
+public class AtomicReference<T>(private var value_: T) {
+    // A spinlock to fix potential ARC race.
     private var lock: Int = 0
 
     /**
@@ -139,81 +181,36 @@ class AtomicReference<T>(private var value: T? = null) {
     }
 
     /**
+     * Sets the value to [new] value
+     * If [new] value is not null, it must be frozen or permanent object, otherwise an
+     * @InvalidMutabilityException is thrown.
+     */
+    public var value: T
+        get() = @Suppress("UNCHECKED_CAST")(getImpl() as T)
+        set(new) = setImpl(new)
+
+    /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
      * If [new] value is not null, it must be frozen or permanent object, otherwise an
      * @InvalidMutabilityException is thrown.
      * Returns the old value.
      */
     @SymbolName("Kotlin_AtomicReference_compareAndSwap")
-    external public fun compareAndSwap(expected: T?, new: T?): T?
+    external public fun compareAndSwap(expected: T, new: T): T
+
+    @SymbolName("Kotlin_AtomicReference_compareAndSet")
+    external public fun compareAndSet(expected: T, new: T): Boolean
 
     /**
-     * Sets the value to [new] value
-     * If [new] value is not null, it must be frozen or permanent object, otherwise an
-     * @InvalidMutabilityException is thrown.
+     * Returns the string representation of this object.
      */
+    public override fun toString(): String = "Atomic reference to $value"
+
+    // Implementation details.
     @SymbolName("Kotlin_AtomicReference_set")
-    external public fun set(new: T?): Unit
+    private external fun setImpl(new: Any?): Unit
 
-    /**
-     * Returns the current value.
-     */
     @SymbolName("Kotlin_AtomicReference_get")
-    external public fun get(): T?
+    private external fun getImpl(): Any?
+
 }
-
-internal object UNINITIALIZED {
-    // So that single-threaded configs can use those as well.
-    init {
-        freeze()
-    }
-}
-
-internal object INITIALIZING {
-    // So that single-threaded configs can use those as well.
-    init {
-        freeze()
-    }
-}
-
-@Frozen
-internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
-    private val initializer_ = AtomicReference<Function0<T>?>(initializer.freeze())
-    private val value_ = AtomicReference<Any?>(UNINITIALIZED)
-
-    override val value: T
-        get() {
-            if (value_.compareAndSwap(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
-                // We execute exclusively here.
-                val ctor = initializer_.get()
-                if (ctor != null && initializer_.compareAndSwap(ctor, null) === ctor) {
-                    value_.compareAndSwap(INITIALIZING, ctor().freeze())
-                } else {
-                    // Something wrong.
-                    assert(false)
-                }
-            }
-            var result: Any?
-            do {
-                result = value_.get()
-            } while (result === INITIALIZING)
-
-            assert(result !== UNINITIALIZED && result !== INITIALIZING)
-            @Suppress("UNCHECKED_CAST")
-            return result as T
-        }
-
-    // Racy!
-    override fun isInitialized(): Boolean = value_.get() !== UNINITIALIZED
-
-    override fun toString(): String = if (isInitialized())
-        value_.get().toString() else "Lazy value not initialized yet."
-}
-
-/**
- * Atomic lazy initializer, could be used in frozen objects, freezes initializing lambda,
- * so use very carefully. Also, as with other uses of an @AtomicReference may potentially
- * leak memory, so it is recommended to use `atomicLazy` in cases of objects living forever,
- * such as object signletons, or in cases where it's guaranteed not to have cyclical garbage.
- */
-public fun <T> atomicLazy(initializer: () -> T): Lazy<T> = AtomicLazyImpl(initializer)

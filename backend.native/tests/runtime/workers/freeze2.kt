@@ -59,32 +59,32 @@ data class Data(var int: Int)
     assertFailsWith<InvalidMutabilityException> { a8[1] = 2.0 }
 
     // Ensure that String and integral boxes are frozen by default, by passing local to the worker.
-    val worker = startWorker()
+    val worker = Worker.start()
     var data: Any = "Hello" + " " + "world"
     assert(data.isFrozen)
-    worker.schedule(TransferMode.CHECKED, { data } ) {
+    worker.execute(TransferMode.SAFE, { data } ) {
         input -> println("Worker 1: $input")
-    }.result()
+    }.result
 
     data = 42
     assert(data.isFrozen)
-    worker.schedule(TransferMode.CHECKED, { data } ) {
+    worker.execute(TransferMode.SAFE, { data } ) {
         input -> println("Worker2: $input")
-    }.result()
+    }.result
 
     data = 239.0
     assert(data.isFrozen)
-    worker.schedule(TransferMode.CHECKED, { data } ) {
+    worker.execute(TransferMode.SAFE, { data } ) {
         input -> println("Worker3: $input")
-    }.result()
+    }.result
 
     data = 'a'
     assert(data.isFrozen)
-    worker.schedule(TransferMode.CHECKED, { data } ) {
+    worker.execute(TransferMode.SAFE, { data } ) {
         input -> println("Worker4: $input")
-    }.result()
+    }.result
 
-    worker.requestTermination().result()
+    worker.requestTermination().result
 
     println("OK")
 }

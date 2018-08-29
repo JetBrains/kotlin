@@ -11,14 +11,14 @@ import kotlin.native.concurrent.*
 
 @Test fun runTest() {
     withLock { println("zzz") }
-    val worker = startWorker()
-    val future = worker.schedule(TransferMode.CHECKED, {}) {
+    val worker = Worker.start()
+    val future = worker.execute(TransferMode.SAFE, {}) {
         withLock {
             println("42")
         }
     }
-    future.result()
-    worker.requestTermination().result()
+    future.result
+    worker.requestTermination().result
     println("OK")
 }
 

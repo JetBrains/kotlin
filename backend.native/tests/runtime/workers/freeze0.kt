@@ -14,12 +14,12 @@ data class SharedDataMember(val double: Double)
 data class SharedData(val string: String, val int: Int, val member: SharedDataMember)
 
 @Test fun runTest() {
-    val worker = startWorker()
+    val worker = Worker.start()
     // Create immutable shared data.
     val immutable = SharedData("Hello", 10, SharedDataMember(0.1)).freeze()
     println("frozen bit is ${immutable.isFrozen}")
 
-    val future = worker.schedule(TransferMode.CHECKED, { immutable } ) {
+    val future = worker.execute(TransferMode.SAFE, { immutable } ) {
         input ->
         println("Worker: $input")
         input
@@ -27,6 +27,6 @@ data class SharedData(val string: String, val int: Int, val member: SharedDataMe
     future.consume {
         result -> println("Main: $result")
     }
-    worker.requestTermination().result()
+    worker.requestTermination().result
     println("OK")
 }

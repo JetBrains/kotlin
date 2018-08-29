@@ -5,13 +5,7 @@
 
 package kotlin.native.concurrent
 
-import kotlin.native.SymbolName
-import kotlin.native.internal.ExportForCppRuntime
-
-/**
- * Unique identifier of the future. Futures can be used from other workers.
- */
-typealias FutureId = Int
+import kotlin.native.internal.Frozen
 
 /**
  * State of the future object.
@@ -29,7 +23,8 @@ enum class FutureState(val value: Int) {
 /**
  * Class representing abstract computation, whose result may become available in the future.
  */
-public inline class Future<T>(val id: FutureId) {
+@Frozen
+public class Future<T> internal constructor(val id: Int) {
     /**
      * Blocks execution until the future is ready.
      */
@@ -45,7 +40,11 @@ public inline class Future<T>(val id: FutureId) {
                     throw IllegalStateException("Future is cancelled")
             }
 
-    public fun result(): T  = consume { it -> it }
+    /**
+     * Blocks execution until the future is ready. Second attempt to get will result in an error.
+     */
+    public val result: T
+            get() = consume { it -> it }
 
     public val state: FutureState
         get() = FutureState.values()[stateOfFuture(id)]
@@ -53,6 +52,8 @@ public inline class Future<T>(val id: FutureId) {
     public override fun equals(other: Any?): Boolean = (other is Future<*>) && (id == other.id)
 
     public override fun hashCode(): Int = id
+
+    override public fun toString(): String = "future $id"
 }
 
 /**
@@ -82,18 +83,3 @@ public fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Fu
 
     return result
 }
-
-// Private APIs.
-@SymbolName("Kotlin_Worker_stateOfFuture")
-external internal fun stateOfFuture(id: FutureId): Int
-
-@SymbolName("Kotlin_Worker_consumeFuture")
-@PublishedApi
-external internal fun consumeFuture(id: FutureId): Any?
-
-@SymbolName("Kotlin_Worker_waitForAnyFuture")
-external internal fun waitForAnyFuture(versionToken: Int, millis: Int): Boolean
-
-@SymbolName("Kotlin_Worker_versionToken")
-external internal fun versionToken(): Int
-

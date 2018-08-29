@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import kotlin.native.concurrent.Worker
 import kotlinx.cinterop.*
 import sdl.*
 import platform.posix.memset
@@ -32,7 +33,7 @@ private fun SampleFormat.toSDLFormat(): SDL_AudioFormat? = when (this) {
 }
 
 class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
-    private val threadData = arena.alloc<IntVar>().ptr
+    private val workerStable = StableRef.create(player.worker)
     private var state = State.STOPPED
 
     fun start(audio: AudioOutput) {
@@ -48,10 +49,9 @@ class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
                 channels = audio.channels.convert()
                 silence = 0u
                 samples = 4096u
-                userdata = threadData
+                userdata = workerStable.asCPointer()
                 callback = staticCFunction(::audioCallback)
             }
-            threadData.pointed.value = player.workerId
             val realSpec = alloc<SDL_AudioSpec>()
             if (SDL_OpenAudio(spec.ptr, realSpec.ptr) < 0)
                 throwSDLError("SDL_OpenAudio")
@@ -72,6 +72,7 @@ class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
     fun stop() {
         pause()
         state = state.transition(State.PAUSED, State.STOPPED) { SDL_CloseAudio() }
+        workerStable.dispose()
     }
 }
 
@@ -83,7 +84,7 @@ private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?
     // This handler will be invoked in the audio thread, so reinit runtime.
     kotlin.native.initRuntimeIfNeeded()
     val decoder = decoder ?:
-        DecoderWorker(userdata!!.reinterpret<IntVar>().pointed.value).also { decoder = it }
+        DecoderWorker(userdata!!.asStableRef<Worker>().get()).also { decoder = it }
     var outPosition = 0
     while (outPosition < length) {
         val frame = decoder.nextAudioFrame(length - outPosition)

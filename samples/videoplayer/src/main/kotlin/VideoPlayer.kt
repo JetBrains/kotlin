@@ -41,15 +41,15 @@ enum class PlayMode {
 }
 
 class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
+    private val decoder = disposable { DecoderWorker() }
     private val video = disposable { SDLVideo() }
     private val audio = disposable { SDLAudio(this) }
     private val input = disposable { SDLInput(this) }
-    private val decoder = disposable { DecoderWorker() }
     private val now = arena.alloc<platform.posix.timespec>().ptr
 
     private var state = State.STOPPED
 
-    val workerId get() = decoder.workerId
+    val worker get() = decoder.worker
     var lastFrameTime = 0.0
     
     fun stop() {

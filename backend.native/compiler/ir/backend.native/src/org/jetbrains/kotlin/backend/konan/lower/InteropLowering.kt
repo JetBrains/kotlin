@@ -810,7 +810,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                         typeArgumentsCount = 0)
             }
 
-            interop.scheduleFunction -> {
+            interop.executeFunction -> {
                 val irCallableReference = unwrapStaticFunctionArgument(expression.getValueArgument(2)!!)
 
                 if (irCallableReference == null || irCallableReference.getArguments().isNotEmpty()) {
@@ -824,11 +824,11 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                 val target = targetSymbol.descriptor
                 val jobPointer = IrFunctionReferenceImpl(
                         builder.startOffset, builder.endOffset,
-                        symbols.scheduleImpl.owner.valueParameters[3].type,
+                        symbols.executeImpl.owner.valueParameters[3].type,
                         targetSymbol, target,
                         typeArgumentsCount = 0)
 
-                builder.irCall(symbols.scheduleImpl).apply {
+                builder.irCall(symbols.executeImpl).apply {
                     putValueArgument(0, expression.dispatchReceiver)
                     putValueArgument(1, expression.getValueArgument(0))
                     putValueArgument(2, expression.getValueArgument(1))

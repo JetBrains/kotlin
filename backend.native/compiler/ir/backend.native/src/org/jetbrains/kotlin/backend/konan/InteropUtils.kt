@@ -82,10 +82,10 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns, vararg konanPrimitives: 
 
     val concurrentPackageScope = builtIns.builtInsModule.getPackage(FqName("kotlin.native.concurrent")).memberScope
 
-    val scheduleFunction = concurrentPackageScope.getContributedClass("Worker")
-            .unsubstitutedMemberScope.getContributedFunctions("schedule").single()
+    val executeFunction = concurrentPackageScope.getContributedClass("Worker")
+            .unsubstitutedMemberScope.getContributedFunctions("execute").single()
 
-    val scheduleImplFunction = concurrentPackageScope.getContributedFunctions("scheduleImpl").single()
+    val executeImplFunction = concurrentPackageScope.getContributedFunctions("executeImpl").single()
 
     val signExtend = packageScope.getContributedFunctions("signExtend").single()
 

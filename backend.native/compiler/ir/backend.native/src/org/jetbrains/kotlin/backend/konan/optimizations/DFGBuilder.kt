@@ -324,11 +324,11 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     expressions += expression
             }
 
-            if (expression is IrCall && expression.symbol == scheduleImplSymbol) {
-                // Producer and job of scheduleImpl are called externally, we need to reflect this somehow.
+            if (expression is IrCall && expression.symbol == executeImplSymbol) {
+                // Producer and job of executeImpl are called externally, we need to reflect this somehow.
                 val producerInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
-                        scheduleImplProducerInvoke.returnType,
-                        scheduleImplProducerInvoke.symbol, scheduleImplProducerInvoke.descriptor)
+                        executeImplProducerInvoke.returnType,
+                        executeImplProducerInvoke.symbol, executeImplProducerInvoke.descriptor)
                 producerInvocation.dispatchReceiver = expression.getValueArgument(2)
                 val jobFunctionReference = expression.getValueArgument(3) as? IrFunctionReference
                         ?: error("A function reference expected")
@@ -403,13 +403,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     private val arraySetSymbol = context.ir.symbols.arraySet
     private val createUninitializedInstanceSymbol = context.ir.symbols.createUninitializedInstance
     private val initInstanceSymbol = context.ir.symbols.initInstance
-    private val scheduleImplSymbol = context.ir.symbols.scheduleImpl
-    private val scheduleImplProducerClassSymbol = context.ir.symbols.functions[0]
-    private val scheduleImplProducerParam = scheduleImplSymbol.descriptor.valueParameters[2].also {
-        assert(it.name.asString() == "producer")
-        assert(it.type.constructor.declarationDescriptor == scheduleImplProducerClassSymbol.descriptor)
-    }
-    private val scheduleImplProducerInvoke = scheduleImplProducerClassSymbol.owner.simpleFunctions()
+    private val executeImplSymbol = context.ir.symbols.executeImpl
+    private val executeImplProducerClassSymbol = context.ir.symbols.functions[0]
+    private val executeImplProducerInvoke = executeImplProducerClassSymbol.owner.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
 
     private inner class FunctionDFGBuilder(val expressionValuesExtractor: ExpressionValuesExtractor,

@@ -5,10 +5,10 @@ data class WorkerResult(val intResult: Int, val stringResult: String)
 
 fun main(args: Array<String>) {
     val COUNT = 5
-    val workers = Array(COUNT, { _ -> startWorker()})
+    val workers = Array(COUNT, { _ -> Worker.start()})
 
     for (attempt in 1 .. 3) {
-        val futures = Array(workers.size, { workerIndex -> workers[workerIndex].schedule(TransferMode.CHECKED, {
+        val futures = Array(workers.size, { workerIndex -> workers[workerIndex].execute(TransferMode.SAFE, {
             WorkerArgument(workerIndex, "attempt $attempt") }) { input ->
                 var sum = 0
                 for (i in 0..input.intParam * 1000) {
@@ -24,12 +24,13 @@ fun main(args: Array<String>) {
             ready.forEach {
                 it.consume { result ->
                     if (result.stringResult != "attempt $attempt result") throw Error("Unexpected $result")
-                    consumed++ }
+                    consumed++
+                }
             }
         }
     }
     workers.forEach {
-        it.requestTermination().consume { _ -> }
+        it.requestTermination().result
     }
     println("OK")
 }

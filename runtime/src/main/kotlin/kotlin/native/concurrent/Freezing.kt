@@ -5,10 +5,9 @@
 
 package kotlin.native.concurrent
 
-import kotlin.native.internal.ExportForCppRuntime
-
 /**
  * Exception thrown whenever freezing is not possible.
+ * [blocker] is an object preventing freezing, usually one marked with [ensureNeverFrozen] earlier.
  */
 public class FreezingException(toFreeze: Any, blocker: Any) :
         RuntimeException("freezing of $toFreeze has failed, first blocker is $blocker")
@@ -23,31 +22,20 @@ public class InvalidMutabilityException(where: Any) :
  * Freezes object subgraph reachable from this object. Frozen objects can be freely
  * shared between threads/workers.
  */
-fun <T> T.freeze(): T {
+public fun <T> T.freeze(): T {
     freezeInternal(this)
     return this
 }
 
-val Any?.isFrozen
+/**
+ * Checks if given object is null or frozen or permanent (i.e. instantiated at compile-time).
+ */
+public val Any?.isFrozen
     get() = isFrozenInternal(this)
 
-
 /**
- * This function ensures that if we see such an object during freezing attempt - freeze fails and FreezingException
- * is thrown. Is object is already frozen - FreezingException is thrown immediately.
+ * This function ensures that if we see such an object during freezing attempt - freeze fails and
+ * [FreezingException] is thrown. Is object is already frozen - [FreezingException] is thrown immediately.
  */
 @SymbolName("Kotlin_Worker_ensureNeverFrozen")
-external fun Any.ensureNeverFrozen()
-
-@SymbolName("Kotlin_Worker_freezeInternal")
-internal external fun freezeInternal(it: Any?)
-
-@SymbolName("Kotlin_Worker_isFrozenInternal")
-internal external fun isFrozenInternal(it: Any?): Boolean
-
-@ExportForCppRuntime
-internal fun ThrowFreezingException(toFreeze: Any, blocker: Any): Nothing =
-        throw FreezingException(toFreeze, blocker)
-
-@ExportForCppRuntime
-internal fun ThrowInvalidMutabilityException(where: Any): Nothing = throw InvalidMutabilityException(where)
+public external fun Any.ensureNeverFrozen()

@@ -18,19 +18,19 @@ data class WorkerResult(val intResult: Int, val stringResult: String)
 }
 
 fun main(args: Array<String>) {
-    val worker = startWorker()
+    val worker = Worker.start()
     val dataParam = DataParam(17)
     val future = try {
-        worker.schedule(TransferMode.CHECKED,
-                { WorkerArgument(42, dataParam) },
-                { input -> WorkerResult(input.intParam, input.dataParam.toString() + " result") }
-        )
+        worker.execute(TransferMode.SAFE,
+                { WorkerArgument(42, dataParam) }) {
+            input -> WorkerResult(input.intParam, input.dataParam.toString() + " result")
+        }
     } catch (e: IllegalStateException) {
         null
     }
     if (future != null)
         println("Fail 1")
     if (dataParam.int != 17) println("Fail 2")
-    worker.requestTermination().consume { _ -> }
+    worker.requestTermination().result
     println("OK")
 }

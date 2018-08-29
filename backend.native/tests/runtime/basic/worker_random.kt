@@ -14,7 +14,7 @@ import kotlin.test.*
 @Test
 fun testRandomWorkers() {
     val seed = getTimeMillis()
-    val workers = Array(5, { _ -> startWorker()})
+    val workers = Array(5, { _ -> Worker.start() })
 
     val attempts = 3
     val results = Array(attempts, { ArrayList<Int>() } )
@@ -22,7 +22,8 @@ fun testRandomWorkers() {
         Random.seed = seed
         // Produce a list of random numbers in each worker
         val futures = Array(workers.size, { workerIndex ->
-            workers[workerIndex].schedule(TransferMode.CHECKED, { workerIndex }) { input ->
+            workers[workerIndex].execute(TransferMode.SAFE, { workerIndex }) {
+                input ->
                 Array(10, { Random.nextInt() }).toList()
             }
         })
@@ -30,11 +31,11 @@ fun testRandomWorkers() {
         val futureSet = futures.toSet()
         for (i in 0 until futureSet.size) {
             val ready = futureSet.waitForMultipleFutures(10000)
-            ready.forEach { results[attempt].addAll(it.result()) }
+            ready.forEach { results[attempt].addAll(it.result) }
         }
     }
 
     workers.forEach {
-        it.requestTermination().consume { _ -> }
+        it.requestTermination().result
     }
 }

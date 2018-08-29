@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -59,7 +58,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                 expression.transformChildrenVoid(this)
 
                 val descriptor = expression.descriptor.original
-                if (descriptor != interop.scheduleImplFunction)
+                if (descriptor != interop.executeImplFunction)
                     return expression
 
                 val job = expression.getValueArgument(3) as IrFunctionReference

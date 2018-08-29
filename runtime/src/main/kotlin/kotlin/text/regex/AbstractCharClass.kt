@@ -87,10 +87,10 @@ internal abstract class AbstractCharClass : SpecialToken() {
         get() = this
 
 
-    private val surrogates_ = AtomicReference<AbstractCharClass>()
+    private val surrogates_ = AtomicReference<AbstractCharClass?>(null)
     val surrogates: AbstractCharClass
         get() {
-            surrogates_.get()?.let {
+            surrogates_.value?.let {
                 return it
             }
             val result = object : AbstractCharClass() {
@@ -104,15 +104,15 @@ internal abstract class AbstractCharClass : SpecialToken() {
                 }
             }
             result.setNegative(this.altSurrogates)
-            surrogates_.compareAndSwap(null, result.freeze())
-            return surrogates_.get()!!
+            surrogates_.compareAndSet(null, result.freeze())
+            return surrogates_.value!!
         }
 
 
-    private val withoutSurrogates_ = AtomicReference<AbstractCharClass>()
+    private val withoutSurrogates_ = AtomicReference<AbstractCharClass?>(null)
     val withoutSurrogates: AbstractCharClass
         get() {
-            withoutSurrogates_.get()?.let {
+            withoutSurrogates_.value?.let {
                 return it
             }
             val result = object : AbstractCharClass() {
@@ -129,8 +129,8 @@ internal abstract class AbstractCharClass : SpecialToken() {
             }
             result.setNegative(isNegative())
             result.mayContainSupplCodepoints = mayContainSupplCodepoints
-            withoutSurrogates_ .compareAndSwap(null, result.freeze())
-            return withoutSurrogates_.get()!!
+            withoutSurrogates_ .compareAndSet(null, result.freeze())
+            return withoutSurrogates_.value!!
         }
 
 
@@ -561,8 +561,8 @@ internal abstract class AbstractCharClass : SpecialToken() {
             PF("Pf", { CachedCategory(CharCategory.FINAL_QUOTE_PUNCTUATION.value, false)  })
         }
 
-        private val classCache = Array<AtomicReference<CachedCharClass>>(CharClasses.values().size, {
-            AtomicReference<CachedCharClass>()
+        private val classCache = Array<AtomicReference<CachedCharClass?>>(CharClasses.values().size, {
+            AtomicReference<CachedCharClass?>(null)
         })
         private val classCacheMap = CharClasses.values().associate { it -> it.regexName to it }
 
@@ -578,9 +578,9 @@ internal abstract class AbstractCharClass : SpecialToken() {
 
         fun getPredefinedClass(name: String, negative: Boolean): AbstractCharClass {
             val charClass = classCacheMap[name] ?: throw PatternSyntaxException("No such character class")
-            val cachedClass = classCache[charClass.ordinal].get() ?: run {
+            val cachedClass = classCache[charClass.ordinal].value ?: run {
                 classCache[charClass.ordinal].compareAndSwap(null, charClass.factory().freeze())
-                classCache[charClass.ordinal].get()!!
+                classCache[charClass.ordinal].value!!
             }
             return cachedClass.getValue(negative)
         }
