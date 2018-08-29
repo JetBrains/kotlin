@@ -11,8 +11,8 @@ ffmpeg and SDL2 is needed for that to work, i.e.
      apt install libsdl2-dev
      pacman -S mingw-w64-x86_64-SDL2 mingw-w64-x86_64-ffmpeg
 
-To build use `../gradlew build`.
+To build use `../gradlew assemble`.
 
-To run use `./build/konan/bin/<platform>/Player.kexe file.mp4`.
+To run use `./build/exe/main/release/<platform>/Player.kexe file.mp4`.
 
 

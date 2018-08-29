@@ -1,5 +1,5 @@
-apply plugin: 'konan'
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
-konanArtifacts {
-    program('Workers')
+components.main {
+    outputKinds = [ EXECUTABLE ]
 }

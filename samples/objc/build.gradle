@@ -1,7 +1,7 @@
-apply plugin: 'konan'
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
-konan.targets = ['macbook']
-
-konanArtifacts {
-    program('Window')
+components.main {
+    targets = ['macos_x64']
+    outputKinds = [EXECUTABLE]
+    baseName = 'Window'
 }

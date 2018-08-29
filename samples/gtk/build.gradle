@@ -1,23 +1,17 @@
-apply plugin: 'konan'
-
-konan {
-    targets = ['macbook', 'linux']
-    jvmArgs = ['-Xmx8g']
-}
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
 def includePrefixes = [ '/opt/local/include', '/usr/include', '/usr/local/include' ]
 
-konanArtifacts {
-    interop('gtk3') {
-        includePrefixes.each {
-            includeDirs "$it/atk-1.0", "$it/gdk-pixbuf-2.0", "$it/cairo", "$it/pango-1.0", "$it/gtk-3.0", "$it/glib-2.0"
-        }
-        includeDirs '/opt/local/lib/glib-2.0/include', '/usr/lib/x86_64-linux-gnu/glib-2.0/include', '/usr/local/lib/glib-2.0/include'
-    }
+components.main {
+    targets = ['macos_x64', 'linux_x64']
+    outputKinds = [EXECUTABLE]
 
-    program('Gtk3Demo') {
-        libraries {
-            artifact 'gtk3'
+    dependencies {
+        cinterop('gtk3') {
+            includePrefixes.each {
+                includeDirs "$it/atk-1.0", "$it/gdk-pixbuf-2.0", "$it/cairo", "$it/pango-1.0", "$it/gtk-3.0", "$it/glib-2.0"
+            }
+            includeDirs '/opt/local/lib/glib-2.0/include', '/usr/lib/x86_64-linux-gnu/glib-2.0/include', '/usr/local/lib/glib-2.0/include'
         }
     }
 }

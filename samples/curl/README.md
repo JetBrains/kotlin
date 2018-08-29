@@ -4,15 +4,10 @@ This example shows how to communicate with libcurl, HTTP/HTTPS/FTP/etc client li
 depend on an artifact published in a maven repository. The sample depends on a library
 built by [libcurl sample](../libcurl) so you need to run it first.
  
-To build use `../gradlew build`.
+To build use `../gradlew assemble`.
 
-To run use `../gradlew run`.
+Now you can run the client directly 
 
-To change run arguments, change property runArgs in gradle.propeties file 
-or pass `-PrunArgs="https://www.jetbrains.com"` to gradle run. 
-
-Alternatively you can run artifact directly 
-
-    ./build/konan/bin/<platform>/Curl.kexe https://www.jetbrains.com
+    ./build/exe/main/release/<platform>/curl.kexe https://www.jetbrains.com
 
 It will perform HTTP get and print out the data obtained.

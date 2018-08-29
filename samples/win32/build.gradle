@@ -1,9 +1,11 @@
-apply plugin: 'konan'
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
-konan.targets = ['mingw']
+components.main {
+    targets = ['mingw_x64']
+    outputKinds = [EXECUTABLE]
+    baseName = 'MessageBox'
 
-konanArtifacts {
-    program('MessageBox') {
+    target('mingw_x64') {
         linkerOpts "-Wl,--subsystem,windows"
     }
 }

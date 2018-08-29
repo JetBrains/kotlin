@@ -1,21 +1,19 @@
-apply plugin: 'konan'
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
-konan.targets = ['macbook', 'linux']
+components.main {
+    targets = ['macos_x64', 'linux_x64']
+    outputKinds = [EXECUTABLE]
 
-konanArtifacts {
-    interop('libgit2') {
-        target('linux') {
-            includeDirs.headerFilterOnly '/usr/include'
-        }
+    dependencies {
+        cinterop('libgit2') {
+            target('linux') {
+                includeDirs.headerFilterOnly '/usr/include'
+            }
 
-        target('macbook') {
-            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
-        }
-    }
-
-    program('GitChurn') {
-        libraries {
-            artifact 'libgit2'
+            target('macbook') {
+                includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+            }
         }
     }
 }
+

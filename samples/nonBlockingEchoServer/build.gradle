@@ -1,7 +1,7 @@
-apply plugin: 'konan'
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
-konan.targets = ['macbook', 'linux']
-
-konanArtifacts {
-    program('EchoServer')
+components.main {
+    targets = ['macos_x64', 'linux_x64']
+    outputKinds = [EXECUTABLE]
+    baseName = 'EchoServer'
 }

@@ -1,59 +1,63 @@
-apply plugin: 'konan'
-
-konan.targets = ['macbook', 'linux', 'raspberrypi', 'mingw']
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
 def konanUserDir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
 def resFile = file("$buildDir/konan/res/Tetris.res")
 
-konanArtifacts {
+components.main {
+    targets = ['macos_x64', 'linux_x64', 'raspberrypi', 'mingw_x64']
+    outputKinds = [EXECUTABLE]
+    baseName = 'tetris'
 
-    interop ('sdl') {
-        defFile 'src/main/c_interop/sdl.def'
-        packageName 'sdl'
-
-        target 'macbook', {
-            includeDirs '/Library/Frameworks/SDL2.framework/Headers',
-                    "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers",
-                    '/opt/local/include/SDL2',
-                    '/usr/local/include/SDL2'
-        }
-
-        target 'linux', {
-            includeDirs '/usr/include/SDL2'
-        }
-
-        target 'raspberrypi', {
-            includeDirs "$konanUserDir/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
-        }
-
-        target 'mingw', {
-            includeDirs "${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/include/SDL2"
-        }
+    target 'macbook', {
+        linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -framework SDL2"
+        // Use this line instead of the previous one if you've got a 'No SDL-framework' error.
+        //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
     }
 
-    program ('tetris') {
-        libraries {
-            artifact 'sdl'
-        }
+    target 'linux', {
+        linkerOpts '-L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lSDL2'
+    }
 
-        target 'macbook', {
-            linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -framework SDL2"
-            // Use this line instead of the previous one if you've got a 'No SDL-framework' error.
-            //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
-        }
+    target 'raspberrypi', {
+        linkerOpts '-lSDL2'
+    }
 
-        target 'linux', {
-            linkerOpts '-L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lSDL2'
-        }
+    target 'mingw', {
+        linkerOpts "$resFile -L${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/lib -Wl,-Bstatic -lstdc++ -static -lSDL2 -limm32 -lole32 -loleaut32 -lversion -lwinmm -mwindows"
+    }
 
-        target 'raspberrypi', {
-            linkerOpts '-lSDL2'
-        }
+    dependencies {
+        cinterop('sdl') {
+            packageName 'sdl'
+            target 'macos_x64', {
+                includeDirs '/Library/Frameworks/SDL2.framework/Headers',
+                        "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers",
+                        '/opt/local/include/SDL2',
+                        '/usr/local/include/SDL2'
+            }
 
-        target 'mingw', {
-            linkerOpts "$resFile -L${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/lib -Wl,-Bstatic -lstdc++ -static -lSDL2 -limm32 -lole32 -loleaut32 -lversion -lwinmm -mwindows"
-            dependsOn 'windowsResources'
-            inputs.file resFile
+            target 'linux_x64', {
+                includeDirs '/usr/include/SDL2'
+            }
+
+            target 'raspberrypi', {
+                includeDirs "$konanUserDir/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
+            }
+
+            target 'mingw_x64', {
+                includeDirs "${System.getenv("MINGW64_DIR") ?: "c:/msys64/mingw64"}/include/SDL2"
+            }
+        }
+    }
+}
+
+assemble {
+    doLast {
+        components.withType(KotlinNativeExecutable.class).all { binary ->
+            copy {
+                from 'src/main/resources'
+                into binary.runtimeFile.asFile.get().parentFile
+            }
         }
     }
 }
@@ -71,13 +75,11 @@ task windowsResources (type: Exec) {
     outputs.file resFile
 }
 
-compileKonan {
-    doLast {
-        konanArtifacts.tetris.forEach() { task ->
-            copy {
-                from 'src/main/resources'
-                into task.artifact.parentFile
-            }
-        }
-    }
+project.tasks.matching {
+    name == 'compileDebugMingw_x64KotlinNative' ||
+    name == 'compileReleaseMingw_x64KotlinNative'
+}.all {
+    dependsOn 'windowsResources'
+    inputs.file resFile
 }
+

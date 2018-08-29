@@ -1,29 +1,36 @@
-apply plugin: 'konan'
-
-konan.targets = ['macbook', 'linux']
+apply plugin: 'org.jetbrains.kotlin.platform.native'
+apply plugin: 'maven-publish'
 
 group 'org.jetbrains.kotlin.native'
 version '1.0'
 
-konanArtifacts {
-    interop('libcurl') {
-        target('linux') {
-            includeDirs.headerFilterOnly '/usr/include'
-        }
-        target('macbook') {
-            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
-        }
-        pom {
-            withXml {
-                def root = asNode()
-                root.appendNode('name', 'libcurl interop library')
-                root.appendNode('description', 'A library providing interoperability with host libcurl')
+// Native component
+components.main {
+    targets = ['macos_x64', 'linux_x64']
+
+    dependencies {
+        cinterop('libcurl-interop') {
+            defFile 'src/main/c_interop/libcurl.def'
+
+            target('linux_x64') {
+                includeDirs.headerFilterOnly '/usr/include'
             }
+            target('macos_x64') {
+                includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+            }
+        }
+    }
+
+    pom {
+        withXml {
+            def root = asNode()
+            root.appendNode('name', 'libcurl interop library')
+            root.appendNode('description', 'A library providing interoperability with host libcurl')
         }
     }
 }
 
-apply plugin: 'maven-publish'
+// Publishing
 def localMavenRepo="file://${new File(System.properties['user.home'] as String)}/.m2-kotlin-native"
 
 task cleanLocalRepo(type: Delete) {
@@ -31,20 +38,9 @@ task cleanLocalRepo(type: Delete) {
 }
 
 publishing {
-    publications{
-        libcurl(MavenPublication) {
-            artifact sourceJar{
-                classifier "source"
-            }
-        }
-    }
     repositories {
         maven {
             url = localMavenRepo
         }
     }
-}
-
-task sourceJar(type: Jar) {
-    from project.files('src/main')
 }

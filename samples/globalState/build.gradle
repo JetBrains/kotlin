@@ -1,15 +1,10 @@
-apply plugin: 'konan'
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
-konan.targets = ['macbook', 'linux', 'mingw']
+components.main {
+    targets = ['macos_x64', 'linux_x64', 'mingw_x64']
+    outputKinds = [EXECUTABLE]
 
-konanArtifacts {
-    interop('global') {
-        defFile 'src/main/c_interop/global.def'
-    }
-
-    program('Globals') {
-        libraries {
-            artifact 'global'
-        }
+    dependencies {
+        cinterop('global')
     }
 }

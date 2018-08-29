@@ -2,16 +2,9 @@
 
 To build use `../gradlew build` or `./build.sh`.
 
-Run the server:
+Now you can run the server 
 
-    ../gradlew run
-    
-To change run arguments, change property runArgs in gradle.propeties file 
-or pass `-PrunArgs="3000"` to gradle run. 
-
-Alternatively you can run artifact directly 
-
-    ./build/konan/bin/<platform>/EchoServer.kexe 3000 &
+    ./build/exe/main/release/EchoServer.kexe 3000 &
 
 Test the server by conecting to it, for example with telnet:
 

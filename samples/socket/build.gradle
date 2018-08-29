@@ -1,5 +1,6 @@
-apply plugin: 'konan'
+apply plugin: 'org.jetbrains.kotlin.platform.native'
 
-konanArtifacts {
-    program('EchoServer')
+components.main {
+    outputKinds = [EXECUTABLE]
+    baseName = 'EchoServer'
 }
