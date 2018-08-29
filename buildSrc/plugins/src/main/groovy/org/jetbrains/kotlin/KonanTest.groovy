@@ -931,10 +931,10 @@ fun runTest() {
             runCompiler(compileList, buildExePath(), flags)
         } catch (Exception ex) {
             println("ERROR: Compilation failed for test suite: ${testSuite.name} with exception: ${ex}")
-            ktFiles.each {
-                def testCase = testSuite.createTestCase(it.name)
-                testCase.error(ex)
-            }
+            println("The following files were unable to compile:")
+            ktFiles.each { println it.name }
+            statistics.error(ktFiles.size())
+            testSuite.finish()
             throw new RuntimeException("Compilation failed", ex)
         }
 
