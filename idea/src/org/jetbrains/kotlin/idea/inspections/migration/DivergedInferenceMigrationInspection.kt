@@ -9,15 +9,20 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -31,15 +36,34 @@ class DivergedInferenceMigrationInspection : AbstractKotlinInspection(), Migrati
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         if (file !is KtFile) return null
 
-        val resolutionSummary = buildResolutionSummary(file)
+        // TODO
+        val languageVersionSettingsBefore = LanguageVersionSettingsImpl.DEFAULT
+        val languageVersionSettingsAfter = LanguageVersionSettingsImpl.DEFAULT
+
+        val resolutionBefore = buildResolutionSummary(file, languageVersionSettingsBefore)
+        val resolutionAfter = buildResolutionSummary(file, languageVersionSettingsAfter)
+
+        val resolutionDifference = compareResolutionSummaries(resolutionBefore, resolutionAfter)
+
+        return resolutionDifference.toProblemsDescriptors()
+    }
+
+    private fun compareResolutionSummaries(resolutionBefore: ResolutionSummary, resolutionAfter: ResolutionSummary): ResolutionDifference {
+        // TODO()
+        return ResolutionDifference()
     }
 
     @Suppress("UNREACHABLE_CODE")
-    private fun buildResolutionSummary(file: KtFile): Any {
-        val analysisResult = file.analyzeAndGetResult()
+    private fun buildResolutionSummary(file: KtFile, languageVersionSettings: LanguageVersionSettings): ResolutionSummary {
+        val analysisResult = file.analyzeWithGivenLanguageVersionSettings(languageVersionSettings)
         val (ir, symbolTable) = buildIr(file, analysisResult, languageVersionSettings = TODO())
 
         return ResolutionSummary(analysisResult, ir, symbolTable, file)
+    }
+
+    private fun KtFile.analyzeWithGivenLanguageVersionSettings(languageVersionSettings: LanguageVersionSettings): AnalysisResult {
+        // TODO
+        KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this)).analyzeWithAllCompilerChecks(listOf(this)).bindingContext
     }
 
     private fun buildIr(
@@ -60,6 +84,12 @@ class DivergedInferenceMigrationInspection : AbstractKotlinInspection(), Migrati
         val irModuleFragment = irTranslator.generateModuleFragment(generatorContext, listOf(sourceFile))
 
         return irModuleFragment to generatorContext.symbolTable
+    }
+}
+
+private class ResolutionDifference {
+    fun toProblemsDescriptors(): Array<ProblemDescriptor>? {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
 
