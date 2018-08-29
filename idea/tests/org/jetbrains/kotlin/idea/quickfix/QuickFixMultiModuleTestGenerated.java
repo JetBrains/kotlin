@@ -74,6 +74,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/annotation/");
     }
 
+    @TestMetadata("annotationOptionalExpectation")
+    public void testAnnotationOptionalExpectation() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/annotationOptionalExpectation/");
+    }
+
     @TestMetadata("class")
     public void testClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/class/");

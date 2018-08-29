@@ -43,10 +43,13 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
 sealed class CreateActualFix<out D : KtNamedDeclaration>(
@@ -280,6 +283,14 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
             actualEntry.replace(createSuperTypeCallEntry("${actualEntry.typeReference!!.text}()"))
         }
     }
+    if (actualClass.isAnnotation()) {
+        actualClass.annotationEntries.zip(expectedClass.annotationEntries).forEach { (actualEntry, expectedEntry) ->
+            val annotationDescriptor = context.get(BindingContext.ANNOTATION, expectedEntry) ?: return@forEach
+            if (annotationDescriptor.fqName in forbiddenAnnotationFqNames) {
+                actualEntry.delete()
+            }
+        }
+    }
 
     declLoop@ for (expectedDeclaration in expectedClass.declarations.filter { !it.exists() }) {
         val descriptor = expectedDeclaration.toDescriptor() ?: continue
@@ -318,6 +329,12 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
         replaceExpectModifier(actualNeeded)
     }
 }
+
+private val forbiddenAnnotationFqNames = setOf(
+    ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME,
+    FqName("kotlin.ExperimentalMultiplatform"),
+    ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME
+)
 
 private fun KtPsiFactory.generateFunction(
     project: Project,

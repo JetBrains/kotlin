@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
-    internal val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
+    val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
@@ -129,7 +129,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             .safeAs<PsiSourceFile>()
             ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
 
-    private fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
+    fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
         this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
 
     private fun checkActualDeclarationHasExpected(
