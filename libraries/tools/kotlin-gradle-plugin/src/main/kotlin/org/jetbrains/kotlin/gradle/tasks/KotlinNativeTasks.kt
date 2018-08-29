@@ -149,7 +149,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
             get() = DependencyDirectories.localKonanDir.resolve("kotlin-native-$simpleOsName-$compilerVersion")
 
         // TODO: Support project property for Kotlin/Native compiler version
-        val compilerVersion: KonanVersion = KonanVersionImpl(MetaVersion.RELEASE, 0, 8, 2)
+        val compilerVersion: KonanVersion = KonanVersionImpl(MetaVersion.RELEASE, 0, 9, 0)
 
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
         const val KONAN_DOWNLOAD_TASK_NAME = "checkNativeCompiler"
