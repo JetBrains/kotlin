@@ -83,7 +83,7 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
         get() = konanTargets.get().map { it.name }
         set(value) {
             val hostManager = HostManager()
-            konanTargets.set(targets.map { hostManager.targetByName(it) })
+            konanTargets.set(value.map { hostManager.targetByName(it) })
         }
 
     override fun target(target: String, action: KotlinNativeBinary.() -> Unit) =
