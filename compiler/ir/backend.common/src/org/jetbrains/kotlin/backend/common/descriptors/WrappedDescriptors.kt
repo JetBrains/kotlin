@@ -13,14 +13,22 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 
 
 abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(override val annotations: Annotations) : DeclarationDescriptor {
     lateinit var owner: T
-    fun bind(declaration: T) { owner = declaration }
+    private var bound = false
+    fun bind(declaration: T) {
+        assert(!bound)
+        bound = true
+        owner = declaration
+    }
 }
 
 abstract class WrappedCallableDescriptor<T : IrDeclaration>(
@@ -129,26 +137,25 @@ open class WrappedTypeParameterDescriptor(
 
     override fun getUpperBounds() = owner.superTypes.map { it.toKotlinType() }
 
-    override fun getTypeConstructor(): TypeConstructor {
-        return object : TypeConstructor {
-            override fun getParameters(): List<TypeParameterDescriptor> {
-                TODO("not implemented")
-            }
+    private val _typeConstryuctor: TypeConstructor by lazy {
+        object : AbstractTypeConstructor(LockBasedStorageManager.NO_LOCKS) {
+            override fun computeSupertypes() = upperBounds
 
-            override fun getSupertypes() = upperBounds
+            override val supertypeLoopChecker = SupertypeLoopChecker.EMPTY
+
+            override fun getParameters() = emptyList()
 
             override fun isFinal() = false
 
-            override fun isDenotable() = false
+            override fun isDenotable() = true
 
-            override fun getDeclarationDescriptor() = owner.descriptor
+            override fun getDeclarationDescriptor() = this@WrappedTypeParameterDescriptor
 
-            override fun getBuiltIns(): KotlinBuiltIns {
-                TODO("not implemented")
-            }
-
+            override fun getBuiltIns() = module.builtIns
         }
     }
+
+    override fun getTypeConstructor() = _typeConstryuctor
 
     override fun getOriginal() = this
 
@@ -156,9 +163,17 @@ open class WrappedTypeParameterDescriptor(
 
     override fun isCapturedFromOuterDeclaration() = false
 
-    override fun getDefaultType(): SimpleType {
-        TODO("not implemented")
+    private val _defaultType: SimpleType by lazy {
+        KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+            Annotations.EMPTY, typeConstructor, emptyList(), false,
+            TypeIntersectionScope.create(
+                "Scope for type parameter " + name.asString(),
+                upperBounds
+            )
+        )
     }
+
+    override fun getDefaultType() = _defaultType
 
     override fun getContainingDeclaration() = (owner.parent as IrDeclaration).descriptor
 
@@ -385,25 +400,15 @@ open class WrappedClassDescriptor(
 ) : ClassDescriptor, WrappedDeclarationDescriptor<IrClass>(annotations) {
     override fun getName() = owner.name
 
-    override fun getMemberScope(typeArguments: MutableList<out TypeProjection>): MemberScope {
-        TODO("not implemented")
-    }
+    override fun getMemberScope(typeArguments: MutableList<out TypeProjection>)= MemberScope.Empty
 
-    override fun getMemberScope(typeSubstitution: TypeSubstitution): MemberScope {
-        TODO("not implemented")
-    }
+    override fun getMemberScope(typeSubstitution: TypeSubstitution)= MemberScope.Empty
 
-    override fun getUnsubstitutedMemberScope(): MemberScope {
-        TODO("not implemented")
-    }
+    override fun getUnsubstitutedMemberScope() = MemberScope.Empty
 
-    override fun getUnsubstitutedInnerClassesScope(): MemberScope {
-        TODO("not implemented")
-    }
+    override fun getUnsubstitutedInnerClassesScope() = MemberScope.Empty
 
-    override fun getStaticScope(): MemberScope {
-        TODO("not implemented")
-    }
+    override fun getStaticScope() = MemberScope.Empty
 
     override fun getSource() = sourceElement
 
@@ -411,9 +416,12 @@ open class WrappedClassDescriptor(
 
     override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
 
-    override fun getDefaultType(): SimpleType {
-        TODO("not implemented")
+
+    private val _defaultType: SimpleType by lazy {
+        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
     }
+
+    override fun getDefaultType(): SimpleType = _defaultType
 
     override fun getKind() = owner.kind
 
@@ -451,9 +459,11 @@ open class WrappedClassDescriptor(
 
     override fun isActual() = false
 
-    override fun getTypeConstructor(): TypeConstructor {
-        TODO("not implemented")
+    private val _typeConstructor: TypeConstructor by lazy {
+        ClassTypeConstructorImpl(this, emptyList(), owner.superTypes.map { it.toKotlinType() }, LockBasedStorageManager.NO_LOCKS)
     }
+
+    override fun getTypeConstructor(): TypeConstructor = _typeConstructor
 
     override fun isInner() = owner.isInner
 
