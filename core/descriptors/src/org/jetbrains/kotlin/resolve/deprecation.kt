@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 interface Deprecation {
@@ -18,3 +19,4 @@ enum class DeprecationLevelValue {
     WARNING, ERROR, HIDDEN
 }
 
+val DEPRECATED_FUNCTION_KEY = object : CallableDescriptor.UserDataKey<Deprecation> {}

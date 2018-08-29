@@ -2617,6 +2617,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/java"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("functionN.kt")
+        public void testFunctionN() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/java/functionN.kt");
+        }
+
         @TestMetadata("patternCompileCallableReference.kt")
         public void testPatternCompileCallableReference() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/java/patternCompileCallableReference.kt");

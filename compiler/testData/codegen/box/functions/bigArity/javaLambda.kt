@@ -39,6 +39,7 @@ fun call(f: (A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A
 }
 
 fun box(): String {
+    @Suppress("DEPRECATION_ERROR")
     val f = J.FIELD as Function30<
             Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?,
             Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?,
@@ -48,6 +49,7 @@ fun box(): String {
     if (f is Function31<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>) return "Fail field 31"
     if (call(f) != "OK") return "Fail field call"
 
+    @Suppress("DEPRECATION_ERROR")
     val m = J.getViaMethod() as Function30<
             Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?,
             Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?,

@@ -30,8 +30,10 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DEPRECATED_FUNCTION_KEY
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -160,7 +162,7 @@ class SignatureEnhancement(
             val hasDefaultValue = p.hasDefaultValueInAnnotation(actualType)
             val wereChanges = enhancementResult.wereChanges || (hasDefaultValue != p.declaresDefaultValue())
 
-            ValueParameterEnhancementResult(enhancementResult.type, hasDefaultValue, wereChanges)
+            ValueParameterEnhancementResult(enhancementResult.type, hasDefaultValue, wereChanges, enhancementResult.containsFunctionN)
         }
 
         val returnTypeEnhancement =
@@ -174,14 +176,24 @@ class SignatureEnhancement(
                     AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE
             ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
+        val containsFunctionN = receiverTypeEnhancement?.containsFunctionN == true || returnTypeEnhancement.containsFunctionN ||
+                valueParameterEnhancements.any { it.containsFunctionN }
+
         if ((receiverTypeEnhancement?.wereChanges == true)
-            || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }
+            || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges } || containsFunctionN
         ) {
+            val additionalUserData =
+                if (containsFunctionN)
+                    DEPRECATED_FUNCTION_KEY to DeprecationCausedByFunctionN(this)
+                else
+                    null
+
             @Suppress("UNCHECKED_CAST")
             return this.enhance(
                 receiverTypeEnhancement?.type,
                 valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) },
-                returnTypeEnhancement.type
+                returnTypeEnhancement.type,
+                additionalUserData
             ) as D
         }
 
@@ -218,9 +230,16 @@ class SignatureEnhancement(
                 }
             }
 
+            val containsFunctionN = TypeUtils.contains(fromOverride) {
+                val classifier = it.constructor.declarationDescriptor ?: return@contains false
+
+                classifier.name == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME.shortName() &&
+                        classifier.fqNameOrNull() == JavaToKotlinClassMap.FUNCTION_N_FQ_NAME
+            }
+
             return fromOverride.enhance(qualifiersWithPredefined ?: qualifiers)?.let { enhanced ->
-                PartEnhancementResult(enhanced, wereChanges = true)
-            } ?: PartEnhancementResult(fromOverride, wereChanges = false)
+                PartEnhancementResult(enhanced, wereChanges = true, containsFunctionN = containsFunctionN)
+            } ?: PartEnhancementResult(fromOverride, wereChanges = false, containsFunctionN = containsFunctionN)
         }
 
         private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
@@ -397,12 +416,18 @@ class SignatureEnhancement(
 
     }
 
-    private open class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
+    private open class PartEnhancementResult(
+        val type: KotlinType,
+        val wereChanges: Boolean,
+        val containsFunctionN: Boolean
+    )
+
     private class ValueParameterEnhancementResult(
         type: KotlinType,
         val hasDefaultValue: Boolean,
-        wereChanges: Boolean
-    ) : PartEnhancementResult(type, wereChanges)
+        wereChanges: Boolean,
+        containsFunctionN: Boolean
+    ) : PartEnhancementResult(type, wereChanges, containsFunctionN)
 
     private fun CallableMemberDescriptor.partsForValueParameter(
         // TODO: investigate if it's really can be a null (check properties' with extension overrides in Java)

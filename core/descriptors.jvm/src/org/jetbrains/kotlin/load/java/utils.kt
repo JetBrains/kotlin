@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.Deprecation
+import org.jetbrains.kotlin.resolve.DeprecationLevelValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.extractRadix
@@ -60,4 +64,11 @@ fun KotlinType.lexicalCastFrom(value: String): JavaDefaultValue? {
     }
 
     return if (result != null) Constant(result) else null
+}
+
+class DeprecationCausedByFunctionN(override val target: DeclarationDescriptor) : Deprecation {
+    override val deprecationLevel: DeprecationLevelValue
+        get() = DeprecationLevelValue.ERROR
+    override val message: String?
+        get() = "Java members containing references to ${JavaToKotlinClassMap.FUNCTION_N_FQ_NAME} are not supported"
 }

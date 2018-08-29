@@ -345,6 +345,7 @@ class DeprecationResolver(
                 result.add(deprecation)
             }
             getDeprecationByCoroutinesVersion(target)?.let(result::add)
+            getDeprecationFromUserData(target)?.let(result::add)
         }
 
         addDeprecationIfPresent(this)
@@ -375,6 +376,9 @@ class DeprecationResolver(
             }
         }
     }
+
+    private fun getDeprecationFromUserData(target: DeclarationDescriptor): Deprecation? =
+        target.safeAs<CallableDescriptor>()?.getUserData(DEPRECATED_FUNCTION_KEY)
 
     private fun getDeprecationByVersionRequirement(target: DeclarationDescriptor): List<DeprecatedByVersionRequirement> {
         fun createVersion(version: String): MavenComparableVersion? = try {

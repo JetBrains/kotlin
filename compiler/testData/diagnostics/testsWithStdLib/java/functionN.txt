@@ -1,0 +1,24 @@
+package
+
+public fun </*0*/ T> any(): T
+public fun main(): kotlin.Unit
+
+public open class A : KI {
+    public constructor A(/*0*/ w: kotlin.jvm.functions.FunctionN<*>!)
+    public final var field: kotlin.jvm.functions.FunctionN<*>!
+    public open fun bar(): kotlin.jvm.functions.FunctionN<*>!
+    public open fun baz(/*0*/ z: kotlin.collections.(Mutable)List<kotlin.jvm.functions.FunctionN<*>!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ x: kotlin.jvm.functions.FunctionN<kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun manyParams(/*0*/ x: (kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String) -> kotlin.Unit): kotlin.Unit
+    public open fun manyParams(/*0*/ x: kotlin.jvm.functions.FunctionN<Unit!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface KI {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun manyParams(/*0*/ x: (kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String) -> kotlin.Unit): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
