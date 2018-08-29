@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.KonanModuleDescriptorFactory
 import org.jetbrains.kotlin.descriptors.konan.KonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.isInteropLibrary
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal object KonanModuleDescriptorFactoryImpl : KonanModuleDescriptorFactory {
@@ -26,7 +28,10 @@ internal object KonanModuleDescriptorFactoryImpl : KonanModuleDescriptorFactory 
         name,
         storageManager,
         builtIns,
-        capabilities = customCapabilities + mapOf(KonanModuleOrigin.CAPABILITY to origin)
+        capabilities = customCapabilities + mapOf(
+            KonanModuleOrigin.CAPABILITY to origin,
+            ImplicitIntegerCoercion.MODULE_CAPABILITY to origin.isInteropLibrary()
+        )
     )
 
     override fun createDescriptorAndNewBuiltIns(
