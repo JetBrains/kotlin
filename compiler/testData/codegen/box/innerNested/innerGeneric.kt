@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class Outer {
     inner class Inner<T>(val t: T) {
         fun box() = t
