@@ -46,7 +46,10 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
     override fun inspectionText(element: KtIfExpression) = "Foldable if-then"
 
     override fun inspectionHighlightType(element: KtIfExpression): ProblemHighlightType =
-        if (element.shouldBeTransformed()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
+        if (element.shouldBeTransformed(transformToSafeAccess = true))
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+        else
+            ProblemHighlightType.INFORMATION
 
     override val defaultFixText = "Simplify foldable if-then"
 
