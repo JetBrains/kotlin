@@ -185,6 +185,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
     private fun Project.addInteropTasks() {
         val settingsToTask = mutableMapOf<CInteropSettings, CInteropTask>()
+        val namesWithWarning = mutableSetOf<String>()
         components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
             binary.component.dependencies.cinterops.all { cinterop ->
                 val konanTarget = binary.konanTarget
@@ -205,6 +206,22 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                 if (binary is KotlinNativeLibrary) {
                     binary.linkElements.get().outgoing.artifact(interopTask.outputFileProvider) {
                         it.classifier = "interop-${cinterop.name}"
+                    }
+                    // User can create an interop with the same name as the main library.
+                    // In this case we get two libraries with the same name and one of them depends
+                    // on the another. Such a situation is considered as a cyclic dependency by the compiler
+                    // so we warn a user about it.
+                    val mainLibraryName = binary.linkFile.get().asFile.nameWithoutExtension
+                    val interopLibraryName = interopTask.outputFile.nameWithoutExtension
+
+                    if (mainLibraryName == interopLibraryName && mainLibraryName !in namesWithWarning) {
+                        logger.warn("""
+
+                            Warning: you have an interop with the same name as the main library ($mainLibraryName)!
+                            It may cause failures in dependent projects so consider renaming the interop.
+
+                        """.trimIndent())
+                        namesWithWarning.add(mainLibraryName)
                     }
                 }
             }
