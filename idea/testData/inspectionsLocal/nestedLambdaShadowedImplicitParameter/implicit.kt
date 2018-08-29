@@ -3,8 +3,8 @@ fun bar(s: String) {}
 
 fun test() {
     foo {
-        <caret>foo {
-            bar(it)
+        foo {
+            bar(it<caret>)
         }
     }
 }
