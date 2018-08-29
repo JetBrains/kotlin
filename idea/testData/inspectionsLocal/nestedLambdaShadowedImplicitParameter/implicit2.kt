@@ -1,3 +1,5 @@
+// FIX: Add explicit parameter name to outer lambda
+
 fun foo(f: (String) -> Unit) {}
 fun bar(f: (Int) -> Unit) {}
 

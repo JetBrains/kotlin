@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -35,12 +36,13 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
                 implicitParameterReference,
                 "Implicit parameter 'it' of enclosing lambda is shadowed",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                AddExplicitParameterNameFix()
+                AddExplicitParameterToOuterLambdaFix(),
+                RenameImplicitParameterFix()
             )
         })
     }
 
-    private class AddExplicitParameterNameFix : LocalQuickFix {
+    private class AddExplicitParameterToOuterLambdaFix : LocalQuickFix {
         override fun getName() = "Add explicit parameter name to outer lambda"
 
         override fun getFamilyName() = name
@@ -52,12 +54,22 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
             val parameter = parentLambda.functionLiteral.getOrCreateParameterList().addParameterBefore(
                 KtPsiFactory(project).createLambdaParameterList("it").parameters.first(), null
             )
-            val editor = parentLambda.findExistingEditor()
-            if (editor != null) {
-                PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
-                editor.caretModel.moveToOffset(parameter.startOffset)
-                KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
-            }
+            val editor = parentLambda.findExistingEditor() ?: return
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+            editor.caretModel.moveToOffset(parameter.startOffset)
+            KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
+        }
+    }
+
+    private class RenameImplicitParameterFix : LocalQuickFix {
+        override fun getName() = "Rename 'it'"
+
+        override fun getFamilyName() = name
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val implicitParameterReference = descriptor.psiElement as? KtNameReferenceExpression ?: return
+            val editor = implicitParameterReference.findExistingEditor() ?: return
+            ReplaceItWithExplicitFunctionLiteralParamIntention().applyTo(implicitParameterReference, editor)
         }
     }
 }
