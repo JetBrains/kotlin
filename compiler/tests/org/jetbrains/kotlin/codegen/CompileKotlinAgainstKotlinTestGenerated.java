@@ -138,6 +138,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
     }
 
+    @TestMetadata("internalWithOtherModuleName.kt")
+    public void testInternalWithOtherModuleName() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithOtherModuleName.kt");
+    }
+
     @TestMetadata("jvmField.kt")
     public void testJvmField() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmField.kt");

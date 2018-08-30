@@ -1098,10 +1098,16 @@ public class KotlinTypeMapper {
         if (!(descriptor instanceof ConstructorDescriptor) &&
             descriptor.getVisibility() == Visibilities.INTERNAL &&
             !DescriptorUtilsKt.isPublishedApi(descriptor)) {
-            return InternalNameMapper.mangleInternalName(name, moduleName);
+            return InternalNameMapper.mangleInternalName(name, getModuleName(descriptor));
         }
 
         return name;
+    }
+
+    @NotNull
+    private String getModuleName(@NotNull CallableMemberDescriptor descriptor) {
+        String deserialized = ModuleNameKt.getJvmModuleNameForDeserializedDescriptor(descriptor);
+        return deserialized != null ? deserialized : moduleName;
     }
 
     @Nullable
