@@ -27,7 +27,7 @@ fun labeled(): ULong? {
 }
 
 // @TestKt.class:
-// 2 INVOKESTATIC ULong\$Erased.box
+// 2 INVOKESTATIC ULong\.box
 // 0 INVOKEVIRTUAL ULong.unbox
 
 // 0 valueOf

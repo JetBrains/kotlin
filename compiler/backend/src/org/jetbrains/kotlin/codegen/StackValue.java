@@ -402,25 +402,23 @@ public abstract class StackValue {
 
     private static void boxInlineClass(@NotNull KotlinType kotlinType, @NotNull InstructionAdapter v) {
         Type boxedType = KotlinTypeMapper.mapInlineClassTypeAsDeclaration(kotlinType);
-        Type owner = KotlinTypeMapper.mapToErasedInlineClassType(kotlinType);
         Type underlyingType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType);
 
         if (TypeUtils.isNullableType(kotlinType) && !isPrimitive(underlyingType)) {
-            boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxedType, owner, underlyingType));
+            boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxedType, underlyingType));
         }
         else {
-            invokeBoxMethod(v, boxedType, owner, underlyingType);
+            invokeBoxMethod(v, boxedType, underlyingType);
         }
     }
 
     private static void invokeBoxMethod(
             @NotNull InstructionAdapter v,
             Type boxedType,
-            Type owner,
             Type underlyingType
     ) {
         v.invokestatic(
-                owner.getInternalName(),
+                boxedType.getInternalName(),
                 InlineClassDescriptorResolver.BOX_METHOD_NAME.asString(),
                 Type.getMethodDescriptor(boxedType, underlyingType),
                 false
