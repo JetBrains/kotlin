@@ -10016,6 +10016,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt");
         }
 
+        @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
+        public void testBoxResultInlineClassOfConstructorCall() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt");
+        }
+
         @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
         public void testBoxUnboxInlineClassesWithOperatorsGetSet() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt");
@@ -10294,6 +10299,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("referToUnderlyingPropertyOfInlineClass.kt")
         public void testReferToUnderlyingPropertyOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClass.kt");
+        }
+
+        @TestMetadata("secondaryConstructorWithVararg.kt")
+        public void testSecondaryConstructorWithVararg() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVararg.kt");
         }
 
         @TestMetadata("secondaryConstructorsInsideInlineClass.kt")

@@ -2180,11 +2180,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor descriptor = accessibleFunctionDescriptor(resolvedCall);
 
         if (descriptor instanceof ConstructorDescriptor) {
-            if (InlineClassesUtilsKt.isInlineClass(descriptor.getContainingDeclaration()) && ((ConstructorDescriptor) descriptor).isPrimary()) {
-                // we do not call static function `constructor`, because it's empty
-                return generateInlineClassConstructorCall(expression);
-            }
-
             return generateNewCall(expression, resolvedCall);
         }
 
@@ -2195,24 +2190,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return invokeFunction(resolvedCall, receiver);
-    }
-
-    private StackValue generateInlineClassConstructorCall(@NotNull KtCallExpression expression) {
-        KtValueArgument valueArgument = CollectionsKt.singleOrNull(expression.getValueArguments());
-        assert valueArgument != null : "Inline class constructor call should have single argument";
-
-        KotlinType inlineClassType = kotlinType(expression);
-        assert inlineClassType != null && InlineClassesUtilsKt.isInlineClassType(inlineClassType) :
-                "Constructor call expression of inline class should have inline class type, but have: " + inlineClassType;
-
-        Type underlyingType = typeMapper.mapType(inlineClassType);
-        KotlinType underlyingKotlinType = InlineClassesUtilsKt.unsubstitutedUnderlyingType(inlineClassType);
-
-        StackValue argumentValue = gen(valueArgument.getArgumentExpression());
-
-        return StackValue.coercionValueForArgumentOfInlineClassConstructor(
-                argumentValue, underlyingType, inlineClassType, underlyingKotlinType
-        );
     }
 
     @Override
@@ -4215,8 +4192,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private StackValue generateNewCall(@NotNull KtCallExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
         Type type = expressionType(expression);
         if (type.getSort() == Type.ARRAY) {
-            //noinspection ConstantConditions
-            return generateNewArray(expression, bindingContext.getType(expression), resolvedCall);
+            KotlinType kotlinType = kotlinType(expression);
+            assert kotlinType != null : "No kotlinType for expression of type " + type + ": " + expression.getText();
+            if (KotlinBuiltIns.isArrayOrPrimitiveArray(kotlinType)) {
+                //noinspection ConstantConditions
+                return generateNewArray(expression, bindingContext.getType(expression), resolvedCall);
+            }
         }
 
         return generateConstructorCall(resolvedCall, type);
@@ -4250,7 +4231,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     public StackValue generateConstructorCall(@NotNull ResolvedCall<?> resolvedCall, @NotNull Type objectType) {
-        return StackValue.functionCall(objectType, null, v -> {
+        return StackValue.functionCall(objectType, resolvedCall.getResultingDescriptor().getReturnType(), v -> {
             ClassConstructorDescriptor constructor = getConstructorDescriptor(resolvedCall);
             ReceiverParameterDescriptor dispatchReceiver = constructor.getDispatchReceiverParameter();
             ClassDescriptor containingDeclaration = constructor.getContainingDeclaration();

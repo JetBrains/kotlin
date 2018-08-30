@@ -2158,6 +2158,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertySetterWithInlineClassTypeArgument.kt");
         }
 
+        @TestMetadata("primaryConstructorCalledByInlineClass.kt")
+        public void testPrimaryConstructorCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/primaryConstructorCalledByInlineClass.kt");
+        }
+
         @TestMetadata("skipCallToUnderlyingValueOfInlineClass.kt")
         public void testSkipCallToUnderlyingValueOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
