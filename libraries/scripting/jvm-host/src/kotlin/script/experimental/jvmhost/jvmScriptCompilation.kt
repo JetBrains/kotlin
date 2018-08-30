@@ -15,7 +15,7 @@ import kotlin.script.experimental.jvmhost.impl.withDefaults
 
 interface CompiledJvmScriptsCache {
     fun get(script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>?
-    fun store(compiledScript: CompiledScript<*>, scriptCompilationConfiguration: ScriptCompilationConfiguration)
+    fun store(compiledScript: CompiledScript<*>, script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration)
 
     object NoCache : CompiledJvmScriptsCache {
         override fun get(
@@ -23,7 +23,7 @@ interface CompiledJvmScriptsCache {
         ): CompiledScript<*>? = null
 
         override fun store(
-            compiledScript: CompiledScript<*>, scriptCompilationConfiguration: ScriptCompilationConfiguration
+            compiledScript: CompiledScript<*>, script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration
         ) {
         }
     }
@@ -53,7 +53,7 @@ open class JvmScriptCompiler(
 
         return compilerProxy.compile(script, refinedConfiguration).also {
             if (it is ResultWithDiagnostics.Success) {
-                cache.store(it.value, refinedConfiguration)
+                cache.store(it.value, script, refinedConfiguration)
             }
         }
     }
