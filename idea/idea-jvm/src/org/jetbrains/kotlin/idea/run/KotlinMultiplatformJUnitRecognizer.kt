@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.execution.JUnitRecognizer
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
@@ -27,8 +26,9 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -38,7 +38,7 @@ class KotlinMultiplatformJUnitRecognizer : JUnitRecognizer() {
     override fun isTestAnnotated(method: PsiMethod): Boolean {
         if (method !is KtLightMethod) return false
         val origin = method.kotlinOrigin ?: return false
-        if (origin.module?.targetPlatform !is TargetPlatformKind.Common) return false
+        if (!origin.module?.platform.isCommon) return false
 
         val moduleDescriptor = origin.containingKtFile.findModuleDescriptor()
         val implModules = moduleDescriptor.implementingDescriptors

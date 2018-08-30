@@ -25,10 +25,9 @@ import com.intellij.ide.IdeBundle
 import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDialog
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
-import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.idea.framework.CommonStandardLibraryDescription
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
-import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
+import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.impl.isCommon
 import javax.swing.JComponent
 
 // Based on com.intellij.facet.impl.ui.libraries.FrameworkLibraryValidatorImpl
@@ -36,27 +35,20 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         private val context: LibrariesValidatorContext,
         private val validatorsManager: FacetValidatorsManager,
         private val libraryCategoryName: String,
-        private val getTargetPlatform: () -> TargetPlatformKind<*>
+        private val getPlatform: () -> IdePlatformKind<*>
 ) : FrameworkLibraryValidator() {
-    private val TargetPlatformKind<*>.libraryDescription: CustomLibraryDescription
-        get() {
-            val project = context.module.project
-            return when (this) {
-                is TargetPlatformKind.Jvm -> JavaRuntimeLibraryDescription(project)
-                is TargetPlatformKind.JavaScript -> JSLibraryStdDescription(project)
-                is TargetPlatformKind.Common -> CommonStandardLibraryDescription(project)
-            }
-        }
+    private val IdePlatformKind<*>.libraryDescription: CustomLibraryDescription
+        get() = this.tooling.getLibraryDescription(context.module.project)
 
-    private fun checkLibraryIsConfigured(targetPlatform: TargetPlatformKind<*>): Boolean {
+    private fun checkLibraryIsConfigured(platform: IdePlatformKind<*>): Boolean {
         // TODO: propose to configure kotlin-stdlib-common once it's available
-        if (targetPlatform == TargetPlatformKind.Common) return true
+        if (platform.isCommon) return true
 
         if (KotlinVersionInfoProvider.EP_NAME.extensions.any {
-            it.getLibraryVersions(context.module, targetPlatform, context.rootModel).isNotEmpty()
+            it.getLibraryVersions(context.module, platform, context.rootModel).isNotEmpty()
         }) return true
 
-        val libraryDescription = targetPlatform.libraryDescription
+        val libraryDescription = platform.libraryDescription
         val libraryKinds = libraryDescription.suitableLibraryKinds
         var found = false
         val presentationManager = LibraryPresentationManager.getInstance()
@@ -75,12 +67,12 @@ class FrameworkLibraryValidatorWithDynamicDescription(
     }
 
     override fun check(): ValidationResult {
-        val targetPlatform = getTargetPlatform()
+        val targetPlatform = getPlatform()
 
         if (checkLibraryIsConfigured(targetPlatform)) {
-            val conflictingPlatforms = TargetPlatformKind.ALL_PLATFORMS.filter {
-                it != TargetPlatformKind.Common && it.name != targetPlatform.name && checkLibraryIsConfigured(it)
-            }
+            val conflictingPlatforms = IdePlatformKind.getInstances()
+                .filter { !it.isCommon && it.name != targetPlatform.name && checkLibraryIsConfigured(it) }
+
             if (conflictingPlatforms.isNotEmpty()) {
                 val platformText = conflictingPlatforms.mapTo(LinkedHashSet()) { it.name }.joinToString()
                 return ValidationResult("Libraries for the following platform are also present in the module dependencies: $platformText")

@@ -7,8 +7,8 @@
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformSupport"
-                        interface="org.jetbrains.kotlin.caches.resolve.IdePlatformSupport"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
+                        interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
                         interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
@@ -50,9 +50,9 @@
         <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
                                  implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
 
-        <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformSupport"/>
-        <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformSupport"/>
-        <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformSupport"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution"/>
 
         <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
     </extensions>

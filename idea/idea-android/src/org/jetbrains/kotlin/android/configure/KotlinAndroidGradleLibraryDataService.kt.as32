@@ -30,7 +30,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.idea.configuration.detectPlatformByPlugin
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
-import org.jetbrains.kotlin.idea.framework.libraryKind
+import org.jetbrains.kotlin.idea.platform.tooling
 import java.io.File
 
 class KotlinAndroidGradleLibraryDataService : AbstractProjectDataService<JavaModuleModel, Void>() {
@@ -43,7 +43,8 @@ class KotlinAndroidGradleLibraryDataService : AbstractProjectDataService<JavaMod
             modelsProvider: IdeModifiableModelsProvider
     ) {
         for (dataNode in toImport) {
-            val targetLibraryKind = detectPlatformByPlugin(dataNode.parent as DataNode<ModuleData>)?.libraryKind
+            @Suppress("UNCHECKED_CAST")
+            val targetLibraryKind = detectPlatformByPlugin(dataNode.parent as DataNode<ModuleData>)?.tooling?.libraryKind
             if (targetLibraryKind != null) {
                 for (dep in dataNode.data.jarLibraryDependencies) {
                     val library = modelsProvider.findLibraryByBinaryPath(dep.binaryPath) as LibraryEx? ?: continue

@@ -39,6 +39,11 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.getLibraryLanguageLevel
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
+import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -56,7 +61,7 @@ var KtFile.forcedTargetPlatform: TargetPlatform? by UserDataProperty(Key.create(
 
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
-    val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.targetPlatformKind)
+    val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.platform?.kind)
 
     // Preserve inferred version in facet/project settings
     if (facetSettings.useProjectSettings) {
@@ -123,7 +128,7 @@ fun Project.getLanguageVersionSettings(
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
 
     val additionalArguments: CommonCompilerArguments = parseArguments(
-        TargetPlatformKind.DEFAULT_PLATFORM,
+        DefaultIdeTargetPlatformKindProvider.defaultPlatform,
         compilerSettings.additionalArgumentsAsList
     )
 
@@ -187,7 +192,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
 
     val languageFeatures = facetSettings.mergedCompilerArguments?.configureLanguageFeatures(MessageCollector.NONE)?.apply {
         configureCoroutinesSupport(facetSettings.coroutineSupport, languageVersion)
-        configureMultiplatformSupport(facetSettings.targetPlatformKind, this@computeLanguageVersionSettings)
+        configureMultiplatformSupport(facetSettings.platform?.kind, this@computeLanguageVersionSettings)
     }.orEmpty()
 
     val analysisFlags = facetSettings.mergedCompilerArguments?.configureAnalysisFlags(MessageCollector.NONE).orEmpty()
@@ -200,33 +205,25 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
     )
 }
 
-val Module.targetPlatform: TargetPlatformKind<*>?
-    get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)?.targetPlatformKind ?: project.targetPlatform
+val Module.platform: IdePlatform<*, *>?
+    get() = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this).platform ?: project.platform
 
-val Project.targetPlatform: TargetPlatformKind<*>?
+val Project.platform: IdePlatform<*, *>?
     get() {
         val jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(this).settings.jvmTarget ?: return null
         val version = JvmTarget.fromString(jvmTarget) ?: return null
-        return TargetPlatformKind.Jvm[version]
+        return JvmIdePlatformKind.Platform(version)
     }
 
 private val Module.implementsCommonModule: Boolean
-    get() = targetPlatform != TargetPlatformKind.Common
-            && ModuleRootManager.getInstance(this).dependencies.any { it.targetPlatform == TargetPlatformKind.Common }
+    get() = !platform.isCommon
+            && ModuleRootManager.getInstance(this).dependencies.any { it.platform.isCommon }
 
 private fun parseArguments(
-    targetPlatformKind: TargetPlatformKind<*>,
+    platformKind: IdePlatform<*, *>,
     additionalArguments: List<String>
 ): CommonCompilerArguments {
-    val arguments = when (targetPlatformKind) {
-        is TargetPlatformKind.Jvm -> K2JVMCompilerArguments()
-        TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
-        TargetPlatformKind.Common -> K2MetadataCompilerArguments()
-    }
-
-    parseCommandLineArguments(additionalArguments, arguments)
-
-    return arguments
+    return platformKind.createArguments().also { parseCommandLineArguments(additionalArguments, it) }
 }
 
 fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCoroutinesSupport(
@@ -242,10 +239,10 @@ fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCoroutinesSuppor
 }
 
 fun MutableMap<LanguageFeature, LanguageFeature.State>.configureMultiplatformSupport(
-    targetPlatformKind: TargetPlatformKind<*>?,
+    platformKind: IdePlatformKind<*>?,
     module: Module?
 ) {
-    if (targetPlatformKind == TargetPlatformKind.Common || module?.implementsCommonModule == true) {
+    if (platformKind.isCommon || module?.implementsCommonModule == true) {
         put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
     }
 }

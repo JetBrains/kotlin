@@ -10,16 +10,14 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.config.CompilerSettings
-import org.jetbrains.kotlin.config.KotlinFacetSettings
-import org.jetbrains.kotlin.config.KotlinModuleKind
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.platform.IdePlatform
 
 val JpsModule.kotlinFacet: JpsKotlinFacetModuleExtension?
     get() = container.getChild(JpsKotlinFacetModuleExtension.KIND)
 
-val JpsModule.targetPlatform: TargetPlatformKind<*>?
-    get() = kotlinFacet?.settings?.targetPlatformKind
+val JpsModule.platform: IdePlatform<*, *>?
+    get() = kotlinFacet?.settings?.platform
 
 val JpsModule.kotlinKind: KotlinModuleKind
     get() = kotlinFacet?.settings?.kind ?: KotlinModuleKind.DEFAULT

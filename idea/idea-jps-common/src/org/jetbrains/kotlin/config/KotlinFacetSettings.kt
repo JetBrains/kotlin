@@ -20,32 +20,11 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.utils.DescriptionAware
-
-sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
-        val version: Version,
-        val name: String
-) : DescriptionAware {
-    override val description = "$name ${version.description}"
-
-    class Jvm(version: JvmTarget) : TargetPlatformKind<JvmTarget>(version, "JVM") {
-        companion object {
-            val JVM_PLATFORMS by lazy { JvmTarget.values().map(::Jvm) }
-
-            operator fun get(version: JvmTarget) = JVM_PLATFORMS[version.ordinal]
-        }
-    }
-
-    object JavaScript : TargetPlatformKind<TargetPlatformVersion.NoVersion>(TargetPlatformVersion.NoVersion, "JavaScript")
-
-    object Common : TargetPlatformKind<TargetPlatformVersion.NoVersion>(TargetPlatformVersion.NoVersion, "Common (experimental)")
-
-    companion object {
-        val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { Jvm.JVM_PLATFORMS + JavaScript + Common }
-        val DEFAULT_PLATFORM: TargetPlatformKind<*>
-            get() = Jvm[JvmTarget.DEFAULT]
-    }
-}
 
 object CoroutineSupport {
     @JvmStatic
@@ -183,15 +162,16 @@ class KotlinFacetSettings {
             compilerArguments!!.apiVersion = value?.versionString
         }
 
-    val targetPlatformKind: TargetPlatformKind<*>?
-        get() = compilerArguments?.let {
-            when (it) {
+    val platform: IdePlatform<*, *>?
+        get() {
+            val compilerArguments = this.compilerArguments
+            return when (compilerArguments) {
                 is K2JVMCompilerArguments -> {
-                    val jvmTarget = it.jvmTarget ?: JvmTarget.DEFAULT.description
-                    TargetPlatformKind.Jvm.JVM_PLATFORMS.firstOrNull { it.version.description >= jvmTarget }
+                    val jvmTarget = compilerArguments.jvmTarget ?: JvmTarget.DEFAULT.description
+                    JvmIdePlatformKind.platforms.firstOrNull { it.version.description >= jvmTarget }
                 }
-                is K2JSCompilerArguments -> TargetPlatformKind.JavaScript
-                is K2MetadataCompilerArguments -> TargetPlatformKind.Common
+                is K2JSCompilerArguments -> JsIdePlatformKind.Platform
+                is K2MetadataCompilerArguments -> CommonIdePlatformKind.Platform
                 else -> null
             }
         }
@@ -218,22 +198,6 @@ class KotlinFacetSettings {
 
     var kind: KotlinModuleKind = KotlinModuleKind.DEFAULT
     var sourceSetNames: List<String> = emptyList()
-}
-
-fun TargetPlatformKind<*>.createCompilerArguments(init: CommonCompilerArguments.() -> Unit = {}): CommonCompilerArguments {
-    val arguments = when (this) {
-        is TargetPlatformKind.Jvm -> K2JVMCompilerArguments()
-        is TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
-        is TargetPlatformKind.Common -> K2MetadataCompilerArguments()
-    }
-
-    arguments.init()
-
-    if (arguments is K2JVMCompilerArguments) {
-        arguments.jvmTarget = this@createCompilerArguments.version.description
-    }
-
-    return arguments
 }
 
 interface KotlinFacetSettingsProvider {

@@ -10,6 +10,7 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend.java"))
+    compile(project(":js:js.frontend"))
     compileOnly(intellijDep())
     compileOnly(intellijDep("jps-standalone")) { includeJars("jps-model") }
 }

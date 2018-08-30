@@ -11,8 +11,10 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
+import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.junit.Test
 import org.junit.runners.Parameterized
 
@@ -125,7 +127,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             module("app")
             // TODO: Delete metadata modules (after KT-26253 fixed)
             module("app_metadataMain") {
-                platform(TargetPlatformKind.Common)
+                platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("app_commonMain", DependencyScope.COMPILE)
                 moduleDependency("lib_metadataMain", DependencyScope.COMPILE)
@@ -134,7 +136,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("app/build/classes/kotlin/metadata/main", true)
             }
             module("app_metadataTest") {
-                platform(TargetPlatformKind.Common)
+                platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("app_commonMain", DependencyScope.COMPILE)
                 moduleDependency("app_commonTest", DependencyScope.COMPILE)
@@ -145,14 +147,14 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("app/build/classes/kotlin/metadata/test", false)
             }
             module("app_commonMain") {
-                platform(TargetPlatformKind.Common)
+                platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 sourceFolder("app/src/commonMain/kotlin", KotlinSourceRootType.Source)
                 sourceFolder("app/src/commonMain/resources", KotlinResourceRootType.Resource)
                 inheritProjectOutput()
             }
             module("app_commonTest") {
-                platform(TargetPlatformKind.Common)
+                platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("app_commonMain", DependencyScope.COMPILE)
                 sourceFolder("app/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
@@ -160,7 +162,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 inheritProjectOutput()
             }
             module("app_jsMain") {
-                platform(TargetPlatformKind.JavaScript)
+                platform(JsIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("lib_jsMain", DependencyScope.COMPILE)
@@ -170,7 +172,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("app/build/classes/kotlin/js/main", true)
             }
             module("app_jsTest") {
-                platform(TargetPlatformKind.JavaScript)
+                platform(JsIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("lib_jsMain", DependencyScope.COMPILE)
@@ -182,7 +184,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("app/build/classes/kotlin/js/test", false)
             }
             module("app_jvmMain") {
-                platform(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+                platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_6))
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
@@ -194,7 +196,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("app/build/classes/kotlin/jvm/main", true)
             }
             module("app_jvmTest") {
-                platform(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+                platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_6))
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
@@ -208,7 +210,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("app/build/classes/kotlin/jvm/test", false)
             }
             module("app_main") {
-                platform(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8])
+                platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8))
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
@@ -218,7 +220,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 inheritProjectOutput()
             }
             module("app_test") {
-                platform(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8])
+                platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8))
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
@@ -230,7 +232,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
             module("lib")
             module("lib_metadataMain") {
-                platform(TargetPlatformKind.Common)
+                platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("lib_commonMain", DependencyScope.COMPILE)
                 sourceFolder("lib/src/metadataMain/kotlin", KotlinSourceRootType.Source)
@@ -238,7 +240,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("lib/build/classes/kotlin/metadata/main", true)
             }
             module("lib_metadataTest") {
-                platform(TargetPlatformKind.Common)
+                platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("lib_commonMain", DependencyScope.COMPILE)
                 moduleDependency("lib_commonTest", DependencyScope.COMPILE)
@@ -248,14 +250,14 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("lib/build/classes/kotlin/metadata/test", false)
             }
             module("lib_commonMain") {
-                platform(TargetPlatformKind.Common)
+                platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 sourceFolder("lib/src/commonMain/kotlin", KotlinSourceRootType.Source)
                 sourceFolder("lib/src/commonMain/resources", KotlinResourceRootType.Resource)
                 inheritProjectOutput()
             }
             module("lib_commonTest") {
-                platform(TargetPlatformKind.Common)
+                platform(CommonIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("lib_commonMain", DependencyScope.COMPILE)
                 sourceFolder("lib/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
@@ -263,7 +265,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 inheritProjectOutput()
             }
             module("lib_jsMain") {
-                platform(TargetPlatformKind.JavaScript)
+                platform(JsIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("lib_commonMain", DependencyScope.COMPILE)
@@ -272,7 +274,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("lib/build/classes/kotlin/js/main", true)
             }
             module("lib_jsTest") {
-                platform(TargetPlatformKind.JavaScript)
+                platform(JsIdePlatformKind.Platform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 moduleDependency("lib_commonMain", DependencyScope.COMPILE)
@@ -283,7 +285,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("lib/build/classes/kotlin/js/test", false)
             }
             module("lib_jvmMain") {
-                platform(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+                platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_6))
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
@@ -293,7 +295,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
                 outputPath("lib/build/classes/kotlin/jvm/main", true)
             }
             module("lib_jvmTest") {
-                platform(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+                platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_6))
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)

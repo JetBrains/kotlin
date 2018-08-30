@@ -3106,6 +3106,10 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinJsMetaBinary"/>
 
     <highlighterExtension implementation="org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension"/>
+
+    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind"/>
+
+    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling"/>
   </extensions>
 
     <extensions defaultExtensionNs="com.intellij.jvm">
