@@ -669,12 +669,6 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
             }
         }
 
-        def languageVersion = findLinesWithPrefixesRemoved(text, "// LANGUAGE_VERSION: ")
-        if (languageVersion.size() != 0) {
-            flags.add("-language-version")
-            flags.add(languageVersion.first())
-        }
-
         def experimentalSettings = findLinesWithPrefixesRemoved(text, "// !USE_EXPERIMENTAL: ")
         if (experimentalSettings.size() != 0) {
             experimentalSettings.forEach { line ->
@@ -852,6 +846,12 @@ fun runTest() {
             return false
         }
         if (languageSettings.contains('+NewInference')) {
+            return false
+        }
+
+        def version = findLinesWithPrefixesRemoved(text, '// LANGUAGE_VERSION: ')
+        if (version.size() != 0 && !version.contains("1.3")) {
+            // Support tests for 1.3 and exclude 1.2
             return false
         }
 
