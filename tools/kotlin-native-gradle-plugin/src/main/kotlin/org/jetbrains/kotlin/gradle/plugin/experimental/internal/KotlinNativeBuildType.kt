@@ -29,7 +29,7 @@ class KotlinNativeBuildType(
 
     companion object {
         val DEBUG = KotlinNativeBuildType("debug", true, false)
-        val RELEASE = KotlinNativeBuildType("release", true, true)
+        val RELEASE = KotlinNativeBuildType("release", false, true)
         val DEFAULT_BUILD_TYPES: Collection<KotlinNativeBuildType> = Arrays.asList(DEBUG, RELEASE)
     }
 }
