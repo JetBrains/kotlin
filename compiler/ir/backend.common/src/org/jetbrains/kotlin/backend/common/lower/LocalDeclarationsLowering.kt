@@ -520,7 +520,7 @@ class LocalDeclarationsLowering(
             val newValueParameters = createTransformedValueParameters(localFunctionContext, capturedValues)
 
             newDescriptor.initialize(
-                oldDescriptor.extensionReceiverParameter?.type,
+                oldDescriptor.extensionReceiverParameter?.copy(newDescriptor),
                 newDispatchReceiverParameter,
                 newTypeParameters,
                 newValueParameters.map { it.descriptor as ValueParameterDescriptor },

@@ -41,6 +41,7 @@ fun makeModuleFile(
         isTest: Boolean,
         outputDir: File,
         sourcesToCompile: Iterable<File>,
+        commonSources: Iterable<File>,
         javaSourceRoots: Iterable<JvmSourceRoot>,
         classpath: Iterable<File>,
         friendDirs: Iterable<File>
@@ -55,6 +56,7 @@ fun makeModuleFile(
             sourcesToCompile.map { it.absoluteFile },
             javaSourceRoots,
             classpath,
+            commonSources.map { it.absoluteFile },
             null,
             "java-production",
             isTest,
@@ -132,6 +134,7 @@ fun ChangesCollector.getDirtyData(
 
         if (change is ChangeInfo.SignatureChanged) {
             val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
+            dirtyClassesFqNames.addAll(fqNames)
 
             for (classFqName in fqNames) {
                 assert(!classFqName.isRoot) { "$classFqName is root when processing $change" }

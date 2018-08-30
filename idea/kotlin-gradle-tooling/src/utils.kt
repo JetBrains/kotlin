@@ -18,3 +18,6 @@ fun Class<*>.getDeclaredMethodOrNull(name: String, vararg parameterTypes: Class<
     } catch (e: Exception) {
         null
     }
+
+fun compilationFullName(simpleName: String, classifier: String?) =
+    if (classifier != null) classifier + simpleName.capitalize() else simpleName

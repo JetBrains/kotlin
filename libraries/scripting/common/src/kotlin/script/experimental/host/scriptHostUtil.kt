@@ -16,9 +16,9 @@ fun ScriptSource.getScriptText(): String = when {
     else -> throw RuntimeException("unable to get text from null script")
 }
 
-fun getMergedScriptText(script: ScriptSource, configuration: ScriptCompileConfiguration): String {
+fun getMergedScriptText(script: ScriptSource, configuration: ScriptCompilationConfiguration?): String {
     val originalScriptText = script.getScriptText()
-    val sourceFragments = configuration.getOrNull(ScriptCompileConfigurationProperties.sourceFragments)
+    val sourceFragments = configuration?.get(ScriptCompilationConfiguration.sourceFragments)
     return if (sourceFragments == null || sourceFragments.isEmpty()) {
         originalScriptText
     } else {

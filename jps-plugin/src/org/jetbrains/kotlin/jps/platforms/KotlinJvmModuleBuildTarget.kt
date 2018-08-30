@@ -150,6 +150,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
             val friendDirs = target.friendOutputDirs
 
             val moduleSources = collectSourcesToCompile(target, dirtyFilesHolder)
+            val commonSources = emptyList<File>() // TODO: pass common sources here
             val hasDirtyOrRemovedSources = checkShouldCompileAndLog(target, dirtyFilesHolder, moduleSources)
             if (hasDirtyOrRemovedSources) hasDirtySources = true
 
@@ -160,6 +161,7 @@ class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildT
                 moduleSources,
                 target.findSourceRoots(context),
                 target.findClassPathRoots(),
+                commonSources,
                 target.findModularJdkRoot(),
                 kotlinModuleId.type,
                 isTests,

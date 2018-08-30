@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.hasBackingField
 import org.jetbrains.kotlin.types.KotlinType
 
 class DeclarationStubGenerator(
@@ -79,10 +79,10 @@ class DeclarationStubGenerator(
                 throw AssertionError("Unexpected member descriptor: $descriptor")
         }
 
-    internal fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty =
+    internal fun generatePropertyStub(descriptor: PropertyDescriptor, bindingContext: BindingContext? = null): IrProperty =
         IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
             val getterDescriptor = descriptor.getter
-            if (getterDescriptor == null) {
+            if (descriptor.hasBackingField(bindingContext)) {
                 irProperty.backingField =
                         symbolTable.declareField(
                             UNDEFINED_OFFSET,
@@ -91,7 +91,8 @@ class DeclarationStubGenerator(
                             descriptor.original,
                             descriptor.type.toIrType()
                         )
-            } else {
+            }
+            if (getterDescriptor != null) {
                 irProperty.getter = generateFunctionStub(getterDescriptor)
             }
 

@@ -116,24 +116,15 @@ class KotlinBuildScriptManipulator(
 
     override fun addKotlinLibraryToModuleBuildScript(
         scope: DependencyScope,
-        libraryDescriptor: ExternalLibraryDescriptor,
-        isAndroidModule: Boolean
+        libraryDescriptor: ExternalLibraryDescriptor
     ) {
-        val kotlinLibraryVersion = libraryDescriptor.maxVersion
-            .takeIf {
-                !useNewSyntax(if (isAndroidModule) "kotlin-android" else KotlinGradleModuleConfigurator.KOTLIN)
-            }
-            .let {
-                if (it == GSK_KOTLIN_VERSION_PROPERTY_NAME) "\$$it" else it
-            }
-
         scriptFile.getDependenciesBlock()?.apply {
             addExpressionIfMissing(
                 getCompileDependencySnippet(
                     libraryDescriptor.libraryGroupId,
                     libraryDescriptor.libraryArtifactId,
-                    scope.toGradleCompileScope(isAndroidModule),
-                    kotlinLibraryVersion
+                    libraryDescriptor.maxVersion,
+                    scope.toGradleCompileScope(module?.getBuildSystemType() == AndroidGradle)
                 )
             )
         }
@@ -358,9 +349,6 @@ class KotlinBuildScriptManipulator(
     private fun KtBlockExpression.addPluginToClassPathIfMissing(): KtCallExpression? =
         addExpressionIfMissing(getKotlinGradlePluginClassPathSnippet()) as? KtCallExpression
 
-    fun getKotlinGradlePluginClassPathSnippet(): String =
-        "classpath(${getKotlinModuleDependencySnippet("gradle-plugin", "\$$GSK_KOTLIN_VERSION_PROPERTY_NAME")})"
-
     private fun KtBlockExpression.addBlock(name: String, first: Boolean = false): KtBlockExpression? {
         return psiFactory.createExpression("$name {\n}")
             .let { if (first) addAfter(it, null) else add(it) }
@@ -444,6 +432,24 @@ class KotlinBuildScriptManipulator(
     private val PsiElement.psiFactory: KtPsiFactory
         get() = KtPsiFactory(this)
 
+    private fun getCompileDependencySnippet(
+        groupId: String,
+        artifactId: String,
+        version: String?,
+        compileScope: String = "compile"
+    ): String {
+        if (groupId != KOTLIN_GROUP_ID) {
+            return "$compileScope(\"$groupId:$artifactId:$version\")"
+        }
+
+        if (useNewSyntax(if (scriptFile.module?.getBuildSystemType() == AndroidGradle) "kotlin-android" else KotlinGradleModuleConfigurator.KOTLIN)) {
+            return "$compileScope(${getKotlinModuleDependencySnippet(artifactId)})"
+        }
+
+        val libraryVersion = if (version == GSK_KOTLIN_VERSION_PROPERTY_NAME) "\$$version" else version
+        return "$compileScope(${getKotlinModuleDependencySnippet(artifactId, libraryVersion)})"
+    }
+
     companion object {
         private val STDLIB_ARTIFACT_PREFIX = "org.jetbrains.kotlin:kotlin-stdlib"
         val GSK_KOTLIN_VERSION_PROPERTY_NAME = "kotlin_version"
@@ -459,16 +465,5 @@ class KotlinBuildScriptManipulator(
                 else -> "kotlinModule(\"$moduleName\", ${"\"$version\""})"
             }
         }
-
-        fun getCompileDependencySnippet(
-            groupId: String,
-            artifactId: String,
-            compileScope: String = "compile",
-            version: String? = null
-        ): String =
-            if (groupId == KOTLIN_GROUP_ID)
-                "$compileScope(${Companion.getKotlinModuleDependencySnippet(artifactId, version)})"
-            else
-                "$compileScope(\"$groupId:$artifactId:$version\")"
     }
 }

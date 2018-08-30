@@ -221,6 +221,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
               FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<Test2>) returnType:kotlin.Int flags:
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<Test2> flags:
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
+          FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public flags:final
+            overridden:
+              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
           FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:Test2) returnType:kotlin.Int flags:
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
             overridden:
@@ -287,6 +290,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
               FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<Test2>) returnType:kotlin.Int flags:
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<Test2> flags:
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
+          FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public flags:final
+            overridden:
+              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
           FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:Test2) returnType:kotlin.Int flags:
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL flags:val
             overridden:
@@ -349,4 +355,3 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:Test2 flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-

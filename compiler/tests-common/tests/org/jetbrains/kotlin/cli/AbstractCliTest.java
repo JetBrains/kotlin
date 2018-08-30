@@ -79,6 +79,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(testDataAbsoluteDir, TESTDATA_DIR)
                 .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR)
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
+                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getParentFile().getAbsolutePath(), "$DIST_DIR$")
                 .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")

@@ -690,6 +690,18 @@ public class BodyResolver {
             PropertyDescriptor descriptor = trace.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
             if (descriptor != null) {
                 ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
+
+                if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets)) {
+                    PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
+                    if (getterDescriptor != null) {
+                        ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
+                    }
+
+                    PropertySetterDescriptor setterDescriptor = descriptor.getSetter();
+                    if (setterDescriptor != null) {
+                        ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
+                    }
+                }
             }
         }
     }
@@ -730,6 +742,8 @@ public class BodyResolver {
         }
 
         resolvePropertyAccessors(c, property, propertyDescriptor);
+
+        ForceResolveUtil.forceResolveAllContents(propertyDescriptor.getAnnotations());
     }
 
     private void resolvePropertyDeclarationBodies(@NotNull BodiesResolveContext c) {
@@ -780,18 +794,33 @@ public class BodyResolver {
 
         KtPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-        if (getter != null && getterDescriptor != null) {
-            LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
-            ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
-            resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+
+        boolean forceResolveAnnotations =
+                languageVersionSettings.supportsFeature(LanguageFeature.ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets);
+
+        if (getterDescriptor != null) {
+            if (getter != null) {
+                LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+            }
+
+            if (getter != null || forceResolveAnnotations) {
+                ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
+            }
         }
 
         KtPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-        if (setter != null && setterDescriptor != null) {
-            LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
-            ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
-            resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+
+        if (setterDescriptor != null) {
+            if (setter != null) {
+                LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+            }
+
+            if (setter != null || forceResolveAnnotations) {
+                ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
+            }
         }
     }
 

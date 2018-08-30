@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// WITH_RUNTIME
 data class Data(val x: String, val y: Int)
 
 suspend fun test() {

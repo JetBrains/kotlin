@@ -22,7 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
@@ -90,7 +91,7 @@ public class SignaturesPropagationData {
                 SourceElement.NO_SOURCE
         );
         autoMethodDescriptor.initialize(
-                /* receiverParameterType = */ null,
+                null,
                 containingClass.getThisAsReceiverParameter(),
                 autoTypeParameters,
                 autoValueParameters,

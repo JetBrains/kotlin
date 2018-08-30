@@ -1,0 +1,9 @@
+// "Add annotation target" "true"
+@Target(AnnotationTarget.EXPRESSION)
+@Retention
+annotation class Foo
+
+fun test() {
+    var v = 0
+    @Foo v++
+}

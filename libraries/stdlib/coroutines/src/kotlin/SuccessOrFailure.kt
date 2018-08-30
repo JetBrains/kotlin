@@ -181,6 +181,15 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
 }
 
 /**
+ * Returns the encapsulated value if this instance represents [success][SuccessOrFailure.isSuccess] or the
+ * [defaultValue] if it is [failure][SuccessOrFailure.isFailure].
+ *
+ * This function is shorthand for `getOrElse { defaultValue }` (see [getOrElse]).
+ */
+public fun <R, T : R> SuccessOrFailure<T>.getOrDefault(defaultValue: R): R =
+    getOrElse { defaultValue }
+
+/**
  * Returns the the result of [onSuccess] for encapsulated value if this instance represents [success][SuccessOrFailure.isSuccess]
  * or the result of [onFailure] function for encapsulated exception if it is [failure][SuccessOrFailure.isFailure].
  *

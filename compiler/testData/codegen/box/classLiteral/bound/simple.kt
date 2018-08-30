@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: NATIVE
 
 fun box(): String {
     val x: CharSequence = ""

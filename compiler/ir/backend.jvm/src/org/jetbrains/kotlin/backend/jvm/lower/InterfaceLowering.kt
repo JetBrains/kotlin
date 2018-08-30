@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -105,20 +105,20 @@ internal fun createStaticFunctionWithReceivers(
 ): SimpleFunctionDescriptorImpl {
     val newFunction = SimpleFunctionDescriptorImpl.create(
         owner,
-        AnnotationsImpl(emptyList()),
+        Annotations.EMPTY,
         name,
         CallableMemberDescriptor.Kind.DECLARATION, descriptor.source
     )
     var offset = 0
     val dispatchReceiver =
         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-            newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("this"),
+            newFunction, null, offset++, Annotations.EMPTY, Name.identifier("this"),
             dispatchReceiverType, false, false, false, null, descriptor.source, null
         )
     val extensionReceiver =
         descriptor.extensionReceiverParameter?.let { extensionReceiver ->
             ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
+                newFunction, null, offset++, Annotations.EMPTY, Name.identifier("receiver"),
                 extensionReceiver.value.type, false, false, false, null, extensionReceiver.source, null
             )
         }

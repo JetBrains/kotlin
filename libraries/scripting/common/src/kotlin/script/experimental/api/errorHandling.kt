@@ -31,12 +31,29 @@ sealed class ResultWithDiagnostics<out R> {
     }
 }
 
+// call chaining
+
+suspend fun <R1, R2> ResultWithDiagnostics<R1>.onSuccess(body: suspend (R1) -> ResultWithDiagnostics<R2>): ResultWithDiagnostics<R2> =
+    when (this) {
+        is ResultWithDiagnostics.Success -> this.reports + body(this.value)
+        is ResultWithDiagnostics.Failure -> this
+    }
+
+suspend fun <R> ResultWithDiagnostics<R>.onFailure(body: suspend (ResultWithDiagnostics<R>) -> Unit): ResultWithDiagnostics<R> {
+    if (this is ResultWithDiagnostics.Failure) {
+        body(this)
+    }
+    return this
+}
+
 operator fun <R> List<ScriptDiagnostic>.plus(res: ResultWithDiagnostics<R>): ResultWithDiagnostics<R> = when (res) {
     is ResultWithDiagnostics.Success -> ResultWithDiagnostics.Success(res.value, this + res.reports)
     is ResultWithDiagnostics.Failure -> ResultWithDiagnostics.Failure(this + res.reports)
 }
 
-fun <R : Any> R.asSuccess(reports: List<ScriptDiagnostic> = listOf()): ResultWithDiagnostics.Success<R> =
+// results creation
+
+fun <R> R.asSuccess(reports: List<ScriptDiagnostic> = listOf()): ResultWithDiagnostics.Success<R> =
     ResultWithDiagnostics.Success(this, reports)
 
 fun Throwable.asDiagnostics(customMessage: String? = null, location: ScriptSource.Location? = null): ScriptDiagnostic =

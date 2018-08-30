@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.resolve.BindingContext
 
 class ExternalDependenciesGenerator(
     moduleDescriptor: ModuleDescriptor,
@@ -30,11 +31,11 @@ class ExternalDependenciesGenerator(
         moduleDescriptor, symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, irBuiltIns.languageVersionSettings
     )
 
-    fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
-        DependencyGenerationTask(irModule).run()
+    fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment, bindingContext: BindingContext? = null) {
+        DependencyGenerationTask(irModule, bindingContext).run()
     }
 
-    private inner class DependencyGenerationTask(val irModule: IrModuleFragment) {
+    private inner class DependencyGenerationTask(val irModule: IrModuleFragment, val bindingContext: BindingContext?) {
 
         fun run() {
             stubGenerator.unboundSymbolGeneration = true
@@ -48,7 +49,7 @@ class ExternalDependenciesGenerator(
                 stubGenerator.generateEnumEntryStub(it.descriptor)
             }
             ArrayList(symbolTable.unboundFields).forEach {
-                stubGenerator.generatePropertyStub(it.descriptor)
+                stubGenerator.generatePropertyStub(it.descriptor, bindingContext)
             }
             ArrayList(symbolTable.unboundSimpleFunctions).forEach {
                 stubGenerator.generateFunctionStub(it.descriptor)

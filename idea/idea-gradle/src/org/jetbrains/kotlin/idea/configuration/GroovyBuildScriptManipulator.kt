@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -28,12 +29,11 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
+import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrAssignmentExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.util.GrStatementOwner
-import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
 
 class GroovyBuildScriptManipulator(
     override val scriptFile: GroovyFile,
@@ -158,12 +158,11 @@ class GroovyBuildScriptManipulator(
 
     override fun addKotlinLibraryToModuleBuildScript(
         scope: DependencyScope,
-        libraryDescriptor: ExternalLibraryDescriptor,
-        isAndroidModule: Boolean
+        libraryDescriptor: ExternalLibraryDescriptor
     ) {
         val dependencyString = String.format(
             "%s \"%s:%s:%s\"",
-            scope.toGradleCompileScope(isAndroidModule),
+            scope.toGradleCompileScope(scriptFile.module?.getBuildSystemType() == AndroidGradle),
             libraryDescriptor.libraryGroupId,
             libraryDescriptor.libraryArtifactId,
             libraryDescriptor.maxVersion

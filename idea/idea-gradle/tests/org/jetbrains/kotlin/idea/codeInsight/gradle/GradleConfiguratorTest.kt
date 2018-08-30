@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
+import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
@@ -122,7 +122,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // Enable in Gradle 4.4+
+    @TargetVersions("4.4+")
     fun testConfigureJvmWithBuildGradle() {
         val files = importProjectFromTestData()
 
@@ -139,7 +139,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // Enable in Gradle 4.4+
+    @TargetVersions("4.4+")
     fun testConfigureJvmWithBuildGradleKts() {
         val files = importProjectFromTestData()
 
@@ -156,7 +156,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // Enable in Gradle 4.4+
+    @TargetVersions("4.4+")
     fun testConfigureJvmEAPWithBuildGradle() {
         val files = importProjectFromTestData()
 
@@ -173,7 +173,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // Enable in Gradle 4.4+
+    @TargetVersions("4.4+")
     fun testConfigureJvmEAPWithBuildGradleKts() {
         val files = importProjectFromTestData()
 
@@ -190,7 +190,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // Enable in Gradle 4.4+
+    @TargetVersions("4.4+")
     fun testConfigureJsWithBuildGradle() {
         val files = importProjectFromTestData()
 
@@ -207,7 +207,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // Enable in Gradle 4.4+
+    @TargetVersions("4.4+")
     fun testConfigureJsWithBuildGradleKts() {
         val files = importProjectFromTestData()
 
@@ -224,7 +224,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // Enable in Gradle 4.4+
+    @TargetVersions("4.4+")
     fun testConfigureJsEAPWithBuildGradle() {
         val files = importProjectFromTestData()
 
@@ -241,7 +241,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    @Ignore // Enable in Gradle 4.4+
+    @TargetVersions("4.4+")
     fun testConfigureJsEAPWithBuildGradleKts() {
         val files = importProjectFromTestData()
 
@@ -349,6 +349,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
+    @TargetVersions("3.5")
     @Test
     fun testAddLibraryGSKWithKotlinVersion() {
         val files = importProjectFromTestData()
@@ -450,8 +451,23 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
+    @TargetVersions("3.5")
     @Test
     fun testChangeCoroutinesSupportGSK() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
+            }
+
+            checkFiles(files)
+        }
+    }
+
+    @TargetVersions("4.4+")
+    @Test
+    fun testChangeCoroutinesSupportGSK49() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
@@ -554,7 +570,12 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
             .forEach {
                 if (it.name == GradleConstants.SETTINGS_FILE_NAME && !File(testDataDirectory(), it.name + SUFFIX).exists()) return@forEach
                 val actualText = LoadTextUtil.loadText(it).toString()
-                KotlinTestUtils.assertEqualsToFile(File(testDataDirectory(), it.name + SUFFIX), actualText)
+                val expectedFileName = if (File(testDataDirectory(), it.name + ".$gradleVersion" + SUFFIX).exists()) {
+                    it.name + ".$gradleVersion" + SUFFIX
+                } else {
+                    it.name + SUFFIX
+                }
+                KotlinTestUtils.assertEqualsToFile(File(testDataDirectory(), expectedFileName), actualText)
             }
     }
 }

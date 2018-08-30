@@ -686,10 +686,12 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun PsiModifierListOwner.expectAnnotations(number: Int): Array<PsiAnnotation> =
-            this.modifierList!!.annotations.apply {
-                TestCase.assertEquals("expected one annotation, found ${this.joinToString(", ") { it.qualifiedName ?: "unknown" }}",
-                                      number, size)
-            }
+        this.modifierList!!.annotations.apply {
+            assertEquals(
+                "expected $number annotation(s), found [${this.joinToString(", ") { it.qualifiedName ?: "unknown" }}]",
+                number, size
+            )
+        }
 
     private fun configureKotlinVersion(version: String) {
         WriteAction.run<Throwable> {

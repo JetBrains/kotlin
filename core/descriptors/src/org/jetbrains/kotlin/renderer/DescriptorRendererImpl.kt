@@ -985,25 +985,25 @@ internal class DescriptorRendererImpl(
         }
 
         override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, builder: StringBuilder) {
-            if (renderAccessors) {
-                renderAccessorModifiers(descriptor, builder)
-                builder.append("getter for ")
-                renderProperty(descriptor.correspondingProperty, builder)
-            }
-            else {
-                visitFunctionDescriptor(descriptor, builder)
-            }
-
+            visitPropertyAccessorDescriptor(descriptor, builder, "getter")
         }
 
         override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, builder: StringBuilder) {
-            if (renderAccessors) {
-                renderAccessorModifiers(descriptor, builder)
-                builder.append("setter for ")
-                renderProperty(descriptor.correspondingProperty, builder)
-            }
-            else {
-                visitFunctionDescriptor(descriptor, builder)
+            visitPropertyAccessorDescriptor(descriptor, builder, "setter")
+        }
+
+        private fun visitPropertyAccessorDescriptor(descriptor: PropertyAccessorDescriptor, builder: StringBuilder, kind: String) {
+            when (propertyAccessorRenderingPolicy) {
+                PropertyAccessorRenderingPolicy.PRETTY -> {
+                    renderAccessorModifiers(descriptor, builder)
+                    builder.append("$kind for ")
+                    renderProperty(descriptor.correspondingProperty, builder)
+                }
+                PropertyAccessorRenderingPolicy.DEBUG -> {
+                    visitFunctionDescriptor(descriptor, builder)
+                }
+                PropertyAccessorRenderingPolicy.NONE -> {
+                }
             }
         }
 

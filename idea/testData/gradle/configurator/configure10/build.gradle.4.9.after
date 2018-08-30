@@ -1,0 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+}
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.0.6'
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+}

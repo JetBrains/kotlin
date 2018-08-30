@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
@@ -50,9 +49,10 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
+import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
+import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -475,8 +475,14 @@ class CompileServiceImpl(
                                           incrementalCompilationOptions.customCacheVersionFileName,
                                           workingDir,
                                           enabled = true)
-
-        val compiler = IncrementalJsCompilerRunner(workingDir, versions, reporter)
+        val modulesApiHistory = ModulesApiHistoryJs(incrementalCompilationOptions.modulesInfo)
+        val compiler = IncrementalJsCompilerRunner(
+            workingDir = workingDir,
+            cacheVersions = versions,
+            reporter = reporter,
+            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
+            modulesApiHistory = modulesApiHistory
+        )
         return compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
     }
 
@@ -508,6 +514,8 @@ class CompileServiceImpl(
         val javaSourceRoots = parsedModule.modules.flatMapTo(HashSet()) {
             it.getJavaSourceRoots().map { JvmSourceRoot(File(it.path), it.packagePrefix) }
         }
+
+        k2jvmArgs.commonSources = parsedModule.modules.flatMap { it.getCommonSourceFiles() }.toTypedArray().takeUnless { it.isEmpty() }
 
         val allKotlinFiles = parsedModule.modules.flatMap { it.getSourceFiles().map(::File) }
         k2jvmArgs.friendPaths = parsedModule.modules.flatMap(Module::getFriendPaths).toTypedArray()

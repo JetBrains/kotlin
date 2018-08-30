@@ -116,6 +116,7 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment) {
     moduleFragment.files.forEach(clble.getClosureBuilder())
     moduleFragment.files.forEach(clble.getReferenceReplacer())
     moduleFragment.files.forEach(ClassReferenceLowering(this)::lower)
+    moduleFragment.files.forEach(PrimitiveCompanionLowering(this)::lower)
     moduleFragment.files.forEach(IntrinsicifyCallsLowering(this)::lower)
 }
 

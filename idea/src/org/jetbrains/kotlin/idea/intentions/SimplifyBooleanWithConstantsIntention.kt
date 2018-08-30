@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
@@ -28,10 +27,11 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isTrueConstant
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.*
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.PARTIAL
 import org.jetbrains.kotlin.types.isFlexible
 
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
@@ -40,8 +40,11 @@ class SimplifyBooleanWithConstantsIntention :
     SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Simplify boolean expression") {
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
-        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, KtBinaryExpression::class.java) ?: element
-        return areThereExpressionsToBeSimplified(topBinary)
+        return areThereExpressionsToBeSimplified(element.topBinary())
+    }
+
+    private fun KtBinaryExpression.topBinary(): KtBinaryExpression {
+        return this.parentsWithSelf.takeWhile { it is KtBinaryExpression }.lastOrNull() as? KtBinaryExpression ?: this
     }
 
     private fun areThereExpressionsToBeSimplified(element: KtExpression?): Boolean {
@@ -61,7 +64,7 @@ class SimplifyBooleanWithConstantsIntention :
     }
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
-        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, KtBinaryExpression::class.java) ?: element
+        val topBinary = element.topBinary()
         val simplified = toSimplifiedExpression(topBinary)
         val result = topBinary.replaced(KtPsiUtil.safeDeparenthesize(simplified, true))
         removeRedundantAssertion(result)

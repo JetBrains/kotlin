@@ -23,7 +23,9 @@ class IncrementalModuleInfo(
     val projectRoot: File,
     val dirToModule: Map<File, IncrementalModuleEntry>,
     val nameToModules: Map<String, Set<IncrementalModuleEntry>>,
-    val jarToClassListFile: Map<File, File>
+    val jarToClassListFile: Map<File, File>,
+    // only for js
+    val jarToModule: Map<File, IncrementalModuleEntry>
 ) : Serializable {
     companion object {
         private const val serialVersionUID = 0L

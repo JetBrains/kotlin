@@ -53,7 +53,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             val platform = kotlinSourceSet.platform
             val rootModel = modelsProvider.getModifiableRootModel(ideModule)
 
-            if (platform != KotlinPlatform.JVM) {
+            if (platform != KotlinPlatform.JVM && platform != KotlinPlatform.ANDROID) {
                 migrateNonJvmSourceFolders(rootModel)
             }
 
@@ -81,7 +81,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             ?.data
             ?.let { findKotlinPluginVersion(it) } ?: return
         val platformKind = when (kotlinSourceSet.platform) {
-            KotlinPlatform.JVM -> TargetPlatformKind.Jvm[JvmTarget.fromString(
+            KotlinPlatform.JVM, KotlinPlatform.ANDROID -> TargetPlatformKind.Jvm[JvmTarget.fromString(
                 sourceSetData.targetCompatibility ?: ""
             ) ?: JvmTarget.DEFAULT]
             KotlinPlatform.JS -> TargetPlatformKind.JavaScript

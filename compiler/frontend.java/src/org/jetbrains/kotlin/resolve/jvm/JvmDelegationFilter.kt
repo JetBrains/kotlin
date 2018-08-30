@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 
 object JvmDelegationFilter : DelegationFilter {

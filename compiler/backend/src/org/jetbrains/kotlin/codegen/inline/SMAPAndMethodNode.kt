@@ -23,12 +23,12 @@ import java.util.*
 
 //TODO comment
 class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
-    val sortedRanges = createLineNumberSequence(node, classSMAP).map { it.mapper }.distinct().toList().sortedWith(RangeMapping.Comparator)
+    val sortedRanges = createLineNumberSequence(node, classSMAP).distinct().toList().sortedWith(RangeMapping.Comparator)
 
     fun copyWithNewNode(newMethodNode: MethodNode) = SMAPAndMethodNode(newMethodNode, classSMAP)
 }
 
-private fun createLineNumberSequence(node: MethodNode, classSMAP: SMAP): Sequence<LabelAndMapping> {
+private fun createLineNumberSequence(node: MethodNode, classSMAP: SMAP): Sequence<RangeMapping> {
     return InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map { lineNumber ->
         val index = classSMAP.intervals.binarySearch(RangeMapping(lineNumber.line, lineNumber.line, 1), Comparator {
             value, key ->
@@ -37,8 +37,6 @@ private fun createLineNumberSequence(node: MethodNode, classSMAP: SMAP): Sequenc
         if (index < 0) {
             error("Unmapped line number in inlined function ${node.name}:${lineNumber.line}")
         }
-        LabelAndMapping(lineNumber, classSMAP.intervals[index])
+        classSMAP.intervals[index]
     }
 }
-
-class LabelAndMapping(val lineNumberNode: LineNumberNode, val mapper: RangeMapping)

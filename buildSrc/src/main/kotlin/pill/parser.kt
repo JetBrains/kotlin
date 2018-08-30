@@ -15,6 +15,9 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
+import org.gradle.api.internal.file.copy.CopySpecInternal
+import org.gradle.api.internal.file.copy.SingleParentCopySpec
+import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.pill.POrderRoot.*
 import org.jetbrains.kotlin.pill.PSourceRoot.*
 import org.jetbrains.kotlin.pill.PillExtension.*
@@ -281,9 +284,38 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
         for (directory in directories) {
             sourceRoots += PSourceRoot(directory, kind, kotlinOptions)
         }
+
+        for (root in parseResourceRootsProcessedByProcessResourcesTask(project, sourceSet)) {
+            if (sourceRoots.none { it.path == root.path }) {
+                sourceRoots += root
+            }
+        }
     }
 
     return sourceRoots
+}
+
+private fun parseResourceRootsProcessedByProcessResourcesTask(project: Project, sourceSet: SourceSet): List<PSourceRoot> {
+    val isMainSourceSet = sourceSet.name == SourceSet.MAIN_SOURCE_SET_NAME
+    val isTestSourceSet = sourceSet.name == SourceSet.TEST_SOURCE_SET_NAME
+
+    val resourceRootKind = if (isTestSourceSet) PSourceRoot.Kind.TEST_RESOURCES else PSourceRoot.Kind.RESOURCES
+    val taskNameBase = "processResources"
+    val taskName = if (isMainSourceSet) taskNameBase else sourceSet.name + taskNameBase.capitalize()
+    val task = project.tasks.findByName(taskName) as? ProcessResources ?: return emptyList()
+
+    val roots = mutableListOf<File>()
+    fun collectRoots(spec: CopySpecInternal) {
+        if (spec is SingleParentCopySpec && spec.children.none()) {
+            roots += spec.sourcePaths.map { File(project.projectDir, it.toString()) }.filter { it.exists() }
+            return
+        }
+
+        spec.children.forEach(::collectRoots)
+    }
+    collectRoots(task.rootSpec)
+
+    return roots.map { PSourceRoot(it, resourceRootKind, null) }
 }
 
 private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? {
@@ -363,11 +395,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
             val dependency = (dependencyInfo as DependencyInfo.ResolvedDependencyInfo).dependency
 
             for (mapper in dependencyMappers) {
-                if (dependency.moduleGroup == mapper.group
-                    && dependency.moduleName == mapper.module
-                    && dependency.configuration in mapper.configurations
-                    && (mapper.version == null || dependency.moduleVersion == mapper.version)
-                ) {
+                if (dependency.configuration in mapper.configurations && mapper.predicate(dependency)) {
                     val mappedDependency = mapper.mapping(dependency)
 
                     if (mappedDependency != null) {

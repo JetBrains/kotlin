@@ -12,13 +12,15 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
  * This version includes the version of the core protobuf messages (metadata.proto) as well as JVM extensions (jvm_metadata.proto).
  */
 class JvmMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
-    // NOTE: 1.1 is incompatible with 1.0 and hence with any other version except 1.1.*
+    // In Kotlin 1.4, JVM metadata version is going to be advanced to 1.4.0.
+    // Kotlin 1.3 is able to read metadata of versions up to Kotlin 1.4.
+    // NOTE: 1.0 is a pre-Kotlin-1.0 metadata version, with which the current compiler is incompatible
     override fun isCompatible() =
-        this.major == 1 && this.minor == 1
+        major == 1 && minor in 1..4
 
     companion object {
         @JvmField
-        val INSTANCE = JvmMetadataVersion(1, 1, 11)
+        val INSTANCE = JvmMetadataVersion(1, 1, 12)
 
         @JvmField
         val INVALID_VERSION = JvmMetadataVersion()

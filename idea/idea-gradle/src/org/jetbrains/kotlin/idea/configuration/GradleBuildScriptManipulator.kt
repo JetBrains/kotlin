@@ -50,8 +50,7 @@ interface GradleBuildScriptManipulator<out Psi: PsiFile> {
 
     fun addKotlinLibraryToModuleBuildScript(
         scope: DependencyScope,
-        libraryDescriptor: ExternalLibraryDescriptor,
-        isAndroidModule: Boolean
+        libraryDescriptor: ExternalLibraryDescriptor
     )
 
     fun getKotlinStdlibVersion(): String?

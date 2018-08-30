@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
@@ -125,9 +123,13 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
     ) {
         JavaClassConstructorDescriptor enhanced = createSubstitutedCopy(
                 getContainingDeclaration(), /* original = */ null, getKind(), null, getAnnotations(), getSource());
+        ReceiverParameterDescriptor enhancedReceiver =
+                enhancedReceiverType == null ? null : DescriptorFactory.createExtensionReceiverParameterForCallable(
+                        enhanced, enhancedReceiverType, Annotations.Companion.getEMPTY()
+                );
         // We do not use doSubstitute here as in JavaMethodDescriptor.enhance because type parameters of constructor belongs to class
         enhanced.initialize(
-                enhancedReceiverType,
+                enhancedReceiver,
                 getDispatchReceiverParameter(),
                 getTypeParameters(),
                 UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), enhanced),

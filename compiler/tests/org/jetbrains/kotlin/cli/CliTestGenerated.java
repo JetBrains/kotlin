@@ -396,6 +396,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/kotlinPackage.args");
         }
 
+        @TestMetadata("kt19628_12.args")
+        public void testKt19628_12() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_12.args");
+        }
+
+        @TestMetadata("kt19628_13.args")
+        public void testKt19628_13() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_13.args");
+        }
+
+        @TestMetadata("kt19628_progressive.args")
+        public void testKt19628_progressive() throws Exception {
+            runTest("compiler/testData/cli/jvm/kt19628_progressive.args");
+        }
+
         @TestMetadata("kt22304.args")
         public void testKt22304() throws Exception {
             runTest("compiler/testData/cli/jvm/kt22304.args");
@@ -584,11 +599,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("wrongAbiVersion.args")
         public void testWrongAbiVersion() throws Exception {
             runTest("compiler/testData/cli/jvm/wrongAbiVersion.args");
-        }
-
-        @TestMetadata("wrongAbiVersionNoErrors.args")
-        public void testWrongAbiVersionNoErrors() throws Exception {
-            runTest("compiler/testData/cli/jvm/wrongAbiVersionNoErrors.args");
         }
 
         @TestMetadata("wrongArgument.args")

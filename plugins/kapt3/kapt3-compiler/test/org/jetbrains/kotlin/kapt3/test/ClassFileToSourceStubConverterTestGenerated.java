@@ -214,6 +214,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt19750.kt");
     }
 
+    @TestMetadata("kt24272.kt")
+    public void testKt24272() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt24272.kt");
+    }
+
     @TestMetadata("kt25071.kt")
     public void testKt25071() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt25071.kt");

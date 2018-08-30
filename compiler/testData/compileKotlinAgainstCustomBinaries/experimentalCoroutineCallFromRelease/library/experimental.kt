@@ -1,27 +1,14 @@
-suspend fun dummy() {}
-
-class C {
-    suspend fun dummy() = "OK"
-}
-
-class WithNested {
-    class Nested {
-        suspend fun dummy() = "OK"
-    }
-}
-
-class WithInner {
-    inner class Inner {
-        suspend fun dummy() = "OK"
-    }
-}
-
 val c: suspend () -> Unit = {}
 
 class WithTypeParameter<T: suspend() -> Unit> {}
 
 fun returnsSuspend() : suspend() -> Unit = {}
 
-fun builder(c: suspend () -> Unit) {}
-
 fun <T: suspend () -> Unit> withTypeParameter() = {}
+
+fun suspendFunctionNested(x: List<suspend () -> Unit>) {}
+fun suspendFunctionNestedInFunctionType(x: (suspend () -> Unit) -> Unit) {}
+
+fun suspendFunctionType3(x: suspend (Int, Int, Int) -> Unit) {}
+
+fun suspendVarargs(vararg x: suspend () -> Unit) {}

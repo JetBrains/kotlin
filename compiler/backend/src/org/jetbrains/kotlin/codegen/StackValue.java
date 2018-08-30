@@ -487,6 +487,33 @@ public abstract class StackValue {
         coerce(fromType, toType, v);
     }
 
+    public static boolean requiresInlineClassBoxingOrUnboxing(
+            @NotNull Type fromType,
+            @Nullable KotlinType fromKotlinType,
+            @NotNull Type toType,
+            @Nullable KotlinType toKotlinType
+    ) {
+        // NB see also coerceInlineClasses below
+
+        if (fromKotlinType == null || toKotlinType == null) return false;
+
+        boolean isFromTypeInlineClass = InlineClassesUtilsKt.isInlineClassType(fromKotlinType);
+        boolean isToTypeInlineClass = InlineClassesUtilsKt.isInlineClassType(toKotlinType);
+
+        if (!isFromTypeInlineClass && !isToTypeInlineClass) return false;
+
+        boolean isFromTypeUnboxed = isFromTypeInlineClass && isUnboxedInlineClass(fromKotlinType, fromType);
+        boolean isToTypeUnboxed = isToTypeInlineClass && isUnboxedInlineClass(toKotlinType, toType);
+
+        if (isFromTypeInlineClass && isToTypeInlineClass) {
+            return isFromTypeUnboxed != isToTypeUnboxed;
+        }
+        else {
+            return isFromTypeInlineClass /* && !isToTypeInlineClass */ && isFromTypeUnboxed ||
+                   isToTypeInlineClass /* && !isFromTypeInlineClass */ && isToTypeUnboxed;
+        }
+    }
+
     private static boolean coerceInlineClasses(
             @NotNull Type fromType,
             @Nullable KotlinType fromKotlinType,
@@ -494,6 +521,8 @@ public abstract class StackValue {
             @Nullable KotlinType toKotlinType,
             @NotNull InstructionAdapter v
     ) {
+        // NB see also requiresInlineClassBoxingOrUnboxing above
+
         if (fromKotlinType == null || toKotlinType == null) return false;
 
         boolean isFromTypeInlineClass = InlineClassesUtilsKt.isInlineClassType(fromKotlinType);
@@ -698,8 +727,8 @@ public abstract class StackValue {
         return new PostIncrement(index, increment);
     }
 
-    public static StackValue preIncrementForLocalVar(int index, int increment) {
-        return new PreIncrementForLocalVar(index, increment);
+    public static StackValue preIncrementForLocalVar(int index, int increment, @Nullable KotlinType kotlinType) {
+        return new PreIncrementForLocalVar(index, increment, kotlinType);
     }
 
     public static StackValue preIncrement(
@@ -710,7 +739,7 @@ public abstract class StackValue {
             @NotNull ExpressionCodegen codegen
     ) {
         if (stackValue instanceof StackValue.Local && Type.INT_TYPE == stackValue.type) {
-            return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta);
+            return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta, stackValue.kotlinType);
         }
         return new PrefixIncrement(type, stackValue, resolvedCall, codegen);
     }
@@ -1834,8 +1863,8 @@ public abstract class StackValue {
         private final int index;
         private final int increment;
 
-        public PreIncrementForLocalVar(int index, int increment) {
-            super(Type.INT_TYPE);
+        public PreIncrementForLocalVar(int index, int increment, @Nullable KotlinType kotlinType) {
+            super(Type.INT_TYPE, kotlinType);
             this.index = index;
             this.increment = increment;
         }
@@ -1861,7 +1890,7 @@ public abstract class StackValue {
                 ResolvedCall resolvedCall,
                 @NotNull ExpressionCodegen codegen
         ) {
-            super(type);
+            super(type, value.kotlinType);
             this.value = value;
             this.resolvedCall = resolvedCall;
             this.codegen = codegen;

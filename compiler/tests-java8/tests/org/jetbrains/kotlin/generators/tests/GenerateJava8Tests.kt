@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.codegen.AbstractCompileKotlinAgainstKotlinTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
-import org.jetbrains.kotlin.jvm.compiler.AbstractJava8WriteSignatureTest
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8Test
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8WithFastClassReadingTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest
@@ -75,10 +74,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractCompileKotlinAgainstKotlinTest> {
             model("codegen/java8/compileKotlinAgainstKotlin")
-        }
-
-        testClass<AbstractJava8WriteSignatureTest> {
-            model("codegen/java8/writeSignature")
         }
 
         testClass<AbstractWriteFlagsTest> {

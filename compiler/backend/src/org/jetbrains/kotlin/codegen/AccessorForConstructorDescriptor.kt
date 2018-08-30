@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -56,7 +55,7 @@ class AccessorForConstructorDescriptor(
 
     init {
         initialize(
-            DescriptorUtils.getReceiverParameterType(extensionReceiverParameter),
+            calleeDescriptor.extensionReceiverParameter?.copy(this),
             calleeDescriptor.dispatchReceiverParameter,
             copyTypeParameters(calleeDescriptor),
             copyValueParameters(calleeDescriptor),

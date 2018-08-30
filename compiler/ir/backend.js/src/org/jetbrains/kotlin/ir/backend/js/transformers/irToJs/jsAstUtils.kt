@@ -35,12 +35,19 @@ fun jsAssignment(left: JsExpression, right: JsExpression) = JsBinaryOperation(Js
 
 fun prototypeOf(classNameRef: JsExpression) = JsNameRef(Namer.PROTOTYPE_NAME, classNameRef)
 
-fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
+fun translateFunction(declaration: IrFunction, name: JsName?, isObjectConstructor: Boolean, context: JsGenerationContext): JsFunction {
     val functionScope = JsFunctionScope(context.currentScope, "scope for ${name ?: "annon"}")
     val functionContext = context.newDeclaration(functionScope, declaration)
     val functionParams = declaration.valueParameters.map { functionContext.getNameForSymbol(it.symbol) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
-    val function = JsFunction(functionScope, body, "member function ${name ?: "annon"}")
+
+    val functionBody = if (isObjectConstructor) {
+        val instanceName = context.currentScope.declareName(name!!.objectInstanceName())
+        val assignObject = jsAssignment(JsNameRef(instanceName), JsThisRef())
+        JsBlock(assignObject.makeStmt(), body)
+    } else body
+
+    val function = JsFunction(functionScope, functionBody, "member function ${name ?: "annon"}")
 
     function.name = name
 
@@ -75,3 +82,5 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
 val IrFunction.isStatic: Boolean get() = this.dispatchReceiverParameter == null
 
 fun JsStatement.asBlock() = this as? JsBlock ?: JsBlock(this)
+
+fun JsName.objectInstanceName() = "${ident}_instance"

@@ -43,6 +43,7 @@ public class CodegenBinding {
     private static final WritableSlice<ClassDescriptor, Collection<ClassDescriptor>> INNER_CLASSES = Slices.createSimpleSlice();
 
     public static final WritableSlice<KtExpression, SamType> SAM_VALUE = Slices.createSimpleSlice();
+    public static final WritableSlice<KtExpression, Type> FUNCTION_TYPE_FOR_SUSPEND_WRAPPER = Slices.createSimpleSlice();
 
     public static final WritableSlice<KtCallElement, KtExpression> SAM_CONSTRUCTOR_TO_ARGUMENT = Slices.createSimpleSlice();
 

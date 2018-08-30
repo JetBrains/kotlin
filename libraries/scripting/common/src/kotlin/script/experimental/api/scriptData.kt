@@ -8,6 +8,7 @@
 package kotlin.script.experimental.api
 
 import java.net.URL
+import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptSource {
     val location: URL?
@@ -22,7 +23,7 @@ data class ScriptSourceNamedFragment(val name: String?, val range: ScriptSource.
 
 enum class ScriptBodyTarget {
     Constructor,
-    SingleAbstractMethod
+    SAMFunction
 }
 
 data class ResolvingRestrictionRule(
@@ -39,3 +40,20 @@ interface ScriptDependency {
     // Q: anything generic here?
 }
 
+
+interface ScriptCollectedDataKeys
+
+class ScriptCollectedData(properties: Map<PropertiesCollection.Key<*>, Any>) : PropertiesCollection(properties) {
+
+    companion object : ScriptCollectedDataKeys
+}
+
+val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
+
+val ScriptCollectedDataKeys.foundFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
+
+class ScriptConfigurationRefinementContext(
+    val source: ScriptSource,
+    val compilationConfiguration: ScriptCompilationConfiguration,
+    val collectedData: ScriptCollectedData? = null
+)

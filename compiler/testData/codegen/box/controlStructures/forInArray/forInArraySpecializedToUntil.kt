@@ -129,7 +129,7 @@ fun checkIntArrayMethodCallBound(): Boolean {
     val intArray = intArrayOf(1, 2, 3)
     var start = 0
     var sum = 0
-    for (i in 0..Math.min(intArray.size, 10) - 1) {
+    for (i in 0..intArray.size.coerceAtMost(10) - 1) {
         sum += intArray[i]
     }
     if (sum != 6) return false

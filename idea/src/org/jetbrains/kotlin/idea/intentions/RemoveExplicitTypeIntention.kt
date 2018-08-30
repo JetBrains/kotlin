@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -35,7 +37,10 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
     }
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
+        val initializer = (element as? KtProperty)?.initializer
+        val typeArgumentList = initializer?.let { getQualifiedTypeArgumentList(it) }
         element.typeReference = null
+        if (typeArgumentList != null) addTypeArgumentsIfNeeded(initializer, typeArgumentList)
     }
 
     companion object {

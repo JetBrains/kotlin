@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -30,7 +28,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 /*
@@ -227,7 +229,7 @@ private fun makeJvmStaticFunctionSymbol(
     )
 
     proxyDescriptorForIrFunction.initialize(
-        oldFunctionSymbol.descriptor.extensionReceiverParameter?.type,
+        oldFunctionSymbol.descriptor.extensionReceiverParameter?.copy(proxyDescriptorForIrFunction),
         null,
         oldFunctionSymbol.descriptor.typeParameters,
         oldFunctionSymbol.descriptor.valueParameters.map { it.copy(proxyDescriptorForIrFunction, it.name, it.index) },

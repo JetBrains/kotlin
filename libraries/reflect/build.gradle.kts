@@ -17,7 +17,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.0.2")
+        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.0.4")
     }
 }
 

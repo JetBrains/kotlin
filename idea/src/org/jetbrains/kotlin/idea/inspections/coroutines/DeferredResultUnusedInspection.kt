@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import javax.swing.JComponent
 
-class DeferredResultUnusedInspection(@JvmField var standardOnly: Boolean = true) : AbstractResultUnusedChecker(
+class DeferredResultUnusedInspection(@JvmField var standardOnly: Boolean = false) : AbstractResultUnusedChecker(
     expressionChecker = fun(expression, inspection): Boolean =
         inspection is DeferredResultUnusedInspection && expression is KtCallExpression &&
                 (!inspection.standardOnly || expression.calleeExpression?.text in shortNames),

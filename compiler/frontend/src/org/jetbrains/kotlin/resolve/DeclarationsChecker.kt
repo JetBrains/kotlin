@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.isInlineOnly
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 internal class DeclarationsCheckerBuilder(
@@ -404,6 +406,8 @@ class DeclarationsChecker(
                 // Otherwise report the diagnostic on the type parameter declaration
                 declaration
             }
+
+            if (descriptor.containingDeclaration.safeAs<MemberDescriptor>()?.isInlineOnly() == true) return
 
             trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(reportOn))
         }

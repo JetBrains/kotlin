@@ -100,7 +100,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun maybeGenerateObjectInstance(): List<JsStatement> {
-        val instanceVarName = "${className.ident}_instance"
+        val instanceVarName = className.objectInstanceName()
         val getInstanceFunName = "${className.ident}_getInstance"
         val jsVarNode = context.currentScope.declareName(instanceVarName)
         val varStmt = JsVars(JsVars.JsVar(jsVarNode))

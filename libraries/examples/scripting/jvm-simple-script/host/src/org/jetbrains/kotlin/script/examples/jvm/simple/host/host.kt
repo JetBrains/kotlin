@@ -6,38 +6,25 @@
 package org.jetbrains.kotlin.script.examples.jvm.simple.host
 
 import org.jetbrains.kotlin.script.examples.jvm.simple.MyScript
-import org.jetbrains.kotlin.script.util.*
 import java.io.File
-import kotlin.script.experimental.api.*
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.api.EvaluationResult
+import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
-import kotlin.script.experimental.misc.*
-
-val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
-    listOf(
-        baseClass<MyScript>(),
-        dependencies(JvmDependency(scriptCompilationClasspathFromContext("scripting-jvm-simple-script" /* script library jar name */)))
-    )
-}
+import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.createBasicScriptCompilationConfigurationFromAnnotatedBaseClass
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
-    val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
-        ScriptingEnvironment(
-            ScriptingEnvironmentProperties.baseClass<MyScript>(),
-            ScriptingEnvironmentProperties.getScriptingClass(JvmGetScriptingClass())
-        )
-    )
+    val compilationConfiguration = createBasicScriptCompilationConfigurationFromAnnotatedBaseClass<MyScript> {
+        jvm {
+            dependenciesFromCurrentContext(
+                "scripting-jvm-simple-script" /* script library jar name */
+            )
+        }
+    }
 
-    val host = JvmBasicScriptingHost(
-        scriptDefinition.compilationConfigurator,
-        scriptCompiler,
-        scriptDefinition.evaluator
-    )
-
-    return host.eval(scriptFile.toScriptSource(), ScriptCompileConfiguration(myJvmConfigParams), ScriptEvaluationEnvironment())
+    return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), compilationConfiguration, null)
 }
 
 fun main(vararg args: String) {

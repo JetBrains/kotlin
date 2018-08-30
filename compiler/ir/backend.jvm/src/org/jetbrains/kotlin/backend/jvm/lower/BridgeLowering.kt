@@ -53,8 +53,8 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescrip
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getSuperClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
-import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -197,7 +197,8 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
         )
 
         bridgeDescriptorForIrFunction.initialize(
-            bridge.descriptor.extensionReceiverParameter?.returnType, containingClass.thisAsReceiverParameter, emptyList(),
+            bridge.descriptor.extensionReceiverParameter?.copy(bridgeDescriptorForIrFunction),
+            containingClass.thisAsReceiverParameter, emptyList(),
             bridge.descriptor.valueParameters.map { it.copy(bridgeDescriptorForIrFunction, it.name, it.index) },
             bridge.descriptor.returnType, Modality.OPEN, descriptor.visibility
         )
@@ -329,7 +330,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             )
 
             delegationDescriptor.initialize(
-                descriptor.extensionReceiverParameter?.returnType, containingClass.thisAsReceiverParameter, emptyList(),
+                descriptor.extensionReceiverParameter?.copy(delegationDescriptor), containingClass.thisAsReceiverParameter, emptyList(),
                 descriptor.valueParameters.map { it.copy(delegationDescriptor, it.name, it.index) },
                 descriptor.returnType, Modality.OPEN, descriptor.visibility
             )

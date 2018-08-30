@@ -88,6 +88,7 @@ public class DescriptorResolver {
     private final TypeApproximator typeApproximator;
     private final DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer;
     private final DataFlowValueFactory dataFlowValueFactory;
+    private final Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -106,7 +107,8 @@ public class DescriptorResolver {
             @NotNull Project project,
             @NotNull TypeApproximator approximator,
             @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer,
-            @NotNull DataFlowValueFactory dataFlowValueFactory
+            @NotNull DataFlowValueFactory dataFlowValueFactory,
+            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -125,6 +127,7 @@ public class DescriptorResolver {
         typeApproximator = approximator;
         this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
         this.dataFlowValueFactory = dataFlowValueFactory;
+        this.anonymousTypeTransformers = anonymousTypeTransformers;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -927,8 +930,15 @@ public class DescriptorResolver {
             }
         }
 
-        ReceiverParameterDescriptor receiverDescriptor =
-                DescriptorFactory.createExtensionReceiverParameterForCallable(propertyDescriptor, receiverType);
+        ReceiverParameterDescriptor receiverDescriptor;
+        if (receiverType != null) {
+            receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
+                    propertyDescriptor, receiverType, Annotations.Companion.getEMPTY()
+            );
+        }
+        else {
+            receiverDescriptor = null;
+        }
 
         LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeForInitializerResolutionWithTypeParameters, propertyDescriptor);
         KotlinType propertyType = propertyInfo.getVariableType();
@@ -977,8 +987,16 @@ public class DescriptorResolver {
             @NotNull DeclarationDescriptorWithVisibility descriptor,
             @NotNull KtDeclaration declaration,
             @NotNull KotlinType type,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers
     ) {
+        for (DeclarationSignatureAnonymousTypeTransformer transformer : anonymousTypeTransformers) {
+            KotlinType transformedType = transformer.transformAnonymousType(descriptor, type);
+            if (transformedType != null) {
+                return transformedType;
+            }
+        }
+
         ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
         if (classifier == null || !DescriptorUtils.isAnonymousObject(classifier) || DescriptorUtils.isLocal(descriptor)) {
             return type;
@@ -995,7 +1013,6 @@ public class DescriptorResolver {
 
         return type;
     }
-
 
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(
@@ -1159,7 +1176,7 @@ public class DescriptorResolver {
         return wrappedTypeFactory.createRecursionIntolerantDeferredType(trace, () -> {
             PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace, languageVersionSettings);
             KotlinType type = expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
-            KotlinType publicType = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
+            KotlinType publicType = transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace, anonymousTypeTransformers);
             UnwrappedType approximatedType = typeApproximator.approximateDeclarationType(publicType, false, languageVersionSettings);
             KotlinType sanitizedType = declarationReturnTypeSanitizer.sanitizeReturnType(approximatedType, wrappedTypeFactory, trace, languageVersionSettings);
             functionsTypingVisitor.checkTypesForReturnStatements(function, trace, sanitizedType);
@@ -1213,9 +1230,7 @@ public class DescriptorResolver {
                 false
         );
         propertyWrapper.setDescriptor(propertyDescriptor);
-        propertyDescriptor.setType(
-                type, Collections.emptyList(), getDispatchReceiverParameterIfNeeded(classDescriptor), (ReceiverParameterDescriptor) null
-        );
+        propertyDescriptor.setType(type, Collections.emptyList(), getDispatchReceiverParameterIfNeeded(classDescriptor), null);
 
         Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
         Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(

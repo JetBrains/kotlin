@@ -5,6 +5,10 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    maven("https://dl.bintray.com/jetbrains/markdown")
+}
+
 dependencies {
     testRuntime(intellijDep())
 
@@ -38,11 +42,11 @@ dependencies {
     compile(project(":kotlin-script-util")) { isTransitive = false }
 
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    compile(commonDep("org.jetbrains", "markdown"))
 
     compileOnly(project(":kotlin-daemon-client"))
 
     compileOnly(intellijDep())
+    compileOnly(commonDep("org.jetbrains", "markdown"))
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     compileOnly(intellijPluginDep("IntelliLang"))
     compileOnly(intellijPluginDep("copyright"))
@@ -57,6 +61,7 @@ dependencies {
     testCompile(project(":idea:idea-maven")) { isTransitive = false }
     testCompile(commonDep("junit:junit"))
 
+    testRuntime(commonDep("org.jetbrains", "markdown"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-preloader"))
@@ -85,6 +90,7 @@ dependencies {
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
+    testCompile(intellijPluginDep("stream-debugger"))
     testCompileOnly(intellijDep())
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     testCompileOnly(intellijPluginDep("gradle"))

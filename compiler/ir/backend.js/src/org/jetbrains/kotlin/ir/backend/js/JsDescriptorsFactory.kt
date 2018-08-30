@@ -53,16 +53,10 @@ class JsDescriptorsFactory : DescriptorsFactory {
                 false,
                 false
             ).apply {
-                setType(
-                    outerClass.defaultType.toKotlinType(),
-                    emptyList(),
-                    innerClass.descriptor.thisAsReceiverParameter,
-                    null as? ReceiverParameterDescriptor
-                )
+                setType(outerClass.defaultType.toKotlinType(), emptyList(), innerClass.descriptor.thisAsReceiverParameter, null)
                 initialize(null, null)
             })
         }
-
 
     override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructorSymbol {
         val innerClass = innerClassConstructor.parent as IrClass
@@ -109,7 +103,7 @@ class JsDescriptorsFactory : DescriptorsFactory {
             CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false,
             /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false, /* isDelegated = */ false
         ).apply {
-            setType(objectDescriptor.defaultType, emptyList(), null, null as ReceiverParameterDescriptor)
+            setType(objectDescriptor.defaultType, emptyList(), null, null)
             initialize(null, null)
         }
     }

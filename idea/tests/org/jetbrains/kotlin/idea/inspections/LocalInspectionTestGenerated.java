@@ -1864,6 +1864,87 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/coroutines/redundantAsync/withStartNoContext.kt");
             }
         }
+
+        @TestMetadata("idea/testData/inspectionsLocal/coroutines/redundantRunCatching")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RedundantRunCatching extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInRedundantRunCatching() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines/redundantRunCatching"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/redundantRunCatching/simple.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ResultIsSuccessOrFailure extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            @TestMetadata("abstract.kt")
+            public void testAbstract() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/abstract.kt");
+            }
+
+            public void testAllFilesPresentInResultIsSuccessOrFailure() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("anonymous.kt")
+            public void testAnonymous() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/anonymous.kt");
+            }
+
+            @TestMetadata("complexBlock.kt")
+            public void testComplexBlock() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/complexBlock.kt");
+            }
+
+            @TestMetadata("lambdaSimple.kt")
+            public void testLambdaSimple() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/lambdaSimple.kt");
+            }
+
+            @TestMetadata("lambdaWithPartialReturn.kt")
+            public void testLambdaWithPartialReturn() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/lambdaWithPartialReturn.kt");
+            }
+
+            @TestMetadata("lambdaWithReturn.kt")
+            public void testLambdaWithReturn() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/lambdaWithReturn.kt");
+            }
+
+            @TestMetadata("needParentheses.kt")
+            public void testNeedParentheses() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/needParentheses.kt");
+            }
+
+            @TestMetadata("rename.kt")
+            public void testRename() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/rename.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/simple.kt");
+            }
+
+            @TestMetadata("simpleBlock.kt")
+            public void testSimpleBlock() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/resultIsSuccessOrFailure/simpleBlock.kt");
+            }
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith")
@@ -4100,6 +4181,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testCompanionWithName() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSemicolon/companionWithName.kt");
         }
+
+        @TestMetadata("ifElse.kt")
+        public void testIfElse() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSemicolon/ifElse.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantSetter")
@@ -4499,6 +4585,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/property.kt");
+        }
+
+        @TestMetadata("yield.kt")
+        public void testYield() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantBackticks/yield.kt");
         }
     }
 
@@ -4913,6 +5004,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("rangeTo.kt")
         public void testRangeTo() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceRangeToWithUntil/rangeTo.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/inspectionsLocal/replaceSingleLineLet")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSingleLineLet extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceSingleLineLet() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceSingleLineLet"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("callChain.kt")
+        public void testCallChain() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/callChain.kt");
+        }
+
+        @TestMetadata("callChain2.kt")
+        public void testCallChain2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/callChain2.kt");
+        }
+
+        @TestMetadata("callChain3.kt")
+        public void testCallChain3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/callChain3.kt");
+        }
+
+        @TestMetadata("callChainWithLineBreak.kt")
+        public void testCallChainWithLineBreak() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/callChainWithLineBreak.kt");
+        }
+
+        @TestMetadata("longCallChain.kt")
+        public void testLongCallChain() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/longCallChain.kt");
+        }
+
+        @TestMetadata("noReceiver.kt")
+        public void testNoReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/noReceiver.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceSingleLineLet/simple.kt");
         }
     }
 

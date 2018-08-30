@@ -7,6 +7,7 @@ package kotlin.coroutines
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import kotlin.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons.*
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @PublishedApi
 @SinceKotlin("1.3")

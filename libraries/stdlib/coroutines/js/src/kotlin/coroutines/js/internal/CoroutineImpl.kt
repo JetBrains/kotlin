@@ -5,7 +5,7 @@
 
 package kotlin.coroutines
 
-import kotlin.coroutines.intrinsics.CoroutineSingletons
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @SinceKotlin("1.3")
 @JsName("CoroutineImpl")
@@ -45,7 +45,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
 
                 try {
                     val outcome = doResume()
-                    if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
+                    if (outcome === COROUTINE_SUSPENDED) return
                     currentResult = outcome
                     currentException = null
                 } catch (exception: dynamic) { // Catch all exceptions

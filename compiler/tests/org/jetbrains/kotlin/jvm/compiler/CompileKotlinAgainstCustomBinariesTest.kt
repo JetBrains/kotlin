@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
+import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.WrongBytecodeVersionTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -255,6 +256,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
                 listOf("-language-version", someStableReleasedVersion.versionString)
             )
+
+            checkPreReleaseness(File(tmpdir, "usage/SourceKt.class"), shouldBePreRelease = false)
         }
     }
 
@@ -265,6 +268,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
                 listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString)
             )
+
+            checkPreReleaseness(File(tmpdir, "usage/SourceKt.class"), shouldBePreRelease = true)
         }
     }
 
@@ -316,7 +321,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testRequireKotlinInNestedClassesAgainst14() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xmetadata-version=1.4.0"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xskip-metadata-version-check"))
+        compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     fun testRequireKotlinInNestedClassesAgainst14Js() {
@@ -484,6 +489,14 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testExperimentalCoroutineCallFromRelease() {
+        doTestExperimentalCoroutineCallFromRelease()
+    }
+
+    fun testExperimentalCoroutineCallFromReleaseWarnings() {
+        doTestExperimentalCoroutineCallFromRelease()
+    }
+
+    private fun doTestExperimentalCoroutineCallFromRelease() {
         val library = compileLibrary(
             "library",
             additionalOptions = listOf("-language-version", "1.2"),
@@ -492,7 +505,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin(
             "release.kt",
             tmpdir,
-            listOf(library),
+            listOf(library, ForTestCompileRuntime.coroutinesJarForTests()),
             additionalOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
         )
     }
@@ -600,6 +613,27 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             }
 
             return outputFile
+        }
+
+        private fun checkPreReleaseness(file: File, shouldBePreRelease: Boolean) {
+            // If there's no "xi" field in the Metadata annotation, it's value is assumed to be 0, i.e. _not_ pre-release
+            var isPreRelease = false
+
+            ClassReader(file.readBytes()).accept(object : ClassVisitor(Opcodes.ASM6) {
+                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                    if (desc != JvmAnnotationNames.METADATA_DESC) return null
+
+                    return object : AnnotationVisitor(Opcodes.ASM6) {
+                        override fun visit(name: String, value: Any) {
+                            if (name != JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME) return
+
+                            isPreRelease = (value as Int and JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG) != 0
+                        }
+                    }
+                }
+            }, 0)
+
+            TestCase.assertEquals("Pre-release flag of the class file has incorrect value", shouldBePreRelease, isPreRelease)
         }
     }
 }

@@ -16,26 +16,18 @@
 
 package org.jetbrains.kotlin.resolve.annotations
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ErrorValue
 
+// This annotation is declared here in frontend (as opposed to frontend.java) because it's used in MainFunctionDetector.
+// If you wish to add another JVM-related annotation and has/find utility methods, please proceed to jvmAnnotationUtil.kt
 val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
 
-val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
-
-val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
-
 private val IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME = FqName("kotlin.internal.ImplicitIntegerCoercion")
-
-fun CallableMemberDescriptor.hasJvmDefaultAnnotation() =
-    DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
-
 
 fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
     return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null
@@ -45,18 +37,14 @@ fun DeclarationDescriptor.hasImplicitIntegerCoercionAnnotation(): Boolean {
     return annotations.findAnnotation(IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME) != null
 }
 
-private val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
-
-fun DeclarationDescriptor.hasJvmSyntheticAnnotation() = findJvmSyntheticAnnotation() != null
-
-fun DeclarationDescriptor.findJvmSyntheticAnnotation() =
-    DescriptorUtils.getAnnotationByFqName(annotations, JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
-
-private val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
-
-fun DeclarationDescriptor.findStrictfpAnnotation() =
-    DescriptorUtils.getAnnotationByFqName(annotations, STRICTFP_ANNOTATION_FQ_NAME)
-
 fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>? {
     return allValueArguments[Name.identifier(parameterName)].takeUnless { it is ErrorValue }
 }
+
+@Deprecated(
+    "Use org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME or " +
+            "org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation instead.",
+    ReplaceWith("org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME"),
+    DeprecationLevel.ERROR
+)
+val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")

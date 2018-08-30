@@ -124,8 +124,7 @@ open class SymbolTable : ReferenceSymbolTable {
         private var currentScope: Scope? = null
 
         override fun get(d: D): S? {
-            val scope = currentScope
-                 ?: throw AssertionError("No active scope")
+            val scope = currentScope ?: return null
             return scope[d]
         }
 

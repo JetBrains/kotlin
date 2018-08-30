@@ -1,5 +1,5 @@
 // WITH_REFLECT
-// IGNORE_BACKEND: JVM_IR, JS_IR, JS
+// IGNORE_BACKEND: JVM_IR, JS_IR, JS, NATIVE
 
 // Please make sure that this test is consistent with the diagnostic test "annotationsTargetingNonExistentAccessor.kt"
 

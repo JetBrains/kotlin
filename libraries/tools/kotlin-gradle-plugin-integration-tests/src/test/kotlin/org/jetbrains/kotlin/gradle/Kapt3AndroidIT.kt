@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
+import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
@@ -127,28 +128,31 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
+    fun testICWithAnonymousClasses() {
+        val project = Project("icAnonymousTypes", directoryPrefix = "kapt2")
+        setupDataBinding(project, null)
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+
+        val aKt = project.projectDir.getFileByName("a.kt").also { assert(it.exists()) }
+        aKt.modify {
+            assert(it.contains("CrashMe2(1000)"))
+            it.replace("CrashMe2(1000)", "CrashMe2(2000)")
+        }
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+    }
+
+    @Test
     open fun testDatabinding() {
         val project = Project("android-databinding", directoryPrefix = "kapt2")
-
-        if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-            project.setupWorkingDir()
-
-            // With new AGP, there's no need in the Databinding kapt dependency:
-            project.gradleBuildScript("app").modify {
-                it.lines().filterNot {
-                    it.contains("kapt \"com.android.databinding:compiler")
-                }.joinToString("\n")
-            }
-
-            // Workaround for KT-24915
-            project.gradleBuildScript("app").appendText(
-                "\n" + """
-               afterEvaluate {
-                    kaptDebugKotlin.dependsOn dataBindingExportFeaturePackageIdsDebug
-               }
-            """.trimIndent()
-            )
-        }
+        setupDataBinding(project, "app")
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -163,6 +167,28 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
             // KT-23866
             assertNotContains("The following options were not recognized by any processor")
+        }
+    }
+
+    private fun setupDataBinding(project: Project, projectName: String?) {
+        if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+            project.setupWorkingDir()
+
+            // With new AGP, there's no need in the Databinding kapt dependency:
+            project.gradleBuildScript(projectName).modify {
+                it.lines().filterNot {
+                    it.contains("kapt \"com.android.databinding:compiler")
+                }.joinToString("\n")
+            }
+
+            // Workaround for KT-24915
+            project.gradleBuildScript(projectName).appendText(
+                "\n" + """
+               afterEvaluate {
+                    kaptDebugKotlin.dependsOn dataBindingExportFeaturePackageIdsDebug
+               }
+            """.trimIndent()
+            )
         }
     }
 }

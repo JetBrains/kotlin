@@ -9,11 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class JvmDefaultSuperCallChecker : CallChecker {

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -140,8 +141,7 @@ abstract class FileRankingCalculator(
             method.isFinal && descriptor.modality == Modality.FINAL,
             method.isVarArgs && descriptor.varargParameterPosition() >= 0,
             rankingForVisibility(descriptor, method),
-            rankingForType(descriptor.returnType, method.safeReturnType(), typeMapper),
-            rankingForValueParameters(descriptor.valueParameters, method.safeArguments(), typeMapper)
+            descriptor.valueParameters.size == (method.safeArguments()?.size ?: 0)
         )
     }
 
@@ -162,18 +162,7 @@ abstract class FileRankingCalculator(
         }
 
         val actualPropertyName = getPropertyName(methodName, accessor.isSetter)
-        if (expectedPropertyName != actualPropertyName)
-            return -NORMAL
-
-        val bindingContext = analyze(accessor.property)
-        val descriptor = bindingContext[BindingContext.PROPERTY_ACCESSOR, accessor] ?: return ZERO
-
-        val jdiPropertyType = when {
-            accessor.isGetter -> method.safeReturnType()
-            else -> method.safeArguments()?.map { it.safeType() }?.singleOrNull()
-        }
-
-        return rankingForType(descriptor.returnType, jdiPropertyType, makeTypeMapper(bindingContext))
+        return if (expectedPropertyName == actualPropertyName) NORMAL else -NORMAL
     }
 
     private fun getPropertyName(accessorMethodName: String, isSetter: Boolean): String {
@@ -200,70 +189,11 @@ abstract class FileRankingCalculator(
         return if (methodName.drop(3) == propertyName.capitalize()) MAJOR else -NORMAL
     }
 
-    private fun rankingForValueParameters(
-        ktParameters: List<ValueParameterDescriptor>,
-        jdiParameters: List<LocalVariable>?,
-        typeMapper: KotlinTypeMapper
-    ): Ranking {
-        if (jdiParameters == null)
-            return ZERO
-
-        if (ktParameters.size != jdiParameters.size)
-            return -NORMAL
-
-        return ktParameters.zip(jdiParameters).fold(ZERO) { sum, (ktParameter, jdiParameter) ->
-            sum + rankingForValueParameter(ktParameter, jdiParameter, typeMapper)
-        }
-    }
-
-    private fun rankingForValueParameter(
-        ktParameter: ValueParameterDescriptor,
-        jdiParameter: LocalVariable,
-        typeMapper: KotlinTypeMapper
-    ): Ranking {
-        return collect(
-            ktParameter.name.asString() == jdiParameter.name(),
-            rankingForType(ktParameter.type, jdiParameter.safeType(), typeMapper)
-        )
-    }
-
     private fun rankingForVisibility(descriptor: DeclarationDescriptorWithVisibility, accessible: Accessible): Ranking {
         return collect(
             accessible.isPublic && descriptor.visibility == Visibilities.PUBLIC,
             accessible.isProtected && descriptor.visibility == Visibilities.PROTECTED,
             accessible.isPrivate && descriptor.visibility == Visibilities.PRIVATE
-        )
-    }
-
-    private fun rankingForType(ktType: KotlinType?, jdiType: Type?, typeMapper: KotlinTypeMapper): Ranking {
-        if (jdiType == null)
-            return ZERO
-
-        if (ktType == null)
-            return Ranking.minor(jdiType is VoidType)
-
-        val asmType = typeMapper.mapType(ktType)
-        return Ranking.minor(
-            when (jdiType) {
-                is VoidType -> asmType == AsmType.VOID_TYPE
-                is LongType -> asmType == AsmType.LONG_TYPE
-                is DoubleType -> asmType == AsmType.DOUBLE_TYPE
-                is CharType -> asmType == AsmType.CHAR_TYPE
-                is FloatType -> asmType == AsmType.FLOAT_TYPE
-                is ByteType -> asmType == AsmType.BYTE_TYPE
-                is IntegerType -> asmType == AsmType.INT_TYPE
-                is BooleanType -> asmType == AsmType.BOOLEAN_TYPE
-                is ShortType -> asmType == AsmType.SHORT_TYPE
-                is ArrayType -> {
-                    asmType.sort == AsmType.ARRAY && KotlinBuiltIns.isArrayOrPrimitiveArray(ktType) && run {
-                        val ktElementType = ktType.builtIns.getArrayElementType(ktType)
-                        val jdiElementType = jdiType.componentType()
-                        rankingForType(ktElementType, jdiElementType, typeMapper) > ZERO
-                    }
-                }
-                is ReferenceType -> asmType.className == jdiType.name()
-                else -> false
-            }
         )
     }
 
@@ -417,7 +347,10 @@ abstract class FileRankingCalculator(
     }
 
     private fun makeTypeMapper(bindingContext: BindingContext): KotlinTypeMapper {
-        return KotlinTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, "debugger", false)
+        return KotlinTypeMapper(
+            bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, "debugger", JvmTarget.DEFAULT,
+            KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT, false
+        )
     }
 
     companion object {

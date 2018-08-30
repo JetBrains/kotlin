@@ -5683,6 +5683,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/noOperatorModifierOnProvideDelegate.kt");
                 }
 
+                @TestMetadata("overloadResolutionForSeveralProvideDelegates.kt")
+                public void testOverloadResolutionForSeveralProvideDelegates() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/overloadResolutionForSeveralProvideDelegates.kt");
+                }
+
                 @TestMetadata("provideDelegateOperatorDeclaration.kt")
                 public void testProvideDelegateOperatorDeclaration() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateOperatorDeclaration.kt");
@@ -10289,6 +10294,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/upperBounds/nonNullUpperBound.kt");
                 }
 
+                @TestMetadata("typeParameterAsUpperBound.kt")
+                public void testTypeParameterAsUpperBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/upperBounds/typeParameterAsUpperBound.kt");
+                }
+
                 @TestMetadata("useBoundsIfUnknownParameters.kt")
                 public void testUseBoundsIfUnknownParameters() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/upperBounds/useBoundsIfUnknownParameters.kt");
@@ -11845,6 +11855,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("specializedMap.kt")
                 public void testSpecializedMap() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverrides/specializedMap.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/primitiveOverridesWithInlineClass")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class PrimitiveOverridesWithInlineClass extends AbstractDiagnosticsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInPrimitiveOverridesWithInlineClass() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/primitiveOverridesWithInlineClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("inlineClassErasedToPrimitiveInt.kt")
+                public void testInlineClassErasedToPrimitiveInt() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/primitiveOverridesWithInlineClass/inlineClassErasedToPrimitiveInt.kt");
                 }
             }
 

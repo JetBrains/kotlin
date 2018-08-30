@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.0.6'
+}
+
+group 'testgroup'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+}

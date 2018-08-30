@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
@@ -29,7 +29,7 @@ fun FunctionDescriptor.toStatic(
     dispatchReceiverClass: ClassDescriptor? = this.containingDeclaration as? ClassDescriptor
 ): FunctionDescriptor {
     val newFunction = SimpleFunctionDescriptorImpl.create(
-        newOwner, AnnotationsImpl(emptyList()),
+        newOwner, Annotations.EMPTY,
         name,
         CallableMemberDescriptor.Kind.DECLARATION, this.source
     )
@@ -37,14 +37,14 @@ fun FunctionDescriptor.toStatic(
     var offset = 0
     val dispatchReceiver = dispatchReceiverParameter?.let {
         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-            newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("this"),
+            newFunction, null, offset++, Annotations.EMPTY, Name.identifier("this"),
             dispatchReceiverClass!!.defaultType, false, false, false, null, dispatchReceiverClass.source, null
         )
     }
 
     val extensionReceiver = extensionReceiverParameter?.let {
         ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-            newFunction, null, offset++, AnnotationsImpl(emptyList()), Name.identifier("receiver"),
+            newFunction, null, offset++, Annotations.EMPTY, Name.identifier("receiver"),
             it.value.type, false, false, false, null, it.source, null
         )
     }

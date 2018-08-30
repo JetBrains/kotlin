@@ -108,4 +108,3 @@ FILE fqName:<root> fileName:/objectAsCallable.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Int'
           GET_FIELD 'test2: Int' type=kotlin.Int origin=null
-

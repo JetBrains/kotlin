@@ -13,43 +13,13 @@
 package kotlin.script.experimental.annotations
 
 import kotlin.reflect.KClass
-import kotlin.script.experimental.api.ScriptCompilationConfigurator
-import kotlin.script.experimental.api.ScriptDefinition
-import kotlin.script.experimental.api.ScriptEvaluator
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class KotlinScript(
-    val name: String = "Kotlin script"
+    val name: String = "Kotlin script",
+    val extension: String = "kts",
+    val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class // object or class filled in 0-ary constructor
 )
 
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptDefinition(
-    val definition: KClass<out ScriptDefinition> = ScriptDefinitionFromAnnotatedBaseClass::class
-)
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptFileExtension(
-    val extension: String
-)
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptCompilationConfigurator(
-    val compilationConfigurator: KClass<out ScriptCompilationConfigurator>
-)
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptEvaluator(
-    val evaluator: KClass<out ScriptEvaluator<*>>
-)
-
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptDefaultCompilationConfiguration(
-    val compilationConfiguration: KClass<out List<*>> // object or class filled in 0-ary constructor
-)

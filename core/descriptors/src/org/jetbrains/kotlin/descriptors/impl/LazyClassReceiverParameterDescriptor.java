@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
@@ -27,6 +29,7 @@ public class LazyClassReceiverParameterDescriptor extends AbstractReceiverParame
     private final ImplicitClassReceiver receiverValue;
 
     public LazyClassReceiverParameterDescriptor(@NotNull ClassDescriptor descriptor) {
+        super(Annotations.Companion.getEMPTY());
         this.descriptor = descriptor;
         this.receiverValue = new ImplicitClassReceiver(descriptor, null);
     }
@@ -41,6 +44,12 @@ public class LazyClassReceiverParameterDescriptor extends AbstractReceiverParame
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return descriptor;
+    }
+
+    @NotNull
+    @Override
+    public ReceiverParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

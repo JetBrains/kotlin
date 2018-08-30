@@ -239,6 +239,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addAnnotationTarget/expression.kt");
         }
 
+        @TestMetadata("expression2.kt")
+        public void testExpression2() throws Exception {
+            runTest("idea/testData/quickfix/addAnnotationTarget/expression2.kt");
+        }
+
+        @TestMetadata("expression3.kt")
+        public void testExpression3() throws Exception {
+            runTest("idea/testData/quickfix/addAnnotationTarget/expression3.kt");
+        }
+
         @TestMetadata("file.kt")
         public void testFile() throws Exception {
             runTest("idea/testData/quickfix/addAnnotationTarget/file.kt");
@@ -6268,6 +6278,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/experimental"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotationInTopLevelProperty.kt")
+        public void testAnnotationInTopLevelProperty() throws Exception {
+            runTest("idea/testData/quickfix/experimental/annotationInTopLevelProperty.kt");
+        }
+
         @TestMetadata("basicFunction.kt")
         public void testBasicFunction() throws Exception {
             runTest("idea/testData/quickfix/experimental/basicFunction.kt");
@@ -6303,6 +6318,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/experimental/doNotSwitchOn.kt");
         }
 
+        @TestMetadata("experimentalUnused.kt")
+        public void testExperimentalUnused() throws Exception {
+            runTest("idea/testData/quickfix/experimental/experimentalUnused.kt");
+        }
+
+        @TestMetadata("experimentalUnused2.kt")
+        public void testExperimentalUnused2() throws Exception {
+            runTest("idea/testData/quickfix/experimental/experimentalUnused2.kt");
+        }
+
         @TestMetadata("functionInLocalClass.kt")
         public void testFunctionInLocalClass() throws Exception {
             runTest("idea/testData/quickfix/experimental/functionInLocalClass.kt");
@@ -6323,9 +6348,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/experimental/override.kt");
         }
 
+        @TestMetadata("propertyInConstructor.kt")
+        public void testPropertyInConstructor() throws Exception {
+            runTest("idea/testData/quickfix/experimental/propertyInConstructor.kt");
+        }
+
         @TestMetadata("switchOn.kt")
         public void testSwitchOn() throws Exception {
             runTest("idea/testData/quickfix/experimental/switchOn.kt");
+        }
+
+        @TestMetadata("typeAlias.kt")
+        public void testTypeAlias() throws Exception {
+            runTest("idea/testData/quickfix/experimental/typeAlias.kt");
+        }
+
+        @TestMetadata("typeInTopLevelProperty.kt")
+        public void testTypeInTopLevelProperty() throws Exception {
+            runTest("idea/testData/quickfix/experimental/typeInTopLevelProperty.kt");
         }
     }
 
