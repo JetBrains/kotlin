@@ -145,6 +145,9 @@ abstract class AbstractKotlinCompilation(
     override fun toString(): String = "compilation '$compilationName' ($target)"
 }
 
+val KotlinCompilation.allKotlinSourceSets: Set<KotlinSourceSet>
+    get() = kotlinSourceSets.flatMapTo(mutableSetOf()) { it.getSourceSetHierarchy() }
+
 abstract class AbstractKotlinCompilationToRunnableFiles(
     target: KotlinTarget,
     name: String

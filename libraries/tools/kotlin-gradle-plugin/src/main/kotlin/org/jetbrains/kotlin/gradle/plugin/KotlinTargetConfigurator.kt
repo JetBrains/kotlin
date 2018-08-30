@@ -97,8 +97,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             }
 
             if (compilation is KotlinCompilationWithResources) {
-                val sourceSetHierarchy = compilation.kotlinSourceSets.flatMap { it.getSourceSetHierarchy() }.distinct()
-                configureResourceProcessing(compilation, project.files(Callable { sourceSetHierarchy.map { it.resources } }))
+                configureResourceProcessing(compilation, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } }))
             }
 
             createLifecycleTask(compilation)

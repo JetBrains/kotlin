@@ -159,7 +159,7 @@ internal class Kotlin2JvmSourceSetProcessor(
 
             appliedPlugins
                 .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
-                .forEach { plugin -> kotlinCompilation.kotlinSourceSets.forEach { sourceSet -> plugin.source(sourceSet.kotlin) } }
+                .forEach { plugin -> kotlinCompilation.allKotlinSourceSets.forEach { sourceSet -> plugin.source(sourceSet.kotlin) } }
 
             javaTask?.let { configureJavaTask(kotlinTask, it, logger) }
 
@@ -269,7 +269,7 @@ internal class Kotlin2JsSourceSetProcessor(
 
             appliedPlugins
                     .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
-                    .forEach { task -> kotlinCompilation.kotlinSourceSets.forEach { sourceSet -> task.source(sourceSet.kotlin) } }
+                    .forEach { task -> kotlinCompilation.allKotlinSourceSets.forEach { sourceSet -> task.source(sourceSet.kotlin) } }
         }
     }
 
@@ -307,7 +307,7 @@ internal class KotlinCommonSourceSetProcessor(
             )
             appliedPlugins
                 .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
-                .forEach { kotlinCompilation.kotlinSourceSets.forEach { sourceSet -> it.source(sourceSet.kotlin) } }
+                .forEach { kotlinCompilation.allKotlinSourceSets.forEach { sourceSet -> it.source(sourceSet.kotlin) } }
         }
     }
 
