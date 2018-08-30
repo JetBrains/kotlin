@@ -35,7 +35,7 @@ open class KotlinNativeTestExecutableImpl @Inject constructor(
         name: String,
         baseName: Provider<String>,
         componentImplementation: Configuration,
-        testComponent: KotlinNativeTestSuite,
+        val testComponent: KotlinNativeTestSuite,
         val mainSources: KotlinNativeSourceSet,
         identity: KotlinNativeVariantIdentity,
         objects: ObjectFactory,
@@ -63,5 +63,8 @@ open class KotlinNativeTestExecutableImpl @Inject constructor(
     override val outputRootName: String = "test-exe"
 
     override val additionalCompilerOptions: Collection<String>
-            get() = listOf("-tr") + super.additionalCompilerOptions
+        get() = listOf("-tr") + super.additionalCompilerOptions
+
+    override val linkerOpts: List<String>
+        get() = super.linkerOpts + testComponent.testedComponent.target(konanTarget).linkerOpts
 }

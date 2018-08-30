@@ -39,6 +39,15 @@ interface KotlinNativeDependencies: ComponentDependencies {
     fun cinterop(name: String, action: Action<CInterop>)
 }
 
+interface TargetSettings {
+    /**
+     * Additional options passed to a linker when a binary is built.
+     */
+    val linkerOpts: MutableList<String>
+    fun linkerOpts(values: List<String>)
+    fun linkerOpts(vararg values: String)
+}
+
 /**
  *  Class representing a Kotlin/Native component: application or library (both klib and dynamic)
  *  built for different targets.
@@ -77,10 +86,15 @@ interface KotlinNativeComponent: ComponentWithBinaries, ComponentWithDependencie
     @Deprecated("Use the 'targets' property instead. E.g. targets = ['macos_x64', 'linux_x64']")
     fun target(vararg targets: String)
 
-    /** Provide a way to configure binaries included in this component for a particular target. */
-    fun target(target: String, action: KotlinNativeBinary.() -> Unit)
+    /** Allows providing target-specific compiler options. */
+    fun target(target: String): TargetSettings
+    fun target(konanTarget: KonanTarget): TargetSettings
+    fun target(target: String, action: TargetSettings.() -> Unit)
     fun target(target: String, action: Closure<Unit>)
-    fun target(target: String, action: Action<KotlinNativeBinary>)
+    fun target(target: String, action: Action<TargetSettings>)
+    fun allTargets(action: TargetSettings.() -> Unit)
+    fun allTargets(action: Closure<Unit>)
+    fun allTargets(action: Action<TargetSettings>)
 
     /** Set additional compiler options for this component. */
     val extraOpts: Collection<String>

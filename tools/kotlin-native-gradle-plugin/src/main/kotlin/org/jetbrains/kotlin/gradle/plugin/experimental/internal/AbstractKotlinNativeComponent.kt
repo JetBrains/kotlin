@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
 import groovy.lang.Closure
 import org.gradle.api.Action
+import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.file.FileOperations
@@ -33,11 +34,21 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeComponent
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeDependencies
+import org.jetbrains.kotlin.gradle.plugin.experimental.TargetSettings
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSetImpl
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import javax.inject.Inject
+
+class TargetSettingsImpl(val konanTarget: KonanTarget) : Named, TargetSettings {
+    override fun getName(): String = konanTarget.name
+    override val linkerOpts = mutableListOf<String>()
+    override fun linkerOpts(values: List<String>) = linkerOpts(*values.toTypedArray())
+    override fun linkerOpts(vararg values: String) {
+        linkerOpts.addAll(values)
+    }
+}
 
 abstract class AbstractKotlinNativeComponent @Inject constructor(
         private val name: String,
@@ -77,6 +88,11 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
 
     override fun getImplementationDependencies(): Configuration = dependencies.implementationDependencies
 
+    val targetSettings =
+        project.container(TargetSettingsImpl::class.java) { name ->
+            TargetSettingsImpl(HostManager().targetByName(name))
+        }
+
     // region DSL.
 
     override var targets: List<String>
@@ -86,18 +102,24 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
             konanTargets.set(value.map { hostManager.targetByName(it) })
         }
 
-    override fun target(target: String, action: KotlinNativeBinary.() -> Unit) =
-        binaries.whenElementKnown {
-            if (it.konanTarget == HostManager().targetByName(target)) {
-                it.action()
-            }
-        }
+    private val String.canonicalTargetName: String
+        get() = HostManager().targetByName(this).name
+
+    override fun target(konanTarget: KonanTarget): TargetSettings = targetSettings.maybeCreate(konanTarget.name)
+    override fun target(target: String): TargetSettings = targetSettings.maybeCreate(target.canonicalTargetName)
+
+    override fun target(target: String, action: TargetSettings.() -> Unit) =
+        targetSettings.maybeCreate(target.canonicalTargetName).action()
 
     override fun target(target: String, action: Closure<Unit>) =
         target(target, ConfigureUtil.configureUsing(action))
 
-    override fun target(target: String, action: Action<KotlinNativeBinary>) =
+    override fun target(target: String, action: Action<TargetSettings>) =
         target(target) { action.execute(this) }
+
+    override fun allTargets(action: TargetSettings.() -> Unit) = targetSettings.all(action)
+    override fun allTargets(action: Closure<Unit>) = targetSettings.all(action)
+    override fun allTargets(action: Action<TargetSettings>) = targetSettings.all(action)
 
     @Deprecated("Use the 'targets' property instead. E.g. targets = ['macos_x64', 'linux_x64']")
     override fun target(vararg targets: String) {
