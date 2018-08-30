@@ -19,8 +19,8 @@ import kotlin.test.assertEquals
  */
 
 @DebugMetadata(
-    sourceFiles = ["test.kt", "test1.kt", "test.kt"],
-    lineNumbers = [10, 2, 11],
+    sourceFile = "test.kt",
+    lineNumbers = [10, 122, 11],
     indexToLabel = [0, 0, 1, 1, 2],
     localNames = ["a", "b", "b", "c", "c"],
     spilled = ["L$1", "L$2", "L$1", "L$2", "L$1"],
@@ -49,7 +49,7 @@ class DebugMetadataTest {
         assertEquals(listOf("L$1", "a", "L$2", "b"), myContinuation.getSpilledVariableFieldMapping()!!.toList())
         myContinuation.label = 2
         assertEquals(
-            StackTraceElement("SomeClass", "testMethod", "test1.kt", 2),
+            StackTraceElement("SomeClass", "testMethod", "test.kt", 122),
             myContinuation.getStackTraceElement()
         )
         assertEquals(listOf("L$1", "b", "L$2", "c"), myContinuation.getSpilledVariableFieldMapping()!!.toList())

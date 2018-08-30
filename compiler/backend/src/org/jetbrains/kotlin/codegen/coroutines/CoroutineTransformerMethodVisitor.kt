@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
-private const val COROUTINES_METADATA_SOURCE_FILES_JVM_NAME = "f"
+private const val COROUTINES_METADATA_SOURCE_FILE_JVM_NAME = "f"
 private const val COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME = "l"
 private const val COROUTINES_METADATA_LOCAL_NAMES_JVM_NAME = "n"
 private const val COROUTINES_METADATA_SPILLED_JVM_NAME = "s"
@@ -194,10 +194,7 @@ class CoroutineTransformerMethodVisitor(
             label.safeAs<AbstractInsnNode>()?.findNextOrNull { it is LineNumberNode }.safeAs<LineNumberNode>()?.line ?: -1
         }
         val metadata = classBuilderForCoroutineState.newAnnotation(DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor, true)
-        // TODO: support inlined functions (similar to SMAP)
-        metadata.visitArray(COROUTINES_METADATA_SOURCE_FILES_JVM_NAME).also { v ->
-            lines.forEach { v.visit(null, sourceFile) }
-        }.visitEnd()
+        metadata.visit(COROUTINES_METADATA_SOURCE_FILE_JVM_NAME, sourceFile)
         metadata.visit(COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME, lines.toIntArray())
 
         val debugIndexToLabel = spilledToLocalMapping.withIndex().flatMap { (labelIndex, list) ->

@@ -11,7 +11,7 @@ import kotlin.coroutines.Continuation
 @SinceKotlin("1.3")
 internal annotation class DebugMetadata(
     @get:JvmName("f")
-    val sourceFiles: Array<String>,
+    val sourceFile: String,
     @get:JvmName("l")
     val lineNumbers: IntArray,
     @get:JvmName("n")
@@ -39,9 +39,8 @@ internal annotation class DebugMetadata(
 internal fun BaseContinuationImpl.getStackTraceElementImpl(): StackTraceElement? {
     val debugMetadata = getDebugMetadataAnnotation() ?: return null
     val label = getLabel()
-    val fileName = if (label < 0) "" else debugMetadata.sourceFiles[label]
     val lineNumber = if (label < 0) -1 else debugMetadata.lineNumbers[label]
-    return StackTraceElement(debugMetadata.className, debugMetadata.methodName, fileName, lineNumber)
+    return StackTraceElement(debugMetadata.className, debugMetadata.methodName, debugMetadata.sourceFile, lineNumber)
 }
 
 private fun BaseContinuationImpl.getDebugMetadataAnnotation(): DebugMetadata? =
