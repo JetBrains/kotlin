@@ -3,5 +3,5 @@ annotation class Annotation2(val a: Int = 0)
 annotation class Annotation3(val a: Int = 0)
 
 
-class TestClass(private @field:Annotation1(42) @property:Annotation2(42) @Annotation1(42) @Annotation3(42) val text: String = "LoremIpsum") {
+class TestClass(private @property:Annotation1(42) @field:Annotation2(42) @Annotation1(42) @Annotation3(42) val text: String = "LoremIpsum") {
 }
