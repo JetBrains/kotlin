@@ -383,14 +383,14 @@ val ideaPlugin by task<Task> {
 }
 
 tasks {
-    "clean" {
+    create("clean") {
         doLast {
             delete("$buildDir/repo")
             delete(distDir)
         }
     }
 
-    "cleanupArtifacts" {
+    create("cleanupArtifacts") {
         doLast {
             delete(ideaPluginDir)
             delete(ideaUltimatePluginDir)
@@ -398,7 +398,7 @@ tasks {
         }
     }
 
-    "coreLibsTest" {
+    create("coreLibsTest") {
         (coreLibProjects + listOf(
                 ":kotlin-stdlib:samples",
                 ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
@@ -409,34 +409,34 @@ tasks {
         }
     }
 
-    "gradlePluginTest" {
+    create("gradlePluginTest") {
         gradlePluginProjects.forEach {
             dependsOn(it + ":check")
         }
     }
 
-    "gradlePluginIntegrationTest" {
+    create("gradlePluginIntegrationTest") {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
-    "jvmCompilerTest" {
+    create("jvmCompilerTest") {
         dependsOn("dist")
         dependsOn(":compiler:test",
                   ":compiler:container:test",
                   ":compiler:tests-java8:test")
     }
 
-    "jsCompilerTest" {
+    create("jsCompilerTest") {
         dependsOn(":js:js.tests:test")
         dependsOn(":js:js.tests:runMocha")
     }
 
-    "scriptingTest" {
+    create("scriptingTest") {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
     }
 
-    "compilerTest" {
+    create("compilerTest") {
         dependsOn("jvmCompilerTest")
         dependsOn("jsCompilerTest")
 
@@ -445,44 +445,44 @@ tasks {
         dependsOn(":compiler:incremental-compilation-impl:test")
     }
 
-    "toolsTest" {
+    create("toolsTest") {
         dependsOn(":tools:kotlinp:test")
     }
 
-    "examplesTest" {
+    create("examplesTest") {
         dependsOn("dist")
         (project(":examples").subprojects + project(":kotlin-gradle-subplugin-example")).forEach { p ->
             dependsOn("${p.path}:check")
         }
     }
 
-    "distTest" {
+    create("distTest") {
         dependsOn("compilerTest")
         dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
     }
 
-    "specTest" {
+    create("specTest") {
         dependsOn("dist")
         dependsOn(":compiler:tests-spec:test")
     }
 
-    "androidCodegenTest" {
+    create("androidCodegenTest") {
         dependsOn(":compiler:android-tests:test")
     }
 
-    "jps-tests" {
+    create("jps-tests") {
         dependsOn("dist")
         dependsOn(":jps-plugin:test")
     }
 
-    "idea-plugin-main-tests" {
+    create("idea-plugin-main-tests") {
         dependsOn("dist")
         dependsOn(":idea:test")
     }
 
-    "idea-plugin-additional-tests" {
+    create("idea-plugin-additional-tests") {
         dependsOn("dist")
         dependsOn(":idea:idea-gradle:test",
                   ":idea:idea-maven:test",
@@ -490,20 +490,20 @@ tasks {
                   ":eval4j:test")
     }
 
-    "idea-plugin-tests" {
+    create("idea-plugin-tests") {
         dependsOn("dist")
         dependsOn("idea-plugin-main-tests",
                   "idea-plugin-additional-tests")
     }
 
-    "android-ide-tests" {
+    create("android-ide-tests") {
         dependsOn("dist")
         dependsOn(":plugins:android-extensions-ide:test",
                   ":idea:idea-android:test",
                   ":kotlin-annotation-processing:test")
     }
 
-    "plugins-tests" {
+    create("plugins-tests") {
         dependsOn("dist")
         dependsOn(":kotlin-annotation-processing:test",
                   ":kotlin-source-sections-compiler-plugin:test",
@@ -516,7 +516,7 @@ tasks {
     }
 
 
-    "ideaPluginTest" {
+    create("ideaPluginTest") {
         dependsOn(
                 "idea-plugin-tests",
                 "jps-tests",
@@ -527,12 +527,15 @@ tasks {
     }
 
 
-    "test" {
+    create("test") {
         doLast {
             throw GradleException("Don't use directly, use aggregate tasks *-check instead")
         }
     }
-    "check" { dependsOn("test") }
+
+    create("check") {
+        dependsOn("test")
+    }
 }
 
 fun CopySpec.setExecutablePermissions() {

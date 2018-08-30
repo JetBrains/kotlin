@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.DependencyConstraint
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.artifacts.*
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
@@ -80,7 +77,7 @@ internal class KotlinPlatformUsageContext(
     override fun getCapabilities(): Set<Capability> = emptySet()
 
     // FIXME this is a stub for a function that is not present in the Gradle API that we compile against
-    fun getGlobalExcludes(): Set<Any> = emptySet()
+    override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
 }
 
 private fun rewriteMppDependenciesToTargetModuleDependencies(

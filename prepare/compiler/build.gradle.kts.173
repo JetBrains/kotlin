@@ -88,15 +88,25 @@ dependencies {
 
 val packCompiler by task<ShadowJar> {
     configurations = listOf(fatJar)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     destinationDir = File(buildDir, "libs")
 
     setupPublicJar(compilerBaseName, "before-proguard")
 
     from(fatJarContents)
-    afterEvaluate {
-        fatJarContentsStripServices.files.forEach { from(zipTree(it)) { exclude("META-INF/services/**") } }
-        fatJarContentsStripMetadata.files.forEach { from(zipTree(it)) { exclude("META-INF/jb/** META-INF/LICENSE") } }
+
+    dependsOn(fatJarContentsStripServices)
+    from {
+        fatJarContentsStripServices.files.map {
+            zipTree(it).matching { exclude("META-INF/services/**") }
+        }
+    }
+
+    dependsOn(fatJarContentsStripMetadata)
+    from {
+        fatJarContentsStripMetadata.files.map {
+            zipTree(it).matching { exclude("META-INF/jb/**", "META-INF/LICENSE") }
+        }
     }
 
     manifest.attributes["Class-Path"] = compilerManifestClassPath

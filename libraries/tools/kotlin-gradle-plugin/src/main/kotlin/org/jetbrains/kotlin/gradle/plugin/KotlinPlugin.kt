@@ -476,7 +476,7 @@ internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlin
         } else {
             configuration.resolutionStrategy.eachDependency { details ->
                 val requested = details.requested
-                if (requested.group == "org.jetbrains.kotlin" && requested.version.isEmpty()) {
+                if (requested.group == "org.jetbrains.kotlin" && requested.version.isNullOrEmpty()) {
                     details.useVersion(kotlinPluginVersion)
                 }
             }
