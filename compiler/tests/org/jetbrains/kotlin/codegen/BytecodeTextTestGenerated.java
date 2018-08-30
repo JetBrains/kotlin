@@ -2068,14 +2068,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/constructorWithInlineClassParametersIsNotMangled.kt");
         }
 
-        @TestMetadata("functionsWithInlineClassParametersHaveStableMangledNames.kt")
-        public void testFunctionsWithInlineClassParametersHaveStableMangledNames() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/functionsWithInlineClassParametersHaveStableMangledNames.kt");
+        @TestMetadata("equalsIsCalledByInlineClass.kt")
+        public void testEqualsIsCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsIsCalledByInlineClass.kt");
         }
 
         @TestMetadata("factoryMethodForSecondaryConstructorsCalledByInlineClass.kt")
         public void testFactoryMethodForSecondaryConstructorsCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/factoryMethodForSecondaryConstructorsCalledByInlineClass.kt");
+        }
+
+        @TestMetadata("functionsWithInlineClassParametersHaveStableMangledNames.kt")
+        public void testFunctionsWithInlineClassParametersHaveStableMangledNames() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/functionsWithInlineClassParametersHaveStableMangledNames.kt");
         }
 
         @TestMetadata("generationOfAccessorToUnderlyingValue.kt")
@@ -2153,11 +2158,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/passInlineClassesWithSpreadOperatorToVarargs.kt");
         }
 
-        @TestMetadata("propertySetterWithInlineClassTypeArgument.kt")
-        public void testPropertySetterWithInlineClassTypeArgument() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertySetterWithInlineClassTypeArgument.kt");
-        }
-
         @TestMetadata("primaryConstructorCalledByInlineClass.kt")
         public void testPrimaryConstructorCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/primaryConstructorCalledByInlineClass.kt");
@@ -2166,6 +2166,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("propertyAccessorsAreCalledByInlineClass.kt")
         public void testPropertyAccessorsAreCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertyAccessorsAreCalledByInlineClass.kt");
+        }
+
+        @TestMetadata("propertySetterWithInlineClassTypeArgument.kt")
+        public void testPropertySetterWithInlineClassTypeArgument() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertySetterWithInlineClassTypeArgument.kt");
         }
 
         @TestMetadata("skipCallToUnderlyingValueOfInlineClass.kt")

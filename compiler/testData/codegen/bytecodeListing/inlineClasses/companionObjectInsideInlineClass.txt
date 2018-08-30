@@ -7,7 +7,7 @@ public final class Foo$Companion {
 }
 
 @kotlin.Metadata
-public static class Foo$Erased {
+static class Foo$Erased {
     method <init>(): void
     public final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
     public static method constructor(p0: int): int
