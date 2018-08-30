@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -38,8 +39,10 @@ object AssignOperatorAmbiguityFactory : KotlinIntentionActionsFactory() {
                 if (left.getType(context).isMutableCollection()) {
                     val property = left.mainReference?.resolve() as? KtProperty
                     val propertyName = property?.name
-                    if (property != null && propertyName != null && property.isLocal) fixes.add(ChangeToValFix(property, propertyName))
-                    fixes.add(ChangeToAssignFunctionCallFix(element, operationText))
+                    if (property != null && propertyName != null && property.isLocal) {
+                        fixes.add(ChangeVariableMutabilityFix(property, false, "Change '$propertyName' to val"))
+                    }
+                    fixes.add(ReplaceWithAssignFunctionCallFix(element, operationText))
                 }
             }
         }
@@ -56,22 +59,11 @@ private fun KotlinType?.isMutableCollection(): Boolean {
             || className.endsWith("Map") && classDescriptor.isSubclassOf(builtIns.mutableMap)
 }
 
-private class ChangeToValFix(element: KtProperty, val propertyName: String) : KotlinQuickFixAction<KtProperty>(element) {
-    override fun getText() = "Change '$propertyName' to val"
-
-    override fun getFamilyName() = text
-
-    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val property = element ?: return
-        property.valOrVarKeyword.replace(KtPsiFactory(property).createValKeyword())
-    }
-}
-
-private class ChangeToAssignFunctionCallFix(
+private class ReplaceWithAssignFunctionCallFix(
     element: KtBinaryExpression,
     private val operationText: String
 ) : KotlinQuickFixAction<KtBinaryExpression>(element) {
-    override fun getText() = "Change to '${operationText}Assign()' call"
+    override fun getText() = "Replace with '${operationText}Assign()' call"
 
     override fun getFamilyName() = text
 
