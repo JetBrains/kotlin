@@ -31,9 +31,6 @@ class ErasedInlineClassBodyCodegen(
     parentCodegen: MemberCodegen<*>?
 ) : ClassBodyCodegen(aClass, context, v, state, parentCodegen) {
 
-    private val wrapperSuperClassAsmType = AsmTypes.OBJECT_TYPE
-    private val erasedSuperClassAsmType = AsmTypes.OBJECT_TYPE
-
     private val classAsmType = typeMapper.mapErasedInlineClass(descriptor)
 
     private val constructorCodegen = ConstructorCodegen(
@@ -42,7 +39,7 @@ class ErasedInlineClassBodyCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(
-            myClass.psiOrParent, state.classFileVersion, Opcodes.ACC_STATIC or Opcodes.ACC_PUBLIC,
+            myClass.psiOrParent, state.classFileVersion, Opcodes.ACC_STATIC,
             classAsmType.internalName, null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
         v.visitSource(myClass.containingKtFile.name, null)
@@ -53,10 +50,10 @@ class ErasedInlineClassBodyCodegen(
 
         generateDefaultConstructorForErasedInlineClass()
 
-        constructorCodegen.generatePrimaryConstructor(delegationFieldsInfo, wrapperSuperClassAsmType)
+        constructorCodegen.generatePrimaryConstructor(delegationFieldsInfo, AsmTypes.OBJECT_TYPE)
 
         for (secondaryConstructor in descriptor.secondaryConstructors) {
-            constructorCodegen.generateSecondaryConstructor(secondaryConstructor, wrapperSuperClassAsmType)
+            constructorCodegen.generateSecondaryConstructor(secondaryConstructor, AsmTypes.OBJECT_TYPE)
         }
     }
 
@@ -68,7 +65,7 @@ class ErasedInlineClassBodyCodegen(
         mv.visitCode()
         InstructionAdapter(mv).apply {
             load(0, AsmTypes.OBJECT_TYPE)
-            invokespecial(erasedSuperClassAsmType.internalName, "<init>", "()V", false)
+            invokespecial(AsmTypes.OBJECT_TYPE.internalName, "<init>", "()V", false)
             areturn(Type.VOID_TYPE)
         }
         mv.visitMaxs(1, 1)
