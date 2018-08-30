@@ -44,7 +44,7 @@ class ObsoleteExperimentalCoroutinesInspection : AbstractKotlinInspection(), Cle
 
             when (simpleNameExpression.text) {
                 RESUME_MARKER, RESUME_WITH_EXCEPTION_MARKER -> {
-                    simpleNameExpression.parent as? KtCallExpression ?: return
+                    if (simpleNameExpression.parent !is KtCallExpression) return
 
                     val descriptor = simpleNameExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return
                     val callableDescriptor = descriptor as? CallableDescriptor ?: return
@@ -174,7 +174,7 @@ class ObsoleteExperimentalCoroutinesInspection : AbstractKotlinInspection(), Cle
 
                 override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
                     val element = descriptor.psiElement
-                    element as? KtSimpleNameExpression ?: return
+                    if (element !is KtSimpleNameExpression) return
 
                     val importFun =
                         KotlinTopLevelFunctionFqnNameIndex.getInstance()

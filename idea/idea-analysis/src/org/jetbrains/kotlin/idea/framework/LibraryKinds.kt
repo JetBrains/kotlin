@@ -52,7 +52,7 @@ val PersistentLibraryKind<*>?.platform: TargetPlatform
     }
 
 fun getLibraryPlatform(project: Project, library: Library): TargetPlatform {
-    library as? LibraryEx ?: return JvmPlatform
+    if (library !is LibraryEx) return JvmPlatform
     if (library.isDisposed) return JvmPlatform
 
     return library.effectiveKind(project).platform
