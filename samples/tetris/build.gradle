@@ -53,7 +53,7 @@ components.main {
 
 assemble {
     doLast {
-        components.withType(KotlinNativeExecutable.class).all { binary ->
+        components.main.binaries.get().each { binary ->
             copy {
                 from 'src/main/resources'
                 into binary.runtimeFile.asFile.get().parentFile
@@ -76,10 +76,10 @@ task windowsResources (type: Exec) {
 }
 
 project.tasks.matching {
-    name == 'compileDebugMingw_x64KotlinNative' ||
-    name == 'compileReleaseMingw_x64KotlinNative'
+    it.name == 'compileDebugMingw_x64KotlinNative' ||
+    it.name == 'compileReleaseMingw_x64KotlinNative'
 }.all {
-    dependsOn 'windowsResources'
-    inputs.file resFile
+    it.dependsOn 'windowsResources'
+    it.inputs.file resFile
 }
 
