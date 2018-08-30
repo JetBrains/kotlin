@@ -175,9 +175,11 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
                         objects
                 )
 
-                val binary = component.addTestExecutable(variantIdentity)
-                if (target == HostManager.host) {
-                    component.testBinary.set(binary)
+                if (hostManager.isEnabled(target)) {
+                    val binary = component.addTestExecutable(variantIdentity)
+                    if (target == HostManager.host) {
+                        component.testBinary.set(binary)
+                    }
                 }
             }
             component.binaries.realizeNow()

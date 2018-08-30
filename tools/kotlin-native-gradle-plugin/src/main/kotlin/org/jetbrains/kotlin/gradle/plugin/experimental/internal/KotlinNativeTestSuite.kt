@@ -41,6 +41,7 @@ open class KotlinNativeTestSuite @Inject constructor(
 
     init {
         getImplementationDependencies().extendsFrom(testedComponent.getImplementationDependencies())
+        konanTargets.set(project.provider { testedComponent.konanTargets.get() })
     }
 
     override fun getDisplayName(): DisplayName = Describables.withTypeAndName("Kotlin/Native test suite", name)
