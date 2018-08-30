@@ -13,7 +13,7 @@ use `apt-get install libsdl2-dev`.
 For Windows - `pacman -S mingw-w64-x86_64-SDL2` in MinGW64 console, if you do
 not have MSYS2-MinGW64 installed - install it first as described in http://www.msys2.org
 
-To build Tetris application for your host platform (Mac or Linux) use `../gradlew assemble`. 
+To build Tetris application for your host platform (Mac or Linux) use `../gradlew build`. 
     
 Aleternatively for Mac and Linux `./build.sh`.
 

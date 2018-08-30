@@ -4,7 +4,7 @@ This example shows how to communicate with libcurl, HTTP/HTTPS/FTP/etc client li
 depend on an artifact published in a maven repository. The sample depends on a library
 built by [libcurl sample](../libcurl) so you need to run it first.
  
-To build use `../gradlew assemble`.
+To build use `../gradlew build`.
 
 Now you can run the client directly 
 
