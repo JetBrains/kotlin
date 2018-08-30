@@ -1,4 +1,4 @@
-// FIX: Rename 'it'
+// FIX: Replace 'it' with explicit parameter
 
 fun foo(f: (String) -> Unit) {}
 fun bar(s: String) {}
@@ -6,6 +6,8 @@ fun bar(s: String) {}
 fun test() {
     foo {
         foo { it1 ->
+            bar(it1)
+            bar(it1)
             bar(it1)
         }
     }

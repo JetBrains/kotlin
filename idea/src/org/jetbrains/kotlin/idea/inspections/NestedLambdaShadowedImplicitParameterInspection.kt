@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElementVisitor
@@ -29,16 +26,18 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
             val context = lambda.analyze(BodyResolveMode.PARTIAL)
             val implicitParameter = lambda.functionDescriptor(context)?.valueParameters?.singleOrNull() ?: return
             if (lambda.getParentImplicitParameterLambda(context) == null) return
-            val implicitParameterReference = lambda.findDescendantOfType<KtNameReferenceExpression> {
-                it.text == "it" && it.getResolvedCall(context)?.resultingDescriptor == implicitParameter
-            } ?: return
-            holder.registerProblem(
-                implicitParameterReference,
-                "Implicit parameter 'it' of enclosing lambda is shadowed",
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                AddExplicitParameterToOuterLambdaFix(),
-                RenameImplicitParameterFix()
-            )
+            val containingFile = lambda.containingFile
+            lambda.forEachDescendantOfType<KtNameReferenceExpression> {
+                if (it.text == "it" && it.getResolvedCall(context)?.resultingDescriptor == implicitParameter) {
+                    holder.registerProblem(
+                        it,
+                        "Implicit parameter 'it' of enclosing lambda is shadowed",
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                        AddExplicitParameterToOuterLambdaFix(),
+                        IntentionWrapper(ReplaceItWithExplicitFunctionLiteralParamIntention(), containingFile)
+                    )
+                }
+            }
         })
     }
 
@@ -58,18 +57,6 @@ class NestedLambdaShadowedImplicitParameterInspection : AbstractKotlinInspection
             PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
             editor.caretModel.moveToOffset(parameter.startOffset)
             KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
-        }
-    }
-
-    private class RenameImplicitParameterFix : LocalQuickFix {
-        override fun getName() = "Rename 'it'"
-
-        override fun getFamilyName() = name
-
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val implicitParameterReference = descriptor.psiElement as? KtNameReferenceExpression ?: return
-            val editor = implicitParameterReference.findExistingEditor() ?: return
-            ReplaceItWithExplicitFunctionLiteralParamIntention().applyTo(implicitParameterReference, editor)
         }
     }
 }
