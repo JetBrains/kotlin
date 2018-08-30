@@ -45,6 +45,7 @@ dependencies {
     compileOnly project(':kotlin-compiler-runner')
     compileOnly project(':kotlin-annotation-processing')
     compileOnly project(':kotlin-annotation-processing-gradle')
+    compileOnly project(':kotlin-scripting-compiler')
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
     compileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
@@ -62,6 +63,7 @@ dependencies {
     runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
     runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
     runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
+    runtime project(path: ':kotlin-scripting-compiler-embeddable', configuration: 'runtimeJar')
     runtime project(':kotlin-reflect')
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies

@@ -14,6 +14,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-jvm"))
+    compile(project(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all") }
@@ -32,6 +33,14 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        languageVersion = "1.2"
+        apiVersion = "1.2"
+        freeCompilerArgs += "-Xskip-metadata-version-check"
+    }
 }
 
 val jar = runtimeJar {

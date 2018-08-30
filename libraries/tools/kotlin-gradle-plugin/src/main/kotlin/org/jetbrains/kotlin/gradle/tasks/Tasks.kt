@@ -15,6 +15,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
@@ -152,6 +153,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
+
+    private val sourceFilesExtensionsSources: MutableList<Iterable<String>> = mutableListOf()
+
+    @get:Input
+    val sourceFilesExtensions: List<String>
+        get() = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + sourceFilesExtensionsSources.flatten()
+
+    internal fun sourceFilesExtensions(extensions: Iterable<String>) {
+        sourceFilesExtensionsSources.add(extensions)
+    }
 
     private val kotlinExt: KotlinProjectExtension
             get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
@@ -360,7 +371,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     }
 
     @Internal
-    override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer)
+    override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer, sourceFilesExtensions)
 
     override fun callCompiler(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.ForJvm
@@ -487,7 +498,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         kotlinOptionsImpl.updateArguments(args)
     }
 
-    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource())
+    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions)
 
     @get:InputFiles
     @get:Optional

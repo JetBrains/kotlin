@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
-import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -57,8 +57,8 @@ fun makeIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val kotlinExtensions = listOf("kt", "kts")
-    val allExtensions = kotlinExtensions + listOf("java")
+    val kotlinExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+    val allExtensions = kotlinExtensions + "java"
     val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
     val files = rootsWalk.filter(File::isFile)
     val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
@@ -75,7 +75,8 @@ fun makeIncrementally(
                 usePreciseJavaTracking = true,
                 localStateDirs = emptyList(),
                 buildHistoryFile = buildHistoryFile,
-                modulesApiHistory = EmptyModulesApiHistory
+                modulesApiHistory = EmptyModulesApiHistory,
+                kotlinSourceFilesExtensions = kotlinExtensions
         )
         compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
@@ -104,9 +105,10 @@ class IncrementalJvmCompilerRunner(
     cachesVersionManagers: List<CacheVersionManager>,
     reporter: ICReporter,
     private val usePreciseJavaTracking: Boolean,
-     buildHistoryFile: File,
+    buildHistoryFile: File,
     localStateDirs: Collection<File>,
-    private val modulesApiHistory: ModulesApiHistory
+    private val modulesApiHistory: ModulesApiHistory,
+    override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
@@ -145,7 +147,7 @@ class IncrementalJvmCompilerRunner(
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments
     ): CompilationMode {
-        val dirtyFiles = DirtyFilesContainer(caches, reporter)
+        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
 
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild { "No information on previous build" }

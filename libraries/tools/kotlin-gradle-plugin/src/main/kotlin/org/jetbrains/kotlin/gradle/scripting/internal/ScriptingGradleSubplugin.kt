@@ -5,18 +5,104 @@
 
 package org.jetbrains.kotlin.gradle.scripting.internal
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
+import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
+import kotlin.properties.Delegates
 
 class ScriptingGradleSubplugin : Plugin<Project> {
     companion object {
         fun isEnabled(project: Project) = project.plugins.findPlugin(ScriptingGradleSubplugin::class.java) != null
+
+        val MAIN_CONFIGURATION_NAME = "kotlinScriptDef"
+
+        fun getConfigurationName(sourceSetName: String): String = when (sourceSetName) {
+            "main" -> MAIN_CONFIGURATION_NAME
+            else -> "$sourceSetName${MAIN_CONFIGURATION_NAME.capitalize()}"
+        }
+
+        fun createDiscoveryConfigurationIfNeeded(project: Project, sourceSetName: String) {
+            project.configurations.maybeCreate(getConfigurationName(sourceSetName))
+        }
     }
 
-    override fun apply(project: Project) {}
+    override fun apply(project: Project) {
+
+        project.afterEvaluate {
+
+            val javaPluginConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
+            if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
+
+                project.tasks.all { task ->
+                    if (task is KotlinCompile) {
+                        val configuration = project.configurations.findByName(getConfigurationName(task.sourceSetName))
+                        if (configuration?.isEmpty == false) {
+                            javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
+                                val extensionsTask =
+                                    project.tasks.create(
+                                        "discover${task.sourceSetName.capitalize()}ScriptsExtensions",
+                                        DiscoverScriptExtensionsTask::class.java
+                                    )
+                                extensionsTask.sourceSet = sourceSet
+                                extensionsTask.discoveryClasspathConfiguration = configuration
+                                extensionsTask.kotlinCompile = task
+                                task.dependsOn.add(extensionsTask)
+                            }
+                        }
+                    }
+                }
+            } else {
+                project.logger.warn("kotlin scripting plugin: applied to a non-JVM project $project")
+            }
+        }
+    }
+}
+
+open class DiscoverScriptExtensionsTask : DefaultTask() {
+
+    @get:Internal
+    internal var sourceSet: SourceSet by Delegates.notNull()
+
+    @get:Internal
+    internal var discoveryClasspathConfiguration: Configuration by Delegates.notNull()
+
+    @get:Internal
+    internal var kotlinCompile: KotlinCompile by Delegates.notNull()
+
+    override fun getDependsOn(): MutableSet<Any> = kotlinCompile.dependsOn
+
+    @TaskAction
+    @Suppress("unused")
+    fun findKnownScriptExtensions() {
+        val scriptingClasspath = discoveryClasspathConfiguration.files.takeIf { it.isNotEmpty() } ?: return
+
+        val definitions =
+            ScriptDefinitionsFromClasspathDiscoverySource(
+                scriptingClasspath.toList(), emptyMap(),
+                GradleMessageCollector(project.logger)
+            ).definitions
+        val extensions = definitions.mapTo(arrayListOf(), KotlinScriptDefinition::fileExtension)
+        val kotlinSourceSet = sourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
+        if (kotlinSourceSet == null) {
+            project.logger.warn("kotlin scripting plugin: kotlin source set not found: $project.$sourceSet")
+        } else if (extensions.isNotEmpty()) {
+            project.logger.info("kotlin scripting plugin: Add new extensions to the sourceset $project.$sourceSet: $extensions")
+            kotlinSourceSet.kotlin.filter.include(extensions.map { "**/*.$it" })
+        }
+    }
 }
 
 class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
