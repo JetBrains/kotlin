@@ -80,6 +80,8 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration>(
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
         TODO("not implemented")
     }
+
+    override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
 open class WrappedValueParameterDescriptor(
@@ -289,7 +291,7 @@ open class WrappedSimpleFunctionDescriptor(
 
     override fun getInitialSignatureDescriptor() = null
 
-    override fun <V : Any?> getUserData(key: FunctionDescriptor.UserDataKey<V>?): V? = null
+    override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 
     override fun newCopyBuilder(): FunctionDescriptor.CopyBuilder<out SimpleFunctionDescriptor> {
         TODO("not implemented")
@@ -378,7 +380,7 @@ open class WrappedClassConstructorDescriptor(
 
     override fun isSuspend() = false
 
-    override fun <V : Any?> getUserData(key: FunctionDescriptor.UserDataKey<V>?): V? = null
+    override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 
     override fun isExternal() = owner.isExternal
 
@@ -586,4 +588,6 @@ open class WrappedPropertyDescriptor(
     override fun getDelegateField(): FieldDescriptor? {
         TODO("not implemented")
     }
+
+    override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }

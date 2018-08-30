@@ -204,7 +204,7 @@ class FunctionDescriptorResolver(
         )
 
         val contractProvider = getContractProvider(functionDescriptor, trace, scope, dataFlowInfo, function)
-        val userData = mutableMapOf<FunctionDescriptor.UserDataKey<*>, Any>().apply {
+        val userData = mutableMapOf<CallableDescriptor.UserDataKey<*>, Any>().apply {
             if (contractProvider != null) {
                 put(ContractProviderKey, contractProvider)
             }

@@ -546,4 +546,10 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
                 .setCopyOverrides(copyOverrides)
                 .build();
     }
+
+    @Nullable
+    @Override
+    public <V> V getUserData(UserDataKey<V> key) {
+        return null;
+    }
 }

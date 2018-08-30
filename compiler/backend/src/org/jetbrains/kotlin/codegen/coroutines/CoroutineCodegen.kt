@@ -50,7 +50,7 @@ abstract class AbstractCoroutineCodegen(
     element: KtElement,
     closureContext: ClosureContext,
     classBuilder: ClassBuilder,
-    private val userDataForDoResume: Map<out FunctionDescriptor.UserDataKey<*>, *>? = null
+    private val userDataForDoResume: Map<out CallableDescriptor.UserDataKey<*>, *>? = null
 ) : ClosureCodegen(
     outerExpressionCodegen.state,
     element, null, closureContext, null,
