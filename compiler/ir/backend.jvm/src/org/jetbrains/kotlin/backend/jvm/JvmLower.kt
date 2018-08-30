@@ -34,7 +34,7 @@ class JvmLower(val context: JvmBackendContext) {
 
         LateinitLowering(context, true).lower(irFile)
 
-        ConstAndJvmFieldPropertiesLowering().lower(irFile)
+        ConstAndJvmFieldPropertiesLowering(context).lower(irFile)
         PropertiesLowering().lower(irFile)
         AnnotationLowering().runOnFilePostfix(irFile) //should be run before defaults lowering
 
