@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.script.util.impl.getResourcePathForClass
 import org.jetbrains.kotlin.script.util.impl.toFile
 import java.io.File
 import java.io.FileNotFoundException
+import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -28,14 +29,24 @@ internal const val KOTLIN_SCRIPT_RUNTIME_JAR_PROPERTY = "kotlin.script.runtime.j
 private val validClasspathFilesExtensions = setOf("jar", "zip", "java")
 
 fun classpathFromClassloader(classLoader: ClassLoader): List<File>? =
-        generateSequence(classLoader) { it.parent }.toList().flatMap {
-            (it as? URLClassLoader)?.urLs?.mapNotNull {
-                // taking only classpath elements pointing to dirs (presumably with classes) or jars, because this classpath is intended for
-                //   usage with the kotlin compiler, which cannot process other types of entries, e.g. jni libs
-                it.toFile()?.takeIf { el -> el.isDirectory || validClasspathFilesExtensions.any { el.extension == it } }
+    generateSequence(classLoader) { it.parent }.toList().flatMap {
+        val urls = (it as? URLClassLoader)?.urLs?.asList()
+            ?: try {
+                // e.g. for IDEA platform UrlClassLoader
+                val getUrls = it::class.java.getMethod("getUrls")
+                getUrls.isAccessible = true
+                val result = getUrls.invoke(it) as? List<Any?>
+                result?.filterIsInstance<URL>()
+            } catch (e: Throwable) {
+                null
             }
-            ?: emptyList()
+        urls?.mapNotNull {
+            // taking only classpath elements pointing to dirs (presumably with classes) or jars, because this classpath is intended for
+            //   usage with the kotlin compiler, which cannot process other types of entries, e.g. jni libs
+            it.toFile()?.takeIf { el -> el.isDirectory || validClasspathFilesExtensions.any { el.extension == it } }
         }
+            ?: emptyList()
+    }.distinct().takeIf { it.isNotEmpty() }
 
 fun classpathFromClasspathProperty(): List<File>? =
         System.getProperty("java.class.path")
