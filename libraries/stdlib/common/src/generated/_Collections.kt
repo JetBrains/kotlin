@@ -69,6 +69,8 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(ele
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 public fun <T> Iterable<T>.elementAt(index: Int): T {
     if (this is List)
@@ -78,6 +80,8 @@ public fun <T> Iterable<T>.elementAt(index: Int): T {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this list.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAt(index: Int): T {

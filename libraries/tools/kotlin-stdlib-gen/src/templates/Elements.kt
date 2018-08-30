@@ -242,6 +242,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         val index = '$' + "index"
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Usage.elementAt")
         returns("T")
         body {
             """
