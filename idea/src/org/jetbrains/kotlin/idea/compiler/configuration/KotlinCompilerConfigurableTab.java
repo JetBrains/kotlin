@@ -111,6 +111,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JLabel labelForSourceMapPrefix;
     private JComboBox sourceMapEmbedSources;
     private JPanel coroutinesPanel;
+    private JCheckBox enableNewInferenceCheckBox;
     private boolean isEnabled = true;
 
     public KotlinCompilerConfigurableTab(
@@ -458,7 +459,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                isModified(sourceMapPrefix, StringUtil.notNullize(k2jsCompilerArguments.getSourceMapPrefix())) ||
                !getSelectedSourceMapSourceEmbedding().equals(
                        getSourceMapSourceEmbeddingOrDefault(k2jsCompilerArguments.getSourceMapEmbedSources())) ||
-               !getSelectedJvmVersion().equals(getJvmVersionOrDefault(k2jvmCompilerArguments.getJvmTarget()));
+               !getSelectedJvmVersion().equals(getJvmVersionOrDefault(k2jvmCompilerArguments.getJvmTarget())) ||
+
+               isModified(enableNewInferenceCheckBox, compilerSettings.getEnableNewInference());
     }
 
     @NotNull
@@ -514,7 +517,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                     !getSelectedLanguageVersionView().equals(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments)) ||
                     !getSelectedAPIVersionView().equals(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments)) ||
                     !getSelectedCoroutineState().equals(commonCompilerArguments.getCoroutinesState()) ||
-                    !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments());
+                    !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments()) ||
+                    enableNewInferenceCheckBox.isSelected() != compilerSettings.getEnableNewInference();
 
             if (shouldInvalidateCaches) {
                 ApplicationUtilsKt.runWriteAction(
@@ -536,6 +540,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         commonCompilerArguments.setCoroutinesState(getSelectedCoroutineState());
 
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
+        compilerSettings.setEnableNewInference(enableNewInferenceCheckBox.isSelected());
         compilerSettings.setScriptTemplates(scriptTemplatesField.getText());
         compilerSettings.setScriptTemplatesClasspath(scriptTemplatesClasspathField.getText());
         compilerSettings.setCopyJsLibraryFiles(copyRuntimeFilesCheckBox.isSelected());
@@ -594,6 +599,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         scriptTemplatesClasspathField.setText(compilerSettings.getScriptTemplatesClasspath());
         copyRuntimeFilesCheckBox.setSelected(compilerSettings.getCopyJsLibraryFiles());
         outputDirectory.setText(compilerSettings.getOutputDirectoryForJsLibraryFiles());
+        enableNewInferenceCheckBox.setSelected(compilerSettings.getEnableNewInference());
 
         if (compilerWorkspaceSettings != null) {
             enableIncrementalCompilationForJvmCheckBox.setSelected(compilerWorkspaceSettings.getPreciseIncrementalEnabled());

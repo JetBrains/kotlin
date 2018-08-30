@@ -91,8 +91,10 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
         )
 
+        val enableNewInferenceProperty = mainModuleNode.enableNewInference ?: findKotlinNewInferenceProperty(ideModule.project)
+
         val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
-        kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
+        kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, enableNewInferenceProperty, platformKind, modelsProvider)
 
         val compilerArguments = kotlinSourceSet.compilerArguments
         val defaultCompilerArguments = kotlinSourceSet.defaultCompilerArguments

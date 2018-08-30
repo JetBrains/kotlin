@@ -155,6 +155,7 @@ fun Module.getOrCreateFacet(
 fun KotlinFacet.configureFacet(
     compilerVersion: String,
     coroutineSupport: LanguageFeature.State,
+    enableNewInference: Boolean,
     platformKind: TargetPlatformKind<*>?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider
 ) {
@@ -174,6 +175,7 @@ fun KotlinFacet.configureFacet(
             this.apiLevel = languageLevel
         }
         this.coroutineSupport = if (languageLevel != null && languageLevel < LanguageVersion.KOTLIN_1_3) coroutineSupport else null
+        this.enableNewInference = enableNewInference
     }
 
     module.externalCompilerVersion = compilerVersion

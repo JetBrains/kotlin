@@ -254,7 +254,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         )
         val platform = detectPlatform(mavenProject)
 
-        kotlinFacet.configureFacet(compilerVersion, LanguageFeature.Coroutines.defaultState, platform, modifiableModelsProvider)
+        kotlinFacet.configureFacet(compilerVersion, LanguageFeature.Coroutines.defaultState, false, platform, modifiableModelsProvider)
         val facetSettings = kotlinFacet.configuration.settings
         val configuredPlatform = kotlinFacet.configuration.settings.targetPlatformKind!!
         val configuration = mavenPlugin.configurationElement

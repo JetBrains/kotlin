@@ -211,6 +211,16 @@ class KotlinFacetSettings {
             }
         }
 
+    var enableNewInference: Boolean
+        get() {
+            val languageVersion = languageLevel ?: return LanguageFeature.NewInference.defaultState == LanguageFeature.State.ENABLED
+            if (languageVersion < LanguageFeature.NewInference.sinceVersion!!) return false
+            return compilerSettings?.enableNewInference ?: false
+        }
+        set(value) {
+            compilerSettings?.enableNewInference = value
+        }
+
     var implementedModuleNames: List<String> = emptyList()
 
     var productionOutputPath: String? = null

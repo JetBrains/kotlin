@@ -127,11 +127,13 @@ fun Project.getLanguageVersionSettings(
         compilerSettings.additionalArgumentsAsList
     )
 
+    // TODO: enable sam conversions if new inference was enabled
     val extraLanguageFeatures = additionalArguments.configureLanguageFeatures(MessageCollector.NONE).apply {
         configureCoroutinesSupport(
             CoroutineSupport.byCompilerArguments(KotlinCommonCompilerArgumentsHolder.getInstance(this@getLanguageVersionSettings).settings),
             languageVersion
         )
+        configureNewInferenceSupport(compilerSettings.enableNewInference)
         if (isReleaseCoroutines != null) {
             put(
                 LanguageFeature.ReleaseCoroutines,
@@ -188,6 +190,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
     val languageFeatures = facetSettings.mergedCompilerArguments?.configureLanguageFeatures(MessageCollector.NONE)?.apply {
         configureCoroutinesSupport(facetSettings.coroutineSupport, languageVersion)
         configureMultiplatformSupport(facetSettings.targetPlatformKind, this@computeLanguageVersionSettings)
+        configureNewInferenceSupport(facetSettings.enableNewInference)
     }.orEmpty()
 
     val analysisFlags = facetSettings.mergedCompilerArguments?.configureAnalysisFlags(MessageCollector.NONE).orEmpty()
@@ -250,6 +253,9 @@ fun MutableMap<LanguageFeature, LanguageFeature.State>.configureMultiplatformSup
     }
 }
 
+fun MutableMap<LanguageFeature, LanguageFeature.State>.configureNewInferenceSupport(enableNewInference: Boolean) {
+    if (enableNewInference) put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
+}
 
 val KtElement.languageVersionSettings: LanguageVersionSettings
     get() {

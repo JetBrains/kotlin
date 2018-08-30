@@ -50,6 +50,8 @@ var DataNode<ModuleData>.compilerArgumentsBySourceSet
         by CopyableDataNodeUserDataProperty(Key.create<CompilerArgumentsBySourceSet>("CURRENT_COMPILER_ARGUMENTS"))
 var DataNode<ModuleData>.coroutines
         by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
+var DataNode<ModuleData>.enableNewInference
+        by CopyableDataNodeUserDataProperty(Key.create<Boolean>("KOTLIN_ENABLE_NEW_INFERENCE"))
 var DataNode<ModuleData>.platformPluginId
         by CopyableDataNodeUserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
 var DataNode<out ModuleData>.implementedModuleNames
@@ -185,6 +187,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.hasKotlinPlugin = gradleModel.hasKotlinPlugin
         ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
         ideModule.coroutines = gradleModel.coroutines
+        ideModule.enableNewInference = gradleModel.enableNewInference
         ideModule.platformPluginId = gradleModel.platformPluginId
         addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)
 

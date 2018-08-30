@@ -46,6 +46,7 @@ interface KotlinGradleModel : Serializable {
     val hasKotlinPlugin: Boolean
     val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val coroutines: String?
+    val enableNewInference: Boolean?
     val platformPluginId: String?
     val implements: List<String>
 }
@@ -54,6 +55,7 @@ class KotlinGradleModelImpl(
         override val hasKotlinPlugin: Boolean,
         override val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
         override val coroutines: String?,
+        override val enableNewInference: Boolean?,
         override val platformPluginId: String?,
         override val implements: List<String>
 ) : KotlinGradleModel
@@ -169,6 +171,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
                 kotlinPluginId != null || platformPluginId != null,
                 compilerArgumentsBySourceSet,
                 getCoroutines(project),
+                null,
                 platform,
                 implementedProjects.map { it.pathOrName() }
         )

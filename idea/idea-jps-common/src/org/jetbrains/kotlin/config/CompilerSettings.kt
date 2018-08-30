@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.arguments.Freezable
 
 class CompilerSettings : Freezable() {
     var additionalArguments: String by FreezableVar(DEFAULT_ADDITIONAL_ARGUMENTS)
+    var enableNewInference: Boolean by FreezableVar(false)
     var scriptTemplates: String by FreezableVar("")
     var scriptTemplatesClasspath: String by FreezableVar("")
     var copyJsLibraryFiles: Boolean by FreezableVar(true)
