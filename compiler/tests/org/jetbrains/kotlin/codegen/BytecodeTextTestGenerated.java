@@ -2068,6 +2068,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/functionsWithInlineClassParametersHaveStableMangledNames.kt");
         }
 
+        @TestMetadata("factoryMethodForSecondaryConstructorsCalledByInlineClass.kt")
+        public void testFactoryMethodForSecondaryConstructorsCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/factoryMethodForSecondaryConstructorsCalledByInlineClass.kt");
+        }
+
         @TestMetadata("generationOfAccessorToUnderlyingValue.kt")
         public void testGenerationOfAccessorToUnderlyingValue() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/generationOfAccessorToUnderlyingValue.kt");
