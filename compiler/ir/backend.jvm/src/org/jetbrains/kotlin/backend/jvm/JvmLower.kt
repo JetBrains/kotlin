@@ -41,8 +41,8 @@ class JvmLower(val context: JvmBackendContext) {
         //Should be before interface lowering
         DefaultArgumentStubGenerator(context, false).runOnFilePostfix(irFile)
 
-        InterfaceLowering(context.state).runOnFilePostfix(irFile)
-        InterfaceDelegationLowering(context.state).runOnFilePostfix(irFile)
+        InterfaceLowering(context).runOnFilePostfix(irFile)
+        InterfaceDelegationLowering(context).runOnFilePostfix(irFile)
         SharedVariablesLowering(context).runOnFilePostfix(irFile)
 
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
