@@ -50,12 +50,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
 
-interface Deprecation {
-    val deprecationLevel: DeprecationLevelValue
-    val message: String?
-    val target: DeclarationDescriptor
-}
-
 fun Deprecation.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
 
 fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? {
@@ -212,11 +206,6 @@ internal fun createDeprecationDiagnostic(
             factory.on(element, targetOriginal, deprecation.message ?: "")
         }
     }
-}
-
-// values from kotlin.DeprecationLevel
-enum class DeprecationLevelValue {
-    WARNING, ERROR, HIDDEN
 }
 
 @DefaultImplementation(CoroutineCompatibilitySupport::class)
