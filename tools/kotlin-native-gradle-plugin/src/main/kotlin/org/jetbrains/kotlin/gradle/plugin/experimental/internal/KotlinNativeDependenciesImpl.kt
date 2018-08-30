@@ -34,7 +34,7 @@ open class KotlinNativeDependenciesImpl @Inject constructor(
 ) : DefaultComponentDependencies(configurations, implementationName),
     KotlinNativeDependencies {
 
-    internal val cinterops = project.container(CInteropImpl::class.java) { name ->
+    override val cinterops = project.container(CInteropImpl::class.java) { name ->
         CInteropImpl(project, name).apply {
             dependencies.implementationDependencies.extendsFrom(
                 this@KotlinNativeDependenciesImpl.implementationDependencies

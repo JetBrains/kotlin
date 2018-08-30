@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin.experimental
 
 import groovy.lang.Closure
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSo
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 interface KotlinNativeDependencies: ComponentDependencies {
+    val cinterops : NamedDomainObjectContainer<out CInterop>
     fun cinterop(name: String): CInterop
     fun cinterop(name: String, action: CInterop.() -> Unit)
     fun cinterop(name: String, action: Closure<Unit>)

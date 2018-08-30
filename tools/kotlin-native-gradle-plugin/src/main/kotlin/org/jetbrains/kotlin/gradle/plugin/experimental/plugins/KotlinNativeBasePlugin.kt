@@ -31,8 +31,7 @@ import org.gradle.language.plugins.NativeBasePlugin
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
-import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
-import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeLibrary
+import org.jetbrains.kotlin.gradle.plugin.experimental.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.CInteropTask
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
@@ -186,9 +185,9 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
     private fun Project.addInteropTasks() {
         val settingsToTask = mutableMapOf<CInteropSettings, CInteropTask>()
         val namesWithWarning = mutableSetOf<String>()
-        components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
-            binary.component.dependencies.cinterops.all { cinterop ->
-                val konanTarget = binary.konanTarget
+
+        fun AbstractKotlinNativeBinary.setupInteropFromComponent(component: KotlinNativeComponent) {
+            component.dependencies.cinterops.all { cinterop ->
                 val settings = cinterop.target(konanTarget)
 
                 val interopTask = settingsToTask.getOrPut(settings) {
@@ -198,31 +197,44 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                         settings
                     ).apply {
                         group = INTEROP_GROUP
-                        description = "Generates Kotlin/Native interop library '${cinterop.name}' for target '${konanTarget.name}'"
+                        description =
+                                "Generates Kotlin/Native interop library '${cinterop.name}' for target '${konanTarget.name}'"
                     }
                 }
 
-                binary.klibraries.dependencies.add(dependencies.create(files(interopTask.outputFileProvider)))
-                if (binary is KotlinNativeLibrary) {
-                    binary.linkElements.get().outgoing.artifact(interopTask.outputFileProvider) {
+                klibraries.dependencies.add(project.dependencies.create(files(interopTask.outputFileProvider)))
+
+                if (this is KotlinNativeLibrary) {
+                    linkElements.get().outgoing.artifact(interopTask.outputFileProvider) {
                         it.classifier = "interop-${cinterop.name}"
                     }
                     // User can create an interop with the same name as the main library.
                     // In this case we get two libraries with the same name and one of them depends
                     // on the another. Such a situation is considered as a cyclic dependency by the compiler
                     // so we warn a user about it.
-                    val mainLibraryName = binary.linkFile.get().asFile.nameWithoutExtension
+                    val mainLibraryName = linkFile.get().asFile.nameWithoutExtension
                     val interopLibraryName = interopTask.outputFile.nameWithoutExtension
 
                     if (mainLibraryName == interopLibraryName && mainLibraryName !in namesWithWarning) {
-                        logger.warn("""
+                        logger.warn(
+                            """
 
                             Warning: you have an interop with the same name as the main library ($mainLibraryName)!
                             It may cause failures in dependent projects so consider renaming the interop.
 
-                        """.trimIndent())
+                        """.trimIndent()
+                        )
                         namesWithWarning.add(mainLibraryName)
                     }
+                }
+            }
+        }
+
+        components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
+            binary.component.let {
+                binary.setupInteropFromComponent(it)
+                if (it is KotlinNativeTestComponent) {
+                    binary.setupInteropFromComponent(it.testedComponent)
                 }
             }
         }

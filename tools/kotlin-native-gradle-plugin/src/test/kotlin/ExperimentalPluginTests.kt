@@ -684,7 +684,7 @@ class ExperimentalPluginTests {
         }
         // endregion.
 
-        rootProject.createRunner().withArguments(":build").build().apply {
+        rootProject.createRunner().withArguments("build").build().apply {
             output.contains("Interop is here!")
             output.contains("Transitive call!")
         }
@@ -722,7 +722,7 @@ class ExperimentalPluginTests {
         assertTrue(projectDirectory.resolve("libFoo/build").deleteRecursively())
         assertTrue(projectDirectory.resolve("libBar/build").deleteRecursively())
 
-        rootProject.createRunner().withArguments(":build").build().apply {
+        rootProject.createRunner().withArguments("build").build().apply {
             output.contains("Interop is here!")
             output.contains("Transitive call!")
         }
