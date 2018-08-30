@@ -3875,6 +3875,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inline/inlineChain.kt");
         }
 
+        @TestMetadata("inlineChainCrossModule.kt")
+        public void testInlineChainCrossModule() throws Exception {
+            runTest("js/js.translator/testData/box/inline/inlineChainCrossModule.kt");
+        }
+
         @TestMetadata("inlineChainWithFewStatements.kt")
         public void testInlineChainWithFewStatements() throws Exception {
             runTest("js/js.translator/testData/box/inline/inlineChainWithFewStatements.kt");
@@ -3983,6 +3988,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("kt26117.kt")
         public void testKt26117() throws Exception {
             runTest("js/js.translator/testData/box/inline/kt26117.kt");
+        }
+
+        @TestMetadata("kt26466.kt")
+        public void testKt26466() throws Exception {
+            runTest("js/js.translator/testData/box/inline/kt26466.kt");
         }
 
         @TestMetadata("lambdaInLambda.kt")
