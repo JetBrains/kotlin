@@ -50,7 +50,7 @@ object JvmProtoBufUtil {
         JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(this, EXTENSION_REGISTRY), strings)
 
     /**
-     * Serializes [message] and [stringTable] into a string array which must be further written to [Metadata.d1]
+     * Serializes [message] and [stringTable] into a string array which must be further written to [Metadata.data1]
      */
     @JvmStatic
     fun writeData(message: MessageLite, stringTable: JvmStringTable): Array<String> =
