@@ -2515,24 +2515,24 @@ public final class kotlin/collections/UArraysKt {
 
 public abstract class kotlin/collections/UByteIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
-	public final fun next ()B
 	public synthetic fun next ()Ljava/lang/Object;
+	public final fun next ()Lkotlin/UByte;
 	public abstract fun nextUByte ()B
 	public fun remove ()V
 }
 
 public abstract class kotlin/collections/UIntIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
-	public final fun next ()I
 	public synthetic fun next ()Ljava/lang/Object;
+	public final fun next ()Lkotlin/UInt;
 	public abstract fun nextUInt ()I
 	public fun remove ()V
 }
 
 public abstract class kotlin/collections/ULongIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
-	public final fun next ()J
 	public synthetic fun next ()Ljava/lang/Object;
+	public final fun next ()Lkotlin/ULong;
 	public abstract fun nextULong ()J
 	public fun remove ()V
 }
@@ -2540,7 +2540,7 @@ public abstract class kotlin/collections/ULongIterator : java/util/Iterator, kot
 public abstract class kotlin/collections/UShortIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
 	public fun <init> ()V
 	public synthetic fun next ()Ljava/lang/Object;
-	public final fun next ()S
+	public final fun next ()Lkotlin/UShort;
 	public abstract fun nextUShort ()S
 	public fun remove ()V
 }
@@ -4206,10 +4206,10 @@ public final class kotlin/ranges/UIntRange : kotlin/ranges/UIntProgression, kotl
 	public synthetic fun contains (Ljava/lang/Comparable;)Z
 	public fun contains-4wtlwgkb (I)Z
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getEndInclusive ()I
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
-	public fun getStart ()I
+	public fun getEndInclusive ()Lkotlin/UInt;
 	public synthetic fun getStart ()Ljava/lang/Comparable;
+	public fun getStart ()Lkotlin/UInt;
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public fun toString ()Ljava/lang/String;
@@ -4242,10 +4242,10 @@ public final class kotlin/ranges/ULongRange : kotlin/ranges/ULongProgression, ko
 	public synthetic fun contains (Ljava/lang/Comparable;)Z
 	public fun contains-4n0qz0s4 (J)Z
 	public fun equals (Ljava/lang/Object;)Z
-	public fun getEndInclusive ()J
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
-	public fun getStart ()J
+	public fun getEndInclusive ()Lkotlin/ULong;
 	public synthetic fun getStart ()Ljava/lang/Comparable;
+	public fun getStart ()Lkotlin/ULong;
 	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public fun toString ()Ljava/lang/String;
