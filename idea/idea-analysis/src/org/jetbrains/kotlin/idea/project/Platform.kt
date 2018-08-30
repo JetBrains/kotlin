@@ -192,7 +192,7 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
     val apiVersion = facetSettings.apiLevel ?: languageVersion
 
     val languageFeatures = facetSettings.mergedCompilerArguments?.configureLanguageFeatures(MessageCollector.NONE)?.apply {
-        configureCoroutinesSupport(facetSettings.coroutineSupport)
+        configureCoroutinesSupport(facetSettings.coroutineSupport, languageVersion)
         configureMultiplatformSupport(facetSettings.platformKind?.kind, this@computeLanguageVersionSettings)
     }.orEmpty()
 
