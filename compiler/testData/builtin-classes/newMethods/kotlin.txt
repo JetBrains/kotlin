@@ -716,6 +716,9 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
     public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public final operator fun plus(/*0*/ other: kotlin.Any?): kotlin.String
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public open fun strip(): kotlin.String!
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public open fun stripLeading(): kotlin.String!
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public open fun stripTrailing(): kotlin.String!
     public open override /*1*/ fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
 
     public companion object Companion {
