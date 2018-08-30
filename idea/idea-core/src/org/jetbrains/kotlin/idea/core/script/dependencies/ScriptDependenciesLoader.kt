@@ -109,13 +109,19 @@ abstract class ScriptDependenciesLoader(
     protected fun notifyRootsChanged() {
         if (!shouldNotifyRootsChanged) return
 
-        TransactionGuard.submitTransaction(project, Runnable {
+        val doNotifyRootsChanged = Runnable {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
 
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
             }
-        })
+        }
+
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            doNotifyRootsChanged.run()
+        } else {
+            TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
+        }
     }
 }
