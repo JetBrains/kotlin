@@ -607,6 +607,213 @@ public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: 
 }
 
 /**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int, startIndex: Int, endIndex: Int): Array<T> {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int, startIndex: Int, endIndex: Int): ByteArray {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int, startIndex: Int, endIndex: Int): ShortArray {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int, startIndex: Int, endIndex: Int): IntArray {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int, startIndex: Int, endIndex: Int): LongArray {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int, startIndex: Int, endIndex: Int): FloatArray {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int, startIndex: Int, endIndex: Int): DoubleArray {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int, startIndex: Int, endIndex: Int): BooleanArray {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ *
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ *
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int, startIndex: Int, endIndex: Int): CharArray {
+    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
+    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    return destination
+}
+
+/**
  * Returns `true` if the two specified arrays are *deeply* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  *

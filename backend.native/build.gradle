@@ -181,6 +181,7 @@ targetList.each { target ->
                 '-output', project(':runtime').file("build/${target}Stdlib"),
                 '-produce', 'library', '-module_name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
                 '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
+                '-Xuse-experimental=kotlin.contracts.ExperimentalContracts',
                 commonSrc.absolutePath,
                 project(':Interop:Runtime').file('src/main/kotlin'),
                 project(':Interop:Runtime').file('src/native/kotlin'),

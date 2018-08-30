@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-package kotlin
+package kotlin.coroutines
 
 import kotlin.native.internal.FixmeReflection
 

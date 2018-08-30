@@ -15,6 +15,4 @@ public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
     }
 }
 
-public actual fun randomInt(limit: Int): Int = kotlin.random.Random.nextInt(limit)
-
 internal actual fun String.removeLeadingPlusOnJava6(): String = this
