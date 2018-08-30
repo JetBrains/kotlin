@@ -4251,13 +4251,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public StackValue generateConstructorCall(@NotNull ResolvedCall<?> resolvedCall, @NotNull Type objectType) {
         return StackValue.functionCall(objectType, null, v -> {
-            v.anew(objectType);
-            v.dup();
-
             ClassConstructorDescriptor constructor = getConstructorDescriptor(resolvedCall);
-
             ReceiverParameterDescriptor dispatchReceiver = constructor.getDispatchReceiverParameter();
             ClassDescriptor containingDeclaration = constructor.getContainingDeclaration();
+
+            if (!containingDeclaration.isInline()) {
+                v.anew(objectType);
+                v.dup();
+            }
+
             if (dispatchReceiver != null) {
                 KotlinType kotlinType = dispatchReceiver.getType();
                 Type receiverType = typeMapper.mapType(kotlinType);
