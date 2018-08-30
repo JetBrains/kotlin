@@ -31,6 +31,8 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.contains(ele
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 public fun <T> Sequence<T>.elementAt(index: Int): T {
     return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
