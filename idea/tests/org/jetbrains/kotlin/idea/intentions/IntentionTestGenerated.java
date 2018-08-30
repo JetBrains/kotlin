@@ -3508,6 +3508,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/private"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("annotated.kt")
+            public void testAnnotated() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/annotated.kt");
+            }
+
             @TestMetadata("hasModifier1.kt")
             public void testHasModifier1() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/private/hasModifier1.kt");
