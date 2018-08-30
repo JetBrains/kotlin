@@ -21,11 +21,11 @@ public interface KonanModelProvider {
 
     ExtensionPointName<KonanModelProvider> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.native.konanModelProvider");
 
-    @NotNull
-    Collection<KonanArtifact> getArtifacts(@NotNull Project project);
+    //@NotNull
+    //Collection<KonanArtifact> getArtifacts(@NotNull Project project);
 
     @Nullable
     Path getKonanHome(@NotNull Project project);
 
-    boolean reloadLibraries(@NotNull Project project, @NotNull Collection<Path> libraryPaths);
+    //boolean reloadLibraries(@NotNull Project project, @NotNull Collection<Path> libraryPaths);
 }

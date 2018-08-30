@@ -32,6 +32,9 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <binaryExtension implementation="org.jetbrains.konan.analyser.index.KonanMetaBinary"/>
-        <idePlatformSupport implementation="org.jetbrains.konan.analyser.KonanPlatformSupport" order="first"/>
+        <!--<idePlatformSupport implementation="org.jetbrains.konan.analyser.KonanPlatformSupport" order="first"/>-->
+        <idePlatformKind implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKind"/>
+        <idePlatformKindTooling implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKindTooling"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKindResolution"/>
     </extensions>
 </idea-plugin>
