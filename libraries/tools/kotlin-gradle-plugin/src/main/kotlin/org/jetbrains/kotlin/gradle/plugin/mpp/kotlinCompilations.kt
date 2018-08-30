@@ -70,10 +70,12 @@ abstract class AbstractKotlinCompilation(
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
     open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Boolean) {
-        val compileTask = target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>
-        compileTask.source(sourceSet.kotlin)
-        if (addAsCommonSources) {
-            compileTask.commonSourceSet += sourceSet.kotlin
+        (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).apply {
+            source(sourceSet.kotlin)
+            sourceFilesExtensions(sourceSet.customSourceFilesExtensions)
+            if (addAsCommonSources) {
+                commonSourceSet += sourceSet.kotlin
+            }
         }
     }
 

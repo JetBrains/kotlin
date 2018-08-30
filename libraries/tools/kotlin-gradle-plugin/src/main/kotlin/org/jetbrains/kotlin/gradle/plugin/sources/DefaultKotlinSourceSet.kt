@@ -12,6 +12,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
@@ -53,7 +54,9 @@ class DefaultKotlinSourceSet(
         get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(name + " Kotlin source", fileResolver).apply {
-        filter.include("**/*.java", "**/*.kt", "**/*.kts")
+        filter.include("**/*.java")
+        filter.include("**/*.kt")
+        filter.include("**/*.kts")
     }
 
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
@@ -89,6 +92,16 @@ class DefaultKotlinSourceSet(
         get() = dependsOnSourceSetsImpl
 
     override fun toString(): String = "source set $name"
+
+    override val customSourceFilesExtensions: Iterable<String>
+        get() = Iterable {
+            kotlin.filter.includes.mapNotNull { pattern ->
+                pattern.substringAfterLast('.').takeUnless { extension ->
+                    DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS.any { extension.equals(it, ignoreCase = true) }
+                            || extension.any { it == '\\' || it == '/' }
+                }
+            }.iterator()
+        }
 }
 
 private fun KotlinSourceSet.checkForCircularDependencies(): Unit {

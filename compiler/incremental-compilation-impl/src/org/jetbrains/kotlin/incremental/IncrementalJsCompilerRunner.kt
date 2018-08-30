@@ -90,7 +90,7 @@ class IncrementalJsCompilerRunner(
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
             ?: return CompilationMode.Rebuild { "No information on previous build" }
 
-        val dirtyFiles = DirtyFilesContainer(caches, reporter)
+        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
 
         val libs = (args.libraries ?: "").split(File.pathSeparator).map { File(it) }
