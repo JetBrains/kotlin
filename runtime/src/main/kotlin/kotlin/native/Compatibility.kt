@@ -18,4 +18,5 @@ public annotation class Volatile
 public annotation class Synchronized
 
 @kotlin.internal.InlineOnly
-public actual inline fun <R> synchronized(@Suppress("UNUSED_PARAMETER") lock: Any, block: () -> R): R = block()
+public actual inline fun <R> synchronized(@Suppress("UNUSED_PARAMETER") lock: Any, block: () -> R): R =
+        throw UnsupportedOperationException("synchronized() is unsupported")

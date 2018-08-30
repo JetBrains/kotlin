@@ -68,7 +68,13 @@ internal fun ThrowFreezingException(toFreeze: Any, blocker: Any): Nothing =
         throw FreezingException(toFreeze, blocker)
 
 @ExportForCppRuntime
-internal fun ThrowInvalidMutabilityException(where: Any): Nothing = throw InvalidMutabilityException(where)
+internal fun ThrowInvalidMutabilityException(where: Any): Nothing {
+    val kClass = where::class
+    val className = kClass.qualifiedName ?: kClass.simpleName ?: "<object>"
+    val unsignedHashCode = where.hashCode().toLong() and 0xffffffffL
+    val hashCodeStr = unsignedHashCode.toString(16)
+    throw InvalidMutabilityException("$className@$hashCodeStr")
+}
 
 @SymbolName("Kotlin_AtomicReference_checkIfFrozen")
 external internal fun checkIfFrozen(ref: Any?)
