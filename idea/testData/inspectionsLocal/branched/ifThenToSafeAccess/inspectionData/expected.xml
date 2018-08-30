@@ -96,42 +96,10 @@
     <description>Foldable if-then</description>
   </problem>
   <problem>
-    <file>isCondition.kt</file>
-    <line>1</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/isCondition.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
-  <problem>
-    <file>isNotCondition.kt</file>
-    <line>1</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/src/isNotCondition.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
-  <problem>
     <file>nullCheckWithSelectorCallChain.kt</file>
     <line>5</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/nullCheckWithSelectorCallChain.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
-  <problem>
-    <file>isCheckWithSelectorChain.kt</file>
-    <line>4</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/isCheckWithSelectorChain.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
-  <problem>
-    <file>isCheckSimple.kt</file>
-    <line>4</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/isCheckSimple.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Foldable if-then</description>
   </problem>
@@ -148,14 +116,6 @@
     <line>2</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/implicitReceiver.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
-    <description>Foldable if-then</description>
-  </problem>
-  <problem>
-    <file>property.kt</file>
-    <line>10</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/property.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Foldable if-then</description>
   </problem>

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
-import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -305,14 +304,6 @@ internal fun KtIfExpression.shouldBeTransformed(): Boolean {
         is KtBinaryExpression -> {
             val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
             !baseClause.isClauseTransformableToLetOnly()
-        }
-        is KtIsExpression -> {
-            val baseClause = (if (condition.isNegated) `else` else then)?.unwrapBlockOrParenthesis()
-            when {
-                baseClause.isClauseTransformableToLetOnly() -> false
-                !isMultiLine() -> true
-                else -> baseClause !is KtDotQualifiedExpression
-            }
         }
         else -> false
     }
