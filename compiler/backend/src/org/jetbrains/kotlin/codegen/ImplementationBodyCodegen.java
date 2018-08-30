@@ -454,8 +454,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         try {
             lookupConstructorExpressionsInClosureIfPresent();
             constructorCodegen.generatePrimaryConstructor(delegationFieldsInfo, superClassAsmType);
-            for (ClassConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
-                constructorCodegen.generateSecondaryConstructor(secondaryConstructor, superClassAsmType);
+            if (!descriptor.isInline()) {
+                for (ClassConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
+                    constructorCodegen.generateSecondaryConstructor(secondaryConstructor, superClassAsmType);
+                }
             }
         }
         catch (CompilationException | ProcessCanceledException e) {

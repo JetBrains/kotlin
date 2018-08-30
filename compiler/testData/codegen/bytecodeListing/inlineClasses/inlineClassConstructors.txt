@@ -1,0 +1,21 @@
+@kotlin.Metadata
+static class Foo$Erased {
+    method <init>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
+    public static method constructor(p0: int): int
+    public static method constructor(p0: long): int
+    public static method equals(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public static method hashCode(p0: int): int
+    public static @org.jetbrains.annotations.NotNull method toString(p0: int): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Foo {
+    private final field x: int
+    public method <init>(p0: int): void
+    public method equals(p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public method toString(): java.lang.String
+    public final method unbox(): int
+}
