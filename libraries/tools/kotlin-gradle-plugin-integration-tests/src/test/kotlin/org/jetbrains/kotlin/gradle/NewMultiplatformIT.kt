@@ -369,4 +369,38 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
     }
+
+
+    @Test
+    fun testOptionalExpectations() = with(Project("new-mpp-lib-with-tests", gradleVersion)) {
+        setupWorkingDir()
+
+        projectDir.resolve("src/commonMain/kotlin/Optional.kt").writeText(
+            """
+            @file:Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+            @OptionalExpectation
+            expect annotation class Optional(val value: String)
+
+            @Optional("optionalAnnotationValue")
+            class OptionalCommonUsage
+            """.trimIndent()
+        )
+
+        build("compileKotlinJvmWithoutJava") {
+            assertSuccessful()
+            assertFileExists(targetClassesDir("jvmWithoutJava") + "OptionalCommonUsage.class")
+        }
+
+        projectDir.resolve("src/jvmWithoutJavaMain/kotlin/OptionalImpl.kt").writeText(
+            "\n" + """
+            @Optional("should fail, see KT-25196")
+            class OptionalPlatformUsage
+            """.trimIndent()
+        )
+
+        build("compileKotlinJvmWithoutJava") {
+            assertFailed()
+            assertContains("Declaration annotated with '@OptionalExpectation' can only be used in common module sources")
+        }
+    }
 }

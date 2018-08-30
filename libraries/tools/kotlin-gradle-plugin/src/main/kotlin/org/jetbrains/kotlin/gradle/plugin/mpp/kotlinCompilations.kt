@@ -12,6 +12,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.util.*
 
 internal fun KotlinCompilation.composeName(prefix: String? = null, suffix: String? = null): String {
     val compilationNamePart = compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }
@@ -62,8 +64,12 @@ abstract class AbstractKotlinCompilation(
 
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
-    open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet) {
-        (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).source(sourceSet.kotlin)
+    open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Boolean) {
+        val compileTask = target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>
+        compileTask.source(sourceSet.kotlin)
+        if (addAsCommonSources) {
+            compileTask.commonSourceSet += sourceSet.kotlin
+        }
     }
 
     override fun source(sourceSet: KotlinSourceSet) {
@@ -71,7 +77,10 @@ abstract class AbstractKotlinCompilation(
             with(target.project) {
                 whenEvaluated {
                     sourceSet.getSourceSetHierarchy().forEach { sourceSet ->
-                        addSourcesToCompileTask(sourceSet)
+                        val isCommonSource =
+                            CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project)?.contains(sourceSet) ?: false
+
+                        addSourcesToCompileTask(sourceSet, addAsCommonSources = isCommonSource)
 
                         // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
                         // old Java & Android projects:
@@ -295,7 +304,8 @@ class KotlinNativeCompilation(
             "klibrary"
         )
 
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet) {
+    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Boolean) {
+        // TODO: support optional expectations
         allSources += sourceSet.kotlin
     }
 
@@ -308,4 +318,24 @@ class KotlinNativeCompilation(
         val FRAMEWORK = NativeOutputKind.FRAMEWORK
     }
 
+}
+
+private object CompilationSourceSetUtil {
+    // Cache the results per project
+    private val projectSourceSetsInMultipleCompilationsCache = WeakHashMap<Project, Set<KotlinSourceSet>>()
+
+    fun sourceSetsInMultipleCompilations(project: Project) =
+        projectSourceSetsInMultipleCompilationsCache.computeIfAbsent(project) { _ ->
+            check(project.state.executed) { "Should only be computed after the project is evaluated" }
+
+            val compilations = (project.kotlinExtension as? KotlinMultiplatformExtension)?.targets?.flatMap { it.compilations }
+                ?: return@computeIfAbsent null
+
+            compilations
+                .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
+                .groupingBy { (_, sourceSet) -> sourceSet }
+                .eachCount()
+                .filterValues { it > 1 }
+                .keys
+        }
 }
