@@ -7,8 +7,6 @@ import kotlin.script.experimental.location.*
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptEvaluator
-import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 
-@KotlinScript("Kotlin Script with custom extension")
-@KotlinScriptFileExtension("mykts")
+@KotlinScript(name = "Kotlin Script with custom extension", extension = "mykts")
 open class Template
