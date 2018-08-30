@@ -910,7 +910,7 @@ public class KotlinTypeMapper {
                 ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
                                            ? declarationOwner
                                            : currentOwner;
-                owner = toInlinedErasedClass ? mapErasedInlineClass(receiver) : mapClass(receiver);
+                owner = mapClass(receiver);
                 thisClass = owner;
                 dispatchReceiverKotlinType = receiver.getDefaultType();
             }
