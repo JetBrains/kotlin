@@ -3,7 +3,7 @@
  This example shows how one may use _Kotlin/Native_ to build GUI
  applications with the GTK toolkit.
 
-To build use `../gradlew build` or `./build.sh [-I=/include/path]`.
+To build use `../gradlew assemble` or `./build.sh [-I=/include/path]`.
 
 Do not forget to install GTK3. See bellow.
 
