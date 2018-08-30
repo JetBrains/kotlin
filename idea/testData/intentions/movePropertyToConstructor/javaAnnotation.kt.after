@@ -1,2 +1,2 @@
-class Test(@property:JavaAnn @field:JavaFieldAnn val foo: String = "") {
+class Test(@property:JavaAnn @JavaFieldAnn val foo: String = "") {
 }

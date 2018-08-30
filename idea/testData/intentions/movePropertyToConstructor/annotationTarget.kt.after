@@ -1,13 +1,16 @@
-annotation class Ann(val i: Int, val j: Int)
-
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
-annotation class PropertyFieldAnn(val i: Int, val j: Int)
+annotation class Ann1(val i: Int, val j: Int)
 
 @Target(AnnotationTarget.PROPERTY)
-annotation class PropertyAnn(val i: Int, val j: Int)
+annotation class Ann2(val i: Int, val j: Int)
 
 @Target(AnnotationTarget.FIELD)
-annotation class FieldAnn(val i: Int, val j: Int)
+annotation class Ann3(val i: Int, val j: Int)
 
-class Test(@property:Ann(1, 2) @property:PropertyFieldAnn(3, 4) @property:PropertyAnn(5, 6) @field:FieldAnn(7, 8) @get:Ann(9, 0) val foo: String = "") {
+@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
+annotation class Ann4(val i: Int, val j: Int)
+
+@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD)
+annotation class Ann5(val i: Int, val j: Int)
+
+class Test(@get:Ann1(0, 0) @property:Ann1(1, 11) @Ann2(2, 22) @Ann3(3, 33) @property:Ann4(4, 44) @field:Ann5(5, 55) val foo: String = "") {
 }

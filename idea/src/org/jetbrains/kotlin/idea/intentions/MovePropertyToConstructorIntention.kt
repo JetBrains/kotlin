@@ -133,6 +133,8 @@ class MovePropertyToConstructorIntention :
         val applicableTargets = AnnotationChecker.applicableTargetSet(descriptor)
         val valueArgumentList = valueArgumentList?.text.orEmpty()
         return when {
+            KotlinTarget.VALUE_PARAMETER !in applicableTargets ->
+                text
             KotlinTarget.PROPERTY in applicableTargets ->
                 "@${AnnotationUseSiteTarget.PROPERTY.renderName}:$typeReference$valueArgumentList"
             KotlinTarget.FIELD in applicableTargets ->
