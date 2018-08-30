@@ -487,4 +487,16 @@ class Collections {
         }
     }
 
+    class Usage {
+        @Sample
+        fun elementAt() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.elementAt(0), "1")
+            assertPrints(list.elementAt(2), "3")
+            assertFails { list.elementAt(3) }
+
+            val emptyList = emptyList<Int>()
+            assertFails { emptyList.elementAt(0) }
+        }
+    }
 }
