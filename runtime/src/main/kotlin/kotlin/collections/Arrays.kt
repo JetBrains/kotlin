@@ -159,6 +159,13 @@ public actual inline fun CharArray.copyOf(newSize: Int): CharArray {
     return copyOfUninitializedElements(newSize)
 }
 
+@PublishedApi internal inline fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) {
+    if (toIndex > size)
+        throw IndexOutOfBoundsException("toIndex ($toIndex) is greater than size ($size).")
+    if (fromIndex > toIndex)
+        throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex).")
+}
+
 /**
  * Returns new array which is a copy of range of original array.
  */
@@ -167,8 +174,7 @@ public actual inline fun CharArray.copyOf(newSize: Int): CharArray {
 // Sync its behaviour wiht Kotlin JVM when the problem is solved there.
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
@@ -177,8 +183,7 @@ public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int):
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
@@ -187,8 +192,7 @@ public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): By
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
@@ -197,8 +201,7 @@ public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): S
  */
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
@@ -207,8 +210,7 @@ public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): Int
  */
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
@@ -217,8 +219,7 @@ public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): Lo
  */
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
@@ -227,8 +228,7 @@ public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): F
  */
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
@@ -237,8 +237,7 @@ public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): 
  */
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
@@ -247,8 +246,7 @@ public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int):
  */
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
-    if (fromIndex > toIndex || toIndex > size)
-        throw IllegalArgumentException("Wrong indices: fromIndex: $fromIndex, toIndex: $toIndex, array size: $size")
+    checkCopyOfRangeArguments(fromIndex, toIndex, size)
     return copyOfUninitializedElements(fromIndex, toIndex)
 }
 
