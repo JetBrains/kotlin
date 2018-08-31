@@ -97,7 +97,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             val setterFlags = proto.setterFlags
             val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
             val isExternal = proto.hasSetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
-            val isInline = proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(setterFlags)
+            val isInline = proto.hasSetterFlags() && Flags.IS_INLINE_ACCESSOR.get(setterFlags)
             val annotations = getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER)
             if (isNotDefault) {
                 val setter = PropertySetterDescriptorImpl(
