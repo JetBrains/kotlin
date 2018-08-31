@@ -38,13 +38,13 @@ fun makeJsIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val isIncremental = IncrementalCompilation.isEnabledForJs()
-    val versions = commonCacheVersionsManagers(cachesDir, isIncremental) + standaloneCacheVersionManager(cachesDir, isIncremental)
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
             .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withJsIC {
+        val versions = commonCacheVersionsManagers(cachesDir, true) + standaloneCacheVersionManager(cachesDir, true)
+
         val compiler = IncrementalJsCompilerRunner(
             cachesDir, versions, reporter,
             buildHistoryFile = buildHistoryFile,

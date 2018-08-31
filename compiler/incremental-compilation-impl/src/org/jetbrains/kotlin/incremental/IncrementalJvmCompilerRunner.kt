@@ -57,9 +57,6 @@ fun makeIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val isIncremental = IncrementalCompilation.isEnabledForJvm()
-    val versions = commonCacheVersionsManagers(cachesDir, isIncremental) + standaloneCacheVersionManager(cachesDir, isIncremental)
-
     val kotlinExtensions = listOf("kt", "kts")
     val allExtensions = kotlinExtensions + listOf("java")
     val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
@@ -68,6 +65,8 @@ fun makeIncrementally(
     val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withIC {
+        val versions = commonCacheVersionsManagers(cachesDir, true) + standaloneCacheVersionManager(cachesDir, true)
+
         val compiler = IncrementalJvmCompilerRunner(
                 cachesDir,
                 sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
