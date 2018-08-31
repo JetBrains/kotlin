@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.ide.util.DirectoryChooserUtil
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.roots.ModulePackageIndex
@@ -20,6 +21,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
+import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.idea.util.sourceRoot
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -93,6 +95,18 @@ private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
     return result
 }
 
+private fun Module.getOrConfigureKotlinSourceRoots(): List<VirtualFile> {
+    val sourceRoots = getNonGeneratedKotlinSourceRoots()
+    if (sourceRoots.isNotEmpty()) {
+        return sourceRoots
+    }
+    return runWriteAction {
+        val rootDir = rootManager.contentRoots.firstOrNull()
+        rootDir?.createChildDirectory(project, "kotlin")
+        getNonGeneratedKotlinSourceRoots()
+    }
+}
+
 private fun getPackageDirectoriesInModule(rootPackage: PsiPackage, module: Module): Array<PsiDirectory> =
     rootPackage.getDirectories(GlobalSearchScope.moduleScope(module))
 
@@ -118,7 +132,7 @@ fun findOrCreateDirectoryForPackage(module: Module, packageName: String): PsiDir
     }
 
     val existingDirectory = existingDirectoryByPackage ?: run {
-        val sourceRoots = module.getNonGeneratedKotlinSourceRoots()
+        val sourceRoots = module.getOrConfigureKotlinSourceRoots()
         if (sourceRoots.isEmpty()) {
             return null
         }
