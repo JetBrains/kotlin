@@ -2183,6 +2183,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
         }
 
+        @TestMetadata("successOrFailureApiDoesntUseErasedClass.kt")
+        public void testSuccessOrFailureApiDoesntUseErasedClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/successOrFailureApiDoesntUseErasedClass.kt");
+        }
+
         @TestMetadata("synthesizedBoxMethodIsNotMangled.kt")
         public void testSynthesizedBoxMethodIsNotMangled() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/synthesizedBoxMethodIsNotMangled.kt");
