@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
 import org.jetbrains.kotlin.idea.util.sourceRoot
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
 fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
@@ -77,8 +78,20 @@ private fun findLongestExistingPackage(module: Module, packageName: String): Psi
 private val kotlinSourceRootTypes: Set<JpsModuleSourceRootType<JavaSourceRootProperties>> =
     setOf(KotlinSourceRootType.Source, KotlinSourceRootType.TestSource) + JavaModuleSourceRootTypes.SOURCES
 
-private fun Module.getSourceRoots(): List<VirtualFile> =
-    ModuleRootManager.getInstance(this).getSourceRoots(kotlinSourceRootTypes)
+private fun Module.getNonGeneratedKotlinSourceRoots(): List<VirtualFile> {
+    val result = mutableListOf<VirtualFile>()
+    val rootManager = ModuleRootManager.getInstance(this)
+    for (contentEntry in rootManager.contentEntries) {
+        val sourceFolders = contentEntry.getSourceFolders(kotlinSourceRootTypes)
+        for (sourceFolder in sourceFolders) {
+            if (sourceFolder.jpsElement.getProperties(kotlinSourceRootTypes)?.isForGeneratedSources == true) {
+                continue
+            }
+            result.addIfNotNull(sourceFolder.file)
+        }
+    }
+    return result
+}
 
 private fun getPackageDirectoriesInModule(rootPackage: PsiPackage, module: Module): Array<PsiDirectory> =
     rootPackage.getDirectories(GlobalSearchScope.moduleScope(module))
@@ -105,7 +118,7 @@ fun findOrCreateDirectoryForPackage(module: Module, packageName: String): PsiDir
     }
 
     val existingDirectory = existingDirectoryByPackage ?: run {
-        val sourceRoots = module.getSourceRoots()
+        val sourceRoots = module.getNonGeneratedKotlinSourceRoots()
         if (sourceRoots.isEmpty()) {
             return null
         }
