@@ -493,6 +493,11 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                     runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/FieldTarget.kt");
                 }
 
+                @TestMetadata("PropertyAndAccessor.kt")
+                public void testPropertyAndAccessor() throws Exception {
+                    runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/PropertyAndAccessor.kt");
+                }
+
                 @TestMetadata("ReceiverTarget.kt")
                 public void testReceiverTarget() throws Exception {
                     runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/ReceiverTarget.kt");

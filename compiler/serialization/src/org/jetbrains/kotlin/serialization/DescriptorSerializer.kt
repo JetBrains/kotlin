@@ -166,7 +166,7 @@ class DescriptorSerializer private constructor(
         val hasAnnotations =
             hasAnnotations(descriptor) || hasAnnotations(descriptor.backingField) || hasAnnotations(descriptor.delegateField)
 
-        val propertyFlags = Flags.getAccessorFlags(
+        val defaultAccessorFlags = Flags.getAccessorFlags(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
@@ -177,7 +177,7 @@ class DescriptorSerializer private constructor(
         if (getter != null) {
             hasGetter = true
             val accessorFlags = getAccessorFlags(getter)
-            if (accessorFlags != propertyFlags) {
+            if (accessorFlags != defaultAccessorFlags) {
                 builder.getterFlags = accessorFlags
             }
         }
@@ -186,7 +186,7 @@ class DescriptorSerializer private constructor(
         if (setter != null) {
             hasSetter = true
             val accessorFlags = getAccessorFlags(setter)
-            if (accessorFlags != propertyFlags) {
+            if (accessorFlags != defaultAccessorFlags) {
                 builder.setterFlags = accessorFlags
             }
 

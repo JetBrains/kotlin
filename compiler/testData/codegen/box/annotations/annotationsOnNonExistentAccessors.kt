@@ -3,25 +3,6 @@
 
 // Please make sure that this test is consistent with the diagnostic test "annotationsTargetingNonExistentAccessor.kt"
 
-// FILE: Temporary.java
-
-// see https://youtrack.jetbrains.com/issue/KT-25499
-
-class Temporary {
-    public static void checkX2FromStaticsHasAnnotations() {
-        try {
-            if (Statics.Companion.getClass().getDeclaredMethod("getX2").getAnnotations().length == 0) {
-                throw new RuntimeException("there are no annotations");
-            }
-        }
-        catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-}
-
-// FILE: test.kt
-
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KProperty
 
@@ -152,9 +133,9 @@ class Statics {
         check(::x0.getter, annotationExists = false)
         check(::x1.getter, annotationExists = false)
 
-        check(::x2.getter, annotationExists = false) // https://youtrack.jetbrains.com/issue/KT-25499
-        check(::x2.setter, annotationExists = false)
-        check(::x2.setter.parameters.first(), annotationExists = false)
+        check(::x2.getter, annotationExists = true)
+        check(::x2.setter, annotationExists = true)
+        check(::x2.setter.parameters.first(), annotationExists = false /* TODO */)
 
         check(::x3.getter, annotationExists = false)
 
@@ -185,7 +166,6 @@ fun box(): String {
     PrivateProperties(0, "").test()
     EffetivelyPrivate.test()
     Statics().test()
-    Temporary.checkX2FromStaticsHasAnnotations()
     Delegate().test()
     return "OK"
 }

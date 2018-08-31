@@ -67,11 +67,20 @@ class MemberDeserializer(private val c: DeserializationContext) {
             }
         )
 
+        // Per documentation on Property.getter_flags in metadata.proto, if an accessor flags field is absent, its value should be computed
+        // by taking hasAnnotations/visibility/modality from property flags, and using false for the rest
+        val defaultAccessorFlags = Flags.getAccessorFlags(
+            Flags.HAS_ANNOTATIONS.get(flags),
+            Flags.VISIBILITY.get(flags),
+            Flags.MODALITY.get(flags),
+            false, false, false
+        )
+
         val getter = if (hasGetter) {
-            val getterFlags = proto.getterFlags
-            val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
-            val isExternal = proto.hasGetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
-            val isInline = proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(getterFlags)
+            val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
+            val isNotDefault = Flags.IS_NOT_DEFAULT.get(getterFlags)
+            val isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
+            val isInline = Flags.IS_INLINE_ACCESSOR.get(getterFlags)
             val annotations = getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER)
             val getter = if (isNotDefault) {
                 PropertyGetterDescriptorImpl(
@@ -94,10 +103,10 @@ class MemberDeserializer(private val c: DeserializationContext) {
         }
 
         val setter = if (Flags.HAS_SETTER.get(flags)) {
-            val setterFlags = proto.setterFlags
-            val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
-            val isExternal = proto.hasSetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
-            val isInline = proto.hasSetterFlags() && Flags.IS_INLINE_ACCESSOR.get(setterFlags)
+            val setterFlags = if (proto.hasSetterFlags()) proto.setterFlags else defaultAccessorFlags
+            val isNotDefault = Flags.IS_NOT_DEFAULT.get(setterFlags)
+            val isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
+            val isInline = Flags.IS_INLINE_ACCESSOR.get(setterFlags)
             val annotations = getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER)
             if (isNotDefault) {
                 val setter = PropertySetterDescriptorImpl(
