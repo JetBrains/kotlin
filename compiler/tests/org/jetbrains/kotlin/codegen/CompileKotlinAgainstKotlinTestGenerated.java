@@ -123,6 +123,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/enum.kt");
     }
 
+    @TestMetadata("inlineClassFromBinaryDependencies.kt")
+    public void testInlineClassFromBinaryDependencies() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFromBinaryDependencies.kt");
+    }
+
     @TestMetadata("inlinedConstants.kt")
     public void testInlinedConstants() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlinedConstants.kt");
