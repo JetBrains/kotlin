@@ -2257,7 +2257,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 val typeArgument = callee.getTypeArgument(0)!!
                 val typeArgumentClass = typeArgument.getClass()
                 if (typeArgumentClass == null) {
-                    // E.g. for `T::class` in a body of an inline function itself.
+                    // Should not happen anymore, but it is safer to handle this case.
                     functionGenerationContext.unreachable()
                     kNullInt8Ptr
                 } else {

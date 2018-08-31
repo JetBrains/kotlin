@@ -42,6 +42,21 @@ internal class KClassImpl<T : Any>(private val typeInfo: NativePtr) : KClass<T> 
     }
 }
 
+@PublishedApi
+internal class KClassUnsupportedImpl(private val message: String) : KClass<Any> {
+    override val simpleName: String? get() = error(message)
+
+    override val qualifiedName: String? get() = error(message)
+
+    override fun isInstance(value: Any?): Boolean = error(message)
+
+    override fun equals(other: Any?): Boolean = error(message)
+
+    override fun hashCode(): Int = error(message)
+
+    override fun toString(): String = "unreflected class ($message)"
+}
+
 @ExportForCompiler
 @SymbolName("Kotlin_Any_getTypeInfo")
 internal external fun getObjectTypeInfo(obj: Any): NativePtr

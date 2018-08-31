@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.getInlinedClass
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithStarProjections
+import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
@@ -28,8 +31,8 @@ import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -37,6 +40,8 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -325,22 +330,43 @@ internal fun IrBuilderWithScope.irKType(context: KonanBackendContext, type: IrTy
     val kTypeImplSymbol = context.ir.symbols.kTypeImpl
     val kTypeImplForGenericsSymbol = context.ir.symbols.kTypeImplForGenerics
 
-    val kClassImplConstructorSymbol = context.ir.symbols.kClassImplConstructor
     val kTypeImplConstructorSymbol = kTypeImplSymbol.constructors.single()
     val kTypeImplForGenericsConstructorSymbol = kTypeImplForGenericsSymbol.constructors.single()
 
-    val getClassTypeInfoSymbol = context.ir.symbols.getClassTypeInfo
+    val classifierOrNull = type.classifierOrNull
 
-    return if (type.classifierOrNull !is IrClassSymbol) {
+    return if (classifierOrNull !is IrClassSymbol) {
         // IrTypeParameterSymbol
         irCall(kTypeImplForGenericsConstructorSymbol)
     } else {
-        val returnKClass = irCall(kClassImplConstructorSymbol).apply {
-            putValueArgument(0, irCall(getClassTypeInfoSymbol, listOf(type)))
-        }
+        val returnKClass = irKClass(context, classifierOrNull)
         irCall(kTypeImplConstructorSymbol).apply {
             putValueArgument(0, returnKClass)
             putValueArgument(1, irBoolean(type.isMarkedNullable()))
         }
     }
 }
+
+internal fun IrBuilderWithScope.irKClass(context: KonanBackendContext, symbol: IrClassifierSymbol): IrExpression {
+    val symbols = context.ir.symbols
+    return when {
+        symbol !is IrClassSymbol -> // E.g. for `T::class` in a body of an inline function itself.
+            irCall(symbols.ThrowNullPointerException.owner)
+
+        symbol.descriptor.isObjCClass() ->
+            irKClassUnsupported(context, "KClass for Objective-C classes is not supported yet")
+
+        symbol.descriptor.getAllSuperClassifiers().any {
+            it is ClassDescriptor && it.fqNameUnsafe == InteropFqNames.nativePointed
+        } -> irKClassUnsupported(context, "KClass for interop types is not supported yet")
+
+        else -> irCall(symbols.kClassImplConstructor.owner).apply {
+            putValueArgument(0, irCall(symbols.getClassTypeInfo, listOf(symbol.typeWithStarProjections)))
+        }
+    }
+}
+
+private fun IrBuilderWithScope.irKClassUnsupported(context: KonanBackendContext, message: String) =
+        irCall(context.ir.symbols.kClassUnsupportedImplConstructor.owner).apply {
+            putValueArgument(0, irString(message))
+        }

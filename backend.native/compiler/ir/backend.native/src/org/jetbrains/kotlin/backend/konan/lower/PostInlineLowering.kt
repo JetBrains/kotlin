@@ -36,11 +36,7 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                 val builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
                         expression.startOffset, expression.endOffset)
 
-                val typeArgument = expression.symbol.typeWithStarProjections
-
-                return builder.irCall(symbols.kClassImplConstructor, listOf(typeArgument)).apply {
-                    putValueArgument(0, builder.irCall(symbols.getClassTypeInfo, listOf(typeArgument)))
-                }
+                return builder.irKClass(context, expression.symbol)
             }
 
             override fun visitGetClass(expression: IrGetClass): IrExpression {

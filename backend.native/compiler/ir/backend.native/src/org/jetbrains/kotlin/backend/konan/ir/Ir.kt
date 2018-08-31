@@ -409,6 +409,8 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val getObjectTypeInfo = internalFunction("getObjectTypeInfo")
     val kClassImpl = internalClass("KClassImpl")
     val kClassImplConstructor by lazy { kClassImpl.constructors.single() }
+    val kClassUnsupportedImpl = internalClass("KClassUnsupportedImpl")
+    val kClassUnsupportedImplConstructor by lazy { kClassUnsupportedImpl.constructors.single() }
     val kTypeImpl = internalClass("KTypeImpl")
     val kTypeImplForGenerics = internalClass("KTypeImplForGenerics")
 
