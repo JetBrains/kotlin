@@ -3,13 +3,11 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.source
+package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 
 interface KotlinSourceSet : Named, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
