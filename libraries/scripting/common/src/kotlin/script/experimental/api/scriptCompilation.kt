@@ -130,5 +130,5 @@ interface CompiledScript<out ScriptBase : Any> {
 
     val compilationConfiguration: ScriptCompilationConfiguration
 
-    suspend fun instantiate(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<ScriptBase>
+    suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>>
 }
