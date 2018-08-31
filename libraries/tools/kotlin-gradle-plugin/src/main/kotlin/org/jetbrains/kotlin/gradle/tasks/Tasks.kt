@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
@@ -285,7 +286,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             Coroutines.DEFAULT -> CommonCompilerArguments.DEFAULT
         }
 
+        if (newInference == LanguageFeature.State.ENABLED) {
+            args.newInference = true
+        }
+
         logger.kotlinDebug { "args.coroutinesState=${args.coroutinesState}" }
+        logger.kotlinDebug { "args.newInference=${args.newInference}" }
 
         if (project.logger.isDebugEnabled) {
             args.verbose = true
