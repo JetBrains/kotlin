@@ -50,18 +50,18 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is PropertyDescriptor) return
+        if (descriptor !is PropertyDescriptor || declaration !is KtProperty) return
 
         val annotation = descriptor.findJvmFieldAnnotation()
             ?: descriptor.delegateField?.annotations?.findAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
             ?: return
 
         val problem = when {
-            declaration is KtProperty && declaration.hasDelegate() -> DELEGATE
+            declaration.hasDelegate() -> DELEGATE
             !descriptor.hasBackingField(context.trace.bindingContext) -> return
             descriptor.isOverridable -> NOT_FINAL
             Visibilities.isPrivate(descriptor.visibility) -> PRIVATE
-            descriptor.hasCustomAccessor() -> CUSTOM_ACCESSOR
+            declaration.hasCustomAccessor() -> CUSTOM_ACCESSOR
             descriptor.overriddenDescriptors.isNotEmpty() -> OVERRIDES
             descriptor.isLateInit -> LATEINIT
             descriptor.isConst -> CONST
@@ -95,7 +95,16 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         return true
     }
 
-    private fun PropertyDescriptor.hasCustomAccessor() = !(getter?.isDefault ?: true) || !(setter?.isDefault ?: true)
+    // This logic has been effectively used since 1.0. It'd be nice to call [PropertyAccessorDescriptor.isDefault] here instead,
+    // but that would be a breaking change because in the following case:
+    //
+    //     @JvmField
+    //     @get:Anno
+    //     val foo = 42
+    //
+    // we'd start considering foo as having a custom getter and disallow the JvmField annotation on it
+    private fun KtProperty.hasCustomAccessor(): Boolean =
+        getter != null || setter != null
 
     private fun PropertyDescriptor.hasBackingField(bindingContext: BindingContext) =
         bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, this) ?: false

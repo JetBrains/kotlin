@@ -1038,10 +1038,13 @@ public class DescriptorResolver {
             boolean hasDelegate
     ) {
         PropertySetterDescriptorImpl setterDescriptor = null;
+        Annotations setterTargetedAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
+        Annotations parameterTargetedAnnotations = annotationSplitter.getAnnotationsForTarget(SETTER_PARAMETER);
         if (setter != null) {
             Annotations annotations = new CompositeAnnotations(CollectionsKt.listOf(
-                    annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER),
-                    annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, setter.getModifierList(), trace)));
+                    setterTargetedAnnotations,
+                    annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, setter.getModifierList(), trace)
+            ));
             KtParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptorImpl(
@@ -1082,8 +1085,7 @@ public class DescriptorResolver {
                 }
 
                 ValueParameterDescriptorImpl valueParameterDescriptor = resolveValueParameterDescriptor(
-                        scopeWithTypeParameters, setterDescriptor, parameter, 0, type, trace,
-                        annotationSplitter.getAnnotationsForTarget(SETTER_PARAMETER)
+                        scopeWithTypeParameters, setterDescriptor, parameter, 0, type, trace, parameterTargetedAnnotations
                 );
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
@@ -1095,10 +1097,9 @@ public class DescriptorResolver {
         }
         else if (property.isVar()) {
             setterDescriptor = DescriptorFactory.createSetter(
-                    propertyDescriptor,
-                    annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER),
-                    annotationSplitter.getAnnotationsForTarget(SETTER_PARAMETER),
-                    !hasDelegate, false, property.hasModifier(KtTokens.INLINE_KEYWORD),
+                    propertyDescriptor, setterTargetedAnnotations, parameterTargetedAnnotations,
+                    !hasDelegate && setterTargetedAnnotations.isEmpty() && parameterTargetedAnnotations.isEmpty(),
+                    false, property.hasModifier(KtTokens.INLINE_KEYWORD),
                     propertyDescriptor.getSource()
             );
         }
@@ -1124,10 +1125,12 @@ public class DescriptorResolver {
     ) {
         PropertyGetterDescriptorImpl getterDescriptor;
         KotlinType getterType;
+        Annotations getterTargetedAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER);
         if (getter != null) {
             Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
-                    annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
-                    annotationResolver.resolveAnnotationsWithoutArguments(scopeForDeclarationResolution, getter.getModifierList(), trace)));
+                    getterTargetedAnnotations,
+                    annotationResolver.resolveAnnotationsWithoutArguments(scopeForDeclarationResolution, getter.getModifierList(), trace)
+            ));
 
             getterDescriptor = new PropertyGetterDescriptorImpl(
                     propertyDescriptor, getterAnnotations,
@@ -1142,9 +1145,11 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
-            Annotations getterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER);
-            getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, getterAnnotations, !hasDelegate,
-                                                              /* isExternal = */ false, property.hasModifier(KtTokens.INLINE_KEYWORD));
+            getterDescriptor = DescriptorFactory.createGetter(
+                    propertyDescriptor, getterTargetedAnnotations,
+                    !hasDelegate && getterTargetedAnnotations.isEmpty(),
+                    /* isExternal = */ false, property.hasModifier(KtTokens.INLINE_KEYWORD)
+            );
             getterType = propertyTypeIfKnown;
         }
 

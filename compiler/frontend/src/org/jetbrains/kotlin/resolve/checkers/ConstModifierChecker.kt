@@ -60,8 +60,9 @@ object ConstModifierChecker : DeclarationChecker {
             return Errors.CONST_VAL_WITH_DELEGATE.on(declaration.delegate!!).nonApplicable()
         }
 
-        if (!descriptor.getter!!.isDefault) {
-            return Errors.CONST_VAL_WITH_GETTER.on(declaration.getter!!).nonApplicable()
+        val getter = declaration.getter
+        if (!descriptor.getter!!.isDefault && getter != null) {
+            return Errors.CONST_VAL_WITH_GETTER.on(getter).nonApplicable()
         }
 
         if (descriptor.type.isError) return ConstApplicability.NonApplicable()

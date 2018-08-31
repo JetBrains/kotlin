@@ -135,7 +135,7 @@ class Statics {
 
         check(::x2.getter, annotationExists = true)
         check(::x2.setter, annotationExists = true)
-        check(::x2.setter.parameters.first(), annotationExists = false /* TODO */)
+        check(::x2.setter.parameters.first(), annotationExists = true)
 
         check(::x3.getter, annotationExists = false)
 
