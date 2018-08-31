@@ -62,10 +62,9 @@ abstract class KonanTest extends JavaExec {
         if (outputDirectory != null) {
             return
         }
-
-        def outputSourceSet = project.sourceSets.findByName(getOutputSourceSetName())
+        def outputSourceSet = project.findProperty(getOutputSourceSetName())
         if (outputSourceSet != null) {
-            outputDirectory = outputSourceSet.output.getDirs().getSingleFile().absolutePath + "/$name"
+            outputDirectory = outputSourceSet.absolutePath + "/$name"
             project.file(outputDirectory).mkdirs()
         } else {
             outputDirectory = getTemporaryDir().absolutePath
@@ -338,9 +337,9 @@ abstract class ExtKonanTest extends KonanTest {
             return
         }
 
-        def outputSourceSet = project.sourceSets.findByName(getOutputSourceSetName())
+        def outputSourceSet = project.findProperty(getOutputSourceSetName())
         if (outputSourceSet != null) {
-            outputDirectory = outputSourceSet.output.getDirs().getSingleFile().absolutePath
+            outputDirectory = outputSourceSet.absolutePath
             project.file(outputDirectory).mkdirs()
         } else {
             outputDirectory = getTemporaryDir().absolutePath
@@ -882,9 +881,9 @@ fun runTest() {
     @Override
     String buildExePath() {
         def outputDir
-        def outputSourceSet = project.sourceSets.findByName(getOutputSourceSetName())
+        def outputSourceSet = project.findProperty(getOutputSourceSetName())
         if (outputSourceSet != null) {
-            outputDir = outputSourceSet.output.getDirs().getSingleFile().absolutePath + "/$name"
+            outputDir  = outputSourceSet.absolutePath+ "/$name"
         } else {
             outputDir = getTemporaryDir().absolutePath
         }

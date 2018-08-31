@@ -65,27 +65,17 @@ project.convention.plugins.executor = ExecutorServiceKt.create(project)
 
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
-    sourceSets {
-        // backend.native/tests
-        testOutputLocal {
-            output.dir(rootProject.file("$testOutputRoot/local"))
-        }
+    // backend.native/tests
+    ext.testOutputLocal = rootProject.file("$testOutputRoot/local")
 
-        // backend.native/tests/external
-        testOutputExternal {
-            output.dir(rootProject.file("$testOutputRoot/external"))
-        }
+    // backend.native/tests/external
+    ext.testOutputExternal = rootProject.file("$testOutputRoot/external")
 
-        // backend.native/tests/stdlib_external
-        testOutputStdlib {
-            output.dir(rootProject.file("$testOutputRoot/stdlib"))
-        }
+    // backend.native/tests/stdlib_external
+    ext.testOutputStdlib = rootProject.file("$testOutputRoot/stdlib")
 
-        // backend.native/tests/framework
-        testOutputFramework {
-            output.dir(rootProject.file("$testOutputRoot/framework"))
-        }
-    }
+    // backend.native/tests/framework
+    ext.testOutputFramework = rootProject.file("$testOutputRoot/framework")
 }
 
 konanArtifacts {
@@ -165,7 +155,7 @@ task resultsTask() {
 
         def output = ["statistics": statistics, "tests": results]
         def json = JsonOutput.toJson(output)
-        def reportFile = new File(sourceSets.testOutputExternal.output.getDirs().getSingleFile(), "results.json")
+        def reportFile = new File(testOutputExternal, "results.json")
         reportFile.write(JsonOutput.prettyPrint(json))
         println("DONE.\n\n" +
                 "TOTAL: $statistics.total\n" +
@@ -2889,13 +2879,6 @@ task produce_dynamic(type: DynamicKonanTest) {
                 "topLevel = 777 3\n"
 }
 
-/**
- * Get sourceSet's output path as a string
- */
-static String outputPath(SourceSet set) {
-    return set.output.getDirs().getSingleFile().toString()
-}
-
 if (isMac() && project.testTarget != 'wasm32') {
     def target = ext.platformManager.targetByName(project.testTarget ?: 'host').name
 
@@ -2904,7 +2887,7 @@ if (isMac() && project.testTarget != 'wasm32') {
         konanArtifacts {
             framework(frameworkName, targets: [ target ]) {
                 srcDir 'framework/values'
-                baseDir outputPath(sourceSets.testOutputFramework) + "/$frameworkName"
+                baseDir "$testOutputFramework/$frameworkName"
 
                 if (!useCustomDist) {
                     dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
@@ -2919,7 +2902,7 @@ if (isMac() && project.testTarget != 'wasm32') {
         konanArtifacts {
             framework(frameworkName, targets: [ target ]) {
                 srcDir 'framework/stdlib'
-                baseDir outputPath(sourceSets.testOutputFramework) + "/$frameworkName"
+                baseDir "$testOutputFramework/$frameworkName"
 
                 if (!useCustomDist) {
                     dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'

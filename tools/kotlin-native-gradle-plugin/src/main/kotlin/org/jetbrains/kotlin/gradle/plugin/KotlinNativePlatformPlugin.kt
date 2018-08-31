@@ -23,6 +23,14 @@ open class KotlinNativePlatformPlugin: KotlinPlatformImplementationPluginBase("n
         }
     }
 
+    internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
+        if (state.executed) {
+            fn()
+        } else {
+            afterEvaluate { it.fn() }
+        }
+    }
+
     protected fun addCommonProject(commonProject: Project, platformProject: Project) {
         commonProjects.add(commonProject)
         commonProject.whenEvaluated {

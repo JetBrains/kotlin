@@ -48,3 +48,15 @@ external fun <R : Number> Number.narrow(): R
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 internal annotation class JvmName(val name: String)
+
+fun cValuesOf(vararg elements: UByte): CValues<UByteVar> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+fun cValuesOf(vararg elements: UShort): CValues<UShortVar> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+fun cValuesOf(vararg elements: UInt): CValues<UIntVar> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+fun cValuesOf(vararg elements: ULong): CValues<ULongVar> =
+        createValues(elements.size) { index -> this.value = elements[index] }
