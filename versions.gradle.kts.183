@@ -35,7 +35,7 @@ when (platform) {
         extra["versions.jar.swingx-core"] = "1.6.2-2"
         extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.7"
-        extra["versions.jar.gson"] = "2.8.4"
+        extra["versions.jar.gson"] = "2.8.5"
         extra["versions.jar.oro"] = "2.0.8"
         extra["versions.jar.picocontainer"] = "1.2"
         for (jar in gradleJars) {
