@@ -3583,6 +3583,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/propertyVar")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PropertyVar extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInPropertyVar() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/propertyVar"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("withGetter.kt")
+        public void testWithGetter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/withGetter.kt");
+        }
+
+        @TestMetadata("withGetter2.kt")
+        public void testWithGetter2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/withGetter2.kt");
+        }
+
+        @TestMetadata("withGetter3.kt")
+        public void testWithGetter3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/withGetter3.kt");
+        }
+
+        @TestMetadata("withGetterAndSetter3.kt")
+        public void testWithGetterAndSetter3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/withGetterAndSetter3.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/recursiveEqualsCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

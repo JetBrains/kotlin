@@ -1,0 +1,5 @@
+// FIX: Change to val and delete initializer
+class Test {
+    private val p: Int
+        get() = 1
+}
