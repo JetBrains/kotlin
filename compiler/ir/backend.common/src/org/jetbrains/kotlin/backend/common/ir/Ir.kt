@@ -169,6 +169,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
+    fun getFunction(parameterCount: Int) = symbolTable.referenceClass(context.builtIns.getFunction(parameterCount))
+
     val functionReference = calc { symbolTable.referenceClass(context.getInternalClass("FunctionReference")) }
 
     fun getFunction(name: Name, receiverType: KotlinType, vararg argTypes: KotlinType) =

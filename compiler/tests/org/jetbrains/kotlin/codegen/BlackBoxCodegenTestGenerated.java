@@ -10729,6 +10729,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/functions/bigArity/invokeLambda.kt");
             }
 
+            @TestMetadata("invokeMemberCallableReference.kt")
+            public void testInvokeMemberCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/invokeMemberCallableReference.kt");
+            }
+
             @TestMetadata("javaLambda.kt")
             public void testJavaLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/bigArity/javaLambda.kt");

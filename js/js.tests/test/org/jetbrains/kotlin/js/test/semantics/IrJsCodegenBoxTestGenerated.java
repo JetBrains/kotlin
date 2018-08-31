@@ -9279,6 +9279,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/functions/bigArity/invokeLambda.kt");
             }
 
+            @TestMetadata("invokeMemberCallableReference.kt")
+            public void testInvokeMemberCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/invokeMemberCallableReference.kt");
+            }
+
             @TestMetadata("noBigFunctionTypes.kt")
             public void testNoBigFunctionTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/bigArity/noBigFunctionTypes.kt");

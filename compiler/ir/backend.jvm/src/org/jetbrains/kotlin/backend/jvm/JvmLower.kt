@@ -57,6 +57,7 @@ class JvmLower(val context: JvmBackendContext) {
             true
         ).runOnFilePostfix(irFile)
         CallableReferenceLowering(context).lower(irFile)
+        FunctionNVarargInvokeLowering(context).runOnFilePostfix(irFile)
 
         InnerClassesLowering(context).runOnFilePostfix(irFile)
         InnerClassConstructorCallsLowering(context).runOnFilePostfix(irFile)

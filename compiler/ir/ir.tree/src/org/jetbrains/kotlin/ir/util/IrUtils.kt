@@ -266,6 +266,26 @@ val IrClass.defaultType: IrType
 
 val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
 
+fun IrClass.isImmediateSubClassOf(ancestor: IrClass) = ancestor.symbol in superTypes.mapNotNull {
+    (it as? IrSimpleType)?.classifier
+}
+
+fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
+
+    val alreadyVisited = mutableSetOf<IrClass>()
+
+    fun IrClass.hasAncestorInSuperTypes(): Boolean = when {
+        this === ancestor -> true
+        this in alreadyVisited -> false
+        else -> {
+            alreadyVisited.add(this)
+            superTypes.mapNotNull { ((it as? IrSimpleType)?.classifier as? IrClassSymbol)?.owner }.any { it.hasAncestorInSuperTypes() }
+        }
+    }
+
+    return this.hasAncestorInSuperTypes()
+}
+
 // This implementation is from kotlin-native
 // TODO: use this implementation instead of any other
 fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
@@ -338,6 +358,12 @@ fun IrDeclaration.isEffectivelyExternal(): Boolean {
 }
 
 fun IrDeclaration.isDynamic() = this is IrFunction && dispatchReceiverParameter?.type is IrDynamicType
+
+inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
+    declarations.find { it is T && predicate(it) } as? T
+
+inline fun <reified T : IrDeclaration> IrDeclarationContainer.filterDeclarations(predicate: (T) -> Boolean): List<T> =
+    declarations.filter { it is T && predicate(it) } as List<T>
 
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
     assert(this.descriptor.type == newDescriptor.type)

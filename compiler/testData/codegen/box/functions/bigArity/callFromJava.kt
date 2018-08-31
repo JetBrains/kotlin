@@ -1,7 +1,6 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // FILE: J.java
 
 import kotlin.jvm.functions.FunctionN;
