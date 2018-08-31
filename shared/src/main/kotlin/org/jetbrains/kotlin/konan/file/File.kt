@@ -177,38 +177,6 @@ fun createTempFile(name: String, suffix: String? = null)
 fun createTempDir(name: String): File 
     = Files.createTempDirectory(name).File()
 
-private val File.zipUri: URI
-        get() = URI.create("jar:${this.toPath().toUri()}")
-
-fun File.zipFileSystem(mutable: Boolean = false): FileSystem {
-    val zipUri = this.zipUri
-    val attributes = hashMapOf("create" to mutable.toString())
-    return try {
-        FileSystems.newFileSystem(zipUri, attributes, null)
-    } catch (e: FileSystemAlreadyExistsException) {
-        FileSystems.getFileSystem(zipUri)
-    }
-}
-
-fun File.mutableZipFileSystem() = this.zipFileSystem(mutable = true)
-
-fun File.zipPath(path: String): Path
-    = this.zipFileSystem().getPath(path)
-
-val File.asZipRoot: File
-    get() = File(this.zipPath("/"))
-
-val File.asWritableZipRoot: File
-    get() = File(this.mutableZipFileSystem().getPath("/"))
-
-private fun File.toPath() = Paths.get(this.path)
-
-fun File.zipDirAs(unixFile: File) {
-    val zipRoot = unixFile.asWritableZipRoot
-    this.recursiveCopyTo(zipRoot)
-    zipRoot.javaPath.fileSystem.close()
-}
-
 fun Path.recursiveCopyTo(destPath: Path) {
     val sourcePath = this
     Files.walk(sourcePath).forEach next@ { oldPath ->
@@ -247,13 +215,5 @@ inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
         if (!closed) {
             this?.close()
         }
-    }
-}
-
-fun Path.unzipTo(directory: Path) {
-    val zipUri = URI.create("jar:" + this.toUri())
-    FileSystems.newFileSystem(zipUri, emptyMap<String, Any?>(), null).use { zipfs ->
-        val zipPath = zipfs.getPath("/")
-        zipPath.recursiveCopyTo(directory)
     }
 }
