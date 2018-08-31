@@ -162,10 +162,11 @@ class KotlinPullUpDialog(
                             targetClass: PsiNamedElement,
                             memberInfos: List<KotlinMemberInfo>): PullUpProcessor {
             val targetPsiClass = targetClass as? PsiClass ?: (targetClass as KtClass).toLightClass()
-            return PullUpProcessor(sourceClass.toLightClass(),
-                                   targetPsiClass,
-                                   memberInfos.mapNotNull { it.toJavaMemberInfo() }.toTypedArray(),
-                                   DocCommentPolicy<PsiComment>(JavaRefactoringSettings.getInstance().PULL_UP_MEMBERS_JAVADOC))
+            return PullUpProcessor(
+                sourceClass.toLightClass() ?: error("can't build lightClass for $sourceClass"),
+                targetPsiClass,
+                memberInfos.mapNotNull { it.toJavaMemberInfo() }.toTypedArray(),
+                DocCommentPolicy<PsiComment>(JavaRefactoringSettings.getInstance().PULL_UP_MEMBERS_JAVADOC))
         }
     }
 }

@@ -450,7 +450,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                             FinishMarkAction.finish(project, editor, startMarkAction)
                         }
 
-                        override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                        override fun templateFinished(template: Template, brokenOff: Boolean) {
                             if (!brokenOff) {
                                 postProcess(declaration)
                             }
