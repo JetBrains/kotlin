@@ -59,14 +59,18 @@ public abstract class NativeRandom {
          */
         override fun nextLong(): Long = (nextInt().toLong() shl 32) + nextInt().toLong()
 
-        override fun nextBits(bitCount: Int): Int = TODO("unimplemented")
+        override fun nextBits(bitCount: Int): Int =
+                nextInt().takeUpperBits(bitCount)
     }
 }
 
-
 internal actual fun defaultPlatformRandom(): Random = NativeRandom
-internal actual fun fastLog2(value: Int): Int  = TODO("unimplemented")
-internal actual fun doubleFromParts(hi26: Int, low27: Int): Double  = TODO("unimplemented")
+
+internal actual fun fastLog2(value: Int): Int =
+        31 - value.numberOfLeadingZeros()
+
+internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
+        (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()
 
 // TODO: common stdlib Random hasn't got seed, this is workaround for running K/N tests.
 var Random.seed:Long
