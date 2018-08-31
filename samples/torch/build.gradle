@@ -7,7 +7,7 @@ buildscript {
             url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
         }
         maven {
-	        url "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_13M1_Compiler),number:1.3-M1-eap-77,branch:default:any/artifacts/content/maven/"
+	        url "http://dl.bintray.com/kotlin/kotlin-eap"
 	    }
     }
 

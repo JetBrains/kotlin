@@ -12,6 +12,18 @@ using Gradle plugin DSL:
         id "org.jetbrains.kotlin.konan" version "0.9"
     }
 
+__Note__: The 0.9 version of Kotlin/Native is based on Kotlin 1.3-M1 which is an EAP version and isn't available at
+plugin portal. In this case you need to add a Kotlin EAP repository in your `settings.gradle`:
+
+    pluginManagement {
+        repositories {
+            gradlePluginPortal()
+            maven {
+                url = 'http://dl.bintray.com/kotlin/kotlin-eap'
+            }
+        }
+    }
+
 You also can get the plugin from a Bintray repository. In addition to releases, this repo contains old and development
 versions of the plugin which are not available at the plugin portal. To get the plugin from the Bintray repo, include
 the following snippet in your build script:
@@ -20,7 +32,10 @@ the following snippet in your build script:
        repositories {
            mavenCentral()
            maven {
-               url  "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+               url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
+           }
+           maven {
+               url "http://dl.bintray.com/kotlin/kotlin-eap"
            }
        }
     
