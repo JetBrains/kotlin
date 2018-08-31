@@ -436,7 +436,10 @@ private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: 
 
 internal val ModuleDescriptor.namePrefix: String get() {
     // <fooBar> -> FooBar
-    val moduleName = this.name.asString().let { it.substring(1, it.lastIndex) }.capitalize()
+    val moduleName = this.name.asString()
+        .let { it.substring(1, it.lastIndex) }
+        .capitalize()
+        .replace('-', '_')
 
     val uppers = moduleName.filterIndexed { index, character -> index == 0 || character.isUpperCase() }
     if (uppers.length >= 3) return uppers
