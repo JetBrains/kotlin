@@ -23,8 +23,8 @@ fun PsiFile.getFqNameByDirectory(): FqName {
 
 fun PsiDirectory.getFqNameWithImplicitPrefix(): FqName {
     val packageFqName = getPackage()?.qualifiedName?.let(::FqName) ?: FqName.ROOT
-    sourceRoot?.let {
-        val implicitPrefix = PerModulePackageCacheService.getInstance(project).getImplicitPackagePrefix(it)
+    sourceRoot?.let { sourceRoot ->
+        val implicitPrefix = PerModulePackageCacheService.getInstance(project).getImplicitPackagePrefix(sourceRoot)
         return FqName.fromSegments((implicitPrefix.pathSegments() + packageFqName.pathSegments()).map { it.asString() })
     }
     return packageFqName
