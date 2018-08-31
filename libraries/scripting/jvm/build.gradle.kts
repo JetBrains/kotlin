@@ -9,7 +9,7 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(project(":kotlin-script-runtime"))
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-script-util"))
 }
