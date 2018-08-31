@@ -166,7 +166,7 @@ public infix fun ULongProgression.step(step: Long): ULongProgression {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public infix fun UByte.until(to: UByte): UIntRange {
-    return this.toUInt() .. (to.toUInt() - 1).toUInt()
+    return this.toUInt() .. (to.toUInt() - 1u).toUInt()
 }
 
 /**
@@ -180,7 +180,7 @@ public infix fun UByte.until(to: UByte): UIntRange {
 @ExperimentalUnsignedTypes
 public infix fun UInt.until(to: UInt): UIntRange {
     if (to <= UInt.MIN_VALUE) return UIntRange.EMPTY
-    return this .. (to - 1).toUInt()
+    return this .. (to - 1u).toUInt()
 }
 
 /**
@@ -194,7 +194,7 @@ public infix fun UInt.until(to: UInt): UIntRange {
 @ExperimentalUnsignedTypes
 public infix fun ULong.until(to: ULong): ULongRange {
     if (to <= ULong.MIN_VALUE) return ULongRange.EMPTY
-    return this .. (to - 1).toULong()
+    return this .. (to - 1u).toULong()
 }
 
 /**
@@ -205,6 +205,6 @@ public infix fun ULong.until(to: ULong): ULongRange {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public infix fun UShort.until(to: UShort): UIntRange {
-    return this.toUInt() .. (to.toUInt() - 1).toUInt()
+    return this.toUInt() .. (to.toUInt() - 1u).toUInt()
 }
 
