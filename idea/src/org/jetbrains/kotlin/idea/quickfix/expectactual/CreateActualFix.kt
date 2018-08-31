@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.util.EditorHelper
-import com.intellij.ide.util.PackageUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -112,8 +111,8 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         val expectedDir = declaration.containingFile.containingDirectory
         val expectedPackage = JavaDirectoryService.getInstance().getPackage(expectedDir)
 
-        val actualDirectory = PackageUtil.findOrCreateDirectoryForPackage(
-            actualModule, expectedPackage?.qualifiedName ?: "", null, false
+        val actualDirectory = findOrCreateDirectoryForPackage(
+            actualModule, expectedPackage?.qualifiedName ?: ""
         ) ?: return null
         return runWriteAction {
             val fileName = "$name.kt"
