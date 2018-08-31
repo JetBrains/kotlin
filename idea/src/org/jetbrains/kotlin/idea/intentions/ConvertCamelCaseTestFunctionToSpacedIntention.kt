@@ -114,13 +114,13 @@ class ConvertCamelCaseTestFunctionToSpacedIntention : SelfTargetingRangeIntentio
                         private var chosenId: String = newId
                         private var range: TextRange? = null
 
-                        override fun beforeTemplateFinished(state: TemplateState?, template: Template?) {
+                        override fun beforeTemplateFinished(state: TemplateState, template: Template?) {
                             val varName = (template as? TemplateImpl)?.getVariableNameAt(0) ?: return
                             chosenId = state?.getVariableValue(varName)?.text?.quoteIfNeeded() ?: return
                             range = state.getVariableRange(varName)
                         }
 
-                        override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                        override fun templateFinished(template: Template, brokenOff: Boolean) {
                             range?.let {
                                 val doc = editor.document
                                 runWriteAction { doc.replaceString(it.startOffset, it.endOffset, oldId) }
