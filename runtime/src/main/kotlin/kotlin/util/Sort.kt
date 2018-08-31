@@ -274,9 +274,9 @@ private fun partition(
     var j = right
     val pivot = array[(left + right) / 2]
     while (i <= j) {
-        while (array[i] < pivot)
+        while (array[i].compareTo(pivot) < 0)
             i++
-        while (array[j] > pivot)
+        while (array[j].compareTo(pivot) > 0)
             j--
         if (i <= j) {
             val tmp = array[i]
@@ -305,9 +305,9 @@ private fun partition(
     var j = right
     val pivot = array[(left + right) / 2]
     while (i <= j) {
-        while (array[i] < pivot)
+        while (array[i].compareTo(pivot) < 0)
             i++
-        while (array[j] > pivot)
+        while (array[j].compareTo(pivot) > 0)
             j--
         if (i <= j) {
             val tmp = array[i]
