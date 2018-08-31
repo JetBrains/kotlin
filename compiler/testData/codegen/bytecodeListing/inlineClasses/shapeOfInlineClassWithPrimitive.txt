@@ -14,7 +14,7 @@ static class Foo$Erased {
 @kotlin.Metadata
 public final class Foo {
     private final field l: long
-    public method <init>(p0: long): void
+    public synthetic method <init>(p0: long): void
     public method equals(p0: java.lang.Object): boolean
     public final method getL(): long
     public method hashCode(): int

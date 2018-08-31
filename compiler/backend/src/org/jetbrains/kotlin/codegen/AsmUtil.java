@@ -255,11 +255,20 @@ public class AsmUtil {
             flags |= ACC_ABSTRACT;
         }
 
-        if (KotlinTypeMapper.isAccessor(functionDescriptor) || hasJvmSyntheticAnnotation(functionDescriptor)) {
+        if (KotlinTypeMapper.isAccessor(functionDescriptor) ||
+            hasJvmSyntheticAnnotation(functionDescriptor) ||
+            isInlineClassWrapperConstructor(functionDescriptor, kind)
+        ) {
             flags |= ACC_SYNTHETIC;
         }
 
         return flags;
+    }
+
+    private static boolean isInlineClassWrapperConstructor(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind) {
+        if (!(functionDescriptor instanceof ConstructorDescriptor)) return false;
+        ClassDescriptor classDescriptor = ((ConstructorDescriptor) functionDescriptor).getConstructedClass();
+        return classDescriptor.isInline() && kind == OwnerKind.IMPLEMENTATION;
     }
 
     public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor, @NotNull GenerationState state) {

@@ -24,7 +24,7 @@ public final class Foo {
     private final field x: int
     inner class Foo$Companion
     static method <clinit>(): void
-    public method <init>(p0: int): void
+    public synthetic method <init>(p0: int): void
     public method equals(p0: java.lang.Object): boolean
     public final method getX(): int
     public method hashCode(): int

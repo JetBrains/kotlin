@@ -2113,6 +2113,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassExtendsErasedClass.kt");
         }
 
+        @TestMetadata("inlineClassWrapperPrimaryConstructorIsSynthetic.kt")
+        public void testInlineClassWrapperPrimaryConstructorIsSynthetic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassWrapperPrimaryConstructorIsSynthetic.kt");
+        }
+
         @TestMetadata("inlineClassesUnboxingAfterAssertionOperator.kt")
         public void testInlineClassesUnboxingAfterAssertionOperator() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassesUnboxingAfterAssertionOperator.kt");
