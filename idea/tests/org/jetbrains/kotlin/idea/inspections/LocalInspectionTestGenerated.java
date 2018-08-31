@@ -5999,6 +5999,34 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/unlabeledReturnInsideLambda")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnlabeledReturnInsideLambda extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInUnlabeledReturnInsideLambda() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/unlabeledReturnInsideLambda"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("labeledReturn.kt")
+        public void testLabeledReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unlabeledReturnInsideLambda/labeledReturn.kt");
+        }
+
+        @TestMetadata("return.kt")
+        public void testReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unlabeledReturnInsideLambda/return.kt");
+        }
+
+        @TestMetadata("returnInFunction.kt")
+        public void testReturnInFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unlabeledReturnInsideLambda/returnInFunction.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/unnecessaryVariable")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
