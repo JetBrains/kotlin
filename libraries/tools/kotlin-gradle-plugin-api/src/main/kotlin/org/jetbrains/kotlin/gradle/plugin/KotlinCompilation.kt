@@ -9,7 +9,6 @@ import org.gradle.api.Named
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSetOutput
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 
 interface KotlinCompilation: Named, HasAttributes, HasKotlinDependencies {
     val target: KotlinTarget

@@ -23,7 +23,6 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 
 internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension? =
     project.extensions.getByName("kotlin") as KotlinMultiplatformExtension

@@ -10,7 +10,11 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
+import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 

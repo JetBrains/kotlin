@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 internal class ConsistencyCheck<T, S>(
     val name: String,
