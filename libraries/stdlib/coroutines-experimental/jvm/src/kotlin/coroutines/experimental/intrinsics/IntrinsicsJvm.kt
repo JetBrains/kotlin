@@ -116,11 +116,4 @@ private inline fun <T> buildContinuationByInvokeCall(
  * the execution was suspended and will not return any result immediately.
  */
 @SinceKotlin("1.1")
-public actual val COROUTINE_SUSPENDED: Any get() = CoroutineSingletons.COROUTINE_SUSPENDED
-
-// Using enum here ensures two important properties:
-//  1. It makes SafeContinuation serializable with all kinds of serialization frameworks (since all of them natively support enums)
-//  2. It improves debugging experience, since you clearly see toString() value of those objects and what package they come from
-private enum class CoroutineSingletons {
-    COROUTINE_SUSPENDED
-}
+public actual val COROUTINE_SUSPENDED: Any get() = kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
