@@ -150,6 +150,9 @@ def commonSrc = file('build/stdlib')
 
 task unzipStdlibSources(type: Copy) {
     from (zipTree(configurations.kotlin_common_stdlib_src.singleFile)) {
+        exclude 'generated/_Sequences.kt'
+        exclude 'kotlin/collections/Sequences.kt'
+        exclude 'kotlin/collections/SlidingWindow.kt'
         include 'generated/**/*.kt'
         include 'kotlin/**/*.kt'
     }
