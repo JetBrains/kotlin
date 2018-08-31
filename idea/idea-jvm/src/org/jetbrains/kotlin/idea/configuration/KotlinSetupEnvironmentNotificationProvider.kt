@@ -41,7 +41,7 @@ class KotlinSetupEnvironmentNotificationProvider(
 
     init {
         myProject.messageBus.connect(myProject).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent?) {
+            override fun rootsChanged(event: ModuleRootEvent) {
                 notifications.updateAllNotifications()
             }
         })

@@ -53,7 +53,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
     init {
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent?) {
+            override fun rootsChanged(event: ModuleRootEvent) {
                 updateNotifications()
             }
         })
