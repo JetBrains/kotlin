@@ -16,6 +16,7 @@ def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${projectDir}/../src/kotlin"
 def commonSrcDir2 = "${projectDir}/../common/src"
 def coroutinesJsSrcDir = "${projectDir}/../coroutines/js/src"
+def coroutinesExpJsSrcDir = "${projectDir}/../coroutines-experimental/js/src"
 
 def builtinsDir = "${rootDir}/core/builtins"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
@@ -46,6 +47,7 @@ sourceSets {
         kotlin {
             srcDir builtinsSrcDir
             srcDir jsSrcDir
+            srcDir coroutinesJsSrcDir
         }
     }
 
@@ -64,7 +66,7 @@ sourceSets {
 
     coroutines {
         kotlin {
-            srcDir coroutinesJsSrcDir
+            srcDir coroutinesExpJsSrcDir
         }
     }
 }
@@ -152,7 +154,7 @@ compileKotlin2Js {
             "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
             "-XXLanguage:+InlineClasses",
-            "-XXLanguage:-ReleaseCoroutines"
+            "-XXLanguage:+ReleaseCoroutines"
         ]
     }
 }
@@ -177,7 +179,8 @@ compileCoroutinesKotlin2Js {
         sourceMap = true
         sourceMapPrefix = "./"
         freeCompilerArgs += [
-            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-XXLanguage:-ReleaseCoroutines"
         ]
     }
 }

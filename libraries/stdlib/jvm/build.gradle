@@ -30,6 +30,7 @@ sourceSets {
             srcDir "${rootDir}/core/builtins/src"
             srcDir 'runtime'
             srcDir 'src'
+            srcDir '../coroutines/jvm/src'
         }
     }
     experimental {
@@ -39,7 +40,7 @@ sourceSets {
     }
     coroutines {
         kotlin {
-            srcDir '../coroutines/jvm/src'
+            srcDir '../coroutines-experimental/jvm/src'
         }
     }
     coroutinesTest {
@@ -183,7 +184,7 @@ compileKotlin {
                 "-Xuse-experimental=kotlin.Experimental",
                 "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-                "-XXLanguage:-ReleaseCoroutines",
+                "-XXLanguage:+ReleaseCoroutines",
                 "-XXLanguage:+InlineClasses"
         ]
     }
@@ -214,6 +215,7 @@ compileCoroutinesKotlin {
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-XXLanguage:-ReleaseCoroutines",
                 "-module-name", "kotlin-stdlib-coroutines"
         ]
     }
@@ -254,7 +256,8 @@ compileUnsignedKotlin {
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                "-XXLanguage:-ReleaseCoroutines"
         ]
     }
 }

@@ -16,7 +16,6 @@ package kotlin.sequences
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
-import kotlin.coroutines.experimental.*
 
 /**
  * Returns a sequence containing all elements that are instances of specified class.

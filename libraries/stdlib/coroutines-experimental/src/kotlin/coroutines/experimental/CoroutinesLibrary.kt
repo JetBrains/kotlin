@@ -4,6 +4,7 @@
  */
 
 @file:kotlin.jvm.JvmName("CoroutinesKt")
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
 package kotlin.coroutines.experimental
 

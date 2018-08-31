@@ -101,10 +101,6 @@ fun List<MemberBuilder>.writeTo(file: File, platformSource: PlatformSourceFile) 
             writer.appendln("import kotlin.random.*")
         }
 
-        if (sourceFile == SourceFile.Sequences) {
-            writer.appendln("import kotlin.coroutines.experimental.*")
-        }
-
         writer.appendln()
 
         for (f in this) {

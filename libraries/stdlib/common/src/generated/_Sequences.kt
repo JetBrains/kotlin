@@ -17,7 +17,6 @@ import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
 import kotlin.random.*
-import kotlin.coroutines.experimental.*
 
 /**
  * Returns `true` if [element] is found in the sequence.

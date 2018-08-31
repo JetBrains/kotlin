@@ -9,7 +9,6 @@
 package kotlin.sequences
 
 import kotlin.*
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values through the [Iterator]
