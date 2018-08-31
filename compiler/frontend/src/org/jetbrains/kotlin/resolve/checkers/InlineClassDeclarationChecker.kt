@@ -140,3 +140,23 @@ class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
         }
     }
 }
+
+class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
+
+    companion object {
+        private val reservedFunctions = setOf("box", "unbox", "equals", "hashCode")
+    }
+
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val containingDeclaration = descriptor.containingDeclaration ?: return
+        if (!containingDeclaration.isInlineClass()) return
+
+        if (declaration is KtFunction && descriptor is FunctionDescriptor) {
+            val functionName = descriptor.name.asString()
+            if (functionName in reservedFunctions) {
+                val nameIdentifier = declaration.nameIdentifier ?: return
+                context.trace.report(Errors.RESERVED_MEMBER_INSIDE_INLINE_CLASS.on(nameIdentifier, functionName))
+            }
+        }
+    }
+}

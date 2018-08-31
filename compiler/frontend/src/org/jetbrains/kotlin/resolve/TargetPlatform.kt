@@ -119,7 +119,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     SuspendOperatorsCheckers,
     InlineClassDeclarationChecker,
     PropertiesWithBackingFieldsInsideInlineClass(),
-    AnnotationClassTargetAndRetentionChecker()
+    AnnotationClassTargetAndRetentionChecker(),
+    ReservedMembersAndConstructsForInlineClass()
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
