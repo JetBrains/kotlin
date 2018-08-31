@@ -809,7 +809,7 @@ private fun createVariableSubstitutionMap(element: IrElement,
 
     val variableSubstituteMap = mutableMapOf<VariableDescriptor, VariableDescriptor>()
 
-    element.acceptChildrenVoid(object: IrElementVisitorVoidWithContextFixed() {
+    element.acceptChildrenVoid(object: IrElementVisitorVoidWithContext() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -958,74 +958,5 @@ internal class DescriptorSubstitutorForExternalScope(
             return oldExpression
 
         return oldExpression.shallowCopy(oldExpression.origin, createFunctionSymbol(newDescriptor), oldExpression.superQualifierSymbol)
-    }
-}
-
-// TODO: Move to big kotlin
-abstract class IrElementVisitorVoidWithContextFixed : IrElementVisitorVoid {
-
-    private val scopeStack = mutableListOf<ScopeWithIr>()
-
-    override final fun visitFile(declaration: IrFile) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
-        visitFileNew(declaration)
-        scopeStack.pop()
-    }
-
-    override final fun visitClass(declaration: IrClass) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
-        visitClassNew(declaration)
-        scopeStack.pop()
-    }
-
-    override final fun visitProperty(declaration: IrProperty) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
-        visitPropertyNew(declaration)
-        scopeStack.pop()
-    }
-
-    override final fun visitField(declaration: IrField) {
-        val isDelegated = declaration.descriptor.isDelegated
-        if (isDelegated) scopeStack.push(ScopeWithIr(Scope(declaration.symbol), declaration))
-        visitFieldNew(declaration)
-        if (isDelegated) scopeStack.pop()
-    }
-
-    override final fun visitFunction(declaration: IrFunction) {
-        scopeStack.push(ScopeWithIr(Scope(declaration.descriptor), declaration))
-        visitFunctionNew(declaration)
-        scopeStack.pop()
-    }
-
-    protected val currentFile get() = scopeStack.lastOrNull { it.scope.scopeOwner is PackageFragmentDescriptor }
-    protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwner is ClassDescriptor }
-    protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwner is FunctionDescriptor }
-    protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwner is PropertyDescriptor }
-    protected val currentScope get() = scopeStack.peek()
-    protected val parentScope get() = if (scopeStack.size < 2) null else scopeStack[scopeStack.size - 2]
-    protected val allScopes get() = scopeStack
-
-    fun printScopeStack() {
-        scopeStack.forEach { println(it.scope.scopeOwner) }
-    }
-
-    open fun visitFileNew(declaration: IrFile) {
-        super.visitFile(declaration)
-    }
-
-    open fun visitClassNew(declaration: IrClass) {
-        super.visitClass(declaration)
-    }
-
-    open fun visitFunctionNew(declaration: IrFunction) {
-        super.visitFunction(declaration)
-    }
-
-    open fun visitPropertyNew(declaration: IrProperty) {
-        super.visitProperty(declaration)
-    }
-
-    open fun visitFieldNew(declaration: IrField) {
-        super.visitField(declaration)
     }
 }
