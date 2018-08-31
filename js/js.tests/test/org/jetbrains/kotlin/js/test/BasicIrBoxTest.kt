@@ -23,6 +23,7 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/generated",
     "libraries/stdlib/js/irRuntime",
     "libraries/stdlib/js/runtime",
+    "libraries/stdlib/unsigned",
 
     "core/builtins/native/kotlin/Annotation.kt",
     "core/builtins/native/kotlin/Number.kt",
@@ -33,6 +34,12 @@ private val runtimeSources = listOfKtFilesFrom(
 
     BasicBoxTest.COMMON_FILES_DIR_PATH
 ) - listOfKtFilesFrom(
+    "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
+    "libraries/stdlib/src/kotlin/annotations/Multiplatform.kt",
+
+    // TODO: Support Int.pow
+    "libraries/stdlib/js/src/kotlin/random/PlatformRandom.kt",
+
     // TODO: Unify exceptions
     "libraries/stdlib/common/src/kotlin/ExceptionsH.kt",
 
@@ -111,13 +118,14 @@ private val smallerRuntimeSources = listOfKtFilesFrom(
 
     "libraries/stdlib/common/src/kotlin/JsAnnotationsH.kt",
 
-    "libraries/stdlib/common/src/kotlin/CoroutinesH.kt",
-    "libraries/stdlib/common/src/kotlin/CoroutinesIntrinsicsH.kt",
+    "libraries/stdlib/common/src/kotlin/CoroutinesExperimentalH.kt",
+    "libraries/stdlib/common/src/kotlin/CoroutinesIntrinsicsExperimentalH.kt",
 
     "libraries/stdlib/js/irRuntime",
     BasicBoxTest.COMMON_FILES_DIR_PATH
 ) - listOfKtFilesFrom(
-    "libraries/stdlib/js/irRuntime/kotlinHacks.kt"
+    "libraries/stdlib/js/irRuntime/kotlinHacks.kt",
+    "libraries/stdlib/js/irRuntime/PlatformRandom.kt"
 )
 
 private var runtimeResult: Result? = null
