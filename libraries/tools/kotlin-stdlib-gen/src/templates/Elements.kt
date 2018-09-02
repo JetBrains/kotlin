@@ -595,6 +595,7 @@ object Elements : TemplateGroupBase() {
         returns("T")
         body {
             """
+            ${if (f == Iterables) "if (this is List) return this.last(predicate)" else ""}
             var last: T? = null
             var found = false
             for (element in this) {
@@ -639,6 +640,7 @@ object Elements : TemplateGroupBase() {
         returns("T?")
         body {
             """
+            ${if (f == Iterables) "if (this is List) return this.lastOrNull(predicate)" else ""}
             var last: T? = null
             for (element in this) {
                 if (predicate(element)) {
