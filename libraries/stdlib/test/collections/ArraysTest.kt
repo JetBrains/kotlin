@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
 package test.collections
 
 import test.assertStaticTypeIs
