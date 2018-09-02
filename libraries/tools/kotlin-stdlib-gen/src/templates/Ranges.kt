@@ -131,6 +131,7 @@ object RangeOps : TemplateGroupBase() {
         }
 
         val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
+        val u = if (elementType in PrimitiveType.unsignedPrimitives) "u" else ""
 
         if (elementType == toType) {
             // hack to work around incorrect char overflow behavior in JVM and int overflow behavior in JS
@@ -143,11 +144,11 @@ object RangeOps : TemplateGroupBase() {
                 // <= instead of == for JS
                 """
                 if (to <= $minValue) return $progressionType.EMPTY
-                return $fromExpr .. (to - 1).to$elementType()
+                return $fromExpr .. (to - 1$u).to$elementType()
                 """
             }
         } else {
-            body { "return $fromExpr .. (to.to$elementType() - 1).to$elementType()" }
+            body { "return $fromExpr .. (to.to$elementType() - 1$u).to$elementType()" }
         }
     }
 
