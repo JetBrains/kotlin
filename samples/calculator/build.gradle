@@ -1,3 +1,15 @@
+allprojects {
+    buildscript {
+        repositories {
+            maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
+        }
+    }
+
+    repositories {
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
+    }
+}
+
 task build {
     subprojects.each {
         dependsOn("${it.path}:build")

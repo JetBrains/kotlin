@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.test
 
+import spock.lang.Ignore
+
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -315,6 +317,7 @@ class MultiplatformSpecification extends BaseKonanSpecification {
         result.output.contains("has an 'expectedBy' dependency to non-common project")
     }
 
+    @Ignore("TODO in the Big Kotlin plugin")
     def 'Build should fail if custom common source set doesn\'t exist'() {
         when:
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
