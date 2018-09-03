@@ -9,12 +9,15 @@ package org.jetbrains.kotlin.platform
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
     abstract val compilerPlatform: TargetPlatform
     abstract val platforms: List<IdePlatform<Kind, *>>
 
     abstract val defaultPlatform: IdePlatform<Kind, *>
+
+    abstract fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<Kind, CommonCompilerArguments>?
 
     abstract val argumentsClass: Class<out CommonCompilerArguments>
 
@@ -30,6 +33,11 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
         val All_PLATFORMS by lazy { ALL_KINDS.flatMap { it.platforms } }
 
         val IDE_PLATFORMS_BY_COMPILER_PLATFORMS by lazy { ALL_KINDS.map { it.compilerPlatform to it }.toMap() }
+
+        fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): IdePlatform<*, Args> {
+            return ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) as IdePlatform<*, Args>? }!!
+        }
+
     }
 }
 

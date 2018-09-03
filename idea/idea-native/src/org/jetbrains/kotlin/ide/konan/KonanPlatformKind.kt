@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ide.konan
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.konan.K2NativeCompilerArguments
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
@@ -13,31 +14,32 @@ import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
 object KonanPlatformKind : IdePlatformKind<KonanPlatformKind>() {
 
+    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<KonanPlatformKind, CommonCompilerArguments>? {
+        return if (arguments is K2NativeCompilerArguments) Platform
+        else null
+    }
+
     override val compilerPlatform get() = KonanPlatform
 
-    // FIXME(ddol): implement support for multiple K/N targets
     override val platforms get() = listOf(Platform)
     override val defaultPlatform get() = Platform
 
-    override val argumentsClass get() = KonanCompilerArguments::class.java
+    override val argumentsClass get() = K2NativeCompilerArguments::class.java
 
     override val name get() = "Native"
 
-    object Platform : IdePlatform<KonanPlatformKind, KonanCompilerArguments>() {
+    object Platform : IdePlatform<KonanPlatformKind, K2NativeCompilerArguments>() {
         override val kind get() = KonanPlatformKind
         override val version get() = TargetPlatformVersion.NoVersion
-        override fun createArguments(init: KonanCompilerArguments.() -> Unit) = KonanCompilerArguments().apply(init)
+        override fun createArguments(init: K2NativeCompilerArguments.() -> Unit) = K2NativeCompilerArguments().apply(init)
     }
 
-    override fun equals(other: Any?): Boolean = other is KonanPlatformKind
+    override fun equals(other: Any?): Boolean = other === KonanPlatformKind
     override fun hashCode(): Int = javaClass.hashCode()
 }
 
-// FIXME(ddol): implement support for K/N compiler arguments
-class KonanCompilerArguments : CommonCompilerArguments()
-
 val IdePlatformKind<*>?.isKonan
-    get() = this is KonanPlatformKind
+    get() = this === KonanPlatformKind
 
 val IdePlatform<*, *>?.isKonan
-    get() = this is KonanPlatformKind.Platform
+    get() = this === KonanPlatformKind.Platform
