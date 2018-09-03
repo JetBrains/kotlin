@@ -70,7 +70,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         val targetPlatform = getPlatform()
 
         if (checkLibraryIsConfigured(targetPlatform)) {
-            val conflictingPlatforms = IdePlatformKind.getInstances()
+            val conflictingPlatforms = IdePlatformKind.ALL_KINDS
                 .filter { !it.isCommon && it.name != targetPlatform.name && checkLibraryIsConfigured(it) }
 
             if (conflictingPlatforms.isNotEmpty()) {

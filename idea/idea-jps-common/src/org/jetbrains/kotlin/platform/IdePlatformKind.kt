@@ -27,19 +27,18 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
     override fun equals(other: Any?): Boolean = javaClass == other?.javaClass
     override fun hashCode(): Int = javaClass.hashCode()
 
-    companion object : ApplicationExtensionDescriptor<IdePlatformKind<*>>(
-        "org.jetbrains.kotlin.idePlatformKind", IdePlatformKind::class.java
-    ) {
+    companion object {
+        // We can't use the ApplicationExtensionDescriptor class directly because it's missing in the JPS process
+        private val extension = ApplicationManager.getApplication()?.let {
+            ApplicationExtensionDescriptor("org.jetbrains.kotlin.idePlatformKind", IdePlatformKind::class.java)
+        }
+
         // For using only in JPS
-        private val JPS_KINDS = listOf(JvmIdePlatformKind, JsIdePlatformKind, CommonIdePlatformKind)
+        private val JPS_KINDS get() = listOf(JvmIdePlatformKind, JsIdePlatformKind, CommonIdePlatformKind)
 
         val ALL_KINDS by lazy {
-            if (ApplicationManager.getApplication() == null) {
-                return@lazy JPS_KINDS
-            }
-
-            val kinds = getInstances()
-            require(kinds.isNotEmpty()) { "Platform list is empty" }
+            val kinds = extension?.getInstances() ?: return@lazy JPS_KINDS
+            require(kinds.isNotEmpty()) { "Platform kind list is empty" }
             kinds
         }
 
