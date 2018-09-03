@@ -28,9 +28,8 @@ import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.noVersionAutoAdvance
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
+import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -82,20 +81,22 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             .firstOrNull()
             ?.data
             ?.let { findKotlinPluginVersion(it) } ?: return
-        val platformKind = when (kotlinSourceSet.platform) {
-            KotlinPlatform.JVM, KotlinPlatform.ANDROID -> {
+
+        val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
+        val platform = when (platformKind) {
+            is JvmIdePlatformKind -> {
                 val target = JvmTarget.fromString(sourceSetData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
                 JvmIdePlatformKind.Platform(target)
             }
-            KotlinPlatform.JS -> JsIdePlatformKind.Platform
-            KotlinPlatform.COMMON -> CommonIdePlatformKind.Platform
+            else -> platformKind.defaultPlatform
         }
+
         val coroutinesProperty = CoroutineSupport.byCompilerArgument(
             mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
         )
 
         val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
-        kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
+        kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platform, modelsProvider)
 
         val compilerArguments = kotlinSourceSet.compilerArguments
         val defaultCompilerArguments = kotlinSourceSet.defaultCompilerArguments

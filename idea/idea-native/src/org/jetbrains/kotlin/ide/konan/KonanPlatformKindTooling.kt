@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import org.jetbrains.konan.analyser.KonanAnalyzerFacade
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.idea.framework.CustomLibraryDescriptorWithDeferredConfig
 import org.jetbrains.kotlin.idea.framework.KotlinLibraryKind
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
@@ -29,6 +30,7 @@ class KonanPlatformKindTooling : IdePlatformKindTooling {
 
     override val mavenLibraryIds: List<String> get() = emptyList()
     override val gradlePluginId: String get() = ""
+    override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.KONAN)
 
     override val libraryKind: PersistentLibraryKind<*> = KonanLibraryKind
     override fun getLibraryDescription(project: Project) = KonanStandardLibraryDescription(project)

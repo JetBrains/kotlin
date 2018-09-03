@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.idea.core.platform.impl
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
-import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.CommonStandardLibraryDescription
@@ -37,6 +37,7 @@ object CommonIdePlatformKindTooling : IdePlatformKindTooling {
 
     override val mavenLibraryIds = listOf(MAVEN_COMMON_STDLIB_ID)
     override val gradlePluginId = "kotlin-platform-common"
+    override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.COMMON)
 
     override val libraryKind = CommonLibraryKind
 

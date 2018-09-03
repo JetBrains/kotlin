@@ -60,6 +60,7 @@ enum class KotlinPlatform(val id: String) {
     COMMON("common"),
     JVM("jvm"),
     JS("js"),
+    KONAN("native"),
     ANDROID("androidJvm");
 
     companion object {
