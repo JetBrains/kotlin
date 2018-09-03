@@ -29,6 +29,6 @@ class KotlinLibraryValidatorCreator : KotlinFacetValidatorCreator() {
                 DelegatingLibrariesValidatorContext(editorContext),
                 validatorsManager,
                 "kotlin"
-        ) { editor.targetPlatformComboBox.selectedItem as IdePlatformKind<*> }
+        ) { editor.targetPlatformComboBox.selectedItemTyped!!.kind }
     }
 }
