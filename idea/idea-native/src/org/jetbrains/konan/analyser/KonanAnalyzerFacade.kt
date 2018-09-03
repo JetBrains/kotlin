@@ -67,7 +67,7 @@ object KonanAnalyzerFacade : ResolverForModuleFactory() {
 
             val moduleDescriptors = module.createResolvedModuleDescriptors(
                 moduleContext.storageManager,
-                moduleContext.module.builtIns, // FIXME(ddol): investigate: reuse existing builtIns (from KonanPlatformSupport) or create new one
+                moduleContext.module.builtIns,
                 languageVersionSettings
             )
 
