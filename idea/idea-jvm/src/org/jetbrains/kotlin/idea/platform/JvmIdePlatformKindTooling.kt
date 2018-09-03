@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
@@ -43,6 +44,7 @@ class JvmIdePlatformKindTooling : IdePlatformKindTooling() {
     )
 
     override val gradlePluginId = "kotlin-platform-jvm"
+    override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.JVM, KotlinPlatform.ANDROID)
 
     override val libraryKind: PersistentLibraryKind<*>? = null
     override fun getLibraryDescription(project: Project) = JavaRuntimeLibraryDescription(project)

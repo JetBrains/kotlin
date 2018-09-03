@@ -12,6 +12,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
@@ -48,6 +49,7 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override val mavenLibraryIds = listOf(PathUtil.JS_LIB_NAME, MAVEN_OLD_JS_STDLIB_ID)
     override val gradlePluginId = "kotlin-platform-js"
+    override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.JS)
 
     override val libraryKind = JSLibraryKind
     override fun getLibraryDescription(project: Project) = JSLibraryStdDescription(project)
