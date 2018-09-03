@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
 import java.io.File
 import java.util.*
 
-abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProjectConfigurator {
+abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinProjectConfigurator {
     protected abstract val libraryName: String
 
     protected abstract val messageForOverrideDialog: String

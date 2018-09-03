@@ -293,7 +293,7 @@ fun hasKotlinFilesInSources(module: Module): Boolean {
     return FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(false))
 }
 
-private class LibraryKindSearchScope(
+class LibraryKindSearchScope(
     val module: Module,
     val baseScope: GlobalSearchScope,
     val libraryKind: PersistentLibraryKind<*>

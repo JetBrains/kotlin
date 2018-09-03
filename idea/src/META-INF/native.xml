@@ -36,5 +36,6 @@
         <idePlatformKind implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKind"/>
         <idePlatformKindTooling implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKindTooling"/>
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKindResolution"/>
-    </extensions>
+        <projectConfigurator implementation="org.jetbrains.kotlin.ide.konan.KonanModuleConfigurator"/>
+      </extensions>
 </idea-plugin>
