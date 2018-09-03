@@ -64,12 +64,15 @@ fun hasKonanRuntimeInScope(module: Module): Boolean {
     }
 }
 
-private val KONAN_FQ_NAME = FqName("kotlin.native")
+private val KONAN_FQ_NAMES = listOf(
+    "kotlin.native",
+    "konan.native" // Keep "konan.native" for backward compatibility with older versions of Kotlin/Native.
+).map { FqName(it) }
 
 fun hasKonanMetadataFile(project: Project, scope: GlobalSearchScope): Boolean {
     return runReadAction {
         project.runWithAlternativeResolveEnabled {
-            KonanMetaFileIndex.hasSomethingInPackage(KONAN_FQ_NAME, scope)
+            KONAN_FQ_NAMES.any { KonanMetaFileIndex.hasSomethingInPackage(it, scope) }
         }
     }
 }
