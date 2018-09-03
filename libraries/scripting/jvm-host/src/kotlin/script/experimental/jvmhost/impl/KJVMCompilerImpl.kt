@@ -134,6 +134,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 }
                 // TODO: implement logic similar to compiler's  -no-stdlib (and -no-reflect?)
                 addRoot("kotlin.stdlib", KotlinJars.stdlib)
+                KotlinJars.scriptRuntimeOrNull?.let { addRoot("kotlin.script.runtime", it) }
 
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script") // TODO" take meaningful and valid name from somewhere
                 languageVersionSettings = LanguageVersionSettingsImpl(

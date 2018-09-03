@@ -14,6 +14,11 @@ private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 private const val ILLEGAL_CONFIG_ANN_ARG =
     "Illegal argument compilationConfiguration of the KotlinScript annotation: expecting an object or default-constructed class derived from ScriptCompilationConfiguration"
 
+private const val SCRIPT_RUNTIME_TEMPLATES_PACKAGE = "kotlin.script.templates.standard"
+
+@KotlinScript
+private abstract class DummyScriptTemplate
+
 fun createCompilationConfigurationFromTemplate(
     baseClassType: KotlinType,
     hostConfiguration: ScriptingHostConfiguration,
@@ -33,6 +38,16 @@ fun createCompilationConfigurationFromTemplate(
     val loadedBaseClassType = if (baseClass == baseClassType.fromClass) baseClassType else KotlinType(baseClass)
 
     val mainAnnotation = baseClass.findAnnotation<KotlinScript>()
+        ?: run {
+            // transitions to the new scripting API:
+            // substituting annotations for standard templates from script-runtime
+            when (baseClass.qualifiedName) {
+                "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.SimpleScriptTemplate",
+                "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithArgs",
+                "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithBindings" -> DummyScriptTemplate::class
+                else -> null
+            }?.findAnnotation<KotlinScript>()
+        }
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $baseClass")
 
     fun scriptConfigInstance(kclass: KClass<out ScriptCompilationConfiguration>): ScriptCompilationConfiguration = try {
