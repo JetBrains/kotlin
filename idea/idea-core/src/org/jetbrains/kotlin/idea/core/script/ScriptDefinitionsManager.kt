@@ -58,7 +58,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
@@ -210,7 +210,7 @@ fun loadDefinitionsFromTemplates(
                     )
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
-                    val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingEnvironment) {
+                    val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
                         configurationDependencies(JvmDependency(classpath))
                     }
                     KotlinScriptDefinitionAdapterFromNewAPI(

@@ -27,7 +27,7 @@ fun createCompilationConfigurationFromTemplate(
 ): ScriptCompilationConfiguration {
 
     val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
-        ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting environment")
+        ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting host configuration")
 
     val baseClass: KClass<*> =
         try {

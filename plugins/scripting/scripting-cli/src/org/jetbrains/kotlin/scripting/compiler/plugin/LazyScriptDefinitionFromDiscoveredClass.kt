@@ -19,7 +19,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val annotationsFromAsm: ArrayList<BinAnnData>,
@@ -36,7 +36,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
     override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ScriptingHostConfiguration(defaultJvmScriptingEnvironment) {
+        ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
             configurationDependencies.append(JvmDependency(classpath))
         }
     }

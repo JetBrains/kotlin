@@ -11,17 +11,17 @@ import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptEvaluationConfigurationKeys
 
-class ScriptEvaluationConfiguration(baseEvaluationEnvironments: Iterable<ScriptEvaluationConfiguration>, body: Builder.() -> Unit) :
-    PropertiesCollection(Builder(baseEvaluationEnvironments).apply(body).data) {
+class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<ScriptEvaluationConfiguration>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseEvaluationConfigurations).apply(body).data) {
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
     constructor(
         vararg baseConfigurations: ScriptEvaluationConfiguration, body: Builder.() -> Unit = {}
     ) : this(baseConfigurations.asIterable(), body)
 
-    class Builder internal constructor(baseEvaluationEnvironments: Iterable<ScriptEvaluationConfiguration>) :
+    class Builder internal constructor(baseEvaluationConfigurations: Iterable<ScriptEvaluationConfiguration>) :
         ScriptEvaluationConfigurationKeys,
-        PropertiesCollection.Builder(baseEvaluationEnvironments)
+        PropertiesCollection.Builder(baseEvaluationConfigurations)
 
     companion object : ScriptEvaluationConfigurationKeys
 }

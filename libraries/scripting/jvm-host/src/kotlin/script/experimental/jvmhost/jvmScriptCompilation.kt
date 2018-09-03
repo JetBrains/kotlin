@@ -9,7 +9,7 @@ package kotlin.script.experimental.jvmhost
 
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvmhost.impl.KJvmCompilerImpl
 import kotlin.script.experimental.jvmhost.impl.withDefaults
 
@@ -30,7 +30,7 @@ interface CompiledJvmScriptsCache {
 }
 
 open class JvmScriptCompiler(
-    hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingEnvironment,
+    hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     val compilerProxy: KJvmCompilerProxy = KJvmCompilerImpl(hostConfiguration.withDefaults()),
     val cache: CompiledJvmScriptsCache = CompiledJvmScriptsCache.NoCache
 ) : ScriptCompiler {

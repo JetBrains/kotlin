@@ -12,17 +12,17 @@ import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptingHostConfigurationKeys
 
-class ScriptingHostConfiguration(baseScriptingEnvironments: Iterable<ScriptingHostConfiguration>, body: Builder.() -> Unit) :
-    PropertiesCollection(Builder(baseScriptingEnvironments).apply(body).data) {
+class ScriptingHostConfiguration(baseScriptingConfigurations: Iterable<ScriptingHostConfiguration>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseScriptingConfigurations).apply(body).data) {
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
     constructor(
         vararg baseConfigurations: ScriptingHostConfiguration, body: Builder.() -> Unit = {}
     ) : this(baseConfigurations.asIterable(), body)
 
-    class Builder internal constructor(baseScriptingEnvironments: Iterable<ScriptingHostConfiguration>) :
+    class Builder internal constructor(baseScriptingHostConfigurations: Iterable<ScriptingHostConfiguration>) :
         ScriptingHostConfigurationKeys,
-        PropertiesCollection.Builder(baseScriptingEnvironments)
+        PropertiesCollection.Builder(baseScriptingHostConfigurations)
     
     companion object : ScriptingHostConfigurationKeys
 }

@@ -46,7 +46,7 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.jvm.javaHome
 import kotlin.script.experimental.jvm.jvm
-import kotlin.script.experimental.jvmhost.JvmScriptEvaluationEnvironment
+import kotlin.script.experimental.jvmhost.JvmScriptEvaluationConfiguration
 import kotlin.script.experimental.jvmhost.KJvmCompilerProxy
 import kotlin.script.experimental.jvmhost.baseClassLoader
 import kotlin.script.experimental.util.getOrError
@@ -58,7 +58,7 @@ class KJvmCompiledScript<out ScriptBase : Any>(
 ) : CompiledScript<ScriptBase> {
 
     override suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>> = try {
-        val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationEnvironment.baseClassLoader)
+        val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationConfiguration.baseClassLoader)
             ?: Thread.currentThread().contextClassLoader
         val dependencies = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
             ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }

@@ -10,14 +10,14 @@ package kotlin.script.experimental.jvmhost
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
 
-open class JvmScriptEvaluationEnvironment : PropertiesCollection.Builder() {
+open class JvmScriptEvaluationConfiguration : PropertiesCollection.Builder() {
 
-    companion object : JvmScriptEvaluationEnvironment()
+    companion object : JvmScriptEvaluationConfiguration()
 }
 
-val JvmScriptEvaluationEnvironment.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
+val JvmScriptEvaluationConfiguration.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
 
-val ScriptEvaluationConfiguration.jvm get() = JvmScriptEvaluationEnvironment()
+val ScriptEvaluationConfiguration.jvm get() = JvmScriptEvaluationConfiguration()
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
