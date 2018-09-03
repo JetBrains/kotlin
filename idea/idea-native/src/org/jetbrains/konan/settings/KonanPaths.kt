@@ -30,7 +30,7 @@ open class KonanPaths(protected val project: Project) : ProjectComponent {
 
     open fun konanDist(): Path? {
         for (provider in KonanModelProvider.EP_NAME.extensions) {
-            provider.getKonanHome(project)?.let { return it }
+            provider.getKonanHome(project)?.existing()?.let { return it }
         }
         return bundledKonanDist()
     }
@@ -41,7 +41,7 @@ open class KonanPaths(protected val project: Project) : ProjectComponent {
 
         val resolvedTargetName = HostManager.resolveAlias(target().name)
         val klibPath =
-            konanDist()?.resolve(konanSpecificPlatformLibrariesPath(resolvedTargetName))?.takeIf { it.exists() } ?: return emptyList()
+            konanDist()?.resolve(konanSpecificPlatformLibrariesPath(resolvedTargetName))?.existing() ?: return emptyList()
 
         return Files.walk(klibPath, 1).filter {
             it.isDirectory() && it.fileName.toString() != KONAN_STDLIB_NAME && it != klibPath
@@ -51,3 +51,5 @@ open class KonanPaths(protected val project: Project) : ProjectComponent {
     //todo: this is wrong, we are not allowing multiple targets in project
     open fun target(): KonanTarget = HostManager.host
 }
+
+private fun Path.existing(): Path? = takeIf { exists() }

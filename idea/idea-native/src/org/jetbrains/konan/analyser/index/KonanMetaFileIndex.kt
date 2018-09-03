@@ -9,25 +9,22 @@ import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinFileIndexBase
 import org.jetbrains.kotlin.name.FqName
 
-class KonanMetaFileIndex
-    : KotlinFileIndexBase<KonanMetaFileIndex>(KonanMetaFileIndex::class.java) {
+object KonanMetaFileIndex : KotlinFileIndexBase<KonanMetaFileIndex>(KonanMetaFileIndex::class.java) {
 
-    companion object {
-        private const val VERSION = 4
-    }
+    override fun getIndexer() = INDEXER
 
-    /*todo: check version?!*/
-    private val dataIndexer = indexer { fileContent ->
-        val fragment = KonanDescriptorManager.getInstance().getCachedPackageFragment(fileContent.file)
-        FqName(fragment.fqName)
-    }
+    override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KonanMetaFileType }
+
+    override fun getVersion() = VERSION
 
     // this is to express intention to index all Kotlin/Native metadata files irrespectively to file size
     override fun getFileTypesWithSizeLimitNotApplicable() = listOf(KonanMetaFileType)
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KonanMetaFileType }
+    private const val VERSION = 4
 
-    override fun getIndexer() = dataIndexer
-
-    override fun getVersion() = VERSION
+    /*todo: check version?!*/
+    private val INDEXER = indexer { fileContent ->
+        val fragment = KonanDescriptorManager.getInstance().getCachedPackageFragment(fileContent.file)
+        FqName(fragment.fqName)
+    }
 }

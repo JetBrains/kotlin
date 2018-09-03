@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
-import java.util.Collection;
 
 @ApiStatus.Experimental
 public interface KonanModelProvider {
@@ -21,11 +20,6 @@ public interface KonanModelProvider {
 
     ExtensionPointName<KonanModelProvider> EP_NAME = ExtensionPointName.create("org.jetbrains.kotlin.native.konanModelProvider");
 
-    @NotNull
-    Collection<KonanArtifact> getArtifacts(@NotNull Project project);
-
     @Nullable
     Path getKonanHome(@NotNull Project project);
-
-    boolean reloadLibraries(@NotNull Project project, @NotNull Collection<Path> libraryPaths);
 }

@@ -3,50 +3,50 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.analyser
+package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.exists
 import org.jetbrains.konan.KONAN_CURRENT_ABI_VERSION
+import org.jetbrains.konan.analyser.KonanAnalyzerFacade
 import org.jetbrains.konan.settings.KonanPaths
-import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.caches.resolve.IdePlatformSupport
+import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
 import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
-/**
- * @author Alefas
- */
-class KonanPlatformSupport : IdePlatformSupport() {
+class KonanPlatformKindResolution : IdePlatformKindResolution {
+    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
+        return virtualFile.extension == "klib"
+                || virtualFile.isDirectory && virtualFile.children.any { it.name == "manifest" }
+    }
 
-    override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = KonanAnalyzerFacade()
+    override val libraryKind: PersistentLibraryKind<*>?
+        get() = KonanLibraryKind
 
-    override val libraryKind: PersistentLibraryKind<*>? = null
+    override val kind get() = KonanPlatformKind
 
-    override val platform: TargetPlatform
-        get() = KonanPlatform
+    override val resolverForModuleFactory get() = KonanAnalyzerFacade
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl) = createKonanBuiltIns(sdkContext)
-
-    override fun isModuleForPlatform(module: Module) = true
+    override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext) =
+        createKonanBuiltIns(projectContext)
 }
 
-private fun createKonanBuiltIns(sdkContext: GlobalContextImpl): KotlinBuiltIns {
+private fun createKonanBuiltIns(projectContext: ProjectContext): KotlinBuiltIns {
 
     // TODO: it depends on a random project's stdlib, propagate the actual project here
-    val stdlibPath = ProjectManager.getInstance().openProjects.asSequence().mapNotNull {
-        KonanPaths.getInstance(it).konanStdlib()?.takeIf { it.exists() }
+    val stdlibPath = ProjectManager.getInstance().openProjects.asSequence().mapNotNull { project ->
+        KonanPaths.getInstance(project).konanStdlib()?.takeIf { it.exists() }
     }.firstOrNull()
 
     if (stdlibPath != null) {
@@ -55,7 +55,7 @@ private fun createKonanBuiltIns(sdkContext: GlobalContextImpl): KotlinBuiltIns {
         val builtInsModule = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
             library,
             LanguageVersionSettingsImpl.DEFAULT,
-            sdkContext.storageManager
+            projectContext.storageManager
         )
         builtInsModule.setDependencies(listOf(builtInsModule))
 

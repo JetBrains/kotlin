@@ -16,8 +16,6 @@ class KonanDescriptorManager : ApplicationComponent {
 
     companion object {
 
-        private const val currentAbiVersion = 1
-
         @JvmStatic
         fun getInstance(): KonanDescriptorManager = ApplicationManager.getApplication().getComponent(KonanDescriptorManager::class.java)
     }

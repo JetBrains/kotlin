@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 /**
  * @author Alefas
  */
-class KonanAnalyzerFacade : ResolverForModuleFactory() {
+object KonanAnalyzerFacade : ResolverForModuleFactory() {
     override val targetPlatform: TargetPlatform
         get() = KonanPlatform
 

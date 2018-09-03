@@ -28,13 +28,4 @@
     <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
         <konanModelProvider implementation="org.jetbrains.konan.gradle.GradleKonanModelProvider"/>
     </extensions>
-
-    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
-        <projectResolve implementation="org.jetbrains.konan.gradle.KonanProjectResolver"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="com.intellij">
-        <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"/>
-    </extensions>
-    <!-- /NATIVE PART -->
 </idea-plugin>
