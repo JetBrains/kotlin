@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
@@ -64,6 +63,20 @@ class KotlinFunctionParameterInfoHandler : KotlinParameterInfoWithCallHandlerBas
     override fun getActualParametersRBraceType() = KtTokens.RPAR
 
     override fun getArgumentListAllowedParentClasses() = setOf(KtCallElement::class.java)
+}
+
+class KotlinLambdaParameterInfoHandler :
+    KotlinParameterInfoWithCallHandlerBase<KtLambdaArgument, KtLambdaArgument>(KtLambdaArgument::class, KtLambdaArgument::class) {
+    override fun getActualParameters(lambdaArgument: KtLambdaArgument) = arrayOf(lambdaArgument)
+
+    override fun getActualParametersRBraceType() = KtTokens.RBRACE
+
+    override fun getArgumentListAllowedParentClasses() = setOf(KtLambdaArgument::class.java)
+
+    override fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: KtLambdaArgument): Int {
+        val size = (argumentList.parent as? KtCallElement)?.valueArguments?.size ?: 1
+        return size - 1
+    }
 }
 
 class KotlinArrayAccessParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<KtContainerNode, KtExpression>(KtContainerNode::class, KtExpression::class) {
@@ -116,7 +129,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val file = context.file as? KtFile ?: return null
 
         val token = file.findElementAt(context.offset) ?: return null
-        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java) ?: return null
+        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java, true, KtValueArgumentList::class.java) ?: return null
 
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val call = findCall(argumentList, bindingContext) ?: return null
@@ -140,12 +153,15 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         if (context.parameterOwner !== argumentList) {
             context.removeHint()
         }
-
-        val offset = context.offset
-        val parameterIndex = argumentList.allChildren
-                .takeWhile { it.startOffset < offset }
-                .count { it.node.elementType == KtTokens.COMMA }
+        val parameterIndex = getParameterIndex(context, argumentList)
         context.setCurrentParameter(parameterIndex)
+    }
+
+    protected open fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: TArgumentList): Int {
+        val offset = context.offset
+        return argumentList.allChildren
+            .takeWhile { it.startOffset < offset }
+            .count { it.node.elementType == KtTokens.COMMA }
     }
 
     override fun updateUI(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext) {
