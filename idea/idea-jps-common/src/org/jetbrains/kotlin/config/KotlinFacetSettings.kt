@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyBean
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.platform.IdePlatform
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 @Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
@@ -189,16 +189,8 @@ class KotlinFacetSettings {
 
     val platform: IdePlatform<*, *>?
         get() {
-            val compilerArguments = this.compilerArguments
-            return when (compilerArguments) {
-                is K2JVMCompilerArguments -> {
-                    val jvmTarget = compilerArguments.jvmTarget ?: JvmTarget.DEFAULT.description
-                    JvmIdePlatformKind.platforms.firstOrNull { it.version.description >= jvmTarget }
-                }
-                is K2JSCompilerArguments -> JsIdePlatformKind.Platform
-                is K2MetadataCompilerArguments -> CommonIdePlatformKind.Platform
-                else -> null
-            }
+            val compilerArguments = this.compilerArguments ?: return null
+            return IdePlatformKind.platformByCompilerArguments(compilerArguments)
         }
 
     var coroutineSupport: LanguageFeature.State?

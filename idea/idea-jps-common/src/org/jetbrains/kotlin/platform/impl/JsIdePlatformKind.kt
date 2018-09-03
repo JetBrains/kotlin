@@ -6,6 +6,7 @@
 @file:JvmName("JsIdePlatformUtil")
 package org.jetbrains.kotlin.platform.impl
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -13,6 +14,12 @@ import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 
 object JsIdePlatformKind : IdePlatformKind<JsIdePlatformKind>() {
+
+    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<JsIdePlatformKind, CommonCompilerArguments>? {
+        return if (arguments is K2JSCompilerArguments) Platform
+        else null
+    }
+
     override val compilerPlatform get() = JsPlatform
 
     override val platforms get() = listOf(Platform)

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.utils.DescriptionAware
 
-abstract class IdePlatform<Kind : IdePlatformKind<Kind>, Arguments : CommonCompilerArguments> : DescriptionAware {
+abstract class IdePlatform<Kind : IdePlatformKind<Kind>, out Arguments : CommonCompilerArguments> : DescriptionAware {
     abstract val kind: Kind
     abstract val version: TargetPlatformVersion
 
