@@ -32,9 +32,7 @@ open class FrameworkTest : DefaultTask() {
     lateinit var frameworkName: String
 
     private val testOutput by lazy {
-        ((project.findProperty("sourceSets") as SourceSetContainer)
-                .getByName("testOutputFramework") as SourceSet).output.dirs.singleFile.absolutePath
-                ?: throw RuntimeException("Empty sourceSet")
+        (project.findProperty("testOutputFramework") as java.io.File).absolutePath
     }
 
     override fun configure(config: Closure<*>): Task {
