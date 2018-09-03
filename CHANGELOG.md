@@ -1,5 +1,6 @@
 # v0.9 (Sep 2018)
   * Support Kotlin 1.3M2
+    * Note: Common modules of multiplatform projects also should use Kotlin 1.3
   * Major standard library (native parts) rework and rename
   * New Gradle plugin with multiplatform integration and reworked DSL
   * Support unsigned types in Kotlin and interop
