@@ -13,10 +13,10 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createBasicScriptCompilationConfigurationFromAnnotatedBaseClass
+import kotlin.script.experimental.jvmhost.createCompilationConfigurationFromTemplate
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val compilationConfiguration = createBasicScriptCompilationConfigurationFromAnnotatedBaseClass<SimpleScript> {
+    val compilationConfiguration = createCompilationConfigurationFromTemplate<SimpleScript> {
         jvm {
             dependenciesFromCurrentContext(
                 "scripting-jvm-simple-script" /* script library jar name */

@@ -17,7 +17,7 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
-import kotlin.script.experimental.host.createScriptCompilationConfigurationFromAnnotatedBaseClass
+import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
 
@@ -47,7 +47,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
-            createScriptCompilationConfigurationFromAnnotatedBaseClass(
+            createCompilationConfigurationFromTemplate(
                 KotlinType(className),
                 hostConfiguration,
                 LazyScriptDefinitionFromDiscoveredClass::class

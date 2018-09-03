@@ -14,7 +14,7 @@ private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 private const val ILLEGAL_CONFIG_ANN_ARG =
     "Illegal argument compilationConfiguration of the KotlinScript annotation: expecting an object or default-constructed class derived from ScriptCompilationConfiguration"
 
-fun createScriptCompilationConfigurationFromAnnotatedBaseClass(
+fun createCompilationConfigurationFromTemplate(
     baseClassType: KotlinType,
     hostConfiguration: ScriptingHostConfiguration,
     contextClass: KClass<*> = ScriptCompilationConfiguration::class,
