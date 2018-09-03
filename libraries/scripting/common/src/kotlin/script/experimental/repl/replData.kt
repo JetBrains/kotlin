@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.repl
 
-import kotlin.script.experimental.api.ScriptSource
+import kotlin.script.experimental.api.SourceCode
 
-interface ReplSnippetSource : ScriptSource, ReplSnippetId
+interface ReplSnippetSource : SourceCode, ReplSnippetId
 

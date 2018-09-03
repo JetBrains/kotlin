@@ -10,7 +10,7 @@ package kotlin.script.experimental.api
 data class ScriptDiagnostic(
     val message: String,
     val severity: Severity = Severity.ERROR,
-    val location: ScriptSource.Location? = null,
+    val location: SourceCode.Location? = null,
     val exception: Throwable? = null
 ) {
     enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
@@ -56,10 +56,10 @@ operator fun <R> List<ScriptDiagnostic>.plus(res: ResultWithDiagnostics<R>): Res
 fun <R> R.asSuccess(reports: List<ScriptDiagnostic> = listOf()): ResultWithDiagnostics.Success<R> =
     ResultWithDiagnostics.Success(this, reports)
 
-fun Throwable.asDiagnostics(customMessage: String? = null, location: ScriptSource.Location? = null): ScriptDiagnostic =
+fun Throwable.asDiagnostics(customMessage: String? = null, location: SourceCode.Location? = null): ScriptDiagnostic =
     ScriptDiagnostic(customMessage ?: message ?: "$this", ScriptDiagnostic.Severity.ERROR, location, this)
 
-fun String.asErrorDiagnostics(location: ScriptSource.Location? = null): ScriptDiagnostic =
+fun String.asErrorDiagnostics(location: SourceCode.Location? = null): ScriptDiagnostic =
     ScriptDiagnostic(this, ScriptDiagnostic.Severity.ERROR, location)
 
 fun<R> ResultWithDiagnostics<R>.resultOrNull(): R? = when (this) {

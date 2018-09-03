@@ -9,7 +9,7 @@ package kotlin.script.experimental.jvm.compat
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.api.ScriptDiagnostic
-import kotlin.script.experimental.api.ScriptSource
+import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.dependencies.ScriptReport
 
 fun mapLegacyDiagnosticSeverity(severity: ScriptDependenciesResolver.ReportSeverity): ScriptDiagnostic.Severity = when (severity) {
@@ -28,8 +28,8 @@ fun mapToLegacyScriptReportSeverity(severity: ScriptDiagnostic.Severity): Script
     ScriptDiagnostic.Severity.DEBUG -> ScriptReport.Severity.DEBUG
 }
 
-fun mapLegacyScriptPosition(pos: ScriptContents.Position?): ScriptSource.Location? =
-    pos?.let { ScriptSource.Location(ScriptSource.Position(pos.line, pos.col)) }
+fun mapLegacyScriptPosition(pos: ScriptContents.Position?): SourceCode.Location? =
+    pos?.let { SourceCode.Location(SourceCode.Position(pos.line, pos.col)) }
 
-fun mapToLegacyScriptReportPosition(pos: ScriptSource.Location?): ScriptReport.Position? =
+fun mapToLegacyScriptReportPosition(pos: SourceCode.Location?): ScriptReport.Position? =
     pos?.let { ScriptReport.Position(pos.start.line, pos.start.col) }

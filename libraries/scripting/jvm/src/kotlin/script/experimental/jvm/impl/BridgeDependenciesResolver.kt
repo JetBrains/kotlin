@@ -84,7 +84,7 @@ class BridgeDependenciesResolver(
 internal fun List<ScriptDiagnostic>.mapScriptReportsToDiagnostics() =
     map { ScriptReport(it.message, mapToLegacyScriptReportSeverity(it.severity), mapToLegacyScriptReportPosition(it.location)) }
 
-internal fun ScriptContents.toScriptSource(): ScriptSource = when {
+internal fun ScriptContents.toScriptSource(): SourceCode = when {
     text != null -> text!!.toString().toScriptSource()
     file != null -> file!!.toScriptSource()
     else -> throw IllegalArgumentException("Unable to convert script contents $this into script source")

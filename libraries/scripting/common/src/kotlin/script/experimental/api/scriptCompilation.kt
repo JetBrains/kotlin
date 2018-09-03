@@ -120,7 +120,7 @@ class RefineConfigurationOnSectionsData(
 interface ScriptCompiler {
 
     suspend operator fun invoke(
-        script: ScriptSource,
+        script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 }

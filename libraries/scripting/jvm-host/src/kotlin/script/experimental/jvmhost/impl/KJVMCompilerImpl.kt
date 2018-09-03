@@ -78,7 +78,7 @@ class KJvmCompiledScript<out ScriptBase : Any>(
 class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvmCompilerProxy {
 
     override fun compile(
-        script: ScriptSource,
+        script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>> {
         val messageCollector = ScriptDiagnosticsMessageCollector()
@@ -229,7 +229,7 @@ class ScriptDiagnosticsMessageCollector : MessageCollector {
         }
         if (mappedSeverity != null) {
             val mappedLocation = location?.let {
-                ScriptSource.Location(ScriptSource.Position(it.line, it.column))
+                SourceCode.Location(SourceCode.Position(it.line, it.column))
             }
             _diagnostics.add(ScriptDiagnostic(message, mappedSeverity, mappedLocation))
         }

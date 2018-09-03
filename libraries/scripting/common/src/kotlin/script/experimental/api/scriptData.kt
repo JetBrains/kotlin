@@ -10,16 +10,19 @@ package kotlin.script.experimental.api
 import java.net.URL
 import kotlin.script.experimental.util.PropertiesCollection
 
-interface ScriptSource {
-    val location: URL?
-    val text: String?
+interface SourceCode {
+    val text: String
 
     data class Position(val line: Int, val col: Int, val absolutePos: Int? = null)
     data class Range(val start: Position, val end: Position)
     data class Location(val start: Position, val end: Position? = null)
 }
 
-data class ScriptSourceNamedFragment(val name: String?, val range: ScriptSource.Range)
+interface ExternalSourceCode : SourceCode {
+    val externalLocation: URL
+}
+
+data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Range)
 
 enum class ScriptBodyTarget {
     Constructor,
@@ -53,7 +56,7 @@ val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<An
 val ScriptCollectedDataKeys.foundFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
 
 class ScriptConfigurationRefinementContext(
-    val source: ScriptSource,
+    val script: SourceCode,
     val compilationConfiguration: ScriptCompilationConfiguration,
     val collectedData: ScriptCollectedData? = null
 )

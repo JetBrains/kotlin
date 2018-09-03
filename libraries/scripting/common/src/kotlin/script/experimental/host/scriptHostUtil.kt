@@ -9,15 +9,8 @@ import java.io.File
 import java.net.URL
 import kotlin.script.experimental.api.*
 
-fun ScriptSource.getScriptText(): String = when {
-    text != null -> text!!
-    location != null ->
-        location!!.openStream().bufferedReader().readText()
-    else -> throw RuntimeException("unable to get text from null script")
-}
-
-fun getMergedScriptText(script: ScriptSource, configuration: ScriptCompilationConfiguration?): String {
-    val originalScriptText = script.getScriptText()
+fun getMergedScriptText(script: SourceCode, configuration: ScriptCompilationConfiguration?): String {
+    val originalScriptText = script.text
     val sourceFragments = configuration?.get(ScriptCompilationConfiguration.sourceFragments)
     return if (sourceFragments == null || sourceFragments.isEmpty()) {
         originalScriptText
@@ -45,16 +38,15 @@ fun getMergedScriptText(script: ScriptSource, configuration: ScriptCompilationCo
     }
 }
 
-open class FileScriptSource(val file: File) : ScriptSource {
-    override val location: URL? get() = file.toURI().toURL()
-    override val text: String? get() = null
+open class FileScriptSource(val file: File) : ExternalSourceCode {
+    override val externalLocation: URL get() = file.toURI().toURL()
+    override val text: String by lazy { file.readText() }
 }
 
-fun File.toScriptSource(): ScriptSource = FileScriptSource(this)
+fun File.toScriptSource(): SourceCode = FileScriptSource(this)
 
-open class StringScriptSource(val source: String) : ScriptSource {
-    override val location: URL? get() = null
-    override val text: String? get() = source
+open class StringScriptSource(val source: String) : SourceCode {
+    override val text: String get() = source
 }
 
-fun String.toScriptSource(): ScriptSource = StringScriptSource(this)
+fun String.toScriptSource(): SourceCode = StringScriptSource(this)

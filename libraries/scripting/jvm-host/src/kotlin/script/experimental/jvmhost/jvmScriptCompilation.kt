@@ -14,16 +14,16 @@ import kotlin.script.experimental.jvmhost.impl.KJvmCompilerImpl
 import kotlin.script.experimental.jvmhost.impl.withDefaults
 
 interface CompiledJvmScriptsCache {
-    fun get(script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>?
-    fun store(compiledScript: CompiledScript<*>, script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration)
+    fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>?
+    fun store(compiledScript: CompiledScript<*>, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration)
 
     object NoCache : CompiledJvmScriptsCache {
         override fun get(
-            script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration
+            script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration
         ): CompiledScript<*>? = null
 
         override fun store(
-            compiledScript: CompiledScript<*>, script: ScriptSource, scriptCompilationConfiguration: ScriptCompilationConfiguration
+            compiledScript: CompiledScript<*>, script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration
         ) {
         }
     }
@@ -36,7 +36,7 @@ open class JvmScriptCompiler(
 ) : ScriptCompiler {
 
     override suspend operator fun invoke(
-        script: ScriptSource,
+        script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>> {
         val refineConfigurationFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeParsing]
@@ -61,7 +61,7 @@ open class JvmScriptCompiler(
 
 interface KJvmCompilerProxy {
     fun compile(
-        script: ScriptSource,
+        script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 }

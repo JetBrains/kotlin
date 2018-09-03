@@ -29,7 +29,7 @@ abstract class BasicScriptingHost(
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
 
     open fun eval(
-        script: ScriptSource,
+        script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
         configuration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
