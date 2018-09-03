@@ -1716,7 +1716,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             functionGenerationContext.positionAtEnd(bbExit)
         }
 
-        return returnableBlockScope.resultPhi ?: codegen.theUnitInstanceRef.llvm
+        return returnableBlockScope.resultPhi ?: if (value.type.isUnit()) {
+            codegen.theUnitInstanceRef.llvm
+        } else {
+            LLVMGetUndef(codegen.getLLVMType(value.type))!!
+        }
     }
 
     //-------------------------------------------------------------------------//
