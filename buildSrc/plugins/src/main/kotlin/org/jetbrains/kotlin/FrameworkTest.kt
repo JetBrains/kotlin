@@ -31,8 +31,8 @@ open class FrameworkTest : DefaultTask() {
     @Input
     lateinit var frameworkName: String
 
-    private val testOutput by lazy {
-        (project.findProperty("testOutputFramework") as java.io.File).absolutePath
+    private val testOutput: String by lazy {
+        project.file(project.property("testOutputFramework")!!).absolutePath
     }
 
     override fun configure(config: Closure<*>): Task {
