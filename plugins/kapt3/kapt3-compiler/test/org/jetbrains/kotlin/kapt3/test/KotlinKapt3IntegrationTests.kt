@@ -51,20 +51,6 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
     }
 
     @Test
-    fun testSuperclass() = test("Superclass", "test.MyAnnotation") { set, roundEnv, env ->
-        if (set.size == 1) {
-            val annotatedElements = roundEnv.getElementsAnnotatedWith(set.single())
-            assertEquals(1, annotatedElements.size)
-            val typeElement = annotatedElements.single() as TypeElement
-            assertEquals("FooBar", typeElement.superclass.toString())
-            env.filer.createSourceFile("test.FooBar").openWriter().use { writer ->
-                writer.write("package test;")
-                writer.write("public class FooBar {}")
-            }
-        }
-    }
-
-    @Test
     fun testComments() = test("Simple", "test.MyAnnotation") { set, roundEnv, env ->
         fun commentOf(className: String) = env.elementUtils.getDocComment(env.elementUtils.getTypeElement(className))
 

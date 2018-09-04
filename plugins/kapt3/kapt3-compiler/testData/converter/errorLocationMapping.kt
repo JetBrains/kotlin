@@ -1,14 +1,16 @@
 // CORRECT_ERROR_TYPES
 
-// EXPECTED_ERROR(kotlin:16:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:19:34) cannot find symbol
-// EXPECTED_ERROR(kotlin:19:50) cannot find symbol
-// EXPECTED_ERROR(kotlin:19:62) cannot find symbol
-// EXPECTED_ERROR(kotlin:26:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:27:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:30:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:18:1) cannot find symbol
+// EXPECTED_ERROR(kotlin:21:34) cannot find symbol
+// EXPECTED_ERROR(kotlin:21:50) cannot find symbol
+// EXPECTED_ERROR(kotlin:21:62) cannot find symbol
+// EXPECTED_ERROR(kotlin:23:1) cannot find symbol
+// EXPECTED_ERROR(kotlin:24:1) cannot find symbol
+// EXPECTED_ERROR(kotlin:28:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:29:5) cannot find symbol
 // EXPECTED_ERROR(kotlin:32:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:35:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:34:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:37:5) cannot find symbol
 
 @file:Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION")
 import kotlin.reflect.KClass
