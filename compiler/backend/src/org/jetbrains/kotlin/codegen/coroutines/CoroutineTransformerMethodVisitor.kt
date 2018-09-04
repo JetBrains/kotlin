@@ -34,6 +34,8 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.SourceValue
 
+private const val COROUTINES_DEBUG_METADATA_VERSION = 1
+
 private const val COROUTINES_METADATA_SOURCE_FILE_JVM_NAME = "f"
 private const val COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME = "l"
 private const val COROUTINES_METADATA_LOCAL_NAMES_JVM_NAME = "n"
@@ -41,6 +43,7 @@ private const val COROUTINES_METADATA_SPILLED_JVM_NAME = "s"
 private const val COROUTINES_METADATA_INDEX_TO_LABEL_JVM_NAME = "i"
 private const val COROUTINES_METADATA_METHOD_NAME_JVM_NAME = "m"
 private const val COROUTINES_METADATA_CLASS_NAME_JVM_NAME = "c"
+private const val COROUTINES_METADATA_VERSION_JVM_NAME = "v"
 
 class CoroutineTransformerMethodVisitor(
     delegate: MethodVisitor,
@@ -210,6 +213,10 @@ class CoroutineTransformerMethodVisitor(
         }.visitEnd()
         metadata.visit(COROUTINES_METADATA_METHOD_NAME_JVM_NAME, methodNode.name)
         metadata.visit(COROUTINES_METADATA_CLASS_NAME_JVM_NAME, containingClassInternalName)
+        @Suppress("ConstantConditionIf")
+        if (COROUTINES_DEBUG_METADATA_VERSION != 1) {
+            metadata.visit(COROUTINES_METADATA_VERSION_JVM_NAME, COROUTINES_DEBUG_METADATA_VERSION)
+        }
         metadata.visitEnd()
     }
 
