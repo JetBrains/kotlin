@@ -390,9 +390,24 @@ class ClassFileToSourceStubConverter(
                 modifiers,
                 treeMaker.name(simpleName),
                 genericType.typeParameters,
-                if (hasSuperClass) genericType.superClass else null,
+                if (hasSuperClass) genericType.superClass else getSuperType(descriptor as? ClassDescriptor),
                 genericType.interfaces,
                 enumValues + fields + methods + nestedClasses).keepKdocComments(clazz)
+    }
+
+    private inline fun getSuperType(classDescriptor: ClassDescriptor?): JCExpression? {
+        if (!correctErrorTypes) {
+            return null
+        }
+        val ktClass = (classDescriptor?.source as? PsiSourceElement)?.psi as? KtClass
+        val superTypeCallEntry =
+            ktClass?.getSuperTypeList()?.entries?.mapNotNull { it as? KtSuperTypeCallEntry }?.first()
+        val typeFromSource = superTypeCallEntry?.typeReference?.typeElement
+        val ktFile = typeFromSource?.containingKtFile
+        if (ktFile != null) {
+            return ErrorTypeCorrector(this, SUPER_TYPE, ktFile).convert(typeFromSource, emptyMap())
+        }
+        return null
     }
 
     private tailrec fun checkIfValidTypeName(containingClass: ClassNode, type: Type): Boolean {
