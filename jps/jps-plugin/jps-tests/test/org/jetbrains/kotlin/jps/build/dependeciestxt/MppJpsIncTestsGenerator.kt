@@ -15,7 +15,7 @@ fun actualizeMppJpsIncTestCaseDirs(rootDir: String, dir: String) {
         val dependenciesTxtFile = File(dirFile, "dependencies.txt")
         if (dependenciesTxtFile.exists()) {
             val fileTitle = "$dir/${dirFile.name}/dependencies.txt"
-            val dependenciesTxt = DependenciesTxtBuilder().readFile(dependenciesTxtFile, fileTitle)
+            val dependenciesTxt = ModulesTxtBuilder().readFile(dependenciesTxtFile, fileTitle)
 
             MppJpsIncTestsGenerator(dependenciesTxt) { File(dirFile, it.name) }
                 .actualizeTestCasesDirs(dirFile)
@@ -178,7 +178,13 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
         override fun generate() {
             generateBaseContent()
             check(commonModule.isCommonModule)
-            val implModules = commonModule.usages.filter { it.expectedBy }.map { it.from }
+            val implModules = commonModule.usages
+                .asSequence()
+                .filter {
+                    it.kind == ModulesTxt.Dependency.Kind.EXPECTED_BY ||
+                            it.kind == ModulesTxt.Dependency.Kind.INCLUDE
+                }
+                .map { it.from }
 
             commonModule.contentsSettings = ModuleContentSettings(commonModule, serviceNameSuffix = "New")
             implModules.forEach { implModule ->
