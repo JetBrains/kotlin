@@ -26,6 +26,31 @@ import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.utils.DescriptionAware
 
+@Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
+sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
+    val version: Version,
+    val name: String
+) : DescriptionAware {
+    override val description = "$name ${version.description}"
+
+    class Jvm(version: JvmTarget) : @Suppress("DEPRECATION_ERROR") TargetPlatformKind<JvmTarget>(version, "JVM") {
+        companion object {
+            private val JVM_PLATFORMS by lazy { JvmTarget.values().map(::Jvm) }
+            operator fun get(version: JvmTarget) = JVM_PLATFORMS[version.ordinal]
+        }
+    }
+
+    object JavaScript : @Suppress("DEPRECATION_ERROR") TargetPlatformKind<TargetPlatformVersion.NoVersion>(
+        TargetPlatformVersion.NoVersion,
+        "JavaScript"
+    )
+
+    object Common : @Suppress("DEPRECATION_ERROR") TargetPlatformKind<TargetPlatformVersion.NoVersion>(
+        TargetPlatformVersion.NoVersion,
+        "Common (experimental)"
+    )
+}
+
 object CoroutineSupport {
     @JvmStatic
     fun byCompilerArguments(arguments: CommonCompilerArguments?): LanguageFeature.State =
