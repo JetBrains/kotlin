@@ -28,7 +28,7 @@ object MNIST {
 
         val file = fopen(path, "rb") ?: fail()
         try {
-            ByteArray(size).also { fread(it.refTo(0), 1, size.signExtend(), file) }
+            ByteArray(size).also { fread(it.refTo(0), 1, size.convert(), file) }
         } finally {
             fclose(file)
         }

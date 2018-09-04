@@ -73,21 +73,21 @@ class Renderer(val container: DisposableContainer,
         if (savedMatrix != null) {
             memcpy(matrix, savedMatrix, 16 * 4)
         } else {
-            for (i in 0 .. 3)
-                for (j in 0 .. 3)
+            for (i in 0..3)
+                for (j in 0..3)
                     matrix[i * 4 + j] = if (i == j) 1.0f else 0.0f
         }
     }
 
     fun initialize(window: CPointer<ANativeWindow>): Boolean {
-        with (container.arena) {
+        with(container.arena) {
             logInfo("Initializing context..")
             display = eglGetDisplay(null)
             if (display == null) {
                 logError("eglGetDisplay() returned error ${eglGetError()}")
                 return false
             }
-            if (eglInitialize(display, null, null) == 0) {
+            if (eglInitialize(display, null, null) == 0u) {
                 logError("eglInitialize() returned error ${eglGetError()}")
                 return false
             }
@@ -100,11 +100,11 @@ class Renderer(val container: DisposableContainer,
                     EGL_NONE
             )
             val numConfigs = alloc<EGLintVar>()
-            if (eglChooseConfig(display, attribs, null, 0, numConfigs.ptr) == 0) {
+            if (eglChooseConfig(display, attribs, null, 0, numConfigs.ptr) == 0u) {
                 throw Error("eglChooseConfig()#1 returned error ${eglGetError()}")
             }
             val supportedConfigs = allocArray<EGLConfigVar>(numConfigs.value)
-            if (eglChooseConfig(display, attribs, supportedConfigs, numConfigs.value, numConfigs.ptr) == 0) {
+            if (eglChooseConfig(display, attribs, supportedConfigs, numConfigs.value, numConfigs.ptr) == 0u) {
                 throw Error("eglChooseConfig()#2 returned error ${eglGetError()}")
             }
             var configIndex = 0
@@ -113,11 +113,11 @@ class Renderer(val container: DisposableContainer,
                 val g = alloc<EGLintVar>()
                 val b = alloc<EGLintVar>()
                 val d = alloc<EGLintVar>()
-                if (eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_RED_SIZE, r.ptr) != 0 &&
-                    eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_GREEN_SIZE, g.ptr) != 0 &&
-                    eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_BLUE_SIZE, b.ptr) != 0 &&
-                    eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_DEPTH_SIZE, d.ptr) != 0 &&
-                    r.value == 8 && g.value == 8 && b.value == 8 && d.value == 0) break
+                if (eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_RED_SIZE, r.ptr) != 0u &&
+                        eglGetConfigAttrib (display, supportedConfigs[configIndex], EGL_GREEN_SIZE, g.ptr) != 0u &&
+                eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_BLUE_SIZE, b.ptr) != 0u &&
+                eglGetConfigAttrib(display, supportedConfigs[configIndex], EGL_DEPTH_SIZE, d.ptr) != 0u &&
+                r.value == 8 && g.value == 8 && b.value == 8 && d.value == 0) break
                 ++configIndex
             }
             if (configIndex >= numConfigs.value)
@@ -133,16 +133,16 @@ class Renderer(val container: DisposableContainer,
                 throw Error("eglCreateContext() returned error ${eglGetError()}")
             }
 
-            if (eglMakeCurrent(display, surface, surface, context) == 0) {
+            if (eglMakeCurrent(display, surface, surface, context) == 0u) {
                 throw Error("eglMakeCurrent() returned error ${eglGetError()}")
             }
 
             val width = alloc<EGLintVar>()
             val height = alloc<EGLintVar>()
-            if (eglQuerySurface(display, surface, EGL_WIDTH, width.ptr) == 0
-                    || eglQuerySurface(display, surface, EGL_HEIGHT, height.ptr) == 0) {
-                throw Error("eglQuerySurface() returned error ${eglGetError()}")
-            }
+            if (eglQuerySurface(display, surface, EGL_WIDTH, width.ptr) == 0u
+                    || eglQuerySurface (display, surface, EGL_HEIGHT, height.ptr) == 0u) {
+            throw Error("eglQuerySurface() returned error ${eglGetError()}")
+        }
 
             this@Renderer.screen = Vector2(width.value.toFloat(), height.value.toFloat())
 
@@ -198,14 +198,13 @@ class Renderer(val container: DisposableContainer,
     }
 
 
-
     private fun loadTexture(assetName: String): Unit = memScoped {
-        val asset = AAssetManager_open(nativeActivity.assetManager, assetName, AASSET_MODE_BUFFER)
+        val asset = AAssetManager_open(nativeActivity.assetManager, assetName, AASSET_MODE_BUFFER.convert())
                 ?: throw Error("Error opening asset $assetName")
         try {
             val length = AAsset_getLength(asset)
             val buffer = allocArray<ByteVar>(length)
-            if (AAsset_read(asset, buffer, length) != length.toInt()) {
+            if (AAsset_read(asset, buffer, length.convert()) != length.toInt()) {
                 throw Error("Error reading asset")
             }
             with(BMPHeader(buffer.rawValue)) {
@@ -247,7 +246,7 @@ class Renderer(val container: DisposableContainer,
 
         glMultMatrixf(matrix)
 
-        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
+        glClear((GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT).toUInt())
 
         glEnableClientState(GL_VERTEX_ARRAY)
         glEnableClientState(GL_NORMAL_ARRAY)
@@ -289,15 +288,15 @@ class Renderer(val container: DisposableContainer,
 
         glPopMatrix()
 
-        if (eglSwapBuffers(display, surface) == 0) {
+        if (eglSwapBuffers(display, surface) == 0u) {
             val error = eglGetError()
             if (error != EGL_BAD_SURFACE)
                 throw Error("eglSwapBuffers() returned error $error")
             else {
-                if (eglMakeCurrent(display, surface, surface, context) == 0) {
+                if (eglMakeCurrent(display, surface, surface, context) == 0u) {
                     throw Error("Reinit eglMakeCurrent() returned error ${eglGetError()}")
                 }
-                if (eglSwapBuffers(display, surface) == 0)
+                if (eglSwapBuffers(display, surface) == 0u)
                     throw Error("Bad eglSwapBuffers() after surface reinit: ${eglGetError()}")
             }
         }
@@ -306,7 +305,7 @@ class Renderer(val container: DisposableContainer,
     fun start() {
         logInfo("Starting renderer..")
         if (initialized) {
-            if (eglMakeCurrent(display, surface, surface, context) == 0) {
+            if (eglMakeCurrent(display, surface, surface, context) == 0u) {
                 throw Error("eglMakeCurrent() returned error ${eglGetError()}")
             }
         }

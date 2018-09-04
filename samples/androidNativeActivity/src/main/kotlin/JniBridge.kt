@@ -24,8 +24,10 @@ data class JniMethod(val jmethod: jmethodID)
 
 fun asJniClass(jclass: jclass?) =
         if (jclass != null) JniClass(jclass) else null
+
 fun asJniObject(jobject: jobject?) =
         if (jobject != null) JniObject(jobject) else null
+
 fun asJniMethod(jmethodID: jmethodID?) =
         if (jmethodID != null) JniMethod(jmethodID) else null
 
@@ -52,7 +54,7 @@ class JniBridge(val vm: CPointer<JavaVMVar>) {
     val fPopLocalFrame = envFunctions.PopLocalFrame!!
 
     private fun check() {
-        if (fExceptionCheck(jniEnv) != 0.toByte()) {
+        if (fExceptionCheck(jniEnv) != 0.toUByte()) {
             fExceptionDescribe(jniEnv)
             fExceptionClear(jniEnv)
             throw Error("JVM exception thrown")
@@ -89,7 +91,7 @@ class JniBridge(val vm: CPointer<JavaVMVar>) {
     fun GetMethodID(clazz: JniClass?, name: String, signature: String) = memScoped {
         val result = asJniMethod(fGetMethodID(jniEnv, clazz?.jclass, name.cstr.ptr, signature.cstr.ptr))
         check()
-         result
+        result
     }
 
     fun CallVoidMethod(receiver: JniObject?, method: JniMethod, vararg arguments: Any?) = memScoped {

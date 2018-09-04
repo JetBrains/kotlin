@@ -6,5 +6,5 @@ source "$DIR/../konan.sh"
 
 PYTHON=python
 
-konanc -p dynamic src/main/kotlin/Server.kt -o server
-sudo $PYTHON src/main/python/setup.py install
+konanc -p dynamic ${DIR}/src/main/kotlin/Server.kt -o server
+sudo $PYTHON ${DIR}/src/main/python/setup.py install

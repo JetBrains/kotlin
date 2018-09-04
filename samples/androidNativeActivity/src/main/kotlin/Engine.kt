@@ -22,11 +22,11 @@ import platform.gles3.*
 import platform.linux.*
 
 fun logError(message: String) {
-    __android_log_write(ANDROID_LOG_ERROR, "KonanActivity", message)
+    __android_log_write(ANDROID_LOG_ERROR.convert(), "KonanActivity", message)
 }
 
 fun logInfo(message: String) {
-    __android_log_write(ANDROID_LOG_INFO, "KonanActivity", message)
+    __android_log_write(ANDROID_LOG_INFO.convert(), "KonanActivity", message)
 }
 
 private fun getUnixError() = strerror(posix_errno())!!.toKString()
@@ -35,7 +35,7 @@ const val LOOPER_ID_INPUT = 2
 
 inline fun <reified T : CPointed> CPointer<*>?.dereferenceAs(): T = this!!.reinterpret<T>().pointed
 
-class Engine(val state: NativeActivityState): DisposableContainer() {
+class Engine(val state: NativeActivityState) : DisposableContainer() {
     private val renderer = Renderer(this, state.activity!!.pointed, state.savedState)
     private var queue: CPointer<AInputQueue>? = null
     private var rendererState: COpaquePointer? = null
@@ -94,22 +94,22 @@ class Engine(val state: NativeActivityState): DisposableContainer() {
     private val jniBrigde = JniBridge(state.activity!!.pointed.vm!!)
 
     private fun callToManagedAPI() = jniBrigde.withLocalFrame {
-            // Actually, this is a context pointer.
-            val context = JniObject(state.activity!!.pointed.clazz!!)
+        // Actually, this is a context pointer.
+        val context = JniObject(state.activity!!.pointed.clazz!!)
 
-            val contextClass = FindClass("android/content/Context")
-            val getSystemServiceMethod = GetMethodID(
-                    contextClass, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;")!!
-            val vibrator = CallObjectMethod(context, getSystemServiceMethod, "vibrator")
-            if (vibrator != null) {
-                val vibratorClass = FindClass("android/os/Vibrator")
-                val vibrateMethod = GetMethodID(vibratorClass, "vibrate", "(J)V")!!
-                CallVoidMethod(vibrator, vibrateMethod, 500L)
-            }
+        val contextClass = FindClass("android/content/Context")
+        val getSystemServiceMethod = GetMethodID(
+                contextClass, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;")!!
+        val vibrator = CallObjectMethod(context, getSystemServiceMethod, "vibrator")
+        if (vibrator != null) {
+            val vibratorClass = FindClass("android/os/Vibrator")
+            val vibrateMethod = GetMethodID(vibratorClass, "vibrate", "(J)V")!!
+            CallVoidMethod(vibrator, vibrateMethod, 500L)
+        }
     }
 
     private fun processSysEvent(fd: IntVar): Boolean {
-        val readBytes = read(fd.value, eventPointer.ptr, pointerSize.narrow()).toLong()
+        val readBytes = read(fd.value, eventPointer.ptr, pointerSize.convert()).toLong()
         if (readBytes != pointerSize.toLong()) {
             logError("Failure reading event, $readBytes read: ${getUnixError()}")
             return true
@@ -163,12 +163,12 @@ class Engine(val state: NativeActivityState): DisposableContainer() {
                 NativeActivityEventKind.SAVE_INSTANCE_STATE -> {
                     val saveStateEvent = eventPointer.value.dereferenceAs<NativeActivitySaveStateEvent>()
                     val state = renderer.getState()
-                    val dataSize = state.second.signExtend<size_t>()
-                    rendererState = realloc(rendererState, dataSize)
-                    memcpy(rendererState, state.first, dataSize)
+                    val dataSize = state.second
+                    rendererState = realloc(rendererState, dataSize.convert())
+                    memcpy(rendererState, state.first, dataSize.convert())
                     logInfo("Saving instance state to $rendererState: $dataSize bytes")
                     saveStateEvent.savedState = rendererState
-                    saveStateEvent.savedStateSize = dataSize
+                    saveStateEvent.savedStateSize = dataSize.convert()
                 }
             }
         } finally {
@@ -183,7 +183,7 @@ class Engine(val state: NativeActivityState): DisposableContainer() {
     }
 
     private fun getEventPoint(event: CPointer<AInputEvent>?, i: Int) =
-            Vector2(AMotionEvent_getRawX(event, i.signExtend<size_t>()), AMotionEvent_getRawY(event, i.signExtend<size_t>()))
+            Vector2(AMotionEvent_getRawX(event, i.convert()), AMotionEvent_getRawY(event, i.convert()))
 
     private fun getEventTime(event: CPointer<AInputEvent>?) =
             AMotionEvent_getEventTime(event) / 1_000_000_000.0f
@@ -195,8 +195,8 @@ class Engine(val state: NativeActivityState): DisposableContainer() {
         }
         val event = inputEvent.value
         val eventType = AInputEvent_getType(event)
-        if (eventType == AINPUT_EVENT_TYPE_MOTION) {
-            val action = AKeyEvent_getAction(event) and AMOTION_EVENT_ACTION_MASK
+        if (eventType.toUInt() == AINPUT_EVENT_TYPE_MOTION) {
+            val action = AKeyEvent_getAction(event).toUInt() and AMOTION_EVENT_ACTION_MASK
             when (action) {
                 AMOTION_EVENT_ACTION_DOWN -> {
                     animating = false
