@@ -180,7 +180,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     }
 
     /**
-     * @property isIncludedSourceRoot for reporting errors during cross-compilation common module sources
+     * @property isIncludedSourceRoot sources that are cross-compiled to multiple targets
      */
     class Source(
         val file: File,

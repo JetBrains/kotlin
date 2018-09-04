@@ -150,8 +150,11 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             val outputDir = target.outputDir
             val friendDirs = target.friendOutputDirs
 
-            val moduleSources = collectSourcesToCompile(target, dirtyFilesHolder)
-            val commonSources = emptyList<File>() // TODO: pass common sources here
+            val moduleSources = collectSourcesToCompile(target, dirtyFilesHolder).toSet()
+            val commonSources = sources
+                .filter { it.value.isIncludedSourceRoot && it.key in moduleSources }
+                .map { it.key }
+
             val hasDirtyOrRemovedSources = checkShouldCompileAndLog(target, dirtyFilesHolder, moduleSources)
             if (hasDirtyOrRemovedSources) hasDirtySources = true
 
