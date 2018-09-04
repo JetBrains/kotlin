@@ -159,7 +159,7 @@ public class PropertyCodegen {
         // Fields and '$annotations' methods for non-private const properties are generated in the multi-file facade
         boolean isBackingFieldOwner = descriptor.isConst() && !Visibilities.isPrivate(descriptor.getVisibility())
                                       ? !(context instanceof MultifileClassPartContext)
-                                      : CodegenContextUtil.isImplClassOwner(context);
+                                      : CodegenContextUtil.isImplementationOwner(context, descriptor);
 
         assert declaration != null : "Declaration is null: " + descriptor + " (context=" + context + ")";
         generateBackingField(declaration, descriptor, isBackingFieldOwner);
@@ -338,7 +338,7 @@ public class PropertyCodegen {
         if (annotations.isEmpty()) return;
 
         Method signature = getSyntheticMethodSignature(descriptor);
-        if (kind != OwnerKind.DEFAULT_IMPLS && CodegenContextUtil.isImplClassOwner(context)) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && CodegenContextUtil.isImplementationOwner(context, descriptor)) {
             v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, signature);
         }
 

@@ -243,7 +243,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     }
 
     private void genTypeAliasAnnotationsMethodIfRequired(TypeAliasDescriptor typeAliasDescriptor) {
-        boolean isAnnotationsMethodOwner = CodegenContextUtil.isImplClassOwner(context);
+        boolean isAnnotationsMethodOwner = CodegenContextUtil.isImplementationOwner(context, typeAliasDescriptor);
         Annotations annotations = typeAliasDescriptor.getAnnotations();
         if (!isAnnotationsMethodOwner || annotations.isEmpty()) return;
 

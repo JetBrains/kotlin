@@ -37,10 +37,6 @@ class SuperClassInfo(
                 return SuperClassInfo(OBJECT_TYPE, null)
             }
 
-            if (descriptor.isInline) {
-                return SuperClassInfo(typeMapper.mapErasedInlineClass(descriptor), null)
-            }
-
             for (supertype in descriptor.typeConstructor.supertypes) {
                 val superClass = supertype.constructor.declarationDescriptor
                 if (superClass != null && !isJvmInterface(superClass)) {

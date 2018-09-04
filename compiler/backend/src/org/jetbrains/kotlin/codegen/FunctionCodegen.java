@@ -225,7 +225,7 @@ public class FunctionCodegen {
                         asmMethod.getDescriptor()
                 );
 
-        if (CodegenContextUtil.isImplClassOwner(owner)) {
+        if (CodegenContextUtil.isImplementationOwner(owner, functionDescriptor)) {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, CodegenUtilKt.unwrapFrontendVersion(functionDescriptor), asmMethod);
         }
 
@@ -307,7 +307,7 @@ public class FunctionCodegen {
         }
 
         // base check
-        boolean isInlineClass = isClass(containingDeclaration) && ((ClassDescriptor) containingDeclaration).isInline();
+        boolean isInlineClass = InlineClassesUtilsKt.isInlineClass(containingDeclaration);
         boolean simpleFunctionOrProperty =
                 !(functionDescriptor instanceof ConstructorDescriptor) && !KotlinTypeMapper.isAccessor(functionDescriptor);
 
@@ -323,10 +323,8 @@ public class FunctionCodegen {
     ) {
         mv.visitCode();
 
-        Type inlineErasedType = typeMapper.mapErasedInlineClass(containingDeclaration);
-        Method erasedMethodImpl = typeMapper.mapAsmMethod(functionDescriptor.getOriginal(), OwnerKind.ERASED_INLINE_CLASS);
-
         Type fieldOwnerType = typeMapper.mapClass(containingDeclaration);
+        Method erasedMethodImpl = typeMapper.mapAsmMethod(functionDescriptor.getOriginal(), OwnerKind.ERASED_INLINE_CLASS);
 
         ValueParameterDescriptor valueRepresentation = InlineClassesUtilsKt.underlyingRepresentation(containingDeclaration);
         if (valueRepresentation == null) return;
@@ -334,7 +332,7 @@ public class FunctionCodegen {
         Type fieldType = typeMapper.mapType(valueRepresentation);
 
         generateDelegateToStaticErasedVersion(
-                mv, erasedMethodImpl, inlineErasedType.getInternalName(),
+                mv, erasedMethodImpl,
                 fieldOwnerType, valueRepresentation.getName().asString(), fieldType
         );
 
@@ -915,11 +913,11 @@ public class FunctionCodegen {
     private static void generateDelegateToStaticErasedVersion(
             @NotNull MethodVisitor mv,
             @NotNull Method erasedStaticAsmMethod,
-            @NotNull String classToDelegateTo,
             @NotNull Type fieldOwnerType,
             @NotNull String fieldName,
             @NotNull Type fieldType
     ) {
+        String internalName = fieldOwnerType.getInternalName();
         InstructionAdapter iv = new InstructionAdapter(mv);
         Type[] argTypes = erasedStaticAsmMethod.getArgumentTypes();
 
@@ -928,7 +926,7 @@ public class FunctionCodegen {
         iv.visitLineNumber(1, label);
 
         iv.load(0, AsmTypes.OBJECT_TYPE);
-        iv.visitFieldInsn(Opcodes.GETFIELD, fieldOwnerType.getInternalName(), fieldName, fieldType.getDescriptor());
+        iv.visitFieldInsn(Opcodes.GETFIELD, internalName, fieldName, fieldType.getDescriptor());
 
         int k = 1;
         for (int i = 1; i < argTypes.length; i++) {
@@ -937,7 +935,7 @@ public class FunctionCodegen {
             k += argType.getSize();
         }
 
-        iv.invokestatic(classToDelegateTo, erasedStaticAsmMethod.getName(), erasedStaticAsmMethod.getDescriptor(), false);
+        iv.invokestatic(internalName, erasedStaticAsmMethod.getName(), erasedStaticAsmMethod.getDescriptor(), false);
         iv.areturn(erasedStaticAsmMethod.getReturnType());
     }
 

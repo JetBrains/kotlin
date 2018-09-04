@@ -327,9 +327,6 @@ public class KotlinTypeMapper {
         if (isInterface(classDescriptor)) {
             nestedClass = JvmAbi.DEFAULT_IMPLS_SUFFIX;
         }
-        else if (classDescriptor.isInline()) {
-            nestedClass = JvmAbi.ERASED_INLINE_CLASS_SUFFIX;
-        }
         else {
             nestedClass = null;
         }
@@ -479,10 +476,6 @@ public class KotlinTypeMapper {
         return mapTypeAsDeclaration(descriptor.getReturnType());
     }
 
-    public Type mapErasedInlineClass(@NotNull ClassDescriptor descriptor) {
-        return Type.getObjectType(mapClass(descriptor).getInternalName() + JvmAbi.ERASED_INLINE_CLASS_SUFFIX);
-    }
-
     @NotNull
     public JvmMethodGenericSignature mapAnnotationParameterSignature(@NotNull PropertyDescriptor descriptor) {
         JvmSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
@@ -531,13 +524,6 @@ public class KotlinTypeMapper {
             throw new IllegalStateException("There should be underlying type for inline class type: " + kotlinType);
         }
         return mapInlineClassType(underlyingType, TypeMappingMode.DEFAULT);
-    }
-
-    @NotNull
-    public static Type mapToErasedInlineClassType(@NotNull KotlinType kotlinType) {
-        return Type.getObjectType(
-                mapInlineClassTypeAsDeclaration(kotlinType).getInternalName() + JvmAbi.ERASED_INLINE_CLASS_SUFFIX
-        );
     }
 
     @NotNull

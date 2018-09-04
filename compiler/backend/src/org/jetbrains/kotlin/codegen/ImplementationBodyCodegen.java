@@ -256,18 +256,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!(myClass instanceof KtClass)) return;
         if (!descriptor.isInline()) return;
 
-        Type erasedInlineClassType = state.getTypeMapper().mapErasedInlineClass(descriptor);
-        ClassBuilder builder = state.getFactory().newVisitor(
-                JvmDeclarationOriginKt.ErasedInlineClassOrigin(myClass.getPsiOrParent(), descriptor),
-                erasedInlineClassType,
-                myClass.getContainingKtFile()
-        );
-
         CodegenContext parentContext = context.getParentContext();
         assert parentContext != null : "Parent context of inline class declaration should not be null";
 
         ClassContext erasedInlineClassContext = parentContext.intoWrapperForErasedInlineClass(descriptor, state);
-        new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, builder, state, this).generate();
+        new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, v, state, this).generate();
     }
 
     @Override
