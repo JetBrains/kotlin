@@ -45,6 +45,10 @@ fun run() {
     pair.swap()
     println("${pair.first}, ${pair.second}")
 
+    val defaultPair = MutablePairImpl()
+    assertEquals(defaultPair.first(), 123)
+    assertEquals(defaultPair.second(), 321)
+
     // equals and hashCode (virtually):
     val map = mapOf(foo to pair, pair to foo)
 
@@ -105,6 +109,8 @@ class MutablePairImpl(first: Int, second: Int) : NSObject(), MutablePairProtocol
     override fun update(index: Int, sub: Int) {
         elements[index] -= sub
     }
+
+    constructor() : this(123, 321)
 }
 
 fun testTypeOps() {

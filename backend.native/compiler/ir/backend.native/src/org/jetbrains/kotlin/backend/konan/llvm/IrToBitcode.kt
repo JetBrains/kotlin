@@ -2583,7 +2583,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val constructedClass = functionGenerationContext.constructedClass!!
         val thisPtr = currentCodeContext.genGetValue(constructedClass.thisReceiver!!)
 
-        if (constructedClass.isObjCClass()) {
+        if (descriptor.constructedClass.isExternalObjCClass()) {
+            assert(args.isEmpty())
             return codegen.theUnitInstanceRef.llvm
         }
 
