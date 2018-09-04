@@ -694,11 +694,11 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         val shared = descriptor.objectIsShared && context.config.threadsAreAllowed
         val objectPtr = codegen.getObjectInstanceStorage(descriptor, shared)
-        val bbCurrent = currentBlock
         val bbInit = basicBlock("label_init", locationInfo)
         val bbExit = basicBlock("label_continue", locationInfo)
         val objectVal = loadSlot(objectPtr, false)
         val objectInitialized = icmpUGt(ptrToInt(objectVal, codegen.intPtrType), codegen.immOneIntPtrType)
+        val bbCurrent = currentBlock
         condBr(objectInitialized, bbExit, bbInit)
 
         positionAtEnd(bbInit)
