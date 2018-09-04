@@ -83,3 +83,12 @@ class JSLibraryType : LibraryType<DummyLibraryProperties>(JSLibraryKind) {
 }
 
 private fun isAcceptedForJsLibrary(extension: String?) = extension == "js" || extension == "kjsm"
+
+@Suppress("DEPRECATION_ERROR")
+// Can't import a member annotated with DEPRECATION_ERROR
+val org.jetbrains.kotlin.config.TargetPlatformKind<*>.libraryKind: PersistentLibraryKind<*>?
+    get() = when (this) {
+        org.jetbrains.kotlin.config.TargetPlatformKind.JavaScript -> JSLibraryKind
+        org.jetbrains.kotlin.config.TargetPlatformKind.Common -> CommonLibraryKind
+        else -> null
+    }

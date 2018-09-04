@@ -162,7 +162,7 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
         @Suppress("UNCHECKED_CAST")
         val moduleDataNodes = projectDataNode.children.filter { it.data is ModuleData } as List<DataNode<ModuleData>>
         val anyNonJvmModules = moduleDataNodes
-            .any { node -> detectPlatformByPlugin(node)?.takeIf { !it.isJvm } != null }
+            .any { node -> detectPlatformKindByPlugin(node)?.takeIf { !it.isJvm } != null }
 
         for (libraryDataNode in toImport) {
             val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
@@ -202,9 +202,24 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
     }
 }
 
-fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): IdePlatformKind<*>? {
+fun detectPlatformKindByPlugin(moduleNode: DataNode<ModuleData>): IdePlatformKind<*>? {
     val pluginId = moduleNode.platformPluginId
     return IdePlatformKind.ALL_KINDS.firstOrNull { it.tooling.gradlePluginId == pluginId }
+}
+
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(
+    "Use detectPlatformKindByPlugin() instead",
+    replaceWith = ReplaceWith("detectPlatformKindByPlugin(moduleNode)"),
+    level = DeprecationLevel.ERROR
+)
+fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
+    return when (moduleNode.platformPluginId) {
+        "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        "kotlin-platform-js" -> TargetPlatformKind.JavaScript
+        "kotlin-platform-common" -> TargetPlatformKind.Common
+        else -> null
+    }
 }
 
 private fun detectPlatformByLibrary(moduleNode: DataNode<ModuleData>): IdePlatformKind<*>? {
@@ -246,7 +261,7 @@ fun configureFacetByGradleModule(
 
     val compilerVersion = moduleNode.findAll(BuildScriptClasspathData.KEY).firstOrNull()?.data?.let(::findKotlinPluginVersion)
             ?: return null
-    val platformKind = detectPlatformByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
+    val platformKind = detectPlatformKindByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
 
     // TODO there should be a way to figure out the correct platform version
     val platform = platformKind?.defaultPlatform
