@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.KotlinModuleKind.COMPILATION_AND_SOURCE_SET_HOLDER
+import org.jetbrains.kotlin.config.KotlinModuleKind.SOURCE_SET_HOLDER
+import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt.Dependency.Kind.*
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJvm
 import java.io.File
@@ -20,7 +23,7 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 
 /**
- * Dependencies description file.
+ * Modules description file.
  * See [README.md] for more details.
  */
 data class ModulesTxt(
@@ -46,13 +49,18 @@ data class ModulesTxt(
         val usages = mutableListOf<Dependency>()
 
         val isCommonModule
-            get() = kotlinFacetSettings?.platform.isCommon
+            get() =
+                kotlinFacetSettings?.platform.isCommon ||
+                        kotlinFacetSettings?.kind == SOURCE_SET_HOLDER
 
         val isJvmModule
             get() = kotlinFacetSettings?.platform.isJvm
 
         val expectedBy
-            get() = dependencies.filter { it.expectedBy }
+            get() = dependencies.filter {
+                it.kind == EXPECTED_BY ||
+                        it.kind == INCLUDE
+            }
 
         @Flag
         var edit: Boolean = false
@@ -79,20 +87,26 @@ data class ModulesTxt(
         val from: Module,
         val to: Module,
         val scope: JpsJavaDependencyScope,
-        val expectedBy: Boolean,
+        val kind: Kind,
         val exported: Boolean
     ) {
         val effectivelyExported
-            get() = expectedBy || exported
+            get() = kind == EXPECTED_BY || exported
 
         init {
             from.dependencies.add(this)
             to.usages.add(this)
         }
+
+        enum class Kind {
+            DEPENDENCY,
+            EXPECTED_BY,
+            INCLUDE
+        }
     }
 }
 
-class DependenciesTxtBuilder {
+class ModulesTxtBuilder {
     val modules = mutableMapOf<String, ModuleRef>()
     private val dependencies = mutableListOf<DependencyBuilder>()
 
@@ -112,7 +126,13 @@ class DependenciesTxtBuilder {
             if (kotlinFacetSettings != null) {
                 kotlinFacetSettings.implementedModuleNames =
                         result.dependencies.asSequence()
-                            .filter { it.expectedBy }
+                            .filter { it.kind == EXPECTED_BY }
+                            .map { it.to.name }
+                            .toList()
+
+                kotlinFacetSettings.sourceSetNames =
+                        result.dependencies.asSequence()
+                            .filter { it.kind == INCLUDE }
                             .map { it.to.name }
                             .toList()
             }
@@ -127,12 +147,20 @@ class DependenciesTxtBuilder {
         val from: ModuleRef,
         val to: ModuleRef,
         val scope: JpsJavaDependencyScope,
-        val expectedBy: Boolean,
+        val kind: ModulesTxt.Dependency.Kind,
         val exported: Boolean
     ) {
         fun build(): ModulesTxt.Dependency {
-            if (expectedBy) check(to.actual.isCommonModule) { "$this: ${to.actual} is not common module" }
-            return ModulesTxt.Dependency(from.actual, to.actual, scope, expectedBy, exported)
+            when (kind) {
+                DEPENDENCY -> Unit
+                EXPECTED_BY -> check(to.actual.isCommonModule) {
+                    "$this: ${to.actual} is not common module"
+                }
+                INCLUDE -> check(to.actual.kotlinFacetSettings?.kind == SOURCE_SET_HOLDER) {
+                    "$this: ${to.actual} is not source set holder"
+                }
+            }
+            return ModulesTxt.Dependency(from.actual, to.actual, scope, kind, exported)
         }
     }
 
@@ -141,14 +169,11 @@ class DependenciesTxtBuilder {
             parseDeclaration(line)
         }
 
-        // module.build() requires built dependencies
+        // dependencies need to be build first: module.build() requires it
         val dependencies = dependencies.map { it.build() }
-        return ModulesTxt(
-            file,
-            fileTitle,
-            modules.values.mapIndexed { index, moduleRef -> moduleRef.build(index) },
-            dependencies
-        )
+        val modules = modules.values.mapIndexed { index, moduleRef -> moduleRef.build(index) }
+
+        return ModulesTxt(file, fileTitle, modules, dependencies)
     }
 
     private fun parseDeclaration(line: String) = doParseDeclaration(removeComments(line))
@@ -200,11 +225,11 @@ class DependenciesTxtBuilder {
         val name = def.value.trim()
 
         val module = ModulesTxt.Module(name)
-        val kotlinFacetSettings = KotlinFacetSettings()
-        module.kotlinFacetSettings = kotlinFacetSettings
+        val settings = KotlinFacetSettings()
+        module.kotlinFacetSettings = settings
 
-        kotlinFacetSettings.useProjectSettings = false
-        kotlinFacetSettings.compilerSettings = CompilerSettings().also {
+        settings.useProjectSettings = false
+        settings.compilerSettings = CompilerSettings().also {
             it.additionalArguments = "-version -Xmulti-platform"
         }
 
@@ -215,9 +240,11 @@ class DependenciesTxtBuilder {
 
         def.flags.forEach { flag ->
             when (flag) {
-                "common" -> kotlinFacetSettings.compilerArguments = K2MetadataCompilerArguments()
-                "jvm" -> kotlinFacetSettings.compilerArguments = K2JVMCompilerArguments()
-                "js" -> kotlinFacetSettings.compilerArguments = K2JSCompilerArguments()
+                "sourceSetHolder" -> settings.kind = SOURCE_SET_HOLDER
+                "compilationAndSourceSetHolder" -> settings.kind = COMPILATION_AND_SOURCE_SET_HOLDER
+                "common" -> settings.compilerArguments = K2MetadataCompilerArguments()
+                "jvm" -> settings.compilerArguments = K2JVMCompilerArguments()
+                "js" -> settings.compilerArguments = K2JSCompilerArguments()
                 else -> {
                     val flagProperty = ModulesTxt.Module.flags[flag]
                     if (flagProperty != null) flagProperty.set(module, true)
@@ -243,11 +270,16 @@ class DependenciesTxtBuilder {
         } else {
             var exported = false
             var scope: JpsJavaDependencyScope? = null
-            var expectedBy = false
+            var kind: ModulesTxt.Dependency.Kind = DEPENDENCY
 
             fun setScope(newScope: JpsJavaDependencyScope) {
                 check(scope == null) { "`$this: $from -> $to` dependency is already flagged as $scope" }
                 scope = newScope
+            }
+
+            fun setKind(newKind: ModulesTxt.Dependency.Kind) {
+                check(kind == DEPENDENCY) { "`$this: $from -> $to` dependency is already flagged as $kind" }
+                kind = newKind
             }
 
             flags.forEach { flag ->
@@ -257,7 +289,8 @@ class DependenciesTxtBuilder {
                     "test" -> setScope(JpsJavaDependencyScope.TEST)
                     "runtime" -> setScope(JpsJavaDependencyScope.RUNTIME)
                     "provided" -> setScope(JpsJavaDependencyScope.PROVIDED)
-                    "expectedBy" -> expectedBy = true
+                    "expectedBy" -> setKind(EXPECTED_BY)
+                    "include" -> setKind(INCLUDE)
                     else -> error("Unknown dependency flag `$flag`")
                 }
             }
@@ -266,7 +299,7 @@ class DependenciesTxtBuilder {
                 from = moduleRef(from),
                 to = moduleRef(to),
                 scope = scope ?: JpsJavaDependencyScope.COMPILE,
-                expectedBy = expectedBy,
+                kind = kind,
                 exported = exported
             ).also {
                 dependencies.add(it)

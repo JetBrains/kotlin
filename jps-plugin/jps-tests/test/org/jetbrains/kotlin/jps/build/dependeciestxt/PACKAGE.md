@@ -22,7 +22,8 @@ Referring to undefined module is allowed (`jvm` module will be created at this c
 This modules can be defined after reference. Several declarations for same module is not allowed.
 
 Supported module flags:
-  - `common`
+  - `common` (old MPP)
+  - `sourceSetHolder`, `compilationAndSourceSetHolder` (new MPP)
   - `jvm` (default)
   - `js`
   - `edit`, `editJvm`, `editExcpetActual` - see jps-plugin/testData/incremental/multiplatform/multiModule/README.md
@@ -32,5 +33,6 @@ Supported dependency flags:
   - `test`
   - `runtime`
   - `provided`
-  - `expectedBy`
+  - `expectedBy` (old MPP)
+  - `included` (new MPP)
   - `exproted`
