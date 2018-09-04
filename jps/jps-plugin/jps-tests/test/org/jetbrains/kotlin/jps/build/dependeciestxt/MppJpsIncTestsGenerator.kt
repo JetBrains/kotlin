@@ -25,8 +25,8 @@ fun actualizeMppJpsIncTestCaseDirs(rootDir: String, dir: String) {
     return
 }
 
-class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider: (TestCase) -> File) {
-    val DependenciesTxt.Module.capitalName get() = name.capitalize()
+class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (TestCase) -> File) {
+    val ModulesTxt.Module.capitalName get() = name.capitalize()
 
     val testCases: List<TestCase>
 
@@ -84,15 +84,15 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
     }
 
     data class ModuleContentSettings(
-        val module: DependenciesTxt.Module,
+        val module: ModulesTxt.Module,
         val serviceNameSuffix: String = "",
-        val generateActualDeclarationsFor: List<DependenciesTxt.Module> = module.expectedBy.map { it.to },
+        val generateActualDeclarationsFor: List<ModulesTxt.Module> = module.expectedBy.map { it.to },
         val generatePlatformDependent: Boolean = true,
         var generateKtFile: Boolean = true,
         var generateJavaFile: Boolean = true
     )
 
-    inner class EditingTestCase(val module: DependenciesTxt.Module, val changeJavaClass: Boolean) : TestCase() {
+    inner class EditingTestCase(val module: ModulesTxt.Module, val changeJavaClass: Boolean) : TestCase() {
         override val name: String =
             if (changeJavaClass) "editing${module.capitalName}Java"
             else "editing${module.capitalName}Kotlin"
@@ -171,7 +171,7 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
 
     }
 
-    inner class EditingExpectActualTestCase(val commonModule: DependenciesTxt.Module) : TestCase() {
+    inner class EditingExpectActualTestCase(val commonModule: ModulesTxt.Module) : TestCase() {
         override val name: String = "editing${commonModule.capitalName}ExpectActual"
         override val dir: File = testCaseDirProvider(this)
 
@@ -244,7 +244,7 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
 
         abstract val dir: File
 
-        private val modules = mutableMapOf<DependenciesTxt.Module, ModuleContentSettings>()
+        private val modules = mutableMapOf<ModulesTxt.Module, ModuleContentSettings>()
 
         var step = 1
         val steps = mutableListOf<String>()
@@ -255,7 +255,7 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
             step++
         }
 
-        var DependenciesTxt.Module.contentsSettings: ModuleContentSettings
+        var ModulesTxt.Module.contentsSettings: ModuleContentSettings
             get() = modules.getOrPut(this) { ModuleContentSettings(this) }
             set(value) {
                 modules[this] = value
@@ -273,7 +273,7 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
             }
         }
 
-        private fun generateModuleContents(module: DependenciesTxt.Module) {
+        private fun generateModuleContents(module: ModulesTxt.Module) {
             when {
                 module.isCommonModule -> {
                     // common module
@@ -290,13 +290,13 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
             }
         }
 
-        private val DependenciesTxt.Module.serviceName
+        private val ModulesTxt.Module.serviceName
             get() = "$capitalName${contentsSettings.serviceNameSuffix}"
 
-        private val DependenciesTxt.Module.javaClassName
+        private val ModulesTxt.Module.javaClassName
             get() = "${serviceName}JavaClass"
 
-        protected fun serviceKtFile(module: DependenciesTxt.Module, fileNameSuffix: String = ""): File {
+        protected fun serviceKtFile(module: ModulesTxt.Module, fileNameSuffix: String = ""): File {
             val suffix =
                 if (module.isCommonModule) "${module.serviceName}Header"
                 else "${module.name.capitalize()}${module.contentsSettings.serviceNameSuffix}Impl"
@@ -304,30 +304,30 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
             return File(dir, "${module.indexedName}_service$suffix.kt$fileNameSuffix")
         }
 
-        fun serviceJavaFile(module: DependenciesTxt.Module, fileNameSuffix: String = ""): File {
+        fun serviceJavaFile(module: ModulesTxt.Module, fileNameSuffix: String = ""): File {
             return File(dir, "${module.indexedName}_${module.javaClassName}.java$fileNameSuffix")
         }
 
-        private val DependenciesTxt.Module.platformDependentFunName: String
+        private val ModulesTxt.Module.platformDependentFunName: String
             get() {
                 check(isCommonModule)
                 return "${name}_platformDependent$serviceName"
             }
 
-        private val DependenciesTxt.Module.platformIndependentFunName: String
+        private val ModulesTxt.Module.platformIndependentFunName: String
             get() {
                 check(isCommonModule)
                 return "${name}_platformIndependent$serviceName"
             }
 
-        private val DependenciesTxt.Module.platformOnlyFunName: String
+        private val ModulesTxt.Module.platformOnlyFunName: String
             get() {
                 // platformOnly fun names already unique, so no module name prefix required
                 return "${name}_platformOnly${contentsSettings.serviceNameSuffix}"
             }
 
         protected fun generateCommonFile(
-            module: DependenciesTxt.Module,
+            module: ModulesTxt.Module,
             fileNameSuffix: String = ""
         ) {
             val settings = module.contentsSettings
@@ -343,7 +343,7 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
         }
 
         protected fun generatePlatformFile(
-            module: DependenciesTxt.Module,
+            module: ModulesTxt.Module,
             fileNameSuffix: String = ""
         ) {
             val isJvm = module.isJvmModule
@@ -386,7 +386,7 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
 
         // call all functions declared in this module and all of its dependencies recursively
         private fun StringBuilder.appendTestFun(
-            module: DependenciesTxt.Module,
+            module: ModulesTxt.Module,
             settings: ModuleContentSettings
         ) {
             appendln()
@@ -414,8 +414,8 @@ class MppJpsIncTestsGenerator(val txt: DependenciesTxt, val testCaseDirProvider:
             appendln("}")
         }
 
-        private fun DependenciesTxt.Module.collectDependenciesRecursivelyTo(
-            collection: MutableCollection<DependenciesTxt.Module>,
+        private fun ModulesTxt.Module.collectDependenciesRecursivelyTo(
+            collection: MutableCollection<ModulesTxt.Module>,
             exportedOnly: Boolean = false
         ) {
             dependencies.forEach {

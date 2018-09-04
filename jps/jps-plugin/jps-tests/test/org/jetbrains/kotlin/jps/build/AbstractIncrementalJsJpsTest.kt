@@ -24,7 +24,7 @@ abstract class AbstractIncrementalJsJpsTest : AbstractIncrementalJpsTest() {
         super.tearDown()
     }
 
-    override fun configureDependencies() {
+    override fun addStdlib() {
         AbstractKotlinJpsBuildTestCase.addKotlinJavaScriptStdlibDependency(myProject)
     }
 
