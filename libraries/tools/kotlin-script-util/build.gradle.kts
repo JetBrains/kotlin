@@ -19,7 +19,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testRuntime(project(":kotlin-reflect"))
     testCompile(commonDep("junit:junit"))
-    testRuntime(projectRuntimeJar(":kotlin-compiler"))
+    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
     testRuntime("com.jcabi:jcabi-aether:0.10.1")
     testRuntime("org.sonatype.aether:aether-api:1.13.1")
     testRuntime("org.apache.maven:maven-core:3.0.3")
