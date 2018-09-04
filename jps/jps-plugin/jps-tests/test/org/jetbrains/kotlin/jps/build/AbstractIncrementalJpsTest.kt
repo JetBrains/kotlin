@@ -22,7 +22,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.concurrency.FixedFuture
 import junit.framework.TestCase
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
@@ -45,7 +44,6 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesDiff
 import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import org.jetbrains.kotlin.incremental.testingUtils.*
@@ -56,9 +54,11 @@ import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import java.util.*
-import java.util.concurrent.Future
 import kotlin.reflect.jvm.javaField
 
 abstract class AbstractIncrementalJpsTest(
@@ -139,7 +139,7 @@ abstract class AbstractIncrementalJpsTest(
     // JPS forces rebuild of all files when JVM constant has been changed and Callbacks.ConstantAffectionResolver
     // is not provided, so ConstantAffectionResolver is mocked with empty implementation
     // Usages in Kotlin files are expected to be found by KotlinLookupConstantSearch
-    private val mockConstantSearch: Callbacks.ConstantAffectionResolver?
+    protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
         get() = MockJavaConstantSearch(workDir)
 
     private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules()): MakeResult {
@@ -153,7 +153,14 @@ abstract class AbstractIncrementalJpsTest(
         projectDescriptor.project.setTestingContext(testingContext)
 
         try {
-            val builder = IncProjectBuilder(projectDescriptor, BuilderRegistry.getInstance(), myBuildParams, CanceledStatus.NULL, mockConstantSearch, true)
+            val builder = IncProjectBuilder(
+                projectDescriptor,
+                BuilderRegistry.getInstance(),
+                myBuildParams,
+                CanceledStatus.NULL,
+                mockConstantSearch,
+                true
+            )
             val buildResult = BuildResult()
             builder.addMessageHandler(buildResult)
             val finalScope = scope.build()
@@ -173,12 +180,10 @@ abstract class AbstractIncrementalJpsTest(
                         .map { it.replace("^.+:\\d+:\\s+".toRegex(), "").trim() }
                         .joinToString("\n")
                 return MakeResult(logger.log + "$COMPILATION_FAILED\n" + errorMessages + "\n", true, null)
-            }
-            else {
+            } else {
                 return MakeResult(logger.log, false, createMappingsDump(projectDescriptor))
             }
-        }
-        finally {
+        } finally {
             projectDescriptor.dataManager.flush(false)
             projectDescriptor.release()
         }
@@ -190,8 +195,7 @@ abstract class AbstractIncrementalJpsTest(
         val initBuildLogFile = File(testDataDir, "init-build.log")
         if (initBuildLogFile.exists()) {
             UsefulTestCase.assertSameLinesWithFile(initBuildLogFile.absolutePath, makeResult.log)
-        }
-        else {
+        } else {
             assertFalse("Initial make failed:\n$makeResult", makeResult.makeFailed)
         }
 
@@ -215,21 +219,21 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         val rebuildResult = rebuild()
-        assertEquals("Rebuild failed: ${rebuildResult.makeFailed}, last make failed: ${makeOverallResult.makeFailed}. Rebuild result: $rebuildResult",
-                     rebuildResult.makeFailed, makeOverallResult.makeFailed)
+        assertEquals(
+            "Rebuild failed: ${rebuildResult.makeFailed}, last make failed: ${makeOverallResult.makeFailed}. Rebuild result: $rebuildResult",
+            rebuildResult.makeFailed, makeOverallResult.makeFailed
+        )
 
         if (!outAfterMake.exists()) {
             assertFalse(outDir.exists())
-        }
-        else {
+        } else {
             assertEqualDirectories(outDir, outAfterMake, makeOverallResult.makeFailed)
         }
 
         if (!makeOverallResult.makeFailed) {
             if (checkDumpsCaseInsensitively && rebuildResult.mappingsDump?.toLowerCase() == makeOverallResult.mappingsDump?.toLowerCase()) {
                 // do nothing
-            }
-            else {
+            } else {
                 TestCase.assertEquals(rebuildResult.mappingsDump, makeOverallResult.mappingsDump)
             }
         }
@@ -282,8 +286,7 @@ abstract class AbstractIncrementalJpsTest(
 
         if (buildLogFile != null && buildLogFile.exists()) {
             UsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, logs)
-        }
-        else if (!allowNoBuildLogFileInTestData) {
+        } else if (!allowNoBuildLogFileInTestData) {
             throw IllegalStateException("No build log file in $testDataDir")
         }
 
@@ -295,9 +298,9 @@ abstract class AbstractIncrementalJpsTest(
     private fun createMappingsDump(
         project: ProjectDescriptor
     ) = createKotlinIncrementalCacheDump(project) + "\n\n\n" +
-                createLookupCacheDump(project) + "\n\n\n" +
-                createCommonMappingsDump(project) + "\n\n\n" +
-                createJavaMappingsDump(project)
+            createLookupCacheDump(project) + "\n\n\n" +
+            createCommonMappingsDump(project) + "\n\n\n" +
+            createJavaMappingsDump(project)
 
     private fun createKotlinIncrementalCacheDump(
         project: ProjectDescriptor
@@ -377,8 +380,7 @@ abstract class AbstractIncrementalJpsTest(
             performAdditionalModifications(step)
             if (moduleNames == null) {
                 preProcessSources(File(workDir, "src"))
-            }
-            else {
+            } else {
                 moduleNames.forEach { preProcessSources(File(workDir, "$it/src")) }
             }
 
@@ -401,7 +403,8 @@ abstract class AbstractIncrementalJpsTest(
             preProcessSources(sourceDestinationDir)
         }
 
-        JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject).outputUrl = JpsPathUtil.pathToUrl(getAbsolutePath("out"))
+        JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject).outputUrl =
+                JpsPathUtil.pathToUrl(getAbsolutePath("out"))
 
         val jdk = addJdk("my jdk")
         val moduleDependencies = readModuleDependencies()
@@ -412,8 +415,7 @@ abstract class AbstractIncrementalJpsTest(
             addModule("module", arrayOf(getAbsolutePath("src")), null, null, jdk)
             prepareModuleSources(moduleName = null)
             moduleNames = null
-        }
-        else {
+        } else {
             val nameToModule = moduleDependencies.keys
                 .keysToMap { addModule(it, arrayOf(getAbsolutePath("$it/src")), null, null, jdk)!! }
 
@@ -421,8 +423,10 @@ abstract class AbstractIncrementalJpsTest(
                 val module = nameToModule[moduleName]!!
 
                 for (dependency in dependencies) {
-                    JpsModuleRootModificationUtil.addDependency(module, nameToModule[dependency.name],
-                                                                JpsJavaDependencyScope.COMPILE, dependency.exported)
+                    JpsModuleRootModificationUtil.addDependency(
+                        module, nameToModule[dependency.name],
+                        JpsJavaDependencyScope.COMPILE, dependency.exported
+                    )
                 }
             }
 
@@ -524,38 +528,6 @@ abstract class AbstractIncrementalJpsTest(
         override fun logLine(message: String?) {
             logBuf.append(KotlinTestUtils.replaceHashWithStar(message!!.replace("^$rootPath/".toRegex(), "  "))).append('\n')
         }
-    }
-}
-
-/**
- * Mocks Intellij Java constant search.
- * When JPS is run from Intellij, it sends find usages request to IDE (it only searches for references inside Java files).
- *
- * We rely on heuristics instead of precise usages search.
- * A Java file is considered affected if:
- * 1. It contains changed field name as a content substring.
- * 2. Its simple file name is not equal to a field's owner class simple name (to avoid recompiling field's declaration again)
- */
-private class MockJavaConstantSearch(private val workDir: File) : Callbacks.ConstantAffectionResolver {
-    override fun request(
-        ownerClassName: String,
-        fieldName: String,
-        accessFlags: Int,
-        fieldRemoved: Boolean,
-        accessChanged: Boolean
-    ): Future<Callbacks.ConstantAffection> {
-        fun File.isAffected(): Boolean {
-            if (!isJavaFile()) return false
-
-            if (nameWithoutExtension == ownerClassName.substringAfterLast(".")) return false
-
-            val code = readText()
-            return code.contains(fieldName)
-        }
-
-
-        val affectedJavaFiles = workDir.walk().filter(File::isAffected).toList()
-        return FixedFuture(Callbacks.ConstantAffection(affectedJavaFiles))
     }
 }
 
