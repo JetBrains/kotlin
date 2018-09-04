@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.getPropertyDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -74,7 +75,8 @@ class JsIrBackendContext(
     private val internalPackage = module.getPackage(internalPackageName)
 
     // TODO: replace it with appropriate package name once we migrate to 1.3 coroutines
-    private val coroutinePackageNameSrting = "kotlin.coroutines.experimental"
+    private val coroutinePackageNameSrting_12 = "kotlin.coroutines.experimental"
+    private val coroutinePackageNameSrting_13 = "kotlin.coroutines"
 
     private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
     private val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
@@ -86,7 +88,7 @@ class JsIrBackendContext(
     private val CONTINUATION_CONTEXT_GETTER_NAME = Name.special("<get-context>")
     private val CONTINUATION_CONTEXT_PROPERTY_NAME = Name.identifier("context")
 
-    private val coroutinePackageName = FqName(coroutinePackageNameSrting)
+    private val coroutinePackageName = FqName(coroutinePackageNameSrting_12)
     private val coroutineIntrinsicsPackageName = coroutinePackageName.child(INTRINSICS_PACKAGE_NAME)
 
     private val coroutinePackage = module.getPackage(coroutinePackageName)
@@ -192,6 +194,11 @@ class JsIrBackendContext(
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
+
+    val coroutineImplLabelProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("label")!! }
+    val coroutineImplResultSymbol by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("result")!! }
+    val coroutineImplExceptionProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("exception")!! }
+    val coroutineImplExceptionStateProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("exceptionState")!! }
 
     private fun referenceOperators() = OperatorNames.ALL.map { name ->
         // TODO to replace KotlinType with IrType we need right equals on IrType

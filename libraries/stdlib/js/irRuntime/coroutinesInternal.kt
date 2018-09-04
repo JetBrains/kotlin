@@ -34,7 +34,8 @@ internal abstract class CoroutineImpl(private val completion: Continuation<Any?>
     protected var exceptionState = 0
     protected var label: Int = 0
 
-    protected var pendingException: dynamic = null
+    protected var exception: dynamic = null
+    protected var result: dynamic = null
 
     public override val context: CoroutineContext get() = completion?.context
 
@@ -44,21 +45,22 @@ internal abstract class CoroutineImpl(private val completion: Continuation<Any?>
     }
 
     override fun resume(value: Any?) {
-        doResumeWrapper(value, null)
+        this.result = value
+        doResumeWrapper()
     }
 
     override fun resumeWithException(exception: Throwable) {
         // TODO: once we have arrays working refact it with exception table
-        label = exceptionState
-        pendingException = exception
-        doResumeWrapper(null, exception)
+        this.label = exceptionState
+        this.exception = exception
+        doResumeWrapper()
     }
 
-    protected fun doResumeWrapper(data: Any?, exception: Throwable?) {
-        processBareContinuationResume(completion) { doResume(data, exception) }
+    protected fun doResumeWrapper() {
+        processBareContinuationResume(completion) { doResume() }
     }
 
-    protected abstract fun doResume(data: Any?, exception: Throwable?): Any?
+    protected abstract fun doResume(): Any?
 
     open fun create(completion: Continuation<*>): Continuation<Unit> {
         throw IllegalStateException("create(Continuation) has not been overridden")
