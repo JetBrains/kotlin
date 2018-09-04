@@ -7,7 +7,9 @@ import org.gradle.api.file.DuplicatesStrategy
 description = "Kotlin Compiler"
 
 plugins {
-    maven
+    // HACK: java plugin makes idea import dependencies on this project as source (with empty sources however),
+    // this prevents reindexing of kotlin-compiler.jar after build on every change in compiler modules
+    java
 }
 
 // You can run Gradle with "-Pkotlin.build.proguard=true" to enable ProGuard run on kotlin-compiler.jar (on TeamCity, ProGuard always runs)
@@ -25,12 +27,9 @@ val fatSourcesJarContents by configurations.creating
 val fatJar by configurations.creating
 val compilerJar by configurations.creating
 val runtimeJar by configurations.creating
-val libraries by configurations.creating
-
-val compile by configurations.creating {
-    the<MavenPluginConvention>()
-        .conf2ScopeMappings
-        .addMapping(0, this, COMPILE)
+val compile by configurations  // maven plugin writes pom compile scope from compile configuration by default
+val libraries by configurations.creating {
+    extendsFrom(compile)
 }
 
 val default by configurations
@@ -49,7 +48,6 @@ val compiledModulesSources = compilerModules.map {
 }
 
 dependencies {
-    // Maven plugin generates pom compile dependencies from compile configuration
     compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-script-runtime"))
     compile(project(":kotlin-reflect"))
@@ -120,7 +118,6 @@ val proguard by task<ProGuardTask> {
         System.setProperty("kotlin-compiler-jar", outputJar.canonicalPath)
     }
 
-    libraryjars(mapOf("filter" to "!META-INF/versions/**"), compile)
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), libraries)
 
     printconfiguration("$buildDir/compiler.pro.dump")
