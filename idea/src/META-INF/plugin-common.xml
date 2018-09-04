@@ -761,6 +761,7 @@
     <moveLeftRightHandler language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinMoveLeftRightHandler"/>
 
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinDeclarationAndAssignmentHandler"/>
+    <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinInitializerAndIfToElvisHandler"/>
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinBlockIntoSingleStatementHandler"/>
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinStatementsAddSemicolonHandler"/>
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinToStringTemplateHandler"/>
