@@ -18,49 +18,49 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            namedFunctionVisitor(fun(function) {
-                val funKeyword = function.funKeyword ?: return
-                val modifierList = function.modifierList ?: return
-                if (!modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
-                if (MODIFIER_EXCLUDE_OVERRIDE.any { modifierList.hasModifier(it) }) return
-                if (function.annotationEntries.isNotEmpty()) return
-                if (function.containingClass()?.isData() == true) return
+        namedFunctionVisitor(fun(function) {
+            val funKeyword = function.funKeyword ?: return
+            val modifierList = function.modifierList ?: return
+            if (!modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+            if (MODIFIER_EXCLUDE_OVERRIDE.any { modifierList.hasModifier(it) }) return
+            if (function.annotationEntries.isNotEmpty()) return
+            if (function.containingClass()?.isData() == true) return
 
-                val bodyExpression = function.bodyExpression ?: return
-                val qualifiedExpression = when (bodyExpression) {
-                    is KtDotQualifiedExpression -> bodyExpression
-                    is KtBlockExpression -> {
-                        val body = bodyExpression.statements.singleOrNull()
-                        when (body) {
-                            is KtReturnExpression -> body.returnedExpression
-                            is KtDotQualifiedExpression -> body.takeIf {
-                                function.typeReference.let { it == null || it.text == "Unit" }
-                            }
-                            else -> null
+            val bodyExpression = function.bodyExpression ?: return
+            val qualifiedExpression = when (bodyExpression) {
+                is KtDotQualifiedExpression -> bodyExpression
+                is KtBlockExpression -> {
+                    val body = bodyExpression.statements.singleOrNull()
+                    when (body) {
+                        is KtReturnExpression -> body.returnedExpression
+                        is KtDotQualifiedExpression -> body.takeIf { _ ->
+                            function.typeReference.let { it == null || it.text == "Unit" }
                         }
-
+                        else -> null
                     }
-                    else -> null
-                } as? KtDotQualifiedExpression ?: return
 
-                val superExpression = qualifiedExpression.receiverExpression as? KtSuperExpression ?: return
-                if (superExpression.superTypeQualifier != null) return
+                }
+                else -> null
+            } as? KtDotQualifiedExpression ?: return
 
-                val superCallElement = qualifiedExpression.selectorExpression as? KtCallElement ?: return
-                if (!isSameFunctionName(superCallElement, function)) return
-                if (!isSameArguments(superCallElement, function)) return
-                if (function.isDefinedInDelegatedSuperType(qualifiedExpression)) return
+            val superExpression = qualifiedExpression.receiverExpression as? KtSuperExpression ?: return
+            if (superExpression.superTypeQualifier != null) return
 
-                val descriptor = holder.manager.createProblemDescriptor(
-                        function,
-                        TextRange(modifierList.startOffsetInParent, funKeyword.endOffset - function.startOffset),
-                        "Redundant overriding method",
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        isOnTheFly,
-                        RedundantOverrideFix()
-                )
-                holder.registerProblem(descriptor)
-            })
+            val superCallElement = qualifiedExpression.selectorExpression as? KtCallElement ?: return
+            if (!isSameFunctionName(superCallElement, function)) return
+            if (!isSameArguments(superCallElement, function)) return
+            if (function.isDefinedInDelegatedSuperType(qualifiedExpression)) return
+
+            val descriptor = holder.manager.createProblemDescriptor(
+                function,
+                TextRange(modifierList.startOffsetInParent, funKeyword.endOffset - function.startOffset),
+                "Redundant overriding method",
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                isOnTheFly,
+                RedundantOverrideFix()
+            )
+            holder.registerProblem(descriptor)
+        })
 
     private fun isSameArguments(superCallElement: KtCallElement, function: KtNamedFunction): Boolean {
         val arguments = superCallElement.valueArguments
@@ -92,7 +92,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
 
 private fun KtNamedFunction.isDefinedInDelegatedSuperType(superQualifiedExpression: KtDotQualifiedExpression): Boolean {
     val delegatedSuperTypeEntries =
-            containingClassOrObject?.superTypeListEntries?.filterIsInstance<KtDelegatedSuperTypeEntry>() ?: return false
+        containingClassOrObject?.superTypeListEntries?.filterIsInstance<KtDelegatedSuperTypeEntry>() ?: return false
     if (delegatedSuperTypeEntries.isEmpty()) return false
 
     val context = superQualifiedExpression.analyze()
