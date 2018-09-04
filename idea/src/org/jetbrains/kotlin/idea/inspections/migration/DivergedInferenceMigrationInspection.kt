@@ -9,20 +9,23 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfoWithGivenLanguageSettings
+import org.jetbrains.kotlin.idea.caches.project.forcedModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -33,37 +36,43 @@ class DivergedInferenceMigrationInspection : AbstractKotlinInspection(), Migrati
         return migrationInfo.isInferenceUpdate()
     }
 
-    override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
-        if (file !is KtFile) return null
+    override fun checkFile(oldFile: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+        if (oldFile !is KtFile) return null
+        val oldModuleInfo = oldFile.getModuleInfo() as? ModuleSourceInfo ?: return null
 
-        // TODO
-        val languageVersionSettingsBefore = LanguageVersionSettingsImpl.DEFAULT
-        val languageVersionSettingsAfter = LanguageVersionSettingsImpl.DEFAULT
+        val languageVersionSettingsBefore = oldFile.module?.languageVersionSettings!!
+        val languageVersionSettingsAfter = languageVersionSettingsBefore.wrapEnablingNewInference()
 
-        val resolutionBefore = buildResolutionSummary(file, languageVersionSettingsBefore)
-        val resolutionAfter = buildResolutionSummary(file, languageVersionSettingsAfter)
+        val syntheticFileCopy = oldFile.copy() as KtFile
+        syntheticFileCopy.forcedModuleInfo = ModuleSourceInfoWithGivenLanguageSettings(oldModuleInfo, languageVersionSettingsAfter)
+
+        val resolutionBefore = buildResolutionSummary(oldFile, oldFile.getResolutionFacade())
+        val resolutionAfter = buildResolutionSummary(syntheticFileCopy, syntheticFileCopy.getResolutionFacade())
 
         val resolutionDifference = compareResolutionSummaries(resolutionBefore, resolutionAfter)
 
         return resolutionDifference.toProblemsDescriptors()
     }
 
+    private fun LanguageVersionSettings.wrapEnablingNewInference(): LanguageVersionSettings {
+        return object : LanguageVersionSettings by this {
+            override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
+                if (feature == LanguageFeature.NewInference) LanguageFeature.State.ENABLED else getFeatureSupport(feature)
+
+            override fun supportsFeature(feature: LanguageFeature): Boolean =
+                if (feature == LanguageFeature.NewInference) true else supportsFeature(feature)
+        }
+    }
+
     private fun compareResolutionSummaries(resolutionBefore: ResolutionSummary, resolutionAfter: ResolutionSummary): ResolutionDifference {
-        // TODO()
         return ResolutionDifference()
     }
 
-    @Suppress("UNREACHABLE_CODE")
-    private fun buildResolutionSummary(file: KtFile, languageVersionSettings: LanguageVersionSettings): ResolutionSummary {
-        val analysisResult = file.analyzeWithGivenLanguageVersionSettings(languageVersionSettings)
-        val (ir, symbolTable) = buildIr(file, analysisResult, languageVersionSettings = TODO())
+    private fun buildResolutionSummary(file: KtFile, resolutionFacade: ResolutionFacade): ResolutionSummary {
+        val analysisResult = resolutionFacade.analyzeWithAllCompilerChecks(listOf(file))
+        val (ir, symbolTable) = buildIr(file, analysisResult, languageVersionSettings = resolutionFacade.frontendService())
 
         return ResolutionSummary(analysisResult, ir, symbolTable, file)
-    }
-
-    private fun KtFile.analyzeWithGivenLanguageVersionSettings(languageVersionSettings: LanguageVersionSettings): AnalysisResult {
-        // TODO
-        KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this)).analyzeWithAllCompilerChecks(listOf(this)).bindingContext
     }
 
     private fun buildIr(
@@ -89,7 +98,8 @@ class DivergedInferenceMigrationInspection : AbstractKotlinInspection(), Migrati
 
 private class ResolutionDifference {
     fun toProblemsDescriptors(): Array<ProblemDescriptor>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // TODO
+        return null
     }
 }
 

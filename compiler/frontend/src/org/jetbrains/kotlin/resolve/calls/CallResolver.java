@@ -51,6 +51,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 
 import javax.inject.Inject;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -567,6 +570,13 @@ public class CallResolver {
     ) {
         Call call = context.call;
         tracing.bindCall(context.trace, call);
+        System.out.println(
+                "[CallResolver.doResolveCall] NewInference = " +
+                context.languageVersionSettings.getFeatureSupport(LanguageFeature.NewInference) +
+                ", resolutionTask.name=" +
+                resolutionTask.name
+        );
+
 
         boolean newInferenceEnabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference);
         NewResolutionOldInference.ResolutionKind resolutionKind = resolutionTask.resolutionKind;
@@ -656,6 +666,10 @@ public class CallResolver {
             @NotNull ResolutionTask<D> resolutionTask,
             @NotNull TracingStrategy tracing
     ) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos, true);
+        new Exception().printStackTrace(ps);
+
         DataFlowInfo initialInfo = context.dataFlowInfoForArguments.getResultInfo();
         if (context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
             argumentTypeResolver.analyzeArgumentsAndRecordTypes(context, ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS);

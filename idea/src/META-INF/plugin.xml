@@ -2976,6 +2976,16 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.migration.DivergedInferenceMigrationInspection"
+                     displayName="Check inference divergence"
+                     groupPath="Kotlin"
+                     groupName="Migration"
+                     enabledByDefault="false"
+                     cleanupTool="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantWithInspection"
                      displayName="Redundant 'with' call"
                      groupPath="Kotlin"

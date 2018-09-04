@@ -47,6 +47,7 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
         isReleaseCoroutines: Boolean?
     ): LanguageVersionSettings =
         when (moduleInfo) {
+            is ModuleSourceInfoWithGivenLanguageSettings -> moduleInfo.languageVersionSettings
             is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
             is LibraryInfo -> project.getLanguageVersionSettings(
                 jsr305State = computeJsr305State(project), isReleaseCoroutines = isReleaseCoroutines
