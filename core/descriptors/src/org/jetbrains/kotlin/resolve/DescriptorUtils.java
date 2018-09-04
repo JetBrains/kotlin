@@ -47,6 +47,7 @@ public class DescriptorUtils {
     public static final FqName CONTINUATION_INTERFACE_FQ_NAME_RELEASE =
             COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"));
     public static final FqName SUCCESS_OR_FAILURE_FQ_NAME = new FqName("kotlin.SuccessOrFailure");
+    public static final FqName RESULT_FQ_NAME = new FqName("kotlin.Result");
 
     // This JVM-specific class FQ name is declared here only because it's used in MainFunctionDetector which is in frontend
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");

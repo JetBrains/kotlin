@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.getRepresentativeUpperBound
+import org.jetbrains.kotlin.resolve.DescriptorUtils.RESULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.DescriptorUtils.SUCCESS_OR_FAILURE_FQ_NAME
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver.BOX_METHOD_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -34,7 +35,7 @@ private fun KotlinType.isInlineClassThatRequiresMangling() =
     isInlineClassType() && !isDontMangleClass(this.constructor.declarationDescriptor as ClassDescriptor)
 
 private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
-    classDescriptor.fqNameSafe == SUCCESS_OR_FAILURE_FQ_NAME
+    classDescriptor.fqNameSafe == SUCCESS_OR_FAILURE_FQ_NAME || classDescriptor.fqNameSafe == RESULT_FQ_NAME
 
 private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Boolean {
     val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
