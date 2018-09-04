@@ -12954,6 +12954,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/multiplatform/privateTopLevelDeclarations.kt");
             }
 
+            @TestMetadata("sealedTypeAlias.kt")
+            public void testSealedTypeAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/sealedTypeAlias.kt");
+            }
+
+            @TestMetadata("sealedTypeAliasTopLevel.kt")
+            public void testSealedTypeAliasTopLevel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/sealedTypeAliasTopLevel.kt");
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

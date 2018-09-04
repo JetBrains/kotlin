@@ -124,6 +124,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/platformTypeAliasInterchangebleWithAliasedClass/");
     }
 
+    @TestMetadata("sealedTypeAlias")
+    public void testSealedTypeAlias() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/sealedTypeAlias/");
+    }
+
     @TestMetadata("suppressHeaderWithoutImpl")
     public void testSuppressHeaderWithoutImpl() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/suppressHeaderWithoutImpl/");
