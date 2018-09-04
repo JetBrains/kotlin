@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.kotlin.jps.build.dependeciestxt.DependenciesTxt
-import org.jetbrains.kotlin.jps.build.dependeciestxt.MppJpsIncTestsGenerator
-import java.io.File
-
 abstract class AbstractMultiplatformJpsTest : AbstractIncrementalJpsTest() {
     override fun doTest(testDataPath: String) {
         // temporary ignore jps-plugin/testData/incremental/multiplatform/multiModule tests

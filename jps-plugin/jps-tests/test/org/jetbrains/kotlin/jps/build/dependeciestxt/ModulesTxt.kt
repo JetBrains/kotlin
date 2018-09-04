@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.jps.build.dependeciestxt
 
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
+import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
@@ -22,7 +23,7 @@ import kotlin.reflect.full.memberProperties
  * Dependencies description file.
  * See [README.md] for more details.
  */
-data class DependenciesTxt(
+data class ModulesTxt(
     val file: File,
     val fileName: String,
     val modules: List<Module>,
@@ -62,6 +63,8 @@ data class DependenciesTxt(
         @Flag
         var editExpectActual: Boolean = false
 
+        lateinit var jpsModule: JpsModule
+
         companion object {
             val flags: Map<String, KMutableProperty1<Module, Boolean>> = Module::class.memberProperties
                 .filter { it.findAnnotation<Flag>() != null }
@@ -98,17 +101,20 @@ class DependenciesTxtBuilder {
      */
     class ModuleRef(name: String) {
         var defined: Boolean = false
-        var actual: DependenciesTxt.Module = DependenciesTxt.Module(name)
+        var actual: ModulesTxt.Module = ModulesTxt.Module(name)
 
         override fun toString() = actual.name
 
-        fun build(index: Int): DependenciesTxt.Module {
+        fun build(index: Int): ModulesTxt.Module {
             val result = actual
             result.index = index
             val kotlinFacetSettings = result.kotlinFacetSettings
             if (kotlinFacetSettings != null) {
                 kotlinFacetSettings.implementedModuleNames =
-                        result.dependencies.filter { it.expectedBy }.map { it.to.name }
+                        result.dependencies.asSequence()
+                            .filter { it.expectedBy }
+                            .map { it.to.name }
+                            .toList()
             }
             return result
         }
@@ -124,20 +130,20 @@ class DependenciesTxtBuilder {
         val expectedBy: Boolean,
         val exported: Boolean
     ) {
-        fun build(): DependenciesTxt.Dependency {
+        fun build(): ModulesTxt.Dependency {
             if (expectedBy) check(to.actual.isCommonModule) { "$this: ${to.actual} is not common module" }
-            return DependenciesTxt.Dependency(from.actual, to.actual, scope, expectedBy, exported)
+            return ModulesTxt.Dependency(from.actual, to.actual, scope, expectedBy, exported)
         }
     }
 
-    fun readFile(file: File, fileTitle: String = file.toString()): DependenciesTxt {
+    fun readFile(file: File, fileTitle: String = file.toString()): ModulesTxt {
         file.forEachLine { line ->
             parseDeclaration(line)
         }
 
         // module.build() requires built dependencies
         val dependencies = dependencies.map { it.build() }
-        return DependenciesTxt(
+        return ModulesTxt(
             file,
             fileTitle,
             modules.values.mapIndexed { index, moduleRef -> moduleRef.build(index) },
@@ -190,10 +196,10 @@ class DependenciesTxtBuilder {
     private fun moduleRef(name: String) =
         modules.getOrPut(name) { ModuleRef(name) }
 
-    private fun newModule(def: ValueWithFlags): DependenciesTxt.Module {
+    private fun newModule(def: ValueWithFlags): ModulesTxt.Module {
         val name = def.value.trim()
 
-        val module = DependenciesTxt.Module(name)
+        val module = ModulesTxt.Module(name)
         val kotlinFacetSettings = KotlinFacetSettings()
         module.kotlinFacetSettings = kotlinFacetSettings
 
@@ -213,7 +219,7 @@ class DependenciesTxtBuilder {
                 "jvm" -> kotlinFacetSettings.compilerArguments = K2JVMCompilerArguments()
                 "js" -> kotlinFacetSettings.compilerArguments = K2JSCompilerArguments()
                 else -> {
-                    val flagProperty = DependenciesTxt.Module.flags[flag]
+                    val flagProperty = ModulesTxt.Module.flags[flag]
                     if (flagProperty != null) flagProperty.set(module, true)
                     else error("Unknown module flag `$flag`")
                 }
@@ -236,16 +242,21 @@ class DependenciesTxtBuilder {
             return null
         } else {
             var exported = false
-            var scope = JpsJavaDependencyScope.COMPILE
+            var scope: JpsJavaDependencyScope? = null
             var expectedBy = false
+
+            fun setScope(newScope: JpsJavaDependencyScope) {
+                check(scope == null) { "`$this: $from -> $to` dependency is already flagged as $scope" }
+                scope = newScope
+            }
 
             flags.forEach { flag ->
                 when (flag) {
                     "exported" -> exported = true
-                    "compile" -> scope = JpsJavaDependencyScope.COMPILE
-                    "test" -> scope = JpsJavaDependencyScope.TEST
-                    "runtime" -> scope = JpsJavaDependencyScope.RUNTIME
-                    "provided" -> scope = JpsJavaDependencyScope.PROVIDED
+                    "compile" -> setScope(JpsJavaDependencyScope.COMPILE)
+                    "test" -> setScope(JpsJavaDependencyScope.TEST)
+                    "runtime" -> setScope(JpsJavaDependencyScope.RUNTIME)
+                    "provided" -> setScope(JpsJavaDependencyScope.PROVIDED)
                     "expectedBy" -> expectedBy = true
                     else -> error("Unknown dependency flag `$flag`")
                 }
@@ -254,7 +265,7 @@ class DependenciesTxtBuilder {
             return DependencyBuilder(
                 from = moduleRef(from),
                 to = moduleRef(to),
-                scope = scope,
+                scope = scope ?: JpsJavaDependencyScope.COMPILE,
                 expectedBy = expectedBy,
                 exported = exported
             ).also {
