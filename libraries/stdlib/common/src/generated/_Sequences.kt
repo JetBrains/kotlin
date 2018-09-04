@@ -961,6 +961,20 @@ public fun <T, K> Sequence<T>.distinctBy(selector: (T) -> K): Sequence<T> {
 }
 
 /**
+ * Returns a sequence containing lists having [batchSize] number of elements from the source sequence.
+ *
+ * If the source sequence does not contain a multiplier of [batchSize] elements, then the final element
+ * returned by the resulting sequence will only contain the remaining elements.
+ *
+ * The elements in the resulting sequence are in the same order as they were in the source sequence.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+public fun <T> Sequence<T>.batch(batchSize: Int): Sequence<List<T>> {
+    return BatchSequence(this, batchSize)
+}
+
+/**
  * Returns a mutable set containing all distinct elements from the given sequence.
  * 
  * The returned set preserves the element iteration order of the original sequence.
