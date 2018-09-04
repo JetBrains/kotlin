@@ -517,6 +517,15 @@ public class SequenceTest {
         assertEquals(listOf(13, 34, 55, 144), sequence.distinctBy { it % 4 }.toList())
     }
 
+    @Test fun batch() {
+        val sequence = (1 until 30).asSequence().batch(10)
+        val list = sequence.toList()
+        assertEquals(3, list.size)
+        assertEquals((1..10).toList(), list[0])
+        assertEquals((11..20).toList(), list[1])
+        assertEquals((21..29).toList(), list[2])
+    }
+
     @Test fun unzip() {
         val seq = sequenceOf(1 to 'a', 2 to 'b', 3 to 'c')
         val (ints, chars) = seq.unzip()
