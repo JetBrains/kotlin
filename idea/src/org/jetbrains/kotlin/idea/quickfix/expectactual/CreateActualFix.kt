@@ -322,6 +322,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                 parameter.addModifier(KtTokens.ACTUAL_KEYWORD)
             }
         }
+        it.removeParameterDefaultValues()
     }
 
     return actualClass.apply {
