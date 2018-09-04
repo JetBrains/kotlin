@@ -98,4 +98,14 @@ public class MoveLeftRightTestGenerated extends AbstractMoveLeftRightTest {
     public void testTypeArgs() throws Exception {
         runTest("idea/testData/codeInsight/moveLeftRight/typeArgs.kt");
     }
+
+    @TestMetadata("typeConstraints1.kt")
+    public void testTypeConstraints1() throws Exception {
+        runTest("idea/testData/codeInsight/moveLeftRight/typeConstraints1.kt");
+    }
+
+    @TestMetadata("typeConstraints2.kt")
+    public void testTypeConstraints2() throws Exception {
+        runTest("idea/testData/codeInsight/moveLeftRight/typeConstraints2.kt");
+    }
 }
