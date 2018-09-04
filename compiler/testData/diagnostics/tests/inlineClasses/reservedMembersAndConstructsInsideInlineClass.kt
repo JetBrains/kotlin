@@ -37,3 +37,9 @@ interface WithBox {
 inline class IC4(val s: String) : WithBox {
     override fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>box<!>(): String = ""
 }
+
+inline class IC5(val a: String) {
+    constructor(i: Int) : this(i.toString()) <!SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS!>{<!>
+        TODO("something")
+    }
+}

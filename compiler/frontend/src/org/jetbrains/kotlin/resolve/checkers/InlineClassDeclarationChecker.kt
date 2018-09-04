@@ -151,11 +151,25 @@ class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
         val containingDeclaration = descriptor.containingDeclaration ?: return
         if (!containingDeclaration.isInlineClass()) return
 
-        if (declaration is KtFunction && descriptor is FunctionDescriptor) {
-            val functionName = descriptor.name.asString()
-            if (functionName in reservedFunctions) {
-                val nameIdentifier = declaration.nameIdentifier ?: return
-                context.trace.report(Errors.RESERVED_MEMBER_INSIDE_INLINE_CLASS.on(nameIdentifier, functionName))
+        if (descriptor !is FunctionDescriptor) return
+
+        when (descriptor) {
+            is SimpleFunctionDescriptor -> {
+                val ktFunction = declaration as? KtFunction ?: return
+                val functionName = descriptor.name.asString()
+                if (functionName in reservedFunctions) {
+                    val nameIdentifier = ktFunction.nameIdentifier ?: return
+                    context.trace.report(Errors.RESERVED_MEMBER_INSIDE_INLINE_CLASS.on(nameIdentifier, functionName))
+                }
+            }
+
+            is ConstructorDescriptor -> {
+                val secondaryConstructor = declaration as? KtSecondaryConstructor ?: return
+                val bodyExpression = secondaryConstructor.bodyExpression
+                if (secondaryConstructor.hasBlockBody() && bodyExpression is KtBlockExpression) {
+                    val lBrace = bodyExpression.lBrace ?: return
+                    context.trace.report(Errors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS.on(lBrace))
+                }
             }
         }
     }
