@@ -194,7 +194,6 @@ task run_external () {
     createTestTasks(externalTestsDir, RunExternalTestGroup) { }
 
     // Set up dependencies.
-    dependsOn(clean)
     dependsOn(tasksOf { it instanceof RunExternalTestGroup || it instanceof RunStdlibTest })
 }
 
