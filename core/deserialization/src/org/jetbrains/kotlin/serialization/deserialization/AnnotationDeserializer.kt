@@ -79,7 +79,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
                 StringValue(nameResolver.getString(value.stringValue))
             }
             Type.CLASS -> {
-                resolveClassLiteralValue(nameResolver.getClassId(value.classId))
+                resolveClassLiteralValue(nameResolver.getClassId(value.classId), value.arrayDimensionCount)
             }
             Type.ENUM -> {
                 EnumValue(nameResolver.getClassId(value.classId), nameResolver.getName(value.enumValueId))
@@ -128,13 +128,17 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
     private inline fun <T, R> T.letIf(predicate: Boolean, f: (T) -> R, g: (T) -> R): R =
         if (predicate) f(this) else g(this)
 
-    private fun resolveClassLiteralValue(classId: ClassId): ConstantValue<*> {
+    private fun resolveClassLiteralValue(classId: ClassId, arrayDimensions: Int): ConstantValue<*> {
         // If value refers to a class named test.Foo.Bar where both Foo and Bar have generic type parameters,
         // we're constructing a type `KClass<test.Foo<*>.Bar<*>>` below
-        val starProjectedType = resolveClass(classId).defaultType.replaceArgumentsWithStarProjections()
+        var type = resolveClass(classId).defaultType.replaceArgumentsWithStarProjections()
+        repeat(arrayDimensions) {
+            // We only support invariant projections and non-null array element types, see KT-26568
+            type = builtIns.getArrayType(Variance.INVARIANT, type)
+        }
+
         val kClass = resolveClass(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.kClass.toSafe()))
-        val type = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(TypeProjectionImpl(starProjectedType)))
-        return KClassValue(type)
+        return KClassValue(KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(TypeProjectionImpl(type))))
     }
 
     private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): SimpleType =

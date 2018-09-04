@@ -977,6 +977,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsAnnotationArgumentValueArrayElement(old, new)) return false
 
+        if (old.hasArrayDimensionCount() != new.hasArrayDimensionCount()) return false
+        if (old.hasArrayDimensionCount()) {
+            if (old.arrayDimensionCount != new.arrayDimensionCount) return false
+        }
+
         if (old.hasFlags() != new.hasFlags()) return false
         if (old.hasFlags()) {
             if (old.flags != new.flags) return false
@@ -2164,6 +2169,10 @@ fun ProtoBuf.Annotation.Argument.Value.hashCode(stringIndexes: (Int) -> Int, fqN
 
     for(i in 0..arrayElementCount - 1) {
         hashCode = 31 * hashCode + getArrayElement(i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasArrayDimensionCount()) {
+        hashCode = 31 * hashCode + arrayDimensionCount
     }
 
     if (hasFlags()) {
