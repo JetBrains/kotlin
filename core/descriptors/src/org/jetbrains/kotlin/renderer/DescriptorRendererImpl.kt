@@ -458,7 +458,11 @@ internal class DescriptorRendererImpl(
         return when (value) {
             is ArrayValue -> value.value.joinToString(", ", "{", "}") { renderConstant(it) }
             is AnnotationValue -> renderAnnotation(value.value).removePrefix("@")
-            is KClassValue -> renderType(value.value) + "::class"
+            is KClassValue -> {
+                var type = value.classId.asSingleFqName().asString()
+                repeat(value.arrayDimensions) { type = "kotlin.Array<$type>" }
+                "$type::class"
+            }
             else -> value.toString()
         }
     }

@@ -3,8 +3,8 @@ package test
 public final class A {
     /*primary*/ public constructor A()
     public final fun arrays(/*0*/ s: @test.Ann(klass = kotlin.Array<kotlin.Int>::class) kotlin.Array<kotlin.Int>, /*1*/ t: @test.Ann(klass = kotlin.Array<kotlin.IntArray>::class) kotlin.Array<kotlin.IntArray>, /*2*/ u: @test.Ann(klass = kotlin.Array<kotlin.Array<kotlin.Int>>::class) kotlin.Array<kotlin.Array<kotlin.Int>>, /*3*/ v: @test.Ann(klass = kotlin.Array<kotlin.Array<kotlin.Array<kotlin.String>>>::class) kotlin.Array<kotlin.Array<kotlin.Array<kotlin.String>>>): kotlin.Unit
-    public final fun generic(/*0*/ s: @test.Ann(klass = test.Generic<*>::class) kotlin.String): kotlin.Unit
-    public final fun innerGeneric(/*0*/ s: @test.Ann(klass = test.InnerGeneric<*, *>.Inner<*, *>::class) kotlin.String): kotlin.Unit
+    public final fun generic(/*0*/ s: @test.Ann(klass = test.Generic::class) kotlin.String): kotlin.Unit
+    public final fun innerGeneric(/*0*/ s: @test.Ann(klass = test.InnerGeneric.Inner::class) kotlin.String): kotlin.Unit
     public final fun simple(/*0*/ s: @test.Ann(klass = test.Simple::class) kotlin.String): kotlin.Unit
 }
 

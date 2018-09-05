@@ -439,7 +439,7 @@ public abstract class AnnotationCodegen {
 
             @Override
             public Void visitKClassValue(KClassValue value, Void data) {
-                annotationVisitor.visit(name, typeMapper.mapType(value.getValue()));
+                annotationVisitor.visit(name, typeMapper.mapType(value.getArgumentType(module)));
                 return null;
             }
 

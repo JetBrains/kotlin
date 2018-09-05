@@ -27,18 +27,19 @@ import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.kapt3.*
-import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
-import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.kapt3.base.plus
+import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
 import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.mapJList
 import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
 import org.jetbrains.kotlin.kapt3.base.pairedListToMap
-import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
+import org.jetbrains.kotlin.kapt3.base.plus
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
-import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.*
+import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
+import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
+import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
+import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAMETER_TYPE
+import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.name.FqName
@@ -1049,7 +1050,7 @@ class ClassFileToSourceStubConverter(
                         && asm.size == desc.value.size
                         && asm.zip(desc.value).all { (eAsm, eDesc) -> checkIfAnnotationValueMatches(eAsm, eDesc) }
             }
-            is Type -> desc is KClassValue && typeMapper.mapType(desc.value) == asm
+            is Type -> desc is KClassValue && typeMapper.mapType(desc.getArgumentType(kaptContext.generationState.module)) == asm
             is AnnotationNode -> {
                 val annotationDescriptor = (desc as? AnnotationValue)?.value ?: return false
                 if (typeMapper.mapType(annotationDescriptor.type).descriptor != asm.desc) return false

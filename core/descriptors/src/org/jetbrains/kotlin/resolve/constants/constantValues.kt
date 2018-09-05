@@ -17,15 +17,18 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 abstract class ConstantValue<out T>(open val value: T) {
     abstract fun getType(module: ModuleDescriptor): KotlinType
@@ -154,13 +157,47 @@ class IntValue(value: Int) : IntegerValueConstant<Int>(value) {
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitIntValue(this, data)
 }
 
-class KClassValue(private val type: KotlinType) : ConstantValue<KotlinType>(type) {
-    override fun getType(module: ModuleDescriptor): KotlinType = type
+class KClassValue(value: ClassLiteralValue) : ConstantValue<ClassLiteralValue>(value) {
+    val classId: ClassId get() = value.classId
+    val arrayDimensions: Int get() = value.arrayNestedness
 
-    override val value: KotlinType
-        get() = type.arguments.single().type
+    constructor(classId: ClassId, arrayDimensions: Int) : this(ClassLiteralValue(classId, arrayDimensions))
+
+    override fun getType(module: ModuleDescriptor): KotlinType =
+        KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, module.builtIns.kClass, listOf(TypeProjectionImpl(getArgumentType(module))))
+
+    fun getArgumentType(module: ModuleDescriptor): KotlinType {
+        val descriptor = module.findClassAcrossModuleDependencies(classId)
+            ?: return ErrorUtils.createErrorType("Unresolved type: $classId (arrayDimensions=$arrayDimensions)")
+
+        // If this value refers to a class named test.Foo.Bar where both Foo and Bar have generic type parameters,
+        // we're constructing a type `test.Foo<*>.Bar<*>` below
+        var type = descriptor.defaultType.replaceArgumentsWithStarProjections()
+        repeat(arrayDimensions) {
+            type = module.builtIns.getArrayType(Variance.INVARIANT, type)
+        }
+
+        return type
+    }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitKClassValue(this, data)
+
+    companion object {
+        fun create(argumentType: KotlinType): ConstantValue<*>? {
+            if (argumentType.isError) return null
+
+            var type = argumentType
+            var arrayDimensions = 0
+            while (KotlinBuiltIns.isArray(type)) {
+                type = type.arguments.single().type
+                arrayDimensions++
+            }
+
+            val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+            val classId = descriptor.classId ?: return null
+            return KClassValue(classId, arrayDimensions)
+        }
+    }
 }
 
 class LongValue(value: Long) : IntegerValueConstant<Long>(value) {

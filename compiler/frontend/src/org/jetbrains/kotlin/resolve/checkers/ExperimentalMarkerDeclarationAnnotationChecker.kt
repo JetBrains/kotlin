@@ -53,7 +53,8 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
 
         for (annotationClass in annotationClasses) {
             val classDescriptor =
-                (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor as? ClassDescriptor ?: continue
+                (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor
+                    ?: continue
             val experimentality = with(ExperimentalUsageChecker) {
                 classDescriptor.loadExperimentalityForMarkerAnnotation()
             }

@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -30,9 +28,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.compact
 import java.util.*
 
@@ -94,8 +89,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             override fun visitClassLiteral(name: Name, value: ClassLiteralValue) {
-                arguments[name] = value.toClassValue() ?:
-                        ErrorValue.create("Error value of annotation argument: $name: class ${value.classId.asSingleFqName()} not found")
+                arguments[name] = KClassValue(value)
             }
 
             override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
@@ -115,11 +109,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                     }
 
                     override fun visitClassLiteral(value: ClassLiteralValue) {
-                        elements.add(
-                            value.toClassValue() ?: ErrorValue.create(
-                                "Error array element value of annotation argument: $name: class ${value.classId.asSingleFqName()} not found"
-                            )
-                        )
+                        elements.add(KClassValue(value))
                     }
 
                     override fun visitEnd() {
@@ -152,21 +142,6 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
         }
     }
-
-    private fun ClassLiteralValue.toClassValue(): KClassValue? =
-        module.findClassAcrossModuleDependencies(classId)?.let { classDescriptor ->
-            var currentType = classDescriptor.defaultType
-            for (i in 0 until arrayNestedness) {
-                val nextWrappedType =
-                    (if (i == 0) module.builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(currentType) else null)
-                        ?: module.builtIns.getArrayType(Variance.INVARIANT, currentType)
-                currentType = nextWrappedType
-            }
-            val kClass = resolveClass(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.kClass.toSafe()))
-            val arguments = listOf(TypeProjectionImpl(currentType))
-            val type = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, arguments)
-            KClassValue(type)
-        }
 
     private fun resolveClass(classId: ClassId): ClassDescriptor {
         return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)

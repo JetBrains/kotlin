@@ -287,6 +287,10 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         String elementDesc = nestedness == 0 ? typeDesc : type.getElementType().getDescriptor();
         JvmPrimitiveType primType = JvmPrimitiveType.getByDesc(elementDesc);
         if (primType != null) {
+            if (nestedness > 0) {
+                // "int[][]" should be loaded as "Array<IntArray>", not as "Array<Array<Int>>"
+                return new ClassLiteralValue(ClassId.topLevel(primType.getPrimitiveType().getArrayTypeFqName()), nestedness - 1);
+            }
             return new ClassLiteralValue(ClassId.topLevel(primType.getPrimitiveType().getTypeFqName()), nestedness);
         }
         ClassId javaClassId = resolveNameByDesc(elementDesc, innerClasses);

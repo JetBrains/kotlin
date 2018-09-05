@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 sealed class SinceKotlinAccessibility {
     object Accessible : SinceKotlinAccessibility()
@@ -102,13 +102,13 @@ private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): SinceKotlinValue? 
     return result
 }
 
-private fun Annotated.loadWasExperimentalMarkerClasses(): List<ClassDescriptor> {
+private fun DeclarationDescriptor.loadWasExperimentalMarkerClasses(): List<ClassDescriptor> {
     val wasExperimental = annotations.findAnnotation(ExperimentalUsageChecker.WAS_EXPERIMENTAL_FQ_NAME)
     if (wasExperimental != null) {
         val annotationClasses = wasExperimental.allValueArguments[ExperimentalUsageChecker.WAS_EXPERIMENTAL_ANNOTATION_CLASS]
         if (annotationClasses is ArrayValue) {
             return annotationClasses.value.mapNotNull { annotationClass ->
-                (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor as? ClassDescriptor
+                (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor
             }
         }
     }
