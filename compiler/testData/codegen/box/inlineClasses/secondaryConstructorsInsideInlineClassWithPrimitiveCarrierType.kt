@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JS_IR
 
 var global = "wrong"
 
