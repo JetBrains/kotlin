@@ -12,6 +12,6 @@ fun Any.nullWhenString(): Any? {
 
 fun test(x: Int?) {
     if (x?.nullWhenString() == null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
