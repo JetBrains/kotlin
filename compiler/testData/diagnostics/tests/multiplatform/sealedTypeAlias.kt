@@ -3,8 +3,8 @@
 // FILE: common.kt
 
 expect sealed class Presence {
-    object Online: <!JVM:SEALED_SUPERTYPE!>Presence<!>
-    object Offline: <!JVM:SEALED_SUPERTYPE!>Presence<!>
+    object Online: Presence
+    object Offline: Presence
 }
 
 // MODULE: m2-jvm(m1-common)

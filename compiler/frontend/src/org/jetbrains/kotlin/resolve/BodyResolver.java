@@ -40,7 +40,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -497,6 +499,16 @@ public class BodyResolver {
                         parentEnumOrSealed = new HashSet<>();
                     }
                     parentEnumOrSealed.add(currentDescriptor.getTypeConstructor());
+                    if (currentDescriptor.isExpect()) {
+                        List<MemberDescriptor> actualDescriptors = ExpectedActualResolver.INSTANCE.findCompatibleActualForExpected(
+                                currentDescriptor, DescriptorUtilsKt.getModule( currentDescriptor)
+                        );
+                        for (MemberDescriptor actualDescriptor: actualDescriptors) {
+                            if (actualDescriptor instanceof TypeAliasDescriptor) {
+                                parentEnumOrSealed.add(((TypeAliasDescriptor) actualDescriptor).getExpandedType().getConstructor());
+                            }
+                        }
+                    }
                 }
             }
         }
