@@ -97,6 +97,7 @@
 
 - [`KT-25317`](https://youtrack.jetbrains.com/issue/KT-25317) `Go to actual declaration` keyboard shortcut doesn't work for `expect object`, showing "No implementations found" message
 - [`KT-25492`](https://youtrack.jetbrains.com/issue/KT-25492) Find usages: keep `Expected functions` option state while searching for usages of a regular function
+- [`KT-25498`](https://youtrack.jetbrains.com/issue/KT-25498) `Find Usages` doesn't show `Supertype` usages of `actual` declarations with constructor
 
 ### IDE. Project View
 
@@ -160,6 +161,10 @@
 ### Tools. Scripts
 
 - [`KT-26142`](https://youtrack.jetbrains.com/issue/KT-26142) update maven-central remote repository url
+
+### Tools. Incremental Compile
+
+- [`KT-26528`](https://youtrack.jetbrains.com/issue/KT-26528) ISE “To save disabled cache status [delete] should be called (this behavior is kept for compatibility)” on compiling project with enabled IC in Maven
 
 ### JavaScript
 
