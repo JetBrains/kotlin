@@ -559,6 +559,9 @@ public class BodyResolver {
                 else if (FunctionTypesKt.isSuspendFunctionType(supertype)) {
                     trace.report(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE.on(typeReference));
                 }
+                else if (FunctionTypesKt.isKSuspendFunctionType(supertype)) {
+                    trace.report(SUPERTYPE_IS_KSUSPEND_FUNCTION_TYPE.on(typeReference));
+                }
 
                 if (classDescriptor.getKind() != ClassKind.INTERFACE) {
                     if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS) {
