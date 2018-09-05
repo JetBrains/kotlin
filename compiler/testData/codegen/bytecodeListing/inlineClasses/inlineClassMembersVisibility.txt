@@ -1,0 +1,42 @@
+@kotlin.Metadata
+public final class Z {
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box(p0: int): Z
+    public static method constructor(p0: int): int
+    public static method constructor(p0: int, p1: int): int
+    public static method constructor(p0: long): int
+    private static method constructor(p0: short): int
+    public static method equals(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public method equals(p0: java.lang.Object): boolean
+    public final static method getInternalExtensionVal$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public final static method getInternalExtensionVar$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public final static method getInternalVal$test_module(p0: int): int
+    public final static method getInternalVar$test_module(p0: int): int
+    private final static method getPrivateExtensionVal(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    private final static method getPrivateExtensionVar(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    private final static method getPrivateVal(p0: int): int
+    private final static method getPrivateVar(p0: int): int
+    public final static method getPublicExtensionVal(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public final static method getPublicExtensionVar(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public final static method getPublicVal(p0: int): int
+    public final static method getPublicVar(p0: int): int
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode(p0: int): int
+    public final static method internalExtensionFun$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public final static method internalFun$test_module(p0: int): void
+    private final static method privateExtensionFun(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    private final static method privateFun(p0: int): void
+    public final static method publicExtensionFun(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public final static method publicFun(p0: int): void
+    public final static method setInternalExtensionVar$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): void
+    public final static method setInternalVar$test_module(p0: int, p1: int): void
+    private final static method setPrivateExtensionVar(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): void
+    private final static method setPrivateVar(p0: int, p1: int): void
+    public final static method setPublicExtensionVar(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): void
+    public final static method setPublicVar(p0: int, p1: int): void
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString(p0: int): java.lang.String
+    public synthetic final method unbox(): int
+}
