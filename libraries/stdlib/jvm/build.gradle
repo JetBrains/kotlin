@@ -257,7 +257,7 @@ compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs += [
                 "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-XXLanguage:-ReleaseCoroutines"
+                "-XXLanguage:+ReleaseCoroutines"
         ]
     }
 }

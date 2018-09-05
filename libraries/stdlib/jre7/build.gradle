@@ -68,7 +68,7 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-XXLanguage:-ReleaseCoroutines", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-XXLanguage:+ReleaseCoroutines", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
 }
 
 kotlin.experimental.coroutines 'enable'
