@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.idea.PluginStartupComponent;
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
-import org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt;
+import org.jetbrains.kotlin.idea.roots.RootUtilsKt;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.platform.IdePlatform;
 import org.jetbrains.kotlin.platform.IdePlatformKind;
@@ -524,7 +524,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                         new Function0<Object>() {
                             @Override
                             public Object invoke() {
-                                ProjectRootUtilsKt.invalidateProjectRoots(project);
+                                RootUtilsKt.invalidateProjectRoots(project);
                                 return null;
                             }
                         }
