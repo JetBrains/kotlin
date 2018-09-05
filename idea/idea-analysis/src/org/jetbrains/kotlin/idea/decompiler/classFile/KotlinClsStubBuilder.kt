@@ -43,13 +43,19 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.CLASSFILE_STUB_VERSION
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
-        val file = content.file
+        val virtualFile = content.file
 
-        if (isKotlinInternalCompiledFile(file, content.content)) {
+        if (isKotlinInternalCompiledFile(virtualFile, content.content)) {
             return null
         }
 
-        return doBuildFileStub(file, content.content)
+        if (isVersioned(virtualFile)) {
+            // Kotlin can't build stubs for versioned class files, because list of versioned inner classes
+            // might be incomplete
+            return null
+        }
+
+        return doBuildFileStub(virtualFile, content.content)
     }
 
     private fun doBuildFileStub(file: VirtualFile, fileContent: ByteArray): PsiFileStub<KtFile>? {
@@ -105,6 +111,13 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
 
     companion object {
         val LOG = Logger.getInstance(KotlinClsStubBuilder::class.java)
+
+        // Archive separator + META-INF + versions
+        private val VERSIONED_PATH_MARKER = "!/META-INF/versions/"
+
+        fun isVersioned(virtualFile: VirtualFile): Boolean {
+            return virtualFile.path.contains(VERSIONED_PATH_MARKER)
+        }
     }
 }
 
