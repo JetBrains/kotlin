@@ -27,7 +27,7 @@ internal actual constructor(
         val cur = this.result
         when {
             cur === UNDECIDED -> {
-                this.result = result
+                this.result = result.value
             }
             cur === COROUTINE_SUSPENDED -> {
                 this.result = RESUMED
