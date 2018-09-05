@@ -1,0 +1,9 @@
+package
+
+public fun case_1(): kotlin.Unit
+
+package contracts {
+    public fun case_1(/*0*/ x: kotlin.Double = ..., /*1*/ block: () -> kotlin.Unit): kotlin.Double
+        CallsInPlace(block, EXACTLY_ONCE)
+
+}

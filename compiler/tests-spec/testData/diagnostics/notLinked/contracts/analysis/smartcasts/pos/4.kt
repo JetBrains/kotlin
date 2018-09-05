@@ -249,18 +249,17 @@ fun case_9(value_1: Number?) {
 }
 
 /*
- UNEXPECTED BEHAVIOUR
  ISSUES: KT-26382
  */
 fun case_10(value_1: Number?, value_2: Number?) {
     if (value_1?.case_10_1() == null) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
+        println(value_1<!UNSAFE_CALL!>.<!>toByte())
     } else {
         println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
     }
     if (value_2?.case_10_2() != null) {
         println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte())
     } else {
-        println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte())
+        println(value_2<!UNSAFE_CALL!>.<!>toByte())
     }
 }
