@@ -307,7 +307,7 @@ public class FunctionCodegen {
             annotationsOwner = functionDescriptor;
         }
 
-        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(annotationsOwner, asmMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(annotationsOwner, asmMethod.getReturnType());
         generateParameterAnnotations(annotationsOwner, mv, jvmSignature, memberCodegen, state);
     }
 
@@ -514,7 +514,7 @@ public class FunctionCodegen {
             @NotNull GenerationState state
     ) {
         if (isAccessor(functionDescriptor)) return;
-        KotlinTypeMapper typeMapper = state.getTypeMapper();
+
         Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
 
@@ -526,7 +526,6 @@ public class FunctionCodegen {
                 continue;
             }
 
-            AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper);
             Annotated annotated =
                     kind == JvmMethodParameterKind.VALUE
                     ? iterator.next()
@@ -535,7 +534,7 @@ public class FunctionCodegen {
                       : null;
 
             if (annotated != null) {
-                annotationCodegen.genAnnotations(annotated, parameterSignature.getAsmType());
+                AnnotationCodegen.forParameter(i, mv, innerClassConsumer, state).genAnnotations(annotated, parameterSignature.getAsmType());
             }
         }
     }
@@ -1187,7 +1186,7 @@ public class FunctionCodegen {
 
         // Only method annotations are copied to the $default method. Parameter annotations are not copied until there are valid use cases;
         // enum constructors have two additional synthetic parameters which somewhat complicate this task
-        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
         if (!state.getClassBuilderMode().generateBodies) {
             if (this.owner instanceof MultifileClassFacadeContext)

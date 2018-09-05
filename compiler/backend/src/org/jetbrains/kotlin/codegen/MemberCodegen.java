@@ -260,7 +260,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         int flags = ACC_DEPRECATED | ACC_STATIC | ACC_SYNTHETIC | AsmUtil.getVisibilityAccessFlag(descriptor);
         MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                        syntheticMethod.getDescriptor(), null, null);
-        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE);
+        AnnotationCodegen.forMethod(mv, this, state).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE);
         mv.visitCode();
         mv.visitInsn(Opcodes.RETURN);
         mv.visitEnd();
