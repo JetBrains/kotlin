@@ -1286,6 +1286,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/receiver.kt");
             }
 
+            @TestMetadata("safecallAndReturnsNull.kt")
+            public void testSafecallAndReturnsNull() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/safecallAndReturnsNull.kt");
+            }
+
             @TestMetadata("throwsEffect.kt")
             public void testThrowsEffect() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/throwsEffect.kt");
