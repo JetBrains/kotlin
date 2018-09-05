@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 object SuspendOperatorsCheckers : DeclarationChecker {
     private val UNSUPPORTED_OPERATOR_NAMES = setOf(
         OperatorNameConventions.CONTAINS,
-        OperatorNameConventions.GET, OperatorNameConventions.SET
+        OperatorNameConventions.GET, OperatorNameConventions.SET,
+        OperatorNameConventions.PROVIDE_DELEGATE, OperatorNameConventions.GET_VALUE, OperatorNameConventions.SET_VALUE
     )
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
