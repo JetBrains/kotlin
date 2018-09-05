@@ -56,13 +56,13 @@ public final class Test {
      * prop.
      */
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String prop = "";
+    public final java.lang.String prop = "";
 
     /**
      * prop2.
      */
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String prop2 = "";
+    private final java.lang.String prop2 = null;
 
     /**
      * method().
@@ -81,11 +81,6 @@ public final class Test {
      */
     public final void method(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getProp() {
-        return null;
     }
 
     @Anno()

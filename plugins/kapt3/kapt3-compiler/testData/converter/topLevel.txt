@@ -21,7 +21,8 @@ public final class TopLevelKt {
     public TopLevelKt() {
         super();
     }
-    private static final int topLevelProperty = 2;
+    private static final int topLevelProperty = 0;
+    public static final int topLevelConstProperty = 2;
 
     @org.jetbrains.annotations.Nullable()
     public static final java.lang.String topLevelFunction() {

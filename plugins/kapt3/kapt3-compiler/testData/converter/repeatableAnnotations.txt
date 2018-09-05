@@ -184,7 +184,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String value = "";
+    private final java.lang.String value = null;
 
     @lib.Anno(value = "3", construct = {"C"})
     @lib.Anno(value = "2", construct = {"A", "B"})

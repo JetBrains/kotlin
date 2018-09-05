@@ -3,11 +3,11 @@ class JvmStaticTest {
         @JvmStatic
         val one = 1
 
-        val two = 2
+        const val two = 2
 
         const val c: Char = 'C'
     }
 
-    val three: Byte = 3.toByte()
-    val d: Char = 'D'
+    const val three: Byte = 3.toByte()
+    const val d: Char = 'D'
 }

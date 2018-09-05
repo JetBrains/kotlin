@@ -87,7 +87,7 @@ public final class Test<G extends java.lang.Object> {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Object m = null;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String n = "";
+    private final java.lang.String n = null;
     @org.jetbrains.annotations.NotNull()
     public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> o11;
     @org.jetbrains.annotations.NotNull()

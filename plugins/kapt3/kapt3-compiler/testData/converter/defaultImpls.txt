@@ -21,7 +21,7 @@ public abstract interface Intf {
 
     @kotlin.Metadata()
     public static final class Companion {
-        private static final int BLACK = 1;
+        private static final int BLACK = 0;
         public static final int WHITE = 2;
 
         public final int getBLACK() {

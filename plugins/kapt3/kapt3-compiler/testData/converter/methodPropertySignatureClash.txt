@@ -2,7 +2,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class CrashMe {
-    private final int resources = 1;
+    private final int resources = 0;
 
     public final int getResources() {
         return 0;
