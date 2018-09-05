@@ -547,11 +547,13 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
     object KotlinGoals {
         const val Compile = "compile"
         const val TestCompile = "test-compile"
+
         const val Js = "js"
         const val TestJs = "test-js"
         const val MetaData = "metadata"
 
         val JvmGoals = listOf(Compile, TestCompile)
+        val CompileGoals = listOf(Compile, TestCompile, Js, TestJs, MetaData)
     }
 
     companion object {
