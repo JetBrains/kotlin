@@ -12,6 +12,9 @@ object StubRenderer {
         stub.run {
             when (this) {
                 is ObjCProtocol -> {
+                    attributes.forEach {
+                        +renderAttribute(it)
+                    }
                     +renderProtocolHeader()
                     +"@required"
                     renderMembers(this)

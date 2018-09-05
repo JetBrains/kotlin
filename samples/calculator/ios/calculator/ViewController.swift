@@ -29,7 +29,7 @@ class ViewController: UIViewController, UITextViewDelegate, UICollectionViewData
     @IBOutlet var input: UITextView!
     @IBOutlet var numpad: UICollectionView!
 
-    private let parser = KAPPartialParser(composer: KAPCalculator(), partialComposer: PartialRenderer())
+    private let parser = PartialParser(composer: Calculator(), partialComposer: PartialRenderer())
 
     @IBAction func numpadButtonPressed(_ sender: UIButton) {
         let title = sender.currentTitle!
@@ -112,7 +112,7 @@ private extension String {
     }
 }
 
-private class PartialRenderer: NSObject, KAPPartialExpressionComposer {
+private class PartialRenderer: NSObject, PartialExpressionComposer {
     func missing() -> Any {
         return "... ".toAttributed()
     }

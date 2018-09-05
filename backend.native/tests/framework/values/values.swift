@@ -21,10 +21,10 @@ import Values
 
 func testVals() throws {
     print("Values from Swift")
-    let dbl = Values.dbl
-    let flt = Values.flt
-    let int = Values.integer
-    let long = Values.longInt
+    let dbl = ValuesKt.dbl
+    let flt = ValuesKt.flt
+    let int = ValuesKt.integer
+    let long = ValuesKt.longInt
     
     print(dbl)
     print(flt)
@@ -39,9 +39,9 @@ func testVals() throws {
 
 func testVars() throws {
     print("Variables from Swift")
-    var intVar = Values.intVar
-    var strVar = Values.str
-    var strAsId = Values.strAsAny
+    var intVar = ValuesKt.intVar
+    var strVar = ValuesKt.str
+    var strAsId = ValuesKt.strAsAny
     
     print(intVar)
     print(strVar)
@@ -52,133 +52,133 @@ func testVars() throws {
     try assertEquals(actual: strAsId as! String, expected: "Kotlin String as Any")
     
     strAsId = "Swift str"
-    Values.strAsAny = strAsId
-    print(Values.strAsAny)
-    try assertEquals(actual: Values.strAsAny as! String, expected: strAsId as! String)
+    ValuesKt.strAsAny = strAsId
+    print(ValuesKt.strAsAny)
+    try assertEquals(actual: ValuesKt.strAsAny as! String, expected: strAsId as! String)
     
     // property with custom getter/setter backed by the Kotlin's var
     var intProp : Int32 {
         get {
-            return Values.intVar * 2
+            return ValuesKt.intVar * 2
         }
         set(value) {
-            Values.intVar = 123 + value
+            ValuesKt.intVar = 123 + value
         }
     }
-    intProp += 10
+    intProp += 10   
     print(intProp)
-    print(Values.intVar)
-    try assertEquals(actual: Values.intVar * 2, expected: intProp, "Property backed by var")
+    print(ValuesKt.intVar)
+    try assertEquals(actual: ValuesKt.intVar * 2, expected: intProp, "Property backed by var")
 }
 
 func testDoubles() throws {
     print("Doubles in Swift")
-    let minDouble = Values.minDoubleVal as! Double
-    let maxDouble = Values.maxDoubleVal as! NSNumber
+    let minDouble = ValuesKt.minDoubleVal as! Double
+    let maxDouble = ValuesKt.maxDoubleVal as! NSNumber
 
     print(minDouble)
     print(maxDouble)
-    print(Values.nanDoubleVal)
-    print(Values.nanFloatVal)
-    print(Values.infDoubleVal)
-    print(Values.infFloatVal)
+    print(ValuesKt.nanDoubleVal)
+    print(ValuesKt.nanFloatVal)
+    print(ValuesKt.infDoubleVal)
+    print(ValuesKt.infFloatVal)
 
     try assertEquals(actual: minDouble, expected: Double.leastNonzeroMagnitude, "Min double")
     try assertEquals(actual: maxDouble, expected: Double.greatestFiniteMagnitude as NSNumber, "Max double")
-    try assertTrue(Values.nanDoubleVal.isNaN, "NaN double")
-    try assertTrue(Values.nanFloatVal.isNaN, "NaN float")
-    try assertEquals(actual: Values.infDoubleVal, expected: Double.infinity, "Inf double")
-    try assertEquals(actual: Values.infFloatVal, expected: -Float.infinity, "-Inf float")
+    try assertTrue(ValuesKt.nanDoubleVal.isNaN, "NaN double")
+    try assertTrue(ValuesKt.nanFloatVal.isNaN, "NaN float")
+    try assertEquals(actual: ValuesKt.infDoubleVal, expected: Double.infinity, "Inf double")
+    try assertEquals(actual: ValuesKt.infFloatVal, expected: -Float.infinity, "-Inf float")
 }
 
 func testNumbers() throws {
-    try assertEquals(actual: ValuesBoolean(value: true).boolValue, expected: true)
-    try assertEquals(actual: ValuesBoolean(value: false).intValue, expected: 0)
-    try assertEquals(actual: ValuesBoolean(value: true), expected: true)
-    try assertFalse(ValuesBoolean(value: false) as! Bool)
+    try assertEquals(actual: KotlinBoolean(value: true).boolValue, expected: true)
+    try assertEquals(actual: KotlinBoolean(value: false).intValue, expected: 0)
+    try assertEquals(actual: KotlinBoolean(value: true), expected: true)
+    try assertFalse(KotlinBoolean(value: false) as! Bool)
 
-    try assertEquals(actual: ValuesByte(value: -1).int8Value, expected: -1)
-    try assertEquals(actual: ValuesByte(value: -1).int32Value, expected: -1)
-    try assertEquals(actual: ValuesByte(value: -1).doubleValue, expected: -1.0)
-    try assertEquals(actual: ValuesByte(value: -1), expected: NSNumber(value: Int64(-1)))
-    try assertFalse(ValuesByte(value: -1) == NSNumber(value: -1.5))
-    try assertEquals(actual: ValuesByte(value: -1), expected: -1)
-    try assertTrue(ValuesByte(value: -1) == -1)
-    try assertFalse(ValuesByte(value: -1) == 1)
-    try assertEquals(actual: ValuesByte(value: -1) as! Int32, expected: -1)
+    try assertEquals(actual: KotlinByte(value: -1).int8Value, expected: -1)
+    try assertEquals(actual: KotlinByte(value: -1).int32Value, expected: -1)
+    try assertEquals(actual: KotlinByte(value: -1).doubleValue, expected: -1.0)
+    try assertEquals(actual: KotlinByte(value: -1), expected: NSNumber(value: Int64(-1)))
+    try assertFalse(KotlinByte(value: -1) == NSNumber(value: -1.5))
+    try assertEquals(actual: KotlinByte(value: -1), expected: -1)
+    try assertTrue(KotlinByte(value: -1) == -1)
+    try assertFalse(KotlinByte(value: -1) == 1)
+    try assertEquals(actual: KotlinByte(value: -1) as! Int32, expected: -1)
 
-    try assertEquals(actual: ValuesShort(value: 111).int16Value, expected: 111)
-    try assertEquals(actual: ValuesShort(value: -15) as! Int16, expected: -15)
-    try assertEquals(actual: ValuesShort(value: 47), expected: 47)
+    try assertEquals(actual: KotlinShort(value: 111).int16Value, expected: 111)
+    try assertEquals(actual: KotlinShort(value: -15) as! Int16, expected: -15)
+    try assertEquals(actual: KotlinShort(value: 47), expected: 47)
 
-    try assertEquals(actual: ValuesInt(value: 99).int32Value, expected: 99)
-    try assertEquals(actual: ValuesInt(value: -1) as! Int32, expected: -1)
-    try assertEquals(actual: ValuesInt(value: 72), expected: 72)
+    try assertEquals(actual: KotlinInt(value: 99).int32Value, expected: 99)
+    try assertEquals(actual: KotlinInt(value: -1) as! Int32, expected: -1)
+    try assertEquals(actual: KotlinInt(value: 72), expected: 72)
 
-    try assertEquals(actual: ValuesLong(value: 65).int64Value, expected: 65)
-    try assertEquals(actual: ValuesLong(value: 10000000000) as! Int64, expected: 10000000000)
-    try assertEquals(actual: ValuesLong(value: 8), expected: 8)
+    try assertEquals(actual: KotlinLong(value: 65).int64Value, expected: 65)
+    try assertEquals(actual: KotlinLong(value: 10000000000) as! Int64, expected: 10000000000)
+    try assertEquals(actual: KotlinLong(value: 8), expected: 8)
 
-    try assertEquals(actual: ValuesUByte(value: 17).uint8Value, expected: 17)
-    try assertEquals(actual: ValuesUByte(value: 42) as! UInt8, expected: 42)
-    try assertEquals(actual: 88, expected: ValuesUByte(value: 88))
+    try assertEquals(actual: KotlinUByte(value: 17).uint8Value, expected: 17)
+    try assertEquals(actual: KotlinUByte(value: 42) as! UInt8, expected: 42)
+    try assertEquals(actual: 88, expected: KotlinUByte(value: 88))
 
-    try assertEquals(actual: ValuesUShort(value: 40000).uint16Value, expected: 40000)
-    try assertEquals(actual: ValuesUShort(value: 1) as! UInt16, expected: UInt16(1))
-    try assertEquals(actual: ValuesUShort(value: 65000), expected: 65000)
+    try assertEquals(actual: KotlinUShort(value: 40000).uint16Value, expected: 40000)
+    try assertEquals(actual: KotlinUShort(value: 1) as! UInt16, expected: UInt16(1))
+    try assertEquals(actual: KotlinUShort(value: 65000), expected: 65000)
 
-    try assertEquals(actual: ValuesUInt(value: 3).uint32Value, expected: 3)
-    try assertEquals(actual: ValuesUInt(value: UInt32.max) as! UInt32, expected: UInt32.max)
-    try assertEquals(actual: ValuesUInt(value: 2), expected: 2)
+    try assertEquals(actual: KotlinUInt(value: 3).uint32Value, expected: 3)
+    try assertEquals(actual: KotlinUInt(value: UInt32.max) as! UInt32, expected: UInt32.max)
+    try assertEquals(actual: KotlinUInt(value: 2), expected: 2)
 
-    try assertEquals(actual: ValuesULong(value: 55).uint64Value, expected: 55)
-    try assertEquals(actual: ValuesULong(value: 0) as! UInt64, expected: 0)
-    try assertEquals(actual: ValuesULong(value: 7), expected: 7)
+    try assertEquals(actual: KotlinULong(value: 55).uint64Value, expected: 55)
+    try assertEquals(actual: KotlinULong(value: 0) as! UInt64, expected: 0)
+    try assertEquals(actual: KotlinULong(value: 7), expected: 7)
 
-    try assertEquals(actual: ValuesFloat(value: 1.0).floatValue, expected: 1.0)
-    try assertEquals(actual: ValuesFloat(value: 22.0) as! Float, expected: 22)
-    try assertEquals(actual: ValuesFloat(value: 41.0), expected: 41)
-    try assertEquals(actual: ValuesFloat(value: -5.5), expected: -5.5)
+    try assertEquals(actual: KotlinFloat(value: 1.0).floatValue, expected: 1.0)
+    try assertEquals(actual: KotlinFloat(value: 22.0) as! Float, expected: 22)
+    try assertEquals(actual: KotlinFloat(value: 41.0), expected: 41)
+    try assertEquals(actual: KotlinFloat(value: -5.5), expected: -5.5)
 
-    try assertEquals(actual: ValuesDouble(value: 0.5).doubleValue, expected: 0.5)
-    try assertEquals(actual: ValuesDouble(value: 45.0) as! Double, expected: 45)
-    try assertEquals(actual: ValuesDouble(value: 89.0), expected: 89)
-    try assertEquals(actual: ValuesDouble(value: -3.7), expected: -3.7)
+    try assertEquals(actual: KotlinDouble(value: 0.5).doubleValue, expected: 0.5)
+    try assertEquals(actual: KotlinDouble(value: 45.0) as! Double, expected: 45)
+    try assertEquals(actual: KotlinDouble(value: 89.0), expected: 89)
+    try assertEquals(actual: KotlinDouble(value: -3.7), expected: -3.7)
 
-    Values.ensureEqualBooleans(actual: ValuesBoolean(value: true), expected: true)
-    Values.ensureEqualBooleans(actual: false, expected: false)
+    ValuesKt.ensureEqualBooleans(actual: KotlinBoolean(value: true), expected: true)
+    ValuesKt.ensureEqualBooleans(actual: false, expected: false)
 
-    Values.ensureEqualBytes(actual: ValuesByte(value: 42), expected: 42)
-    Values.ensureEqualBytes(actual: -11, expected: -11)
+    ValuesKt.ensureEqualBytes(actual: KotlinByte(value: 42), expected: 42)
+    ValuesKt.ensureEqualBytes(actual: -11, expected: -11)
 
-    Values.ensureEqualShorts(actual: ValuesShort(value: 256), expected: 256)
-    Values.ensureEqualShorts(actual: -1, expected: -1)
+    ValuesKt.ensureEqualShorts(actual: KotlinShort(value: 256), expected: 256)
+    ValuesKt.ensureEqualShorts(actual: -1, expected: -1)
 
-    Values.ensureEqualInts(actual: ValuesInt(value: 100000), expected: 100000)
-    Values.ensureEqualInts(actual: -7, expected: -7)
+    ValuesKt.ensureEqualInts(actual: KotlinInt(value: 100000), expected: 100000)
+    ValuesKt.ensureEqualInts(actual: -7, expected: -7)
 
-    Values.ensureEqualLongs(actual: ValuesLong(value: Int64.max), expected: Int64.max)
-    Values.ensureEqualLongs(actual: 17, expected: 17)
+    ValuesKt.ensureEqualLongs(actual: KotlinLong(value: Int64.max), expected: Int64.max)
+    ValuesKt.ensureEqualLongs(actual: 17, expected: 17)
 
-    Values.ensureEqualUBytes(actual: ValuesUByte(value: 6), expected: 6)
-    Values.ensureEqualUBytes(actual: 255, expected: 255)
+    ValuesKt.ensureEqualUBytes(actual: KotlinUByte(value: 6), expected: 6)
+    ValuesKt.ensureEqualUBytes(actual: 255, expected: 255)
 
-    Values.ensureEqualUShorts(actual: ValuesUShort(value: 300), expected: 300)
-    Values.ensureEqualUShorts(actual: 65535, expected: UInt16.max)
+    ValuesKt.ensureEqualUShorts(actual: KotlinUShort(value: 300), expected: 300)
+    ValuesKt.ensureEqualUShorts(actual: 65535, expected: UInt16.max)
 
-    Values.ensureEqualUInts(actual: ValuesUInt(value: 70000), expected: 70000)
-    Values.ensureEqualUInts(actual: 48, expected: 48)
+    ValuesKt.ensureEqualUInts(actual: KotlinUInt(value: 70000), expected: 70000)
+    ValuesKt.ensureEqualUInts(actual: 48, expected: 48)
 
-    Values.ensureEqualULongs(actual: ValuesULong(value: UInt64.max), expected: UInt64.max)
-    Values.ensureEqualULongs(actual: 39, expected: 39)
+    ValuesKt.ensureEqualULongs(actual: KotlinULong(value: UInt64.max), expected: UInt64.max)
+    ValuesKt.ensureEqualULongs(actual: 39, expected: 39)
 
-    Values.ensureEqualFloats(actual: ValuesFloat(value: 36.6), expected: 36.6)
-    Values.ensureEqualFloats(actual: 49.5, expected: 49.5)
-    Values.ensureEqualFloats(actual: 18, expected: 18.0)
+    ValuesKt.ensureEqualFloats(actual: KotlinFloat(value: 36.6), expected: 36.6)
+    ValuesKt.ensureEqualFloats(actual: 49.5, expected: 49.5)
+    ValuesKt.ensureEqualFloats(actual: 18, expected: 18.0)
 
-    Values.ensureEqualDoubles(actual: ValuesDouble(value: 12.34), expected: 12.34)
-    Values.ensureEqualDoubles(actual: 56.78, expected: 56.78)
-    Values.ensureEqualDoubles(actual: 3, expected: 3)
+    ValuesKt.ensureEqualDoubles(actual: KotlinDouble(value: 12.34), expected: 12.34)
+    ValuesKt.ensureEqualDoubles(actual: 56.78, expected: 56.78)
+    ValuesKt.ensureEqualDoubles(actual: 3, expected: 3)
 
     func checkBox<T: Equatable, B : NSObject>(_ value: T, _ boxFunction: (T) -> B?) throws {
         let box = boxFunction(value)!
@@ -188,27 +188,27 @@ func testNumbers() throws {
         try assertTrue(box.isKind(of: B.self))
     }
 
-    try checkBox(true, Values.box)
-    try checkBox(Int8(-1), Values.box)
-    try checkBox(Int16(-2), Values.box)
-    try checkBox(Int32(-3), Values.box)
-    try checkBox(Int64(-4), Values.box)
-    try checkBox(UInt8(5), Values.box)
-    try checkBox(UInt16(6), Values.box)
-    try checkBox(UInt32(7), Values.box)
-    try checkBox(UInt64(8), Values.box)
-    try checkBox(Float(8.7), Values.box)
-    try checkBox(Double(9.4), Values.box)
+    try checkBox(true, ValuesKt.box)
+    try checkBox(Int8(-1), ValuesKt.box)
+    try checkBox(Int16(-2), ValuesKt.box)
+    try checkBox(Int32(-3), ValuesKt.box)
+    try checkBox(Int64(-4), ValuesKt.box)
+    try checkBox(UInt8(5), ValuesKt.box)
+    try checkBox(UInt16(6), ValuesKt.box)
+    try checkBox(UInt32(7), ValuesKt.box)
+    try checkBox(UInt64(8), ValuesKt.box)
+    try checkBox(Float(8.7), ValuesKt.box)
+    try checkBox(Double(9.4), ValuesKt.box)
 }
 
 func testLists() throws {
-    let numbersList = Values.numbersList
+    let numbersList = ValuesKt.numbersList
     let gold = [1, 2, 13]
     for i in 0..<gold.count {
         try assertEquals(actual: gold[i], expected: Int(numbersList[i] as! NSNumber), "Numbers list")
     }
 
-    let anyList = Values.anyList
+    let anyList = ValuesKt.anyList
     for i in anyList {
         print(i)
     }
@@ -216,7 +216,7 @@ func testLists() throws {
 }
 
 func testLazyVal() throws {
-    let lazyVal = Values.lazyVal
+    let lazyVal = ValuesKt.lazyVal
     print(lazyVal)
     try assertEquals(actual: lazyVal, expected: "Lazily initialized string", "lazy value")
 }
@@ -224,7 +224,7 @@ func testLazyVal() throws {
 let goldenArray = ["Delegated", "global", "array", "property"]
 
 func testDelegatedProp() throws {
-    let delegatedGlobalArray = Values.delegatedGlobalArray
+    let delegatedGlobalArray = ValuesKt.delegatedGlobalArray
     guard Int(delegatedGlobalArray.size) == goldenArray.count else {
         throw TestError.assertFailed("Size differs")
     }
@@ -234,7 +234,7 @@ func testDelegatedProp() throws {
 }
 
 func testGetterDelegate() throws {
-    let delegatedList = Values.delegatedList
+    let delegatedList = ValuesKt.delegatedList
     guard delegatedList.count == goldenArray.count else {
         throw TestError.assertFailed("Size differs")
     }
@@ -244,16 +244,16 @@ func testGetterDelegate() throws {
 }
 
 func testNulls() throws {
-    let nilVal : Any? = Values.nullVal
+    let nilVal : Any? = ValuesKt.nullVal
     try assertTrue(nilVal == nil, "Null value")
 
-    Values.nullVar = nil
-    var nilVar : Any? = Values.nullVar
+    ValuesKt.nullVar = nil
+    var nilVar : Any? = ValuesKt.nullVar
     try assertTrue(nilVar == nil, "Null variable")
 }
 
 func testAnyVar() throws {
-    let anyVar : Any = Values.anyValue
+    let anyVar : Any = ValuesKt.anyValue
     print(anyVar)
     if let str = anyVar as? String {
         print(str)
@@ -264,19 +264,19 @@ func testAnyVar() throws {
 }
 
 func testFunctions() throws {
-    let _: Any? = Values.emptyFun()
+    let _: Any? = ValuesKt.emptyFun()
 
-    let str = Values.strFun()
+    let str = ValuesKt.strFun()
     try assertEquals(actual: str, expected: "fooStr")
 
-    try assertEquals(actual: Values.argsFun(i: 10, l: 20, d: 3.5, s: "res") as! String,
+    try assertEquals(actual: ValuesKt.argsFun(i: 10, l: 20, d: 3.5, s: "res") as! String,
             expected: "res10203.5")
 }
 
 func testFuncType() throws {
     let s = "str"
     let fFunc: () -> String = { return s }
-    try assertEquals(actual: Values.funArgument(foo: fFunc), expected: s, "Using function type arguments failed")
+    try assertEquals(actual: ValuesKt.funArgument(foo: fFunc), expected: s, "Using function type arguments failed")
 }
 
 func testGenericsFoo() throws {
@@ -284,48 +284,48 @@ func testGenericsFoo() throws {
     // wrap lambda to workaround issue with type conversion inability:
     // (Int) -> String can't be cast to (Any?) -> Any?
     let wrapper = { (t: Any?) -> Any? in return fun(t as! Int) }
-    let res = Values.genericFoo(t: 42, foo: wrapper)
+    let res = ValuesKt.genericFoo(t: 42, foo: wrapper)
     try assertEquals(actual: res as! String, expected: "S 42")
 }
 
 func testVararg() throws {
-    let ktArray = ValuesStdlibArray(size: 3, init: { (_) -> Int in return 42 })
-    let arr: [Int] = Values.varargToList(args: ktArray) as! [Int]
+    let ktArray = KotlinArray(size: 3, init: { (_) -> Int in return 42 })
+    let arr: [Int] = ValuesKt.varargToList(args: ktArray) as! [Int]
     try assertEquals(actual: arr, expected: [42, 42, 42])
 }
 
 func testStrExtFun() throws {
-    try assertEquals(actual: Values.subExt("String", i: 2), expected: "r")
-    try assertEquals(actual: Values.subExt("A", i: 2), expected: "nothing")
+    try assertEquals(actual: ValuesKt.subExt("String", i: 2), expected: "r")
+    try assertEquals(actual: ValuesKt.subExt("A", i: 2), expected: "nothing")
 }
 
 func testAnyToString() throws {
-    try assertEquals(actual: Values.toString(nil), expected: "null")
-    try assertEquals(actual: Values.toString(42), expected: "42")
+    try assertEquals(actual: ValuesKt.toString(nil), expected: "null")
+    try assertEquals(actual: ValuesKt.toString(42), expected: "42")
 }
 
 func testAnyPrint() throws {
     print("BEGIN")
-    Values.print(nil)
-    Values.print("Print")
-    Values.print(123456789)
-    Values.print(3.14)
-    Values.print([3, 2, 1])
+    ValuesKt.print(nil)
+    ValuesKt.print("Print")
+    ValuesKt.print(123456789)
+    ValuesKt.print(3.14)
+    ValuesKt.print([3, 2, 1])
     print("END")
 }
 
 func testLambda() throws {
-    try assertEquals(actual: Values.sumLambda(3, 4), expected: 7)
+    try assertEquals(actual: ValuesKt.sumLambda(3, 4), expected: 7)
 }
 
 // -------- Tests for classes and interfaces -------
-class ValIEmptyExt : ValuesI {
+class ValIEmptyExt : I {
     func iFun() -> String {
         return "ValIEmptyExt::iFun"
     }
 }
 
-class ValIExt : ValuesI {
+class ValIExt : I {
     func iFun() -> String {
         return "ValIExt::iFun"
     }
@@ -337,19 +337,19 @@ func testInterfaceExtension() throws {
 }
 
 func testClassInstances() throws {
-    try assertEquals(actual: ValuesOpenClassI().iFun(), expected: "OpenClassI::iFun")
-    try assertEquals(actual: ValuesDefaultInterfaceExt().iFun(), expected: "I::iFun")
-    try assertEquals(actual: ValuesFinalClassExtOpen().iFun(), expected: "FinalClassExtOpen::iFun")
-    try assertEquals(actual: ValuesMultiExtClass().iFun(), expected: "PI::iFun")
-    try assertEquals(actual: ValuesMultiExtClass().piFun() as! Int, expected: 42)
-    try assertEquals(actual: ValuesConstrClass(i: 1, s: "str", a: "Any").iFun(), expected: "OpenClassI::iFun")
-    try assertEquals(actual: ValuesExtConstrClass(i: 123).iFun(), expected: "ExtConstrClass::iFun::123-String-AnyS")
+    try assertEquals(actual: OpenClassI().iFun(), expected: "OpenClassI::iFun")
+    try assertEquals(actual: DefaultInterfaceExt().iFun(), expected: "I::iFun")
+    try assertEquals(actual: FinalClassExtOpen().iFun(), expected: "FinalClassExtOpen::iFun")
+    try assertEquals(actual: MultiExtClass().iFun(), expected: "PI::iFun")
+    try assertEquals(actual: MultiExtClass().piFun() as! Int, expected: 42)
+    try assertEquals(actual: ConstrClass(i: 1, s: "str", a: "Any").iFun(), expected: "OpenClassI::iFun")
+    try assertEquals(actual: ExtConstrClass(i: 123).iFun(), expected: "ExtConstrClass::iFun::123-String-AnyS")
 }
 
 func testEnum() throws {
-    try assertEquals(actual: Values.passEnum().enumValue, expected: 42)
-    try assertEquals(actual: Values.passEnum().name, expected: "ANSWER")
-    Values.receiveEnum(e: 1)
+    try assertEquals(actual: ValuesKt.passEnum().enumValue, expected: 42)
+    try assertEquals(actual: ValuesKt.passEnum().name, expected: "ANSWER")
+    ValuesKt.receiveEnum(e: 1)
 }
 
 func testDataClass() throws {
@@ -357,13 +357,13 @@ func testDataClass() throws {
     let s = "2"
     let t = "3"
 
-    let tripleVal = ValuesTripleVals(first: f, second: s, third: t)
+    let tripleVal = TripleVals(first: f, second: s, third: t)
     try assertEquals(actual: tripleVal.first as! String, expected: f, "Data class' value")
     try assertEquals(actual: tripleVal.component2() as! String, expected: s, "Data class' component")
     print(tripleVal)
     try assertEquals(actual: String(describing: tripleVal), expected: "TripleVals(first=\(f), second=\(s), third=\(t))")
 
-    let tripleVar = ValuesTripleVars(first: f, second: s, third: t)
+    let tripleVar = TripleVars(first: f, second: s, third: t)
     try assertEquals(actual: tripleVar.first as! String, expected: f, "Data class' value")
     try assertEquals(actual: tripleVar.component2() as! String, expected: s, "Data class' component")
     print(tripleVar)
@@ -377,31 +377,31 @@ func testDataClass() throws {
 }
 
 func testCompanionObj() throws {
-    try assertEquals(actual: ValuesWithCompanionAndObjectCompanion().str, expected: "String")
-    try assertEquals(actual: Values.getCompanionObject().str, expected: "String")
+    try assertEquals(actual: WithCompanionAndObjectCompanion().str, expected: "String")
+    try assertEquals(actual: ValuesKt.getCompanionObject().str, expected: "String")
 
-    let namedFromCompanion = Values.getCompanionObject().named
-    let named = Values.getNamedObject()
+    let namedFromCompanion = ValuesKt.getCompanionObject().named
+    let named = ValuesKt.getNamedObject()
     try assertTrue(named === namedFromCompanion, "Should be the same Named object")
 
-    try assertEquals(actual: Values.getNamedObjectInterface().iFun(), expected: named.iFun(), "Named object's method")
+    try assertEquals(actual: ValuesKt.getNamedObjectInterface().iFun(), expected: named.iFun(), "Named object's method")
 }
 
 func testInlineClasses() throws {
     let ic1: Int32 = 42
-    let ic1N = Values.box(ic1: 17)
+    let ic1N = ValuesKt.box(ic1: 17)
     let ic2 = "foo"
     let ic2N = "bar"
-    let ic3 = ValuesTripleVals(first: 1, second: 2, third: 3)
-    let ic3N = Values.box(ic3: nil)
+    let ic3 = TripleVals(first: 1, second: 2, third: 3)
+    let ic3N = ValuesKt.box(ic3: nil)
 
     try assertEquals(
-        actual: Values.concatenateInlineClassValues(ic1: ic1, ic1N: ic1N, ic2: ic2, ic2N: ic2N, ic3: ic3, ic3N: ic3N),
+        actual: ValuesKt.concatenateInlineClassValues(ic1: ic1, ic1N: ic1N, ic2: ic2, ic2N: ic2N, ic3: ic3, ic3N: ic3N),
         expected: "42 17 foo bar TripleVals(first=1, second=2, third=3) null"
     )
 
     try assertEquals(
-        actual: Values.concatenateInlineClassValues(ic1: ic1, ic1N: nil, ic2: ic2, ic2N: nil, ic3: nil, ic3N: nil),
+        actual: ValuesKt.concatenateInlineClassValues(ic1: ic1, ic1N: nil, ic2: ic2, ic2N: nil, ic3: nil, ic3N: nil),
         expected: "42 null foo null null null"
     )
 }

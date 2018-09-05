@@ -15,12 +15,14 @@ open class Stub<out D : DeclarationDescriptor>(val name: String, val descriptor:
 abstract class ObjCClass<out D : DeclarationDescriptor>(name: String,
                                                         descriptor: D?,
                                                         val superProtocols: List<String>,
-                                                        val members: List<Stub<*>>) : Stub<D>(name, descriptor)
+                                                        val members: List<Stub<*>>,
+                                                        val attributes: List<String>) : Stub<D>(name, descriptor)
 
 class ObjCProtocol(name: String,
                    descriptor: ClassDescriptor,
                    superProtocols: List<String>,
-                   members: List<Stub<*>>) : ObjCClass<ClassDescriptor>(name, descriptor, superProtocols, members)
+                   members: List<Stub<*>>,
+                   attributes: List<String> = emptyList()) : ObjCClass<ClassDescriptor>(name, descriptor, superProtocols, members, attributes)
 
 class ObjCInterface(name: String,
                     val generics: List<String> = emptyList(),
@@ -29,7 +31,7 @@ class ObjCInterface(name: String,
                     superProtocols: List<String> = emptyList(),
                     val categoryName: String? = null,
                     members: List<Stub<*>> = emptyList(),
-                    val attributes: List<String> = emptyList()) : ObjCClass<ClassDescriptor>(name, descriptor, superProtocols, members)
+                    attributes: List<String> = emptyList()) : ObjCClass<ClassDescriptor>(name, descriptor, superProtocols, members, attributes)
 
 class ObjCMethod(descriptor: DeclarationDescriptor?,
                  val isInstanceMethod: Boolean,

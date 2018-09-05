@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
@@ -43,7 +42,7 @@ abstract class ObjCExportHeaderGenerator(
     internal val namer = ObjCExportNamerImpl(moduleDescriptor, builtIns, mapper, topLevelNamePrefix)
 
     internal val generatedClasses = mutableSetOf<ClassDescriptor>()
-    internal val topLevel = mutableMapOf<FqName, MutableList<CallableMemberDescriptor>>()
+    internal val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
 
     private val mappedToNSNumber: List<ClassDescriptor> = with(builtIns) {
         val result = mutableListOf(boolean, byte, short, int, long, float, double)
@@ -63,15 +62,15 @@ abstract class ObjCExportHeaderGenerator(
         result += CustomTypeMapper.Collection(generator, list, "NSArray")
         result += CustomTypeMapper.Collection(generator, mutableList, "NSMutableArray")
         result += CustomTypeMapper.Collection(generator, set, "NSSet")
-        result += CustomTypeMapper.Collection(generator, mutableSet, namer.mutableSetName)
+        result += CustomTypeMapper.Collection(generator, mutableSet, namer.mutableSetName.objCName)
         result += CustomTypeMapper.Collection(generator, map, "NSDictionary")
-        result += CustomTypeMapper.Collection(generator, mutableMap, namer.mutableMapName)
+        result += CustomTypeMapper.Collection(generator, mutableMap, namer.mutableMapName.objCName)
 
         NSNumberKind.values().forEach {
             // TODO: NSNumber seem to have different equality semantics.
             if (it.mappedKotlinClassId != null) {
                 val descriptor = moduleDescriptor.findClassAcrossModuleDependencies(it.mappedKotlinClassId)!!
-                result += CustomTypeMapper.Simple(descriptor, namer.numberBoxName(descriptor))
+                result += CustomTypeMapper.Simple(descriptor, namer.numberBoxName(descriptor).objCName)
             }
 
         }
@@ -99,7 +98,7 @@ abstract class ObjCExportHeaderGenerator(
     private val kotlinAnyName = namer.kotlinAnyName
 
     private val stubs = mutableListOf<Stub<*>>()
-    private val classOrInterfaceToName = mutableMapOf<ClassDescriptor, String>()
+    private val classOrInterfaceToName = mutableMapOf<ClassDescriptor, ObjCExportNamer.ClassOrProtocolName>()
 
     private val classForwardDeclarations = mutableSetOf<String>()
     private val protocolForwardDeclarations = mutableSetOf<String>()
@@ -107,37 +106,74 @@ abstract class ObjCExportHeaderGenerator(
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
+    private fun objCInterface(
+            name: ObjCExportNamer.ClassOrProtocolName,
+            generics: List<String> = emptyList(),
+            descriptor: ClassDescriptor? = null,
+            superClass: String? = null,
+            superProtocols: List<String> = emptyList(),
+            categoryName: String? = null,
+            members: List<Stub<*>> = emptyList(),
+            attributes: List<String> = emptyList()
+    ): ObjCInterface = ObjCInterface(
+            name.objCName,
+            generics,
+            descriptor,
+            superClass,
+            superProtocols,
+            categoryName,
+            members,
+            attributes + name.toNameAttributes()
+    )
+
+    private fun objCProtocol(
+            name: ObjCExportNamer.ClassOrProtocolName,
+            descriptor: ClassDescriptor,
+            superProtocols: List<String>,
+            members: List<Stub<*>>,
+            attributes: List<String> = emptyList()
+    ): ObjCProtocol = ObjCProtocol(
+            name.objCName,
+            descriptor,
+            superProtocols,
+            members,
+            attributes + name.toNameAttributes()
+    )
+
+    private fun ObjCExportNamer.ClassOrProtocolName.toNameAttributes(): List<String> = listOfNotNull(
+            binaryName.takeIf { it != objCName }?.let { objcRuntimeNameAttribute(it) },
+            swiftName.takeIf { it != objCName }?.let { swiftNameAttribute(it) }
+    )
+
     fun translateModule(): List<Stub<*>> {
         // TODO: make the translation order stable
         // to stabilize name mangling.
 
-        stubs.add(ObjCInterface(kotlinAnyName, superClass = "NSObject", members = buildMembers {
+        stubs.add(objCInterface(kotlinAnyName, superClass = "NSObject", members = buildMembers {
             +ObjCMethod(null, true, ObjCInstanceType, listOf("init"), emptyList(), listOf("unavailable"))
             +ObjCMethod(null, false, ObjCInstanceType, listOf("new"), emptyList(), listOf("unavailable"))
             +ObjCMethod(null, false, ObjCVoidType, listOf("initialize"), emptyList(), listOf("objc_requires_super"))
         }))
 
         // TODO: add comment to the header.
-        stubs.add(ObjCInterface(
+        stubs.add(objCInterface(
                 kotlinAnyName,
                 superProtocols = listOf("NSCopying"),
-                categoryName = "${kotlinAnyName}Copying"
+                categoryName = "${kotlinAnyName.objCName}Copying"
         ))
 
         // TODO: only if appears
-        stubs.add(ObjCInterface(
+        stubs.add(objCInterface(
                 namer.mutableSetName,
                 generics = listOf("ObjectType"),
-                superClass = "NSMutableSet<ObjectType>",
-                attributes = listOf(objcRuntimeNameAttribute("KotlinMutableSet"))
+                superClass = "NSMutableSet<ObjectType>"
         ))
 
         // TODO: only if appears
-        stubs.add(ObjCInterface(
+        stubs.add(objCInterface(
                 namer.mutableMapName,
                 generics = listOf("KeyType", "ObjectType"),
-                superClass = "NSMutableDictionary<KeyType, ObjectType>",
-                attributes = listOf(objcRuntimeNameAttribute("KotlinMutableDictionary"))
+                superClass = "NSMutableDictionary<KeyType, ObjectType>"
         ))
 
         stubs.add(ObjCInterface("NSError", categoryName = "NSErrorKotlinException", members = buildMembers {
@@ -158,7 +194,7 @@ abstract class ObjCExportHeaderGenerator(
                         if (classDescriptor != null) {
                             extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
                         } else {
-                            topLevel.getOrPut(packageFragment.fqName, { mutableListOf() }) += it
+                            topLevel.getOrPut(it.source.containingFile, { mutableListOf() }) += it
                         }
                     }
 
@@ -188,8 +224,8 @@ abstract class ObjCExportHeaderGenerator(
             translateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.forEach { packageFqName, declarations ->
-            translateTopLevel(packageFqName, declarations)
+        topLevel.forEach { sourceFile, declarations ->
+            translateTopLevel(sourceFile, declarations)
         }
 
         while (extraClassesToTranslate.isNotEmpty()) {
@@ -214,11 +250,10 @@ abstract class ObjCExportHeaderGenerator(
                 +nsNumberInit(it, listOf("unavailable"))
             }
         }
-        stubs.add(ObjCInterface(
+        stubs.add(objCInterface(
                 namer.kotlinNumberName,
                 superClass = "NSNumber",
-                members = members,
-                attributes = listOf(objcRuntimeNameAttribute("KotlinNumber"))
+                members = members
         ))
 
         NSNumberKind.values().forEach {
@@ -236,11 +271,10 @@ abstract class ObjCExportHeaderGenerator(
             +nsNumberFactory(kind)
             +nsNumberInit(kind)
         }
-        return ObjCInterface(
+        return objCInterface(
                 name,
-                superClass = namer.kotlinNumberName,
-                members = members,
-                attributes = listOf(objcRuntimeNameAttribute("Kotlin${kotlinClassId.shortClassName}"))
+                superClass = namer.kotlinNumberName.objCName,
+                members = members
         )
     }
 
@@ -266,21 +300,21 @@ abstract class ObjCExportHeaderGenerator(
         )
     }
 
-    private fun translateClassName(descriptor: ClassDescriptor): String = classOrInterfaceToName.getOrPut(descriptor) {
+    private fun translateClassName(descriptor: ClassDescriptor) = classOrInterfaceToName.getOrPut(descriptor) {
         assert(mapper.shouldBeExposed(descriptor))
         val forwardDeclarations = if (descriptor.isInterface) protocolForwardDeclarations else classForwardDeclarations
 
-        namer.getClassOrProtocolName(descriptor).also { forwardDeclarations += it }
+        namer.getClassOrProtocolName(descriptor).also { forwardDeclarations += it.objCName }
     }
 
     private fun translateInterface(descriptor: ClassDescriptor) {
         if (!generatedClasses.add(descriptor)) return
 
-        val name: String = translateClassName(descriptor)
+        val name = translateClassName(descriptor)
         val members: List<Stub<*>> = buildMembers { translateClassOrInterfaceMembers(descriptor) }
         val superProtocols: List<String> = descriptor.superProtocols
 
-        val protocolStub = ObjCProtocol(name, descriptor, superProtocols, members)
+        val protocolStub = objCProtocol(name, descriptor, superProtocols, members)
 
         stubs.add(protocolStub)
     }
@@ -292,7 +326,7 @@ abstract class ObjCExportHeaderGenerator(
                     .filter { mapper.shouldBeExposed(it) }
                     .map {
                         translateInterface(it)
-                        translateClassName(it)
+                        translateClassName(it).objCName
                     }
                     .toList()
 
@@ -303,19 +337,19 @@ abstract class ObjCExportHeaderGenerator(
         val members = buildMembers {
             translateMembers(declarations)
         }
-        stubs.add(ObjCInterface(name, categoryName = "Extensions", members = members))
+        stubs.add(objCInterface(name, categoryName = "Extensions", members = members))
     }
 
-    private fun translateTopLevel(packageFqName: FqName, declarations: List<CallableMemberDescriptor>) {
-        val name = namer.getPackageName(packageFqName)
+    private fun translateTopLevel(sourceFile: SourceFile, declarations: List<CallableMemberDescriptor>) {
+        val name = namer.getFileClassName(sourceFile)
 
         // TODO: stop inheriting KotlinBase.
         val members = buildMembers {
             translateMembers(declarations)
         }
-        stubs.add(ObjCInterface(
+        stubs.add(objCInterface(
                 name,
-                superClass = namer.kotlinAnyName,
+                superClass = namer.kotlinAnyName.objCName,
                 members = members,
                 attributes = listOf("objc_subclassing_restricted")
         ))
@@ -327,7 +361,7 @@ abstract class ObjCExportHeaderGenerator(
         val name = translateClassName(descriptor)
         val superClass = descriptor.getSuperClassNotAny()
 
-        val superName: String = if (superClass == null) {
+        val superName = if (superClass == null) {
             kotlinAnyName
         } else {
             translateClass(superClass)
@@ -404,10 +438,10 @@ abstract class ObjCExportHeaderGenerator(
 
         val attributes = if (descriptor.isFinalOrEnum) listOf("objc_subclassing_restricted") else emptyList()
 
-        val interfaceStub = ObjCInterface(
+        val interfaceStub = objCInterface(
                 name,
                 descriptor = descriptor,
-                superClass = superName,
+                superClass = superName.objCName,
                 superProtocols = superProtocols,
                 members = members,
                 attributes = attributes
@@ -763,9 +797,9 @@ abstract class ObjCExportHeaderGenerator(
         scheduleClassToBeGenerated(classDescriptor)
 
         return if (classDescriptor.isInterface) {
-            ObjCProtocolType(translateClassName(classDescriptor))
+            ObjCProtocolType(translateClassName(classDescriptor).objCName)
         } else {
-            ObjCClassType(translateClassName(classDescriptor))
+            ObjCClassType(translateClassName(classDescriptor).objCName)
         }
     }
 

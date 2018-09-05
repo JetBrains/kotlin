@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -149,24 +148,28 @@ internal class ObjCExportCodeGenerator(
 
     internal fun emitRtti(
             generatedClasses: Collection<ClassDescriptor>,
-            topLevel: Map<FqName, List<CallableMemberDescriptor>>
+            topLevel: Map<SourceFile, List<CallableMemberDescriptor>>
     ) {
         val objCTypeAdapters = mutableListOf<ObjCTypeAdapter>()
 
         generatedClasses.forEach {
             objCTypeAdapters += createTypeAdapter(it)
-            val className = namer.getClassOrProtocolName(it)
-            val superClass = it.getSuperClassOrAny()
-            val superClassName = namer.getClassOrProtocolName(superClass)
 
-            dataGenerator.emitEmptyClass(className, superClassName)
-            // Note: it is generated only to be visible for linker.
-            // Methods will be added at runtime.
+            if (!it.isInterface) {
+                val className = namer.getClassOrProtocolName(it).binaryName
+                val superClass = it.getSuperClassOrAny()
+                val superClassName = namer.getClassOrProtocolName(superClass).binaryName
+
+                dataGenerator.emitEmptyClass(className, superClassName)
+                // Note: it is generated only to be visible for linker.
+                // Methods will be added at runtime.
+            }
         }
 
-        topLevel.forEach { fqName, declarations ->
-            objCTypeAdapters += createTypeAdapterForPackage(fqName, declarations)
-            dataGenerator.emitEmptyClass(namer.getPackageName(fqName), namer.kotlinAnyName)
+        topLevel.forEach { sourceFile, declarations ->
+            objCTypeAdapters += createTypeAdapterForFileClass(sourceFile, declarations)
+            val name = namer.getFileClassName(sourceFile).binaryName
+            dataGenerator.emitEmptyClass(name, namer.kotlinAnyName.binaryName)
         }
 
         NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
@@ -831,11 +834,11 @@ private fun ObjCExportCodeGenerator.vtableIndex(descriptor: FunctionDescriptor):
     }
 }
 
-private fun ObjCExportCodeGenerator.createTypeAdapterForPackage(
-        fqName: FqName,
+private fun ObjCExportCodeGenerator.createTypeAdapterForFileClass(
+        sourceFile: SourceFile,
         declarations: List<CallableMemberDescriptor>
 ): ObjCExportCodeGenerator.ObjCTypeAdapter {
-    val name = namer.getPackageName(fqName)
+    val name = namer.getFileClassName(sourceFile).binaryName
 
     val adapters = declarations.toMethods().map { createMethodAdapter(it, it) }
 
@@ -934,7 +937,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 
     val irClass = context.ir.get(descriptor)
     val typeInfo = constPointer(codegen.typeInfoValue(irClass))
-    val objCName = namer.getClassOrProtocolName(descriptor)
+    val objCName = namer.getClassOrProtocolName(descriptor).binaryName
 
     val vtableSize = if (descriptor.kind == ClassKind.INTERFACE) {
         -1

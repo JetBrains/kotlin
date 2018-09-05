@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerato
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -33,7 +34,7 @@ internal class ObjCExport(val codegen: CodeGenerator) {
 
         val objCCodeGenerator: ObjCExportCodeGenerator
         val generatedClasses: Set<ClassDescriptor>
-        val topLevelDeclarations: Map<FqName, List<CallableMemberDescriptor>>
+        val topLevelDeclarations: Map<SourceFile, List<CallableMemberDescriptor>>
 
         if (context.config.produce == CompilerOutputKind.FRAMEWORK) {
             val headerGenerator = ObjCExportHeaderGeneratorImpl(context)

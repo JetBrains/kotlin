@@ -57,8 +57,8 @@ class StdlibTests : TestProvider {
      */
     func testEmptyDictionary() throws {
         let immutableEmptyDict = [String: Int]()
-        try assertTrue(Stdlib.isEmpty(map: immutableEmptyDict), "Empty dictionary")
-        let keys = Stdlib.getKeysAsSet(map: immutableEmptyDict)
+        try assertTrue(StdlibKt.isEmpty(map: immutableEmptyDict), "Empty dictionary")
+        let keys = StdlibKt.getKeysAsSet(map: immutableEmptyDict)
         try assertTrue(keys.isEmpty, "Should have empty set")
     }
 
@@ -66,7 +66,7 @@ class StdlibTests : TestProvider {
      * Tests usage of a map with generics.
      */
     func testGenericMapUsage() throws {
-        let map = Stdlib.createLinkedMap()
+        let map = StdlibKt.createLinkedMap()
         map[1] = "One"
         map[10] = "Ten"
         map[11] = "Eleven"
@@ -82,7 +82,7 @@ class StdlibTests : TestProvider {
      * Checks order of the underlying LinkedHashMap.
      */
     func testOrderedMapStored() throws {
-        let pair = Stdlib.createPair()
+        let pair = StdlibKt.createPair()
         let map = pair.first as? NSMutableDictionary
 
         map?[1] = "One"
@@ -90,7 +90,7 @@ class StdlibTests : TestProvider {
         map?[11] = "Eleven"
         map?["10"] = "Ten as string"
 
-        let gen = pair.second as! StdlibGenericExtensionClass
+        let gen = pair.second as! GenericExtensionClass
         let value: String? = gen.getFirstValue() as? String
         try assertEquals(actual: value!, expected: "One", "First value of the map")
 
@@ -102,7 +102,7 @@ class StdlibTests : TestProvider {
      * Tests typed map created in Kotlin.
      */
     func testTypedMapUsage() throws {
-        let map = Stdlib.createTypedMutableMap()
+        let map = StdlibKt.createTypedMutableMap()
         map[1] = "One"
         map[1.0 as Float] = "Float"
         map[11] = "Eleven"
@@ -116,11 +116,11 @@ class StdlibTests : TestProvider {
      * Get first element of the collection.
      */
     func testFirstElement() throws {
-        let m = Stdlib.createTypedMutableMap()
+        let m = StdlibKt.createTypedMutableMap()
         m[10] = "Str"
-        try assertEquals(actual: Stdlib.getFirstElement(collection: m.allKeys) as! Int, expected: 10, "First key")
+        try assertEquals(actual: StdlibKt.getFirstElement(collection: m.allKeys) as! Int, expected: 10, "First key")
 
-        try assertEquals(actual: Stdlib.getFirstElement(collection: Stdlib.getKeysAsList(map: m as! Dictionary)) as! Int,
+        try assertEquals(actual: StdlibKt.getFirstElement(collection: StdlibKt.getKeysAsList(map: m as! Dictionary)) as! Int,
                 expected: 10, "First key from a list")
     }
 
@@ -129,35 +129,35 @@ class StdlibTests : TestProvider {
      */
     func testAddDictionary() throws {
         let m = [ "ABC": 10, "CDE": 12, "FGH": 3 ]
-        Stdlib.addSomeElementsToMap(map: StdlibMutableDictionary(dictionary: m))
+        StdlibKt.addSomeElementsToMap(map: KotlinMutableDictionary(dictionary: m))
         for (k, v) in m {
             print("MAP: \(k) - \(v)")
         }
 
-        var smd = StdlibMutableDictionary<NSString, StdlibInt>()
+        var smd = KotlinMutableDictionary<NSString, KotlinInt>()
         smd.setObject(333, forKey: "333" as NSString)
         try assertEquals(actual: smd.object(forKey: "333" as NSString) as! Int, expected: 333, "Add element to dict")
         
-        Stdlib.addSomeElementsToMap(map: smd)
+        StdlibKt.addSomeElementsToMap(map: smd)
         for (k, v) in smd {
             print("MAP: \(k) - \(v)")
         }
         try assertEquals(actual: smd.object(forKey: "XYZ" as NSString) as! Int, expected: 321, "Get element from Kotlin")
     }
 
-    func zeroTo(_ n: Int32) -> StdlibStdlibArray { return StdlibStdlibArray(size: n) { $0 } }
+    func zeroTo(_ n: Int32) -> KotlinArray { return KotlinArray(size: n) { $0 } }
 
     func testList() throws {
         let elements = zeroTo(5)
         elements.set(index: 1, value: nil)
-        let list = Stdlib.list(elements: elements) as! NSArray
+        let list = StdlibKt.list(elements: elements) as! NSArray
         try assertEquals(actual: list.object(at: 2) as! NSNumber, expected: NSNumber(value: 2))
         try assertEquals(actual: list.object(at: 1) as! NSNull, expected: NSNull())
         try assertEquals(actual: list.count, expected: 5)
     }
 
     func testMutableList() throws {
-        let kotlinList = Stdlib.emptyMutableList() as! NSMutableArray
+        let kotlinList = StdlibKt.emptyMutableList() as! NSMutableArray
         let nsList = NSMutableArray()
 
         func apply<T : Equatable>(op: (NSMutableArray)->T) throws {
@@ -191,7 +191,7 @@ class StdlibTests : TestProvider {
     }
 
     func testMutableSet() throws {
-        let kotlinSet = Stdlib.emptyMutableSet() as! NSMutableSet
+        let kotlinSet = StdlibKt.emptyMutableSet() as! NSMutableSet
         let nsSet = NSMutableSet()
 
         func apply<T : Equatable>(op: (NSMutableSet)->T) throws {
@@ -214,10 +214,10 @@ class StdlibTests : TestProvider {
         try applyVoid { $0.add("bar") }
         try applyVoid { $0.remove("baz") }
         try applyVoid { $0.add("baz") }
-        try applyVoid { $0.add(StdlibTripleVals(first: 1, second: 2, third: 3)) }
-        try apply { $0.member(StdlibTripleVals(first: 1, second: 2, third: 3)) as! StdlibTripleVals }
+        try applyVoid { $0.add(TripleVals(first: 1, second: 2, third: 3)) }
+        try apply { $0.member(TripleVals(first: 1, second: 2, third: 3)) as! TripleVals }
         try apply { $0.member(42) == nil }
-        try applyVoid { $0.remove(StdlibTripleVals(first: 1, second: 2, third: 3)) }
+        try applyVoid { $0.remove(TripleVals(first: 1, second: 2, third: 3)) }
 
         let NULL0: Any? = nil
         let NULL = NULL0 as Any
@@ -235,7 +235,7 @@ class StdlibTests : TestProvider {
 
     func testMutableMap() throws {
         // TODO: test KotlinMutableSet/Dictionary constructors
-        let kotlinMap = Stdlib.emptyMutableMap() as! NSMutableDictionary
+        let kotlinMap = StdlibKt.emptyMutableMap() as! NSMutableDictionary
         let nsMap = NSMutableDictionary()
 
         func apply<T : Equatable>(op: (NSMutableDictionary)->T) throws {
@@ -257,7 +257,7 @@ class StdlibTests : TestProvider {
         try apply { $0.object(forKey: 42) == nil }
         try applyVoid { $0.setObject(42, forKey: 42 as NSNumber) }
         try applyVoid { $0.setObject(17, forKey: "foo" as NSString) }
-        let triple = StdlibTripleVals(first: 3, second: 2, third: 1)
+        let triple = TripleVals(first: 3, second: 2, third: 1)
         try applyVoid { $0.setObject("bar", forKey: triple) }
         try applyVoid { $0.removeObject(forKey: 42) }
         try apply { $0.count }
@@ -312,10 +312,10 @@ class StdlibTests : TestProvider {
     }
 
     func testSet() throws {
-        let elements = StdlibStdlibArray(size: 2) { index in nil }
+        let elements = KotlinArray(size: 2) { index in nil }
         elements.set(index: 0, value: nil)
         elements.set(index: 1, value: 42)
-        let set = Stdlib.set(elements: elements) as! NSSet
+        let set = StdlibKt.set(elements: elements) as! NSSet
         try assertEquals(actual: set.count, expected: 2)
         try assertEquals(actual: set.member(NSNull()) as! NSNull, expected: NSNull())
         try assertEquals(actual: set.member(42) as! NSNumber, expected: NSNumber(value: 42 as Int32))
@@ -329,7 +329,7 @@ class StdlibTests : TestProvider {
     }
 
     func testMap() throws {
-        let elements = StdlibStdlibArray(size: 6) { index in nil }
+        let elements = KotlinArray(size: 6) { index in nil }
         elements.set(index: 0, value: nil)
         elements.set(index: 1, value: 42)
         elements.set(index: 2, value: "foo")
@@ -337,7 +337,7 @@ class StdlibTests : TestProvider {
         elements.set(index: 4, value: 42)
         elements.set(index: 5, value: nil)
 
-        let map = Stdlib.map(keysAndValues: elements) as! NSDictionary
+        let map = StdlibKt.map(keysAndValues: elements) as! NSDictionary
         try assertEquals(actual: map.count, expected: 3)
 
         try assertEquals(actual: map.object(forKey: NSNull()) as! NSNumber, expected: NSNumber(value: 42))
