@@ -31,6 +31,8 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any> = empty
     fun <T> getNoDefault(key: PropertiesCollection.Key<T>): T? =
         properties[key]?.let { it as T }
 
+    fun entries(): Set<Map.Entry<Key<*>, Any>> = properties.entries
+
     companion object {
         fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)
         fun <T> keyCopy(source: Key<T>) = PropertyKeyCopyDelegate(source)

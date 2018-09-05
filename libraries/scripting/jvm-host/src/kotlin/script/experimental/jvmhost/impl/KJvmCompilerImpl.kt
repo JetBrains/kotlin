@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -35,8 +34,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.util.KotlinJars
 import java.io.File
-import java.net.URLClassLoader
-import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -46,34 +43,8 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 import kotlin.script.experimental.jvm.javaHome
 import kotlin.script.experimental.jvm.jvm
-import kotlin.script.experimental.jvmhost.JvmScriptEvaluationConfiguration
 import kotlin.script.experimental.jvmhost.KJvmCompilerProxy
-import kotlin.script.experimental.jvmhost.baseClassLoader
 import kotlin.script.experimental.util.getOrError
-
-class KJvmCompiledScript<out ScriptBase : Any>(
-    override val compilationConfiguration: ScriptCompilationConfiguration,
-    private val generationState: GenerationState,
-    private val scriptClassFQName: String
-) : CompiledScript<ScriptBase> {
-
-    override suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>> = try {
-        val baseClassLoader = scriptEvaluationConfiguration?.get(JvmScriptEvaluationConfiguration.baseClassLoader)
-            ?: Thread.currentThread().contextClassLoader
-        val dependencies = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
-            ?.flatMap { (it as? JvmDependency)?.classpath?.map { it.toURI().toURL() } ?: emptyList() }
-        // TODO: previous dependencies and classloaders should be taken into account here
-        val classLoaderWithDeps =
-            if (dependencies == null) baseClassLoader
-            else URLClassLoader(dependencies.toTypedArray(), baseClassLoader)
-        val classLoader = GeneratedClassLoader(generationState.factory, classLoaderWithDeps)
-
-        val clazz = classLoader.loadClass(scriptClassFQName).kotlin
-        clazz.asSuccess()
-    } catch (e: Throwable) {
-        ResultWithDiagnostics.Failure(ScriptDiagnostic("Unable to instantiate class $scriptClassFQName", exception = e))
-    }
-}
 
 class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvmCompilerProxy {
 
@@ -204,7 +175,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
     }
 }
 
-class ScriptDiagnosticsMessageCollector : MessageCollector {
+internal class ScriptDiagnosticsMessageCollector : MessageCollector {
 
     private val _diagnostics = arrayListOf<ScriptDiagnostic>()
 

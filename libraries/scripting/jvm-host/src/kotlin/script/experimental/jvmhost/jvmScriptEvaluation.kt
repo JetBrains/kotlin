@@ -44,7 +44,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                     scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.constructorArgs)?.let {
                         args.addAll(it)
                     }
-                    val ctor = scriptClass.java.constructors.first()
+                    val ctor = scriptClass.java.constructors.single()
                     val instance = ctor.newInstance(*args.toArray())
 
                     // TODO: fix result value
