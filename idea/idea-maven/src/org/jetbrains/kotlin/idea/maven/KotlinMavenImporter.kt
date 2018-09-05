@@ -330,7 +330,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             .filter { it.isKotlinPlugin() }
             .flatMap { it.executions.asSequence() }
             .flatMap { it.goals.asSequence() }
-            .any { it !in PomFile.KotlinGoals.JvmGoals }
+            .any { it in PomFile.KotlinGoals.CompileGoals && it !in PomFile.KotlinGoals.JvmGoals }
 
         val prodSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) KotlinSourceRootType.Source else JavaSourceRootType.SOURCE
         val testSourceRootType: JpsModuleSourceRootType<*> = if (isNonJvmModule) KotlinSourceRootType.TestSource else JavaSourceRootType.TEST_SOURCE
