@@ -520,7 +520,7 @@ compileTestKotlin {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
-            Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
+            Assert.assertTrue(platform.isJavaScript)
             with(compilerArguments as K2JSCompilerArguments) {
                 Assert.assertEquals(true, sourceMap)
                 Assert.assertEquals("plain", moduleKind)
@@ -536,7 +536,7 @@ compileTestKotlin {
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
-            Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
+            Assert.assertTrue(platform.isJavaScript)
             with(compilerArguments as K2JSCompilerArguments) {
                 Assert.assertEquals(false, sourceMap)
                 Assert.assertEquals("umd", moduleKind)
@@ -1210,7 +1210,7 @@ compileTestKotlin {
         importProject()
 
         with(facetSettings("js-module")) {
-            Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
+            Assert.assertTrue(platform.isJavaScript)
         }
 
         val rootManager = ModuleRootManager.getInstance(getModule("js-module"))
