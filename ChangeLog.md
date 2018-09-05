@@ -14,6 +14,12 @@
 - [`KT-25604`](https://youtrack.jetbrains.com/issue/KT-25604) Disable callable references to exprerimental suspend functions
 - [`KT-25665`](https://youtrack.jetbrains.com/issue/KT-25665) Add a warning for annotations which target non-existent accessors
 - [`KT-25894`](https://youtrack.jetbrains.com/issue/KT-25894) Do not generate body for functions from Any in light class builder mode
+- [`KT-20772`](https://youtrack.jetbrains.com/issue/KT-20772) Incorrect smart cast on enum members
+- [`KT-24657`](https://youtrack.jetbrains.com/issue/KT-24657) Compiler performance issues with big files
+- [`KT-25745`](https://youtrack.jetbrains.com/issue/KT-25745) Do not report warning about annotations on non-existing accessors for JvmStatic properties
+- [`KT-25746`](https://youtrack.jetbrains.com/issue/KT-25746) Improve message for warning about annotations that have target to non-existing accessors
+- [`KT-25810`](https://youtrack.jetbrains.com/issue/KT-25810) New Inference: Overload resolution ambiguity on method 'provideDelegate(Nothing?, KProperty<*>)' when there's more than one `provideDelegate` operator in scope
+- [`KT-25973`](https://youtrack.jetbrains.com/issue/KT-25973) Report metadata version mismatch upon discovering a .kotlin_module file in the dependencies with an incompatible metadata version
 
 ### IDE
 
@@ -22,11 +28,25 @@
 - [`KT-24892`](https://youtrack.jetbrains.com/issue/KT-24892) please remove usages of com.intellij.util.containers.ConcurrentFactoryMap#ConcurrentFactoryMap deprecated long ago
 - [`KT-25144`](https://youtrack.jetbrains.com/issue/KT-25144) Quick fix “Change signature” changes class of argument when applied for descendant classes with enabled -Xnew-inference option
 - [`KT-25356`](https://youtrack.jetbrains.com/issue/KT-25356) Update Gradle Kotlin-DSL icon according to new IDEA 2018.2 icons style
+- [`KT-20056`](https://youtrack.jetbrains.com/issue/KT-20056) TCE on creating object of an anonymous class in Kotlin script
+- [`KT-25092`](https://youtrack.jetbrains.com/issue/KT-25092) SourcePsi should be physical leaf element but got OPERATION_REFERENCE
+- [`KT-25249`](https://youtrack.jetbrains.com/issue/KT-25249) Uast operates "Unit" type instead of "void"
+- [`KT-25255`](https://youtrack.jetbrains.com/issue/KT-25255) Preferences | Languages & Frameworks | Kotlin Updates: show currently installed version
+- [`KT-25297`](https://youtrack.jetbrains.com/issue/KT-25297) Inconsistency in `KotlinULambdaExpression` and `KotlinLocalFunctionULambdaExpression`
+- [`KT-25515`](https://youtrack.jetbrains.com/issue/KT-25515) Add/remove analysis-related compiler setting does not update IDE project model immediately
+- [`KT-25524`](https://youtrack.jetbrains.com/issue/KT-25524) UAST: proper resolve for function variable call
+- [`KT-25640`](https://youtrack.jetbrains.com/issue/KT-25640) "Configure Kotlin" action changes values of language and API version in project settings
 
 ### IDE. Debugger
 
 - [`KT-25147`](https://youtrack.jetbrains.com/issue/KT-25147) Conditional breakpoints doesn't work in `common` code of MPP
 - [`KT-25152`](https://youtrack.jetbrains.com/issue/KT-25152) MPP debug doesn't navigate to `common` code if there are same named files in `common` and `platform` parts
+
+### IDE. Gradle
+
+- [`KT-22732`](https://youtrack.jetbrains.com/issue/KT-22732) TestNG runner is always used for TestNG tests even when Use Gradle runner is selected
+- [`KT-25913`](https://youtrack.jetbrains.com/issue/KT-25913) Honor 'store generated project files externally option' for Kotlin facets imported from Gradle
+- [`KT-25955`](https://youtrack.jetbrains.com/issue/KT-25955) Support expect/actual in new MPP imported into IDEA
 
 ### IDE. Inspections and Intentions
 
@@ -34,6 +54,13 @@
 
 - [`KT-6633`](https://youtrack.jetbrains.com/issue/KT-6633) Inspection to detect unnecessary "with" calls
 - [`KT-25146`](https://youtrack.jetbrains.com/issue/KT-25146) Add quick-fix for default parameter value removal
+- [`KT-7675`](https://youtrack.jetbrains.com/issue/KT-7675) Create inspection to replace if with let
+- [`KT-13515`](https://youtrack.jetbrains.com/issue/KT-13515) Add intention to replace '?.let' with null check
+- [`KT-13854`](https://youtrack.jetbrains.com/issue/KT-13854) Need intention actions: to convert property with getter to initializer
+- [`KT-15476`](https://youtrack.jetbrains.com/issue/KT-15476) Inspection to convert non-lazy chains of collection functions into sequences
+- [`KT-22068`](https://youtrack.jetbrains.com/issue/KT-22068) Force usage of “it” in .forEach{} calls 
+- [`KT-23445`](https://youtrack.jetbrains.com/issue/KT-23445) Inspection and quickfix to replace `assertTrue(a == b)` with `assertEquals(a, b)`
+- [`KT-25270`](https://youtrack.jetbrains.com/issue/KT-25270) "return@foo" outside of lambda should have quickfix to remove "@foo" label
 
 #### Fixes
 
@@ -47,10 +74,20 @@
 - [`KT-25321`](https://youtrack.jetbrains.com/issue/KT-25321) Safe delete of a class property implementing constructor parameter at the platform side doesn't remove all the related declarations
 - [`KT-25539`](https://youtrack.jetbrains.com/issue/KT-25539) `Make class open` quick fix doesn't update all the related implementations of a multiplatform class
 - [`KT-25608`](https://youtrack.jetbrains.com/issue/KT-25608) Confusing "Redundant override" inspection message
+- [`KT-16422`](https://youtrack.jetbrains.com/issue/KT-16422) Replace lambda with method reference inspections fails
+- [`KT-21999`](https://youtrack.jetbrains.com/issue/KT-21999) Convert lambda to reference adds this with incorrect label
+- [`KT-23467`](https://youtrack.jetbrains.com/issue/KT-23467) False positive `suspicious callable reference` on scoping function called on another lambda
+- [`KT-25044`](https://youtrack.jetbrains.com/issue/KT-25044) "Implement member" quick-fix should not generate 'actual' modifier with expect declaration in interface only
+- [`KT-25579`](https://youtrack.jetbrains.com/issue/KT-25579) Redundant semicolon erroneously reported during local var modifier ambiguity
+- [`KT-25633`](https://youtrack.jetbrains.com/issue/KT-25633) “Add kotlin-XXX.jar to the classpath” quick fix adds dependency with invalid version in Gradle-based projects
+- [`KT-25739`](https://youtrack.jetbrains.com/issue/KT-25739) "Convert to run" / "Convert to with" intentions incorrectly process references to Java static members
+- [`KT-25928`](https://youtrack.jetbrains.com/issue/KT-25928) "Let extend" quick fix is suggested in case of nullable/non-null TYPE_MISMATCH collision
+- [`KT-26042`](https://youtrack.jetbrains.com/issue/KT-26042) False positive "Remove redundant '.let' call" for lambda with destructured arguments
 
 ### IDE. KDoc
 
 - [`KT-22815`](https://youtrack.jetbrains.com/issue/KT-22815) Update quick documentation
+- [`KT-22648`](https://youtrack.jetbrains.com/issue/KT-22648) Quick Doc popup: break (long?) declarations into several lines
 
 ### IDE. Libraries
 
@@ -74,6 +111,8 @@
 - [`KT-23914`](https://youtrack.jetbrains.com/issue/KT-23914) Safe search false positives during moves between common and actual modules
 - [`KT-25326`](https://youtrack.jetbrains.com/issue/KT-25326) Refactor/Safe Delete doesn't report `actual object` usages
 - [`KT-25438`](https://youtrack.jetbrains.com/issue/KT-25438) Refactor/Safe delete of a multiplatform companion object: usage is not reported
+- [`KT-25857`](https://youtrack.jetbrains.com/issue/KT-25857) Refactoring → Move moves whole file in case of moving class from Kotlin script
+- [`KT-25858`](https://youtrack.jetbrains.com/issue/KT-25858) Refactoring → Move can be called only for class declarations in Kotlin script
 
 ### IDE. Script
 
@@ -84,6 +123,10 @@
 
 - [`KT-25595`](https://youtrack.jetbrains.com/issue/KT-25595) Rename Kotlin-specific "Protractor" run configuration to distinguish it from the one provided by NodeJS plugin
 
+### IDE. Tests Support
+
+- [`KT-26228`](https://youtrack.jetbrains.com/issue/KT-26228) NoClassDefFoundError: org/jetbrains/kotlin/idea/run/KotlinTestNgConfigurationProducer on running a JUnit test with TestNG plugin disabled
+
 ### Reflection
 
 - [`KT-25541`](https://youtrack.jetbrains.com/issue/KT-25541) Incorrect parameter names in reflection for inner class constructor from Java class compiled with "-parameters"
@@ -92,6 +135,7 @@
 
 - [`KT-21910`](https://youtrack.jetbrains.com/issue/KT-21910) Add `-Xfriend-paths` compiler argument to support internal visibility checks in production/test sources from external build systems
 - [`KT-25554`](https://youtrack.jetbrains.com/issue/KT-25554) Do not report warnings when `-XXLanguage` was used to turn on deprecation
+- [`KT-25196`](https://youtrack.jetbrains.com/issue/KT-25196) Optional expected annotation is visible in platforms where it doesn't have actual
 
 ### Tools. JPS
 
@@ -100,3 +144,33 @@
 ### Tools. kapt
 
 - [`KT-25396`](https://youtrack.jetbrains.com/issue/KT-25396) KAPT Error: Unknown option: infoAsWarnings
+
+### Tools. Gradle
+
+- [`KT-25025`](https://youtrack.jetbrains.com/issue/KT-25025) Inter-project IC for JS in Gradle
+- [`KT-25455`](https://youtrack.jetbrains.com/issue/KT-25455) Gradle IC: when class signature is changed its indirect subclasses in different module are not recompiled
+
+### Tools. JPS
+
+- [`KT-25998`](https://youtrack.jetbrains.com/issue/KT-25998) Build process starts compiling w/o any changes (on release version)
+- [`KT-25977`](https://youtrack.jetbrains.com/issue/KT-25977) Can not run a Kotlin test
+- [`KT-26072`](https://youtrack.jetbrains.com/issue/KT-26072) MPP compilation issue
+- [`KT-26113`](https://youtrack.jetbrains.com/issue/KT-26113) Build takes around 20 seconds in already fully built IDEA project
+
+### Tools. Scripts
+
+- [`KT-26142`](https://youtrack.jetbrains.com/issue/KT-26142) update maven-central remote repository url
+
+### JavaScript
+
+- [`KT-22053`](https://youtrack.jetbrains.com/issue/KT-22053) JS: Secondary constructor of Throwable inheritor doesn't call to primary one
+- [`KT-26064`](https://youtrack.jetbrains.com/issue/KT-26064) JS inliner calls wrong constructor in incremental build
+- [`KT-26117`](https://youtrack.jetbrains.com/issue/KT-26117) JS runtime error: ArrayList_init instead of ArrayList_init_0
+
+### Libraries
+
+- [`KT-18067`](https://youtrack.jetbrains.com/issue/KT-18067) KotlinJS - String.compareTo(other: String, ignoreCase: Boolean = false): Int
+- [`KT-19507`](https://youtrack.jetbrains.com/issue/KT-19507) Using @JvmName from stdlib-common fails to compile in JS module.
+- [`KT-19508`](https://youtrack.jetbrains.com/issue/KT-19508) Add @JsName to stdlib-common for controlling JS implementation
+- [`KT-24478`](https://youtrack.jetbrains.com/issue/KT-24478) Annotate relevant standard library annotations with @OptionalExpectation
+- [`KT-25980`](https://youtrack.jetbrains.com/issue/KT-25980) JvmSynthetic annotation has no description in the docs
