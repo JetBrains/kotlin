@@ -14,7 +14,7 @@ public final class Foo {
     inner class Foo$Companion
     static method <clinit>(): void
     private synthetic method <init>(p0: int): void
-    public final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
+    public synthetic final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
     public static method constructor(p0: int): int
     public static method equals(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
     public method equals(p0: java.lang.Object): boolean
@@ -24,5 +24,5 @@ public final class Foo {
     public final static method inInlineClass(p0: int): void
     public method toString(): java.lang.String
     public static @org.jetbrains.annotations.NotNull method toString(p0: int): java.lang.String
-    public final method unbox(): int
+    public synthetic final method unbox(): int
 }

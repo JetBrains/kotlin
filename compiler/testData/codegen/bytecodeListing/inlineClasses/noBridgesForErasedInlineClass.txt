@@ -7,7 +7,7 @@ public interface A {
 public final class Foo {
     private final field x: long
     private synthetic method <init>(p0: long): void
-    public final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
+    public synthetic final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
     public static method constructor(p0: long): long
     public method equals(p0: java.lang.Object): boolean
     public static method equals(p0: long, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
@@ -19,5 +19,5 @@ public final class Foo {
     public static method hashCode(p0: long): int
     public method toString(): java.lang.String
     public static @org.jetbrains.annotations.NotNull method toString(p0: long): java.lang.String
-    public final method unbox(): long
+    public synthetic final method unbox(): long
 }

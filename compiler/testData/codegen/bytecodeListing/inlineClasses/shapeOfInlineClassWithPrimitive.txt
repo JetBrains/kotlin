@@ -2,7 +2,7 @@
 public final class Foo {
     private final field l: long
     private synthetic method <init>(p0: long): void
-    public final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
+    public synthetic final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
     public static method constructor(p0: long): long
     public final static method empty(p0: long): void
     public method equals(p0: java.lang.Object): boolean
@@ -15,5 +15,5 @@ public final class Foo {
     public final static method param(p0: long, p1: double): void
     public method toString(): java.lang.String
     public static @org.jetbrains.annotations.NotNull method toString(p0: long): java.lang.String
-    public final method unbox(): long
+    public synthetic final method unbox(): long
 }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -255,7 +256,9 @@ public class AsmUtil {
 
         if (KotlinTypeMapper.isAccessor(functionDescriptor) ||
             hasJvmSyntheticAnnotation(functionDescriptor) ||
-            isInlineClassWrapperConstructor(functionDescriptor, kind)
+            isInlineClassWrapperConstructor(functionDescriptor, kind) ||
+            InlineClassDescriptorResolver.isSynthesizedBoxMethod(functionDescriptor) ||
+            InlineClassDescriptorResolver.isSynthesizedUnboxMethod(functionDescriptor)
         ) {
             flags |= ACC_SYNTHETIC;
         }

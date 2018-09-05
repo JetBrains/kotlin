@@ -49,7 +49,7 @@ public interface IFoo {
 public final class Z {
     private final field x: int
     private synthetic method <init>(p0: int): void
-    public final static @org.jetbrains.annotations.NotNull method box(p0: int): Z
+    public synthetic final static @org.jetbrains.annotations.NotNull method box(p0: int): Z
     public static method constructor(p0: int): int
     public static method constructor(p0: long): int
     public static method equals(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
@@ -91,5 +91,5 @@ public final class Z {
     public static @ASet method setOverridingVar(p0: int, @ASetParam p1: int): void
     public @A @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static @A @org.jetbrains.annotations.NotNull method toString(p0: int): java.lang.String
-    public final method unbox(): int
+    public synthetic final method unbox(): int
 }

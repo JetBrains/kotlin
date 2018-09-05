@@ -7,5 +7,5 @@ fun test(zs: MutableList<Z2>, z: Z2) {
     zs.add(z)
 }
 
-// 1 public final static box\(I\)LZ2;
+// 1 public final static synthetic box\(I\)LZ2;
 // 1 INVOKESTATIC Z2\.box \(I\)LZ2;
