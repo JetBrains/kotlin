@@ -13,6 +13,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.provider.Property
 import org.jetbrains.plugins.gradle.model.AbstractExternalDependency
 import org.jetbrains.plugins.gradle.model.DefaultExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalDependency
@@ -248,8 +249,13 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
     private fun buildCompilationArguments(compileKotlinTask: Task): KotlinCompilationArguments? {
         val compileTaskClass = compileKotlinTask.javaClass
-        val getCurrentArguments = compileTaskClass.getMethodOrNull("getSerializedCompilerArguments") ?: return null
-        val getDefaultArguments = compileTaskClass.getMethodOrNull("getDefaultSerializedCompilerArguments") ?: return null
+        val getCurrentArguments = compileTaskClass.getMethodOrNull("getSerializedCompilerArguments")
+        val getDefaultArguments = compileTaskClass.getMethodOrNull("getDefaultSerializedCompilerArguments")
+
+        //TODO: Hack for KotlinNativeCompile
+        if (getCurrentArguments == null || getDefaultArguments == null) {
+            return KotlinCompilationArgumentsImpl(emptyList(), emptyList())
+        }
         @Suppress("UNCHECKED_CAST")
         val currentArguments = getCurrentArguments(compileKotlinTask) as? List<String> ?: return null
         @Suppress("UNCHECKED_CAST")
@@ -277,10 +283,15 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val getClassesDirs = gradleOutputClass.getMethodOrNull("getClassesDirs") ?: return null
         val getResourcesDir = gradleOutputClass.getMethodOrNull("getResourcesDir") ?: return null
         val compileKotlinTaskClass = compileKotlinTask.javaClass
-        val getDestinationDir = compileKotlinTaskClass.getMethodOrNull("getDestinationDir") ?: return null
+        val getDestinationDir = compileKotlinTaskClass.getMethodOrNull("getDestinationDir")
+        val getOutputFile = compileKotlinTaskClass.getMethodOrNull("getOutputFile")
         val classesDirs = getClassesDirs(gradleOutput) as? FileCollection ?: return null
         val resourcesDir = getResourcesDir(gradleOutput) as? File ?: return null
-        val destinationDir = getDestinationDir(compileKotlinTask) as? File
+        val destinationDir =
+            getDestinationDir?.invoke(compileKotlinTask) as? File
+            //TODO: Hack for KotlinNativeCompile
+                ?: (getOutputFile?.invoke(compileKotlinTask) as? Property<File>)?.orNull?.parentFile
+                ?: return null
         return KotlinCompilationOutputImpl(classesDirs.files, destinationDir, resourcesDir)
     }
 
