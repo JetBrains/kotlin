@@ -77,6 +77,7 @@ class ErasedInlineClassBodyCodegen(
 
         generateUnboxMethod()
         generateFunctionsFromAny()
+        generateSpecializedEqualsStub()
     }
 
     private fun generateFunctionsFromAny() {
@@ -111,6 +112,31 @@ class ErasedInlineClassBodyCodegen(
                     iv.load(0, baseValueType)
                     constructor.genInvokeInstruction(iv)
                     iv.areturn(wrapperType)
+                }
+            }
+        )
+    }
+
+    private fun generateSpecializedEqualsStub() {
+        val specializedEqualsDescriptor = InlineClassDescriptorResolver.createSpecializedEqualsDescriptor(descriptor) ?: return
+
+        functionCodegen.generateMethod(
+            Synthetic(null, specializedEqualsDescriptor), specializedEqualsDescriptor, object : FunctionGenerationStrategy.CodegenBased(state) {
+                override fun mapMethodSignature(
+                    functionDescriptor: FunctionDescriptor,
+                    typeMapper: KotlinTypeMapper,
+                    contextKind: OwnerKind,
+                    hasSpecialBridge: Boolean
+                ): JvmMethodGenericSignature {
+                    // we shouldn't use default mapping here to avoid adding parameter that relates to carrier type
+                    return typeMapper.mapSignatureForSpecializedEqualsOfInlineClass(functionDescriptor)
+                }
+
+
+                override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                    val iv = codegen.v
+                    iv.aconst(null)
+                    iv.athrow()
                 }
             }
         )
