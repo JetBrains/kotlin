@@ -601,7 +601,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractJvmOptimizeImportsTest> {
-            model("editor/optimizeImports/jvm", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("editor/optimizeImports/jvm", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
             model("editor/optimizeImports/common", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
         testClass<AbstractJsOptimizeImportsTest> {
