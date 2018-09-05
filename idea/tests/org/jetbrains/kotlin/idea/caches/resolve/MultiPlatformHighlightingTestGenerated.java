@@ -109,6 +109,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls/");
     }
 
+    @TestMetadata("jvmNameInCommon")
+    public void testJvmNameInCommon() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmNameInCommon/");
+    }
+
     @TestMetadata("multifileFacade")
     public void testMultifileFacade() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/multifileFacade/");
