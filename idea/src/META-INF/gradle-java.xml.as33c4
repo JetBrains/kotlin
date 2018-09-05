@@ -60,6 +60,7 @@
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.kapt.idea.KaptGradleProjectImportHandler"/>
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgGradleProjectImportHandler"/>
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlinx.serialization.idea.KotlinSerializationGradleImportHandler"/>
 
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>

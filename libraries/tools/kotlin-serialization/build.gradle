@@ -1,17 +1,7 @@
-plugins {
-    id "com.jfrog.bintray" version "1.7.3"
-}
-
 apply plugin: 'kotlin'
 
 configureJvmProject(project)
 configurePublishing(project)
-
-group = 'org.jetbrains.kotlinx'
-version = '0.7.0'
-if (!project.hasProperty("deploy")) {
-    version = "$version-eap-1"
-}
 
 compileJava {
     sourceCompatibility = 1.8
@@ -37,10 +27,6 @@ dependencies {
 
 evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
 
-processResources {
-    expand(project.properties)
-}
-
 jar {
     from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
     from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
@@ -52,27 +38,4 @@ ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project
 artifacts {
     archives sourcesJar
     archives javadocJar
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    configurations = ['archives']
-    if (!project.hasProperty("deploy")) {
-        dryRun = true
-    }
-    pkg {
-        repo = 'kotlinx'
-        name = 'kotlinx.serialization.plugin'
-        userOrg = 'kotlin'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/JetBrains/kotlin/tree/rr/kotlinx.serialization/libraries'
-        websiteUrl = 'https://github.com/Kotlin/kotlinx.serialization'
-        issueTrackerUrl = 'https://github.com/Kotlin/kotlinx.serialization/issues'
-
-        githubRepo = 'JetBrains/kotlin'
-        version {
-            name = project.version
-        }
-    }
 }

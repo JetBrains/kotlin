@@ -3,9 +3,6 @@ apply plugin: 'kotlin'
 configureJvmProject(project)
 configurePublishing(project)
 
-group = 'org.jetbrains.kotlinx'
-version = project(':kotlinx-gradle-serialization-plugin').version
-
 compileJava {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -23,13 +20,8 @@ dependencies {
 
     compileOnly project(':kotlin-stdlib')
     compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
-    compileOnly project(':kotlin-allopen-compiler-plugin')
 
     compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
-}
-
-processResources {
-    expand(project.properties)
 }
 
 evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
@@ -39,6 +31,8 @@ jar {
     from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
+
+ArtifactsKt.runtimeJar(project, jar, {})
 
 artifacts {
     archives sourcesJar

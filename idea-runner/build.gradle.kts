@@ -17,9 +17,7 @@ dependencies {
 
 val ideaPluginDir: File by rootProject.extra
 val ideaSandboxDir: File by rootProject.extra
-val serialPluginDir: File by rootProject.extra
 
-runIdeTask("runIde", ideaPluginDir, ideaSandboxDir, serialPluginDir) {
-    // TODO: add serialization plugin to pluginDir
-    dependsOn(":dist", ":ideaPlugin", ":kotlinx-serialization-compiler-plugin:dist")
+runIdeTask("runIde", ideaPluginDir, ideaSandboxDir) {
+    dependsOn(":dist", ":ideaPlugin")
 }

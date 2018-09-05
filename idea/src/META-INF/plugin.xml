@@ -3101,6 +3101,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <xi:include href="kotlinx-serialization.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
   <extensionPoints>
     <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
 
