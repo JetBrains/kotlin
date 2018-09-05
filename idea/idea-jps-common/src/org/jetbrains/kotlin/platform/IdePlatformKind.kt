@@ -27,6 +27,8 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
     override fun equals(other: Any?): Boolean = javaClass == other?.javaClass
     override fun hashCode(): Int = javaClass.hashCode()
 
+    override fun toString() = name
+
     companion object {
         // We can't use the ApplicationExtensionDescriptor class directly because it's missing in the JPS process
         private val extension = ApplicationManager.getApplication()?.let {

@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDia
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
 import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import javax.swing.JComponent
@@ -35,7 +36,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         private val context: LibrariesValidatorContext,
         private val validatorsManager: FacetValidatorsManager,
         private val libraryCategoryName: String,
-        private val getPlatform: () -> IdePlatformKind<*>
+        private val getPlatform: () -> IdePlatform<*, *>
 ) : FrameworkLibraryValidator() {
     private val IdePlatformKind<*>.libraryDescription: CustomLibraryDescription
         get() = this.tooling.getLibraryDescription(context.module.project)
@@ -69,9 +70,9 @@ class FrameworkLibraryValidatorWithDynamicDescription(
     override fun check(): ValidationResult {
         val targetPlatform = getPlatform()
 
-        if (checkLibraryIsConfigured(targetPlatform)) {
+        if (checkLibraryIsConfigured(targetPlatform.kind)) {
             val conflictingPlatforms = IdePlatformKind.ALL_KINDS
-                .filter { !it.isCommon && it.name != targetPlatform.name && checkLibraryIsConfigured(it) }
+                .filter { !it.isCommon && it.name != targetPlatform.kind.name && checkLibraryIsConfigured(it) }
 
             if (conflictingPlatforms.isNotEmpty()) {
                 val platformText = conflictingPlatforms.mapTo(LinkedHashSet()) { it.name }.joinToString()
@@ -84,7 +85,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
 
         return ValidationResult(
                 IdeBundle.message("label.missed.libraries.text", libraryCategoryName),
-                LibrariesQuickFix(targetPlatform.libraryDescription)
+                LibrariesQuickFix(targetPlatform.kind.libraryDescription)
         )
     }
 
