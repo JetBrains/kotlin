@@ -1,17 +1,5 @@
 // CORRECT_ERROR_TYPES
 
-// EXPECTED_ERROR(kotlin:18:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:21:34) cannot find symbol
-// EXPECTED_ERROR(kotlin:21:50) cannot find symbol
-// EXPECTED_ERROR(kotlin:21:62) cannot find symbol
-// EXPECTED_ERROR(kotlin:23:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:24:1) cannot find symbol
-// EXPECTED_ERROR(kotlin:28:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:29:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:32:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:34:5) cannot find symbol
-// EXPECTED_ERROR(kotlin:37:5) cannot find symbol
-
 @file:Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION")
 import kotlin.reflect.KClass
 
@@ -38,3 +26,15 @@ class ErrorInDeclarations {
 }
 
 annotation class Anno(val a: KClass<Any>)
+
+// EXPECTED_ERROR(kotlin:11:1) cannot find symbol
+// EXPECTED_ERROR(kotlin:12:1) cannot find symbol
+// EXPECTED_ERROR(kotlin:16:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:17:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:20:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:22:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:25:5) cannot find symbol
+// EXPECTED_ERROR(kotlin:6:1) cannot find symbol
+// EXPECTED_ERROR(kotlin:9:34) cannot find symbol
+// EXPECTED_ERROR(kotlin:9:50) cannot find symbol
+// EXPECTED_ERROR(kotlin:9:62) cannot find symbol
