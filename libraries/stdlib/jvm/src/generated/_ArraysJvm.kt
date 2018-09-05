@@ -598,6 +598,231 @@ public actual inline fun CharArray.contentToString(): String {
 }
 
 /**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
+    System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
+    return destination
+}
+
+/**
  * Returns new array which is a copy of the original array.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
@@ -814,74 +1039,227 @@ public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
+@JvmName("copyOfRangeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+    return if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0)) {
+        copyOfRangeImpl(fromIndex, toIndex)
+    } else {
+        if (toIndex > size) throw IndexOutOfBoundsException("toIndex: $toIndex, size: $size")
+        java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+    }
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun <T> Array<T>.copyOfRangeImpl(fromIndex: Int, toIndex: Int): Array<T> {
+    copyOfRangeToIndexCheck(toIndex, size)
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun ByteArray.copyOfRangeImpl(fromIndex: Int, toIndex: Int): ByteArray {
+    copyOfRangeToIndexCheck(toIndex, size)
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun ShortArray.copyOfRangeImpl(fromIndex: Int, toIndex: Int): ShortArray {
+    copyOfRangeToIndexCheck(toIndex, size)
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun IntArray.copyOfRangeImpl(fromIndex: Int, toIndex: Int): IntArray {
+    copyOfRangeToIndexCheck(toIndex, size)
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun LongArray.copyOfRangeImpl(fromIndex: Int, toIndex: Int): LongArray {
+    copyOfRangeToIndexCheck(toIndex, size)
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun FloatArray.copyOfRangeImpl(fromIndex: Int, toIndex: Int): FloatArray {
+    copyOfRangeToIndexCheck(toIndex, size)
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun DoubleArray.copyOfRangeImpl(fromIndex: Int, toIndex: Int): DoubleArray {
+    copyOfRangeToIndexCheck(toIndex, size)
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun BooleanArray.copyOfRangeImpl(fromIndex: Int, toIndex: Int): BooleanArray {
+    copyOfRangeToIndexCheck(toIndex, size)
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+@SinceKotlin("1.3")
+@PublishedApi
+@JvmName("copyOfRange")
+internal fun CharArray.copyOfRangeImpl(fromIndex: Int, toIndex: Int): CharArray {
+    copyOfRangeToIndexCheck(toIndex, size)
     return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 

@@ -163,6 +163,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
+        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralId classLiteralId) {
+        }
+
+        @Override
         @Nullable
         public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
             String string = name.asString();
@@ -234,6 +238,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
+        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralId classLiteralId) {
+        }
+
+        @Override
         @Nullable
         public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
             String string = name.asString();
@@ -299,6 +307,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
         @Override
         public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        }
+
+        @Override
+        public void visitClassLiteral(@NotNull ClassLiteralId classLiteralId) {
         }
 
         @Override

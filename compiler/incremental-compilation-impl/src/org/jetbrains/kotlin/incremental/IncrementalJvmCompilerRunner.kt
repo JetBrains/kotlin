@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -56,9 +57,6 @@ fun makeIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val isIncremental = IncrementalCompilation.isEnabledForJvm()
-    val versions = commonCacheVersions(cachesDir, isIncremental) + standaloneCacheVersion(cachesDir, isIncremental)
-
     val kotlinExtensions = listOf("kt", "kts")
     val allExtensions = kotlinExtensions + listOf("java")
     val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
@@ -67,6 +65,8 @@ fun makeIncrementally(
     val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withIC {
+        val versions = commonCacheVersionsManagers(cachesDir, true) + standaloneCacheVersionManager(cachesDir, true)
+
         val compiler = IncrementalJvmCompilerRunner(
                 cachesDir,
                 sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
@@ -99,20 +99,20 @@ inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
 }
 
 class IncrementalJvmCompilerRunner(
-        workingDir: File,
-        private val javaSourceRoots: Set<JvmSourceRoot>,
-        cacheVersions: List<CacheVersion>,
-        reporter: ICReporter,
-        private val usePreciseJavaTracking: Boolean,
-        buildHistoryFile: File,
-        localStateDirs: Collection<File>,
-        private val modulesApiHistory: ModulesApiHistory
+    workingDir: File,
+    private val javaSourceRoots: Set<JvmSourceRoot>,
+    cachesVersionManagers: List<CacheVersionManager>,
+    reporter: ICReporter,
+    private val usePreciseJavaTracking: Boolean,
+     buildHistoryFile: File,
+    localStateDirs: Collection<File>,
+    private val modulesApiHistory: ModulesApiHistory
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
-        workingDir,
-        "caches-jvm",
-        cacheVersions,
-        reporter,
-        localStateDirs = localStateDirs,
+    workingDir,
+    "caches-jvm",
+    cachesVersionManagers,
+    reporter,
+    localStateDirs = localStateDirs,
         buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =

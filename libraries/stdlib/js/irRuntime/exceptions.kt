@@ -66,6 +66,27 @@ open class NoSuchElementException(message: String?, cause: Throwable?) : Runtime
     constructor(message: String?) : this(message, null)
 }
 
+open class NumberFormatException(message: String?) : IllegalArgumentException(message) {
+    constructor() : this(null)
+}
+
+public open class NoWhenBranchMatchedException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
+}
+
+open class UninitializedPropertyAccessException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    constructor() : this(null, null)
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(undefined, cause)
+}
+
+@SinceKotlin("1.3")
+open class ArithmeticException constructor(message: String?) : RuntimeException(message) {
+    constructor() : this(null)
+}
+
 // TODO: fix function names to satisfy style convention (depends on built-in names)
 fun THROW_ISE() {
     throw IllegalStateException()

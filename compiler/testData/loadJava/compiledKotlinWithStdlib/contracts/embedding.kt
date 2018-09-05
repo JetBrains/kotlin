@@ -1,9 +1,10 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +ReadDeserializedContracts
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
 package test
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 // this tests specifically use primitive condition (predicate/value) as the
 // first argument of sequence, so that it would be optimized and embedded into message

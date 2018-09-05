@@ -10,6 +10,7 @@ import test.*
 import test.collections.behaviors.iteratorBehavior
 import test.collections.compare
 import kotlin.math.sign
+import kotlin.random.Random
 
 
 fun createString(content: String): CharSequence = content
@@ -936,6 +937,29 @@ class StringTest {
         assertNull(data.filterNot { it.isAsciiLetter() || it.isAsciiDigit() }.firstOrNull())
     }
 
+    @Test fun random() = withOneCharSequenceArg { data ->
+        data("abcdefg").let { charSeq ->
+            val tosses = List(10) { charSeq.random() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { charSeq.random(random1) }
+            val tosses2 = List(10) { charSeq.random(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        data("x").let { singletonCharSeq ->
+            val tosses = List(10) { singletonCharSeq.random() }
+            assertEquals(singletonCharSeq.toList(), tosses.distinct())
+        }
+
+        assertFailsWith<NoSuchElementException> { data("").random() }
+    }
+
     @Test fun partition() {
         val data = "a1b2c3"
         val pair = data.partition { it.isAsciiDigit() }
@@ -1157,6 +1181,14 @@ class StringTest {
         assertEquals(2, result.size)
         assertEquals(listOf('a', 'b', 'b', 'a', 'c'), result[false])
         assertEquals(listOf('A', 'A', 'B', 'D'), result[true])
+    }
+
+    @Test fun associateWith() = withOneCharSequenceArg("abc") { data ->
+        val result = data.associateWith { it + 1 }
+        assertEquals(mapOf('a' to 'b', 'b' to 'c', 'c' to 'd'), result)
+
+        val mutableResult = data.drop(1).associateWithTo(result.toMutableMap()) { it - 1 }
+        assertEquals(mapOf('a' to 'b', 'b' to 'a', 'c' to 'b'), mutableResult)
     }
 
     @Test fun joinToString() {

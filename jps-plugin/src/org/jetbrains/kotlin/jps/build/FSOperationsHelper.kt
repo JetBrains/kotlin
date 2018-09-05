@@ -89,7 +89,9 @@ class FSOperationsHelper(
     }
 
     fun markInChunkOrDependents(files: Iterable<File>, excludeFiles: Set<File>) {
-        markFilesImpl(files, currentRound = false) { it !in excludeFiles && it.exists() && moduleBasedFilter.accept(it) }
+        markFilesImpl(files, currentRound = false) {
+            it !in excludeFiles && it.exists() && moduleBasedFilter.accept(it)
+        }
     }
 
     private inline fun markFilesImpl(

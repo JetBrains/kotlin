@@ -20,16 +20,22 @@ import com.intellij.util.SmartList;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.kotlin.descriptors.FindClassInModuleKt.findClassAcrossModuleDependencies;
 
 public final class JsAstUtils {
     private static final JsNameRef DEFINE_PROPERTY = pureFqn("defineProperty", null);
@@ -215,6 +221,42 @@ public final class JsAstUtils {
     @NotNull
     public static JsExpression longToNumber(@NotNull JsExpression expression) {
         return invokeMethod(expression, Namer.LONG_TO_NUMBER);
+    }
+
+    @NotNull
+    public static JsExpression byteToUByte(byte value, @NotNull TranslationContext context) {
+        // replace with external builder
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uByte);
+    }
+
+    @NotNull
+    public static JsExpression shortToUShort(short value, @NotNull TranslationContext context) {
+        // replace with external builder
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uShort);
+    }
+
+    @NotNull
+    public static JsExpression intToUInt(int value, @NotNull TranslationContext context) {
+        // replace with external builder
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uInt);
+    }
+
+    @NotNull
+    public static JsExpression longToULong(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        // replace with external builder
+        return toUnsignedNumber(expression, context, KotlinBuiltIns.FQ_NAMES.uLong);
+    }
+
+    private static JsExpression toUnsignedNumber(
+            @NotNull JsExpression expression,
+            @NotNull TranslationContext context,
+            @NotNull ClassId unsignedClassId
+    ) {
+        ClassDescriptor classDescriptor = findClassAcrossModuleDependencies(context.getCurrentModule(), unsignedClassId);
+        assert classDescriptor != null : "Class descriptor is null for " + unsignedClassId;
+
+        JsName descName = context.getInnerNameForDescriptor(classDescriptor);
+        return new JsNew(descName.makeRef(), Collections.singletonList(expression));
     }
 
     @NotNull

@@ -275,7 +275,17 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
             } else {
                 TypeInfo(fullCallExpression, Variance.OUT_VARIANCE)
             }
-            return FunctionInfo(name, receiverType, returnType, possibleContainers, parameters, typeParameters)
+            val parentFunction = expression.getStrictParentOfType<KtNamedFunction>()
+            val modifierList = if (parentFunction?.hasModifier(KtTokens.INLINE_KEYWORD) == true) {
+                when {
+                    parentFunction.isPublic -> KtPsiFactory(expression).createModifierList(KtTokens.PUBLIC_KEYWORD)
+                    parentFunction.isProtected() -> KtPsiFactory(expression).createModifierList(KtTokens.PROTECTED_KEYWORD)
+                    else -> null
+                }
+            } else {
+                null
+            }
+            return FunctionInfo(name, receiverType, returnType, possibleContainers, parameters, typeParameters, modifierList = modifierList)
         }
 
         object Default : Function()

@@ -62,6 +62,18 @@ public class Char(value: Int) : Comparable<Char> {
 
     companion object {
         /**
+         * The minimum value of a character code unit.
+         */
+        @SinceKotlin("1.3")
+        public const val MIN_VALUE: Char = '\u0000'
+
+        /**
+         * The maximum value of a character code unit.
+         */
+        @SinceKotlin("1.3")
+        public const val MAX_VALUE: Char = '\uFFFF'
+
+        /**
          * The minimum value of a Unicode high-surrogate code unit.
          */
         public const val MIN_HIGH_SURROGATE: Char = '\uD800'

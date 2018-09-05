@@ -1,3 +1,4 @@
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class InlineWithStateMachineKt$box$1 {
     synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
@@ -11,22 +12,24 @@ final class InlineWithStateMachineKt$box$1 {
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 final class InlineWithStateMachineKt$mainSuspend$1 {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
-    synthetic field data: java.lang.Object
     field label: int
+    synthetic field result: java.lang.Object
     inner class InlineWithStateMachineKt$mainSuspend$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 public final class InlineWithStateMachineKt$suspendHere$1 {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
-    synthetic field data: java.lang.Object
     field label: int
+    synthetic field result: java.lang.Object
     inner class InlineWithStateMachineKt$suspendHere$1
     public method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object

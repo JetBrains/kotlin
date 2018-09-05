@@ -46,6 +46,8 @@ val testDistProjects = listOf(
         ":kotlin-stdlib",
         ":kotlin-stdlib-jre7",
         ":kotlin-stdlib-jre8",
+        ":kotlin-stdlib-jdk7",
+        ":kotlin-stdlib-jdk8",
         ":kotlin-stdlib-js",
         ":kotlin-reflect",
         ":kotlin-test:kotlin-test-jvm",

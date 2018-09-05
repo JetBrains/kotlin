@@ -6,19 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.onlyIf
-import org.jetbrains.kotlin.backend.common.utils.isBuiltinFunctionalTypeOrSubtype
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
@@ -29,7 +21,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val className = context.getNameForSymbol(irClass.symbol)
     private val classNameRef = className.makeRef()
     private val baseClass = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
-    private val baseClassName = baseClass?.let { context.getNameForSymbol(it.classifierOrFail) }
+    private val baseClassName = baseClass?.let { context.getNameForType(it) }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsGlobalBlock()
     private val classModel = JsClassModel(className, baseClassName)
@@ -83,10 +75,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
             declaration.resolveFakeOverride()?.let {
-                val implClassDesc = it.descriptor.containingDeclaration as ClassDescriptor
-                if (!KotlinBuiltIns.isAny(implClassDesc) && !it.isEffectivelyExternal()) {
+                val implClassDeclaration = it.parent as IrClass
+                if (!implClassDeclaration.defaultType.isAny() && !it.isEffectivelyExternal()) {
                     val implMethodName = context.getNameForSymbol(it.symbol)
-                    val implClassName = context.getNameForSymbol(IrClassSymbolImpl(implClassDesc))
+                    val implClassName = context.getNameForSymbol(implClassDeclaration.symbol)
 
                     val implClassPrototype = prototypeOf(implClassName.makeRef())
                     val implMemberRef = JsNameRef(implMethodName, implClassPrototype)
@@ -167,16 +159,22 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         return jsAssignment(JsNameRef(Namer.METADATA, classNameRef), metadataLiteral).makeStmt()
     }
 
-    private fun generateSuperClasses(): JsPropertyInitializer = JsPropertyInitializer(
-        JsNameRef(Namer.METADATA_INTERFACES),
-        JsArrayLiteral(
-            irClass.superTypes.mapNotNull {
-                val symbol = it.classifierOrFail
-                // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
-                if (symbol.isInterface && !irClass.defaultType.isBuiltinFunctionalTypeOrSubtype() && !symbol.isEffectivelyExternal()) JsNameRef(context.getNameForSymbol(symbol)) else null
-            }
+    private fun generateSuperClasses(): JsPropertyInitializer {
+        val functionTypeOrSubtype = irClass.defaultType.isFunctionTypeOrSubtype()
+        return JsPropertyInitializer(
+            JsNameRef(Namer.METADATA_INTERFACES),
+            JsArrayLiteral(
+                irClass.superTypes.mapNotNull {
+                    val symbol = it.classifierOrFail
+                    // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
+                    if (symbol.isInterface && !functionTypeOrSubtype && !symbol.isEffectivelyExternal) {
+                        JsNameRef(context.getNameForSymbol(symbol))
+                    } else null
+                }
+            )
         )
-    )
+    }
 }
 
 private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
+private val IrClassifierSymbol.isEffectivelyExternal get() = (owner as? IrDeclaration)?.isEffectivelyExternal() == true

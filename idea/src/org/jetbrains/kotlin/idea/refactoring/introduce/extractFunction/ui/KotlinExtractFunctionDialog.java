@@ -182,9 +182,6 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         visibilityBox.setEnabled(enableVisibility);
         if (enableVisibility) {
             KtModifierKeywordToken defaultVisibility = extractableCodeDescriptor.getVisibility();
-            if (defaultVisibility != null) {
-                defaultVisibility = KtTokens.DEFAULT_VISIBILITY_KEYWORD;
-            }
             visibilityBox.setSelectedItem(defaultVisibility);
         }
         visibilityBox.addItemListener(

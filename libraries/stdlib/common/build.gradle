@@ -18,17 +18,13 @@ sourceSets {
         kotlin {
             srcDir 'src'
             srcDir commonSrcDir
+            srcDir '../unsigned/src'
         }
     }
     test {
         kotlin {
             srcDir commonTestSrcDir
             srcDir 'test'
-        }
-    }
-    unsigned {
-        kotlin {
-            srcDir '../unsigned/src'
         }
     }
     coroutines {
@@ -43,7 +39,6 @@ dependencies {
     testCompile project(":kotlin-test:kotlin-test-common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
 
-    unsignedCompile sourceSets.main.output
     coroutinesCompile sourceSets.main.output
 }
 
@@ -58,18 +53,9 @@ compileKotlinCommon {
         freeCompilerArgs = [
                 "-module-name", project.name,
                 "-Xuse-experimental=kotlin.Experimental",
-                "-Xallow-kotlin-package"
-        ]
-    }
-}
-
-compileUnsignedKotlinCommon {
-    kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs += [
-                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
                 "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-XXLanguage:+InlineClasses",
                 "-Xallow-kotlin-package"
         ]
@@ -81,8 +67,17 @@ compileCoroutinesKotlinCommon {
         languageVersion = "1.3"
         apiVersion = "1.3"
         freeCompilerArgs = [
-                "-module-name", project.name,
+                "-module-name", project.name+"-coroutines",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-Xallow-kotlin-package"
+        ]
+    }
+}
+
+compileTestKotlinCommon {
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
         ]
     }
 }
@@ -91,6 +86,7 @@ kotlin.experimental.coroutines 'enable'
 
 jar {
     manifestAttributes(manifest, project, 'Main')
+    from sourceSets.coroutines.output
 }
 
 task coroutinesCommonJar(type: Jar) {
@@ -98,12 +94,12 @@ task coroutinesCommonJar(type: Jar) {
     version = null
     manifestAttributes(manifest, project, 'Main')
     project.configure(manifest) { attributes 'Kotlin-Version': '1.3' }
-    from sourceSets.coroutines.output
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
+    from sourceSets.coroutines.kotlin
 }
 
 configurations {

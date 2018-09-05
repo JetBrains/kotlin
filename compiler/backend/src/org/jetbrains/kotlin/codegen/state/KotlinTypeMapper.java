@@ -489,7 +489,13 @@ public class KotlinTypeMapper {
         sw.writeReturnType();
         mapType(descriptor.getType(), sw, TypeMappingMode.VALUE_FOR_ANNOTATION);
         sw.writeReturnTypeEnd();
-        return sw.makeJvmMethodSignature(descriptor.getName().asString());
+        return sw.makeJvmMethodSignature(mapAnnotationParameterName(descriptor));
+    }
+
+    @NotNull
+    public String mapAnnotationParameterName(@NotNull PropertyDescriptor descriptor) {
+        PropertyGetterDescriptor getter = descriptor.getGetter();
+        return getter != null ? mapFunctionName(getter, OwnerKind.IMPLEMENTATION) : descriptor.getName().asString();
     }
 
     @NotNull
@@ -651,17 +657,21 @@ public class KotlinTypeMapper {
         List<TypeParameterDescriptor> parameters = classDescriptor.getDeclaredTypeParameters();
         List<TypeProjection> arguments = type.getArguments();
 
-        if (classDescriptor instanceof FunctionClassDescriptor &&
-            ((FunctionClassDescriptor) classDescriptor).getFunctionKind() == FunctionClassDescriptor.Kind.KFunction) {
-            // kotlin.reflect.KFunction{n}<P1, ... Pn, R> is mapped to kotlin.reflect.KFunction<R> on JVM (see JavaToKotlinClassMap).
-            // So for these classes, we need to skip all type arguments except the very last one
-            writeGenericArguments(
-                    signatureVisitor,
-                    Collections.singletonList(CollectionsKt.last(arguments)),
-                    Collections.singletonList(CollectionsKt.last(parameters)),
-                    mode
-            );
-            return;
+        if (classDescriptor instanceof FunctionClassDescriptor) {
+            FunctionClassDescriptor functionClass = (FunctionClassDescriptor) classDescriptor;
+            if (functionClass.hasBigArity() ||
+                functionClass.getFunctionKind() == FunctionClassDescriptor.Kind.KFunction) {
+                // kotlin.reflect.KFunction{n}<P1, ..., Pn, R> is mapped to kotlin.reflect.KFunction<R> (for all n), and
+                // kotlin.Function{n}<P1, ..., Pn, R> is mapped to kotlin.jvm.functions.FunctionN<R> (for n > 22).
+                // So for these classes, we need to skip all type arguments except the very last one
+                writeGenericArguments(
+                        signatureVisitor,
+                        Collections.singletonList(CollectionsKt.last(arguments)),
+                        Collections.singletonList(CollectionsKt.last(parameters)),
+                        mode
+                );
+                return;
+            }
         }
 
         writeGenericArguments(signatureVisitor, arguments, parameters, mode);
@@ -1072,6 +1082,11 @@ public class KotlinTypeMapper {
             return name;
         }
 
+        String manglingSuffix = InlineClassManglingUtilsKt.getInlineClassValueParametersManglingSuffix(descriptor);
+        if (manglingSuffix != null) {
+            name += "-" + manglingSuffix;
+        }
+
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             if (Visibilities.isPrivate(descriptor.getVisibility()) && !(descriptor instanceof ConstructorDescriptor) && !"<clinit>".equals(name)) {
                 String partName = getPartSimpleNameForMangling(descriptor);
@@ -1083,10 +1098,16 @@ public class KotlinTypeMapper {
         if (!(descriptor instanceof ConstructorDescriptor) &&
             descriptor.getVisibility() == Visibilities.INTERNAL &&
             !DescriptorUtilsKt.isPublishedApi(descriptor)) {
-            return InternalNameMapper.mangleInternalName(name, moduleName);
+            return InternalNameMapper.mangleInternalName(name, getModuleName(descriptor));
         }
 
         return name;
+    }
+
+    @NotNull
+    private String getModuleName(@NotNull CallableMemberDescriptor descriptor) {
+        String deserialized = ModuleNameKt.getJvmModuleNameForDeserializedDescriptor(descriptor);
+        return deserialized != null ? deserialized : moduleName;
     }
 
     @Nullable
@@ -1188,7 +1209,7 @@ public class KotlinTypeMapper {
                                 skipGenericSignature);
         }
 
-        if (isDeclarationOfBigArityFunctionInvoke(f)) {
+        if (isDeclarationOfBigArityFunctionInvoke(f) || isDeclarationOfBigArityCreateCoroutineMethod(f)) {
             KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(f);
             KotlinType arrayOfNullableAny = builtIns.getArrayType(Variance.INVARIANT, builtIns.getNullableAnyType());
             return mapSignatureWithCustomParameters(f, kind, Stream.of(arrayOfNullableAny), false, false);

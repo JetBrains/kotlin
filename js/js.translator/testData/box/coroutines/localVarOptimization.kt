@@ -3,7 +3,7 @@
 // DECLARES_VARIABLE: function=doResume name=k
 // PROPERTY_READ_COUNT: name=local$o count=1
 // PROPERTY_WRITE_COUNT: name=local$o count=2
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 var next: () -> Unit = {}
 var complete = false
@@ -19,11 +19,7 @@ fun build(x: suspend () -> Unit) {
         x.startCoroutine(object : Continuation<Unit> {
             override val context = EmptyCoroutineContext
 
-            override fun resume(x: Unit) {
-                complete = true
-            }
-
-            override fun resumeWithException(x: Throwable) {
+            override fun resumeWith(x: SuccessOrFailure<Unit>) {
                 complete = true
             }
         })

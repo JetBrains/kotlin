@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1528
+// EXPECTED_REACHABLE_NODES: 1524
 package foo
 
 public fun <T> List<T>.some(): T = this[0]

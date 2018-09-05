@@ -135,7 +135,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
-    <group id="InternalKotlin" text="IDEA Internal Actions" internal="true">
+    <group id="InternalKotlin" text="Kotlin Internal Actions" internal="true">
       <separator/>
       <group id="KotlinInternalGroup" text="Kotlin" popup="true">
         <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
@@ -2942,7 +2942,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="WARNING"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
@@ -3037,6 +3037,24 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.ConvertFlatMapToFlattenInspection"
+                     displayName="flatMap call should be simplified to flatten()"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SafeCastWithReturnInspection"
+                     displayName="Safe cast with 'return' should be replaced with 'if' type check"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
@@ -3104,6 +3122,10 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <binaryExtension implementation="org.jetbrains.kotlin.idea.util.KotlinJsMetaBinary"/>
 
     <highlighterExtension implementation="org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension"/>
+
+    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind"/>
+
+    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling"/>
   </extensions>
 
 </idea-plugin>

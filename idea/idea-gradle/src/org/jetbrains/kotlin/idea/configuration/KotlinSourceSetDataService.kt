@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinModuleKind
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinModule
 import org.jetbrains.kotlin.gradle.KotlinPlatform
@@ -30,6 +29,9 @@ import org.jetbrains.kotlin.idea.facet.noVersionAutoAdvance
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 
@@ -81,11 +83,12 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             ?.data
             ?.let { findKotlinPluginVersion(it) } ?: return
         val platformKind = when (kotlinSourceSet.platform) {
-            KotlinPlatform.JVM, KotlinPlatform.ANDROID -> TargetPlatformKind.Jvm[JvmTarget.fromString(
-                sourceSetData.targetCompatibility ?: ""
-            ) ?: JvmTarget.DEFAULT]
-            KotlinPlatform.JS -> TargetPlatformKind.JavaScript
-            KotlinPlatform.COMMON -> TargetPlatformKind.Common
+            KotlinPlatform.JVM, KotlinPlatform.ANDROID -> {
+                val target = JvmTarget.fromString(sourceSetData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
+                JvmIdePlatformKind.Platform(target)
+            }
+            KotlinPlatform.JS -> JsIdePlatformKind.Platform
+            KotlinPlatform.COMMON -> CommonIdePlatformKind.Platform
         }
         val coroutinesProperty = CoroutineSupport.byCompilerArgument(
             mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)

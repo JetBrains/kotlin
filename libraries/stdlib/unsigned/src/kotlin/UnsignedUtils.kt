@@ -3,15 +3,18 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseExperimental(ExperimentalUnsignedTypes::class)
 package kotlin
 
 internal fun uintCompare(v1: Int, v2: Int): Int = (v1 xor Int.MIN_VALUE).compareTo(v2 xor Int.MIN_VALUE)
 internal fun ulongCompare(v1: Long, v2: Long): Int = (v1 xor Long.MIN_VALUE).compareTo(v2 xor Long.MIN_VALUE)
 
 internal fun uintDivide(v1: UInt, v2: UInt): UInt = (v1.toLong() / v2.toLong()).toUInt()
-internal fun uintRemainder(v1: UInt, v2: UInt): UInt = (v1.toLong() / v2.toLong()).toUInt()
+internal fun uintRemainder(v1: UInt, v2: UInt): UInt = (v1.toLong() % v2.toLong()).toUInt()
 
-// TODO: Add reference to Guava implementation source
+// Division and remainder are based on Guava's UnsignedLongs implementation
+// Copyright 2011 The Guava Authors
+
 internal fun ulongDivide(v1: ULong, v2: ULong): ULong {
     val dividend = v1.toLong()
     val divisor = v2.toLong()
@@ -57,8 +60,7 @@ internal fun ulongRemainder(v1: ULong, v2: ULong): ULong {
 internal fun ulongToString(v: Long): String = ulongToString(v, 10)
 
 internal fun ulongToString(v: Long, base: Int): String {
-    require(base == 10) // TODO: toString(base) support in common
-    if (v >= 0) return v.toString(/* base */)
+    if (v >= 0) return v.toString(base)
 
     var quotient = ((v ushr 1) / base) shl 1
     var rem = v - quotient * base
@@ -66,6 +68,6 @@ internal fun ulongToString(v: Long, base: Int): String {
         rem -= base
         quotient += 1
     }
-    return quotient.toString(/* base */) + rem.toString(/* base */)
+    return quotient.toString(base) + rem.toString(base)
 }
 

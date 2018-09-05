@@ -63,7 +63,7 @@ class BatchTemplateRunner(private val project: Project) {
                     editor,
                     template,
                     object : TemplateEditingAdapter() {
-                        override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                        override fun templateFinished(template: Template, brokenOff: Boolean) {
                             if (brokenOff) return
                             ApplicationManager.getApplication().invokeLater { runTemplates(iterator) }
                         }

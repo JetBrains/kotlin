@@ -9,13 +9,13 @@ Note: diagnostic tests format specification you can see in the [diagnostic tests
 Each test relates to a specific section, paragraph, and sentence of the Kotlin language specification, and is either positive or negative.
 
 The folder structure is as follows:
-* `s-<sectionNumber>_<sectionName>`
+* `<sectionName>`
     * `p-<paragraphNumber>`
         * `<neg|pos>`
             * `<setenceNumber>.<testNumber>.kt` (test source code)
             * `<setenceNumber>.<testNumber>.txt` (descriptors file)
 
-Example test file path: `testsSpec/s-16.30_when-expression/p-2/neg/3.1.kt`
+Example test file path: `testData/diagnostics/linked/when-expression/p-2/neg/3.1.kt`
 
 ## Positive and negative tests
 
@@ -35,9 +35,9 @@ A comment with meta information has the following format:
 /*
  KOTLIN SPEC TEST (<POSITIVE|NEGATIVE>)
 
- SECTION <sectionNumber>: <sectionName>
+ SECTION: <sectionName>
  PARAGRAPH: <paragraphNumber>
- SENTENCE <setenceNumber>: <setence>
+ SENTENCE: [<setenceNumber>] <setence>
  NUMBER: <testNumber>
  DESCRIPTION: <testDescription>
  */
@@ -45,17 +45,17 @@ A comment with meta information has the following format:
 Example:
 ```
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
 
- SECTION 16.30: When expression
- PARAGRAPH: 3
- SENTENCE 2: Each entry consists of a boolean condition (or a special else condition), each of which is checked and evaluated in order of appearance.
+ SECTION: when-expression
+ PARAGRAPH: 2
+ SENTENCE: [3] When expression has two different forms: with bound value and without it.
  NUMBER: 1
- DESCRIPTION: 'When' with not boolean condition in 'when condition'
+ DESCRIPTION: Empty 'when' with bound value.
  */
 ```
 
-Meta-information should be placed at the beginning of the file after diagnostic directives (if any).
+Meta-information should be placed at the beginning of the file after directives (if any).
 
 ### Case description
 
@@ -92,23 +92,23 @@ If the validation fails, you will receive exception about it.
 During the test run, the following information is displayed for each test:
 
 ```
-<POSITIVE|NEGATIVE> DIAGNOSTICS SPEC TEST
-SECTION: <sectionNumber> <sectionName> (paragraph: <paragraphNumber>)
-SENTENCE <sentenceNumber> [<specUrl>]: <sentence>
+DIAGNOSTICS <POSITIVE|NEGATIVE> SPEC TEST
+SECTION: <sectionName> (paragraph: <paragraphNumber>)
+SENTENCE <sentenceNumber>: <sentence>
 TEST NUMBER: <testNumber>
-NUMBER OF TEST CASES: <casesNumber>
+TEST CASES: <casesNumber>
 DESCRIPTION: <testDescription>
 DIAGNOSTICS: <diagnosticSeverities> | <diagnostics>
 ```
 Example:
 ```
-POSITIVE DIAGNOSTICS SPEC TEST
-SECTION: 16.30 When expression (paragraph: 5)
-SENTENCE 1 [http://jetbrains.github.io/kotlin-spec/#when-expression:5:1]: The type of the resulting expression is the least upper bound of the types of all the entries.
-TEST NUMBER: 4
-NUMBER OF TEST CASES: 9
-DESCRIPTION: 'When' least upper bound of the types check (when exhaustive via sealed class).
-DIAGNOSTICS: {WARNING=15} | {USELESS_IS_CHECK=1, IMPLICIT_CAST_TO_ANY=14}
+DIAGNOSTICS NEGATIVE SPEC TEST
+SECTION: when-expression (paragraph: 3)
+SENTENCE 1: 
+TEST NUMBER: 1
+NUMBER OF TEST CASES: 3
+DESCRIPTION: 'When' without bound value and not allowed break and continue expression (without labels) in the control structure body.
+DIAGNOSTICS: {ERROR=2, WARNING=1} | {BREAK_OR_CONTINUE_IN_WHEN=2, UNREACHABLE_CODE=1}
 ```
 
 ## Statistics on specification tests
@@ -118,18 +118,19 @@ To see statistics for existing tests you can run gradle task `printSpecTestStati
 Example output:
 ```
 
---------------------------------------------------
+==================================================
 SPEC TESTS STATISTIC
 --------------------------------------------------
-DIAGNOSTICS: 131 tests
-  16.30 WHEN-EXPRESSION: 131 tests
-    PARAGRAPH 2: 4 tests (neg: 2, pos: 2)
-    PARAGRAPH 3: 35 tests (neg: 5, pos: 30)
-    PARAGRAPH 4: 67 tests (neg: 11, pos: 56)
-    PARAGRAPH 5: 8 tests (neg: 4, pos: 4)
-    PARAGRAPH 6: 17 tests (neg: 8, pos: 9)
 PSI: 0 tests
+DIAGNOSTICS: 54 tests
+  when-expression: 54 tests
+    PARAGRAPH 9: 8 tests [ neg: 4 ] [ pos: 4 ]
+    PARAGRAPH 7: 16 tests [ neg: 7 ] [ pos: 9 ]
+    PARAGRAPH 6: 2 tests [ neg: 1 ] [ pos: 1 ]
+    PARAGRAPH 11: 17 tests [ neg: 8 ] [ pos: 9 ]
+    PARAGRAPH 3: 7 tests [ neg: 3 ] [ pos: 4 ]
+    PARAGRAPH 2: 2 tests [ pos: 2 ]
+    PARAGRAPH 5: 2 tests [ neg: 1 ] [ pos: 1 ]
 CODEGEN: 0 tests
---------------------------------------------------
 
 ```

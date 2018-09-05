@@ -316,6 +316,29 @@ fun IrAnnotationContainer.hasAnnotation(name: FqName) =
         it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
     }
 
+val IrConstructor.constructedClassType get() = (parent as IrClass).thisReceiver?.type!!
+
+fun IrFunction.isFakeOverriddenFromAny(): Boolean {
+    if (origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+        return (parent as? IrClass)?.thisReceiver?.type?.isAny() ?: false
+    }
+
+    return (this as IrSimpleFunction).overriddenSymbols.all { it.owner.isFakeOverriddenFromAny() }
+}
+
+fun IrCall.isSuperToAny() = superQualifier?.let { this.symbol.owner.isFakeOverriddenFromAny() } ?: false
+
+fun IrDeclaration.isEffectivelyExternal(): Boolean {
+    return when (this) {
+        is IrFunction -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        is IrField -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        is IrClass -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
+        else -> false
+    }
+}
+
+fun IrDeclaration.isDynamic() = this is IrFunction && dispatchReceiverParameter?.type is IrDynamicType
+
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
     assert(this.descriptor.type == newDescriptor.type)
 

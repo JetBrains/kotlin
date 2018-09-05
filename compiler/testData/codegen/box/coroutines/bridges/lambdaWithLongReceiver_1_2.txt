@@ -1,0 +1,30 @@
+@kotlin.Metadata
+final class LambdaWithLongReceiverKt$box$1$1 {
+    private field p$: long
+    inner class LambdaWithLongReceiverKt$box$1
+    inner class LambdaWithLongReceiverKt$box$1$1
+    method <init>(p0: kotlin.coroutines.experimental.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): kotlin.coroutines.experimental.Continuation
+    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+final class LambdaWithLongReceiverKt$box$1 {
+    synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
+    field L$0: java.lang.Object
+    inner class LambdaWithLongReceiverKt$box$1
+    inner class LambdaWithLongReceiverKt$box$1$1
+    method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.experimental.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): kotlin.coroutines.experimental.Continuation
+    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    public final method invoke(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class LambdaWithLongReceiverKt {
+    inner class LambdaWithLongReceiverKt$box$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static @org.jetbrains.annotations.Nullable method call(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
+}

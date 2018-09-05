@@ -35,6 +35,7 @@ class IrTypeParameterImpl(
     override val symbol: IrTypeParameterSymbol,
     override val name: Name,
     override val index: Int,
+    override val isReified: Boolean,
     override val variance: Variance
 ) :
     IrDeclarationBase(startOffset, endOffset, origin),
@@ -50,9 +51,21 @@ class IrTypeParameterImpl(
                 startOffset, endOffset, origin, symbol,
                 symbol.descriptor.name,
                 symbol.descriptor.index,
+                symbol.descriptor.isReified,
                 symbol.descriptor.variance
             )
 
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrTypeParameterSymbol,
+        name: Name,
+        index: Int,
+        variance: Variance
+    ) : this(startOffset, endOffset, origin, symbol, name, index, symbol.descriptor.isReified, variance)
+
+    @Deprecated("Use constructor which takes symbol instead of descriptor")
     constructor(
         startOffset: Int,
         endOffset: Int,

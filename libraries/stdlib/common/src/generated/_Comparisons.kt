@@ -16,6 +16,7 @@ package kotlin.comparisons
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 
 /**
  * Returns the greater of two values.

@@ -1,6 +1,12 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/inlineClasses/common.kt:3:8: warning: the feature "inline classes" is experimental
+expect inline class Foo1(val x: Int)
+       ^
+compiler/testData/multiplatform/inlineClasses/common.kt:4:8: warning: the feature "inline classes" is experimental
+expect inline class Foo2(val y: String)
+       ^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

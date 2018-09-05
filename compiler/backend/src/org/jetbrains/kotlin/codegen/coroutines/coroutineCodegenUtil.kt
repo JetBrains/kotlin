@@ -54,8 +54,9 @@ const val COROUTINE_LABEL_FIELD_NAME = "label"
 const val SUSPEND_FUNCTION_CREATE_METHOD_NAME = "create"
 const val DO_RESUME_METHOD_NAME = "doResume"
 const val INVOKE_SUSPEND_METHOD_NAME = "invokeSuspend"
-const val DATA_FIELD_NAME = "data"
 const val EXCEPTION_FIELD_NAME = "exception"
+
+private val RELEASE_COROUTINES_VERSION_SETTINGS = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3)
 
 fun LanguageVersionSettings.isResumeImplMethodName(name: String) =
     if (isReleaseCoroutines())
@@ -63,10 +64,15 @@ fun LanguageVersionSettings.isResumeImplMethodName(name: String) =
     else
         name == DO_RESUME_METHOD_NAME
 
+fun LanguageVersionSettings.dataFieldName(): String = if (isReleaseCoroutines()) "result" else "data"
+
 fun isResumeImplMethodNameFromAnyLanguageSettings(name: String) = name == INVOKE_SUSPEND_METHOD_NAME || name == DO_RESUME_METHOD_NAME
 
 fun LanguageVersionSettings.coroutinesJvmInternalPackageFqName() =
     coroutinesPackageFqName().child(Name.identifier("jvm")).child(Name.identifier("internal"))
+
+val DEBUG_METADATA_ANNOTATION_ASM_TYPE = RELEASE_COROUTINES_VERSION_SETTINGS.coroutinesJvmInternalPackageFqName()
+    .child(Name.identifier("DebugMetadata")).topLevelClassAsmType()
 
 fun LanguageVersionSettings.continuationAsmType() =
     continuationInterfaceFqName().topLevelClassAsmType()

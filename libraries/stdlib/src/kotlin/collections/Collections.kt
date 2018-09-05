@@ -10,6 +10,7 @@ package kotlin.collections
 
 import kotlin.*
 import kotlin.comparisons.compareValues
+import kotlin.contracts.*
 
 internal object EmptyIterator : ListIterator<Nothing> {
     override fun hasNext(): Boolean = false
@@ -169,6 +170,20 @@ public val <T> List<T>.lastIndex: Int
 public inline fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
 /**
+ * Returns `true` if this nullable collection is either null or empty.
+ * @sample samples.collections.Collections.Collections.collectionIsNullOrEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <T> Collection<T>?.isNullOrEmpty(): Boolean {
+    contract {
+        returns(false) implies (this@isNullOrEmpty != null)
+    }
+
+    return this == null || this.isEmpty()
+}
+
+/**
  * Returns this Collection if it's not `null` and the empty list otherwise.
  * @sample samples.collections.Collections.Collections.collectionOrEmpty
  */
@@ -181,6 +196,18 @@ public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyLis
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
+
+/**
+ * Returns this collection if it's not empty
+ * or the result of calling [defaultValue] function if the collection is empty.
+ *
+ * @sample samples.collections.Collections.Collections.collectionIfEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R =
+    if (isEmpty()) defaultValue() else this
+
 
 /**
  * Checks if all elements in the specified collection are contained in this collection.
@@ -348,4 +375,21 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
     }
 }
 
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal expect fun checkIndexOverflow(index: Int): Int
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal expect fun checkCountOverflow(count: Int): Int
+
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal fun throwIndexOverflow() { throw ArithmeticException("Index overflow has happened.") }
+
+@PublishedApi
+@SinceKotlin("1.3")
+internal fun throwCountOverflow() { throw ArithmeticException("Count overflow has happened.") }
 

@@ -26,12 +26,12 @@ import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
@@ -126,9 +126,9 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 }
 
 fun Module.createFacet(
-        platformKind: TargetPlatformKind<*>? = null,
-        useProjectSettings: Boolean = true,
-        implementedModuleName: String? = null
+    platformKind: IdePlatform<*, *>? = null,
+    useProjectSettings: Boolean = true,
+    implementedModuleName: String? = null
 ) {
     WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)

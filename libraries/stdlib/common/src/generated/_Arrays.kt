@@ -16,6 +16,7 @@ package kotlin.collections
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 
 /**
  * Returns 1st *element* from the collection.
@@ -2047,6 +2048,213 @@ public inline fun CharArray.lastOrNull(predicate: (Char) -> Boolean): Char? {
         if (predicate(element)) return element
     }
     return null
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.random(): T {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.random(): Byte {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.random(): Short {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun IntArray.random(): Int {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun LongArray.random(): Long {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.random(): Float {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.random(): Double {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.random(): Boolean {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun CharArray.random(): Char {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun <T> Array<out T>.random(random: Random): T {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun ByteArray.random(random: Random): Byte {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun ShortArray.random(random: Random): Short {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun IntArray.random(random: Random): Int {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun LongArray.random(random: Random): Long {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun FloatArray.random(random: Random): Float {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun DoubleArray.random(random: Random): Double {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun BooleanArray.random(random: Random): Boolean {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
+}
+
+/**
+ * Returns a random element from this array using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this array is empty.
+ */
+@SinceKotlin("1.3")
+public fun CharArray.random(random: Random): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Array is empty.")
+    return get(random.nextInt(size))
 }
 
 /**
@@ -5573,6 +5781,177 @@ public expect fun BooleanArray.contentToString(): String
 public expect fun CharArray.contentToString(): String
 
 /**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): Array<T>
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): ByteArray
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): ShortArray
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): IntArray
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): LongArray
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): FloatArray
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): DoubleArray
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): BooleanArray
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+public expect fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1): CharArray
+
+/**
  * Returns new array which is a copy of the original array.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
@@ -5737,48 +6116,75 @@ public expect fun CharArray.copyOf(newSize: Int): CharArray
 public expect fun <T> Array<T>.copyOf(newSize: Int): Array<T?>
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 public expect fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T>
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public expect fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public expect fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public expect fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public expect fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public expect fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public expect fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public expect fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public expect fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 
@@ -9674,7 +10080,7 @@ public inline fun CharArray.count(): Int {
  */
 public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9683,7 +10089,7 @@ public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
  */
 public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9692,7 +10098,7 @@ public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
  */
 public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9701,7 +10107,7 @@ public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
  */
 public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9710,7 +10116,7 @@ public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
  */
 public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9719,7 +10125,7 @@ public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
  */
 public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9728,7 +10134,7 @@ public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
  */
 public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9737,7 +10143,7 @@ public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
  */
 public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -9746,7 +10152,7 @@ public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
  */
 public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -13477,7 +13883,7 @@ public fun Array<out Byte>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13491,7 +13897,7 @@ public fun Array<out Short>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13505,7 +13911,7 @@ public fun Array<out Int>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13519,7 +13925,7 @@ public fun Array<out Long>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13533,7 +13939,7 @@ public fun Array<out Float>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13547,7 +13953,7 @@ public fun Array<out Double>.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13560,7 +13966,7 @@ public fun ByteArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13573,7 +13979,7 @@ public fun ShortArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13586,7 +13992,7 @@ public fun IntArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13599,7 +14005,7 @@ public fun LongArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13612,7 +14018,7 @@ public fun FloatArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }
@@ -13625,7 +14031,7 @@ public fun DoubleArray.average(): Double {
     var count: Int = 0
     for (element in this) {
         sum += element
-        count += 1
+        ++count
     }
     return if (count == 0) Double.NaN else sum / count
 }

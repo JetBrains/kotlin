@@ -42,4 +42,13 @@ public interface ContinuationInterceptor : CoroutineContext.Element {
     public fun releaseInterceptedContinuation(continuation: Continuation<*>) {
         /* do nothing by default */
     }
+
+    // Performance optimization for a singleton Key
+    public override operator fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? =
+        @Suppress("UNCHECKED_CAST")
+        if (key === Key) this as E else null
+
+    // Performance optimization to a singleton Key
+    public override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext =
+        if (key === Key) EmptyCoroutineContext else this
 }

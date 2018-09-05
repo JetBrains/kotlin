@@ -10,6 +10,8 @@ import kotlin.test.*
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.comparisons.*
+import kotlin.math.sin
+import kotlin.random.Random
 
 class CollectionTest {
 
@@ -358,6 +360,18 @@ class CollectionTest {
         assertEquals(namesByTeam, mutableNamesByTeam)
     }
 
+    @Test fun associateWith() {
+        val items = listOf("Alice", "Bob", "Carol")
+        val itemsWithTheirLength = items.associateWith { it.length }
+
+        assertEquals(mapOf("Alice" to 5, "Bob" to 3, "Carol" to 5), itemsWithTheirLength)
+
+        val updatedLength =
+            items.drop(1).associateWithTo(itemsWithTheirLength.toMutableMap()) { name -> name.toLowerCase().count { it in "aeuio" }}
+
+        assertEquals(mapOf("Alice" to 5, "Bob" to 1, "Carol" to 2), updatedLength)
+    }
+
     @Test fun plusRanges() {
         val range1 = 1..3
         val range2 = 4..7
@@ -606,6 +620,31 @@ class CollectionTest {
         assertEquals(25, listOf(15, 19, 20, 25).last())
         assertEquals('a', listOf('a').last())
         assertFails { arrayListOf<Int>().last() }
+    }
+
+    @Test fun random() {
+        val list = List(100) { it }
+        val set = list.toSet()
+        listOf(list, set).forEach { collection: Collection<Int> ->
+            val tosses = List(10) { collection.random() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { collection.random(random1) }
+            val tosses2 = List(10) { collection.random(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        listOf("x").let { singletonList ->
+            val tosses = List(10) { singletonList.random() }
+            assertEquals(singletonList, tosses.distinct())
+        }
+
+        assertFailsWith<NoSuchElementException> { emptyList<Any>().random() }
     }
 
     @Test fun subscript() {

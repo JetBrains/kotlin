@@ -11,7 +11,7 @@ package kotlin.text
 
 import kotlin.*
 import kotlin.comparisons.*
-import kotlin.internal.contracts.*
+import kotlin.contracts.contract
 
 
 /**
@@ -275,6 +275,28 @@ public operator fun CharSequence.iterator(): CharIterator = object : CharIterato
 /** Returns the string if it is not `null`, or the empty string otherwise. */
 @kotlin.internal.InlineOnly
 public inline fun String?.orEmpty(): String = this ?: ""
+
+/**
+ * Returns this char sequence if it's not empty
+ * or the result of calling [defaultValue] function if the char sequence is empty.
+ *
+ * @sample samples.text.Strings.stringIfEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : CharSequence, C : R =
+    if (isEmpty()) defaultValue() else this
+
+/**
+ * Returns this char sequence if it is not empty and doesn't consist solely of whitespace characters,
+ * or the result of calling [defaultValue] function otherwise.
+ *
+ * @sample samples.text.Strings.stringIfBlank
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <C, R> C.ifBlank(defaultValue: () -> R): R where C : CharSequence, C : R =
+    if (isBlank()) defaultValue() else this
 
 /**
  * Returns the range of valid character indices for this char sequence.

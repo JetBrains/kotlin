@@ -7,6 +7,8 @@ package kotlin.internal
 
 import kotlin.*
 import java.util.regex.MatchResult
+import kotlin.random.FallbackThreadLocalRandom
+import kotlin.random.Random
 
 internal open class PlatformImplementations {
 
@@ -17,6 +19,8 @@ internal open class PlatformImplementations {
     public open fun getMatchResultNamedGroup(matchResult: MatchResult, name: String): MatchGroup? {
         throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
     }
+
+    public open fun defaultPlatformRandom(): Random = FallbackThreadLocalRandom()
 }
 
 

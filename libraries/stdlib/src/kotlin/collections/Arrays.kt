@@ -9,6 +9,8 @@
 
 package kotlin.collections
 
+import kotlin.contracts.*
+
 
 /**
  * Returns a single list of all elements from all arrays in the given array.
@@ -37,3 +39,29 @@ public fun <T, R> Array<out Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     }
     return listT to listR
 }
+
+/**
+ * Returns `true` if this nullable array is either null or empty.
+ * @sample samples.collections.Arrays.Usage.arrayIsNullOrEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun Array<*>?.isNullOrEmpty(): Boolean {
+    contract {
+        returns(false) implies (this@isNullOrEmpty != null)
+    }
+
+    return this == null || this.isEmpty()
+}
+
+/**
+ * Returns this array if it's not empty
+ * or the result of calling [defaultValue] function if the array is empty.
+ *
+ * @sample samples.collections.Arrays.Usage.arrayIfEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("UPPER_BOUND_CANNOT_BE_ARRAY")
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Array<*>, C : R =
+    if (isEmpty()) defaultValue() else this

@@ -13,18 +13,18 @@ object Test {
     fun withNullableReferenceAsNullable(a: InlineNullableReference?) {}
 }
 
-// method: Test::withPrimitiveAsNullable
+// method: Test::withPrimitiveAsNullable-arwt9fzf
 // jvm signature: (LInlinePrimitive;)V
 // generic signature: null
 
-// method: Test::withReferenceAsNullable
+// method: Test::withReferenceAsNullable-8k1ogbuu
 // jvm signature: (Ljava/lang/String;)V
 // generic signature: null
 
-// method: Test::withNullablePrimitiveAsNullable
+// method: Test::withNullablePrimitiveAsNullable-aiqm4cvc
 // jvm signature: (LInlineNullablePrimitive;)V
 // generic signature: null
 
-// method: Test::withNullableReferenceAsNullable
+// method: Test::withNullableReferenceAsNullable-7pmrpo2y
 // jvm signature: (LInlineNullableReference;)V
 // generic signature: null

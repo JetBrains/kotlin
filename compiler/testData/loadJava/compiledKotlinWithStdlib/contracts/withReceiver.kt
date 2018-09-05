@@ -1,9 +1,9 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +ReadDeserializedContracts
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 package test
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 fun Any?.isNotNull(): Boolean {
     contract {

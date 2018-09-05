@@ -18,8 +18,13 @@ package org.jetbrains.kotlin.android.intention
 
 import com.android.resources.ResourceType
 import com.intellij.CommonBundle
-import com.intellij.codeInsight.template.*
-import com.intellij.codeInsight.template.impl.*
+import com.intellij.codeInsight.template.Template
+import com.intellij.codeInsight.template.TemplateEditingAdapter
+import com.intellij.codeInsight.template.TemplateManager
+import com.intellij.codeInsight.template.impl.ConstantNode
+import com.intellij.codeInsight.template.impl.MacroCallNode
+import com.intellij.codeInsight.template.impl.TemplateImpl
+import com.intellij.codeInsight.template.impl.TemplateState
 import com.intellij.codeInsight.template.macro.VariableOfTypeMacro
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.undo.UndoUtil
@@ -167,7 +172,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
                 ShortenReferences.DEFAULT.process(file, marker.startOffset, marker.endOffset)
             }
 
-            override fun beforeTemplateFinished(state: TemplateState?, template: Template?) {
+            override fun beforeTemplateFinished(state: TemplateState, template: Template?) {
                 ShortenReferences.DEFAULT.process(file, marker.startOffset, marker.endOffset)
             }
         })

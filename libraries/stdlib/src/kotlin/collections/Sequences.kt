@@ -9,6 +9,7 @@
 package kotlin.sequences
 
 import kotlin.*
+import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values through the [Iterator]
@@ -45,6 +46,31 @@ private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
     override fun iterator(): Iterator<Nothing> = EmptyIterator
     override fun drop(n: Int) = EmptySequence
     override fun take(n: Int) = EmptySequence
+}
+
+/**
+ * Returns this sequence if it's not `null` and the empty sequence otherwise.
+ * @sample samples.collections.Sequences.Usage.sequenceOrEmpty
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>?.orEmpty(): Sequence<T> = this ?: emptySequence()
+
+
+/**
+ * Returns a sequence that iterates through the elements either of this sequence
+ * or, if this sequence turns out to be empty, of the sequence returned by [defaultValue] function.
+ *
+ * @sample samples.collections.Sequences.Usage.sequenceIfEmpty
+ */
+@SinceKotlin("1.3")
+public fun <T> Sequence<T>.ifEmpty(defaultValue: () -> Sequence<T>): Sequence<T> = buildSequence {
+    val iterator = this@ifEmpty.iterator()
+    if (iterator.hasNext()) {
+        yieldAll(iterator)
+    } else {
+        yieldAll(defaultValue())
+    }
 }
 
 /**
@@ -170,7 +196,7 @@ constructor(private val sequence: Sequence<T>, private val transformer: (Int, T)
         val iterator = sequence.iterator()
         var index = 0
         override fun next(): R {
-            return transformer(index++, iterator.next())
+            return transformer(checkIndexOverflow(index++), iterator.next())
         }
 
         override fun hasNext(): Boolean {
@@ -189,7 +215,7 @@ constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
         val iterator = sequence.iterator()
         var index = 0
         override fun next(): IndexedValue<T> {
-            return IndexedValue(index++, iterator.next())
+            return IndexedValue(checkIndexOverflow(index++), iterator.next())
         }
 
         override fun hasNext(): Boolean {
@@ -413,8 +439,8 @@ internal class DropSequence<T>(
         require(count >= 0) { "count must be non-negative, but was $count." }
     }
 
-    override fun drop(n: Int): Sequence<T> = DropSequence(sequence, count + n)
-    override fun take(n: Int): Sequence<T> = SubSequence(sequence, count, count + n)
+    override fun drop(n: Int): Sequence<T> = (count + n).let { n1 -> if (n1 < 0) DropSequence(this, n) else DropSequence(sequence, n1) }
+    override fun take(n: Int): Sequence<T> = (count + n).let { n1 -> if (n1 < 0) TakeSequence(this, n) else SubSequence(sequence, count, n1) }
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator()

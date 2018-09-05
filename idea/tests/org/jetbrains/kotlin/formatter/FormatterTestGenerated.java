@@ -41,6 +41,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/AnnotationBeforeExpression.after.kt");
         }
 
+        @TestMetadata("AnnotationBeforeTypeAliasOrConstructor.after.kt")
+        public void testAnnotationBeforeTypeAliasOrConstructor() throws Exception {
+            runTest("idea/testData/formatter/AnnotationBeforeTypeAliasOrConstructor.after.kt");
+        }
+
         @TestMetadata("AnonymousInitializers.after.kt")
         public void testAnonymousInitializers() throws Exception {
             runTest("idea/testData/formatter/AnonymousInitializers.after.kt");

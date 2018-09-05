@@ -1,0 +1,5 @@
+package
+
+internal inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+internal inline fun case_2(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+internal inline fun contractBuilder(/*0*/ block: () -> kotlin.Unit): kotlin.contracts.ContractBuilder.() -> kotlin.Unit

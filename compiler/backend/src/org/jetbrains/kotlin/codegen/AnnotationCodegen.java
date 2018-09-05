@@ -25,10 +25,12 @@ import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.AnnotationChecker;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -166,10 +168,17 @@ public abstract class AnnotationCodegen {
             if (isInvisibleFromTheOutside(descriptor)) return;
             if (descriptor instanceof ValueParameterDescriptor && isInvisibleFromTheOutside(descriptor.getContainingDeclaration())) return;
 
+            // No need to annotate annotation methods since they're always non-null
+            if (descriptor instanceof PropertyGetterDescriptor &&
+                DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
+                return;
+            }
+
             if (returnType != null && !AsmUtil.isPrimitive(returnType)) {
                 generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
             }
         }
+
         if (unwrapped instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) unwrapped;
             if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
@@ -338,9 +347,20 @@ public abstract class AnnotationCodegen {
     }
 
     private void genAnnotationArguments(AnnotationDescriptor annotationDescriptor, AnnotationVisitor annotationVisitor) {
+        ClassDescriptor annotationClass = DescriptorUtilsKt.getAnnotationClass(annotationDescriptor);
         for (Map.Entry<Name, ConstantValue<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
-            genCompileTimeValue(entry.getKey().asString(), entry.getValue(), annotationVisitor);
+            genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, entry.getKey()), entry.getValue(), annotationVisitor);
         }
+    }
+
+    private String getAnnotationArgumentJvmName(@Nullable ClassDescriptor annotationClass, @NotNull Name parameterName) {
+        if (annotationClass == null) return parameterName.asString();
+
+        Collection<PropertyDescriptor> variables =
+                annotationClass.getUnsubstitutedMemberScope().getContributedVariables(parameterName, NoLookupLocation.FROM_BACKEND);
+        if (variables.size() != 1) return parameterName.asString();
+
+        return typeMapper.mapAnnotationParameterName(variables.iterator().next());
     }
 
     private void genCompileTimeValue(

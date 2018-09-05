@@ -16,6 +16,7 @@ package kotlin.text
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 
 /**
  * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
@@ -168,6 +169,29 @@ public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
         if (predicate(element)) return element
     }
     return null
+}
+
+/**
+ * Returns a random character from this char sequence.
+ * 
+ * @throws NoSuchElementException if this char sequence is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.random(): Char {
+    return random(Random)
+}
+
+/**
+ * Returns a random character from this char sequence using the specified source of randomness.
+ * 
+ * @throws NoSuchElementException if this char sequence is empty.
+ */
+@SinceKotlin("1.3")
+public fun CharSequence.random(random: Random): Char {
+    if (isEmpty())
+        throw NoSuchElementException("Char sequence is empty.")
+    return get(random.nextInt(length))
 }
 
 /**
@@ -616,6 +640,36 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(de
 }
 
 /**
+ * Returns a [Map] where keys are characters from the given char sequence and values are
+ * produced by the [valueSelector] function applied to each character.
+ * 
+ * If any two characters are equal, the last one gets added to the map.
+ * 
+ * The returned map preserves the entry iteration order of the original char sequence.
+ * 
+ * @sample samples.text.Strings.associateWith
+ */
+@SinceKotlin("1.3")
+public inline fun <V> CharSequence.associateWith(valueSelector: (Char) -> V): Map<Char, V> {
+    val result = LinkedHashMap<Char, V>(mapCapacity(length).coerceAtLeast(16))
+    return associateWithTo(result, valueSelector)
+}
+
+/**
+ * Populates and returns the [destination] mutable map with key-value pairs for each character of the given char sequence,
+ * where key is the character itself and value is provided by the [valueSelector] function applied to that key.
+ * 
+ * If any two characters are equal, the last one overwrites the former value in the map.
+ */
+@SinceKotlin("1.3")
+public inline fun <V, M : MutableMap<in Char, in V>> CharSequence.associateWithTo(destination: M, valueSelector: (Char) -> V): M {
+    for (element in this) {
+        destination.put(element, valueSelector(element))
+    }
+    return destination
+}
+
+/**
  * Appends all characters to the given [destination] collection.
  */
 public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destination: C): C {
@@ -883,7 +937,7 @@ public inline fun CharSequence.count(): Int {
  */
 public inline fun CharSequence.count(predicate: (Char) -> Boolean): Int {
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 

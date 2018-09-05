@@ -7,7 +7,7 @@
 @file:kotlin.jvm.JvmName("StandardKt")
 package kotlin
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 /**
  * An exception is thrown to indicate that a method body remains to be implemented.

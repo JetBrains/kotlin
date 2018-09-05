@@ -172,7 +172,7 @@ public class RangeTest {
         assertTrue('Y' in openRange)
         assertFalse('Z' in openRange)
 
-        assertTrue(('A' until '\u0000').isEmpty())
+        assertTrue(('A' until Char.MIN_VALUE).isEmpty())
     }
 
     @Test fun doubleRange() {
@@ -379,5 +379,21 @@ public class RangeTest {
         assertFailsWithIllegalArgument { 0.toShort() downTo -5.toShort() step -2 }
         assertFailsWithIllegalArgument { 0L downTo -5L step -2L }
         assertFailsWithIllegalArgument { 'z' downTo 'a' step -2 }
+    }
+
+    @Test fun stepSizeIsTooLow() {
+        assertFailsWithIllegalArgument { CharProgression.fromClosedRange('a', 'b', Int.MIN_VALUE) }
+        assertFailsWithIllegalArgument { IntProgression.fromClosedRange(0, 1, Int.MIN_VALUE) }
+        assertFailsWithIllegalArgument { LongProgression.fromClosedRange(0, 1, Long.MIN_VALUE) }
+        assertFailsWithIllegalArgument { UIntProgression.fromClosedRange(0u, 1u, Int.MIN_VALUE) }
+        assertFailsWithIllegalArgument { ULongProgression.fromClosedRange(0u, 1u, Long.MIN_VALUE) }
+    }
+
+    @Test fun randomInEmptyRange() {
+        assertFailsWith<NoSuchElementException> { IntRange.EMPTY.random() }
+        assertFailsWith<NoSuchElementException> { LongRange.EMPTY.random() }
+        assertFailsWith<NoSuchElementException> { CharRange.EMPTY.random() }
+        assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.random() }
+        assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.random() }
     }
 }

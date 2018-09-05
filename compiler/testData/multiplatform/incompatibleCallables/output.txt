@@ -1,9 +1,6 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/incompatibleCallables/common.kt:32:19: warning: the feature "coroutines" is experimental (see: https://kotlinlang.org/docs/diagnostics/experimental-coroutines)
-expect fun f21(c: suspend Unit.() -> Unit)
-                  ^
 
 -- JVM --
 Exit code: COMPILATION_ERROR

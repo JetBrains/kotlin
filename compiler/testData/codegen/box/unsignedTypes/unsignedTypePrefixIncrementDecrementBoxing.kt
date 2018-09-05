@@ -1,5 +1,5 @@
 // WITH_UNSIGNED
-// IGNORE_BACKEND: JS_IR, JVM_IR, JS
+// IGNORE_BACKEND: JS_IR, JVM_IR
 
 fun prefixDecrementUByteLocal(): Any? {
     var a: UByte = 0u
@@ -89,29 +89,29 @@ fun prefixIncrementULongProperty(): Any? {
 fun check(u: Any?, ts: String, className: String) {
     u!!
     if (u.toString() != ts) throw AssertionError(u.toString())
-    if (u.javaClass.name != className) throw AssertionError(u.javaClass.name)
+    if (u::class.simpleName != className) throw AssertionError(u::class.simpleName)
 }
 
 fun box(): String {
-    check(prefixDecrementUByteLocal(), 0xFFu.toString(), "kotlin.UByte")
-    check(prefixDecrementUShortLocal(), 0xFFFFu.toString(), "kotlin.UShort")
-    check(prefixDecrementUIntLocal(), 0xFFFF_FFFFu.toString(), "kotlin.UInt")
-    check(prefixDecrementULongLocal(), 0xFFFF_FFFF_FFFF_FFFFUL.toString(), "kotlin.ULong")
+    check(prefixDecrementUByteLocal(), 0xFFu.toString(), "UByte")
+    check(prefixDecrementUShortLocal(), 0xFFFFu.toString(), "UShort")
+    check(prefixDecrementUIntLocal(), 0xFFFF_FFFFu.toString(), "UInt")
+    check(prefixDecrementULongLocal(), 0xFFFF_FFFF_FFFF_FFFFUL.toString(), "ULong")
 
-    check(prefixIncrementUByteLocal(), "1", "kotlin.UByte")
-    check(prefixIncrementUShortLocal(), "1", "kotlin.UShort")
-    check(prefixIncrementUIntLocal(), "1", "kotlin.UInt")
-    check(prefixIncrementULongLocal(), "1", "kotlin.ULong")
+    check(prefixIncrementUByteLocal(), "1", "UByte")
+    check(prefixIncrementUShortLocal(), "1", "UShort")
+    check(prefixIncrementUIntLocal(), "1", "UInt")
+    check(prefixIncrementULongLocal(), "1", "ULong")
 
-    check(prefixDecrementUByteProperty(), 0xFFu.toString(), "kotlin.UByte")
-    check(prefixDecrementUShortProperty(), 0xFFFFu.toString(), "kotlin.UShort")
-    check(prefixDecrementUIntProperty(), 0xFFFF_FFFFu.toString(), "kotlin.UInt")
-    check(prefixDecrementULongProperty(), 0xFFFF_FFFF_FFFF_FFFFUL.toString(), "kotlin.ULong")
+    check(prefixDecrementUByteProperty(), 0xFFu.toString(), "UByte")
+    check(prefixDecrementUShortProperty(), 0xFFFFu.toString(), "UShort")
+    check(prefixDecrementUIntProperty(), 0xFFFF_FFFFu.toString(), "UInt")
+    check(prefixDecrementULongProperty(), 0xFFFF_FFFF_FFFF_FFFFUL.toString(), "ULong")
 
-    check(prefixIncrementUByteProperty(), "1", "kotlin.UByte")
-    check(prefixIncrementUShortProperty(), "1", "kotlin.UShort")
-    check(prefixIncrementUIntProperty(), "1", "kotlin.UInt")
-    check(prefixIncrementULongProperty(), "1", "kotlin.ULong")
+    check(prefixIncrementUByteProperty(), "1", "UByte")
+    check(prefixIncrementUShortProperty(), "1", "UShort")
+    check(prefixIncrementUIntProperty(), "1", "UInt")
+    check(prefixIncrementULongProperty(), "1", "ULong")
 
     return "OK"
 }

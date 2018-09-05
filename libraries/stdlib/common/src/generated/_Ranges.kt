@@ -16,6 +16,82 @@ package kotlin.ranges
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
+
+/**
+ * Returns a random element from this range.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun IntRange.random(): Int {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this range.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun LongRange.random(): Long {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this range.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun CharRange.random(): Char {
+    return random(Random)
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+public fun IntRange.random(random: Random): Int {
+    try {
+        return random.nextInt(this)
+    } catch(e: IllegalArgumentException) {
+        throw NoSuchElementException(e.message)
+    }
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+public fun LongRange.random(random: Random): Long {
+    try {
+        return random.nextLong(this)
+    } catch(e: IllegalArgumentException) {
+        throw NoSuchElementException(e.message)
+    }
+}
+
+/**
+ * Returns a random element from this range using the specified source of randomness.
+ * 
+ * @throws IllegalArgumentException if this range is empty.
+ */
+@SinceKotlin("1.3")
+public fun CharRange.random(random: Random): Char {
+    try {
+        return random.nextInt(first.toInt(), last.toInt() + 1).toChar()
+    } catch(e: IllegalArgumentException) {
+        throw NoSuchElementException(e.message)
+    }
+}
 
 /**
  * Checks if the specified [value] belongs to this range.

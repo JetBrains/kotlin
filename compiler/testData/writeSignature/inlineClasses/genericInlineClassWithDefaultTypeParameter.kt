@@ -15,23 +15,23 @@ object Test {
     fun asNullableAndNullableTypeArgument(a: Default<Int?>?) {}
 }
 
-// method: Test::withNotNullPrimitive
+// method: Test::withNotNullPrimitive-7odoyk9m
 // jvm signature: (Ljava/lang/Object;)V
 // generic signature: null
 
-// method: Test::withAdditionalGenericParameter
+// method: Test::withAdditionalGenericParameter-1k09dck1
 // jvm signature: (LInv;Ljava/lang/Object;)V
 // generic signature: (LInv<Ljava/lang/String;>;Ljava/lang/Object;)V
 
-// method: Test::asNullable
+// method: Test::asNullable-ao7usvyu
 // jvm signature: (LDefault;)V
 // generic signature: (LDefault<Ljava/lang/Integer;>;)V
 
-// method: Test::asNullableTypeArgument
+// method: Test::asNullableTypeArgument-7odoyk9m
 // jvm signature: (Ljava/lang/Object;)V
 // generic signature: null
 
-// method: Test::asNullableAndNullableTypeArgument
+// method: Test::asNullableAndNullableTypeArgument-ao7usvyu
 // jvm signature: (LDefault;)V
 // generic signature: (LDefault<Ljava/lang/Integer;>;)V
 

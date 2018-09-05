@@ -251,7 +251,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     fun testPreReleaseCompilerAgainstPreReleaseLibraryStableLanguageVersion() {
         withPreRelease(true) {
             val library = compileLibrary("library")
-            val someStableReleasedVersion = LanguageVersion.values().first().also { assert(it.isStable) }
+            val someStableReleasedVersion = LanguageVersion.values().first { it.isStable && it >= LanguageVersion.FIRST_SUPPORTED }
             compileKotlin(
                 "source.kt", tmpdir, listOf(library), K2JVMCompiler(),
                 listOf("-language-version", someStableReleasedVersion.versionString)
@@ -393,7 +393,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testTypeAliasesAreInvisibleInCompatibilityMode() {
         val library = compileLibrary("library")
-        compileKotlin("main.kt", tmpdir, listOf(library), K2JVMCompiler(), listOf("-language-version", "1.0"))
+        // -Xskip-metadata-version-check because if master is pre-release, an extra error will be reported when compiling with LV 1.0
+        // against a library compiled by a pre-release compiler
+        compileKotlin(
+            "main.kt", tmpdir, listOf(library), K2JVMCompiler(), listOf("-language-version", "1.0", "-Xskip-metadata-version-check")
+        )
     }
 
     fun testInnerClassPackageConflict() {
@@ -429,7 +433,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testObsoleteInlineSuspend() {
         val version = intArrayOf(1, 0, 1) // legacy coroutines metadata
-        val options = listOf("-Xcoroutines=enable")
+        val options = listOf("-language-version", "1.2", "-Xcoroutines=enable")
         val library = transformJar(
             compileLibrary("library", additionalOptions = options),
             { _, bytes ->

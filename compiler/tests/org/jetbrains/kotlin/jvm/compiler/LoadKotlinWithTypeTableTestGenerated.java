@@ -56,6 +56,11 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
             runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInAnnotationArguments.kt");
         }
 
+        @TestMetadata("ClassLiteralArguments.kt")
+        public void testClassLiteralArguments() throws Exception {
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/ClassLiteralArguments.kt");
+        }
+
         @TestMetadata("EnumArgumentWithCustomToString.kt")
         public void testEnumArgumentWithCustomToString() throws Exception {
             runTest("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");

@@ -14,8 +14,8 @@ fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     }
 
     return js("""
-    if (typeof obj1 === "object" && typeof obj1.equals_Any_ === "function") {
-        return obj1.equals_Any_(obj2);
+    if (typeof obj1 === "object" && typeof obj1.equals_kotlin_Any_ === "function") {
+        return obj1.equals_kotlin_Any_(obj2);
     }
 
     if (obj1 !== obj1) {

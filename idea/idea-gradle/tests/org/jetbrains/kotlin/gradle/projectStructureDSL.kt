@@ -13,9 +13,9 @@ import com.intellij.openapi.roots.*
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.platform.IdePlatform
 
 class MessageCollector {
     private val builder = StringBuilder()
@@ -100,8 +100,8 @@ class ModuleInfo(
         }
     }
 
-    fun platform(platform: TargetPlatformKind<*>) {
-        val actualPlatform = module.targetPlatform
+    fun platform(platform: IdePlatform<*, *>) {
+        val actualPlatform = module.platform
         if (actualPlatform != platform) {
             messageCollector.report(
                 "Module '${module.name}': expected platform '${platform.description}' but found '${actualPlatform?.description}'"

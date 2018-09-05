@@ -31,5 +31,5 @@ fun box(): String {
         result = A<String>().bar()
     }
 
-    return if (result == "Continuation @ A\$bar\$1") "OK" else "Fail: $result"
+    return if (result == "Continuation at A.bar(coroutineToString.kt:16)") "OK" else "Fail: $result"
 }

@@ -52,6 +52,33 @@ class Collections {
         }
 
         @Sample
+        fun collectionIsNullOrEmpty() {
+            val nullList: List<Any>? = null
+            assertTrue(nullList.isNullOrEmpty())
+
+            val empty: List<Any>? = emptyList<Any>()
+            assertTrue(empty.isNullOrEmpty())
+
+            val collection: List<Char>? = listOf('a', 'b', 'c')
+            assertFalse(collection.isNullOrEmpty())
+        }
+
+        @Sample
+        fun collectionIfEmpty() {
+            val empty: List<Int> = emptyList()
+
+            val emptyOrNull: List<Int>? = empty.ifEmpty { null }
+            assertPrints(emptyOrNull, "null")
+
+            val emptyOrDefault: List<Any> = empty.ifEmpty { listOf("default") }
+            assertPrints(emptyOrDefault, "[default]")
+
+            val nonEmpty = listOf("x")
+            val sameList: List<String> = nonEmpty.ifEmpty { listOf("empty") }
+            assertTrue(nonEmpty === sameList)
+        }
+
+        @Sample
         fun collectionContainsAll() {
             val collection = mutableListOf('a', 'b')
             val test = listOf('a', 'b', 'c')
@@ -287,6 +314,14 @@ class Collections {
     }
 
     class Transformations {
+
+        @Sample
+        fun associateWith() {
+            val words = listOf("a", "abc", "ab", "def", "abcd")
+            val withLength = words.associateWith { it.length }
+            assertPrints(withLength.keys, "[a, abc, ab, def, abcd]")
+            assertPrints(withLength.values, "[1, 3, 2, 3, 4]")
+        }
 
         @Sample
         fun groupBy() {

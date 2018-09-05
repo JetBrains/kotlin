@@ -1,4 +1,2 @@
-compiler/testData/cli/jvm/coroutines.kt:1:1: error: the feature "coroutines" is experimental and disabled (see: https://kotlinlang.org/docs/diagnostics/experimental-coroutines)
-suspend fun simple() = 5
-^
-COMPILATION_ERROR
+warning: -Xcoroutines has no effect: coroutines are enabled anyway in 1.3 and beyond
+OK

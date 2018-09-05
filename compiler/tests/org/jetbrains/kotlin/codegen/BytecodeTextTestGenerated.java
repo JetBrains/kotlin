@@ -2058,6 +2058,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/checkOuterInlineFunctionCall.kt");
         }
 
+        @TestMetadata("constructorWithInlineClassParametersIsNotMangled.kt")
+        public void testConstructorWithInlineClassParametersIsNotMangled() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/constructorWithInlineClassParametersIsNotMangled.kt");
+        }
+
+        @TestMetadata("functionsWithInlineClassParametersHaveStableMangledNames.kt")
+        public void testFunctionsWithInlineClassParametersHaveStableMangledNames() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/functionsWithInlineClassParametersHaveStableMangledNames.kt");
+        }
+
         @TestMetadata("generationOfAccessorToUnderlyingValue.kt")
         public void testGenerationOfAccessorToUnderlyingValue() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/generationOfAccessorToUnderlyingValue.kt");
@@ -2113,9 +2123,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/passInlineClassesWithSpreadOperatorToVarargs.kt");
         }
 
+        @TestMetadata("propertySetterWithInlineClassTypeArgument.kt")
+        public void testPropertySetterWithInlineClassTypeArgument() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertySetterWithInlineClassTypeArgument.kt");
+        }
+
         @TestMetadata("skipCallToUnderlyingValueOfInlineClass.kt")
         public void testSkipCallToUnderlyingValueOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
+        }
+
+        @TestMetadata("synthesizedBoxMethodIsNotMangled.kt")
+        public void testSynthesizedBoxMethodIsNotMangled() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/synthesizedBoxMethodIsNotMangled.kt");
         }
 
         @TestMetadata("uIntArrayIteratorWithoutBoxing.kt")

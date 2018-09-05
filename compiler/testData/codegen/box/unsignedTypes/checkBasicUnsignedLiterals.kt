@@ -1,8 +1,8 @@
-// IGNORE_BACKEND: JVM_IR
 // WITH_UNSIGNED
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM_IR, JS_IR
 
 fun box(): String {
+    val good = 42.toUInt()
     val u1 = 1u
     val u2 = 2u
     val u3 = u1 + u2

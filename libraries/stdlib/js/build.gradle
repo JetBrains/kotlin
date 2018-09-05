@@ -148,7 +148,11 @@ compileKotlin2Js {
         sourceMapPrefix = "./"
         freeCompilerArgs += [
             "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir, commonSrcDir2].collect { file(it).absoluteFile }.join(File.pathSeparator),
-            "-Xuse-experimental=kotlin.Experimental"
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-XXLanguage:+InlineClasses",
+            "-XXLanguage:-ReleaseCoroutines"
         ]
     }
 }
@@ -172,12 +176,19 @@ compileCoroutinesKotlin2Js {
         outputFile = "${buildDir}/classes/coroutines/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
+        freeCompilerArgs += [
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+        ]
     }
 }
 
 compileTestKotlin2Js {
     kotlinOptions {
         moduleKind = "umd"
+        freeCompilerArgs += [
+            "-XXLanguage:-ReleaseCoroutines",
+            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
     }
 }
 
@@ -346,10 +357,6 @@ dist {
     [mergedJar, distSourcesJar].forEach {
         rename("dist-", "")
         from(it)
-        // legacy
-        from(it) {
-            rename("kotlin-stdlib-js", 'kotlin-jslib')
-        }
     }
 }
 

@@ -141,8 +141,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Dapple.laf.useScreenMenuBar=true",
             "-Dapple.awt.graphics.UseQuartz=true",
             "-Dsun.io.useCanonCaches=false",
-            "-Dplugin.path=${ideaPluginDir.absolutePath}",
-            "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
+            "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
 
         if (rootProject.findProperty("versions.androidStudioRelease") != null) {

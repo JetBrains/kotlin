@@ -20,8 +20,8 @@ import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.FacetEditorContext
 import com.intellij.facet.ui.FacetEditorValidator
 import com.intellij.facet.ui.FacetValidatorsManager
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.KotlinFacetEditorGeneralTab.EditorComponent
+import org.jetbrains.kotlin.platform.IdePlatformKind
 
 class KotlinLibraryValidatorCreator : KotlinFacetValidatorCreator() {
     override fun create(editor: EditorComponent, validatorsManager: FacetValidatorsManager, editorContext: FacetEditorContext): FacetEditorValidator {
@@ -29,6 +29,6 @@ class KotlinLibraryValidatorCreator : KotlinFacetValidatorCreator() {
                 DelegatingLibrariesValidatorContext(editorContext),
                 validatorsManager,
                 "kotlin"
-        ) { editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*> }
+        ) { editor.targetPlatformComboBox.selectedItem as IdePlatformKind<*> }
     }
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1108
 // PROPERTY_WRITE_COUNT: name=publishedTopLevel_61zpoe$ count=1
 // PROPERTY_WRITE_COUNT: name=published_61zpoe$ count=1

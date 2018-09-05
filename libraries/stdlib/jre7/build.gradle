@@ -5,7 +5,6 @@ apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configureDist(project)
-configurePublishing(project)
 ext.javaHome = JDK_17
 
 pill {
@@ -44,8 +43,14 @@ artifacts {
     archives javadocJar
 }
 
+task distForTest(type: Copy) {
+    rename "-${java.util.regex.Pattern.quote(version)}", ''
+    from jar
+    into distDir
+}
+
 dist {
-    from (jar, sourcesJar)
+    dependsOn(distForTest)
 }
 
 
@@ -63,7 +68,7 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-XXLanguage:-ReleaseCoroutines", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
 }
 
 kotlin.experimental.coroutines 'enable'

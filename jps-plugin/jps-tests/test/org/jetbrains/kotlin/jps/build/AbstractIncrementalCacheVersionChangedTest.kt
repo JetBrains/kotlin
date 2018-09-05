@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
 import org.jetbrains.kotlin.incremental.testingUtils.ModifyContent
-import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
+import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 
 abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     override fun performAdditionalModifications(modifications: List<Modification>) {
         val modifiedFiles = modifications.filterIsInstance<ModifyContent>().map { it.path }
-        val paths = projectDescriptor.dataManager.dataPaths
         val targets = projectDescriptor.allModuleTargets
         val hasKotlin = HasKotlinMarker(projectDescriptor.dataManager)
 
@@ -33,13 +32,18 @@ abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJ
         }
 
         if (modifiedFiles.none { it.endsWith("do-not-change-cache-versions") }) {
-            val cacheVersionProvider = CacheVersionProvider(paths, isIncrementalCompilationEnabled = true)
-            val versions = getVersions(cacheVersionProvider, targets)
-            val versionFiles = versions.map { it.formatVersionFile }.filter { it.exists() }
-            versionFiles.forEach { it.writeText("777") }
+            val versions = targets.flatMap {
+                getVersionManagersToTest(kotlinCompileContext.targetsBinding[it]!!)
+            }
+
+            versions.forEach {
+                if (it.versionFileForTesting.exists()) {
+                    it.versionFileForTesting.writeText("777")
+                }
+            }
         }
     }
 
-    protected open fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
-            targets.map { cacheVersionProvider.normalVersion(it) }
+    protected open fun getVersionManagersToTest(target: KotlinModuleBuildTarget<*>): List<CacheVersionManager> =
+        listOf(target.localCacheVersionManager)
 }

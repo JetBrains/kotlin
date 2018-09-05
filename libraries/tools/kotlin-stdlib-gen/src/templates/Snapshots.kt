@@ -405,4 +405,66 @@ object Snapshots : TemplateGroupBase() {
             """
         }
     }
+
+    val f_associateWith = fn("associateWith(valueSelector: (K) -> V)") {
+        include(Iterables, Sequences, CharSequences)
+    } builder {
+        inline()
+        since("1.3")
+        typeParam("K", primary = true)
+        typeParam("V")
+        returns("Map<K, V>")
+        doc {
+            """
+            Returns a [Map] where keys are ${f.element.pluralize()} from the given ${f.collection} and values are
+            produced by the [valueSelector] function applied to each ${f.element}.
+
+            If any two ${f.element.pluralize()} are equal, the last one gets added to the map.
+
+            The returned map preserves the entry iteration order of the original ${f.collection}.
+            """
+        }
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.associateWith"
+            else -> "samples.collections.Collections.Transformations.associateWith"
+        })
+        body {
+            val resultMap = when (family) {
+                Iterables -> "LinkedHashMap<K, V>(mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16))"
+                CharSequences -> "LinkedHashMap<K, V>(mapCapacity(length).coerceAtLeast(16))"
+                else -> "LinkedHashMap<K, V>()"
+            }
+            """
+            val result = $resultMap
+            return associateWithTo(result, valueSelector)
+            """
+        }
+    }
+
+    val f_associateWithTo = fn("associateWithTo(destination: M, valueSelector: (K) -> V)") {
+        include(Iterables, Sequences, CharSequences)
+    } builder {
+        inline()
+        since("1.3")
+        typeParam("K", primary = true)
+        typeParam("V")
+        typeParam("M : MutableMap<in K, in V>")
+        returns("M")
+        doc {
+            """
+            Populates and returns the [destination] mutable map with key-value pairs for each ${f.element} of the given ${f.collection},
+            where key is the ${f.element} itself and value is provided by the [valueSelector] function applied to that key.
+
+            If any two ${f.element.pluralize()} are equal, the last one overwrites the former value in the map.
+            """
+        }
+        body {
+            """
+            for (element in this) {
+                destination.put(element, valueSelector(element))
+            }
+            return destination
+            """
+        }
+    }
 }

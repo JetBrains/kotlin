@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1509
+// EXPECTED_REACHABLE_NODES: 1661
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/builders/builders.1.kt

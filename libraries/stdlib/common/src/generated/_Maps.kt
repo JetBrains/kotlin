@@ -16,6 +16,7 @@ package kotlin.collections
 import kotlin.*
 import kotlin.text.*
 import kotlin.comparisons.*
+import kotlin.random.*
 
 /**
  * Returns a [List] containing all key-value pairs.
@@ -135,7 +136,7 @@ public inline fun <K, V> Map<out K, V>.count(): Int {
 public inline fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
     if (isEmpty()) return 0
     var count = 0
-    for (element in this) if (predicate(element)) count++
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 

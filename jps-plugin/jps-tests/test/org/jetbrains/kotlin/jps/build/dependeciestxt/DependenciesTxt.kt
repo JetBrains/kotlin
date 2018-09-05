@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.jps.build.dependeciestxt
 
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
-import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettings
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.impl.isJvm
 import java.io.File
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -41,16 +41,14 @@ data class DependenciesTxt(
          */
         var kotlinFacetSettings: KotlinFacetSettings? = null
 
-        lateinit var jpsModule: JpsModule
-
         val dependencies = mutableListOf<Dependency>()
         val usages = mutableListOf<Dependency>()
 
         val isCommonModule
-            get() = kotlinFacetSettings?.targetPlatformKind == TargetPlatformKind.Common
+            get() = kotlinFacetSettings?.platform.isCommon
 
         val isJvmModule
-            get() = kotlinFacetSettings?.targetPlatformKind is TargetPlatformKind.Jvm
+            get() = kotlinFacetSettings?.platform.isJvm
 
         val expectedBy
             get() = dependencies.filter { it.expectedBy }

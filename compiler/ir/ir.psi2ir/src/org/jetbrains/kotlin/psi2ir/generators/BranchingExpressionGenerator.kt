@@ -205,12 +205,22 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         val typeOperand = getOrFail(BindingContext.TYPE, ktCondition.typeReference)
         val irTypeOperand = typeOperand.toIrType()
         val typeSymbol = irTypeOperand.classifierOrNull ?: throw AssertionError("Not a classifier type: $typeOperand")
-        return IrTypeOperatorCallImpl(
+        val irInstanceOf = IrTypeOperatorCallImpl(
             ktCondition.startOffset, ktCondition.endOffset,
             context.irBuiltIns.booleanType,
-            IrTypeOperator.INSTANCEOF, irTypeOperand, typeSymbol,
+            IrTypeOperator.INSTANCEOF,
+            irTypeOperand, typeSymbol,
             irSubject.defaultLoad()
         )
+        return if (ktCondition.isNegated)
+            IrUnaryPrimitiveImpl(
+                ktCondition.startOffset, ktCondition.endOffset,
+                context.irBuiltIns.booleanType,
+                IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
+                irInstanceOf
+            )
+        else
+            irInstanceOf
     }
 
     private fun generateInRangeCondition(irSubject: IrVariable, ktCondition: KtWhenConditionInRange): IrExpression {

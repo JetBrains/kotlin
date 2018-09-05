@@ -1,0 +1,87 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+public fun case_10(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+public fun case_2(/*0*/ value_1: kotlin.Number): kotlin.Unit
+public fun case_3(/*0*/ value_1: kotlin.String?, /*1*/ value_2: kotlin.String?): kotlin.Unit
+public fun case_4(/*0*/ value_1: kotlin.String?, /*1*/ value_2: kotlin.String?): kotlin.Unit
+public fun case_5(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+public fun case_6(/*0*/ value_1: kotlin.Number): kotlin.Unit
+public fun case_7(/*0*/ value_1: kotlin.String?, /*1*/ value_2: kotlin.String?): kotlin.Unit
+public fun case_8(/*0*/ value_1: kotlin.String?, /*1*/ value_2: kotlin.String?): kotlin.Unit
+public fun case_9(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+
+package contracts {
+    public fun </*0*/ T> T.case_1(): kotlin.Unit
+        Returns(WILDCARD) -> <this> !is String
+
+    public fun </*0*/ T : kotlin.Number?> T.case_10(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> == null
+
+    public fun </*0*/ T : kotlin.Number> T.case_2(): kotlin.Unit
+        Returns(WILDCARD) -> <this> !is Int
+
+    public fun </*0*/ T : kotlin.String> T?.case_3_1(): kotlin.Unit
+        Returns(WILDCARD) -> <this> == null
+
+    public fun </*0*/ T : kotlin.String> T?.case_3_2(): kotlin.Unit
+        Returns(WILDCARD) -> <this> != null
+
+    public fun </*0*/ T : kotlin.String?> T.case_4_1(): kotlin.Unit
+        Returns(WILDCARD) -> <this> == null
+
+    public fun </*0*/ T : kotlin.String?> T.case_4_2(): kotlin.Unit
+        Returns(WILDCARD) -> <this> != null
+
+    public fun </*0*/ T> T.case_5_1(): kotlin.Boolean
+        Returns(TRUE) -> <this> !is String
+
+    public fun </*0*/ T> T.case_5_2(): kotlin.Boolean
+        Returns(FALSE) -> <this> !is String
+
+    public fun </*0*/ T> T.case_5_3(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> !is String
+
+    public fun </*0*/ T> T.case_5_4(): kotlin.Boolean?
+        Returns(NULL) -> <this> !is String
+
+    public fun </*0*/ T : kotlin.Number> T.case_6_1(): kotlin.Boolean
+        Returns(TRUE) -> <this> !is Int
+
+    public fun </*0*/ T : kotlin.Number> T.case_6_2(): kotlin.Boolean
+        Returns(FALSE) -> <this> !is Int
+
+    public fun </*0*/ T : kotlin.Number> T.case_6_3(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> !is Int
+
+    public fun </*0*/ T : kotlin.Number> T.case_6_4(): kotlin.Boolean?
+        Returns(NULL) -> <this> !is Int
+
+    public fun </*0*/ T : kotlin.String> T?.case_7_1(): kotlin.Boolean
+        Returns(TRUE) -> <this> == null
+
+    public fun </*0*/ T : kotlin.String> T?.case_7_2(): kotlin.Boolean
+        Returns(FALSE) -> <this> != null
+
+    public fun </*0*/ T : kotlin.String> T?.case_7_3(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> != null
+
+    public fun </*0*/ T : kotlin.String> T?.case_7_4(): kotlin.Boolean?
+        Returns(NULL) -> <this> != null
+
+    public fun </*0*/ T : kotlin.String?> T.case_8_1(): kotlin.Boolean
+        Returns(TRUE) -> <this> == null
+
+    public fun </*0*/ T : kotlin.String?> T.case_8_2(): kotlin.Boolean
+        Returns(FALSE) -> <this> != null
+
+    public fun </*0*/ T : kotlin.String?> T.case_8_3(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> != null
+
+    public fun </*0*/ T : kotlin.String?> T.case_8_4(): kotlin.Boolean?
+        Returns(NULL) -> <this> != null
+
+    public fun </*0*/ T : kotlin.Number?> T.case_9(): kotlin.Boolean?
+        Returns(NOT_NULL) -> <this> != null
+
+}

@@ -26,6 +26,10 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         FunctionClassDescriptor.Kind.Function.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.Function.classNamePrefix
     private val NUMBERED_K_FUNCTION_PREFIX =
         FunctionClassDescriptor.Kind.KFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.KFunction.classNamePrefix
+    private val NUMBERED_SUSPEND_FUNCTION_PREFIX =
+        FunctionClassDescriptor.Kind.SuspendFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.SuspendFunction.classNamePrefix
+    private val NUMBERED_K_SUSPEND_FUNCTION_PREFIX =
+        FunctionClassDescriptor.Kind.KSuspendFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.KSuspendFunction.classNamePrefix
 
     private val FUNCTION_N_CLASS_ID = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
     private val FUNCTION_N_FQ_NAME = FUNCTION_N_CLASS_ID.asSingleFqName()
@@ -134,13 +138,19 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
      * kotlin.Nothing -> java.lang.Void
      * kotlin.IntArray -> null
      * kotlin.Function3 -> kotlin.jvm.functions.Function3
+     * kotlin.SuspendFunction3 -> kotlin.jvm.functions.Function4
      * kotlin.Function42 -> kotlin.jvm.functions.FunctionN
+     * kotlin.SuspendFunction42 -> kotlin.jvm.functions.FunctionN
      * kotlin.reflect.KFunction3 -> kotlin.reflect.KFunction
+     * kotlin.reflect.KSuspendFunction3 -> kotlin.reflect.KFunction
      * kotlin.reflect.KFunction42 -> kotlin.reflect.KFunction
+     * kotlin.reflect.KSuspendFunction42 -> kotlin.reflect.KFunction
      */
     fun mapKotlinToJava(kotlinFqName: FqNameUnsafe): ClassId? = when {
         isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_FUNCTION_PREFIX) -> FUNCTION_N_CLASS_ID
+        isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_SUSPEND_FUNCTION_PREFIX) -> FUNCTION_N_CLASS_ID
         isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_K_FUNCTION_PREFIX) -> K_FUNCTION_CLASS_ID
+        isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_K_SUSPEND_FUNCTION_PREFIX) -> K_FUNCTION_CLASS_ID
         else -> kotlinToJava[kotlinFqName]
     }
 

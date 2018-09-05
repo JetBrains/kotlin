@@ -24,7 +24,7 @@ class JavaClass {
         return this;
     }
 
-    @NotNull JavaClass mod(Runnable i) {
+    @NotNull JavaClass rem(Runnable i) {
         i.run();
         return this;
     }

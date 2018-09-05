@@ -151,5 +151,3 @@ internal actual fun digitOf(char: Char, radix: Int): Int = when {
     char >= 'a' && char <= 'z' -> char - 'a' + 10
     else -> -1
 }.let { if (it >= radix) -1 else it }
-
-private fun numberFormatError(input: String): Nothing = throw NumberFormatException("Invalid number format: '$input'")

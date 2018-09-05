@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -104,8 +105,8 @@ private fun makeKotlinType(
     return classifier.descriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
 }
 
-fun ClassifierDescriptor.toIrType(hasQuestionMark: Boolean = false): IrType {
-    val symbol = getSymbol()
+fun ClassifierDescriptor.toIrType(hasQuestionMark: Boolean = false, symbolTable: SymbolTable? = null): IrType {
+    val symbol = getSymbol(symbolTable)
     return IrSimpleTypeImpl(defaultType, symbol, hasQuestionMark, listOf(), listOf())
 }
 
@@ -123,14 +124,14 @@ fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
 
-fun KotlinType.toIrType(): IrType? {
+fun KotlinType.toIrType(symbolTable: SymbolTable? = null): IrType? {
     if (isDynamic()) return IrDynamicTypeImpl(this, listOf(), Variance.INVARIANT)
 
-    val symbol = constructor.declarationDescriptor?.getSymbol() ?: return null
+    val symbol = constructor.declarationDescriptor?.getSymbol(symbolTable) ?: return null
 
-    val arguments = this.arguments.mapIndexed { i, projection ->
+    val arguments = this.arguments.map { projection ->
         when (projection) {
-            is TypeProjectionImpl -> IrTypeProjectionImpl(projection.type.toIrType()!!, projection.projectionKind)
+            is TypeProjectionImpl -> IrTypeProjectionImpl(projection.type.toIrType(symbolTable)!!, projection.projectionKind)
             is StarProjectionImpl -> IrStarProjectionImpl
             else -> error(projection)
         }
@@ -142,8 +143,8 @@ fun KotlinType.toIrType(): IrType? {
 }
 
 // TODO: this function creates unbound symbol which is the great source of problems
-private fun ClassifierDescriptor.getSymbol(): IrClassifierSymbol = when (this) {
-    is ClassDescriptor -> IrClassSymbolImpl(this)
-    is TypeParameterDescriptor -> IrTypeParameterSymbolImpl(this)
+private fun ClassifierDescriptor.getSymbol(symbolTable: SymbolTable?): IrClassifierSymbol = when (this) {
+    is ClassDescriptor -> symbolTable?.referenceClass(this) ?: IrClassSymbolImpl(this)
+    is TypeParameterDescriptor -> /*symbolTable?.referenceTypeParameter(this) ?: */IrTypeParameterSymbolImpl(this)
     else -> TODO()
 }

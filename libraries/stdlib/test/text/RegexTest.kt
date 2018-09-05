@@ -203,6 +203,24 @@ class RegexTest {
 
     }
 
+    @Test fun splitByEmptyMatch() {
+        val input = "test"
+
+        val emptyMatch = "".toRegex()
+
+        assertEquals(input.split(""), input.split(emptyMatch))
+        assertEquals(input.split("", limit = 3), input.split(emptyMatch, limit = 3))
+
+        assertEquals("".split(""), "".split(emptyMatch))
+
+        val emptyMatchBeforeT = "(?=t)".toRegex()
+
+        assertEquals(listOf("", "tes", "t"), input.split(emptyMatchBeforeT))
+        assertEquals(listOf("", "test"), input.split(emptyMatchBeforeT, limit = 2))
+
+        assertEquals(listOf("", "tee"), "tee".split(emptyMatchBeforeT))
+    }
+
 
 
 }

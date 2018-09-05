@@ -12,7 +12,10 @@ package kotlin
 public inline class UByteArray
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @PublishedApi
-internal constructor(private val storage: ByteArray) : Collection<UByte> {
+internal constructor(@PublishedApi internal val storage: ByteArray) : Collection<UByte> {
+
+    /** Creates a new array of the specified [size], with all elements initialized to zero. */
+    public constructor(size: Int) : this(ByteArray(size))
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): UByte = storage[index].toUByte()
@@ -43,11 +46,12 @@ internal constructor(private val storage: ByteArray) : Collection<UByte> {
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
 public inline fun UByteArray(size: Int, init: (Int) -> UByte): UByteArray {
     return UByteArray(ByteArray(size) { index -> init(index).toByte() })
 }
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-// TODO: @kotlin.internal.InlineOnly
+@kotlin.internal.InlineOnly
 public inline fun ubyteArrayOf(vararg elements: UByte): UByteArray = elements

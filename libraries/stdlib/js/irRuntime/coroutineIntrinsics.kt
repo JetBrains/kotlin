@@ -41,7 +41,7 @@ public val COROUTINE_SUSPENDED: Any = Any()
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
-public inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
+public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
 ): Any? {
     val self_0 = this
@@ -54,7 +54,7 @@ public inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
-public inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
+public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
 ): Any? {
@@ -67,7 +67,7 @@ public inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn
 }
 
 @SinceKotlin("1.1")
-public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
     receiver: R,
     completion: Continuation<T>
 ): Continuation<Unit> {
@@ -81,7 +81,7 @@ public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
 }
 
 @SinceKotlin("1.1")
-public fun <T> (suspend () -> T).createCoroutineUnchecked(
+public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
     completion: Continuation<T>
 ): Continuation<Unit> {
     return if (this !is CoroutineImpl) {

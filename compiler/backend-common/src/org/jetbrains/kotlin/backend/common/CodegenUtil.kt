@@ -49,7 +49,8 @@ object CodegenUtil {
     }
 
     @JvmStatic
-    fun getNonPrivateTraitMethods(descriptor: ClassDescriptor): Map<FunctionDescriptor, FunctionDescriptor> {
+    @JvmOverloads
+    fun getNonPrivateTraitMethods(descriptor: ClassDescriptor, copy: Boolean = true): Map<FunctionDescriptor, FunctionDescriptor> {
         val result = linkedMapOf<FunctionDescriptor, FunctionDescriptor>()
         for (declaration in DescriptorUtils.getAllDescriptors(descriptor.defaultType.memberScope)) {
             if (declaration !is CallableMemberDescriptor) continue
@@ -63,29 +64,39 @@ object CodegenUtil {
 
             // inheritedMember can be abstract here. In order for FunctionCodegen to generate the method body, we're creating a copy here
             // with traitMember's modality
-            result.putAll(copyFunctions(declaration, traitMember, declaration.containingDeclaration, traitMember.modality,
-                                        Visibilities.PUBLIC, CallableMemberDescriptor.Kind.DECLARATION, true))
+            result.putAll(
+                if (copy)
+                    copyFunctions(
+                        declaration, traitMember, declaration.containingDeclaration, traitMember.modality,
+                        Visibilities.PUBLIC, CallableMemberDescriptor.Kind.DECLARATION, true
+                    )
+                else mapMembers(declaration, traitMember)
+            )
         }
         return result
     }
 
     fun copyFunctions(
-            inheritedMember: CallableMemberDescriptor,
-            traitMember: CallableMemberDescriptor,
-            newOwner: DeclarationDescriptor,
-            modality: Modality,
-            visibility: Visibility,
-            kind: CallableMemberDescriptor.Kind,
-            copyOverrides: Boolean
-    ): Map<FunctionDescriptor, FunctionDescriptor> {
-        val copy = inheritedMember.copy(newOwner, modality, visibility, kind, copyOverrides)
+        inheritedMember: CallableMemberDescriptor,
+        traitMember: CallableMemberDescriptor,
+        newOwner: DeclarationDescriptor,
+        modality: Modality,
+        visibility: Visibility,
+        kind: CallableMemberDescriptor.Kind,
+        copyOverrides: Boolean
+    ): Map<FunctionDescriptor, FunctionDescriptor> =
+        mapMembers(inheritedMember.copy(newOwner, modality, visibility, kind, copyOverrides), traitMember)
+
+    private fun mapMembers(
+        inherited: CallableMemberDescriptor,
+        traitMember: CallableMemberDescriptor
+    ): LinkedHashMap<FunctionDescriptor, FunctionDescriptor> {
         val result = linkedMapOf<FunctionDescriptor, FunctionDescriptor>()
         if (traitMember is SimpleFunctionDescriptor) {
-            result[traitMember] = copy as FunctionDescriptor
-        }
-        else if (traitMember is PropertyDescriptor) {
+            result[traitMember] = inherited as FunctionDescriptor
+        } else if (traitMember is PropertyDescriptor) {
             for (traitAccessor in traitMember.accessors) {
-                for (inheritedAccessor in (copy as PropertyDescriptor).accessors) {
+                for (inheritedAccessor in (inherited as PropertyDescriptor).accessors) {
                     if (inheritedAccessor::class.java == traitAccessor::class.java) { // same accessor kind
                         result.put(traitAccessor, inheritedAccessor)
                     }

@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import kotlin.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons.*
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.jvm.internal.CoroutineStackFrame
 
 @PublishedApi
 @SinceKotlin("1.3")
@@ -15,7 +16,7 @@ internal actual class SafeContinuation<in T>
 internal actual constructor(
     private val delegate: Continuation<T>,
     initialResult: Any?
-) : Continuation<T> {
+) : Continuation<T>, CoroutineStackFrame {
     @PublishedApi
     internal actual constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
 
@@ -60,4 +61,15 @@ internal actual constructor(
             else -> result // either COROUTINE_SUSPENDED or data
         }
     }
+
+    // --- CoroutineStackFrame implementation
+
+    public override val callerFrame: CoroutineStackFrame?
+        get() = delegate as? CoroutineStackFrame
+
+    override fun getStackTraceElement(): StackTraceElement? =
+        null
+
+    override fun toString(): String =
+        "SafeContinuation for $delegate"
 }

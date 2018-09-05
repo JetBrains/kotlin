@@ -5,79 +5,82 @@
 
 package org.jetbrains.kotlin.spec
 
+import org.jetbrains.kotlin.spec.validators.*
 import java.io.File
 
-abstract class SpecTestsStatElement {
-    var counter = 0
-    abstract val elements: MutableMap<*, out SpecTestsStatElement>?
-    open fun increment() {
-        counter++
+open class SpecTestsStatElement(val type: SpecTestsStatElementType) {
+    val elements: MutableMap<Any, SpecTestsStatElement> = mutableMapOf()
+    var number = 0
+    fun increment() {
+        number++
     }
 }
 
-class SpecTestsTypeStat(private val paragraph: SpecTestsStatElement) : SpecTestsStatElement() {
-    override val elements = null
-    override fun increment() {
-        super.increment()
-        paragraph.increment()
-    }
-}
-
-class SpecTestsParagraphStat(private val section: SpecTestsStatElement) : SpecTestsStatElement() {
-    override val elements = sortedMapOf<String, SpecTestsTypeStat>()
-    override fun increment() {
-        super.increment()
-        section.increment()
-    }
-}
-
-class SpecTestsSectionStat(private val area: SpecTestsStatElement) : SpecTestsStatElement() {
-    override val elements = sortedMapOf<Int, SpecTestsParagraphStat>()
-    override fun increment() {
-        super.increment()
-        area.increment()
-    }
-}
-
-class SpecTestsAreaStat : SpecTestsStatElement() {
-    override val elements = sortedMapOf<String, SpecTestsSectionStat>()
+enum class SpecTestsStatElementType {
+    TYPE,
+    CATEGORY,
+    PARAGRAPH,
+    SECTION,
+    AREA
 }
 
 object TestsStatisticCollector {
     private const val TEST_DATA_DIR = "./testData"
 
-    private fun incrementStatCounters(testAreaStats: SpecTestsAreaStat, sectionName: String, paragraphNumber: Int, testType: String) {
-        val section = testAreaStats.elements.computeIfAbsent(sectionName) { SpecTestsSectionStat(testAreaStats) }
-        val paragraph = section.elements.computeIfAbsent(paragraphNumber) { SpecTestsParagraphStat(section) }
+    private fun incrementStatCounters(baseStatElement: SpecTestsStatElement, elementTypes: List<Pair<SpecTestsStatElementType, Any>>) {
+        var currentStatElement = baseStatElement
 
-        paragraph.elements.computeIfAbsent(testType) { SpecTestsTypeStat(paragraph) }.increment()
+        baseStatElement.increment()
+
+        for ((elementType, value) in elementTypes) {
+            currentStatElement = currentStatElement.run {
+                elements.computeIfAbsent(value) { SpecTestsStatElement(elementType) }.apply { increment() }
+            }
+        }
     }
 
-    fun collect(): Map<TestArea, SpecTestsAreaStat> {
-        val statistic = mutableMapOf<TestArea, SpecTestsAreaStat>()
+    fun collect(testLinkedType: SpecTestLinkedType): Map<TestArea, SpecTestsStatElement> {
+        val statistic = mutableMapOf<TestArea, SpecTestsStatElement>()
 
         for (specTestArea in TestArea.values()) {
-            val specTestsPath = "$TEST_DATA_DIR/${specTestArea.name.toLowerCase()}"
+            val specTestsPath =
+                "$TEST_DATA_DIR/${specTestArea.name.toLowerCase()}/${AbstractSpecTestValidator.dirsByLinkedType[testLinkedType]}"
 
-            statistic[specTestArea] = SpecTestsAreaStat()
+            statistic[specTestArea] = SpecTestsStatElement(SpecTestsStatElementType.AREA)
 
             File(specTestsPath).walkTopDown().forEach areaTests@{
                 if (!it.isFile || it.extension != "kt") return@areaTests
 
-                val testInfoMatcher = SpecTestValidator.testPathPattern.matcher(it.path)
+                val specTestsValidator = AbstractSpecTestValidator.getInstanceByType(it)
 
-                if (!testInfoMatcher.find()) return@areaTests
+                try {
+                    specTestsValidator.parseTestInfo()
+                } catch (e: SpecTestValidationException) {
+                    return@areaTests
+                }
 
-                val sectionNumber = testInfoMatcher.group("sectionNumber")
-                val sectionName = testInfoMatcher.group("sectionName")
-                val paragraphNumber = testInfoMatcher.group("paragraphNumber").toInt()
-                val testType = testInfoMatcher.group("testType")
-                val section = "$sectionNumber $sectionName"
-
-                incrementStatCounters(statistic[specTestArea]!!, section, paragraphNumber, testType)
+                incrementStatCounters(
+                    statistic[specTestArea]!!,
+                    when (testLinkedType) {
+                        SpecTestLinkedType.LINKED -> getStatElementsByLinkedTests(specTestsValidator.testInfo as LinkedSpecTest)
+                        SpecTestLinkedType.NOT_LINKED -> getStatElementsByNotLinkedTests(specTestsValidator.testInfo as NotLinkedSpecTest)
+                    }
+                )
             }
         }
 
         return statistic
     }
+
+    private fun getStatElementsByLinkedTests(testInfo: LinkedSpecTest) = listOf(
+        SpecTestsStatElementType.SECTION to testInfo.section,
+        SpecTestsStatElementType.PARAGRAPH to testInfo.paragraphNumber,
+        SpecTestsStatElementType.TYPE to testInfo.testType.type
+    )
+
+    private fun getStatElementsByNotLinkedTests(testInfo: NotLinkedSpecTest) =
+        mutableListOf(SpecTestsStatElementType.SECTION to testInfo.section).apply {
+            addAll(testInfo.categories.map { SpecTestsStatElementType.CATEGORY to it })
+            add(SpecTestsStatElementType.TYPE to testInfo.testType.type)
+        }
 }

@@ -26,14 +26,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -127,6 +128,6 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
 }
 
 fun Module.findJvmImplementationModule(): Module? {
-    if (targetPlatform != TargetPlatformKind.Common) return null
-    return implementingModules.firstOrNull { it.targetPlatform is TargetPlatformKind.Jvm }
+    if (!platform.isCommon) return null
+    return implementingModules.firstOrNull { it.platform.isJvm }
 }

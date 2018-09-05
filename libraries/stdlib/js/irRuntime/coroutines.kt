@@ -63,10 +63,6 @@ public fun <T> (suspend () -> T).createCoroutine(
     completion: Continuation<T>
 ): Continuation<Unit> = SafeContinuation(createCoroutineUnchecked(completion), COROUTINE_SUSPENDED)
 
-// TODO: remove this once implemented in stdlib
-inline fun <T, R> T.let(f: (T) -> R) = f(this)
-inline fun <R> run(f: () -> R) = f()
-
 public interface CoroutineContext {
     /**
      * Returns the element with the given [key] from this context or `null`.
@@ -154,6 +150,7 @@ public interface ContinuationInterceptor : CoroutineContext.Element {
     public fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T>
 }
 
+
 internal class CombinedContext(val left: CoroutineContext, val element: CoroutineContext.Element) : CoroutineContext {
     override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? {
         var cur = this
@@ -217,38 +214,22 @@ public object EmptyCoroutineContext : CoroutineContext {
     public override fun toString(): String = "EmptyCoroutineContext"
 }
 
-public interface Continuation<in T> {
-    /**
-     * Context of the coroutine that corresponds to this continuation.
-     */
-    public val context: CoroutineContext
-
-    /**
-     * Resumes the execution of the corresponding coroutine passing [value] as the return value of the last suspension point.
-     */
-    public fun resume(value: T)
-
-    /**
-     * Resumes the execution of the corresponding coroutine so that the [exception] is re-thrown right after the
-     * last suspension point.
-     */
-    public fun resumeWithException(exception: Throwable)
-}
-
-public class SafeContinuation<in T>
-public constructor(
+@PublishedApi
+internal actual class SafeContinuation<in T>
+internal actual constructor(
     private val delegate: Continuation<T>,
     initialResult: Any?
 ) : Continuation<T> {
 
-    public constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
+    @PublishedApi
+    internal actual constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
 
-    public override val context: CoroutineContext
+    public actual override val context: CoroutineContext
         get() = delegate.context
 
     private var result: Any? = initialResult
 
-    override fun resume(value: T) {
+    actual override fun resume(value: T) {
         when {
             result === UNDECIDED -> {
                 result = value
@@ -263,7 +244,7 @@ public constructor(
         }
     }
 
-    override fun resumeWithException(exception: Throwable) {
+    actual override fun resumeWithException(exception: Throwable) {
         when {
             result === UNDECIDED -> {
                 result = Fail(exception)
@@ -278,7 +259,8 @@ public constructor(
         }
     }
 
-    public fun getResult(): Any? {
+    @PublishedApi
+    internal actual fun getResult(): Any? {
         if (result === UNDECIDED) {
             result = COROUTINE_SUSPENDED
         }

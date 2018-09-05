@@ -4,8 +4,8 @@
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var result = "FAIL"
 var i = 0
@@ -28,23 +28,20 @@ inline suspend fun inlineMe() {
 
 // FILE: inlineSite.kt
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
-    val continuation = object: helpers.ContinuationAdapter<Unit>() {
+    val continuation = object: Continuation<Unit> {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
-        override fun resume(value: Unit) {
+        override fun resumeWith(r: SuccessOrFailure<Unit>) {
+            r.getOrThrow()
             proceed = {
                 result = "OK"
                 finished = true
             }
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
         }
     }
     c.startCoroutine(continuation)

@@ -34,15 +34,15 @@ class JvmLower(val context: JvmBackendContext) {
 
         LateinitLowering(context, true).lower(irFile)
 
-        ConstAndJvmFieldPropertiesLowering().lower(irFile)
+        ConstAndJvmFieldPropertiesLowering(context).lower(irFile)
         PropertiesLowering().lower(irFile)
         AnnotationLowering().runOnFilePostfix(irFile) //should be run before defaults lowering
 
         //Should be before interface lowering
         DefaultArgumentStubGenerator(context, false).runOnFilePostfix(irFile)
 
-        InterfaceLowering(context.state).runOnFilePostfix(irFile)
-        InterfaceDelegationLowering(context.state).runOnFilePostfix(irFile)
+        InterfaceLowering(context).runOnFilePostfix(irFile)
+        InterfaceDelegationLowering(context).runOnFilePostfix(irFile)
         SharedVariablesLowering(context).runOnFilePostfix(irFile)
 
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
@@ -53,7 +53,8 @@ class JvmLower(val context: JvmBackendContext) {
                 override fun localName(descriptor: DeclarationDescriptor): String =
                     NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
             },
-            Visibilities.PUBLIC //TODO properly figure out visibility
+            Visibilities.PUBLIC, //TODO properly figure out visibility
+            true
         ).runOnFilePostfix(irFile)
         CallableReferenceLowering(context).lower(irFile)
 

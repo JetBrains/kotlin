@@ -1,10 +1,12 @@
 // PROBLEM: none
 
 fun foo(f: (String) -> Unit) {}
+fun bar(s: String) {}
 
 fun test() {
     foo { s ->
-        <caret>foo {
+        foo {
+            bar(it<caret>)
         }
     }
 }

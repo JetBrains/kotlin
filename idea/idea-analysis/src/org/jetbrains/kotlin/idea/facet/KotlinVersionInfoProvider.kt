@@ -20,9 +20,10 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.util.text.VersionComparatorUtil
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.orDefault
+import org.jetbrains.kotlin.config.VersionView
 
 interface KotlinVersionInfoProvider {
     companion object {
@@ -31,54 +32,61 @@ interface KotlinVersionInfoProvider {
 
     fun getCompilerVersion(module: Module): String?
     fun getLibraryVersions(
-            module: Module,
-            targetPlatform: TargetPlatformKind<*>,
-            rootModel: ModuleRootModel?
+        module: Module,
+        platformKind: IdePlatformKind<*>,
+        rootModel: ModuleRootModel?
     ): Collection<String>
 }
 
 fun getRuntimeLibraryVersions(
-        module: Module,
-        rootModel: ModuleRootModel?,
-        targetPlatform: TargetPlatformKind<*>
+    module: Module,
+    rootModel: ModuleRootModel?,
+    platformKind: IdePlatformKind<*>
 ): Collection<String> {
     return KotlinVersionInfoProvider.EP_NAME
                    .extensions
-                   .map { it.getLibraryVersions(module, targetPlatform, rootModel) }
+                   .map { it.getLibraryVersions(module, platformKind, rootModel) }
                    .firstOrNull { it.isNotEmpty() } ?: emptyList()
 }
 
 fun getLibraryLanguageLevel(
         module: Module,
         rootModel: ModuleRootModel?,
-        targetPlatform: TargetPlatformKind<*>?
+        platformKind: IdePlatformKind<*>?,
+        coerceRuntimeLibraryVersionToReleased: Boolean = true
 ): LanguageVersion {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM)
-            .minWith(VersionComparatorUtil.COMPARATOR)
-    return getDefaultLanguageLevel(module, minVersion)
+    val minVersion = getRuntimeLibraryVersions(module, rootModel, platformKind.orDefault())
+        .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
+        .minWith(VersionComparatorUtil.COMPARATOR)
+    return getDefaultLanguageLevel(module, minVersion, coerceRuntimeLibraryVersionToReleased)
 }
 
 fun getDefaultLanguageLevel(
         module: Module,
-        explicitVersion: String? = null
+        explicitVersion: String? = null,
+        coerceRuntimeLibraryVersionToReleased: Boolean = true
 ): LanguageVersion {
     val libVersion = explicitVersion
                      ?: KotlinVersionInfoProvider.EP_NAME.extensions
                              .mapNotNull { it.getCompilerVersion(module) }
+                             .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
                              .minWith(VersionComparatorUtil.COMPARATOR)
-                     ?: return LanguageVersion.LATEST_STABLE
+                     ?: return VersionView.RELEASED_VERSION
     return when {
         libVersion.startsWith("1.3") -> LanguageVersion.KOTLIN_1_3
         libVersion.startsWith("1.2") -> LanguageVersion.KOTLIN_1_2
         libVersion.startsWith("1.1") -> LanguageVersion.KOTLIN_1_1
         libVersion.startsWith("1.0") -> LanguageVersion.KOTLIN_1_0
-        else -> LanguageVersion.LATEST_STABLE
+        else -> VersionView.RELEASED_VERSION
     }
 }
 
+private fun Iterable<String>.addReleaseVersionIfNecessary(shouldAdd: Boolean): Iterable<String> =
+    if (shouldAdd) this + VersionView.RELEASED_VERSION.versionString else this
+
 fun getRuntimeLibraryVersion(module: Module): String? {
-    val targetPlatform = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module).targetPlatformKind
-    val versions = getRuntimeLibraryVersions(module, null, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM)
+    val targetPlatform = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module).platform
+    val versions = getRuntimeLibraryVersions(module, null, targetPlatform.orDefault().kind)
     return versions.toSet().singleOrNull()
 }
 

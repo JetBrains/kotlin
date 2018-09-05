@@ -1,7 +1,7 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    compile project(':kotlin-stdlib-jre8')
+    compile project(':kotlin-stdlib-jdk8')
     testCompile project(':kotlin-test:kotlin-test-junit')
 }
 

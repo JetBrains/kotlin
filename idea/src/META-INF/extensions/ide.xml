@@ -15,8 +15,8 @@
                         interface="org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider"
                         area="IDEA_MODULE"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformSupport"
-                        interface="org.jetbrains.kotlin.caches.resolve.IdePlatformSupport"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
+                        interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
                         interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
@@ -37,6 +37,11 @@
                         interface="org.jetbrains.kotlin.idea.completion.KotlinCompletionExtension"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
                         interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKind"
+                        interface="org.jetbrains.kotlin.platform.IdePlatformKind"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindTooling"
+                        interface="org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -58,9 +63,9 @@
         <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
                                  implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
 
-        <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformSupport"/>
-        <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformSupport"/>
-        <idePlatformSupport implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformSupport"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution"/>
 
         <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
     </extensions>

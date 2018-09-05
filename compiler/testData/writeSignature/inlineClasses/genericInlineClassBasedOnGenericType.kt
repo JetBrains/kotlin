@@ -9,15 +9,15 @@ object Test {
     fun nullableValue(f: Foo<Long>?) {}
 }
 
-// method: Test::nonNullTypeArgument
+// method: Test::nonNullTypeArgument-1e4ch6lh
 // jvm signature: (Ljava/util/List;)V
 // generic signature: (Ljava/util/List<Ljava/lang/Integer;>;)V
 
-// method: Test::nullableTypeArgument
+// method: Test::nullableTypeArgument-1e4ch6lh
 // jvm signature: (Ljava/util/List;)V
 // generic signature: (Ljava/util/List<Ljava/lang/String;>;)V
 
-// method: Test::nullableValue
+// method: Test::nullableValue-31ee2c96
 // jvm signature: (Ljava/util/List;)V
 // generic signature: (Ljava/util/List<Ljava/lang/Long;>;)V
 

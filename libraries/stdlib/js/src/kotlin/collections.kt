@@ -6,7 +6,8 @@
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
-import kotlin.math.floor
+import kotlin.internal.InlineOnly
+import kotlin.random.Random
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 @kotlin.internal.InlineOnly
@@ -87,16 +88,7 @@ public actual fun <T> MutableList<T>.fill(value: T): Unit {
  * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
  */
 @SinceKotlin("1.2")
-public actual fun <T> MutableList<T>.shuffle(): Unit {
-    for (i in lastIndex downTo 1) {
-        val j = rand(i + 1)
-        val copy = this[i]
-        this[i] = this[j]
-        this[j] = copy
-    }
-}
-
-private fun rand(upperBound: Int) = floor(kotlin.js.Math.random() * upperBound).toInt()
+public actual fun <T> MutableList<T>.shuffle(): Unit = shuffle(Random)
 
 /**
  * Returns a new list with the elements of this list randomly shuffled.
@@ -134,6 +126,32 @@ internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
     return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
 }
 
+@SinceKotlin("1.3")
+@PublishedApi
+@JsName("arrayCopy")
+internal fun <T> arrayCopy(source: Array<out T>, destination: Array<in T>, destinationOffset: Int, startIndex: Int, endIndex: Int) {
+    @Suppress("NAME_SHADOWING")
+    val endIndex = if (endIndex == -1) source.size else endIndex // TODO: Remove when default value from expect is fixed
+    AbstractList.checkRangeIndexes(startIndex, endIndex, source.size)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+
+    if (js("ArrayBuffer").isView(destination) && js("ArrayBuffer").isView(source)) {
+        val subrange = source.asDynamic().subarray(startIndex, endIndex)
+        destination.asDynamic().set(subrange, destinationOffset)
+    } else {
+        if (source !== destination || destinationOffset <= startIndex) {
+            for (index in 0 until rangeSize) {
+                destination[destinationOffset + index] = source[startIndex + index]
+            }
+        } else {
+            for (index in rangeSize - 1 downTo 0) {
+                destination[destinationOffset + index] = source[startIndex + index]
+            }
+        }
+    }
+}
+
 // no singleton map implementation in js, return map as is
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
@@ -149,3 +167,22 @@ internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean)
         this
     else
         this.copyOf()
+
+
+
+@PublishedApi
+internal actual fun checkIndexOverflow(index: Int): Int {
+    if (index < 0) {
+        throwIndexOverflow()
+    }
+    return index
+}
+
+@PublishedApi
+internal actual fun checkCountOverflow(count: Int): Int {
+    if (count < 0) {
+        throwCountOverflow()
+    }
+    return count
+}
+

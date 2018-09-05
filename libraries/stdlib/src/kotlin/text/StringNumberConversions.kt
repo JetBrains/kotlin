@@ -178,3 +178,6 @@ public fun String.toLongOrNull(radix: Int): Long? {
 
     return if (isNegative) result else -result
 }
+
+
+internal fun numberFormatError(input: String): Nothing = throw NumberFormatException("Invalid number format: '$input'")

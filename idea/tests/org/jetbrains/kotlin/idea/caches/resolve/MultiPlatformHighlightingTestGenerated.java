@@ -49,6 +49,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/depends/");
     }
 
+    @TestMetadata("differentJvmImpls")
+    public void testDifferentJvmImpls() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/differentJvmImpls/");
+    }
+
     @TestMetadata("headerClass")
     public void testHeaderClass() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/headerClass/");
@@ -92,6 +97,16 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
     @TestMetadata("javaUsesPlatformFacade")
     public void testJavaUsesPlatformFacade() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/javaUsesPlatformFacade/");
+    }
+
+    @TestMetadata("jvmKotlinReferencesCommonKotlinThroughJava")
+    public void testJvmKotlinReferencesCommonKotlinThroughJava() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmKotlinReferencesCommonKotlinThroughJava/");
+    }
+
+    @TestMetadata("jvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls")
+    public void testJvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls/");
     }
 
     @TestMetadata("multifileFacade")

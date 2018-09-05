@@ -94,6 +94,15 @@ class NumbersTest {
         expect(Float.NEGATIVE_INFINITY) { -Float.MAX_VALUE * 2 }
         expect(0.0F) { Float.MIN_VALUE / 2.0F }
     }
+
+    @Test fun charMinMaxValues() {
+        assertTrue(Char.MIN_VALUE.toInt() == 0)
+        assertTrue(Char.MAX_VALUE.toInt() > 0)
+
+        // overflow behavior
+        expect(Char.MIN_VALUE) { Char.MAX_VALUE + one }
+        expect(Char.MAX_VALUE) { Char.MIN_VALUE - one }
+    }
     
     @Test fun doubleProperties() {
         for (value in listOf(1.0, 0.0, Double.MIN_VALUE, Double.MAX_VALUE))
@@ -173,5 +182,23 @@ class NumbersTest {
         }
     }
 
+    @Test fun sizeInBitsAndBytes() {
+        fun testSizes(companion: Any, sizeBytes: Int, sizeBits: Int, expectedSizeBytes: Int) {
+            assertEquals(expectedSizeBytes, sizeBytes, companion.toString())
+            assertEquals(expectedSizeBytes * 8, sizeBits, companion.toString())
+        }
+
+        testSizes(Char, Char.SIZE_BYTES, Char.SIZE_BITS, 2)
+
+        testSizes(Byte, Byte.SIZE_BYTES, Byte.SIZE_BITS, 1)
+        testSizes(Short, Short.SIZE_BYTES, Short.SIZE_BITS, 2)
+        testSizes(Int, Int.SIZE_BYTES, Int.SIZE_BITS, 4)
+        testSizes(Long, Long.SIZE_BYTES, Long.SIZE_BITS, 8)
+
+        testSizes(UByte, UByte.SIZE_BYTES, UByte.SIZE_BITS, 1)
+        testSizes(UShort, UShort.SIZE_BYTES, UShort.SIZE_BITS, 2)
+        testSizes(UInt, UInt.SIZE_BYTES, UInt.SIZE_BITS, 4)
+        testSizes(ULong, ULong.SIZE_BYTES, ULong.SIZE_BITS, 8)
+   }
 
 }

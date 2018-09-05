@@ -18,7 +18,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
 import org.jetbrains.kotlin.idea.util.requireNode
@@ -513,13 +512,13 @@ abstract class KotlinCommonBlock(
                             ANNOTATIONS,
                             !node.treeParent.isFirstParameter()
                         )
-                    is KtClassOrObject ->
+                    is KtClassOrObject, is KtTypeAlias ->
                         return getWrappingStrategyForItemList(
                             commonSettings.CLASS_ANNOTATION_WRAP,
                             ANNOTATIONS
                         )
 
-                    is KtNamedFunction ->
+                    is KtNamedFunction, is KtSecondaryConstructor ->
                         return getWrappingStrategyForItemList(
                             commonSettings.METHOD_ANNOTATION_WRAP,
                             ANNOTATIONS
@@ -539,10 +538,10 @@ abstract class KotlinCommonBlock(
             elementType === KtNodeTypes.VALUE_PARAMETER ->
                 return wrapAfterAnnotation(commonSettings.PARAMETER_ANNOTATION_WRAP)
 
-            nodePsi is KtClassOrObject ->
+            nodePsi is KtClassOrObject || nodePsi is KtTypeAlias ->
                 return wrapAfterAnnotation(commonSettings.CLASS_ANNOTATION_WRAP)
 
-            nodePsi is KtNamedFunction ->
+            nodePsi is KtNamedFunction || nodePsi is KtSecondaryConstructor ->
                 return wrap@{ childElement ->
                     getWrapAfterAnnotation(childElement, commonSettings.METHOD_ANNOTATION_WRAP)?.let {
                         return@wrap it

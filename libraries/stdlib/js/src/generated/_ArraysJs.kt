@@ -3,9 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("ArraysKt")
-
 package kotlin.collections
 
 //
@@ -408,6 +405,222 @@ public actual fun CharArray.contentToString(): String {
 }
 
 /**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
+    arrayCopy(this, destination, destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
+    arrayCopy(this.unsafeCast<Array<Byte>>(), destination.unsafeCast<Array<Byte>>(), destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
+    arrayCopy(this.unsafeCast<Array<Short>>(), destination.unsafeCast<Array<Short>>(), destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
+    arrayCopy(this.unsafeCast<Array<Int>>(), destination.unsafeCast<Array<Int>>(), destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
+    arrayCopy(this.unsafeCast<Array<Long>>(), destination.unsafeCast<Array<Long>>(), destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
+    arrayCopy(this.unsafeCast<Array<Float>>(), destination.unsafeCast<Array<Float>>(), destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
+    arrayCopy(this.unsafeCast<Array<Double>>(), destination.unsafeCast<Array<Double>>(), destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
+    arrayCopy(this.unsafeCast<Array<Boolean>>(), destination.unsafeCast<Array<Boolean>>(), destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
+ * Copies this array or its subrange into the [destination] array and returns that array.
+ * 
+ * It's allowed to pass the same array in the [destination] and even specify the subrange so that it overlaps with the destination range.
+ * 
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the [destination] array to copy to, 0 by default.
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
+ * 
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * or when that index is out of the [destination] array indices range.
+ * 
+ * @return the [destination] array.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual inline fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
+    arrayCopy(this.unsafeCast<Array<Char>>(), destination.unsafeCast<Array<Char>>(), destinationOffset, startIndex, endIndex)
+    return destination
+}
+
+/**
  * Returns new array which is a copy of the original array.
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
@@ -504,6 +717,7 @@ public actual fun CharArray.copyOf(): CharArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, ByteArray(newSize))
 }
 
@@ -517,6 +731,7 @@ public actual fun ByteArray.copyOf(newSize: Int): ByteArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, ShortArray(newSize))
 }
 
@@ -530,6 +745,7 @@ public actual fun ShortArray.copyOf(newSize: Int): ShortArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun IntArray.copyOf(newSize: Int): IntArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, IntArray(newSize))
 }
 
@@ -543,6 +759,7 @@ public actual fun IntArray.copyOf(newSize: Int): IntArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun LongArray.copyOf(newSize: Int): LongArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return withType("LongArray", arrayCopyResize(this, newSize, 0L))
 }
 
@@ -556,6 +773,7 @@ public actual fun LongArray.copyOf(newSize: Int): LongArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, FloatArray(newSize))
 }
 
@@ -569,6 +787,7 @@ public actual fun FloatArray.copyOf(newSize: Int): FloatArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return fillFrom(this, DoubleArray(newSize))
 }
 
@@ -582,6 +801,7 @@ public actual fun DoubleArray.copyOf(newSize: Int): DoubleArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return withType("BooleanArray", arrayCopyResize(this, newSize, false))
 }
 
@@ -595,6 +815,7 @@ public actual fun BooleanArray.copyOf(newSize: Int): BooleanArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 public actual fun CharArray.copyOf(newSize: Int): CharArray {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return withType("CharArray", fillFrom(this, CharArray(newSize)))
 }
 
@@ -609,75 +830,107 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
  */
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 public actual fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
     return arrayCopyResize(this, newSize, null)
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
-public actual inline fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+@Suppress("ACTUAL_WITHOUT_EXPECT")
+public actual fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@Suppress("NOTHING_TO_INLINE")
-public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+public actual fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@Suppress("NOTHING_TO_INLINE")
-public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+public actual fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@Suppress("NOTHING_TO_INLINE")
-public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("LongArray", this.asDynamic().slice(fromIndex, toIndex))
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@Suppress("NOTHING_TO_INLINE")
-public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+public actual fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
-@Suppress("NOTHING_TO_INLINE")
-public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+public actual fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public actual fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("BooleanArray", this.asDynamic().slice(fromIndex, toIndex))
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ * 
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("CharArray", this.asDynamic().slice(fromIndex, toIndex))
 }
 
@@ -1086,6 +1339,6 @@ public actual fun BooleanArray.toTypedArray(): Array<Boolean> {
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public actual fun CharArray.toTypedArray(): Array<Char> {
-    return Array<Char>(size, { i -> this[i] })
+    return Array(size) { index -> this[index] }
 }
 

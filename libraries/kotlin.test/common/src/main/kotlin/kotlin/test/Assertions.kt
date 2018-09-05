@@ -12,8 +12,8 @@
 
 package kotlin.test
 
+import kotlin.contracts.*
 import kotlin.internal.*
-import kotlin.internal.contracts.*
 import kotlin.reflect.KClass
 
 /**

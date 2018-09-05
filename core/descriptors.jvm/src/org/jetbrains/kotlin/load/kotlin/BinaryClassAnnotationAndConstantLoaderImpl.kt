@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
+import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -30,6 +28,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.compact
 import java.util.*
 
@@ -103,6 +104,11 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                 }
             }
 
+            override fun visitClassLiteral(name: Name, classLiteralId: KotlinJvmBinaryClass.ClassLiteralId) {
+                arguments[name] = classLiteralId.toClassValue() ?:
+                        ErrorValue.create("Error value of annotation argument: $name: class ${classLiteralId.classId.asSingleFqName()} not found")
+            }
+
             override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
                 arguments[name] = EnumValue(enumClassId, enumEntryName)
             }
@@ -117,6 +123,13 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 
                     override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
                         elements.add(EnumValue(enumClassId, enumEntryName))
+                    }
+
+                    override fun visitClassLiteral(classLiteralId: KotlinJvmBinaryClass.ClassLiteralId) {
+                        elements.add(
+                            classLiteralId.toClassValue()
+                                ?: ErrorValue.create("Error array element value of annotation argument: $name: class ${classLiteralId.classId.asSingleFqName()} not found")
+                        )
                     }
 
                     override fun visitEnd() {
@@ -149,6 +162,21 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
             }
         }
     }
+
+    private fun KotlinJvmBinaryClass.ClassLiteralId.toClassValue(): KClassValue? =
+        module.findClassAcrossModuleDependencies(this.classId)?.let { classDescriptor ->
+            var currentType = classDescriptor.defaultType
+            for (i in 0 until this.arrayNestedness) {
+                val nextWrappedType =
+                    (if (i == 0) module.builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(currentType) else null)
+                        ?: module.builtIns.getArrayType(Variance.INVARIANT, currentType)
+                currentType = nextWrappedType
+            }
+            val kClass = resolveClass(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.kClass.toSafe()))
+            val arguments = listOf(TypeProjectionImpl(currentType))
+            val type = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, arguments)
+            KClassValue(type)
+        }
 
     private fun resolveClass(classId: ClassId): ClassDescriptor {
         return module.findNonGenericClassAcrossDependencies(classId, notFoundClasses)

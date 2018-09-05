@@ -19,15 +19,12 @@ package org.jetbrains.kotlin.generators.tests;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.LineSeparator;
-import com.intellij.util.containers.ContainerUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +34,6 @@ public class GenerateRangesCodegenTestData {
     private static final File AS_EXPRESSION_DIR = new File(TEST_DATA_DIR, "expression");
     private static final File[] SOURCE_TEST_FILES = {
             new File("libraries/stdlib/test/ranges/RangeIterationTest.kt"),
-            new File("libraries/stdlib/jvm/test/ranges/RangeIterationJVMTest.kt")
     };
 
     private static final Pattern TEST_FUN_PATTERN = Pattern.compile("@Test fun (\\w+)\\(\\) \\{.+?}", Pattern.DOTALL);
@@ -65,32 +61,51 @@ public class GenerateRangesCodegenTestData {
                                                       "    }\n" +
                                                       "\n";
 
-    private static final Map<String, String> ELEMENT_TYPE_KNOWN_SUBSTRINGS = new ContainerUtil.ImmutableMapBuilder<String, String>()
-            .put("'", "Char")
-            .put("\"", "Char")
-            .put("Float.NaN", "Float")
-            .put("Double.NaN", "Double")
-            .put("MaxL", "Long")
-            .put("MinL", "Long")
-            .put("MaxC", "Char")
-            .put("MinC", "Char")
-            .build();
+    private static final List<String> INTEGER_PRIMITIVES = Arrays.asList("Int", "Byte", "Short", "Long", "Char", "UInt", "UByte", "UShort", "ULong");
+
+    private static final Map<String, String> ELEMENT_TYPE_KNOWN_SUBSTRINGS = new HashMap<>();
+    private static final Map<String, String> MIN_MAX_CONSTANTS = new LinkedHashMap<>();
+
+    static {
+        for (String integerType : INTEGER_PRIMITIVES) {
+            String suffix = integerType.substring(0, integerType.startsWith("U") ? 2 : 1);
+            ELEMENT_TYPE_KNOWN_SUBSTRINGS.put("Max" + suffix, integerType);
+            ELEMENT_TYPE_KNOWN_SUBSTRINGS.put("Min" + suffix, integerType);
+            MIN_MAX_CONSTANTS.put("Max" + suffix, integerType + ".MAX_VALUE");
+            MIN_MAX_CONSTANTS.put("Min" + suffix, integerType + ".MIN_VALUE");
+        }
+
+        ELEMENT_TYPE_KNOWN_SUBSTRINGS.put("'", "Char");
+        ELEMENT_TYPE_KNOWN_SUBSTRINGS.put("\"", "Char");
+    }
 
     private static String detectElementType(String rangeExpression) {
         Matcher matcher = Pattern.compile("\\.to(\\w+)").matcher(rangeExpression);
         if (matcher.find()) {
             String elementType = matcher.group(1);
-            return elementType.equals("Byte") || elementType.equals("Short") ? "Int" : elementType;
-        }
-        if (Pattern.compile("\\d\\.\\d").matcher(rangeExpression).find()) {
-            return "Double";
+            return getResultingType(elementType);
         }
         for (String substring : ELEMENT_TYPE_KNOWN_SUBSTRINGS.keySet()) {
             if (rangeExpression.contains(substring)) {
-                return ELEMENT_TYPE_KNOWN_SUBSTRINGS.get(substring);
+                return getResultingType(ELEMENT_TYPE_KNOWN_SUBSTRINGS.get(substring));
             }
         }
+        if (Pattern.compile("\\duL", Pattern.CASE_INSENSITIVE).matcher(rangeExpression).find()) {
+            return "ULong";
+        }
+        if (Pattern.compile("\\dL").matcher(rangeExpression).find()) {
+            return "Long";
+        }
+        if (Pattern.compile("\\du", Pattern.CASE_INSENSITIVE).matcher(rangeExpression).find()) {
+            return "UInt";
+        }
         return "Int";
+    }
+
+    private static String getResultingType(String operandType) {
+        return operandType.equals("Byte") || operandType.equals("Short") ? "Int" :
+               operandType.equals("UByte") || operandType.equals("UShort") ? "UInt" :
+               operandType;
     }
 
     private static String renderTemplate(String template, int number, String elementType, String rangeExpression, String expectedListElements) {
@@ -104,38 +119,9 @@ public class GenerateRangesCodegenTestData {
                 .replace("\n", LineSeparator.getSystemLineSeparator().getSeparatorString());
     }
 
-    private static final List<String> INTEGER_PRIMITIVES = Arrays.asList("Integer", "Byte", "Short", "Long", "Character");
+    private static final List<String> IGNORED_FOR_JS_BACKEND = Collections.emptyList();
 
-    // TODO: Use common MIN_VALUE/MAX_VALUE constants and remove these exclusions
-    private static final List<String> IGNORED_FOR_JS_BACKEND = Arrays.asList(
-            "inexactDownToMinValue.kt",
-            "inexactToMaxValue.kt",
-            "maxValueMinusTwoToMaxValue.kt",
-            "maxValueToMaxValue.kt",
-            "maxValueToMinValue.kt",
-            "progressionDownToMinValue.kt",
-            "progressionMaxValueMinusTwoToMaxValue.kt",
-            "progressionMaxValueToMaxValue.kt",
-            "progressionMaxValueToMinValue.kt",
-            "progressionMinValueToMinValue.kt",
-            "overflowZeroToMinValue.kt",
-            "overflowZeroDownToMaxValue.kt"
-    );
-
-    private static final List<String> IGNORED_FOR_NATIVE_BACKEND = Arrays.asList(
-            "inexactDownToMinValue.kt",
-            "inexactToMaxValue.kt",
-            "maxValueMinusTwoToMaxValue.kt",
-            "maxValueToMaxValue.kt",
-            "maxValueToMinValue.kt",
-            "progressionDownToMinValue.kt",
-            "progressionMaxValueMinusTwoToMaxValue.kt",
-            "progressionMaxValueToMaxValue.kt",
-            "progressionMaxValueToMinValue.kt",
-            "progressionMinValueToMinValue.kt",
-            "overflowZeroToMinValue.kt",
-            "overflowZeroDownToMaxValue.kt"
-    );
+    private static final List<String> IGNORED_FOR_NATIVE_BACKEND = Collections.emptyList();
 
     private static void writeIgnoreBackendDirective(PrintWriter out, String backendName) {
         out.printf("// TODO: muted automatically, investigate should it be ran for %s or not%n", backendName);
@@ -152,8 +138,9 @@ public class GenerateRangesCodegenTestData {
             throw new AssertionError(e);
         }
 
-        // Ranges are not supported in JS_IR yet
+        // Ranges are not supported in JS_IR, JVM_IR yet
         writeIgnoreBackendDirective(out, "JS_IR");
+        writeIgnoreBackendDirective(out, "JVM_IR");
 
         if (IGNORED_FOR_JS_BACKEND.contains(file.getName())) {
             writeIgnoreBackendDirective(out, "JS");
@@ -165,14 +152,14 @@ public class GenerateRangesCodegenTestData {
         out.println("// Auto-generated by " + GenerateRangesCodegenTestData.class.getName() + ". DO NOT EDIT!");
         out.println("// WITH_RUNTIME");
         out.println();
-        if (generatedBody.contains("Max") || generatedBody.contains("Min")) {
-            // Import min/max values, but only in case when the generated test case actually uses them (not to clutter tests which don't)
-            out.println();
-            for (String primitive : INTEGER_PRIMITIVES) {
-                out.println("import java.lang." + primitive + ".MAX_VALUE as Max" + primitive.charAt(0));
-                out.println("import java.lang." + primitive + ".MIN_VALUE as Min" + primitive.charAt(0));
+        // Import min/max values, but only in case when the generated test case actually uses them (not to clutter tests which don't)
+        out.println();
+        MIN_MAX_CONSTANTS.forEach((name, value) -> {
+            if (generatedBody.contains(name)) {
+                out.printf("const val %s = %s", name, value).println();
             }
-        }
+        });
+
         out.println();
         out.println("fun box(): String {");
         out.print(generatedBody);

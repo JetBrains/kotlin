@@ -1,6 +1,7 @@
 // WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 
-const val M = 0.toChar()
+const val M = Char.MIN_VALUE
 
 fun box(): String {
     var count = 0

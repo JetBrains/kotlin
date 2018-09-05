@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import proguard.gradle.ProGuardTask
 
 buildscript {
-    extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
+    extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.70-dev-491", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.0-dev-25", onlySuccessBootstrap = true))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
         maven("https://plugins.gradle.org/m2")
-    }
+        }
 
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
     // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
@@ -65,7 +65,7 @@ val defaultSnapshotVersion: String by extra
 val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
 val kotlinVersion by extra(findProperty("deployVersion")?.toString() ?: buildNumber)
 
-val kotlinLanguageVersion by extra("1.2")
+val kotlinLanguageVersion by extra("1.3")
 
 allprojects {
     group = "org.jetbrains.kotlin"
@@ -266,14 +266,15 @@ allprojects {
         mirrorRepo?.let(::maven)
         bootstrapKotlinRepo?.let(::maven)
         jcenter()
-    }
+        }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
 
     val commonCompilerArgs = listOfNotNull(
         "-Xallow-kotlin-package",
         "-Xread-deserialized-contracts",
-        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") }
+        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") },
+        "-XXLanguage:-ReleaseCoroutines"
     )
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {

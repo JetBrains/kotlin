@@ -57,7 +57,6 @@ enum class LanguageFeature(
     ExpectedTypeFromCast(KOTLIN_1_2),
     DefaultMethodsCallFromJava6TargetError(KOTLIN_1_2),
 
-    BooleanElvisBoundSmartCasts(KOTLIN_1_3),
     RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3, kind = BUG_FIX),
     NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitDataClassesOverridingCopy(KOTLIN_1_3, kind = BUG_FIX),
@@ -74,6 +73,7 @@ enum class LanguageFeature(
     ReadDeserializedContracts(KOTLIN_1_3),
     UseReturnsEffect(KOTLIN_1_3),
     UseCallsInPlaceEffect(KOTLIN_1_3),
+    AllowContractsForCustomFunctions(KOTLIN_1_3),
     VariableDeclarationInWhenSubject(KOTLIN_1_3),
     ProhibitLocalAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitSmartcastsOnLocalDelegatedProperty(KOTLIN_1_3, kind = BUG_FIX),
@@ -100,11 +100,11 @@ enum class LanguageFeature(
         State.ENABLED_WITH_WARNING
     ),
 
-    AllowContractsForCustomFunctions(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
-
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
     NewInference(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
+    // This feature can be enabled only along with new inference, see KT-26357 for details
+    BooleanElvisBoundSmartCasts(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
 
     SamConversionForKotlinFunctions(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
 
@@ -214,7 +214,10 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
             str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         @JvmField
-        val LATEST_STABLE = KOTLIN_1_2
+        val FIRST_SUPPORTED = KOTLIN_1_2
+
+        @JvmField
+        val LATEST_STABLE = KOTLIN_1_3
     }
 }
 

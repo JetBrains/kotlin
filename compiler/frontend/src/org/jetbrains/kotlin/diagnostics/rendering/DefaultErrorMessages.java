@@ -388,6 +388,7 @@ public class DefaultErrorMessages {
         MAP.put(NOT_A_CLASS, "Not a class");
         MAP.put(ILLEGAL_ESCAPE_SEQUENCE, "Illegal escape sequence");
         MAP.put(UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH, "Type of the constant expression cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath");
+        MAP.put(SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED, "Conversion of signed constants to unsigned ones is prohibited");
 
         MAP.put(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS, "Left-hand side of callable reference matches expression syntax reserved for future releases");
 
@@ -941,7 +942,7 @@ public class DefaultErrorMessages {
         MAP.put(PLUGIN_INFO, "{0}", (d, c) -> d.getText());
 
         MAP.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description: {0}", TO_STRING);
-        MAP.put(CONTRACT_NOT_ALLOWED, "Contract is not allowed here");
+        MAP.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING);
 
         MAP.setImmutable();
 

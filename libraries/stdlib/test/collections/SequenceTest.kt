@@ -152,6 +152,11 @@ public class SequenceTest {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
         assertFailsWith<IllegalArgumentException> { fibonacci().drop(-1) }
+
+        val dropMax = fibonacci().drop(Int.MAX_VALUE)
+        val dropMore = dropMax.drop(Int.MAX_VALUE)
+        val takeMore = dropMax.take(Int.MAX_VALUE)
+
     }
 
     @Test fun take() {
@@ -541,6 +546,26 @@ public class SequenceTest {
     @Test fun sortedWith() {
         val comparator = compareBy { s: String -> s.reversed() }
         assertEquals(listOf("act", "wast", "test"), sequenceOf("act", "test", "wast").sortedWith(comparator).toList())
+    }
+
+    @Test fun associateWith() {
+        val items = sequenceOf("Alice", "Bob", "Carol")
+        val itemsWithTheirLength = items.associateWith { it.length }
+
+        assertEquals(mapOf("Alice" to 5, "Bob" to 3, "Carol" to 5), itemsWithTheirLength)
+
+        val updatedLength =
+            items.drop(1).associateWithTo(itemsWithTheirLength.toMutableMap()) { name -> name.toLowerCase().count { it in "aeuio" }}
+
+        assertEquals(mapOf("Alice" to 5, "Bob" to 1, "Carol" to 2), updatedLength)
+    }
+
+    @Test fun orEmpty() {
+        val s1: Sequence<Int>? = null
+        assertEquals(emptySequence(), s1.orEmpty())
+
+        val s2: Sequence<Int>? = sequenceOf(1)
+        assertEquals(s2, s2.orEmpty())
     }
 
     /*
