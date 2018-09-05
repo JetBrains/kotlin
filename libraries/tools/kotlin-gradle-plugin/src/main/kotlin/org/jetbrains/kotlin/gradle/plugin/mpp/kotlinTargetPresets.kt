@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeProjectProperty
 import org.jetbrains.kotlin.compilerRunner.hasProperty
+import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.setProperty
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -250,7 +252,19 @@ class KotlinNativeTargetPreset(
         tasks.maybeCreate(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
     }
 
+    private fun stdlib(target: KonanTarget): FileCollection = with(project) {
+        files("${konanHome}/klib/common/stdlib").builtBy(createCompilerDownloadingTask())
+    }
+
+    private fun platformLibs(target: KonanTarget): FileCollection = with(project) {
+        files(provider {
+            file("${project.konanHome}/klib/platform/${target.name}").listFiles { file -> file.isDirectory } ?: emptyArray()
+        })
+    }
+
     override fun createTarget(name: String): KotlinNativeTarget {
+        createCompilerDownloadingTask()
+
         val result = KotlinNativeTarget(project, konanTarget).apply {
             targetName = name
             disambiguationClassifier = name
@@ -259,8 +273,16 @@ class KotlinNativeTargetPreset(
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
         }
 
-        createCompilerDownloadingTask()
         KotlinNativeTargetConfigurator(buildOutputCleanupRegistry).configureTarget(result)
+
+        // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
+        result.compilations.all {
+            val target = it.target.konanTarget
+            it.dependencies {
+                implementation(stdlib(target))
+                implementation(platformLibs(target))
+            }
+        }
         return result
     }
 }
