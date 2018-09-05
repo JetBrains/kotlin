@@ -132,9 +132,9 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
     public fun toLong(): Long = data.toLong() and 0xFF
 
     public fun toUByte(): UByte = this
-    public fun toUShort(): UShort = data.toUShort()
-    public fun toUInt(): UInt = data.toUInt()
-    public fun toULong(): ULong = data.toULong()
+    public fun toUShort(): UShort = data.toUShort() and 0xFFu
+    public fun toUInt(): UInt = data.toUInt() and 0xFFu
+    public fun toULong(): ULong = data.toULong() and 0xFFu
 
     public override fun toString(): String = toInt().toString()
 

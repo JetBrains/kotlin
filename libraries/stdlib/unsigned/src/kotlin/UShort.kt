@@ -133,8 +133,8 @@ public inline class UShort internal constructor(private val data: Short) : Compa
 
     public fun toUByte(): UByte = data.toUByte()
     public fun toUShort(): UShort = this
-    public fun toUInt(): UInt = data.toUInt()
-    public fun toULong(): ULong = data.toULong()
+    public fun toUInt(): UInt = data.toUInt() and 0xFFFFu
+    public fun toULong(): ULong = data.toULong() and 0xFFFFu
 
     public override fun toString(): String = toInt().toString()
 
@@ -142,7 +142,7 @@ public inline class UShort internal constructor(private val data: Short) : Compa
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Byte.toUShort(): UShort = UShort(this.toShort() and 0xFF)
+public fun Byte.toUShort(): UShort = UShort(this.toShort())
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun Short.toUShort(): UShort = UShort(this)

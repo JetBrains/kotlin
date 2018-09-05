@@ -146,13 +146,13 @@ public inline class ULong internal constructor(private val data: Long) : Compara
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Byte.toULong(): ULong = ULong(this.toLong() and 0xFF)
+public fun Byte.toULong(): ULong = ULong(this.toLong())
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Short.toULong(): ULong = ULong(this.toLong() and 0xFFFF)
+public fun Short.toULong(): ULong = ULong(this.toLong())
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Int.toULong(): ULong = ULong(this.toLong() and 0xFFFF_FFFF)
+public fun Int.toULong(): ULong = ULong(this.toLong())
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun Long.toULong(): ULong = ULong(this)

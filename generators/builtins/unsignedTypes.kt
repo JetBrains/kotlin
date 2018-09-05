@@ -199,7 +199,11 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         for (otherType in UnsignedType.values()) {
             val name = otherType.capitalized
             out.print("    public fun to$name(): $name = ")
-            out.println(if (type == otherType) "this" else "data.to${otherType.capitalized}()")
+            out.println(when {
+                otherType > type -> "data.to${otherType.capitalized}() and ${type.mask}u"
+                otherType == type -> "this"
+                else -> "data.to${otherType.capitalized}()"
+            })
         }
         out.println()
     }
@@ -212,7 +216,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.println("@ExperimentalUnsignedTypes")
             out.print("public fun $otherSigned.to$className(): $className = ")
             out.println(when {
-                otherType < type -> "$className(this.to$thisSigned() and ${otherType.mask})"
                 otherType == type -> "$className(this)"
                 else -> "$className(this.to$thisSigned())"
             })

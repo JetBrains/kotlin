@@ -138,7 +138,7 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
     public fun toUByte(): UByte = data.toUByte()
     public fun toUShort(): UShort = data.toUShort()
     public fun toUInt(): UInt = this
-    public fun toULong(): ULong = data.toULong()
+    public fun toULong(): ULong = data.toULong() and 0xFFFF_FFFFu
 
     public override fun toString(): String = toLong().toString()
 
@@ -146,10 +146,10 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Byte.toUInt(): UInt = UInt(this.toInt() and 0xFF)
+public fun Byte.toUInt(): UInt = UInt(this.toInt())
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Short.toUInt(): UInt = UInt(this.toInt() and 0xFFFF)
+public fun Short.toUInt(): UInt = UInt(this.toInt())
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun Int.toUInt(): UInt = UInt(this)
