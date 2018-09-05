@@ -332,7 +332,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         sourceSetMap,
                         artifactsMap,
                         dataNode,
-                        preprocessDependencies(compilation, ideProject),
+                        preprocessDependencies(compilation.dependencies, ideProject),
                         ideProject
                     )
                     for (sourceSet in compilation.sourceSets) {
@@ -344,50 +344,49 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
             val sourceSetGraph = GraphBuilder.directed().build<KotlinModule>()
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
+                sourceSetGraph.addNode(sourceSet)
                 val productionSourceSet = dataNode.data.productionModuleId
                     ?.let { ideModule.findChildModuleByInternalName(it) }
                     ?.kotlinSourceSet
                     ?.kotlinModule
                 if (productionSourceSet != null) {
-                    sourceSetGraph.putEdge(sourceSet, productionSourceSet!!)
+                    sourceSetGraph.putEdge(sourceSet, productionSourceSet)
                 }
                 for (targetSourceSetName in sourceSet.dependsOnSourceSets) {
                     val targetSourceSet = mppModel.sourceSets[targetSourceSetName] ?: continue
                     sourceSetGraph.putEdge(sourceSet, targetSourceSet)
                 }
+            }
+            val closedSourceSetGraph = Graphs.transitiveClosure(sourceSetGraph)
+            for (sourceSet in closedSourceSetGraph.nodes()) {
+                val fromDataNode = getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx) ?: continue
+                val dependeeSourceSets = closedSourceSetGraph.successors(sourceSet)
+                for (dependeeSourceSet in dependeeSourceSets) {
+                    val toDataNode = getSiblingKotlinModuleData(dependeeSourceSet, gradleModule, ideModule, resolverCtx) ?: continue
+                    addDependency(fromDataNode, toDataNode)
+                }
                 if (processedModuleIds.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))) {
+                    val mergedDependencies = LinkedHashSet<KotlinDependency>().apply {
+                        addAll(sourceSet.dependencies)
+                        dependeeSourceSets.flatMapTo(this) { it.dependencies }
+                    }
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
                         artifactsMap,
-                        dataNode,
-                        preprocessDependencies(sourceSet, ideProject),
+                        fromDataNode,
+                        preprocessDependencies(mergedDependencies, ideProject),
                         ideProject
                     )
-                    if (productionSourceSet != null) {
-                        buildDependencies(
-                            resolverCtx,
-                            sourceSetMap,
-                            artifactsMap,
-                            dataNode,
-                            preprocessDependencies(productionSourceSet, ideProject),
-                            ideProject
-                        )
-                    }
                 }
-            }
-            for (edge in Graphs.transitiveClosure(sourceSetGraph).edges()) {
-                val fromDataNode = getSiblingKotlinModuleData(edge.source(), gradleModule, ideModule, resolverCtx) ?: continue
-                val toDataNode = getSiblingKotlinModuleData(edge.target(), gradleModule, ideModule, resolverCtx) ?: continue
-                addDependency(fromDataNode, toDataNode)
             }
         }
 
         private fun preprocessDependencies(
-            kotlinModule: KotlinModule,
+            dependencies: Set<KotlinDependency>,
             ideProject: DataNode<ProjectData>
         ): List<ExternalDependency> {
-            return kotlinModule.dependencies
+            return dependencies
                 .groupBy { it.id }
                 .mapValues { it.value.firstOrNull { it.scope == "COMPILE" } ?: it.value.lastOrNull() }
                 .values
@@ -433,7 +432,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             gradleModule: IdeaModule,
             ideModule: DataNode<ModuleData>,
             resolverCtx: ProjectResolverContext
-        ): DataNode<*>? {
+        ): DataNode<out ModuleData>? {
             val usedModuleId = getKotlinModuleId(gradleModule, kotlinModule, resolverCtx)
             return ideModule.findChildModuleById(usedModuleId)
         }
