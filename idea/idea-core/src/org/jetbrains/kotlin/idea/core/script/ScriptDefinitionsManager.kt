@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.execution.console.IdeConsoleRootType
-import com.intellij.ide.projectView.impl.ProjectRootsUtil.isInTestSource
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
@@ -36,8 +35,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isInContent
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.utils.PathUtil
@@ -58,7 +55,6 @@ import kotlin.script.experimental.host.createCompilationConfigurationFromTemplat
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStlib
-import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
@@ -109,26 +105,6 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
         return StandardIdeScriptDefinition(project)
-    }
-
-    @Suppress("DEPRECATION")
-    fun isInExpectedLocation(ktFile: KtFile, scriptDefinition: KotlinScriptDefinition): Boolean {
-        if (ScratchFileService.isInScratchRoot(ktFile.virtualFile)) return true
-
-        val scriptScope = scriptDefinition.scriptExpectedLocations
-        return when {
-            scriptScope.contains(ScriptExpectedLocation.Everywhere) -> true
-            scriptScope.contains(ScriptExpectedLocation.Project)
-                    && ProjectRootManager.getInstance(ktFile.project).fileIndex.isInContent(ktFile.virtualFile) -> true
-            scriptScope.contains(ScriptExpectedLocation.TestsOnly) && isInTestSource(ktFile) -> true
-            else -> return isInContent(
-                ktFile,
-                scriptScope.contains(ScriptExpectedLocation.SourcesOnly),
-                scriptScope.contains(ScriptExpectedLocation.Libraries),
-                scriptScope.contains(ScriptExpectedLocation.Libraries),
-                scriptScope.contains(ScriptExpectedLocation.Libraries)
-            )
-        }
     }
 
     private fun updateDefinitions() {
