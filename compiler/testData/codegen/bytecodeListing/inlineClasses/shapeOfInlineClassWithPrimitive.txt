@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public final class Foo {
     private final field l: long
-    public synthetic method <init>(p0: long): void
+    private synthetic method <init>(p0: long): void
     public final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
     public static method constructor(p0: long): long
     public final static method empty(p0: long): void

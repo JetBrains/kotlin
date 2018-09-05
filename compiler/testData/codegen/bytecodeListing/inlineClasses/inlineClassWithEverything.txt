@@ -48,7 +48,7 @@ public interface IFoo {
 @kotlin.Metadata
 public final class Z {
     private final field x: int
-    public synthetic method <init>(p0: int): void
+    private synthetic method <init>(p0: int): void
     public final static @org.jetbrains.annotations.NotNull method box(p0: int): Z
     public static method constructor(p0: int): int
     public static method constructor(p0: long): int

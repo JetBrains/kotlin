@@ -13,7 +13,7 @@ public final class Foo {
     private final field x: int
     inner class Foo$Companion
     static method <clinit>(): void
-    public synthetic method <init>(p0: int): void
+    private synthetic method <init>(p0: int): void
     public final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
     public static method constructor(p0: int): int
     public static method equals(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean

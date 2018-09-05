@@ -222,7 +222,7 @@ public class AsmUtil {
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
-        int flags = getCommonCallableFlags(functionDescriptor, state);
+        int flags = getCommonCallableFlags(functionDescriptor, kind, state);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
             flags |= flagAnnotation.getJvmFlag(functionDescriptor.getOriginal());
@@ -263,14 +263,22 @@ public class AsmUtil {
         return flags;
     }
 
-    private static boolean isInlineClassWrapperConstructor(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind) {
+    private static boolean isInlineClassWrapperConstructor(@NotNull FunctionDescriptor functionDescriptor, @Nullable OwnerKind kind) {
         if (!(functionDescriptor instanceof ConstructorDescriptor)) return false;
         ClassDescriptor classDescriptor = ((ConstructorDescriptor) functionDescriptor).getConstructedClass();
         return classDescriptor.isInline() && kind == OwnerKind.IMPLEMENTATION;
     }
 
     public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor, @NotNull GenerationState state) {
-        int flags = getVisibilityAccessFlag(functionDescriptor);
+        return getCommonCallableFlags(functionDescriptor, null, state);
+    }
+
+    private static int getCommonCallableFlags(
+            FunctionDescriptor functionDescriptor,
+            @Nullable OwnerKind kind,
+            @NotNull GenerationState state
+    ) {
+        int flags = getVisibilityAccessFlag(functionDescriptor, kind);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
         if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor) ||
@@ -281,7 +289,11 @@ public class AsmUtil {
     }
 
     public static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor) {
-        Integer specialCase = specialCaseVisibility(descriptor);
+        return getVisibilityAccessFlag(descriptor, null);
+    }
+
+    private static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor, @Nullable OwnerKind kind) {
+        Integer specialCase = specialCaseVisibility(descriptor, kind);
         if (specialCase != null) {
             return specialCase;
         }
@@ -378,9 +390,14 @@ public class AsmUtil {
     }
 
     @Nullable
-    private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
+    private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor, @Nullable OwnerKind kind) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
+
+        if (memberDescriptor instanceof FunctionDescriptor &&
+            isInlineClassWrapperConstructor((FunctionDescriptor) memberDescriptor, kind)) {
+            return ACC_PRIVATE;
+        }
 
         if (isEffectivelyInlineOnly(memberDescriptor)) {
             return ACC_PRIVATE;
