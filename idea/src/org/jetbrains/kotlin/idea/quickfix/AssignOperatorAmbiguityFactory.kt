@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
-import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -51,12 +48,8 @@ object AssignOperatorAmbiguityFactory : KotlinIntentionActionsFactory() {
 }
 
 private fun KotlinType?.isMutableCollection(): Boolean {
-    val classDescriptor = this?.constructor?.declarationDescriptor as? ClassDescriptor ?: return false
-    val className = classDescriptor.name.asString()
-    val builtIns = DefaultBuiltIns.Instance
-    return className.endsWith("List") && classDescriptor.isSubclassOf(builtIns.mutableList)
-            || className.endsWith("Set") && classDescriptor.isSubclassOf(builtIns.mutableSet)
-            || className.endsWith("Map") && classDescriptor.isSubclassOf(builtIns.mutableMap)
+    if (this == null) return false
+    return JavaToKotlinClassMap.isMutable(this) || constructor.supertypes.reversed().any { JavaToKotlinClassMap.isMutable(it) }
 }
 
 private class ReplaceWithAssignFunctionCallFix(
