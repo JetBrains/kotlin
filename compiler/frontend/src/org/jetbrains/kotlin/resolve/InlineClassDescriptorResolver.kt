@@ -33,6 +33,19 @@ object InlineClassDescriptorResolver {
     fun createUnboxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? =
         createConversionFunctionDescriptor(false, owner)
 
+    @JvmStatic
+    fun isSynthesizedBoxMethod(descriptor: FunctionDescriptor) =
+        isSynthesizedInlineClassMethod(descriptor, BOX_METHOD_NAME)
+
+    @JvmStatic
+    fun isSynthesizedUnboxMethod(descriptor: FunctionDescriptor) =
+        isSynthesizedInlineClassMethod(descriptor, UNBOX_METHOD_NAME)
+
+    private fun isSynthesizedInlineClassMethod(descriptor: FunctionDescriptor, name: Name) =
+        descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
+                descriptor.containingDeclaration.isInlineClass() &&
+                descriptor.name == name
+
     fun createSpecializedEqualsDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? {
         val inlinedValue = owner.underlyingRepresentation() ?: return null
 

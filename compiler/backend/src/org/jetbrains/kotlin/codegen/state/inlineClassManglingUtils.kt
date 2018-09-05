@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.getRepresentativeUpperBound
 import org.jetbrains.kotlin.resolve.DescriptorUtils.RESULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.DescriptorUtils.SUCCESS_OR_FAILURE_FQ_NAME
-import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver.BOX_METHOD_NAME
+import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.isInlineClassType
@@ -19,7 +19,7 @@ import java.security.MessageDigest
 fun getInlineClassValueParametersManglingSuffix(descriptor: CallableMemberDescriptor): String? {
     if (descriptor !is FunctionDescriptor) return null
     if (descriptor is ConstructorDescriptor) return null
-    if (descriptor.isSynthesizedBoxMethod()) return null
+    if (InlineClassDescriptorResolver.isSynthesizedBoxMethod(descriptor)) return null
 
     val actualValueParameterTypes = listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type }
 
@@ -41,11 +41,6 @@ private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Bool
     val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
     return getRepresentativeUpperBound(descriptor).requiresFunctionNameMangling()
 }
-
-private fun FunctionDescriptor.isSynthesizedBoxMethod() =
-    kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-            containingDeclaration.let { it is ClassDescriptor && it.isInline } &&
-            name == BOX_METHOD_NAME
 
 private fun collectSignatureForMangling(types: List<KotlinType>) =
     types.joinToString { getSignatureElementForMangling(it) }
