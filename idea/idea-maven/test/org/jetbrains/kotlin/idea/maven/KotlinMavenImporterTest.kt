@@ -634,7 +634,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
             Assert.assertEquals(
-                "-Xmulti-platform",
+                "-version",
                 compilerSettings!!.additionalArguments
             )
         }
@@ -832,7 +832,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                 Assert.assertEquals("commonjs", moduleKind)
             }
             Assert.assertEquals(
-                "-meta-info -output test.js -Xmulti-platform",
+                "-meta-info -output test.js",
                 compilerSettings!!.additionalArguments
             )
         }
@@ -984,7 +984,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("JVM 1.8", platform!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
-            Assert.assertEquals("-Xmulti-platform", compilerSettings!!.additionalArguments)
+            Assert.assertEquals("-version", compilerSettings!!.additionalArguments)
         }
     }
 

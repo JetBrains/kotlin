@@ -176,7 +176,8 @@ val commonUIExposedFields = listOf(
 )
 private val commonUIHiddenFields = listOf(
     CommonCompilerArguments::pluginClasspaths.name,
-    CommonCompilerArguments::pluginOptions.name
+    CommonCompilerArguments::pluginOptions.name,
+    CommonCompilerArguments::multiPlatform.name
 )
 private val commonPrimaryFields = commonUIExposedFields + commonUIHiddenFields
 

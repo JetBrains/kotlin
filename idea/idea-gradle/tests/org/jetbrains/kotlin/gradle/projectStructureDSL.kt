@@ -13,6 +13,7 @@ import com.intellij.openapi.roots.*
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.IdePlatform
@@ -69,7 +70,7 @@ class ProjectInfo(project: Project, private val projectPath: String) {
 }
 
 class ModuleInfo(
-    private val module: Module,
+    val module: Module,
     private val messageCollector: MessageCollector,
     private val projectPath: String
 ) {
@@ -105,6 +106,15 @@ class ModuleInfo(
         if (actualPlatform != platform) {
             messageCollector.report(
                 "Module '${module.name}': expected platform '${platform.description}' but found '${actualPlatform?.description}'"
+            )
+        }
+    }
+
+    fun additionalArguments(arguments: String?) {
+        val actualArguments = KotlinFacet.get(module)?.configuration?.settings?.compilerSettings?.additionalArguments
+        if (actualArguments != arguments) {
+            messageCollector.report(
+                "Module '${module.name}': expected additional arguments '$arguments' but found '$actualArguments'"
             )
         }
     }

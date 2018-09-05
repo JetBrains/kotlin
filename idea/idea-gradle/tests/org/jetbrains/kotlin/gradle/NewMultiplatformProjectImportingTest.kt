@@ -121,6 +121,10 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             allModules {
                 languageVersion("1.2")
                 apiVersion("1.2")
+                when (module.name) {
+                    "project", "app", "lib" -> additionalArguments(null)
+                    else -> additionalArguments("-version")
+                }
             }
 
             module("project")
