@@ -40,9 +40,7 @@ open class KotlinNativeCompile : DefaultTask() {
         get() = compilation.allSources
 
     val libraries: FileCollection
-        @InputFiles get() = compilation.compileDependencyFiles.filter {
-            it.extension == "klib"
-        }
+        @InputFiles get() = compilation.compileDependencyFiles
 
     @Input
     var optimized = false
@@ -58,6 +56,11 @@ open class KotlinNativeCompile : DefaultTask() {
     val additionalCompilerOptions: Collection<String>
         @Input get() = compilation.extraOpts
 
+    val kotlinNativeVersion: String
+        @Input get() = KonanCompilerDownloadTask.compilerVersion.toString()
+
+    val kotlinNativeHome: File
+        @Input get() = project.file(project.konanHome)
 
     @OutputFile
     val outputFile: Property<File> = project.objects.property(File::class.java)
@@ -107,6 +110,9 @@ open class KotlinNativeCompile : DefaultTask() {
     }
     // endregion
 
+    private val File.providedByCompiler: Boolean
+        get() = toPath().startsWith(project.file(project.konanHome).toPath())
+
     @TaskAction
     fun compile() {
         val output = outputFile.get()
@@ -126,7 +132,10 @@ open class KotlinNativeCompile : DefaultTask() {
 
             addAll(additionalCompilerOptions)
 
-            libraries.files.forEach { library ->
+            libraries.files.filter {
+                // Support only klib files for now.
+                it.extension == "klib" || !it.providedByCompiler
+            }.forEach { library ->
                 library.parent?.let { addArg("-r", it) }
                 addArg("-l", library.nameWithoutExtension)
             }
@@ -212,16 +221,14 @@ open class KonanCompilerDownloadTask : DefaultTask() {
         val archive = configuration.files.single()
 
         logger.info("Use Kotlin/Native compiler archive: ${archive.absolutePath}")
-        logger.lifecycle("Unpack Kotlin/Native compiler (version $versionString)...")
+        logger.lifecycle("Unpacking Kotlin/Native compiler (version $versionString)...")
         project.copy {
             it.from(archiveFileTree(archive))
             it.into(DependencyDirectories.localKonanDir)
         }
 
         removeRepo(repo)
-
     }
-
 
     @TaskAction
     fun checkCompiler() {
