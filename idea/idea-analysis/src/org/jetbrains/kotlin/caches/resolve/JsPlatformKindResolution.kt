@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -19,7 +19,7 @@ class JsPlatformKindResolution : IdePlatformKindResolution {
     override val resolverForModuleFactory: ResolverForModuleFactory
         get() = JsAnalyzerFacade
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
+    override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
         return JsPlatform.builtIns
     }
 }
