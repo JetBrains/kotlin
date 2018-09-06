@@ -59,9 +59,6 @@ open class KotlinNativeCompile : DefaultTask() {
     val kotlinNativeVersion: String
         @Input get() = KonanCompilerDownloadTask.compilerVersion.toString()
 
-    val kotlinNativeHome: File
-        @Input get() = project.file(project.konanHome)
-
     // We manually register this property as output file or directory depending on output kind.
     @Internal
     val outputFile: Property<File> = project.objects.property(File::class.java)
