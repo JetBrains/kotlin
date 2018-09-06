@@ -10,4 +10,4 @@ fun testNZ(z: Z?) = z?.toString()
 // @TestKt.class:
 // 0 INVOKESTATIC Z\$Erased\.toString
 // 0 INVOKESTATIC Z\-Erased\.toString
-// 2 INVOKESTATIC Z\.toString \(I\)Ljava/lang/String;
+// 2 INVOKESTATIC Z\.toString-impl \(I\)Ljava/lang/String;

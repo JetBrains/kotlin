@@ -26,25 +26,35 @@ object InlineClassDescriptorResolver {
     private val SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME = Name.identifier("p1")
     private val SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME = Name.identifier("p2")
 
-    fun createBoxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? {
-        return createConversionFunctionDescriptor(true, owner)
-    }
+    @JvmStatic
+    fun createBoxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? =
+        createConversionFunctionDescriptor(true, owner)
 
+    @JvmStatic
     fun createUnboxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? =
         createConversionFunctionDescriptor(false, owner)
 
     @JvmStatic
-    fun isSynthesizedBoxMethod(descriptor: FunctionDescriptor) =
-        isSynthesizedInlineClassMethod(descriptor, BOX_METHOD_NAME)
+    fun isSynthesizedBoxMethod(descriptor: CallableMemberDescriptor) =
+        isSynthesizedInlineClassMemberWithName(descriptor, BOX_METHOD_NAME)
 
     @JvmStatic
-    fun isSynthesizedUnboxMethod(descriptor: FunctionDescriptor) =
-        isSynthesizedInlineClassMethod(descriptor, UNBOX_METHOD_NAME)
+    fun isSynthesizedUnboxMethod(descriptor: CallableMemberDescriptor) =
+        isSynthesizedInlineClassMemberWithName(descriptor, UNBOX_METHOD_NAME)
 
-    private fun isSynthesizedInlineClassMethod(descriptor: FunctionDescriptor, name: Name) =
-        descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-                descriptor.containingDeclaration.isInlineClass() &&
-                descriptor.name == name
+    @JvmStatic
+    fun isSynthesizedBoxOrUnboxMethod(descriptor: CallableMemberDescriptor) =
+        isSynthesizedInlineClassMember(descriptor) && (descriptor.name == BOX_METHOD_NAME || descriptor.name == UNBOX_METHOD_NAME)
+
+    @JvmStatic
+    fun isSpecializedEqualsMethod(descriptor: CallableMemberDescriptor) =
+        isSynthesizedInlineClassMemberWithName(descriptor, SPECIALIZED_EQUALS_NAME)
+
+    private fun isSynthesizedInlineClassMemberWithName(descriptor: CallableMemberDescriptor, name: Name) =
+        isSynthesizedInlineClassMember(descriptor) && descriptor.name == name
+
+    private fun isSynthesizedInlineClassMember(descriptor: CallableMemberDescriptor) =
+        descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED && descriptor.containingDeclaration.isInlineClass()
 
     fun createSpecializedEqualsDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? {
         val inlinedValue = owner.underlyingRepresentation() ?: return null

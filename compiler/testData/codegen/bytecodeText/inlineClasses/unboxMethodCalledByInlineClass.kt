@@ -9,4 +9,4 @@ fun test(xs: List<Z>) = xs[0]
 // @TestKt.class:
 // 0 INVOKEVIRTUAL Z\$Erased\.unbox
 // 0 INVOKEVIRTUAL Z\-Erased\.unbox
-// 1 INVOKEVIRTUAL Z\.unbox \(\)I
+// 1 INVOKEVIRTUAL Z\.unbox-impl \(\)I

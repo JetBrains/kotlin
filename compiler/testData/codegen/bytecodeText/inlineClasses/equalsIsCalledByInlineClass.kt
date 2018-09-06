@@ -11,4 +11,4 @@ fun testNZ(z: Z?) = z?.equals(z)
 // @TestKt.class:
 // 0 INVOKESTATIC Z\$Erased\.equals
 // 0 INVOKESTATIC Z\-Erased\.equals
-// 3 INVOKESTATIC Z\.equals \(ILjava/lang/Object;\)Z
+// 3 INVOKESTATIC Z\.equals-impl \(ILjava/lang/Object;\)Z

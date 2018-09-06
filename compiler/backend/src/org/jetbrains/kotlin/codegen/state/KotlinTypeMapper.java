@@ -1010,7 +1010,7 @@ public class KotlinTypeMapper {
                                   ? JvmAbi.getterName(propertyName)
                                   : JvmAbi.setterName(propertyName);
 
-            return mangleMemberNameIfRequired(isAccessor ? "access$" + accessorName : accessorName, descriptor);
+            return mangleMemberNameIfRequired(isAccessor ? "access$" + accessorName : accessorName, descriptor, kind);
         }
         else if (isFunctionLiteral(descriptor)) {
             PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
@@ -1029,11 +1029,8 @@ public class KotlinTypeMapper {
         else if (isLocalFunction(descriptor) || isFunctionExpression(descriptor)) {
             return OperatorNameConventions.INVOKE.asString();
         }
-        else if (OwnerKind.ERASED_INLINE_CLASS == kind && descriptor instanceof ConstructorDescriptor) {
-            return JvmAbi.ERASED_INLINE_CONSTRUCTOR_NAME;
-        }
         else {
-            return mangleMemberNameIfRequired(descriptor.getName().asString(), descriptor);
+            return mangleMemberNameIfRequired(descriptor.getName().asString(), descriptor, kind);
         }
     }
 
@@ -1062,15 +1059,46 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private String mangleMemberNameIfRequired(@NotNull String name, @NotNull CallableMemberDescriptor descriptor) {
-        if (descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
+    private String mangleMemberNameIfRequired(
+            @NotNull String name,
+            @NotNull CallableMemberDescriptor descriptor,
+            @Nullable OwnerKind kind
+    ) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof ScriptDescriptor && descriptor instanceof PropertyDescriptor) {
             //script properties should be public
             return name;
         }
 
-        String manglingSuffix = InlineClassManglingUtilsKt.getInlineClassValueParametersManglingSuffix(descriptor);
-        if (manglingSuffix != null) {
-            name += "-" + manglingSuffix;
+        // Special methods for inline classes.
+        if (InlineClassDescriptorResolver.isSynthesizedBoxMethod(descriptor)) {
+            return BOX_JVM_METHOD_NAME;
+        }
+        if (InlineClassDescriptorResolver.isSynthesizedUnboxMethod(descriptor)) {
+            return UNBOX_JVM_METHOD_NAME;
+        }
+        if (InlineClassDescriptorResolver.isSpecializedEqualsMethod(descriptor)) {
+            return name;
+        }
+
+        // Constructor:
+        //   either a constructor method for inline class (should be mangled),
+        //   or should stay as it is ('<init>').
+        if (descriptor instanceof ConstructorDescriptor) {
+            if (kind == OwnerKind.ERASED_INLINE_CLASS) {
+                name = JvmAbi.ERASED_INLINE_CONSTRUCTOR_NAME;
+            }
+            else {
+                return name;
+            }
+        }
+
+        String suffix = InlineClassManglingUtilsKt.getInlineClassSignatureManglingSuffix(descriptor);
+        if (suffix != null) {
+            name += suffix;
+        }
+        else if (kind == OwnerKind.ERASED_INLINE_CLASS) {
+            name += JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS;
         }
 
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
@@ -1089,6 +1117,12 @@ public class KotlinTypeMapper {
 
         return name;
     }
+
+    public static final String BOX_JVM_METHOD_NAME =
+            InlineClassDescriptorResolver.BOX_METHOD_NAME + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS;
+
+    public static final String UNBOX_JVM_METHOD_NAME =
+            InlineClassDescriptorResolver.UNBOX_METHOD_NAME + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS;
 
     @NotNull
     private String getModuleName(@NotNull CallableMemberDescriptor descriptor) {

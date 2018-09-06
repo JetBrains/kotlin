@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
@@ -74,7 +75,8 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
     ) {
         MethodContext context = fieldOwnerContext.intoFunction(function);
         JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
-        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), "toString", getToStringDesc(), null, null);
+        String toStringMethodName = mapFunctionName(function);
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), toStringMethodName, getToStringDesc(), null, null);
 
         if (fieldOwnerContext.getContextKind() != OwnerKind.ERASED_INLINE_CLASS && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
@@ -84,7 +86,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         mv.visitAnnotation(Type.getDescriptor(NotNull.class), false);
 
         if (!generationState.getClassBuilderMode().generateBodies) {
-            FunctionCodegen.endVisit(mv, "toString", getDeclaration());
+            FunctionCodegen.endVisit(mv, toStringMethodName, getDeclaration());
             return;
         }
 
@@ -129,7 +131,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
         iv.areturn(JAVA_STRING_TYPE);
 
-        FunctionCodegen.endVisit(mv, "toString", getDeclaration());
+        FunctionCodegen.endVisit(mv, toStringMethodName, getDeclaration());
     }
 
     @Override
@@ -138,7 +140,8 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
     ) {
         MethodContext context = fieldOwnerContext.intoFunction(function);
         JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
-        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), "hashCode", getHashCodeDesc(), null, null);
+        String hashCodeMethodName = mapFunctionName(function);
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), hashCodeMethodName, getHashCodeDesc(), null, null);
 
         if (fieldOwnerContext.getContextKind() != OwnerKind.ERASED_INLINE_CLASS && classDescriptor.isInline()) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
@@ -146,7 +149,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         }
 
         if (!generationState.getClassBuilderMode().generateBodies) {
-            FunctionCodegen.endVisit(mv, "hashCode", getDeclaration());
+            FunctionCodegen.endVisit(mv, hashCodeMethodName, getDeclaration());
             return;
         }
 
@@ -193,8 +196,11 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
 
         mv.visitInsn(IRETURN);
 
-        FunctionCodegen.endVisit(mv, "hashCode", getDeclaration());
+        FunctionCodegen.endVisit(mv, hashCodeMethodName, getDeclaration());
+    }
 
+    private String mapFunctionName(@NotNull FunctionDescriptor functionDescriptor) {
+        return typeMapper.mapFunctionName(functionDescriptor, fieldOwnerContext.getContextKind());
     }
 
     @Override
@@ -203,7 +209,8 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
     ) {
         MethodContext context = fieldOwnerContext.intoFunction(function);
         JvmDeclarationOrigin methodOrigin = JvmDeclarationOriginKt.OtherOrigin(function);
-        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), "equals", getEqualsDesc(), null, null);
+        String equalsMethodName = mapFunctionName(function);
+        MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), equalsMethodName, getEqualsDesc(), null, null);
 
         boolean isErasedInlineClassKind = fieldOwnerContext.getContextKind() == OwnerKind.ERASED_INLINE_CLASS;
         if (!isErasedInlineClassKind && classDescriptor.isInline()) {
@@ -214,7 +221,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         mv.visitParameterAnnotation(isErasedInlineClassKind ? 1 : 0, Type.getDescriptor(Nullable.class), false);
 
         if (!generationState.getClassBuilderMode().generateBodies) {
-            FunctionCodegen.endVisit(mv, "equals", getDeclaration());
+            FunctionCodegen.endVisit(mv, equalsMethodName, getDeclaration());
             return;
         }
 
@@ -261,7 +268,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         iv.iconst(0);
         iv.areturn(Type.INT_TYPE);
 
-        FunctionCodegen.endVisit(mv, "equals", getDeclaration());
+        FunctionCodegen.endVisit(mv, equalsMethodName, getDeclaration());
     }
 
     private int generateBasicChecksAndStoreTarget(InstructionAdapter iv, Label eq, Label ne) {

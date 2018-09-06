@@ -9,4 +9,4 @@ fun test(): Any = Z(42)
 // @TestKt.class:
 // 0 INVOKESTATIC Z\$Erased\.box
 // 0 INVOKESTATIC Z\-Erased\.box
-// 1 INVOKESTATIC Z\.box \(I\)LZ;
+// 1 INVOKESTATIC Z\.box-impl \(I\)LZ;

@@ -2178,11 +2178,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/successOrFailureApiDoesntUseErasedClass.kt");
         }
 
-        @TestMetadata("synthesizedBoxMethodIsNotMangled.kt")
-        public void testSynthesizedBoxMethodIsNotMangled() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/synthesizedBoxMethodIsNotMangled.kt");
-        }
-
         @TestMetadata("toStringIsCalledByInlineClass.kt")
         public void testToStringIsCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringIsCalledByInlineClass.kt");

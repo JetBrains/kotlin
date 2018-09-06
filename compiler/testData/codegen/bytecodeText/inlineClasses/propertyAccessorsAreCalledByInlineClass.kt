@@ -33,9 +33,9 @@ fun Z.test() {
 // @TestKt.class:
 // 0 INVOKESTATIC Z\$Erased\.
 // 0 INVOKESTATIC Z\-Erased\.
-// 1 INVOKESTATIC Z.getAVal \(I\)I
-// 2 INVOKESTATIC Z.getAVar \(I\)I
-// 2 INVOKESTATIC Z.setAVar \(II\)V
-// 1 INVOKESTATIC Z.getExtVal \(ILjava/lang/String;\)I
-// 2 INVOKESTATIC Z.getExtVar \(ILjava/lang/String;\)I
-// 2 INVOKESTATIC Z.setExtVar \(ILjava/lang/String;I\)V
+// 1 INVOKESTATIC Z.getAVal-impl \(I\)I
+// 2 INVOKESTATIC Z.getAVar-impl \(I\)I
+// 2 INVOKESTATIC Z.setAVar-impl \(II\)V
+// 1 INVOKESTATIC Z.getExtVal-impl \(ILjava/lang/String;\)I
+// 2 INVOKESTATIC Z.getExtVar-impl \(ILjava/lang/String;\)I
+// 2 INVOKESTATIC Z.setExtVar-impl \(ILjava/lang/String;I\)V

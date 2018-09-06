@@ -50,6 +50,8 @@ public final class JvmAbi {
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT = "$i$a$";
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION = "$i$f$";
 
+    public static final String IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS = "-impl";
+
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
         return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;

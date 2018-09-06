@@ -7,4 +7,4 @@ inline class Z(val x: Int)
 fun testZ() = Z(42)
 
 // @TestKt.class:
-// 1 INVOKESTATIC Z\.constructor \(I\)I
+// 1 INVOKESTATIC Z\.constructor-impl \(I\)I

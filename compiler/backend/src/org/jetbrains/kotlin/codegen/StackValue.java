@@ -414,12 +414,12 @@ public abstract class StackValue {
 
     private static void invokeBoxMethod(
             @NotNull InstructionAdapter v,
-            Type boxedType,
-            Type underlyingType
+            @NotNull Type boxedType,
+            @NotNull Type underlyingType
     ) {
         v.invokestatic(
                 boxedType.getInternalName(),
-                InlineClassDescriptorResolver.BOX_METHOD_NAME.asString(),
+                KotlinTypeMapper.BOX_JVM_METHOD_NAME,
                 Type.getMethodDescriptor(boxedType, underlyingType),
                 false
         );
@@ -440,10 +440,14 @@ public abstract class StackValue {
         }
     }
 
-    private static void invokeUnboxMethod(@NotNull InstructionAdapter v, Type owner, Type resultType) {
+    private static void invokeUnboxMethod(
+            @NotNull InstructionAdapter v,
+            @NotNull Type owner,
+            @NotNull Type resultType
+    ) {
         v.invokevirtual(
                 owner.getInternalName(),
-                InlineClassDescriptorResolver.UNBOX_METHOD_NAME.asString(),
+                KotlinTypeMapper.UNBOX_JVM_METHOD_NAME,
                 "()" + resultType.getDescriptor(),
                 false
         );

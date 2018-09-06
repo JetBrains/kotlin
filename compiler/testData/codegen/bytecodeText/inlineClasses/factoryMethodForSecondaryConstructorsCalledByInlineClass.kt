@@ -15,6 +15,6 @@ fun test3() = Z(1, 2)
 // @TestKt.class:
 // 0 INVOKESTATIC Z\$Erased\.constructor
 // 0 INVOKESTATIC Z\-Erased\.constructor
-// 1 INVOKESTATIC Z\.constructor \(J\)I
-// 1 INVOKESTATIC Z\.constructor \(Ljava/lang/String;\)I
-// 1 INVOKESTATIC Z\.constructor \(II\)I
+// 1 INVOKESTATIC Z\.constructor-impl \(J\)I
+// 1 INVOKESTATIC Z\.constructor-impl \(Ljava/lang/String;\)I
+// 1 INVOKESTATIC Z\.constructor-impl \(II\)I

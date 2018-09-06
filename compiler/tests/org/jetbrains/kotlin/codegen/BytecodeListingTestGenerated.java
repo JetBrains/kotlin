@@ -289,9 +289,14 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassMembersVisibility.kt");
         }
 
-        @TestMetadata("inlineClassWithEverything.kt")
-        public void testInlineClassWithEverything() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithEverything.kt");
+        @TestMetadata("inlineClassWithInlineClassUnderlyingType.kt")
+        public void testInlineClassWithInlineClassUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithInlineClassUnderlyingType.kt");
+        }
+
+        @TestMetadata("inlineClassWithManyKindsOfMembers.kt")
+        public void testInlineClassWithManyKindsOfMembers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithManyKindsOfMembers.kt");
         }
 
         @TestMetadata("noBridgesForErasedInlineClass.kt")
