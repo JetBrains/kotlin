@@ -58,22 +58,17 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
             languageVersionSettings
         )
 
+        val moduleDescriptors = moduleContent.moduleInfo.createResolvedModuleDescriptors(
+            moduleContext.project,
+            moduleContext.storageManager,
+            moduleContext.module.builtIns,
+            languageVersionSettings
+        )
+
         val packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
-        val module = (moduleContent.moduleInfo as? ModuleProductionSourceInfo)?.module
-
         val fragmentProviders = mutableListOf(packageFragmentProvider)
-
-        if (module != null) {
-
-            val moduleDescriptors = module.createResolvedModuleDescriptors(
-                moduleContext.storageManager,
-                moduleContext.module.builtIns,
-                languageVersionSettings
-            )
-
-            moduleDescriptors.resolvedDescriptors.mapTo(fragmentProviders) { it.packageFragmentProvider }
-            fragmentProviders.add(moduleDescriptors.forwardDeclarationsModule.packageFragmentProvider)
-        }
+        moduleDescriptors.resolvedDescriptors.mapTo(fragmentProviders) { it.packageFragmentProvider }
+        fragmentProviders.add(moduleDescriptors.forwardDeclarationsModule.packageFragmentProvider)
 
         return ResolverForModule(CompositePackageFragmentProvider(fragmentProviders), container)
     }

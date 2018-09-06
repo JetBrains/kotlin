@@ -6,9 +6,7 @@
 package org.jetbrains.konan
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.PsiFileFactoryImpl
@@ -61,21 +59,24 @@ fun <M : ModuleInfo> createDeclarationProviderFactory(
     moduleInfo
 )
 
-fun Module.createResolvedModuleDescriptors(
+fun ModuleInfo.createResolvedModuleDescriptors(
+    project: Project,
     storageManager: StorageManager,
     builtIns: KotlinBuiltIns,
     languageVersionSettings: LanguageVersionSettings
 ): KonanResolvedModuleDescriptors {
 
     // This is to preserve "capabilities" from the original IntelliJ LibraryInfo:
-    val libraryMap = mutableMapOf<String, LibraryInfo>()
-    ModuleRootManager.getInstance(this).orderEntries().forEachLibrary { intellijLibrary ->
-        intellijLibrary.name?.let { name -> libraryMap[name] = LibraryInfo(project, intellijLibrary) }
-        true
-    }
+    val libraryMap =
+        this.dependencies().filterIsInstance<LibraryInfo>().flatMap { dependency ->
+            dependency.getLibraryRoots().map { file ->
+                file to dependency
+            }
+        }.toMap()
 
     val resolvedLibraries =
-        KonanPluginSearchPathResolver(project).libraryResolver(KONAN_CURRENT_ABI_VERSION).resolveWithDependencies(libraryMap.keys.toList())
+        KonanPluginSearchPathResolver(project).libraryResolver(KONAN_CURRENT_ABI_VERSION)
+            .resolveWithDependencies(libraryMap.keys.toList(), true, true)
 
     return DefaultResolvedDescriptorsFactory.createResolved(
         resolvedLibraries,
@@ -84,7 +85,7 @@ fun Module.createResolvedModuleDescriptors(
         languageVersionSettings,
         null
         // This is to preserve "capabilities" from the original IntelliJ LibraryInfo:
-    ) { konanLibrary -> libraryMap[konanLibrary.pureName]?.capabilities ?: emptyMap() }
+    ) { konanLibrary -> libraryMap[konanLibrary.libraryFile.path]?.capabilities ?: emptyMap() }
 }
 
 private val KonanLibrary.pureName
