@@ -7,6 +7,7 @@
 
 package kotlin.script.experimental.api
 
+import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -104,17 +105,17 @@ typealias RefineScriptCompilationConfigurationHandler =
 // to make it "hasheable" for cashing
 class RefineConfigurationBeforeParsingData(
     val handler: RefineScriptCompilationConfigurationHandler
-)
+) : Serializable
 
 class RefineConfigurationOnAnnotationsData(
     val annotations: List<KotlinType>,
     val handler: RefineScriptCompilationConfigurationHandler
-)
+) : Serializable
 
 class RefineConfigurationOnSectionsData(
     val sections: List<String>,
     val handler: RefineScriptCompilationConfigurationHandler
-)
+) : Serializable
 
 
 interface ScriptCompiler {

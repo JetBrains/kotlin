@@ -7,6 +7,7 @@
 
 package kotlin.script.experimental.api
 
+import java.io.Serializable
 import java.net.URL
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -39,7 +40,7 @@ data class ResolvingRestrictionRule(
     }
 }
 
-interface ScriptDependency {
+interface ScriptDependency : Serializable {
     // Q: anything generic here?
 }
 
