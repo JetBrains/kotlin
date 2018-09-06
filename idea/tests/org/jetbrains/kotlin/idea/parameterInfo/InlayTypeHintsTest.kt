@@ -98,6 +98,76 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         )
     }
 
+    fun testEnumEntry() {
+        checkPropertyHint(
+            """
+            enum class E { ENTRY }
+            val test = E.ENTRY
+            """.trimIndent()
+        )
+    }
+
+    fun testEnumEntryLikeProperty() {
+        checkPropertyHint(
+            """
+            enum class E {
+                ENTRY;
+                companion object {
+                    val test: E = ENTRY
+                }
+            }
+
+            val test<hint text=": E"/> = E.test
+            """.trimIndent()
+        )
+    }
+
+    fun testEnumEntryLikeFunction() {
+        checkPropertyHint(
+            """
+            enum class E { ENTRY;
+                companion object {
+                    fun test(): E = ENTRY
+                }
+            }
+
+            val test<hint text=": E"/> = E.test()
+            """.trimIndent()
+        )
+    }
+
+    fun testImportedEnumEntry() {
+        checkPropertyHint(
+            """
+            import E.ENTRY
+            enum class E { ENTRY }
+            val test<hint text=": E"/> = ENTRY
+            """.trimIndent()
+        )
+    }
+
+    fun testEnumEntryCompanion() {
+        checkPropertyHint(
+            """
+            enum class E {
+                ENTRY;
+                companion object {}
+            }
+            val test<hint text=": E"/> = E.Companion
+            """
+        )
+    }
+
+    fun testEnumEntryQualified() {
+        checkPropertyHint(
+            """
+            package a
+            enum class E { ENTRY }
+            val test = a.E.ENTRY
+            """
+        )
+    }
+
     fun testDestructuring() {
         checkLocalVariable(
             """
