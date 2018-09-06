@@ -411,6 +411,10 @@ open class KotlinNativeTargetConfigurator(
             // TODO: Provide a normal test path!
             outputDir = project.layout.buildDirectory.dir("test-results").get().asFile
 
+            if (project.hasProperty("teamcity")) {
+                args("--ktest_logger=TEAMCITY")
+            }
+
             onlyIf { testExecutableProperty.get().exists() }
             inputs.file(testExecutableProperty)
             dependsOn(testExecutableLinkTask)
