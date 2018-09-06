@@ -23,6 +23,13 @@ import kotlin.test.assertTrue
 class NewMultiplatformIT : BaseGradleIT() {
     val gradleVersion = GradleVersionRequired.AtLeast("4.8")
 
+    val nativeHostTargetName = when {
+        HostManager.hostIsMingw -> "mingw64"
+        HostManager.hostIsLinux -> "linux64"
+        HostManager.hostIsMac -> "macos64"
+        else -> error("Unknown host")
+    }
+
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
 
@@ -32,15 +39,8 @@ class NewMultiplatformIT : BaseGradleIT() {
         val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
         val oldStyleAppProject = Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")
 
-        val hostTargetName = when {
-            HostManager.hostIsMingw -> "mingw64"
-            HostManager.hostIsLinux -> "linux64"
-            HostManager.hostIsMac -> "macos64"
-            else -> error("Unknown host")
-        }
-
         val compileTasksNames =
-            listOf("Jvm6", "NodeJs", "Metadata", "Wasm32", hostTargetName.capitalize()).map { ":compileKotlin$it" }
+            listOf("Jvm6", "NodeJs", "Metadata", "Wasm32", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }
 
         with(libProject) {
             build("publish") {
@@ -52,7 +52,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val jsJarName = "sample-lib-nodejs/1.0/sample-lib-nodejs-1.0.jar"
                 val metadataJarName = "sample-lib-metadata/1.0/sample-lib-metadata-1.0.jar"
                 val wasmKlibName = "sample-lib-wasm32/1.0/sample-lib-wasm32-1.0.klib"
-                val nativeKlibName = "sample-lib-$hostTargetName/1.0/sample-lib-$hostTargetName-1.0.klib"
+                val nativeKlibName = "sample-lib-$nativeHostTargetName/1.0/sample-lib-$nativeHostTargetName-1.0.klib"
 
                 listOf(jvmJarName, jsJarName, metadataJarName, "sample-lib/1.0/sample-lib-1.0.module").forEach {
                     Assert.assertTrue("$it should exist", groupDir.resolve(it).exists())
@@ -117,8 +117,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertFileExists("build/bin/wasm32/main/release/executable/sample_app.wasm")
 
                 val nativeExeName = if (isWindows) "sample-app.exe" else "sample-app.kexe"
-                assertFileExists("build/bin/$hostTargetName/main/release/executable/$nativeExeName")
-                assertFileExists("build/bin/$hostTargetName/main/debug/executable/$nativeExeName")
+                assertFileExists("build/bin/$nativeHostTargetName/main/release/executable/$nativeExeName")
+                assertFileExists("build/bin/$nativeHostTargetName/main/debug/executable/$nativeExeName")
             }
 
             build("assemble", "resolveRuntimeDependencies") {
@@ -457,36 +457,30 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testCanProduceNativeLibraries() = with(Project("new-mpp-native-libraries", gradleVersion)) {
-        val hostTargetName = when {
-            HostManager.hostIsMingw -> "mingw64"
-            HostManager.hostIsLinux -> "linux64"
-            HostManager.hostIsMac -> "macos64"
-            else -> error("Unknown host")
-        }
         val baseName = "native_lib"
 
         val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
         val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
         val sharedPaths = listOf(
-            "build/bin/$hostTargetName/main/debug/shared/$sharedPrefix$baseName$sharedSuffix",
-            "build/bin/$hostTargetName/main/release/shared/$sharedPrefix$baseName$sharedSuffix"
+            "build/bin/$nativeHostTargetName/main/debug/shared/$sharedPrefix$baseName$sharedSuffix",
+            "build/bin/$nativeHostTargetName/main/release/shared/$sharedPrefix$baseName$sharedSuffix"
         )
 
         val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
         val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
         val staticPaths = listOf(
-            "build/bin/$hostTargetName/main/debug/static/$staticPrefix$baseName$staticSuffix",
-            "build/bin/$hostTargetName/main/release/static/$staticPrefix$baseName$staticSuffix"
+            "build/bin/$nativeHostTargetName/main/debug/static/$staticPrefix$baseName$staticSuffix",
+            "build/bin/$nativeHostTargetName/main/release/static/$staticPrefix$baseName$staticSuffix"
         )
 
         val headerPaths = listOf(
-            "build/bin/$hostTargetName/main/debug/shared/$sharedPrefix${baseName}_api.h",
-            "build/bin/$hostTargetName/main/release/shared/$sharedPrefix${baseName}_api.h",
-            "build/bin/$hostTargetName/main/debug/static/$staticPrefix${baseName}_api.h",
-            "build/bin/$hostTargetName/main/release/static/$staticPrefix${baseName}_api.h"
+            "build/bin/$nativeHostTargetName/main/debug/shared/$sharedPrefix${baseName}_api.h",
+            "build/bin/$nativeHostTargetName/main/release/shared/$sharedPrefix${baseName}_api.h",
+            "build/bin/$nativeHostTargetName/main/debug/static/$staticPrefix${baseName}_api.h",
+            "build/bin/$nativeHostTargetName/main/release/static/$staticPrefix${baseName}_api.h"
         )
 
-        val taskSuffix = hostTargetName.capitalize()
+        val taskSuffix = nativeHostTargetName.capitalize()
         val linkTasks = listOf(
             ":linkMainDebugShared$taskSuffix",
             ":linkMainReleaseShared$taskSuffix",
@@ -523,13 +517,6 @@ class NewMultiplatformIT : BaseGradleIT() {
         build("publish") {
             assertSuccessful()
 
-            val nativeHostTargetName = when {
-                HostManager.hostIsMingw -> "mingw64"
-                HostManager.hostIsLinux -> "linux64"
-                HostManager.hostIsMac -> "macos64"
-                else -> error("Unknown host")
-            }
-
             val groupDir = projectDir.resolve("repo/com/example/")
             val targetArtifactIdAppendices = listOf("metadata", "jvm6", "nodejs", "wasm32", nativeHostTargetName)
 
@@ -544,6 +531,24 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["nodejs"])
             assertEquals(setOf("commonMain", "wasm32Main"), sourceJarSourceRoots["wasm32"])
             assertEquals(setOf("commonMain", "${nativeHostTargetName}Main"), sourceJarSourceRoots[nativeHostTargetName])
+        }
+    }
+
+    @Test
+    fun testNativeTests() = with(Project("new-mpp-native-tests", gradleVersion)) {
+        val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test")
+        val hostTestTask = ":${nativeHostTargetName}Test"
+        build("tasks") {
+            assertSuccessful()
+            println(output)
+            testTasks.forEach {
+                // We need to create tasks for all hosts
+                assertTrue(output.contains("$it - "), "There is no test task '$it' in the task list.")
+            }
+        }
+        build("check") {
+            assertSuccessful()
+            assertTasksExecuted(hostTestTask)
         }
     }
 }
