@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.ide.konan
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.konan.KONAN_CURRENT_ABI_VERSION
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -23,12 +25,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
-import org.jetbrains.kotlin.konan.utils.KonanFactories
+import org.jetbrains.kotlin.konan.util.KonanFactories
 import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.storage.StorageManager
-import com.intellij.util.containers.ContainerUtil
-import com.intellij.openapi.util.Key
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {

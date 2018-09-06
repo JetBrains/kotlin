@@ -20,11 +20,11 @@ interface KonanVersion : Serializable {
 }
 
 data class KonanVersionImpl(
-        override val meta: MetaVersion = MetaVersion.DEV,
-        override val major: Int,
-        override val minor: Int,
-        override val maintenance: Int,
-        override val build: Int = -1
+    override val meta: MetaVersion = MetaVersion.DEV,
+    override val major: Int,
+    override val minor: Int,
+    override val maintenance: Int,
+    override val build: Int = -1
 ) : KonanVersion {
 
     override fun toString(showMeta: Boolean, showBuild: Boolean) = buildString {

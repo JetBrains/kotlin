@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
-import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.konan.KonanResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.StorageManager
-import java.io.File.separatorChar
 
 const val KONAN_CURRENT_ABI_VERSION = 1
 
@@ -94,6 +92,3 @@ fun ModuleInfo.createResolvedModuleDescriptors(
         // This is to preserve "capabilities" from the original IntelliJ LibraryInfo:
     ) { konanLibrary -> libraryMap[konanLibrary.libraryFile.path]?.capabilities ?: emptyMap() }
 }
-
-private val KonanLibrary.pureName
-    get() = libraryName.substringAfterLast(separatorChar)

@@ -97,7 +97,7 @@ data class File constructor(internal val javaPath: Path) {
     }
 
     fun deleteOnExit(): File {
-        // Works only on the default file system, 
+        // Works only on the default file system,
         // but that's okay for now.
         javaPath.toFile().deleteOnExit()
         return this // Allow streaming.
@@ -169,7 +169,7 @@ fun Path.recursiveCopyTo(destPath: Path) {
 
         val relative = sourcePath.relativize(oldPath)
         val destFs = destPath.getFileSystem()
-        // We are copying files between file systems, 
+        // We are copying files between file systems,
         // so pass the relative path through the String.
         val newPath = destFs.getPath(destPath.toString(), relative.toString())
 
