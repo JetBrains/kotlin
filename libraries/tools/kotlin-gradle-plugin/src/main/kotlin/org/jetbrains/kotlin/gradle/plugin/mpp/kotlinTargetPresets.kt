@@ -226,7 +226,7 @@ class KotlinNativeTargetPreset(
     }
 
     private fun stdlib(target: KonanTarget): FileCollection = with(project) {
-        files("${konanHome}/klib/common/stdlib").builtBy(createCompilerDownloadingTask())
+        files("${project.konanHome}/klib/common/stdlib").builtBy(createCompilerDownloadingTask())
     }
 
     private fun platformLibs(target: KonanTarget): FileCollection = with(project) {
@@ -249,11 +249,13 @@ class KotlinNativeTargetPreset(
         KotlinNativeTargetConfigurator(buildOutputCleanupRegistry).configureTarget(result)
 
         // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
-        result.compilations.all {
-            val target = it.target.konanTarget
-            it.dependencies {
+        result.compilations.all { compilation ->
+            val target = compilation.target.konanTarget
+            compilation.dependencies {
                 implementation(stdlib(target))
-                implementation(platformLibs(target))
+
+                //TODO: This is a temporary solution to provide the list of KLIB dependencies out of Gradle plugin as a FileCollection per library.
+                platformLibs(target).files.forEach { platformLib -> implementation(project.files(platformLib)) }
             }
         }
         return result
