@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -71,27 +73,29 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         val factory = KtPsiFactory(project)
 
         val actualFile = getOrCreateImplementationFile() ?: return
-        val generated = factory.generateIt(project, element) ?: return
+        DumbService.getInstance(project).runWhenSmart {
+            val generated = factory.generateIt(project, element) ?: return@runWhenSmart
 
-        runWriteAction {
-            if (actualFile.packageDirective?.fqName != file.packageDirective?.fqName &&
-                actualFile.declarations.isEmpty()
-            ) {
-                val packageDirective = file.packageDirective
-                packageDirective?.let {
-                    val oldPackageDirective = actualFile.packageDirective
-                    val newPackageDirective = factory.createPackageDirective(it.fqName)
-                    if (oldPackageDirective != null) {
-                        oldPackageDirective.replace(newPackageDirective)
-                    } else {
-                        actualFile.add(newPackageDirective)
+            project.executeWriteCommand("Create actual declaration") {
+                if (actualFile.packageDirective?.fqName != file.packageDirective?.fqName &&
+                    actualFile.declarations.isEmpty()
+                ) {
+                    val packageDirective = file.packageDirective
+                    packageDirective?.let {
+                        val oldPackageDirective = actualFile.packageDirective
+                        val newPackageDirective = factory.createPackageDirective(it.fqName)
+                        if (oldPackageDirective != null) {
+                            oldPackageDirective.replace(newPackageDirective)
+                        } else {
+                            actualFile.add(newPackageDirective)
+                        }
                     }
                 }
+                val actualDeclaration = actualFile.add(generated) as KtElement
+                val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
+                val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
+                EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
             }
-            val actualDeclaration = actualFile.add(generated) as KtElement
-            val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
-            val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
-            EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
         }
     }
 
