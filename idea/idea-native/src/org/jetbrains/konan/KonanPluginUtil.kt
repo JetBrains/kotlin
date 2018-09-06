@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.ide.konan.getOrCreateKonanFactories
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.libraryResolver
-import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultResolvedDescriptorsFactory
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
@@ -83,7 +83,9 @@ fun ModuleInfo.createResolvedModuleDescriptors(
         KonanPluginSearchPathResolver(project).libraryResolver(KONAN_CURRENT_ABI_VERSION)
             .resolveWithDependencies(libraryMap.keys.toList(), true, true)
 
-    return DefaultResolvedDescriptorsFactory.createResolved(
+    val KonanFactories = project.getOrCreateKonanFactories(storageManager)
+
+    return KonanFactories.DefaultResolvedDescriptorsFactory.createResolved(
         resolvedLibraries,
         storageManager,
         builtIns,

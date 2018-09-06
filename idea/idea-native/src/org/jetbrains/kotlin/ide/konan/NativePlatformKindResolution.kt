@@ -23,8 +23,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
-import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.konan.utils.KonanFactories
+import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.storage.StorageManager
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.openapi.util.Key
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
@@ -51,6 +55,20 @@ val Module.isKotlinNativeModule: Boolean
         return settings.platformKind.isKotlinNative
     }
 
+val KonanFactoriesKey = Key<MutableMap<StorageManager, KonanFactories>>("KonanFactoriesKey")
+
+var Project.KonanFactories by UserDataProperty(KonanFactoriesKey)
+
+fun Project.getOrCreateKonanFactories(storageManager: StorageManager): KonanFactories {
+    val map = this.KonanFactories ?: ContainerUtil.createConcurrentWeakKeySoftValueMap<StorageManager, KonanFactories>().also {
+        this.KonanFactories = it
+    }
+
+    return map.getOrPut(storageManager) {
+        KonanFactories(storageManager)
+    }
+}
+
 private fun createKotlinNativeBuiltIns(projectContext: ProjectContext): KotlinBuiltIns {
 
     // TODO: It depends on a random project's stdlib, propagate the actual project here.
@@ -73,8 +91,10 @@ private fun createKotlinNativeBuiltIns(projectContext: ProjectContext): KotlinBu
 
         val (path, libraryInfo) = stdlib
         val library = createKonanLibrary(File(path), KONAN_CURRENT_ABI_VERSION)
+        val KonanFactories = projectContext.project.getOrCreateKonanFactories(projectContext.storageManager)
 
-        val builtInsModule = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
+
+        val builtInsModule = KonanFactories.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
             library,
             LanguageVersionSettingsImpl.DEFAULT,
             projectContext.storageManager,

@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.exportForwardDeclarations
 import org.jetbrains.kotlin.konan.library.isInterop
 import org.jetbrains.kotlin.konan.library.packageFqName
 import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -26,7 +28,12 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 // FIXME(ddol): decouple and move interop-specific logic back to Kotlin/Native.
-internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserializedPackageFragmentsFactory {
+internal class KonanDeserializedPackageFragmentsFactoryImpl(storageManager: StorageManager) : KonanDeserializedPackageFragmentsFactory {
+
+    val inplaceCache = storageManager.createCacheWithNotNullValues<Pair<File, String>, KonanProtoBuf.LinkDataPackageFragment>()
+
+
+    private fun getLoadProtoCache(storageManager: StorageManager) = inplaceCache
 
     override fun createDeserializedPackageFragments(
         library: KonanLibrary,
@@ -35,7 +42,7 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserialized
         packageAccessedHandler: PackageAccessedHandler?,
         storageManager: StorageManager
     ) = packageFragmentNames.map {
-        KonanPackageFragment(FqName(it), library, packageAccessedHandler, storageManager, moduleDescriptor)
+        KonanPackageFragment(FqName(it), library, packageAccessedHandler, getLoadProtoCache(storageManager), storageManager, moduleDescriptor)
     }
 
     override fun createSyntheticPackageFragments(
