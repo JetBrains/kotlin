@@ -21,12 +21,15 @@ object ImplicitIntegerCoercion {
 
     private fun isEnabledFor(descriptor: DeclarationDescriptor): Boolean =
         descriptor.hasImplicitIntegerCoercionAnnotation() ||
-                DescriptorUtils.getContainingModuleOrNull(descriptor)
-                    ?.getCapability(ImplicitIntegerCoercion.MODULE_CAPABILITY) == true
+                DescriptorUtils.getContainingModuleOrNull(descriptor)?.hasImplicitIntegerCoercionCapability() == true
 
     private val IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME = FqName("kotlin.internal.ImplicitIntegerCoercion")
 
     private fun DeclarationDescriptor.hasImplicitIntegerCoercionAnnotation(): Boolean {
         return annotations.findAnnotation(IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME) != null
     }
+}
+
+fun ModuleDescriptor.hasImplicitIntegerCoercionCapability(): Boolean {
+    return getCapability(ImplicitIntegerCoercion.MODULE_CAPABILITY) == true
 }

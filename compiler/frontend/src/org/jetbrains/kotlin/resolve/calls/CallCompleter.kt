@@ -323,7 +323,7 @@ class CallCompleter(
 
         val constant = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
         val convertedConst = constant is IntegerValueTypeConstant && constant.convertedFromSigned
-        if (convertedConst) {
+        if (convertedConst && !moduleDescriptor.hasImplicitIntegerCoercionCapability()) {
             context.trace.report(Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED.on(deparenthesized))
         }
 
