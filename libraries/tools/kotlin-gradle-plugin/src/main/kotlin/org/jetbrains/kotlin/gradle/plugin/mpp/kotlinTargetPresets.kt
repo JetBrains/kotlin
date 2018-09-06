@@ -259,7 +259,7 @@ class KotlinNativeTargetPreset(
     private fun platformLibs(target: KonanTarget): FileCollection = with(project) {
         files(provider {
             file("${project.konanHome}/klib/platform/${target.name}").listFiles { file -> file.isDirectory } ?: emptyArray()
-        })
+        }).builtBy(createCompilerDownloadingTask())
     }
 
     override fun createTarget(name: String): KotlinNativeTarget {
