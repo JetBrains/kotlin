@@ -31,7 +31,7 @@ import java.io.DataOutput
  */
 abstract class KotlinMetadataVersionIndexBase<T, V : BinaryVersion>(
         private val classOfIndex: Class<T>,
-        protected val createBinaryVersion: (IntArray) -> V
+        protected val createBinaryVersion: (IntArray, Boolean?) -> V
 ) : ScalarIndexExtension<V>() {
 
     override fun getName(): ID<V, Void> = ID.create<V, Void>(classOfIndex.canonicalName)
@@ -43,7 +43,9 @@ abstract class KotlinMetadataVersionIndexBase<T, V : BinaryVersion>(
 
         override fun read(input: DataInput): V {
             val size = DataInputOutputUtil.readINT(input)
-            return createBinaryVersion((0..size - 1).map { DataInputOutputUtil.readINT(input) }.toIntArray())
+            val versionArray = (0..size - 1).map { DataInputOutputUtil.readINT(input) }.toIntArray()
+            val extraBoolean = if (isExtraBooleanNeeded()) DataInputOutputUtil.readINT(input) == 1 else null
+            return createBinaryVersion(versionArray, extraBoolean)
         }
 
         override fun save(output: DataOutput, value: V) {
@@ -52,10 +54,16 @@ abstract class KotlinMetadataVersionIndexBase<T, V : BinaryVersion>(
             for (number in array) {
                 DataInputOutputUtil.writeINT(output, number)
             }
+            if (isExtraBooleanNeeded()) {
+                DataInputOutputUtil.writeINT(output, if (getExtraBoolean(value)) 1 else 0)
+            }
         }
     }
 
     override fun dependsOnFileContent() = true
+
+    protected open fun isExtraBooleanNeeded(): Boolean = false
+    protected open fun getExtraBoolean(version: V): Boolean = throw UnsupportedOperationException()
 
     protected val LOG: Logger = Logger.getInstance(classOfIndex)
 

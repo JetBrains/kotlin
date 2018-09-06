@@ -332,6 +332,18 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
+    fun testStrictMetadataVersionSemanticsSameVersion() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xgenerate-strict-metadata-version"))
+        compileKotlin("source.kt", tmpdir, listOf(library))
+    }
+
+    fun testStrictMetadataVersionSemanticsOldVersion() {
+        val library = compileLibrary(
+            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=1.4.0")
+        )
+        compileKotlin("source.kt", tmpdir, listOf(library))
+    }
+
     /*test source mapping generation when source info is absent*/
     fun testInlineFunWithoutDebugInfo() {
         compileKotlin("sourceInline.kt", tmpdir)

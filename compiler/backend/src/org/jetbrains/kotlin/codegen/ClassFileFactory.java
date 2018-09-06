@@ -123,7 +123,11 @@ public class ClassFileFactory implements OutputFileCollection {
         generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
-                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion(), 0);
+                int flags = 0;
+                if (state.getLanguageVersionSettings().getFlag(AnalysisFlag.getStrictMetadataVersionSemantics())) {
+                    flags |= ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG;
+                }
+                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion(), flags);
             }
 
             @Override

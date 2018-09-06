@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.*
 
 object KotlinJsMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJsMetadataVersionIndex, JsMetadataVersion>(
-        KotlinJsMetadataVersionIndex::class.java, ::JsMetadataVersion
+    KotlinJsMetadataVersionIndex::class.java, { version, _ -> JsMetadataVersion(*version) }
 ) {
     override fun getIndexer() = INDEXER
 

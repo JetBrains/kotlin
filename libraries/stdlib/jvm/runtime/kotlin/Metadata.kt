@@ -56,9 +56,11 @@ public annotation class Metadata(
     /**
      * An extra int. Bits of this number represent the following flags:
      *
-     * 0 - this is a multi-file class facade or part, compiled with `-Xmultifile-parts-inherit`.
-     * 1 - this class file is compiled by a pre-release version of Kotlin and is not visible to release versions.
-     * 2 - this class file is a compiled Kotlin script source file (.kts).
+     * * 0 - this is a multi-file class facade or part, compiled with `-Xmultifile-parts-inherit`.
+     * * 1 - this class file is compiled by a pre-release version of Kotlin and is not visible to release versions.
+     * * 2 - this class file is a compiled Kotlin script source file (.kts).
+     * * 3 - the metadata of this class file is not supposed to be read by the compiler, whose major.minor version is less than
+     *   the major.minor version of this metadata ([mv]).
      */
     @SinceKotlin("1.1")
     val xi: Int = 0

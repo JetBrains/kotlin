@@ -20,6 +20,7 @@ import com.intellij.openapi.fileTypes.StdFileTypes
 import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
@@ -29,7 +30,8 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmMetadataVersionIndex, JvmMetadataVersion>(
-        KotlinJvmMetadataVersionIndex::class.java, ::JvmMetadataVersion
+    KotlinJvmMetadataVersionIndex::class.java,
+    { version, isStrictSemantics -> JvmMetadataVersion(version, isStrictSemantics = isStrictSemantics!!) }
 ) {
     override fun getIndexer() = INDEXER
 
@@ -37,16 +39,21 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 4
+    override fun isExtraBooleanNeeded(): Boolean = true
+
+    override fun getExtraBoolean(version: JvmMetadataVersion): Boolean = version.isStrictSemantics
+
+    private const val VERSION = 5
 
     private val kindsToIndex = setOf(
-            KotlinClassHeader.Kind.CLASS,
-            KotlinClassHeader.Kind.FILE_FACADE,
-            KotlinClassHeader.Kind.MULTIFILE_CLASS
+        KotlinClassHeader.Kind.CLASS,
+        KotlinClassHeader.Kind.FILE_FACADE,
+        KotlinClassHeader.Kind.MULTIFILE_CLASS
     )
 
     private val INDEXER = DataIndexer<JvmMetadataVersion, Void, FileContent> { inputData: FileContent ->
-        var version: JvmMetadataVersion? = null
+        var versionArray: IntArray? = null
+        var isStrictSemantics = false
         var annotationPresent = false
         var kind: KotlinClassHeader.Kind? = null
 
@@ -61,10 +68,13 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
                         override fun visit(name: String, value: Any) {
                             when (name) {
                                 METADATA_VERSION_FIELD_NAME -> if (value is IntArray) {
-                                    version = createBinaryVersion(value)
+                                    versionArray = value
                                 }
                                 KIND_FIELD_NAME -> if (value is Int) {
                                     kind = KotlinClassHeader.Kind.getById(value)
+                                }
+                                METADATA_EXTRA_INT_FIELD_NAME -> if (value is Int) {
+                                    isStrictSemantics = (value and JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG) != 0
                                 }
                             }
                         }
@@ -73,15 +83,17 @@ object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmM
             }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
         }
 
+        var version =
+            if (versionArray != null) createBinaryVersion(versionArray!!, isStrictSemantics) else null
+
         if (kind !in kindsToIndex) {
             // Do not index metadata version for synthetic classes
             version = null
-        }
-        else if (annotationPresent && version == null) {
+        } else if (annotationPresent && version == null) {
             // No version at all because the class is too old, or version is set to something weird
             version = JvmMetadataVersion.INVALID_VERSION
         }
 
-        if (version != null) mapOf(version!! to null) else mapOf()
+        if (version != null) mapOf(version to null) else emptyMap()
     }
 }

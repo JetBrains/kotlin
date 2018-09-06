@@ -31,6 +31,8 @@ class ModuleMapping private constructor(
         @JvmField
         val CORRUPTED: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "CORRUPTED")
 
+        const val STRICT_METADATA_VERSION_SEMANTICS_FLAG = 1 shl 0
+
         fun loadModuleMapping(
             bytes: ByteArray?,
             debugName: String,
@@ -50,15 +52,19 @@ class ModuleMapping private constructor(
                 return CORRUPTED
             }
 
-            val version = JvmMetadataVersion(*versionNumber)
-            if (!skipMetadataVersionCheck && !version.isCompatible()) {
-                reportIncompatibleVersionError(version)
+            val preVersion = JvmMetadataVersion(*versionNumber)
+            if (!skipMetadataVersionCheck && !preVersion.isCompatible()) {
+                reportIncompatibleVersionError(preVersion)
                 return EMPTY
             }
 
             // Since Kotlin 1.4, we write integer flags between the version and the proto
-            if (isKotlin1Dot4OrLater(version)) {
-                stream.readInt()
+            val flags = if (isKotlin1Dot4OrLater(preVersion)) stream.readInt() else 0
+
+            val version = JvmMetadataVersion(versionNumber, (flags and STRICT_METADATA_VERSION_SEMANTICS_FLAG) != 0)
+            if (!skipMetadataVersionCheck && !version.isCompatible()) {
+                reportIncompatibleVersionError(version)
+                return EMPTY
             }
 
             val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream) ?: return EMPTY

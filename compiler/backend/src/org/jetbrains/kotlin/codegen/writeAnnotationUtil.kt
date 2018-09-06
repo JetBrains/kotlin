@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
@@ -36,6 +37,9 @@ fun writeKotlinMetadata(
     var flags = extraFlags
     if (state.languageVersionSettings.isPreRelease()) {
         flags = flags or JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG
+    }
+    if (state.languageVersionSettings.getFlag(AnalysisFlag.strictMetadataVersionSemantics)) {
+        flags = flags or JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG
     }
     if (flags != 0) {
         av.visit(JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME, flags)

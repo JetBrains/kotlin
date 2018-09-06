@@ -245,6 +245,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var disableStandardScript: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xgenerate-strict-metadata-version",
+        description = "Generate metadata with strict version semantics (see kdoc on Metadata.extraInt)"
+    )
+    var strictMetadataVersionSemantics: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xfriend-paths",
         valueDescription = "<path>",
         description = "Paths to output directories for friend modules (whose internals should be visible)"
@@ -253,6 +259,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
+        result.put(AnalysisFlag.strictMetadataVersionSemantics, strictMetadataVersionSemantics)
         result[AnalysisFlag.jsr305] = Jsr305Parser(collector).parse(
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
