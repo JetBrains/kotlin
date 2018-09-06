@@ -1592,7 +1592,10 @@ public abstract class StackValue {
                     putReceiver(v, false);
                 }
                 callGenerator.processAndPutHiddenParameters(true);
-                callGenerator.putValueIfNeeded(new JvmKotlinType(rightSide.type, rightSide.kotlinType), rightSide);
+                callGenerator.putValueIfNeeded(new JvmKotlinType(
+                                                       CollectionsKt.last(setter.getValueParameters()).getAsmType(),
+                                                       CollectionsKt.last(setterDescriptor.getValueParameters()).getType()),
+                                               rightSide);
                 callGenerator.putHiddenParamsIntoLocals();
                 callGenerator.genCall(setter, resolvedCall, false, codegen);
             }

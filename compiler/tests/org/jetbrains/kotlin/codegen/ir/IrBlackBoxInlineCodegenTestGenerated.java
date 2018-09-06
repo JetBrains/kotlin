@@ -2410,6 +2410,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndIncViaConvention.kt");
         }
 
+        @TestMetadata("kt22649.kt")
+        public void testKt22649() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/property/kt22649.kt");
+        }
+
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             runTest("compiler/testData/codegen/boxInline/property/property.kt");
