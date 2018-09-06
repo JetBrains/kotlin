@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
@@ -277,7 +277,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
         primaryConstructor.delete()
     }
 
-    val context = expectedClass.analyze()
+    val context = expectedClass.analyzeWithContent()
     actualClass.superTypeListEntries.zip(expectedClass.superTypeListEntries).forEach { (actualEntry, expectedEntry) ->
         if (actualEntry !is KtSuperTypeEntry) return@forEach
         val superType = context[BindingContext.TYPE, expectedEntry.typeReference]
