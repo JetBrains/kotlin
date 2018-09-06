@@ -15926,6 +15926,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInMultiFile.kt");
             }
 
+            @TestMetadata("RedeclarationParameterlessMain.kt")
+            public void testRedeclarationParameterlessMain() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationParameterlessMain.kt");
+            }
+
+            @TestMetadata("RedeclarationParameterlessMainInvalid.kt")
+            public void testRedeclarationParameterlessMainInvalid() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationParameterlessMainInvalid.kt");
+            }
+
             @TestMetadata("RedeclarationSuspendMainInMultiFile.kt")
             public void testRedeclarationSuspendMainInMultiFile() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationSuspendMainInMultiFile.kt");

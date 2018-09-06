@@ -31,7 +31,7 @@ import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.junit.Assert
 import java.io.File
 import java.util.*
@@ -69,8 +68,8 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                 val assertIsMain = "yes" in options
                 val assertIsNotMain = "no" in options
 
-                val bindingContext = function.analyze(BodyResolveMode.FULL)
-                val isMainFunction = MainFunctionDetector(bindingContext).isMain(function)
+                val isMainFunction =
+                    MainFunctionDetector { it.resolveToDescriptorIfAny() }.isMain(function)
 
                 if (assertIsMain) {
                     Assert.assertTrue("The function ${function.fqName?.asString()} should be main", isMainFunction)
@@ -91,8 +90,17 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                     } catch (expected: Throwable) {
                     }
 
-                    Assert.assertNull("Kotlin configuration producer shouldN'T produce configuration for ${function.fqName?.asString()}",
-                                      KotlinRunConfigurationProducer.getEntryPointContainer(function))
+                    if (function.containingFile.text.startsWith("// entryPointExists")) {
+                        Assert.assertNotNull(
+                            "Kotlin configuration producer should produce configuration for ${function.fqName?.asString()}",
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
+                        )
+                    } else {
+                        Assert.assertNull(
+                            "Kotlin configuration producer shouldn't produce configuration for ${function.fqName?.asString()}",
+                            KotlinRunConfigurationProducer.getEntryPointContainer(function)
+                        )
+                    }
                 }
             }
         }
