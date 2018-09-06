@@ -1,6 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1169
 package foo
 
+@Suppress("DEPRECATION_ERROR")
 fun box(): String {
     check(jsClass<A>(), A().jsClass)
     check(jsClass<B>(), B().jsClass)
