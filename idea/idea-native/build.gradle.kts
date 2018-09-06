@@ -8,7 +8,7 @@ dependencies {
     compile(project(":idea:idea-jvm"))
     compile(project(":compiler:frontend"))
     compileOnly(intellijDep())
-    compile(project(":konan:konan-serializer"))
+    compile(project(":kotlin-native:kotlin-native-serializer"))
 }
 
 sourceSets {

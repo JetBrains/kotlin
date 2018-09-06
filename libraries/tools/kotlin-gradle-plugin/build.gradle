@@ -38,7 +38,7 @@ dependencies {
     compileOnly project(':compiler:daemon-common')
 
     compile project(':kotlin-stdlib')
-    compile project(':konan:konan-utils')
+    compile project(':kotlin-native:kotlin-native-utils')
     compileOnly project(':kotlin-reflect-api')
     compileOnly project(':kotlin-android-extensions')
     compileOnly project(':kotlin-build-common')
