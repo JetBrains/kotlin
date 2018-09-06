@@ -281,6 +281,13 @@ class KotlinNativeCompilation(
 
     var isTestCompilation = false
 
+    var friendCompilationName: String? = null
+
+    internal val friendCompilation: KotlinNativeCompilation?
+        get() = friendCompilationName?.let {
+            target.compilations.getByName(it)
+        }
+
     // Native-specific DSL.
     val extraOpts = mutableListOf<String>()
 

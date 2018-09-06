@@ -86,6 +86,7 @@ class KotlinNativeCompilationFactory(
     override fun create(name: String): KotlinNativeCompilation =
         KotlinNativeCompilation(target, name, target.createCompilationOutput(name)).apply {
             if (name == KotlinCompilation.TEST_COMPILATION_NAME) {
+                friendCompilationName = KotlinCompilation.MAIN_COMPILATION_NAME
                 outputKinds = mutableListOf(NativeOutputKind.EXECUTABLE)
                 buildTypes = mutableListOf(NativeBuildType.DEBUG)
                 isTestCompilation = true

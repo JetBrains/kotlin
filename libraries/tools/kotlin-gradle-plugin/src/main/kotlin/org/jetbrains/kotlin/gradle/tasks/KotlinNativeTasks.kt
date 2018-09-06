@@ -42,6 +42,10 @@ open class KotlinNativeCompile : DefaultTask() {
     val libraries: FileCollection
         @InputFiles get() = compilation.compileDependencyFiles
 
+    val friendModule: FileCollection?
+        // It's already taken into account in libraries
+        @Internal get() = compilation.friendCompilation?.output
+
     @Input
     var optimized = false
     @Input
@@ -136,6 +140,11 @@ open class KotlinNativeCompile : DefaultTask() {
             }.forEach { library ->
                 library.parent?.let { addArg("-r", it) }
                 addArg("-l", library.nameWithoutExtension)
+            }
+
+            val friends = friendModule?.files
+            if (friends != null && friends.isNotEmpty()) {
+                addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
             }
 
             // TODO: Filter only kt files?
