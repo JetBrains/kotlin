@@ -86,11 +86,13 @@ public inline class SuccessOrFailure<out T> @PublishedApi internal constructor(
     /**
      * Returns `true` if the [other] object is `SuccessOrFailure` that encapsulates an equal value or exception.
      */
+    @Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
     public override fun equals(other: Any?): Boolean = other is SuccessOrFailure<*> && value == other.value
 
     /**
      * Returns hashcode of either the encapsulated value or of the exception.
      */
+    @Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
     public override fun hashCode(): Int = value?.hashCode() ?: 0
 
     /**
