@@ -34,6 +34,8 @@ class OverloadResolver(
     private val overloadChecker: OverloadChecker
 ) {
 
+    private val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
+
     fun checkOverloads(c: BodiesResolveContext) {
         val inClasses = findConstructorsInNestedClassesAndTypeAliases(c)
 
@@ -268,7 +270,7 @@ class OverloadResolver(
     }
 
     private fun isTopLevelMainInDifferentFiles(member1: DeclarationDescriptor, member2: DeclarationDescriptor): Boolean {
-        if (!MainFunctionDetector.isMain(member1) || !MainFunctionDetector.isMain(member2)) {
+        if (!mainFunctionDetector.isMain(member1) || !mainFunctionDetector.isMain(member2)) {
             return false
         }
 

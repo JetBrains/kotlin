@@ -35,7 +35,7 @@ class MainFunctionDetector {
     constructor(bindingContext: BindingContext) {
         this.getFunctionDescriptor = { function ->
             bindingContext.get(BindingContext.FUNCTION, function)
-                    ?: throw IllegalStateException("No descriptor resolved for " + function + " " + function.text)
+                ?: throw IllegalStateException("No descriptor resolved for " + function + " " + function.text)
         }
     }
 
@@ -79,6 +79,47 @@ class MainFunctionDetector {
         return isMain(functionDescriptor, checkJvmStaticAnnotation)
     }
 
+    fun isMain(
+        descriptor: DeclarationDescriptor,
+        checkJvmStaticAnnotation: Boolean = true,
+        checkReturnType: Boolean = true
+    ): Boolean {
+        if (descriptor !is FunctionDescriptor) return false
+
+        if (getJVMFunctionName(descriptor) != "main") {
+            return false
+        }
+
+        val parameters = descriptor.valueParameters.mapTo(mutableListOf()) { it.type }
+        descriptor.extensionReceiverParameter?.type?.let { parameters += it }
+
+        if (parameters.size != 1 || !descriptor.typeParameters.isEmpty()) return false
+
+        val parameterType = parameters[0]
+        if (!KotlinBuiltIns.isArray(parameterType)) return false
+
+        val typeArguments = parameterType.arguments
+        if (typeArguments.size != 1) return false
+
+        val typeArgument = typeArguments[0].type
+        if (!KotlinBuiltIns.isString(typeArgument)) {
+            return false
+        }
+        if (typeArguments[0].projectionKind === Variance.IN_VARIANCE) {
+            return false
+        }
+
+        if (checkReturnType && !isMainReturnType(descriptor)) return false
+
+        if (DescriptorUtils.isTopLevelDeclaration(descriptor)) return true
+
+        val containingDeclaration = descriptor.containingDeclaration
+        return containingDeclaration is ClassDescriptor
+                && containingDeclaration.kind.isSingleton
+                && (descriptor.hasJvmStaticAnnotation() || !checkJvmStaticAnnotation)
+    }
+
+
     fun getMainFunction(module: ModuleDescriptor): FunctionDescriptor? = getMainFunction(module, module.getPackage(FqName.ROOT))
 
     private fun getMainFunction(module: ModuleDescriptor, packageView: PackageViewDescriptor): FunctionDescriptor? {
@@ -100,48 +141,7 @@ class MainFunctionDetector {
         declarations.filterIsInstance<KtNamedFunction>().find { isMain(it) }
 
     companion object {
-
-        fun isMain(
-            descriptor: DeclarationDescriptor,
-            checkJvmStaticAnnotation: Boolean = true,
-            checkReturnType: Boolean = true
-        ): Boolean {
-            if (descriptor !is FunctionDescriptor) return false
-
-            if (getJVMFunctionName(descriptor) != "main") {
-                return false
-            }
-
-            val parameters = descriptor.valueParameters.mapTo(mutableListOf()) { it.type }
-            descriptor.extensionReceiverParameter?.type?.let { parameters += it }
-
-            if (parameters.size != 1 || !descriptor.typeParameters.isEmpty()) return false
-
-            val parameterType = parameters[0]
-            if (!KotlinBuiltIns.isArray(parameterType)) return false
-
-            val typeArguments = parameterType.arguments
-            if (typeArguments.size != 1) return false
-
-            val typeArgument = typeArguments[0].type
-            if (!KotlinBuiltIns.isString(typeArgument)) {
-                return false
-            }
-            if (typeArguments[0].projectionKind === Variance.IN_VARIANCE) {
-                return false
-            }
-
-            if (checkReturnType && !isMainReturnType(descriptor)) return false
-
-            if (DescriptorUtils.isTopLevelDeclaration(descriptor)) return true
-
-            val containingDeclaration = descriptor.containingDeclaration
-            return containingDeclaration is ClassDescriptor
-                    && containingDeclaration.kind.isSingleton
-                    && (descriptor.hasJvmStaticAnnotation() || !checkJvmStaticAnnotation)
-        }
-
-        fun isMainReturnType(descriptor: FunctionDescriptor): Boolean {
+        private fun isMainReturnType(descriptor: FunctionDescriptor): Boolean {
             val returnType = descriptor.returnType
             return returnType != null && KotlinBuiltIns.isUnit(returnType)
         }

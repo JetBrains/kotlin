@@ -77,7 +77,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
                 val callable = callableDeclaration.descriptor ?: return
 
-                if (MainFunctionDetector.isMain(callable)) return
+                if (MainFunctionDetector { it.resolveToDescriptorIfAny() }.isMain(callable)) return
 
                 val containingDeclaration = callable.containingDeclaration
                 if (containingDeclaration != null && containingDeclaration == receiverTypeDeclaration) {
