@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.konan.library.impl
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.asZipRoot
-import org.jetbrains.kotlin.konan.file.createTempDir
-import org.jetbrains.kotlin.konan.file.createTempFile
+import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION_WITH_DOT
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.nio.file.FileSystem
 
-private class ZippedKonanLibraryLayout(val klibFile: File, override val target: KonanTarget?) : KonanLibraryLayout {
+interface KonanLibraryLayoutImpl : KonanLibraryLayout {
+    fun <T> inPlace(action: (KonanLibraryLayout) -> T): T
+    fun <T> realFiles(action: (KonanLibraryLayout) -> T): T
+}
+
+private class ZippedKonanLibraryLayout(val klibFile: File, override val target: KonanTarget?) : KonanLibraryLayoutImpl {
 
     init {
         zippedKonanLibraryChecks(klibFile)
@@ -22,7 +25,17 @@ private class ZippedKonanLibraryLayout(val klibFile: File, override val target: 
 
     override val libraryName = klibFile.path.removeSuffix(KLIB_FILE_EXTENSION_WITH_DOT)
 
-    override val libDir by lazy { zippedKonanLibraryRoot(klibFile) }
+    override val libDir: File = File("/")
+
+    override fun <T> realFiles(action: (KonanLibraryLayout) -> T): T {
+        return action(FileExtractor(this))!!
+    }
+
+    override fun <T> inPlace(action: (KonanLibraryLayout) -> T): T {
+        return klibFile.withZipFileSystem { zipFileSystem ->
+            action(DirectFromZip(this, zipFileSystem))
+        }
+    }
 }
 
 internal fun zippedKonanLibraryChecks(klibFile: File) {
@@ -33,17 +46,23 @@ internal fun zippedKonanLibraryChecks(klibFile: File) {
     check(extension.isEmpty() || extension == KLIB_FILE_EXTENSION) { "Unexpected file extension: $extension" }
 }
 
-internal fun zippedKonanLibraryRoot(klibFile: File) = klibFile.asZipRoot
-
-private class UnzippedKonanLibraryLayout(override val libDir: File, override val target: KonanTarget?) : KonanLibraryLayout {
+private class UnzippedKonanLibraryLayout(override val libDir: File, override val target: KonanTarget?) : KonanLibraryLayoutImpl {
     override val libraryName = libDir.path
+
+    override fun <T> inPlace(action: (KonanLibraryLayout) -> T): T = action(this)
+    override fun <T> realFiles(action: (KonanLibraryLayout) -> T): T = inPlace(action)
+}
+
+private class DirectFromZip(zippedLayout: ZippedKonanLibraryLayout, val zipFileSystem: FileSystem) : KonanLibraryLayout {
+    override val libraryName = zippedLayout.libraryName
+    override val libDir = zipFileSystem.file(zippedLayout.libDir)
 }
 
 /**
  * This class automatically extracts pieces of the library on first access. Use it if you need
- * to pass extracted files to an external tool. Otherwise, stick to [ZippedKonanLibraryLayout].
+ * to pass extracted files to an external tool. Otherwise, stick to [DirectFromZip].
  */
-private class FileExtractor(zippedLibraryLayout: KonanLibraryLayout) : KonanLibraryLayout by zippedLibraryLayout {
+private class FileExtractor(val zippedLibraryLayout: ZippedKonanLibraryLayout) : KonanLibraryLayout by zippedLibraryLayout {
 
     override val manifestFile: File by lazy { extract(super.manifestFile) }
 
@@ -57,29 +76,21 @@ private class FileExtractor(zippedLibraryLayout: KonanLibraryLayout) : KonanLibr
 
     override val linkdataDir: File by lazy { extractDir(super.linkdataDir) }
 
-    fun extract(file: File): File {
+    fun extract(file: File): File = zippedLibraryLayout.klibFile.withZipFileSystem { zipFileSystem ->
         val temporary = createTempFile(file.name)
-        file.copyTo(temporary)
+        zipFileSystem.file(file).copyTo(temporary)
         temporary.deleteOnExit()
-        return temporary
+        temporary
     }
 
-    fun extractDir(directory: File): File {
+    fun extractDir(directory: File): File = zippedLibraryLayout.klibFile.withZipFileSystem { zipFileSystem ->
         val temporary = createTempDir(directory.name)
-        directory.recursiveCopyTo(temporary)
+        zipFileSystem.file(directory).recursiveCopyTo(temporary)
         temporary.deleteOnExitRecursively()
-        return temporary
+        temporary
     }
 }
 
 internal fun createKonanLibraryLayout(klib: File, target: KonanTarget? = null) =
     if (klib.isFile) ZippedKonanLibraryLayout(klib, target) else UnzippedKonanLibraryLayout(klib, target)
-
-internal val KonanLibraryLayout.realFiles
-    get() = when (this) {
-        is ZippedKonanLibraryLayout -> FileExtractor(this)
-        // Unpacked library just provides its own files.
-        is UnzippedKonanLibraryLayout -> this
-        else -> error("Provide an extractor for your container.")
-    }
 
