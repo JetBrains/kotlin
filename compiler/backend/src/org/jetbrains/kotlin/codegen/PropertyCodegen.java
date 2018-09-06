@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -228,7 +229,13 @@ public class PropertyCodegen {
         if (hasJvmFieldAnnotation(descriptor)) return false;
         if (kind == OwnerKind.ERASED_INLINE_CLASS) return false;
 
-        return !Visibilities.isPrivate(descriptor.getVisibility());
+        Visibility visibility = descriptor.getVisibility();
+        if (InlineClassesUtilsKt.isInlineClass(descriptor.getContainingDeclaration())) {
+            return visibility.isPublicAPI();
+        }
+        else {
+            return !Visibilities.isPrivate(visibility);
+        }
     }
 
     public void generatePrimaryConstructorProperty(@NotNull KtParameter parameter, @NotNull PropertyDescriptor descriptor) {
