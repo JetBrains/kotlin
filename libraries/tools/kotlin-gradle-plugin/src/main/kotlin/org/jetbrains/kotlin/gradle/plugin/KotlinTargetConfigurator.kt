@@ -28,6 +28,7 @@ import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
@@ -374,7 +375,8 @@ open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
 
 
 open class KotlinNativeTargetConfigurator(
-    buildOutputCleanupRegistry: BuildOutputCleanupRegistry
+    buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
+    private val kotlinPluginVersion: String
 ) : AbstractKotlinTargetConfigurator<KotlinNativeTarget>(
     buildOutputCleanupRegistry,
     createDefaultSourceSets = true,
@@ -436,6 +438,13 @@ open class KotlinNativeTargetConfigurator(
     ): File {
         val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
         return buildDir.resolve("classes/kotlin/$targetSubDirectory${compilation.name}")
+    }
+
+    private fun KotlinNativeCompile.addCompilerPlugins() {
+        SubpluginEnvironment
+            .loadSubplugins(project, kotlinPluginVersion)
+            .addSubpluginOptions<CommonCompilerArguments>(project, this, compilerPluginOptions)
+        compilerPluginClasspath = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
     }
 
     private fun KotlinNativeCompile.registerOutputFiles(outputDirectory: File) {
@@ -504,6 +513,8 @@ open class KotlinNativeTargetConfigurator(
                     debuggable = buildType.debuggable
 
                     registerOutputFiles(binaryOutputDirectory(buildType, kind, compilation))
+                    addCompilerPlugins()
+
                     dependsOnCompilerDownloading()
                     linkAll.dependsOn(this)
                 }
@@ -555,6 +566,7 @@ open class KotlinNativeTargetConfigurator(
             enabled = compilation.target.konanTarget.enabledOnCurrentHost
 
             registerOutputFiles(klibOutputDirectory(compilation))
+            addCompilerPlugins()
             dependsOnCompilerDownloading()
             compilation.output.tryAddClassesDir {
                 project.files(this.outputFile).builtBy(this)
