@@ -4,9 +4,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":konan:konan-serializer"))
-
-//    compile("org.jetbrains.kotlin:kotlin-native-gradle-plugin")
+    compile(project(":kotlin-native:kotlin-native-serializer"))
 
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":idea:idea-native"))
