@@ -1,3 +1,9 @@
+---
+type: doc
+layout: reference
+title: "Kotlin/Native interoperability with Swift/Objective-C"
+---
+
 # _Kotlin/Native_ interoperability with Swift/Objective-C
 
 This documents covers some details of Kotlin/Native interoperability with

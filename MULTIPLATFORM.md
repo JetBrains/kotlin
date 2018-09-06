@@ -1,3 +1,9 @@
+---
+type: doc
+layout: reference
+title: "Kotlin/Native in multiplatform projects"
+---
+
 # Kotlin/Native in multiplatform projects
 
 While Kotlin/Native could be used as the only Kotlin compiler in the project, it is pretty common to combine

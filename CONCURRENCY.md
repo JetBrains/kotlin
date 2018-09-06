@@ -1,3 +1,9 @@
+---
+type: doc
+layout: reference
+title: "Concurrency in Kotlin/Native"
+---
+
 ### Concurrency in Kotlin/Native
 
   Kotlin/Native runtime doesn't encourage a classical thread-oriented concurrency
@@ -12,7 +18,7 @@
    * Raw shared memory using C globals
    * Coroutines for blocking operations (not covered in this document)
 
- ## Workers
+## Workers
 
   Instead of threads Kotlin/Native runtime offers concept of workers: concurrently executing
  control flow streams with an associated request queue. Workers are very similar to actors
@@ -55,7 +61,7 @@
  in the Kotlin/Native repository.
 
 
- ## <a name="transfer"></a>Object transfer and freezing
+## <a name="transfer"></a>Object transfer and freezing
 
    Important invariant that Kotlin/Native runtime maintains is that object is either owned by a single
   thread/worker, or is immutable (_shared XOR mutable_). This ensures that the same data has a single mutator, and so no need for
@@ -76,7 +82,7 @@
  is allowed. Currently, Kotlin/Native runtime only freezes enum objects after creation, although additional
  autofreezing of certain provably immutable objects could be implemented in the future.
 
-  ## <a name="detach"></a>Object subgraph detachment
+## <a name="detach"></a>Object subgraph detachment
 
    Object subgraph without external references could be disconnected using `detachObjectGraph` to
   a `COpaquePointer` value, which could be stored in `void*` data, so disconnected object subgraphs
@@ -84,7 +90,7 @@
   or worker. Combined with [raw memory sharing](#shared) it allows side channel object transfer between
   concurrent threads, if worker mechanisms are insufficient for the particular task.
 
- ## <a name="shared"></a>Raw shared memory
+## <a name="shared"></a>Raw shared memory
 
   Considering strong ties of Kotlin/Native with C via interoperability, in conjunction with other mechanisms
  mentioned above one could build popular data structures, like concurrent hashmap or shared cache with
@@ -112,7 +118,7 @@ class SharedData(rawPtr: NativePtr) : CStructVar(rawPtr) {
 So combined with the top level variable declared above, it allows seeing the same memory from different
 threads and building traditional concurrent structures with platform-specific synchronization primitives.
 
- ## <a name="top_level"></a>Global variables and singletons
+## <a name="top_level"></a>Global variables and singletons
 
   Frequently, global variables are a source of unintended concurrency issues, so _Kotlin/Native_ implements
 following mechanisms to prevent unintended sharing of state via global objects:

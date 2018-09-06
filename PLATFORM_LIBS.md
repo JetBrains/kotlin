@@ -1,12 +1,18 @@
- # Platform libraries
+---
+type: doc
+layout: reference
+title: "Platform libraries"
+---
 
-  ## Overview
+# Platform libraries
+
+## Overview
 
 To provide access to user's native operating system services,
 `Kotlin/Native` distribution includes a set of prebuilt libraries specific to
 each target. We call them **Platform Libraries**.
 
-  ### POSIX bindings
+### POSIX bindings
 
 For all `Unix` or `Windows` based targets (including `Android` and
 `iPhone`) we provide the `posix` platform lib. It contains bindings
@@ -22,7 +28,7 @@ Note that the content of `platform.posix` is NOT identical on
 different platforms, in the same way as different `POSIX` implementations
 are a little different.
 
-  ### OS specific libraries
+### OS specific libraries
 
 We've gone a little further and provided access to more specific
 native OS services. One needs to import the proper packages
@@ -38,7 +44,7 @@ on each of the platform. Choose what matches your target platform:
 
     import platform.ios.*
 
-  ### Popular native libraries
+### Popular native libraries
 
 There are many more platform libraries available for host and
 cross-compilation targets.  `Kotlin/Native` distribution provides access to
@@ -49,7 +55,7 @@ On Apple platforms `objc` library is provided for interoperability with [Objecti
 
 Inspect the contents of `dist/klib/platform/$target` of the distribution for the details.
 
-  ## Availability by default
+## Availability by default
 
 The packages from platform libraries are available by default. No
 special link flags need to be specified to use them. `Kotlin/Native`
@@ -61,7 +67,7 @@ just wrappers and bindings to the native libraries.  That means the
 native libraries themselves (`.so`, `.a`, `.dylib`, `.dll` etc)
 should be installed on the machine.
 
-  ## Examples
+## Examples
 
 `Kotlin/Native` installation provides a wide spectrum of examples
 demonstrating the use of platform libraries. 

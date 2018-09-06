@@ -1,6 +1,12 @@
- # Kotlin/Native libraries
+---
+type: doc
+layout: reference
+title: "Kotlin/Native libraries"
+---
 
-  ## Kotlin compiler specifics
+# Kotlin/Native libraries
+
+## Kotlin compiler specifics
 
 To produce a library with Kotlin/Native compiler use `-produce library` or `-p library` flag. For example:
 
@@ -15,7 +21,7 @@ To link a library use `-library <name>` or `-l <name>` flag. For example:
 the above command will produce `program.kexe` out of `qux.kt` and `bar.klib`
 
 
-  ## cinterop tool specifics
+## cinterop tool specifics
 
 The **cinterop** tool produces `.klib` wrappers for native libraries as its main output. 
 For example using the simple `stdio.def` native library definition file provided in your Kotlin/Native distribution
@@ -25,7 +31,7 @@ For example using the simple `stdio.def` native library definition file provided
 we obtain `stdio.klib`. 
 
 
-  ## klib utility
+## klib utility
 
 The **klib** library management utility allows one to inspect and install the libraries.
 
@@ -52,7 +58,7 @@ All of the above commands accept an additional `-repository <directory>` argumen
         $ klib <command> <name> -repository <directory>
 
 
-  ## Several examples
+## Several examples
 
 First lets create a library:
 
@@ -93,9 +99,9 @@ And run your program:
 
 Have fun!
 
-  # Advanced topics
+# Advanced topics
 
- ## Library search sequence
+## Library search sequence
 
 When given `-library foo` flag, the compiler searches the `foo`  library in the following order:
 
@@ -108,7 +114,7 @@ When given `-library foo` flag, the compiler searches the `foo`  library in the 
     * Libraries installed in `$installation/klib` directory.
 
 
- ## The library format
+## The library format
 
 **WARNING**: the library format is *very* preliminary. It is subject to change right under your fingers. And it can incompatibly change from release to release until Kotlin/Native is stabilized.
 
@@ -117,6 +123,7 @@ directory structure, with the following layout:
 
 **foo.klib** when unpacked as **foo/** gives us:
 
+```
   - foo/
     - targets/
       - $platform/
@@ -131,6 +138,7 @@ directory structure, with the following layout:
     - resources/
       - General resources such as images. (Not used yet).
     - manifest - A file in *java property* format describing the library.
+```
 
-    An exemplar layout can be found in `klib/stdlib` directory of your installation.
+An exemplar layout can be found in `klib/stdlib` directory of your installation.
 
