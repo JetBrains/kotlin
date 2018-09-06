@@ -153,6 +153,7 @@ object ComparableOps : TemplateGroupBase() {
             }
             var convertBack = "to$primitive()"
             on(Platform.JS) {
+                suppress("DEPRECATION_ERROR")
                 convertBack = "unsafeCast<$primitive>()"
             }
             body {
@@ -198,11 +199,13 @@ object ComparableOps : TemplateGroupBase() {
             if (primitive in shortIntPrimitives) {
                 body { "return Math.min(a.toInt(), Math.min(b.toInt(), c.toInt())).to$primitive()" }
                 on(Platform.JS) {
+                    suppress("DEPRECATION_ERROR")
                     body { "return Math.min(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
                 }
             }
             else if (primitive != PrimitiveType.Long) {
                 on(Platform.JS) {
+                    suppress("DEPRECATION_ERROR")
                     body { "return Math.min(a, b, c)" }
                 }
             }
@@ -267,6 +270,7 @@ object ComparableOps : TemplateGroupBase() {
             }
             var convertBack = "to$primitive()"
             on(Platform.JS) {
+                suppress("DEPRECATION_ERROR")
                 convertBack = "unsafeCast<$primitive>()"
             }
             body {
@@ -312,11 +316,13 @@ object ComparableOps : TemplateGroupBase() {
             if (primitive in shortIntPrimitives) {
                 body { "return Math.max(a.toInt(), Math.max(b.toInt(), c.toInt())).to$primitive()" }
                 on(Platform.JS) {
+                    suppress("DEPRECATION_ERROR")
                     body { "return Math.max(a.toInt(), b.toInt(), c.toInt()).unsafeCast<$primitive>()" }
                 }
             }
             else if (primitive != PrimitiveType.Long) {
                 on(Platform.JS) {
+                    suppress("DEPRECATION_ERROR")
                     body { "return Math.max(a, b, c)" }
                 }
             }
