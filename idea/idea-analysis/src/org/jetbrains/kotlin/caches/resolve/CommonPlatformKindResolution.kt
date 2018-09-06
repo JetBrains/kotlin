@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
@@ -28,7 +28,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
         return settings.platformKind.isCommon
     }
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
+    override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
         return DefaultBuiltIns.Instance
     }
 }

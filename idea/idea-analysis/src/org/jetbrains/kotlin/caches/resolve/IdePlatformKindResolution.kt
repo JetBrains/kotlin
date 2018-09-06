@@ -20,7 +20,7 @@ import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.platform.IdePlatformKind
 
@@ -29,7 +29,7 @@ interface IdePlatformKindResolution {
 
     val resolverForModuleFactory: ResolverForModuleFactory
 
-    fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns
+    fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns
 
     fun isModuleForPlatform(module: Module): Boolean
 

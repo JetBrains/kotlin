@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isJvm
@@ -29,7 +29,7 @@ class JvmPlatformKindResolution : IdePlatformKindResolution {
         return settings.platformKind.isJvm
     }
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
-        return if (settings.sdk != null) JvmBuiltIns(sdkContext.storageManager) else DefaultBuiltIns.Instance
+    override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
+        return if (settings.sdk != null) JvmBuiltIns(projectContext.storageManager) else DefaultBuiltIns.Instance
     }
 }

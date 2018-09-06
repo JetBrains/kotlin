@@ -25,12 +25,12 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
-import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.context.ProjectContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
@@ -103,10 +103,11 @@ internal class ProjectResolutionFacade(
             delegateResolverForProject = EmptyResolverForProject()
             delegateBuiltIns = null
         }
+        val projectContext = globalContext.withProject(project)
 
         val builtIns = delegateBuiltIns ?: createBuiltIns(
             settings,
-            globalContext
+            projectContext
         )
 
         val allModuleInfos = (allModules ?: getModuleInfosFromIdeaModel(project, settings.platform)).toMutableSet()
@@ -135,7 +136,7 @@ internal class ProjectResolutionFacade(
 
         val resolverForProject = ResolverForProjectImpl(
             resolverDebugName,
-            globalContext.withProject(project),
+            projectContext,
             modulesToCreateResolversFor,
             modulesContentFactory,
             modulePlatforms = { module -> module.platform?.multiTargetPlatform },
@@ -181,7 +182,8 @@ internal class ProjectResolutionFacade(
                 ?: cachedResolverForProject.diagnoseUnknownModuleInfo(infos.toList())
     }
 
-    internal fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = cachedResolverForProject.resolverForModuleDescriptor(moduleDescriptor)
+    internal fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) =
+        cachedResolverForProject.resolverForModuleDescriptor(moduleDescriptor)
 
     internal fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
         return cachedResolverForProject.descriptorForModule(ideaModuleInfo)
@@ -213,8 +215,8 @@ internal class ProjectResolutionFacade(
     }
 
     private companion object {
-        private fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
-            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, sdkContext)
+        private fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
+            return settings.platform.idePlatformKind.resolution.createBuiltIns(settings, projectContext)
         }
     }
 }

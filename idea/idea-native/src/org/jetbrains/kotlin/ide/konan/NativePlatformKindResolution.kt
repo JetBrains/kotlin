@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.ProjectManager
 import org.jetbrains.konan.KONAN_CURRENT_ABI_VERSION
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeAnalyzerFacade
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
@@ -32,7 +31,8 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override fun isModuleForPlatform(module: Module) = module.isKotlinNativeModule
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl) = createKotlinNativeBuiltIns(sdkContext)
+    override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext) =
+        createKotlinNativeBuiltIns(projectContext)
 }
 
 val Module.isKotlinNativeModule: Boolean
@@ -41,19 +41,15 @@ val Module.isKotlinNativeModule: Boolean
         return settings.platformKind.isKotlinNative
     }
 
-private fun createKotlinNativeBuiltIns(sdkContext: GlobalContextImpl): KotlinBuiltIns {
+private fun createKotlinNativeBuiltIns(projectContext: ProjectContext): KotlinBuiltIns {
 
     // TODO: It depends on a random project's stdlib, propagate the actual project here.
     fun findStdlib(): Pair<String, LibraryInfo>? {
-        ProjectManager.getInstance().openProjects.asSequence().forEach { project ->
-            getModuleInfosFromIdeaModel(project, KonanPlatform).asSequence().forEach {
-                for (dependency in it.dependencies()) {
-                    if (dependency is LibraryInfo) {
-                        for (path in dependency.getLibraryRoots()) {
-                            if (path.endsWith(KONAN_STDLIB_NAME)) {
-                                return path to dependency
-                            }
-                        }
+        getModuleInfosFromIdeaModel(projectContext.project, KonanPlatform).forEach { module ->
+            module.dependencies().forEach { dependency ->
+                (dependency as? LibraryInfo)?.getLibraryRoots()?.forEach { path ->
+                    if (path.endsWith(KONAN_STDLIB_NAME)) {
+                        return path to dependency
                     }
                 }
             }
@@ -71,7 +67,7 @@ private fun createKotlinNativeBuiltIns(sdkContext: GlobalContextImpl): KotlinBui
         val builtInsModule = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
             library,
             LanguageVersionSettingsImpl.DEFAULT,
-            sdkContext.storageManager,
+            projectContext.storageManager,
             // This is to preserve "capabilities" from the original IntelliJ LibraryInfo:
             customCapabilities = libraryInfo.capabilities
         )
