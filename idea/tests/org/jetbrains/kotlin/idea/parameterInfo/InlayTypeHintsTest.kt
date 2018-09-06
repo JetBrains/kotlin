@@ -21,8 +21,8 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         check(text)
     }
 
-    private fun checkLocalVariable(text: String) = check(text, HintType.LOCAL_VARIABLE_HINT)
-    private fun checkPropertyHint(text: String) = check(text, HintType.PROPERTY_HINT)
+    private fun checkLocalVariable(text: String) = check(text.trimIndent(), HintType.LOCAL_VARIABLE_HINT)
+    private fun checkPropertyHint(text: String) = check(text.trimIndent(), HintType.PROPERTY_HINT)
     private fun checkFunctionHint(text: String) = check(text, HintType.FUNCTION_HINT)
 
     fun testLocalVariableType() {
@@ -94,7 +94,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                     val x: Int = 0
                 }
             }
-            """.trimIndent()
+            """
         )
     }
 
@@ -103,7 +103,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             enum class E { ENTRY }
             val test = E.ENTRY
-            """.trimIndent()
+            """
         )
     }
 
@@ -118,7 +118,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             }
 
             val test<hint text=": E"/> = E.test
-            """.trimIndent()
+            """
         )
     }
 
@@ -132,7 +132,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             }
 
             val test<hint text=": E"/> = E.test()
-            """.trimIndent()
+            """
         )
     }
 
@@ -142,7 +142,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             import E.ENTRY
             enum class E { ENTRY }
             val test<hint text=": E"/> = ENTRY
-            """.trimIndent()
+            """
         )
     }
 
@@ -178,7 +178,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             fun x() :Triple<String, String,String> {
                 return Triple(<hint text="first:" />"A", <hint text="second:" />"B", <hint text="third:" />"C")
             }
-            """.trimIndent()
+            """
         )
     }
 
@@ -209,7 +209,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 }
             }
             val inA<hint text=": A.InA"/> = A.provideInA()
-            """.trimIndent()
+            """
         )
     }
 
@@ -223,7 +223,7 @@ class InlayTypeHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 }
             }
             val inA<hint text=": A.N.InA"/> = A.provideInA()
-            """.trimIndent()
+            """
         )
     }
 }
