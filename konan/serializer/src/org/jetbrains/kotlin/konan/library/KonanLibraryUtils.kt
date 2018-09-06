@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.file
+import org.jetbrains.kotlin.konan.file.withMutableZipFileSystem
 import org.jetbrains.kotlin.konan.library.impl.DefaultMetadataReaderImpl
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.library.impl.zippedKonanLibraryChecks
-import org.jetbrains.kotlin.konan.library.impl.zippedKonanLibraryRoot
 import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolver
 import org.jetbrains.kotlin.konan.library.resolver.impl.KonanLibraryResolverImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -26,7 +27,9 @@ fun File.unpackZippedKonanLibraryTo(newDir: File) {
             newDir.delete()
     }
 
-    zippedKonanLibraryRoot(this).recursiveCopyTo(newDir)
+    this.withMutableZipFileSystem {
+        it.file("/").recursiveCopyTo(newDir)
+    }
     check(newDir.exists) { "Could not unpack $this as $newDir." }
 }
 
