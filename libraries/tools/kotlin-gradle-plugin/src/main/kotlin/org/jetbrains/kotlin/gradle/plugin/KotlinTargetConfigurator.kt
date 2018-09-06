@@ -519,6 +519,8 @@ open class KotlinNativeTargetConfigurator(
                     linkAll.dependsOn(this)
                 }
 
+                compilation.binaryTasks[kind to buildType] = linkTask
+
                 if (compilation.isTestCompilation &&
                     buildType == NativeBuildType.DEBUG &&
                     konanTarget in hostTargets

@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.*
 
 internal fun KotlinCompilation.composeName(prefix: String? = null, suffix: String? = null): String {
@@ -288,6 +291,8 @@ class KotlinNativeCompilation(
             target.compilations.getByName(it)
         }
 
+    internal val binaryTasks = mutableMapOf<Pair<NativeOutputKind, NativeBuildType>, KotlinNativeCompile>()
+
     // Native-specific DSL.
     val extraOpts = mutableListOf<String>()
 
@@ -322,8 +327,29 @@ class KotlinNativeCompilation(
     var entryPoint: String? = null
     fun entryPoint(value: String) { entryPoint = value }
 
-    // Naming
+    fun findLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeCompile? = binaryTasks[kind to buildType]
 
+    fun getLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeCompile =
+        findLinkTask(kind, buildType) ?:
+        throw IllegalArgumentException("Cannot find a link task for the binary kind '$kind' and the build type '$buildType'")
+
+    fun findLinkTask(kind: String, buildType: String) =
+        findLinkTask(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
+
+    fun getLinkTask(kind: String, buildType: String) =
+        getLinkTask(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
+
+    fun findBinary(kind: NativeOutputKind, buildType: NativeBuildType): File? = findLinkTask(kind, buildType)?.outputFile?.get()
+
+    fun getBinary(kind: NativeOutputKind, buildType: NativeBuildType): File = getLinkTask(kind, buildType).outputFile.get()
+
+    fun findBinary(kind: String, buildType: String) =
+        findBinary(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
+
+    fun getBinary(kind: String, buildType: String) =
+        getBinary(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
+
+    // Naming
     override val compileDependencyConfigurationName: String
         get() = lowerCamelCaseName(
             target.disambiguationClassifier,
