@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.idea.facet
 import com.intellij.facet.ui.*
 import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.splitArgumentString
 import org.jetbrains.kotlin.idea.compiler.configuration.*
 import org.jetbrains.kotlin.idea.util.onTextChange
 import org.jetbrains.kotlin.platform.IdePlatform
@@ -87,7 +89,7 @@ class KotlinFacetEditorGeneralTab(
         val useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
 
         val targetPlatformComboBox =
-                JComboBox<IdePlatform<*, *>>(IdePlatformKind.All_PLATFORMS.toTypedArray()).apply {
+                ComboBox<IdePlatform<*, *>>(IdePlatformKind.All_PLATFORMS.toTypedArray()).apply {
                     setRenderer(DescriptionListCellRenderer())
                 }
 
@@ -146,12 +148,12 @@ class KotlinFacetEditorGeneralTab(
         }
 
         private val chosenPlatform: IdePlatform<*, *>?
-            get() = targetPlatformComboBox.selectedItem as IdePlatform<*, *>?
+            get() = targetPlatformComboBox.selectedItemTyped
     }
 
     inner class ArgumentConsistencyValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val platform = editor.targetPlatformComboBox.selectedItem as IdePlatform<*, *>? ?: return ValidationResult.OK
+            val platform = editor.targetPlatformComboBox.selectedItemTyped ?: return ValidationResult.OK
             val primaryArguments = platform.createArguments().apply {
                 editor.compilerConfigurable.applyTo(
                         this,
@@ -268,7 +270,7 @@ class KotlinFacetEditorGeneralTab(
 
     override fun isModified(): Boolean {
         if (editor.useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
-        if (editor.targetPlatformComboBox.selectedItem != configuration.settings.platform) return true
+        if (editor.targetPlatformComboBox.selectedItemTyped != configuration.settings.platform) return true
         return !editor.useProjectSettingsCheckBox.isSelected && editor.compilerConfigurable.isModified
     }
 
@@ -286,7 +288,7 @@ class KotlinFacetEditorGeneralTab(
             editor.compilerConfigurable.apply()
             with(configuration.settings) {
                 useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
-                (editor.targetPlatformComboBox.selectedItem as IdePlatform<*, *>?)?.let {
+                editor.targetPlatformComboBox.selectedItemTyped?.let {
                     if (it != platform) {
                         val platformArguments = when {
                             it.isJvm -> editor.compilerConfigurable.k2jvmCompilerArguments
@@ -316,3 +318,5 @@ class KotlinFacetEditorGeneralTab(
         editor.compilerConfigurable.disposeUIResources()
     }
 }
+
+val <T> ComboBox<T>.selectedItemTyped: T? get() = selectedItem as T?
