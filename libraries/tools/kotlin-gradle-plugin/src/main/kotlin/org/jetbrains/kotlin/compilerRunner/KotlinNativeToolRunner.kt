@@ -25,19 +25,11 @@ import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 /** Copied from Kotlin/Native repository. */
 
-//  TODO: Rename to FQ names
 internal enum class KotlinNativeProjectProperty(val propertyName: String) {
-    KONAN_HOME                     ("konan.home"),
-    KONAN_JVM_ARGS                 ("konan.jvmArgs"),
-    KONAN_USE_ENVIRONMENT_VARIABLES("konan.useEnvironmentVariables"),
-    DOWNLOAD_COMPILER              ("download.compiler"),
-
-    // Properties used instead of env vars until https://github.com/gradle/gradle/issues/3468 is fixed.
-    // TODO: Remove them when an API for env vars is provided.
-    KONAN_CONFIGURATION_BUILD_DIR  ("konan.configuration.build.dir"),
-    KONAN_DEBUGGING_SYMBOLS        ("konan.debugging.symbols"),
-    KONAN_OPTIMIZATIONS_ENABLE     ("konan.optimizations.enable"),
-    KONAN_PUBLICATION_ENABLED      ("konan.publication.enabled")
+    KONAN_HOME                     ("org.jetbrains.kotlin.native.home"),
+    KONAN_JVM_ARGS                 ("org.jetbrains.kotlin.native.jvmArgs"),
+    KONAN_USE_ENVIRONMENT_VARIABLES("org.jetbrains.kotlin.native.useEnvironmentVariables"),
+    DOWNLOAD_COMPILER              ("org.jetbrains.kotlin.native.download.compiler"),
 }
 
 internal fun Project.hasProperty(property: KotlinNativeProjectProperty) = hasProperty(property.propertyName)
