@@ -139,7 +139,8 @@ class KotlinMultiplatformPlugin(
 
     private fun configureSourceJars(project: Project) = with(project.kotlinExtension as KotlinMultiplatformExtension) {
         targets.all { target ->
-            val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+            val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                // If a target has no `main` compilation (e.g. Android), don't create the source JAR
                 ?: return@all
 
             val sourcesJar = project.tasks.create(target.sourcesJarTaskName, Jar::class.java) { sourcesJar ->
