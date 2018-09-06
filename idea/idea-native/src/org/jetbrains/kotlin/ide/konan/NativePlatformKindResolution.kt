@@ -11,7 +11,7 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.util.io.exists
 import org.jetbrains.konan.KONAN_CURRENT_ABI_VERSION
-import org.jetbrains.konan.analyser.KonanAnalyzerFacade
+import org.jetbrains.kotlin.ide.konan.analyzer.NativeAnalyzerFacade
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
@@ -27,29 +27,29 @@ import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescri
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class KonanPlatformKindResolution : IdePlatformKindResolution {
+class NativePlatformKindResolution : IdePlatformKindResolution {
 
-    override val kind get() = KonanPlatformKind
+    override val kind get() = NativeIdePlatformKind
 
-    override val resolverForModuleFactory get() = KonanAnalyzerFacade
+    override val resolverForModuleFactory get() = NativeAnalyzerFacade
 
-    override fun isModuleForPlatform(module: Module) = module.isKonanModule
+    override fun isModuleForPlatform(module: Module) = module.isKotlinNativeModule
 
-    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl) = createKonanBuiltIns(sdkContext)
+    override fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl) = createKotlinNativeBuiltIns(sdkContext)
 }
 
-val Module.isKonanModule: Boolean
+val Module.isKotlinNativeModule: Boolean
     get() {
         val settings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
-        return settings.platformKind.isKonan
+        return settings.platformKind.isKotlinNative
     }
 
-private fun createKonanBuiltIns(sdkContext: GlobalContextImpl): KotlinBuiltIns {
+private fun createKotlinNativeBuiltIns(sdkContext: GlobalContextImpl): KotlinBuiltIns {
 
     // TODO: It depends on a random project's stdlib, propagate the actual project here.
     val stdlib: Pair<Path, LibraryInfo>? = ProjectManager.getInstance().openProjects.asSequence().mapNotNull { project ->
 
-        ModuleManager.getInstance(project).modules.asSequence().filter { it.isKonanModule }.mapNotNull { module ->
+        ModuleManager.getInstance(project).modules.asSequence().filter { it.isKotlinNativeModule }.mapNotNull { module ->
 
             var result: Pair<Path, LibraryInfo>? = null
 

@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
-object KonanPlatformKind : IdePlatformKind<KonanPlatformKind>() {
+object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
 
-    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<KonanPlatformKind, CommonCompilerArguments>? {
+    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<NativeIdePlatformKind, CommonCompilerArguments>? {
         return if (arguments is K2NativeCompilerArguments) Platform
         else null
     }
@@ -28,18 +28,18 @@ object KonanPlatformKind : IdePlatformKind<KonanPlatformKind>() {
 
     override val name get() = "Native"
 
-    object Platform : IdePlatform<KonanPlatformKind, K2NativeCompilerArguments>() {
-        override val kind get() = KonanPlatformKind
+    object Platform : IdePlatform<NativeIdePlatformKind, K2NativeCompilerArguments>() {
+        override val kind get() = NativeIdePlatformKind
         override val version get() = TargetPlatformVersion.NoVersion
         override fun createArguments(init: K2NativeCompilerArguments.() -> Unit) = K2NativeCompilerArguments().apply(init)
     }
 
-    override fun equals(other: Any?): Boolean = other === KonanPlatformKind
+    override fun equals(other: Any?): Boolean = other === NativeIdePlatformKind
     override fun hashCode(): Int = javaClass.hashCode()
 }
 
-val IdePlatformKind<*>?.isKonan
-    get() = this === KonanPlatformKind
+val IdePlatformKind<*>?.isKotlinNative
+    get() = this === NativeIdePlatformKind
 
-val IdePlatform<*, *>?.isKonan
-    get() = this === KonanPlatformKind.Platform
+val IdePlatform<*, *>?.isKotlinNative
+    get() = this === NativeIdePlatformKind.Platform

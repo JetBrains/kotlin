@@ -13,7 +13,7 @@ import com.intellij.openapi.roots.libraries.DummyLibraryProperties
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryType
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.konan.analyser.index.KonanMetaFileIndex
+import org.jetbrains.kotlin.ide.konan.index.KotlinNativeMetaFileIndex
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator
 import org.jetbrains.kotlin.idea.configuration.LibraryKindSearchScope
 import org.jetbrains.kotlin.idea.configuration.hasKotlinFilesOnlyInTests
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
-open class KonanModuleConfigurator : KotlinWithLibraryConfigurator() {
+open class KotlinNativeModuleConfigurator : KotlinWithLibraryConfigurator() {
 
     override val name: String get() = NAME
 
@@ -33,15 +33,15 @@ open class KonanModuleConfigurator : KotlinWithLibraryConfigurator() {
 
     override val presentableText get() = PRESENTABLE_TEXT
 
-    override fun isConfigured(module: Module) = hasKonanRuntimeInScope(module)
+    override fun isConfigured(module: Module) = hasKotlinNativeRuntimeInScope(module)
 
-    override val libraryName get() = KonanStandardLibraryDescription.LIBRARY_NAME
+    override val libraryName get() = NativeStandardLibraryDescription.LIBRARY_NAME
 
-    override val dialogTitle get() = KonanStandardLibraryDescription.DIALOG_TITLE
+    override val dialogTitle get() = NativeStandardLibraryDescription.DIALOG_TITLE
 
-    override val libraryCaption get() = KonanStandardLibraryDescription.LIBRARY_CAPTION
+    override val libraryCaption get() = NativeStandardLibraryDescription.LIBRARY_CAPTION
 
-    override val messageForOverrideDialog get() = KonanStandardLibraryDescription.KONAN_LIBRARY_CREATION
+    override val messageForOverrideDialog get() = NativeStandardLibraryDescription.NATIVE_LIBRARY_CREATION
 
     override fun getLibraryJarDescriptors(sdk: Sdk?) = emptyList<LibraryJarDescriptor>()
 
@@ -52,27 +52,27 @@ open class KonanModuleConfigurator : KotlinWithLibraryConfigurator() {
     override val libraryType: LibraryType<DummyLibraryProperties>? get() = null
 
     companion object {
-        const val NAME = "Konan"
+        const val NAME = "KotlinNative"
         const val PRESENTABLE_TEXT = "Native"
     }
 }
 
-fun hasKonanRuntimeInScope(module: Module): Boolean {
+fun hasKotlinNativeRuntimeInScope(module: Module): Boolean {
     return runReadAction {
         val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
-        hasKonanMetadataFile(module.project, LibraryKindSearchScope(module, scope, KonanLibraryKind))
+        hasKotlinNativeMetadataFile(module.project, LibraryKindSearchScope(module, scope, NativeLibraryKind))
     }
 }
 
-private val KONAN_FQ_NAMES = listOf(
+private val KOTLIN_NATIVE_FQ_NAMES = listOf(
     "kotlin.native",
     "konan.native" // Keep "konan.native" for backward compatibility with older versions of Kotlin/Native.
 ).map { FqName(it) }
 
-fun hasKonanMetadataFile(project: Project, scope: GlobalSearchScope): Boolean {
+fun hasKotlinNativeMetadataFile(project: Project, scope: GlobalSearchScope): Boolean {
     return runReadAction {
         project.runWithAlternativeResolveEnabled {
-            KONAN_FQ_NAMES.any { KonanMetaFileIndex.hasSomethingInPackage(it, scope) }
+            KOTLIN_NATIVE_FQ_NAMES.any { KotlinNativeMetaFileIndex.hasSomethingInPackage(it, scope) }
         }
     }
 }

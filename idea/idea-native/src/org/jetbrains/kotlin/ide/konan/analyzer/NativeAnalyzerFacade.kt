@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.analyser
+package org.jetbrains.kotlin.ide.konan.analyzer
 
 import org.jetbrains.konan.createDeclarationProviderFactory
 import org.jetbrains.konan.createResolvedModuleDescriptors
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 /**
  * @author Alefas
  */
-object KonanAnalyzerFacade : ResolverForModuleFactory() {
+object NativeAnalyzerFacade : ResolverForModuleFactory() {
     override val targetPlatform: TargetPlatform
         get() = KonanPlatform
 
