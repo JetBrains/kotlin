@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
 import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultDeserializedDescriptorFactory
@@ -26,8 +27,11 @@ import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
-        return virtualFile.extension == "klib"
-                || virtualFile.isDirectory && virtualFile.children.any { it.name == "manifest" }
+        return if (virtualFile.isDirectory) {
+            virtualFile.findChild("linkdata")?.takeIf { it.isDirectory }?.children?.any { it.extension == "knm" } == true
+        } else {
+            virtualFile.extension == KLIB_FILE_EXTENSION
+        }
     }
 
     override val libraryKind: PersistentLibraryKind<*>?
