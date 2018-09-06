@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
+import org.jetbrains.kotlin.idea.test.configureLanguageAndApiVersion
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -55,6 +56,9 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     fun testMainInTest() {
         val createResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
+        configureLanguageAndApiVersion(
+            createResult.module.project, createResult.module, LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString
+        )
         ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createResult.module, addJdk(testRootDisposable, ::mockJdk))
 
         val runConfiguration = createConfigurationFromMain("some.main")

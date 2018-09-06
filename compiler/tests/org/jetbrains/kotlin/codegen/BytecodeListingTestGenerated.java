@@ -320,6 +320,39 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/main")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Main extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMain() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/main"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("parameterlessMain.kt")
+        public void testParameterlessMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/parameterlessMain.kt");
+        }
+
+        @TestMetadata("parameterlessMain_before.kt")
+        public void testParameterlessMain_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/parameterlessMain_before.kt");
+        }
+
+        @TestMetadata("suspendMain.kt")
+        public void testSuspendMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain.kt");
+        }
+
+        @TestMetadata("suspendMain_before.kt")
+        public void testSuspendMain_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain_before.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/multiplatform")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

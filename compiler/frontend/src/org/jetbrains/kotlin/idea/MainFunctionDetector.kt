@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
@@ -138,6 +139,8 @@ class MainFunctionDetector {
             }
         }
 
+        if (descriptor.isSuspend && !languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)) return false
+
         if (checkReturnType && !isMainReturnType(descriptor)) return false
 
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) return true
@@ -173,17 +176,17 @@ class MainFunctionDetector {
     private fun findMainFunction(declarations: List<KtDeclaration>) =
         declarations.filterIsInstance<KtNamedFunction>().find { isMain(it) }
 
-    companion object {
-        private fun isParameterNumberSuitsForMain(
-            parametersCount: Int,
-            isTopLevel: Boolean,
-            allowParameterless: Boolean
-        ) = when (parametersCount) {
-            1 -> true
-            0 -> isTopLevel && allowParameterless
-            else -> false
-        }
+    private fun isParameterNumberSuitsForMain(
+        parametersCount: Int,
+        isTopLevel: Boolean,
+        allowParameterless: Boolean
+    ) = when (parametersCount) {
+        1 -> true
+        0 -> isTopLevel && allowParameterless && languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)
+        else -> false
+    }
 
+    companion object {
         private fun isMainReturnType(descriptor: FunctionDescriptor): Boolean {
             val returnType = descriptor.returnType
             return returnType != null && KotlinBuiltIns.isUnit(returnType)
