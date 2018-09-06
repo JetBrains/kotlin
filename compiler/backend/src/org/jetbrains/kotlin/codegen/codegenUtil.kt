@@ -484,16 +484,25 @@ fun generateBridgeForMainFunctionIfNecessary(
 ) {
     val originElement = origin.element ?: return
     if (functionDescriptor.name.asString() != "main" || !DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) return
-    if (!state.mainFunctionDetector.isMain(functionDescriptor.unwrapInitialDescriptorForSuspendFunction(), false, true)) return
 
-    if (!functionDescriptor.isSuspend) return
+    val unwrappedFunctionDescriptor = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
+    val isParameterless =
+        unwrappedFunctionDescriptor.extensionReceiverParameter == null && unwrappedFunctionDescriptor.valueParameters.isEmpty()
 
-    val lambdaInternalName = generateLambdaForRunSuspend(
-        state,
-        originElement,
-        packagePartClassBuilder.thisName,
-        signatureOfRealDeclaration
-    )
+    if (!functionDescriptor.isSuspend && !isParameterless) return
+    if (!state.mainFunctionDetector.isMain(unwrappedFunctionDescriptor, false, true)) return
+
+    val lambdaInternalName =
+        if (functionDescriptor.isSuspend)
+            generateLambdaForRunSuspend(
+                state,
+                originElement,
+                packagePartClassBuilder.thisName,
+                signatureOfRealDeclaration,
+                isParameterless
+            )
+        else
+            null
 
     packagePartClassBuilder.newMethod(
         Synthetic(originElement, functionDescriptor),
@@ -502,26 +511,39 @@ fun generateBridgeForMainFunctionIfNecessary(
         METHOD_DESCRIPTOR_FOR_MAIN, null, null
     ).apply {
         visitCode()
-        visitTypeInsn(NEW, lambdaInternalName)
-        visitInsn(DUP)
-        visitVarInsn(ALOAD, 0)
-        visitMethodInsn(
-            INVOKESPECIAL,
-            lambdaInternalName,
-            "<init>",
-            METHOD_DESCRIPTOR_FOR_MAIN,
-            false
-        )
 
-        visitMethodInsn(
-            INVOKESTATIC,
-            "kotlin/coroutines/jvm/internal/RunSuspendKt", "runSuspend",
-            Type.getMethodDescriptor(
-                Type.VOID_TYPE,
-                Type.getObjectType(NUMBERED_FUNCTION_PREFIX + "1")
-            ),
-            false
-        )
+        if (lambdaInternalName != null) {
+            visitTypeInsn(NEW, lambdaInternalName)
+            visitInsn(DUP)
+            visitVarInsn(ALOAD, 0)
+            visitMethodInsn(
+                INVOKESPECIAL,
+                lambdaInternalName,
+                "<init>",
+                METHOD_DESCRIPTOR_FOR_MAIN,
+                false
+            )
+
+            visitMethodInsn(
+                INVOKESTATIC,
+                "kotlin/coroutines/jvm/internal/RunSuspendKt", "runSuspend",
+                Type.getMethodDescriptor(
+                    Type.VOID_TYPE,
+                    Type.getObjectType(NUMBERED_FUNCTION_PREFIX + "1")
+                ),
+                false
+            )
+        } else {
+            visitMethodInsn(
+                INVOKESTATIC,
+                packagePartClassBuilder.thisName, "main",
+                Type.getMethodDescriptor(
+                    Type.VOID_TYPE
+                ),
+                false
+            )
+        }
+
         visitInsn(RETURN)
         visitEnd()
     }
@@ -531,7 +553,8 @@ private fun generateLambdaForRunSuspend(
     state: GenerationState,
     originElement: PsiElement,
     packagePartClassInternalName: String,
-    signatureOfRealDeclaration: JvmMethodGenericSignature
+    signatureOfRealDeclaration: JvmMethodGenericSignature,
+    parameterless: Boolean
 ): String {
     val internalName = "$packagePartClassInternalName$$\$main"
     val lambdaBuilder = state.factory.newVisitor(
@@ -592,13 +615,17 @@ private fun generateLambdaForRunSuspend(
     ).apply {
         visitCode()
 
-        visitVarInsn(ALOAD, 0)
-        visitFieldInsn(
-            GETFIELD,
-            lambdaBuilder.thisName,
-            "args",
-            ARRAY_OF_STRINGS_TYPE.descriptor
-        )
+        if (!parameterless) {
+            // Actually, the field for arguments may also be removed in case of parameterless main,
+            // but probably it'd much easier when IR is ready
+            visitVarInsn(ALOAD, 0)
+            visitFieldInsn(
+                GETFIELD,
+                lambdaBuilder.thisName,
+                "args",
+                ARRAY_OF_STRINGS_TYPE.descriptor
+            )
+        }
 
         visitVarInsn(ALOAD, 1)
         val continuationInternalName = state.languageVersionSettings.continuationAsmType().internalName
