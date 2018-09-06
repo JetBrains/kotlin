@@ -20,7 +20,7 @@ open class BasicJvmScriptingHost(
 ) : BasicScriptingHost(compiler, evaluator)
 
 
-inline fun <reified T : Any> createCompilationConfigurationFromTemplate(
+inline fun <reified T : Any> createJvmCompilationConfigurationFromTemplate(
     hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     noinline body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
 ): ScriptCompilationConfiguration = createCompilationConfigurationFromTemplate(

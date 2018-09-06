@@ -67,7 +67,7 @@ class ScriptingHostTest {
             val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
             Assert.assertTrue(cache.baseDir.listFiles().isEmpty())
 
-            val scriptCompilationConfiguration = createCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
+            val scriptCompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
 
             var compiledScript: CompiledScript<*>? = null
             val output = captureOut {
@@ -110,7 +110,7 @@ class ScriptingHostTest {
     @Test
     fun testCompiledScriptClassLoader() {
         val script = "val x = 1"
-        val scriptCompilationConfiguration = createCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
+        val scriptCompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
         val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
         val compiledScript = runBlocking {
             val res = compiler(script.toScriptSource(), scriptCompilationConfiguration).throwOnFailure()
@@ -147,7 +147,7 @@ fun ResultWithDiagnostics<*>.throwOnFailure(): ResultWithDiagnostics<*> = apply 
 }
 
 private fun evalScript(script: String, host: BasicScriptingHost = BasicJvmScriptingHost()) {
-    val compilationConfiguration = createCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
+    val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
     host.eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure()
 }
 
