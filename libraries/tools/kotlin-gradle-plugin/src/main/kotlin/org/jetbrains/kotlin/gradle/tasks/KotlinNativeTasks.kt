@@ -7,6 +7,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.konan.KonanVersion
@@ -19,10 +20,19 @@ import java.io.File
 
 // TODO: It's just temporary tasks used while KN isn't integrated with Big Kotlin compilation infrastructure.
 
-open class KotlinNativeCompile : DefaultTask() {
+open class KotlinNativeCompile : AbstractCompile() {
 
     init {
-        super.dependsOn(KonanCompilerDownloadTask.KONAN_DOWNLOAD_TASK_NAME)
+        dependsOn(KonanCompilerDownloadTask.KONAN_DOWNLOAD_TASK_NAME)
+
+        @Suppress("LeakingThis")
+        setDestinationDir(project.provider {
+            val output = outputFile.get()
+            if (output.isDirectory) output else output.parentFile
+        })
+
+        sourceCompatibility = "1.6"
+        targetCompatibility = "1.6"
     }
 
     @Internal
@@ -33,6 +43,8 @@ open class KotlinNativeCompile : DefaultTask() {
     lateinit var outputKind: CompilerOutputKind
 
     // Inputs and outputs
+
+    override fun getSource(): FileTree = sources.asFileTree
 
     val sources: FileCollection
         @InputFiles
@@ -45,6 +57,11 @@ open class KotlinNativeCompile : DefaultTask() {
     val friendModule: FileCollection?
         // It's already taken into account in libraries
         @Internal get() = compilation.friendCompilation?.output
+
+    override fun getClasspath(): FileCollection = libraries
+    override fun setClasspath(configuration: FileCollection?) {
+        throw UnsupportedOperationException("Setting class path directly is unsupported.")
+    }
 
     @Input
     var optimized = false
@@ -68,6 +85,8 @@ open class KotlinNativeCompile : DefaultTask() {
     val outputFile: Property<File> = project.objects.property(File::class.java)
 
     // endregion
+    val compilerPluginOptions = CompilerPluginOptions()
+    var compilerPluginClasspath: FileCollection? = null
 
     // region Useful extensions
     internal fun MutableList<String>.addArg(parameter: String, value: String) {
@@ -116,7 +135,7 @@ open class KotlinNativeCompile : DefaultTask() {
         get() = toPath().startsWith(project.file(project.konanHome).toPath())
 
     @TaskAction
-    fun compile() {
+    override fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
@@ -131,6 +150,17 @@ open class KotlinNativeCompile : DefaultTask() {
             addArg("-p", outputKind.name.toLowerCase())
 
             add("-Xmulti-platform")
+
+            println("Trying to obtain a plugin classpath")
+            compilerPluginClasspath?.let { pluginClasspath ->
+                println(pluginClasspath)
+                pluginClasspath.map { it.canonicalPath }.sorted().forEach { path ->
+                    add("-Xplugin=$path")
+                }
+                compilerPluginOptions.arguments.forEach {
+                    add("-P$it")
+                }
+            }
 
             addAll(additionalCompilerOptions)
 

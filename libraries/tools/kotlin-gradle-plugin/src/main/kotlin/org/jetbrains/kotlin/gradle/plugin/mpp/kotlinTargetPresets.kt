@@ -239,7 +239,8 @@ class KotlinNativeTargetPreset(
     private val name: String,
     val project: Project,
     val konanTarget: KonanTarget,
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
+    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
+    private val kotlinPluginVersion: String
 ) : KotlinTargetPreset<KotlinNativeTarget> {
 
     override fun getName(): String = name
@@ -273,7 +274,7 @@ class KotlinNativeTargetPreset(
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
         }
 
-        KotlinNativeTargetConfigurator(buildOutputCleanupRegistry).configureTarget(result)
+        KotlinNativeTargetConfigurator(buildOutputCleanupRegistry, kotlinPluginVersion).configureTarget(result)
 
         // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
         result.compilations.all {
