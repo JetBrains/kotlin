@@ -72,11 +72,11 @@ class VarByMapExtensionsTest {
     @Test fun deprecatedAccessors() {
         assertEquals<Int>(
             expected = map.getValue(this, VarByMapExtensionsTest::c),
-            actual = map.getValue<Int>(this, VarByMapExtensionsTest::c)
+            actual = @Suppress("DEPRECATION_ERROR") map.getValue<Int>(this, VarByMapExtensionsTest::c)
         )
         assertEquals<String>(
             expected = map2.getValue<CharSequence, String>(this, VarByMapExtensionsTest::a2),
-            actual = map2.getValue<String>(this, VarByMapExtensionsTest::a2)
+            actual = @Suppress("DEPRECATION_ERROR") map2.getValue<String>(this, VarByMapExtensionsTest::a2)
         )
     }
 }
