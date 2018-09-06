@@ -9,7 +9,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.KonanVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
@@ -77,6 +80,23 @@ open class KotlinNativeCompile : AbstractCompile() {
     val additionalCompilerOptions: Collection<String>
         @Input get() = compilation.extraOpts
 
+    // region Language settings imported from a SourceSet.
+    val languageSettings: LanguageSettingsBuilder?
+        @Internal get() = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
+
+    val languageVersion: String?
+        @Optional @Input get() = languageSettings?.languageVersion
+
+    val apiVersion: String?
+        @Optional @Input get() = languageSettings?.apiVersion
+
+    val progressiveMode: Boolean
+        @Input get() = languageSettings?.progressiveMode ?: false
+
+    val enabledLanguageFeatures: Set<String>
+        @Input get() = languageSettings?.enabledLanguageFeatures ?: emptySet()
+    // endregion.
+
     val kotlinNativeVersion: String
         @Input get() = KonanCompilerDownloadTask.compilerVersion.toString()
 
@@ -85,7 +105,13 @@ open class KotlinNativeCompile : AbstractCompile() {
     val outputFile: Property<File> = project.objects.property(File::class.java)
 
     // endregion
+    @Internal
     val compilerPluginOptions = CompilerPluginOptions()
+
+    val compilerPluginCommandLine
+        @Input get()= compilerPluginOptions.arguments
+
+    @Optional @InputFiles
     var compilerPluginClasspath: FileCollection? = null
 
     // region Useful extensions
@@ -151,9 +177,16 @@ open class KotlinNativeCompile : AbstractCompile() {
 
             add("-Xmulti-platform")
 
-            println("Trying to obtain a plugin classpath")
+            // Language features.
+            addArgIfNotNull("-language-version", languageVersion)
+            addArgIfNotNull("-api-version", apiVersion)
+            addKey("-Xprogressive", progressiveMode)
+            enabledLanguageFeatures.forEach { featureName ->
+                add("-XXLanguage:+$featureName")
+            }
+
+            // Compiler plugins.
             compilerPluginClasspath?.let { pluginClasspath ->
-                println(pluginClasspath)
                 pluginClasspath.map { it.canonicalPath }.sorted().forEach { path ->
                     add("-Xplugin=$path")
                 }
@@ -164,6 +197,7 @@ open class KotlinNativeCompile : AbstractCompile() {
 
             addAll(additionalCompilerOptions)
 
+            // Libraries.
             libraries.files.filter {
                 // Support only klib files for now.
                 it.extension == "klib" && !it.providedByCompiler
@@ -177,6 +211,7 @@ open class KotlinNativeCompile : AbstractCompile() {
                 addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
             }
 
+            // Sources.
             // TODO: Filter only kt files?
             addAll(sources.files.map { it.absolutePath })
         }
