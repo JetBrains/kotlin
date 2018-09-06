@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.konan.KONAN_CURRENT_ABI_VERSION
+import org.jetbrains.konan.analyser.index.KonanMetaFileType
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
@@ -28,7 +28,8 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
         return if (virtualFile.isDirectory) {
-            virtualFile.findChild("linkdata")?.takeIf { it.isDirectory }?.children?.any { it.extension == "knm" } == true
+            virtualFile.findChild("linkdata")?.takeIf { it.isDirectory }
+                ?.children?.any { it.extension == KonanMetaFileType.defaultExtension } == true
         } else {
             virtualFile.extension == KLIB_FILE_EXTENSION
         }

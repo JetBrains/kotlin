@@ -3,30 +3,27 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan
+package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.konan.KonanPluginSearchPathResolver
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.konan.library.libraryResolver
-import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultResolvedDescriptorsFactory
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultResolvedDescriptorsFactory
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
-import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.konan.KonanResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -43,20 +40,6 @@ fun createFileStub(project: Project, text: String): PsiFileStub<*> {
 }
 
 fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
-
-fun <M : ModuleInfo> createDeclarationProviderFactory(
-    project: Project,
-    moduleContext: ModuleContext,
-    syntheticFiles: Collection<KtFile>,
-    moduleInfo: M,
-    globalSearchScope: GlobalSearchScope?
-) = DeclarationProviderFactoryService.createDeclarationProviderFactory(
-    project,
-    moduleContext.storageManager,
-    syntheticFiles,
-    globalSearchScope!!,
-    moduleInfo
-)
 
 fun ModuleInfo.createResolvedModuleDescriptors(
     project: Project,

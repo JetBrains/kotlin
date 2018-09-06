@@ -7,11 +7,11 @@
 package org.jetbrains.konan.analyser.index
 
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.konan.createLoggingErrorReporter
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
+import org.jetbrains.kotlin.ide.konan.createLoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassifierResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
