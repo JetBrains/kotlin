@@ -280,7 +280,9 @@ class KotlinNativeTargetPreset(
             val target = it.target.konanTarget
             it.dependencies {
                 implementation(stdlib(target))
-                implementation(platformLibs(target))
+                // If we use just implementation(platformLibs(target)), the IDE resolver duplicates the libraries
+                // TODO: switch back to implementation(platformLibs(target)) when this issue is fixed
+                platformLibs(target).files.forEach { platformLib -> implementation(project.files(platformLib)) }
             }
         }
         return result
