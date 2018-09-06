@@ -5,7 +5,7 @@ static class Foo$Erased {
     public static method constructor(p0: long): long
     public final static method empty(p0: long): void
     public static method equals(p0: long, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
-    public final static method equals--impl(p0: long, p1: long): boolean
+    public final static method equals-impl0(p0: long, p1: long): boolean
     public final static method extension(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
     public static method hashCode(p0: long): int
     public final static method param(p0: long, p1: double): void

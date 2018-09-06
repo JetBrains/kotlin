@@ -9,7 +9,7 @@ static class Foo$Erased {
     public final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
     public static method constructor(p0: long): long
     public static method equals(p0: long, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
-    public final static method equals--impl(p0: long, p1: long): boolean
+    public final static method equals-impl0(p0: long, p1: long): boolean
     public static method foo-1e4ch6lh(p0: long, p1: long): void
     public static method hashCode(p0: long): int
     public static @org.jetbrains.annotations.NotNull method toString(p0: long): java.lang.String
