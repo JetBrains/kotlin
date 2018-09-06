@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.caches.resolve
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -18,6 +20,12 @@ import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 
 class JvmPlatformKindResolution : IdePlatformKindResolution {
+    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
+        return false // TODO: No library kind for JVM
+    }
+
+    override val libraryKind: PersistentLibraryKind<*>?
+        get() = null
     override val kind get() = JvmIdePlatformKind
 
     override val resolverForModuleFactory: ResolverForModuleFactory

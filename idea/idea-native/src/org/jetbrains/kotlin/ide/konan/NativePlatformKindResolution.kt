@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.konan.KONAN_CURRENT_ABI_VERSION
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -24,6 +27,13 @@ import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescri
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
+    override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
+        return virtualFile.extension == "klib"
+                || virtualFile.isDirectory && virtualFile.children.any { it.name == "manifest" }
+    }
+
+    override val libraryKind: PersistentLibraryKind<*>?
+        get() = NativeLibraryKind
 
     override val kind get() = NativeIdePlatformKind
 
