@@ -1,5 +1,5 @@
 interface Test {
-    <!JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION!>@get:JvmStatic
+    <!JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION!>@get:JvmStatic
     val a: Int<!>
 
     <!INAPPLICABLE_JVM_NAME!>@get:JvmName("1")<!>
