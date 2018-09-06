@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.utils
+package org.jetbrains.kotlin.konan.util
 
 import org.jetbrains.kotlin.descriptors.konan.KonanModuleDescriptorFactory
 import org.jetbrains.kotlin.descriptors.konan.impl.KonanModuleDescriptorFactoryImpl

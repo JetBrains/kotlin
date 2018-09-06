@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
-import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
 class NativePlatformKindResolution : IdePlatformKindResolution {

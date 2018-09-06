@@ -13,7 +13,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { none() }
 }
 
 standardPublicJars()
