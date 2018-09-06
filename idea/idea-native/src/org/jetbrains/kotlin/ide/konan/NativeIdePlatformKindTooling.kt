@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
-import org.jetbrains.konan.analyser.KonanAnalyzerFacade
+import org.jetbrains.kotlin.ide.konan.analyzer.NativeAnalyzerFacade
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.gradle.KotlinPlatform
@@ -21,20 +21,20 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import javax.swing.Icon
 
-class KonanPlatformKindTooling : IdePlatformKindTooling() {
+class NativeIdePlatformKindTooling : IdePlatformKindTooling() {
 
-    override val kind = KonanPlatformKind
+    override val kind = NativeIdePlatformKind
 
     override fun compilerArgumentsForProject(project: Project): CommonCompilerArguments? = null
 
-    override val resolverForModuleFactory get() = KonanAnalyzerFacade
+    override val resolverForModuleFactory get() = NativeAnalyzerFacade
 
     override val mavenLibraryIds: List<String> get() = emptyList()
     override val gradlePluginId: String get() = ""
-    override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.KONAN)
+    override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.NATIVE)
 
-    override val libraryKind: PersistentLibraryKind<*> = KonanLibraryKind
-    override fun getLibraryDescription(project: Project) = KonanStandardLibraryDescription(project)
+    override val libraryKind: PersistentLibraryKind<*> = NativeLibraryKind
+    override fun getLibraryDescription(project: Project) = NativeStandardLibraryDescription(project)
     override fun getLibraryVersionProvider(project: Project): (Library) -> String? = { null }
 
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? = null
@@ -42,30 +42,30 @@ class KonanPlatformKindTooling : IdePlatformKindTooling() {
     override fun acceptsAsEntryPoint(function: KtFunction) = true
 }
 
-object KonanLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.native"), KotlinLibraryKind {
+object NativeLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.native"), KotlinLibraryKind {
     override val compilerPlatform: TargetPlatform
-        get() = KonanPlatformKind.compilerPlatform
+        get() = NativeIdePlatformKind.compilerPlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
-class KonanStandardLibraryDescription(project: Project?) :
+class NativeStandardLibraryDescription(project: Project?) :
     CustomLibraryDescriptorWithDeferredConfig(
         project,
-        KonanModuleConfigurator.NAME,
+        KotlinNativeModuleConfigurator.NAME,
         LIBRARY_NAME,
         DIALOG_TITLE,
         LIBRARY_CAPTION,
-        KonanLibraryKind,
+        NativeLibraryKind,
         SUITABLE_LIBRARY_KINDS
     ) {
 
     companion object {
         val LIBRARY_NAME = "KotlinNative"
 
-        val KONAN_LIBRARY_CREATION = "Native Library Creation"
+        val NATIVE_LIBRARY_CREATION = "Native Library Creation"
         val DIALOG_TITLE = "Create Kotlin Native Library"
         val LIBRARY_CAPTION = "Kotlin Native Library"
-        val SUITABLE_LIBRARY_KINDS = setOf(KonanLibraryKind)
+        val SUITABLE_LIBRARY_KINDS = setOf(NativeLibraryKind)
     }
 }

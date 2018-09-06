@@ -13,7 +13,7 @@ import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.exists
 import org.jetbrains.konan.KONAN_CURRENT_ABI_VERSION
-import org.jetbrains.konan.analyser.KonanAnalyzerFacade
+import org.jetbrains.kotlin.ide.konan.analyzer.NativeAnalyzerFacade
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
@@ -29,35 +29,36 @@ import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultDeserializedDescri
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class KonanPlatformKindResolution : IdePlatformKindResolution {
+class NativePlatformKindResolution : IdePlatformKindResolution {
+
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
         return virtualFile.extension == "klib"
                 || virtualFile.isDirectory && virtualFile.children.any { it.name == "manifest" }
     }
 
     override val libraryKind: PersistentLibraryKind<*>?
-        get() = KonanLibraryKind
+        get() = NativeLibraryKind
 
-    override val kind get() = KonanPlatformKind
+    override val kind get() = NativeIdePlatformKind
 
-    override val resolverForModuleFactory get() = KonanAnalyzerFacade
+    override val resolverForModuleFactory get() = NativeAnalyzerFacade
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext) =
-        createKonanBuiltIns(projectContext)
+        createKotlinNativeBuiltIns(projectContext)
 }
 
-val Module.isKonanModule: Boolean
+val Module.isKotlinNativeModule: Boolean
     get() {
         val settings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
-        return settings.platform.isKonan
+        return settings.platform.isKotlinNative
     }
 
-private fun createKonanBuiltIns(projectContext: ProjectContext): KotlinBuiltIns {
+private fun createKotlinNativeBuiltIns(projectContext: ProjectContext): KotlinBuiltIns {
 
     // TODO: It depends on a random project's stdlib, propagate the actual project here.
     val stdlib: Pair<Path, LibraryInfo>? = ProjectManager.getInstance().openProjects.asSequence().mapNotNull { project ->
 
-        ModuleManager.getInstance(project).modules.asSequence().filter { it.isKonanModule }.mapNotNull { module ->
+        ModuleManager.getInstance(project).modules.asSequence().filter { it.isKotlinNativeModule }.mapNotNull { module ->
 
             var result: Pair<Path, LibraryInfo>? = null
 

@@ -3,13 +3,15 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.analyser.index
+package org.jetbrains.kotlin.ide.konan.index
 
 import com.intellij.util.indexing.FileBasedIndex
+import org.jetbrains.konan.analyser.index.KonanDescriptorManager
+import org.jetbrains.konan.analyser.index.KonanMetaFileType
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinFileIndexBase
 import org.jetbrains.kotlin.name.FqName
 
-object KonanMetaFileIndex : KotlinFileIndexBase<KonanMetaFileIndex>(KonanMetaFileIndex::class.java) {
+object KotlinNativeMetaFileIndex : KotlinFileIndexBase<KotlinNativeMetaFileIndex>(KotlinNativeMetaFileIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 

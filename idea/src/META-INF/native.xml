@@ -27,15 +27,15 @@
         <filetype.stubBuilder filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
         <filetype.decompiler filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
         <fileTypeFactory implementation="org.jetbrains.konan.analyser.index.KonanMetaFileTypeFactory"/>
-        <fileBasedIndex implementation="org.jetbrains.konan.analyser.index.KonanMetaFileIndex"/>
+        <fileBasedIndex implementation="org.jetbrains.kotlin.ide.konan.index.KotlinNativeMetaFileIndex"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <binaryExtension implementation="org.jetbrains.konan.analyser.index.KonanMetaBinary"/>
         <!--<idePlatformSupport implementation="org.jetbrains.konan.analyser.KonanPlatformSupport" order="first"/>-->
-        <idePlatformKind implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKind"/>
-        <idePlatformKindTooling implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKindTooling"/>
-        <idePlatformKindResolution implementation="org.jetbrains.kotlin.ide.konan.KonanPlatformKindResolution"/>
-        <projectConfigurator implementation="org.jetbrains.kotlin.ide.konan.KonanModuleConfigurator"/>
+        <idePlatformKind implementation="org.jetbrains.kotlin.ide.konan.NativeIdePlatformKind"/>
+        <idePlatformKindTooling implementation="org.jetbrains.kotlin.ide.konan.NativeIdePlatformKindTooling"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.ide.konan.NativePlatformKindResolution"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeModuleConfigurator"/>
       </extensions>
 </idea-plugin>
