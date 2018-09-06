@@ -319,6 +319,9 @@ class KotlinNativeCompilation(
         }.toMutableList()
     }
 
+    var entryPoint: String? = null
+    fun entryPoint(value: String) { entryPoint = value }
+
     // Naming
 
     override val compileDependencyConfigurationName: String

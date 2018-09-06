@@ -65,6 +65,7 @@ kotlin {
 
         configure([wasm32, linux64, mingw64, macos64]) {
             compilations.main.outputKinds += org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind.EXECUTABLE
+            compilations.main.entryPoint = "com.example.app.native.main"
         }
     }
 }

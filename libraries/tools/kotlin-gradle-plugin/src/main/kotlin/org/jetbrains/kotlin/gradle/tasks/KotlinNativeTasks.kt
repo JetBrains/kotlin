@@ -77,6 +77,9 @@ open class KotlinNativeCompile : AbstractCompile() {
     val target: String
         @Input get() = compilation.target.konanTarget.name
 
+    val entryPoint: String?
+        @Optional @Input get() = compilation.entryPoint
+
     val additionalCompilerOptions: Collection<String>
         @Input get() = compilation.extraOpts
 
@@ -174,6 +177,7 @@ open class KotlinNativeCompile : AbstractCompile() {
 
             addArg("-target", target)
             addArg("-p", outputKind.name.toLowerCase())
+            addArgIfNotNull("-entry", entryPoint)
 
             add("-Xmulti-platform")
 
