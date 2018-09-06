@@ -130,7 +130,7 @@ class KotlinFacetEditorGeneralTab(
 
         internal fun updateCompilerConfigurable() {
             val useProjectSettings = useProjectSettingsCheckBox.isSelected
-            compilerConfigurable.setTargetPlatform(chosenPlatform!!.kind)
+            compilerConfigurable.setTargetPlatform(chosenPlatform?.kind)
             compilerConfigurable.setEnabled(!useProjectSettings)
             if (useProjectSettings) {
                 compilerConfigurable.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as CommonCompilerArguments?
