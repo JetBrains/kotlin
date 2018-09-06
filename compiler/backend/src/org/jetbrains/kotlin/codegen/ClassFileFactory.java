@@ -123,7 +123,7 @@ public class ClassFileFactory implements OutputFileCollection {
         generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
-                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion().toArray());
+                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion(), 0);
             }
 
             @Override

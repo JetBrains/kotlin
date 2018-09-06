@@ -8,6 +8,7 @@ package kotlinx.metadata.jvm
 import kotlinx.metadata.InconsistentKotlinMetadataException
 import kotlinx.metadata.KmAnnotation
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
@@ -62,7 +63,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
          *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
          */
         fun write(metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
-            KotlinModuleMetadata(b.build().serializeToByteArray(metadataVersion))
+            KotlinModuleMetadata(b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0))
     }
 
     /**
