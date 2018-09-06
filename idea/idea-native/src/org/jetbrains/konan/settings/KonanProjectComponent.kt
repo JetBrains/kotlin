@@ -50,46 +50,6 @@ abstract class KonanProjectComponent(val project: Project) : ProjectComponent {
     }
 
     open fun reloadLibraries(): Unit = synchronized(this) {
-        val libraryPaths: Set<Path> = collectLibraryPaths()
-        this.libraryPaths = libraryPaths.asSequence().map(Path::toString).toSet()
-
-//    for (konanModelProvider in KonanModelProvider.EP_NAME.extensions) {
-//      if (konanModelProvider.reloadLibraries(project, libraryPaths)) return
-//    }
-
-        val module = ModuleManager.getInstance(project).modules.firstOrNull() ?: return
-        val modifiableModel = ModuleRootManager.getInstance(module).modifiableModel
-        val libraryTable: LibraryTable = modifiableModel.moduleLibraryTable
-        libraryTable.libraries.forEach { libraryTable.removeLibrary(it) }
-
-        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-        val jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)
-
-        for (path in libraryPaths) {
-
-            fun createLibrary(vfs: VirtualFileSystem, rootPath: String) {
-                val root = vfs.refreshAndFindFileByPath(rootPath) ?: return
-
-                val library = libraryTable.createLibrary(path.fileName.toString())
-                val libraryModifiableModel = library.modifiableModel
-
-                libraryModifiableModel.addRoot(root, OrderRootType.CLASSES)
-
-                runWriteAction {
-                    libraryModifiableModel.commit()
-                }
-            }
-
-            val libraryRootPath = path.toString()
-            val libraryRoot: VirtualFile = localFileSystem.refreshAndFindFileByPath(libraryRootPath) ?: continue
-
-            // use JAR FS if this is file (*.klib), otherwise - local FS
-            createLibrary(if (libraryRoot.isDirectory) localFileSystem else jarFileSystem, libraryRootPath)
-        }
-
-        runWriteAction {
-            modifiableModel.commit()
-        }
     }
 
     protected open fun collectLibraryPaths(): MutableSet<Path> {
