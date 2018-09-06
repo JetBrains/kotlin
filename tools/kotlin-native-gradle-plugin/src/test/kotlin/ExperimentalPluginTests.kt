@@ -9,7 +9,9 @@ import org.gradle.testkit.runner.TaskOutcome
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeMainComponent
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.OutputKind
 import org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinNativePlugin
+import org.jetbrains.kotlin.gradle.plugin.experimental.plugins.kotlinNativeSourceSets
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -406,8 +408,8 @@ class ExperimentalPluginTests {
     @Test
     fun `Plugin should not create compilation tasks for targets unsupported by the current host`() =
         withProject {
-            val hosts = arrayOf("macos_x64", "linux_x64", "mingw_x64")
-            components.withType(KotlinNativeMainComponent::class.java).getByName("main").target(*hosts)
+            val hosts = listOf("macos_x64", "linux_x64", "mingw_x64")
+            components.withType(KotlinNativeMainComponent::class.java).getByName("main").targets = hosts
             evaluate()
             hosts.map { HostManager().targetByName(it) }.forEach {
                 val task = tasks.findByName("compileDebug${it.name.capitalize()}KotlinNative")
@@ -725,6 +727,91 @@ class ExperimentalPluginTests {
         rootProject.createRunner().withArguments("build").build().apply {
             output.contains("Interop is here!")
             output.contains("Transitive call!")
+        }
+    }
+
+    @Test
+    fun `Plugin should support the konan tooling model`() {
+        withProject {
+            val hostName = HostManager.hostName
+            val mainSrcDirs = listOf("src/main/kotlin", "src/other/kotlin").map {
+                file(it).apply { mkdirs() }
+            }
+            val testDir = file("src/test/kotlin").apply { mkdirs() }
+
+            val mainSrcFiles = listOf(
+                "src/main/kotlin/main.kt" to "fun main(args: Array<String>) { foo() }",
+                "src/other/kotlin/foo.kt" to "fun foo() { println(42) }"
+            ).map { (name, content) ->
+                project.file(name).apply { createNewFile(); writeText(content) }
+            }
+            val testSrcFile = file("src/test/kotlin/test.kt").apply {
+                createNewFile()
+                writeText("""
+                    import kotlin.test.*
+                    @Test fun test() { foo() }
+                """.trimIndent())
+            }
+
+            components.withType(KotlinNativeMainComponent::class.java).getByName("main").apply {
+                outputKinds.set(listOf(OutputKind.KLIBRARY, OutputKind.EXECUTABLE))
+                targets = listOf(hostName, "wasm32")
+            }
+            kotlinNativeSourceSets.getByName("main").kotlin.srcDirs(*mainSrcDirs.toTypedArray())
+
+            evaluate()
+
+            val model = KonanToolingModelBuilder.buildAll("konan", this)
+            val mainArtifacts = model.artifacts.filterNot { it.name.toLowerCase().contains("test") }
+            val testArtifacts = model.artifacts.filter { it.name.toLowerCase().contains("test") }
+
+            mainArtifacts.forEach {
+                assertEquals(mainSrcDirs.toSet(), it.srcDirs.toSet())
+                assertEquals(mainSrcFiles.toSet(), it.srcFiles.toSet())
+            }
+            testArtifacts.forEach {
+                assertEquals(setOf(testDir), it.srcDirs.toSet())
+                assertEquals(setOf(testSrcFile) + mainSrcFiles.toSet(), it.srcFiles.toSet())
+            }
+
+            val nameToArtifact = model.artifacts.map { it.name to it }.toMap()
+
+            val buildTypes =  listOf("debug", "release")
+            val kinds = listOf(OutputKind.EXECUTABLE, OutputKind.KLIBRARY)
+            val targets = listOf(HostManager.host, KonanTarget.WASM32)
+
+            // Production binaries
+            buildTypes.forEach { buildType ->
+                kinds.forEach { kind ->
+                    targets.forEach { target ->
+                        val suffix = "${buildType.capitalize()}${kind.name.toLowerCase().capitalize()}${target.name.capitalize()}"
+                        val artifact = nameToArtifact.getValue("main$suffix")
+                        assertEquals(target.name, artifact.targetPlatform)
+                        assertEquals(kind.compilerOutputKind, artifact.type)
+                        assertEquals("compile${suffix}KotlinNative", artifact.buildTaskName)
+
+                        val outputRoot = if (kind == OutputKind.EXECUTABLE) "exe" else "lib"
+                        val outputFile = file(
+                            "build/$outputRoot/main/$buildType/${kind.name.toLowerCase()}/${target.name}/" +
+                            "testProject${kind.compilerOutputKind.suffix(target)}"
+                        )
+                        assertEquals(outputFile, artifact.file)
+                    }
+                }
+            }
+
+            // Test binaries
+            targets.forEach { target ->
+                val suffix = "Debug${target.name.capitalize()}"
+                val artifact = nameToArtifact.getValue("test$suffix")
+                assertEquals(target.name, artifact.targetPlatform)
+                assertEquals(CompilerOutputKind.PROGRAM, artifact.type)
+                assertEquals("compileTest${suffix}KotlinNative", artifact.buildTaskName)
+                assertEquals(
+                    file("build/test-exe/test/debug/${target.name}/test${CompilerOutputKind.PROGRAM.suffix(target)}"),
+                    artifact.file
+                )
+            }
         }
     }
 }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 // TODO: implement ComponentWithObjectFiles when we build klibs as objects
-interface KotlinNativeBinary: ComponentWithDependencies, BuildableComponent {
+interface KotlinNativeBinary : ComponentWithDependencies, BuildableComponent, ComponentWithOutputs {
 
     /** A component this binary belongs to. */
     val component: KotlinNativeComponent
@@ -86,7 +86,6 @@ interface KotlinNativeBinary: ComponentWithDependencies, BuildableComponent {
  */
 // TODO: Consider implementing ComponentWithExecutable and ComponentWithInstallation.
 interface KotlinNativeExecutable : KotlinNativeBinary,
-        ComponentWithOutputs,
         PublishableComponent,
         ConfigurableComponentWithRuntimeUsage
 
@@ -95,29 +94,26 @@ interface KotlinNativeExecutable : KotlinNativeBinary,
  */
 // TODO: Consider implementing ComponentWithLinkFile.
 interface KotlinNativeLibrary : KotlinNativeBinary,
-        ComponentWithOutputs,
         PublishableComponent,
         ConfigurableComponentWithLinkUsage
 
 /**
  * Represents an Objective C framework compiled from Kotlin/Native sources.
  */
-interface KotlinNativeFramework : KotlinNativeBinary, ComponentWithOutputs
+interface KotlinNativeFramework : KotlinNativeBinary
 
 /**
  * A shared library compiled from Kotlin/Native sources.
  */
-interface KotlinNativeDynamic : KotlinNativeBinary, ComponentWithOutputs
+interface KotlinNativeDynamic : KotlinNativeBinary
 
 /**
  * A static library compiled from Kotlin/Native sources.
  */
-interface KotlinNativeStatic : KotlinNativeBinary, ComponentWithOutputs
+interface KotlinNativeStatic : KotlinNativeBinary
 
 /**
  * Represents a test executable.
  */
 // TODO: Consider implementing ComponentWithExecutable and ComponentWithInstallation.
-interface KotlinNativeTestExecutable : KotlinNativeBinary,
-        ComponentWithOutputs,
-        TestComponent
+interface KotlinNativeTestExecutable : KotlinNativeBinary, TestComponent

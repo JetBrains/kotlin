@@ -18,29 +18,84 @@ package org.jetbrains.kotlin.gradle.plugin.model
 
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
+import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.konanArtifactsContainer
 import org.jetbrains.kotlin.gradle.plugin.konanExtension
 import org.jetbrains.kotlin.gradle.plugin.konanHome
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
+import java.lang.IllegalStateException
 
 
 object KonanToolingModelBuilder : ToolingModelBuilder {
 
     override fun canBuild(modelName: String) = KonanModel::class.java.name == modelName
 
-    override fun buildAll(modelName: String, project: Project): KonanModel {
+    private fun buildModelKonan(project: Project): KonanModel {
         val artifacts = project.konanArtifactsContainer.flatten().toList().map { it.toModelArtifact() }
         return KonanModelImpl(
-                artifacts,
-                project.file(project.konanHome),
-                KonanVersion.CURRENT,
-                // TODO: Provide defaults for these versions.
-                project.konanExtension.languageVersion,
-                project.konanExtension.apiVersion
+            artifacts,
+            project.file(project.konanHome),
+            KonanVersion.CURRENT,
+            // TODO: Provide defaults for these versions.
+            project.konanExtension.languageVersion,
+            project.konanExtension.apiVersion
         )
     }
+
+    private fun buildModelKotlinNative(project: Project): KonanModel {
+        val artifacts = project.components.withType(AbstractKotlinNativeBinary::class.java).map {
+            it.toModelArtifact()
+        }
+        return KonanModelImpl(
+            artifacts,
+            project.file(project.konanHome),
+            KonanVersion.CURRENT,
+            null,
+            null
+        )
+    }
+
+    private fun AbstractKotlinNativeBinary.toModelArtifact(): KonanModelArtifact {
+        val compileTask = compileTask.get()
+        val sourceRoots = with(component.sources) {
+            kotlin.srcDirs + getPlatformSources(konanTarget).srcDirs
+        }
+        return KonanModelArtifactImpl(
+            name,
+            compileTask.outputFile,
+            kind,
+            konanTarget.name,
+            compileTask.name,
+            sourceRoots.toList(),
+            sources.files.toList(),
+            klibraries.files.toList(),
+            klibraries.files.map { it.parentFile }
+        )
+    }
+
+    private val Project.hasKonanPlugin: Boolean
+        get() = with(pluginManager) {
+            hasPlugin("konan") ||
+            hasPlugin("org.jetbrains.kotlin.konan")
+        }
+
+    private val Project.hasKotlinNativePlugin: Boolean
+        get() = with(pluginManager) {
+            hasPlugin("kotlin-native") ||
+            hasPlugin("kotlin-platform-native") ||
+            hasPlugin("org.jetbrains.kotlin.native") ||
+            hasPlugin("org.jetbrains.kotlin.platform.native")
+        }
+
+
+    override fun buildAll(modelName: String, project: Project): KonanModel =
+        when {
+            project.hasKotlinNativePlugin -> buildModelKotlinNative(project)
+            project.hasKonanPlugin -> buildModelKonan(project)
+            else -> throw IllegalStateException("The project '${project.path}' has no Kotlin/Native plugin")
+        }
 }
 
 internal data class KonanModelImpl(
