@@ -9,22 +9,22 @@ inline class Foo(val x: Int) {
     fun withInlineClassType(c: Foo) {}
 }
 
-// method: Foo$Erased::empty
+// method: Foo::empty-impl
 // jvm signature: (I)V
 // generic signature: null
 
-// method: Foo$Erased::param
+// method: Foo::param-impl
 // jvm signature: (ILjava/lang/String;)V
 // generic signature: null
 
-// method: Foo$Erased::extension
+// method: Foo::extension-impl
 // jvm signature: (ILjava/lang/Object;)V
 // generic signature: null
 
-// method: Foo$Erased::extensionAndParam
+// method: Foo::extensionAndParam-impl
 // jvm signature: (ILjava/lang/Object;D)V
 // generic signature: null
 
-// method: Foo$Erased::withInlineClassType-1e4ch6lh
+// method: Foo::withInlineClassType-GWb7d6U
 // jvm signature: (II)V
 // generic signature: null

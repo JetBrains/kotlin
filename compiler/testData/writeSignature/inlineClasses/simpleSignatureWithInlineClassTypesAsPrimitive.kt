@@ -9,7 +9,7 @@ object Test {
     fun Foo.asAll(x: Any?, a: Foo, b: Int): Foo = TODO()
 }
 
-// method: Test::asParam-1e4ch6lh
+// method: Test::asParam-GWb7d6U
 // jvm signature: (I)V
 // generic signature: null
 
@@ -17,10 +17,10 @@ object Test {
 // jvm signature: ()I
 // generic signature: null
 
-// method: Test::asExtension-1e4ch6lh
+// method: Test::asExtension-GWb7d6U
 // jvm signature: (I)V
 // generic signature: null
 
-// method: Test::asAll-dmjdpekg
+// method: Test::asAll--J2ODwA
 // jvm signature: (ILjava/lang/Object;II)I
 // generic signature: null
