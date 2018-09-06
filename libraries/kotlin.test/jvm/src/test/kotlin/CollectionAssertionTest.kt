@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package kotlin.test.tests
 
