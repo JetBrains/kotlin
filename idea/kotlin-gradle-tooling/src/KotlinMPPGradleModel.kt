@@ -23,6 +23,11 @@ interface KotlinSourceSet : KotlinModule {
     val sourceDirs: Set<File>
     val resourceDirs: Set<File>
     val dependsOnSourceSets: Set<String>
+
+    companion object {
+        const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
+        const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
+    }
 }
 
 interface KotlinLanguageSettings : Serializable {
