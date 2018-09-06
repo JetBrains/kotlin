@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 
 class SimplifyCallChainFix(private val newCallText: String) : LocalQuickFix {
     private val shortenedText = newCallText.split("(").joinToString(separator = "(") {
@@ -58,19 +59,27 @@ class SimplifyCallChainFix(private val newCallText: String) : LocalQuickFix {
                 }
             }
             val firstCallArgumentList = firstCallExpression.valueArgumentList
-            val firstCallArguments = firstCallArgumentList?.arguments
             val secondCallArgumentList = secondCallExpression.valueArgumentList
-            val secondCallArguments = secondCallArgumentList?.arguments
 
-            val argumentsText = when {
-                secondCallArguments?.isNotEmpty() == true && firstCallArguments?.isNotEmpty() == true -> {
-                    "${secondCallArgumentList.text.removeSuffix(")")}, ${firstCallArgumentList.text.removePrefix("(")}"
-                }
-                secondCallArguments?.isNotEmpty() == true -> secondCallArgumentList.text
-                firstCallArguments?.isNotEmpty() == true -> firstCallArgumentList.text
-                else -> ""
+            fun KtValueArgumentList.getTextInsideParentheses(): String {
+                val range = PsiChildRange(leftParenthesis?.nextSibling ?: firstChild, rightParenthesis?.prevSibling ?: lastChild)
+                return range.joinToString(separator = "") { it.text }
             }
+
             val lambdaExpression = firstCallExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()
+            val argumentsText = listOfNotNull(
+                secondCallArgumentList.takeIf { it?.arguments?.isNotEmpty() == true },
+                firstCallArgumentList.takeIf { it?.arguments?.isNotEmpty() == true }
+            ).let {
+                if (it.isEmpty()) ""
+                else it.joinToString(
+                    separator = ", ",
+                    prefix = "(",
+                    postfix = ")"
+                ) { callArgumentList ->
+                    callArgumentList.getTextInsideParentheses()
+                }
+            }
 
             val newQualifiedExpression = if (lambdaExpression != null) factory.createExpressionByPattern(
                 "$0$1$2 $3 $4",
