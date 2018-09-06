@@ -380,6 +380,7 @@ open class KotlinNativeTargetConfigurator(
     createDefaultSourceSets = true,
     createTestCompilation = true
 ) {
+    private val hostTargets = listOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
 
     private val Collection<*>.isDimensionVisible: Boolean
         get() = size > 1
@@ -400,7 +401,8 @@ open class KotlinNativeTargetConfigurator(
         val testTask = tasks.create(taskName, RunTestExecutable::class.java).apply {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
             description = "Executes Kotlin/Native unit tests from the '${compilation.name}' compilation " +
-                    "for target '${compilation.target.name}'"
+                    "for target '${compilation.target.name}'."
+            enabled = compilation.target.konanTarget.isCurrentHost
 
             val testExecutableProperty = testExecutableLinkTask.outputFile
             executable = testExecutableProperty.get().absolutePath
@@ -495,7 +497,7 @@ open class KotlinNativeTargetConfigurator(
                     outputKind = compilerOutputKind
                     group = BasePlugin.BUILD_GROUP
                     description = "Links ${kind.description} from the '${compilation.name}' " +
-                            "compilation for target '${compilation.platformType.name}'"
+                            "compilation for target '${compilation.platformType.name}'."
                     enabled = compilation.target.konanTarget.enabledOnCurrentHost
 
                     optimized = buildType.optimized
@@ -508,7 +510,7 @@ open class KotlinNativeTargetConfigurator(
 
                 if (compilation.isTestCompilation &&
                     buildType == NativeBuildType.DEBUG &&
-                    konanTarget == HostManager.host
+                    konanTarget in hostTargets
                 ) {
                     // TODO: Refactor and move into the corresponding method of AbstractKotlinTargetConfigurator.
                     createTestTask(compilation, linkTask)
@@ -549,7 +551,7 @@ open class KotlinNativeTargetConfigurator(
             outputKind = CompilerOutputKind.LIBRARY
             group = BasePlugin.BUILD_GROUP
             description = "Compiles a klibrary from the '${compilation.name}' " +
-                    "compilation for target '${compilation.platformType.name}'"
+                    "compilation for target '${compilation.platformType.name}'."
             enabled = compilation.target.konanTarget.enabledOnCurrentHost
 
             registerOutputFiles(klibOutputDirectory(compilation))

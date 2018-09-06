@@ -289,6 +289,9 @@ class KotlinNativeTargetPreset(
     }
 }
 
+internal val KonanTarget.isCurrentHost: Boolean
+    get() = this == HostManager.host
+
 internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
 
