@@ -129,16 +129,19 @@ class MovePropertyToConstructorIntention :
     private fun KtAnnotationEntry.getTextWithUseSite(context: BindingContext): String {
         if (useSiteTarget != null) return text
         val typeReference = this.typeReference?.text ?: return text
+        val valueArgumentList = valueArgumentList?.text.orEmpty()
+
+        fun AnnotationUseSiteTarget.textWithMe() = "@$renderName:$typeReference$valueArgumentList"
+
         val descriptor = context[BindingContext.ANNOTATION, this] ?: return text
         val applicableTargets = AnnotationChecker.applicableTargetSet(descriptor)
-        val valueArgumentList = valueArgumentList?.text.orEmpty()
         return when {
             KotlinTarget.VALUE_PARAMETER !in applicableTargets ->
                 text
             KotlinTarget.PROPERTY in applicableTargets ->
-                "@${AnnotationUseSiteTarget.PROPERTY.renderName}:$typeReference$valueArgumentList"
+                AnnotationUseSiteTarget.PROPERTY.textWithMe()
             KotlinTarget.FIELD in applicableTargets ->
-                "@${AnnotationUseSiteTarget.FIELD.renderName}:$typeReference$valueArgumentList"
+                AnnotationUseSiteTarget.FIELD.textWithMe()
             else ->
                 text
         }
