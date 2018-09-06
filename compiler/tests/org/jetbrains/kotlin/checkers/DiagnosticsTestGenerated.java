@@ -15926,6 +15926,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInMultiFile.kt");
             }
 
+            @TestMetadata("RedeclarationSuspendMainInMultiFile.kt")
+            public void testRedeclarationSuspendMainInMultiFile() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationSuspendMainInMultiFile.kt");
+            }
+
             @TestMetadata("Redeclarations.kt")
             public void testRedeclarations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/redeclarations/Redeclarations.kt");

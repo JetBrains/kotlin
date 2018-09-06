@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
+import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
+import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -41,8 +44,11 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode
@@ -52,6 +58,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -464,4 +471,156 @@ fun recordCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingTrac
     val call = callExpression.getResolvedCall(bindingTrace.bindingContext) ?: return
 
     storeLabelName(call.resultingDescriptor.name.asString())
+}
+
+private val ARRAY_OF_STRINGS_TYPE = Type.getType("[Ljava/lang/String;")
+private val METHOD_DESCRIPTOR_FOR_MAIN = Type.getMethodDescriptor(Type.VOID_TYPE, ARRAY_OF_STRINGS_TYPE)
+
+fun generateBridgeForMainFunctionIfNecessary(
+    state: GenerationState,
+    packagePartClassBuilder: ClassBuilder,
+    functionDescriptor: FunctionDescriptor,
+    signatureOfRealDeclaration: JvmMethodGenericSignature,
+    origin: JvmDeclarationOrigin
+) {
+    val originElement = origin.element ?: return
+    if (functionDescriptor.name.asString() != "main" || !DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) return
+    if (!MainFunctionDetector.isMain(functionDescriptor.unwrapInitialDescriptorForSuspendFunction(), false, true)) return
+
+    if (!functionDescriptor.isSuspend) return
+
+    val lambdaInternalName = generateLambdaForRunSuspend(
+        state,
+        originElement,
+        packagePartClassBuilder.thisName,
+        signatureOfRealDeclaration
+    )
+
+    packagePartClassBuilder.newMethod(
+        Synthetic(originElement, functionDescriptor),
+        ACC_PUBLIC or ACC_STATIC or ACC_SYNTHETIC,
+        "main",
+        METHOD_DESCRIPTOR_FOR_MAIN, null, null
+    ).apply {
+        visitCode()
+        visitTypeInsn(NEW, lambdaInternalName)
+        visitInsn(DUP)
+        visitVarInsn(ALOAD, 0)
+        visitMethodInsn(
+            INVOKESPECIAL,
+            lambdaInternalName,
+            "<init>",
+            METHOD_DESCRIPTOR_FOR_MAIN,
+            false
+        )
+
+        visitMethodInsn(
+            INVOKESTATIC,
+            "kotlin/coroutines/jvm/internal/RunSuspendKt", "runSuspend",
+            Type.getMethodDescriptor(
+                Type.VOID_TYPE,
+                Type.getObjectType(NUMBERED_FUNCTION_PREFIX + "1")
+            ),
+            false
+        )
+        visitInsn(RETURN)
+        visitEnd()
+    }
+}
+
+private fun generateLambdaForRunSuspend(
+    state: GenerationState,
+    originElement: PsiElement,
+    packagePartClassInternalName: String,
+    signatureOfRealDeclaration: JvmMethodGenericSignature
+): String {
+    val internalName = "$packagePartClassInternalName$$\$main"
+    val lambdaBuilder = state.factory.newVisitor(
+        JvmDeclarationOrigin.NO_ORIGIN,
+        Type.getObjectType(internalName),
+        originElement.containingFile
+    )
+
+    lambdaBuilder.defineClass(
+        originElement, state.classFileVersion,
+        ACC_FINAL or ACC_SUPER or ACC_SYNTHETIC,
+        internalName, null,
+        AsmTypes.LAMBDA.internalName,
+        arrayOf(NUMBERED_FUNCTION_PREFIX + "1")
+    )
+
+    lambdaBuilder.newField(
+        JvmDeclarationOrigin.NO_ORIGIN,
+        ACC_PRIVATE or ACC_FINAL,
+        "args",
+        ARRAY_OF_STRINGS_TYPE.descriptor, null, null
+    )
+
+    lambdaBuilder.newMethod(
+        JvmDeclarationOrigin.NO_ORIGIN,
+        AsmUtil.NO_FLAG_PACKAGE_PRIVATE or ACC_SYNTHETIC,
+        "<init>",
+        METHOD_DESCRIPTOR_FOR_MAIN, null, null
+    ).apply {
+        visitCode()
+        visitVarInsn(ALOAD, 0)
+        visitVarInsn(ALOAD, 1)
+        visitFieldInsn(
+            PUTFIELD,
+            lambdaBuilder.thisName,
+            "args",
+            ARRAY_OF_STRINGS_TYPE.descriptor
+        )
+
+        visitVarInsn(ALOAD, 0)
+        visitInsn(ICONST_1)
+        visitMethodInsn(
+            INVOKESPECIAL,
+            AsmTypes.LAMBDA.internalName,
+            "<init>",
+            Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE),
+            false
+        )
+        visitInsn(RETURN)
+        visitEnd()
+    }
+
+    lambdaBuilder.newMethod(
+        JvmDeclarationOrigin.NO_ORIGIN,
+        ACC_PUBLIC or ACC_FINAL or ACC_SYNTHETIC,
+        "invoke",
+        Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE), null, null
+    ).apply {
+        visitCode()
+
+        visitVarInsn(ALOAD, 0)
+        visitFieldInsn(
+            GETFIELD,
+            lambdaBuilder.thisName,
+            "args",
+            ARRAY_OF_STRINGS_TYPE.descriptor
+        )
+
+        visitVarInsn(ALOAD, 1)
+        val continuationInternalName = state.languageVersionSettings.continuationAsmType().internalName
+
+        visitTypeInsn(
+            CHECKCAST,
+            continuationInternalName
+        )
+        visitMethodInsn(
+            INVOKESTATIC,
+            packagePartClassInternalName,
+            signatureOfRealDeclaration.asmMethod.name,
+            signatureOfRealDeclaration.asmMethod.descriptor,
+            false
+        )
+        visitInsn(ARETURN)
+        visitEnd()
+    }
+
+    writeSyntheticClassMetadata(lambdaBuilder, state)
+
+    lambdaBuilder.done()
+    return lambdaBuilder.thisName
 }
