@@ -51,9 +51,8 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
 
         val IDE_PLATFORMS_BY_COMPILER_PLATFORMS by lazy { ALL_KINDS.map { it.compilerPlatform to it }.toMap() }
 
-        fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): IdePlatform<*, Args> {
-            return ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) as IdePlatform<*, Args>? }!!
-        }
+        fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): IdePlatform<*, *>? =
+            ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) }
 
     }
 }
