@@ -16,6 +16,15 @@ import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
 private val runtimeSources = listOfKtFilesFrom(
+    // TODO: share more coroutine code between JS BEs
+    // TODO: don't generate code for external declarations, until that:
+    //  it's important now than *H.kt files at the start since we generate code for them
+    //  and actual versions just will override them later.
+    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesExperimentalH.kt",
+    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesIntrinsicsExperimentalH.kt",
+    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/SequenceBuilder.kt",
+    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/Coroutines.kt",
+
     "core/builtins/src/kotlin",
     "libraries/stdlib/common/src",
     "libraries/stdlib/src/kotlin/",
@@ -69,12 +78,6 @@ private val runtimeSources = listOfKtFilesFrom(
     // Full version is defined in stdlib
     // This file is useful for smaller subset of runtime sources
     "libraries/stdlib/js/irRuntime/rangeExtensions.kt"
-) + listOfKtFilesFrom(
-    // TODO share more coroutine code between JS BEs
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/SequenceBuilder.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/Coroutines.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesExperimentalH.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesIntrinsicsExperimentalH.kt"
 )
 
 // Smaller set of sources missing a big part of stdlib
