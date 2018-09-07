@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
+import java.io.File
 import java.util.*
 
 internal object GradlePropertiesFileUtils {
@@ -27,5 +29,32 @@ internal object GradlePropertiesFileUtils {
         }
 
         return null
+    }
+
+    fun addCodeStyleProperty(project: Project, value: String) {
+        addProperty(project, KOTLIN_CODE_STYLE_GRADLE_SETTING, value)
+    }
+
+    private fun addProperty(project: Project, key: String, value: String) {
+        val propertiesFile = projectPropertiesFile(project)
+
+        val keyValue = "$key=$value"
+
+        val updatedText = if (propertiesFile.exists()) {
+            propertiesFile.readText() + System.lineSeparator() + keyValue
+        } else {
+            keyValue
+        }
+
+        propertiesFile.writeText(updatedText)
+    }
+
+    private fun projectPropertiesFile(project: Project): File {
+        return File(getBaseDirPath(project), "gradle.properties")
+    }
+
+    private fun getBaseDirPath(project: Project): File {
+        val basePath = project.basePath!!
+        return File(ExternalSystemApiUtil.toCanonicalPath(basePath))
     }
 }

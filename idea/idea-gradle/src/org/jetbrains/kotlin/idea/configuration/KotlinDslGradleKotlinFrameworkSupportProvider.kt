@@ -101,6 +101,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
 
         if (isInNewProject(module)) {
             ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
+            GradlePropertiesFileUtils.addCodeStyleProperty(module.project, KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
     }
 
