@@ -30,6 +30,7 @@ dependencies {
     compile(project(":compiler:light-classes")) { isTransitive = false }
     compile(project(":compiler:frontend")) { isTransitive = false }
     compile(project(":compiler:frontend.java")) { isTransitive = false }
+    compile(project(":compiler:util")) { isTransitive = false }
     compile(project(":js:js.frontend")) { isTransitive = false }
     compile(projectClasses(":idea"))
     compile(project(":idea:idea-jvm")) { isTransitive = false }

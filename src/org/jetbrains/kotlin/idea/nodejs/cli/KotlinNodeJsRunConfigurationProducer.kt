@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.js.asJsModule
 import org.jetbrains.kotlin.idea.js.jsProductionOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.run.addBuildTask
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -52,7 +53,7 @@ private class KotlinNodeJsRunConfigurationProducer :
         val jsFilePath = module.jsProductionOutputFilePath ?: return null
         val declaration = element.getNonStrictParentOfType<KtNamedDeclaration>()
         if (declaration is KtNamedFunction) {
-            val detector = MainFunctionDetector { it.resolveToDescriptorIfAny() }
+            val detector = MainFunctionDetector(declaration.languageVersionSettings) { it.resolveToDescriptorIfAny() }
             if (!detector.isMain(declaration, false)) return null
         } else if (!TestElementPath.isModuleAssociatedDir(element, module)) return null
         return NodeJsConfigData(element, module, jsFilePath)
