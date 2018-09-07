@@ -54,7 +54,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
                 false
             baseClause.evaluatesTo(receiverExpression) ->
                 true
-            receiverExpression is KtThisExpression && hasImplicitReceiver() || baseClause.hasFirstReceiverOf(receiverExpression) ->
+            hasImplicitReceiverReplaceableBySafeCall() || baseClause.hasFirstReceiverOf(receiverExpression) ->
                 !baseClause.hasNullableType(context)
             else ->
                 false

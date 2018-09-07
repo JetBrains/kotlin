@@ -215,14 +215,14 @@ data class IfThenToSelectData(
                         baseClause is KtDotQualifiedExpression -> baseClause.replaceFirstReceiver(
                             factory, newReceiver!!, safeAccess = true
                         )
-                        hasImplicitReceiver() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
+                        hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
                             factory
                         )
                         baseClause is KtCallExpression -> replacedBaseClauseWithLet(baseClause, newReceiver!!, factory)
                         else -> error("Illegal state")
                     }
                 }
-                hasImplicitReceiver() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
+                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
                 baseClause is KtCallExpression -> replacedBaseClauseWithLet(baseClause, receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
@@ -235,7 +235,8 @@ data class IfThenToSelectData(
         return resolvedCall.getImplicitReceiverValue()
     }
 
-    internal fun hasImplicitReceiver(): Boolean = getImplicitReceiver() != null
+    internal fun hasImplicitReceiverReplaceableBySafeCall(): Boolean =
+        receiverExpression is KtThisExpression && getImplicitReceiver() != null
 
     private fun replacedBaseClauseWithLet(baseClause: KtCallExpression, receiver: KtExpression, factory: KtPsiFactory): KtExpression {
         val needExplicitParameter = baseClause.valueArguments.any { it.getArgumentExpression()?.text == "it" }
@@ -295,15 +296,15 @@ internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData?
     return IfThenToSelectData(context, condition, receiverExpression, baseClause, negatedClause)
 }
 
-internal fun KtExpression?.isClauseTransformableToLetOnly() =
-    this is KtCallExpression && resolveToCall()?.getImplicitReceiverValue() == null
+internal fun KtExpression?.isClauseTransformableToLetOnly(receiver: KtExpression?) =
+    this is KtCallExpression && (resolveToCall()?.getImplicitReceiverValue() == null || receiver !is KtThisExpression)
 
 internal fun KtIfExpression.shouldBeTransformed(): Boolean {
     val condition = condition
     return when (condition) {
         is KtBinaryExpression -> {
             val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
-            !baseClause.isClauseTransformableToLetOnly()
+            !baseClause.isClauseTransformableToLetOnly(checkedExpression())
         }
         else -> false
     }
