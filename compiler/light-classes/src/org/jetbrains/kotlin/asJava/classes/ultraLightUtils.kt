@@ -328,22 +328,16 @@ internal fun KtDeclaration.simpleVisibility(): String = when {
 }
 
 internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = null): Boolean {
-    val jetModifierList = this.modifierList ?: return false
-    if (jetModifierList.annotationEntries.isEmpty()) return false
+    val modifierList = this.modifierList ?: return false
+    if (modifierList.annotationEntries.isEmpty()) return false
 
-    val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
-    val deprecatedName = deprecatedFqName.shortName().asString()
-
-    for (annotationEntry in jetModifierList.annotationEntries) {
-        val typeReference = annotationEntry.typeReference ?: continue
-
-        val typeElement = typeReference.typeElement as? KtUserType ?: continue
-        // If it's not a user type, it's definitely not a ref to deprecated
+    for (annotationEntry in modifierList.annotationEntries) {
+        // If it's not a user type, it's definitely not a reference to deprecated
+        val typeElement = annotationEntry.typeReference?.typeElement as? KtUserType ?: continue
 
         val fqName = toQualifiedName(typeElement) ?: continue
 
-        if (deprecatedFqName == fqName) return true
-        if (deprecatedName == fqName.asString()) return true
+        if (fqName == KotlinBuiltIns.FQ_NAMES.deprecated || fqName == KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin) return true
     }
 
     return support?.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated) !== null
