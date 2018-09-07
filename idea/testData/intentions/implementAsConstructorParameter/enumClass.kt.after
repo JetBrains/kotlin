@@ -1,9 +1,9 @@
 // WITH_RUNTIME
 // DISABLE-ERRORS
 interface T<X> {
-    val <caret>foo: X
+    val foo: X
 }
 
-enum class E(override val foo: Int) : T<Int> {
+enum class E(override val foo: Int<caret>) : T<Int> {
     A, B, C
 }
