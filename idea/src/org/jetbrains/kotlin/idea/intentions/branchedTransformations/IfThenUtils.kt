@@ -224,12 +224,12 @@ data class IfThenToSelectData(
                         hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
                             factory
                         )
-                        baseClause is KtCallExpression -> replacedBaseClauseWithLet(baseClause, newReceiver!!, factory)
+                        baseClause is KtCallExpression -> baseClause.replaceCallWithLet(newReceiver!!, factory)
                         else -> error("Illegal state")
                     }
                 }
                 hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
-                baseClause is KtCallExpression -> replacedBaseClauseWithLet(baseClause, receiverExpression, factory)
+                baseClause is KtCallExpression -> baseClause.replaceCallWithLet(receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
         }
@@ -244,10 +244,13 @@ data class IfThenToSelectData(
     internal fun hasImplicitReceiverReplaceableBySafeCall(): Boolean =
         receiverExpression is KtThisExpression && getImplicitReceiver() != null
 
-    private fun replacedBaseClauseWithLet(baseClause: KtCallExpression, receiver: KtExpression, factory: KtPsiFactory): KtExpression {
-        val needExplicitParameter = baseClause.valueArguments.any { it.getArgumentExpression()?.text == "it" }
+    private fun KtCallExpression.replaceCallWithLet(
+        receiver: KtExpression,
+        factory: KtPsiFactory
+    ): KtExpression {
+        val needExplicitParameter = valueArguments.any { it.getArgumentExpression()?.text == "it" }
         val parameterName = if (needExplicitParameter) {
-            val scope = baseClause.getResolutionScope()
+            val scope = getResolutionScope()
             KotlinNameSuggester.suggestNameByName("it") { scope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
         } else {
             "it"
@@ -256,9 +259,9 @@ data class IfThenToSelectData(
             appendExpression(receiver)
             appendFixedText("?.let {")
             if (needExplicitParameter) appendFixedText(" $parameterName ->")
-            appendExpression(baseClause.calleeExpression)
+            appendExpression(calleeExpression)
             appendFixedText("(")
-            baseClause.valueArguments.forEachIndexed { index, arg ->
+            valueArguments.forEachIndexed { index, arg ->
                 if (index != 0) appendFixedText(", ")
                 val argExpression = arg.getArgumentExpression()
                 if (argExpression?.evaluatesTo(receiverExpression) == true)
