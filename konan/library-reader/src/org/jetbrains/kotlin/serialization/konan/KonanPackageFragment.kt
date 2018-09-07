@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.serialization.konan
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -18,15 +17,12 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFra
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.storage.CacheWithNotNullValues
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.getValue
 
 class KonanPackageFragment(
     fqName: FqName,
     private val library: KonanLibrary,
     private val packageAccessedHandler: PackageAccessedHandler?,
-    private val protoForNamesFun: CacheWithNotNullValues<Pair<File, String>, KonanProtoBuf.LinkDataPackageFragment>,
     storageManager: StorageManager,
     module: ModuleDescriptor
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
@@ -39,10 +35,8 @@ class KonanPackageFragment(
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
-    private val protoForNames by storageManager.createLazyValue {
-        protoForNamesFun.computeIfAbsent(library.libraryFile to fqName.asString()) {
-            parsePackageFragment(library.packageMetadata(fqName.asString()))
-        }
+    private val protoForNames: KonanProtoBuf.LinkDataPackageFragment by lazy {
+        parsePackageFragment(library.packageMetadata(fqName.asString()))
     }
 
     val proto: KonanProtoBuf.LinkDataPackageFragment

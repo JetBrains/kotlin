@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.serialization.konan.KonanResolvedModuleDescriptorsFa
 import org.jetbrains.kotlin.serialization.konan.impl.KonanDeserializedModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.serialization.konan.impl.KonanDeserializedPackageFragmentsFactoryImpl
 import org.jetbrains.kotlin.serialization.konan.impl.KonanResolvedModuleDescriptorsFactoryImpl
-import org.jetbrains.kotlin.storage.StorageManager
 
 /**
  * The default Kotlin/Native factories.
  */
-class KonanFactories(storageManager: StorageManager) {
+object KonanFactories {
 
     /**
      * The default [KonanModuleDescriptorFactory] factory instance.
@@ -29,7 +28,7 @@ class KonanFactories(storageManager: StorageManager) {
      * The default [KonanDeserializedPackageFragmentsFactory] factory instance.
      */
     val DefaultPackageFragmentsFactory: KonanDeserializedPackageFragmentsFactory =
-        KonanDeserializedPackageFragmentsFactoryImpl(storageManager)
+        KonanDeserializedPackageFragmentsFactoryImpl
 
     /**
      * The default [KonanDeserializedModuleDescriptorFactory] factory instance.
