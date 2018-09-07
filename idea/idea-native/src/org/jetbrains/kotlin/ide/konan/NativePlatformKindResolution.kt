@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
 import org.jetbrains.kotlin.konan.util.KonanFactories
@@ -35,7 +36,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
         return if (virtualFile.isDirectory) {
             virtualFile.findChild("linkdata")?.takeIf { it.isDirectory }
-                ?.children?.any { it.extension == KonanMetaFileType.defaultExtension } == true
+                ?.children?.any { it.extension == KLIB_METADATA_FILE_EXTENSION } == true
         } else {
             virtualFile.extension == KLIB_FILE_EXTENSION
         }

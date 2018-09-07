@@ -9,6 +9,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeConsumer
 import com.intellij.openapi.fileTypes.FileTypeFactory
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.serialization.konan.KonanSerializerProtocol
@@ -40,7 +41,7 @@ class KonanMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 object KonanMetaFileType : FileType {
     override fun getName() = "KNM"
     override fun getDescription() = "Kotlin/Native Metadata"
-    override fun getDefaultExtension() = "knm"
+    override fun getDefaultExtension() = KLIB_METADATA_FILE_EXTENSION
     override fun getIcon() = null
     override fun isBinary() = true
     override fun isReadOnly() = true
