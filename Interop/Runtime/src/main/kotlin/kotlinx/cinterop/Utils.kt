@@ -375,16 +375,16 @@ fun List<String>.toCStringArray(autofreeScope: AutofreeScope): CPointer<CPointer
 fun Array<String>.toCStringArray(autofreeScope: AutofreeScope): CPointer<CPointerVar<ByteVar>> =
         autofreeScope.allocArrayOf(this.map { it.cstr.getPointer(autofreeScope) })
 
-val String.wcstr: CValues<ShortVar>
+val String.wcstr: CValues<UShortVar>
     get() {
         val chars = CharArray(this.length, { i -> this.get(i)})
-        return object : CValues<ShortVar>() {
+        return object : CValues<UShortVar>() {
             override val size get() = 2 * (chars.size + 1)
 
-            override fun getPointer(scope: AutofreeScope): CPointer<ShortVar> {
-                val result = scope.allocArray<ShortVar>(chars.size + 1)
+            override fun getPointer(scope: AutofreeScope): CPointer<UShortVar> {
+                val result = scope.allocArray<UShortVar>(chars.size + 1)
                 nativeMemUtils.putCharArray(chars, result.pointed, chars.size)
-                result[chars.size] = 0.toShort()
+                result[chars.size] = 0u
                 return result
             }
         }

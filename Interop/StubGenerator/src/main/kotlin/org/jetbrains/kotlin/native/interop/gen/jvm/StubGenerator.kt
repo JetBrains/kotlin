@@ -323,7 +323,8 @@ class StubGenerator(
     }
 
     // We take this approach as generic 'const short*' shall not be used as String.
-    fun representCFunctionParameterAsWString(type: Type)= type.isAliasOf(platformWStringTypes)
+    fun representCFunctionParameterAsWString(function: FunctionDecl, type: Type) = type.isAliasOf(platformWStringTypes)
+            && !noStringConversion.contains(function.name)
 
     private fun getArrayLength(type: ArrayType): Long {
         val unwrappedElementType = type.elemType.unwrapTypedefs()
@@ -629,7 +630,7 @@ class StubGenerator(
                     kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
                     bodyGenerator.pushMemScoped()
                     "$parameterName?.cstr?.getPointer(memScope)"
-                } else if (representCFunctionParameterAsWString(parameter.type)) {
+                } else if (representCFunctionParameterAsWString(func, parameter.type)) {
                     kotlinParameters.add(parameterName to KotlinTypes.string.makeNullable())
                     bodyGenerator.pushMemScoped()
                     "$parameterName?.wcstr?.getPointer(memScope)"

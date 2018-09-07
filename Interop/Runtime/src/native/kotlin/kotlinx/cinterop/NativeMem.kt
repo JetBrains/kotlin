@@ -129,6 +129,21 @@ fun CPointer<ShortVar>.toKString(): String {
     return String(bytes)
 }
 
+fun CPointer<UShortVar>.toKString(): String {
+    val nativeBytes = this
+
+    var length = 0
+    while (nativeBytes[length] != 0.toUShort()) {
+        ++length
+    }
+    val bytes = CharArray(length)
+    var index = 0
+    while (index < length) {
+        bytes[index] = nativeBytes[index].toShort().toChar()
+        ++index
+    }
+    return String(bytes)
+}
 
 @SymbolName("Kotlin_interop_malloc")
 private external fun malloc(size: Long, align: Int): NativePtr
