@@ -1,9 +1,3 @@
----
-type: doc
-layout: reference
-title: "Kotlin/Native interoperability"
----
-
 # _Kotlin/Native_ interoperability #
 
 ## Introduction ##

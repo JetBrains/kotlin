@@ -1,9 +1,3 @@
----
-type: doc
-layout: reference
-title: "Immutability in Kotlin/Native"
----
-
 # Immutability in Kotlin/Native
 
  Kotlin/Native implements strict mutability checks, ensuring

@@ -1,9 +1,3 @@
----
-type: doc
-layout: reference
-title: "Platform libraries"
----
-
 # Platform libraries
 
 ## Overview

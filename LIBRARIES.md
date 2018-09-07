@@ -1,9 +1,3 @@
----
-type: doc
-layout: reference
-title: "Kotlin/Native libraries"
----
-
 # Kotlin/Native libraries
 
 ## Kotlin compiler specifics
