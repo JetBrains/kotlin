@@ -5,15 +5,15 @@ _Note: For the experimental DSL see the [corresponding section](#experimental-pl
 ## Overview
 
 You may use the Gradle plugin to build _Kotlin/Native_ projects. Since version 0.8 release builds of the plugin are
-[available](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.konan) at the Gradle plugin portal so you can apply it
+[available](https://plugins.gradle.org/plugin/org.jetbrains.kotlin.konan) at the Gradle plugin portal, so you can apply it
 using Gradle plugin DSL:
 
     plugins {
         id "org.jetbrains.kotlin.konan" version "0.9"
     }
 
-__Note__: The 0.9 version of Kotlin/Native is based on Kotlin 1.3-M1 which is an EAP version and isn't available at
-plugin portal. In this case you need to add a Kotlin EAP repository in your `settings.gradle`:
+__Note__: The 0.9 version of Kotlin/Native is based on Kotlin 1.3-M1 which is an EAP version and isn't available on
+the plugin portal. In this case you need to add a Kotlin EAP repository in your `settings.gradle`:
 
     pluginManagement {
         repositories {
@@ -50,8 +50,8 @@ The Kotlin/Native plugin depends on `org.jetbrains.kotlin:kotlin-gradle-plugin`.
 plugins as buildscript dependencies, it's recommended to **declare them in the same `build.gradle`** to avoid issues with
 plugin classpath.
 
-By default the plugin downloads the Kotlin/Native compiler during the first run. If you already downloaded the compiler
-manually you may specify the path to its root directory using `konan.home` project property (e.g. in `gradle.properties`).
+By default the plugin downloads the Kotlin/Native compiler during the first run. If you have already downloaded the compiler
+manually you can specify the path to its root directory using `konan.home` project property (e.g. in `gradle.properties`).
 
     konan.home=/home/user/kotlin-native-0.8
 
@@ -59,7 +59,7 @@ In this case the compiler will not be downloaded by the plugin.
 
 ## Building artifacts
 
-The Kotlin/Native Gradle plugin allows one to build artifacts of the following types:
+The Kotlin/Native Gradle plugin allows building artifacts of the following types:
 
 * Executable
 * KLibrary - a library used by Kotlin/Native compiler (`*.klib`)
@@ -81,7 +81,7 @@ v0.3.4. Use the `interop` method of the `konanArtifact` block instead:
 	}
 
 All artifacts except interop libraries are built by the Kotlin/Native compiler. Such an artifact may be configured using its script block.
-Here one can specify source directories, used libraries and compilation flags (see [**Plugin DSL**](#plugin-dsl) section for details). The plugin
+It is here that you can specify source directories, used libraries, and compilation flags (see [**Plugin DSL**](#plugin-dsl) section for details). The plugin
 uses `src/main/kotlin/` as a default source directory for all compiler artifacts:
 
     konanArtifacts {
@@ -129,12 +129,12 @@ an interoperability library:
 
 ## Building for different targets
 
-All the artifacts declared in a project may be built for different targets. By default they are built only for `host` target i.e. a
-computer used for building. One may change the default  target list using the `konan.targets` project extension:
+All the artifacts declared in a project may be built for different targets. By default they are built only for the `host` target i.e. a
+computer used for building. One may change the default target list using the `konan.targets` project extension:
 
     konan.targets = [ 'linux', 'android_arm64', 'android_arm32' ]
 
-One may specify a custom target set for each particular artifact using `targets` parameter of an artifact declaration:
+One may specify a custom target set for each particular artifact using the `targets` parameter of an artifact declaration:
 
     konan.targets = [ 'linux', 'android_arm64' ]
 
@@ -152,8 +152,8 @@ One may specify a custom target set for each particular artifact using `targets`
     }
 
 
-The plugin creates tasks to compile each artifact for all targets supported by current host and declared in the `konan.targets` list.
-One may perform additional configuration for a target using `target` method of an artifact configuration block:
+The plugin creates tasks to compile each artifact for all the targets supported by the current host and declared in the `konan.targets` list.
+You can perform additional configuration for a target using the `target` method of an artifact configuration block:
 
     konan.targets = [ 'linux', 'macbook', 'wasm32' ]
 
@@ -184,7 +184,7 @@ One may access to a task for some target via artifact methods or properties:
 
 ## Using libraries
 
-One may specify used libraries for artifacts of all types using `libraries` script block:
+You can specify used libraries for artifacts of all types using the `libraries` script block:
 
     program('foo') {
         libraries {
@@ -194,7 +194,7 @@ One may specify used libraries for artifacts of all types using `libraries` scri
 
 There are several ways to describe a library used by an artifact:
 
-* Specify a library file directly. One may specify it using the `file` method of the `libraries` script block. All objects accepted by
+* Specify a library file directly. You can specify it using the `file` method of the `libraries` script block. All the objects accepted by
 the [`Project.file`](https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:file(java.lang.Object))
 method may be passed there:
 
@@ -204,8 +204,8 @@ method may be passed there:
         files 'lib1.klib', 'lib2.klib'
     }
     ```
-* Specify a Kotlin/Native artifact object or its name. In this case the plugin automatically chooses a library with correct target
-and set dependencies between building tasks.
+* Specify a Kotlin/Native artifact object or its name. In this case the plugin automatically chooses a library with the correct target
+and sets dependencies between building tasks.
 
     ```
     libraries {
@@ -231,7 +231,7 @@ and set dependencies between building tasks.
         allInteropLibrariesFrom project(':interop')
     }
     ```
-* Specify only name of a library. In this case the compiler will look for the library in its repositories.
+* Specify only the name of a library. In this case the compiler will look for the library in its repositories.
 
     ```
     libraries {
@@ -246,9 +246,9 @@ and set dependencies between building tasks.
 
 ## Multiplatform build
 
-Kotlin/Native, as well as Kotlin/JVM and Kotlin/JS, supports multiplatform projects. Such a support is included in the
-Kotlin/Native Gradle plugin by default and there is no need to apply additional plugins to use it. By default
-multiplatform support is turned off, and could be enabled with the `enableMultiplatform` DSL method:
+Kotlin/Native, Kotlin/JVM, and Kotlin/JS, support multiplatform projects. Such support is included in the
+Kotlin/Native Gradle plugin by default and there is no need to apply any additional plugins to use it. By default
+multiplatform support is turned off, and can be enabled with the `enableMultiplatform` DSL method:
 
     apply 'konan'
     
@@ -258,7 +258,7 @@ multiplatform support is turned off, and could be enabled with the `enableMultip
         }
     }
 
-The Gradle plugin adds an `expectedBy` dependency configuration that is used to specify a dependency from Kotlin/Native
+The Gradle plugin adds an `expectedBy` dependency configuration that is used to specify a dependency from a Kotlin/Native
 project to a common project:
 
     apply 'konan'
@@ -283,8 +283,8 @@ See more about multiplatform projects [here](https://kotlinlang.org/docs/referen
 
 The Kotlin/Native plugin creates the following tasks:
 
-* __compileKonan\<ArtifactName>\<Target>__. The plugin creates such a task for each target declared in `konan.targets` list and
-for each an artifact defined in a `konanArtifacts` block. Such a task may have different properties depending on the artifact type:
+* __compileKonan\<ArtifactName>\<Target>__. The plugin creates a task for each target declared in the `konan.targets` list and
+for each an artifact is defined in a `konanArtifacts` block. Such a task may have different properties depending on the artifact type:
 
     ##### Properties available for a compiler task (executable, library or bitcode building task):
 
@@ -322,9 +322,9 @@ for each an artifact defined in a `konanArtifacts` block. Such a task may have d
     |`linkFiles     `|`Collection<FileCollection>`|Additional files linked with the stubs                   |
 
 
-* __compileKonan\<ArtifactName>__. Aggregate task allowing one to build an artifact for several targets. By default it builds
-the artifact for all supported targets declared for the project. One may change this behavior by specifying the space-separated
-target list in `konan.build.targets` project property:
+* __compileKonan\<ArtifactName>__. Aggregate task allowing you to build an artifact for several targets. By default it builds
+the artifact for all the supported targets declared for the project. You can change this behavior by specifying the space-separated
+target list in the `konan.build.targets` project property:
 
     ```
     ./gradlew compileKonanFoo -Pkonan.build.targets='android_arm32 android_arm64'
@@ -333,18 +333,18 @@ target list in `konan.build.targets` project property:
     The task has no properties to use by a build script.
 
 * __compileKonan__. Aggregate task to build all the Kotlin/Native artifacts for all available targets. `konan.build.targets` project
-property also may be used to override the target list. The task has no properties to use by a build script.
+property also may be used to override the target list. The task has no properties that can be used by a build script.
 
-* __run\<ArtifactName>__. Such a task is created for each executable supported by current host and allows one to run this
+* __run\<ArtifactName>__. Such a task is created for each executable supported by the current host and allows you to run this
 executable. The task is an instance of Gradle's [`Exec`](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Exec.html)
-so it supports all settings provided by `Exec`. Additionally, run parameters may be passed to the task using the `runArgs`
+so it supports all the settings provided by `Exec`. Additionally, run parameters may be passed to the task using the `runArgs`
 project property:
 
     ```
     ./gradlew runFoo -PrunArgs='foo bar'
     ```
 
-The plugin also edits the default `build` and `clean` tasks so that the first one allows one to build all the artifacts supported
+The plugin also edits the default `build` and `clean` tasks so that the first one allows you to build all the artifacts supported
 (it's dependent on the `compileKonan` task) and the second one removes the files created by the Kotlin/Native build.
 
 ## Building dynamic libraries and frameworks
@@ -355,7 +355,7 @@ Objective-C framework and dynamic library.
 ### Dynamic library
 
 A dynamic library may be built using the `dynamic` artifact block. This block contains the same
-options as other ones (except `interop`) allowing one to specify source files, compiler options and libraries used.
+options as the other ones (except `interop`) allowing you to specify source files, compiler options, and the libraries used.
 Each task building a dynamic library produces two files: the library itself (a `*.so`/`*.dylib`/`*.dll` file depending
 on the target platform) and a C language header. Both of them may be accessed via properties of a building task
 (both properties have type `File`):
@@ -390,8 +390,8 @@ Using a framework is shown in the [calculator sample](samples/calculator).
 ## Additional options
 
 You can also pass additional command line keys to the compiler or cinterop tool using the `extraOpts` expression
-available in artifact configuration script block. For example this sample enables a verbose output for a link and bitcode
-generation stages and prints execution time for all compiler phases:
+available in the artifact configuration script block. For example this sample enables a verbose output for a link and bitcode
+generation stages and prints the execution time for all the compiler phases:
 
     konanArtifacts {
         program('foo') {
@@ -627,16 +627,16 @@ tables below.
 ## Publishing to Maven
 
 Publishing the Kotlin/Native artifacts depends on mechanisms which were introduced in Gradle Native support, e.g. Gradle's 
-metadata feature. Thus some additional steps are required. First of all, the gradle version shouldn't be less 
-than gradle version of kotlin native plugin it depends on (currently Gradle 4.7). Before Gradle 5.0, feature 
+metadata feature. So some additional steps are required. First of all, the gradle version shouldn't be less 
+than the gradle version of kotlin native plugin that it depends on (currently Gradle 4.7). Before Gradle 5.0, the feature 
 [GRADLE_METADATA](https://github.com/gradle/gradle/blob/master/subprojects/docs/src/docs/design/gradle-module-metadata-specification.md) 
-should be enabled for build. e.g. in settings.gradle
+should be enabled for the build. e.g. in settings.gradle
 ````
 enableFeaturePreview('GRADLE_METADATA')
 ````
 
-Some maven repositories require some declarations in `pom` files, that should be presents in all auxiliary `pom` files (
-platform x build types). To meet this requirement the Kotlin/Native plugin has following syntax to do it:
+Some Maven repositories require some declarations in the `pom` files, that should be present in all auxiliary `pom` files (
+platform x build types). To meet this requirement the Kotlin/Native plugin has the following syntax to do it:
 
  ````
  konanArtifacts {
@@ -666,7 +666,7 @@ platform x build types). To meet this requirement the Kotlin/Native plugin has f
 In the version 0.8 a new experimental plugin has been introduced. It is integrated with new Gradle support
 for native languages and provides a new DSL which is much closer to the DSL of Kotlin/JVM and Kotlin/JS
 plugins than the old one.
-The plugin available at Gradle plugin portal:
+The plugin is available at the Gradle plugin portal:
 
 ```
 plugins {
@@ -676,7 +676,7 @@ plugins {
 
 ### Source management
 
-Source management in the `kotlin.platform.native` plugin is uniform with other Kotlin plugins and is based on source sets. Source set is a group of Kotlin/Native source which may contain both common and platform-specific code. The plugin provides a top-level script block `sourceSets` allowing one to configure source sets. Also it create default source sets `main` and `test` (for production and test code respectively).
+Source management in the `kotlin.platform.native` plugin is uniform with other Kotlin plugins and is based on source sets. A source set is a group of Kotlin/Native source which may contain both common and platform-specific code. The plugin provides a top-level script block `sourceSets` allowing you to configure source sets. Also it creates the default source sets `main` and `test` (for production and test code respectively).
 By default the production sources are located in `src/main/kotlin` and the test sources - in `src/test/kotlin`.
 
 ````
@@ -691,7 +691,7 @@ sourceSets {
 
 ### Targets and output kinds
 
-By default the plugin creates software components for main and test source sets. One can access them via `components` container provided by Gradle or via `component` property of a corresponding source set:
+By default the plugin creates software components for the main and test source sets. You can access them via the `components` container provided by Gradle or via the `component` property of a corresponding source set:
 
 ````
 // Main component.
@@ -703,11 +703,11 @@ components.test
 sourceSets.test.component
 ````
 
-Components allow one to specify:
+Components allow you to specify:
 
-* targets (e.g. Linux/x64 or iOS/arm64 etc),
-* output kinds (e.g. executable, library, framework etc),
-* dependencies (including interop ones).
+* Targets (e.g. Linux/x64 or iOS/arm64 etc)
+* Output kinds (e.g. executable, library, framework etc)
+* Dependencies (including interop ones)
 
 Targets can be specified by setting a corresponding component property:
 
@@ -718,7 +718,7 @@ components.main {
 }
 ````
 
-The plugin uses the same notation as the compiler. By default test component uses the same targets as specified for the main one.
+The plugin uses the same notation as the compiler. By default, test component uses the same targets as specified for the main one.
 
 Output kinds can also be specified using a special property:
 
@@ -741,7 +741,7 @@ Also each binary is built in two variants (build types): `debug` (debuggable, no
 
 ### Compile tasks
 
-The plugin creates a compilation task for each combination of target, output kind and build type. The tasks has the following naming convention:
+The plugin creates a compilation task for each combination of the target, output kind, and build type. The tasks have the following naming convention:
 
     compile<ComponentName><BuildType><OutputKind><Target>KotlinNative
 
@@ -754,22 +754,22 @@ The name contains the following parts (some of them may be empty):
 * `<OutputKind>` - output kind name, e.g. `Executabe` or `Dynamic`. Empty if the component has only one output kind.
 * `<Target>` - target the component is built for, e.g. `Macos_x64` or `Wasm32`. Empty if the component is built only for one target.
 
-Also the plugin create number of aggregate tasks allowing one to build all binaries for some build type (e.g.
-`assembleAllDebug`) or all binaries for a particular target (e.g. `assembleAllWasm32`).
+Also the plugin creates a number of aggregate tasks allowing you to build all the binaries for a build type (e.g.
+`assembleAllDebug`) or all the binaries for a particular target (e.g. `assembleAllWasm32`).
 
-Basic lifecycle tasks like `assemble`, `build` and `clean` are also available.
+Basic lifecycle tasks like `assemble`, `build`, and `clean` are also available.
 
 ### Running tests
 
-The plugin builds a test executables for all targets specified for the `test` component. If the current host platform is
-included in this list the test running tasks is also created. To run tests, execute the standard lifecycle `check` task:
+The plugin builds a test executable for all the targets specified for the `test` component. If the current host platform is
+included in this list the test running tasks are also created. To run tests, execute the standard lifecycle `check` task:
 
     ./gradlew check
 
 ### Dependencies
 
-The plugin allows one to declare dependencies on files and other projects using traditional Gradle's mechanism of
-configurations. The plugin supports Kotlin multiplatform projects allowing one to declare `expectedBy` dependencies
+The plugin allows you to declare dependencies on files and other projects using traditional Gradle's mechanism of
+configurations. The plugin supports Kotlin multiplatform projects allowing you to declare the `expectedBy` dependencies
 
 ````
 dependencies {
@@ -782,7 +782,7 @@ dependencies {
 
 It's possible to depend on a Kotlin/Native library published earlier in a maven repo. The plugin relies on Gradle's
 [metadata](https://github.com/gradle/gradle/blob/master/subprojects/docs/src/docs/design/gradle-module-metadata-specification.md)
-support so the corresponding feature must be enabled. Add the following line in your `settings.gralde`:
+support so the corresponding feature must be enabled. Add the following line in your `settings.gradle`:
 
 ````
 enableFeaturePreview('GRADLE_METADATA')
@@ -862,16 +862,16 @@ components.main {
 
 ### Publishing
 
-In presence of `maven-publish` plugin publications for all the binaries built are created. The plugin uses Gradle
+In the presence of `maven-publish` plugin the publications for all the binaries built are created. The plugin uses Gradle
 metadata to publish the artifacts so this feature must be enabled (see the [dependencies](#dependencies) section).
 
-Now one can publish the artifacts with the standard Gradle's `publish` task:
+Now you can publish the artifacts with the standard Gradle `publish` task:
 
     ./gradlew publish
     
-Only `EXECUTABLE` and `KLIBRARY` binaries are published at the moment.
+Only `EXECUTABLE` and `KLIBRARY` binaries are published currently.
 
-The plugin allows one to customize the pom generated for the publication with the `pom` code block available for every component:
+The plugin allows you to customize the pom generated for the publication with the `pom` code block available for every component:
 
 ````
 components.main {
@@ -888,7 +888,7 @@ components.main {
 ### DSL example
 
 In this section a commented DSL is shown. 
-See also projects using this plugin, e.g.
+See also the example projects that use this plugin, e.g.
 [Kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines),
 [MPP http client](https://github.com/e5l/http-client-common/tree/master/samples/ios-test-application)
 
