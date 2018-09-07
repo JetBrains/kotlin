@@ -103,6 +103,7 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
 
     private fun KtCallableDeclaration.deprecatedAnnotationWithNoReplaceWith(): KtAnnotationEntry? {
         for (entry in annotationEntries) {
+            // TODO: support DeprecatedSinceKotlin here
             if (entry.shortName != DEPRECATED_NAME) continue
             val bindingContext = entry.analyze()
             val resolvedCall = entry.calleeExpression.getResolvedCall(bindingContext) ?: continue
