@@ -10,7 +10,6 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightUtil
 import com.intellij.codeInsight.daemon.impl.analysis.JavaHighlightUtil
-import com.intellij.codeInsight.intention.QuickFixFactory
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
 import com.intellij.codeInspection.ex.EntryPointsManager
@@ -386,8 +385,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             )
                 continue
 
-            val intentionAction =
-                QuickFixFactory.getInstance().createAddToDependencyInjectionAnnotationsFix(declaration.project, fqName)
+            val intentionAction = createAddToDependencyInjectionAnnotationsFix(declaration.project, fqName)
+
             list.add(IntentionWrapper(intentionAction, declaration.containingFile))
         }
 
