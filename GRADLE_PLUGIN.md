@@ -825,7 +825,7 @@ components.test {
 It's possible to declare a cinterop dependency for a component. The DSL here is similar to the one used in the `konan` plugin:
 
 ````
-component.main {
+components.main {
     dependencies {
         cinterop('mystdio') {
             // src/main/c_interop/mystdio.def is used as a def file.
@@ -913,7 +913,7 @@ sourceSets.main {
     target('linux').srcDirs += 'src/main/linux'
 }
 
-component.main {
+components.main {
 
     // Set up targets
     targets = ['linux_x64', 'macos_x64', 'mingw_x64']
@@ -931,7 +931,7 @@ component.main {
         linkerOpts '-L/common/lib/path'
     }
 
-    dependnecies {
+    dependencies {
 
         // Dependency on a published Kotlin/Native library.
         implementation 'org.test:mylib:1.0'
