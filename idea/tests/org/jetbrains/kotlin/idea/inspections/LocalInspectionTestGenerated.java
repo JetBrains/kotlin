@@ -286,6 +286,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/propertyWithProperty.kt");
             }
 
+            @TestMetadata("replaceWithLetInMember.kt")
+            public void testReplaceWithLetInMember() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/replaceWithLetInMember.kt");
+            }
+
+            @TestMetadata("replaceWithLetInMemberWithIs.kt")
+            public void testReplaceWithLetInMemberWithIs() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/replaceWithLetInMemberWithIs.kt");
+            }
+
             @TestMetadata("rhsEqualsNull.kt")
             public void testRhsEqualsNull() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/rhsEqualsNull.kt");

@@ -1,0 +1,12 @@
+// HIGHLIGHT: INFORMATION
+// WITH_RUNTIME
+
+class Test {
+    fun doAThing(param1: String) {
+
+    }
+
+    fun doAThingIfPresent(param1: String?) {
+        param1?.let { doAThing(it) }
+    }
+}
