@@ -30,9 +30,11 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmMetadataVersionIndex, JvmMetadataVersion>(
-    KotlinJvmMetadataVersionIndex::class.java,
-    { version, isStrictSemantics -> JvmMetadataVersion(version, isStrictSemantics = isStrictSemantics!!) }
+    KotlinJvmMetadataVersionIndex::class.java
 ) {
+    override fun createBinaryVersion(versionArray: IntArray, extraBoolean: Boolean?): JvmMetadataVersion =
+        JvmMetadataVersion(versionArray, isStrictSemantics = extraBoolean!!)
+
     override fun getIndexer() = INDEXER
 
     override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.fileType == StdFileTypes.CLASS }
