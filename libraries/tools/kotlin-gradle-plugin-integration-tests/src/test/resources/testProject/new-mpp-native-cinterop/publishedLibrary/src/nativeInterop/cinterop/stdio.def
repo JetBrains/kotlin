@@ -1,0 +1,2 @@
+headers = stdio.h
+compilerOpts.osx = -D_ANSI_SOURCE
