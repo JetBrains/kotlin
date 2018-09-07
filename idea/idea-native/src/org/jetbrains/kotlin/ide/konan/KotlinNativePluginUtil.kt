@@ -12,7 +12,6 @@ import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.konan.KonanPluginSearchPathResolver
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -52,17 +51,19 @@ fun ModuleInfo.createResolvedModuleDescriptors(
     val libraryMap =
         this.dependencies().filterIsInstance<LibraryInfo>().flatMap { dependency ->
             if (dependency.platform == KonanPlatform) {
-                dependency.getLibraryRoots().map { file ->
-                    file to dependency
+                dependency.getLibraryRoots().map { libraryRoot ->
+                    libraryRoot to dependency
                 }
             } else {
                 emptyList()
             }
         }.toMap()
 
-    val resolvedLibraries =
-        KonanPluginSearchPathResolver(project).libraryResolver(KONAN_CURRENT_ABI_VERSION)
-            .resolveWithDependencies(libraryMap.keys.toList(), true, true)
+    val libraryPaths = libraryMap.keys.toList()
+
+    val resolvedLibraries = KotlinNativePluginSearchPathResolver(libraryPaths)
+        .libraryResolver(KONAN_CURRENT_ABI_VERSION)
+        .resolveWithDependencies(libraryPaths)
 
     return DefaultResolvedDescriptorsFactory.createResolved(
         resolvedLibraries,
