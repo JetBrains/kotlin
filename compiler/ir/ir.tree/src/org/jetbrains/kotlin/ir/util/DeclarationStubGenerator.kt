@@ -98,6 +98,11 @@ class DeclarationStubGenerator(
             return referenced.owner
         }
 
+        val origin =
+            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+                IrDeclarationOrigin.FAKE_OVERRIDE
+            else origin
+
         return symbolTable.declareField(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
