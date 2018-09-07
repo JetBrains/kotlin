@@ -26,7 +26,7 @@ class Iterables {
         @Sample
         fun iterable() {
             val iterable = Iterable {
-                buildIterator {
+                iterator {
                     yield(42)
                     yieldAll(1..5 step 2)
                 }

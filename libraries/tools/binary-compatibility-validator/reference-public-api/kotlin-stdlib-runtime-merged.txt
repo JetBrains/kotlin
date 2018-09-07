@@ -4448,16 +4448,11 @@ public abstract interface class kotlin/sequences/Sequence {
 	public abstract fun iterator ()Ljava/util/Iterator;
 }
 
-public abstract class kotlin/sequences/SequenceBuilder {
+public abstract class kotlin/sequences/SequenceScope {
 	public abstract fun yield (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun yieldAll (Ljava/lang/Iterable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun yieldAll (Ljava/util/Iterator;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun yieldAll (Lkotlin/sequences/Sequence;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlin/sequences/SequenceBuilderKt {
-	public static final fun buildIterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
-	public static final fun buildSequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 }
 
 public final class kotlin/sequences/SequencesKt {
@@ -4528,6 +4523,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun indexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
 	public static final fun indexOfFirst (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfLast (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
+	public static final fun iterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
 	public static final fun joinTo (Lkotlin/sequences/Sequence;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Appendable;
 	public static synthetic fun joinTo$default (Lkotlin/sequences/Sequence;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Appendable;
 	public static final fun joinToString (Lkotlin/sequences/Sequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
@@ -4570,6 +4566,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun reduce (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun reduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun requireNoNulls (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
+	public static final fun sequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun sequenceOf ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun single (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
 	public static final fun single (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
