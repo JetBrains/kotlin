@@ -1,0 +1,21 @@
+package
+
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.3", message = "") public val valCur: kotlin.Unit
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", message = "") public val valNext: kotlin.Unit
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.3", message = "") public fun funCur(): kotlin.Unit
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", message = "") public fun funNext(): kotlin.Unit
+public fun usage(): kotlin.Unit
+
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.3", message = "") public final class ClassCur {
+    public constructor ClassCur()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.4", message = "") public final class ClassNext {
+    public constructor ClassNext()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

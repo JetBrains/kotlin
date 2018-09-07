@@ -13,20 +13,11 @@ import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.constants.AnnotationValue
-import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun Deprecation.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
 
-fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? {
-    val annotation = (this as? DeprecatedByAnnotation)?.annotation ?: return null
-    val replaceWithAnnotation =
-        annotation.argumentValue(kotlin.Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value ?: return null
-    return replaceWithAnnotation.argumentValue(kotlin.ReplaceWith::expression.name)?.safeAs<StringValue>()?.value
-}
+fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? = (this as? DeprecatedByAnnotation)?.replaceWithValue
 
 internal fun createDeprecationDiagnostic(
     element: PsiElement, deprecation: Deprecation, languageVersionSettings: LanguageVersionSettings
