@@ -46,13 +46,12 @@ public expect open class IndexOutOfBoundsException : RuntimeException {
     constructor(message: String?)
 }
 
-@Suppress("NO_ACTUAL_FOR_EXPECT") // TODO: Introduce typealias in JVM
 public expect open class ConcurrentModificationException : RuntimeException {
     constructor()
     constructor(message: String?)
-    @Deprecated("The constructor is not supported on all platforms and will be removed from kotlin-stdlib-common soon.")
+    @Deprecated("The constructor is not supported on all platforms and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
     constructor(message: String?, cause: Throwable?)
-    @Deprecated("The constructor is not supported on all platforms and will be removed from kotlin-stdlib-common soon.")
+    @Deprecated("The constructor is not supported on all platforms and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
     constructor(cause: Throwable?)
 }
 
