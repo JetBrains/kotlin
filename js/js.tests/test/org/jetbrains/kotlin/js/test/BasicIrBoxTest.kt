@@ -80,55 +80,6 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/irRuntime/rangeExtensions.kt"
 )
 
-// Smaller set of sources missing a big part of stdlib
-// Intended to be used with coroutine tests where runtime is not cached
-private val smallerRuntimeSources = listOfKtFilesFrom(
-    "libraries/stdlib/js/src/kotlin/core.kt",
-    "libraries/stdlib/js/src/kotlin/js.core.kt",
-    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
-    "libraries/stdlib/js/src/kotlin/dynamic.kt",
-    "libraries/stdlib/js/src/kotlin/annotations.kt",
-    "libraries/stdlib/js/src/kotlin/reflect",
-    "libraries/stdlib/js/src/kotlin/annotationsJVM.kt",
-
-    "libraries/stdlib/js/runtime/primitiveCompanionObjects.kt",
-
-    "libraries/stdlib/src/kotlin/internal",
-    "libraries/stdlib/src/kotlin/contracts",
-    "libraries/stdlib/src/kotlin/annotations/Experimental.kt",
-    "libraries/stdlib/src/kotlin/util/Standard.kt",
-    "libraries/stdlib/src/kotlin/coroutines/experimental/Coroutines.kt",
-    "core/builtins/native/kotlin/Annotation.kt",
-    "core/builtins/native/kotlin/Number.kt",
-    "core/builtins/native/kotlin/Comparable.kt",
-    "core/builtins/src/kotlin/Annotations.kt",
-    "core/builtins/src/kotlin/internal/InternalAnnotations.kt",
-    "core/builtins/src/kotlin/internal/progressionUtil.kt",
-    "core/builtins/src/kotlin/Iterators.kt",
-    "core/builtins/src/kotlin/ProgressionIterators.kt",
-    "core/builtins/src/kotlin/Progressions.kt",
-    "core/builtins/src/kotlin/Range.kt",
-    "core/builtins/src/kotlin/Ranges.kt",
-    "core/builtins/src/kotlin/Unit.kt",
-    "core/builtins/src/kotlin/reflect",
-    "core/builtins/src/kotlin/Function.kt",
-
-
-    "core/builtins/native/kotlin/Collections.kt",
-    "core/builtins/native/kotlin/Iterator.kt",
-
-    "libraries/stdlib/common/src/kotlin/JsAnnotationsH.kt",
-
-    "libraries/stdlib/common/src/kotlin/CoroutinesExperimentalH.kt",
-    "libraries/stdlib/common/src/kotlin/CoroutinesIntrinsicsExperimentalH.kt",
-
-    "libraries/stdlib/js/irRuntime",
-    BasicBoxTest.COMMON_FILES_DIR_PATH
-) - listOfKtFilesFrom(
-    "libraries/stdlib/js/irRuntime/kotlinHacks.kt",
-    "libraries/stdlib/js/irRuntime/PlatformRandom.kt"
-)
-
 private var runtimeResult: Result? = null
 private val runtimeFile = File("js/js.translator/testData/out/irBox/testRuntime.js")
 
