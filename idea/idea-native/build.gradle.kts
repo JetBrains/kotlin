@@ -8,7 +8,7 @@ dependencies {
     compile(project(":idea:idea-jvm"))
     compile(project(":compiler:frontend"))
     compileOnly(intellijDep())
-    compile(project(":kotlin-native:kotlin-native-serializer"))
+    compile(project(":kotlin-native:kotlin-native-library-reader"))
 }
 
 sourceSets {

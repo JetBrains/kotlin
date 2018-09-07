@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-native:kotlin-native-serializer"))
+    compile(project(":kotlin-native:kotlin-native-library-reader"))
 
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":idea:idea-native"))
