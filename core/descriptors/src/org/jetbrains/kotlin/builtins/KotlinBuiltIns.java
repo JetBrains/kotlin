@@ -211,6 +211,7 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe longRange = rangesFqName("LongRange");
 
         public final FqName deprecated = fqName("Deprecated");
+        public final FqName deprecatedSinceKotlin = fqName("DeprecatedSinceKotlin");
         public final FqName deprecationLevel = fqName("DeprecationLevel");
         public final FqName replaceWith = fqName("ReplaceWith");
         public final FqName extensionFunctionType = fqName("ExtensionFunctionType");
@@ -1116,6 +1117,7 @@ public abstract class KotlinBuiltIns {
         return classFqNameEquals(descriptor, FQ_NAMES.cloneable);
     }
 
+    // TODO: support DeprecatedSinceKotlin
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor.getOriginal().getAnnotations().hasAnnotation(FQ_NAMES.deprecated)) return true;
 

@@ -178,7 +178,8 @@ public class KtPsiUtil {
             List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (KtAnnotationEntry annotation : annotationEntries) {
                 Name shortName = annotation.getShortName();
-                if (KotlinBuiltIns.FQ_NAMES.deprecated.shortName().equals(shortName)) {
+                if (KotlinBuiltIns.FQ_NAMES.deprecated.shortName().equals(shortName) ||
+                    KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin.shortName().equals(shortName)) {
                     return true;
                 }
             }
