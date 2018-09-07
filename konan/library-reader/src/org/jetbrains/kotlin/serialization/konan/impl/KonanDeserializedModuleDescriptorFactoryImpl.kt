@@ -73,7 +73,7 @@ internal class KonanDeserializedModuleDescriptorFactoryImpl(
 
         val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
-        val provider = createPackageFragmentProvider(
+        val provider = packageFragmentsFactory.createPackageFragmentProvider(
             library,
             packageAccessedHandler,
             libraryProto.packageFragmentNameList,
@@ -87,54 +87,4 @@ internal class KonanDeserializedModuleDescriptorFactoryImpl(
         return moduleDescriptor
     }
 
-    private fun createPackageFragmentProvider(
-        library: KonanLibrary,
-        packageAccessedHandler: PackageAccessedHandler?,
-        packageFragmentNames: List<String>,
-        storageManager: StorageManager,
-        moduleDescriptor: ModuleDescriptor,
-        configuration: DeserializationConfiguration
-    ): PackageFragmentProvider {
-
-        val deserializedPackageFragments = packageFragmentsFactory.createDeserializedPackageFragments(
-            library, packageFragmentNames, moduleDescriptor, packageAccessedHandler, storageManager
-        )
-
-        val syntheticPackageFragments = packageFragmentsFactory.createSyntheticPackageFragments(
-            library, deserializedPackageFragments, moduleDescriptor
-        )
-
-        val provider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments)
-
-        val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
-
-        val annotationAndConstantLoader = AnnotationAndConstantLoaderImpl(
-            moduleDescriptor,
-            notFoundClasses,
-            KonanSerializerProtocol
-        )
-
-        val components = DeserializationComponents(
-            storageManager,
-            moduleDescriptor,
-            configuration,
-            DeserializedClassDataFinder(provider),
-            annotationAndConstantLoader,
-            provider,
-            LocalClassifierTypeSettings.Default,
-            ErrorReporter.DO_NOTHING,
-            LookupTracker.DO_NOTHING,
-            NullFlexibleTypeDeserializer,
-            emptyList(),
-            notFoundClasses,
-            ContractDeserializer.DEFAULT,
-            extensionRegistryLite = KonanSerializerProtocol.extensionRegistry
-        )
-
-        for (packageFragment in deserializedPackageFragments) {
-            packageFragment.initialize(components)
-        }
-
-        return provider
-    }
 }
