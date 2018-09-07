@@ -273,7 +273,7 @@ allprojects {
     val commonCompilerArgs = listOfNotNull(
         "-Xallow-kotlin-package",
         "-Xread-deserialized-contracts",
-        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") },
+        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") }, // TODO: change to "-progressive" after bootstrap
         "-XXLanguage:-ReleaseCoroutines"
     )
 

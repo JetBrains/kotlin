@@ -293,7 +293,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         build("compileKotlinJvm6") {
             assertSuccessful()
-            assertContains("-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses", " -Xprogressive")
+            assertContains("-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses", " -progressive")
         }
     }
 

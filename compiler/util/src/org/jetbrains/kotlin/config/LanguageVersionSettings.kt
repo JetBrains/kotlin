@@ -138,7 +138,7 @@ enum class LanguageFeature(
      *
      *
      * # [enabledInProgressiveMode]
-     * If 'true', then this feature will be automatically enabled under '-Xprogressive' mode.
+     * If 'true', then this feature will be automatically enabled under '-progressive' mode.
      *
      * Restrictions for using this flag for particular feature follow from restrictions of the progressive mode:
      * - enabling it *must not* break compatibility with non-progressive compiler, i.e. code written under progressive
