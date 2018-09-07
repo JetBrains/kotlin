@@ -68,15 +68,13 @@ private val runtimeSources = listOfKtFilesFrom(
 
     // Full version is defined in stdlib
     // This file is useful for smaller subset of runtime sources
-    "libraries/stdlib/js/irRuntime/rangeExtensions.kt",
-
-    // TODO: Reuse coroutine code from common (and current JS BE?)
-    "libraries/stdlib/js/src/kotlin/coroutines.kt",
-    "libraries/stdlib/js/src/kotlin/coroutinesIntrinsics.kt",
-    "libraries/stdlib/src/kotlin/coroutines"
+    "libraries/stdlib/js/irRuntime/rangeExtensions.kt"
 ) + listOfKtFilesFrom(
-    "libraries/stdlib/src/kotlin/coroutines/experimental/SequenceBuilder.kt",
-    "libraries/stdlib/src/kotlin/coroutines/experimental/Coroutines.kt"
+    // TODO share more coroutine code between JS BEs
+    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/SequenceBuilder.kt",
+    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/Coroutines.kt",
+    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesExperimentalH.kt",
+    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesIntrinsicsExperimentalH.kt"
 )
 
 // Smaller set of sources missing a big part of stdlib
