@@ -86,15 +86,11 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
         baseClause == null -> false
         negatedClause == null && baseClause.isUsedAsExpression(context) -> false
         negatedClause != null && !negatedClause.isNullExpression() -> false
-        else -> baseClause.evaluatesTo(receiverExpression) || baseClause.hasFirstReceiverOf(receiverExpression) ||
-                receiverExpression is KtThisExpression && getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true ||
-                replaceableCallExpression()
-    }
-
-    private fun IfThenToSelectData.replaceableCallExpression(): Boolean {
-        val callExpression = baseClause as? KtCallExpression ?: return false
-        val arguments = callExpression.valueArguments.map { it.getArgumentExpression() }
-        return arguments.any { it?.evaluatesTo(receiverExpression) == true } && arguments.all { it is KtNameReferenceExpression }
+        baseClause.evaluatesTo(receiverExpression) -> true
+        baseClause.hasFirstReceiverOf(receiverExpression) -> true
+        baseClause.anyArgumentEvaluatesTo(receiverExpression) -> true
+        receiverExpression is KtThisExpression -> getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
+        else -> false
     }
 
     private fun KtSafeQualifiedExpression.renameLetParameter(editor: Editor) {

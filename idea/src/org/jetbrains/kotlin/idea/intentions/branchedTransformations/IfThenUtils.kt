@@ -106,6 +106,12 @@ fun KtThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
 fun KtExpression.evaluatesTo(other: KtExpression): Boolean =
     this.unwrapBlockOrParenthesis().text == other.text
 
+fun KtExpression.anyArgumentEvaluatesTo(argument: KtExpression): Boolean {
+    val callExpression = this as? KtCallExpression ?: return false
+    val arguments = callExpression.valueArguments.map { it.getArgumentExpression() }
+    return arguments.any { it?.evaluatesTo(argument) == true } && arguments.all { it is KtNameReferenceExpression }
+}
+
 fun KtExpression.convertToIfNotNullExpression(
     conditionLhs: KtExpression,
     thenClause: KtExpression,
