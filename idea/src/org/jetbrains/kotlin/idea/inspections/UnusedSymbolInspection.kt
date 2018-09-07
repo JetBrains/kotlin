@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -86,6 +87,12 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
             if (declaration.hasKotlinAdditionalAnnotation()) return true
             if (declaration is KtClass && declaration.declarations.any { it.hasKotlinAdditionalAnnotation() }) return true
+
+            // Some of the main-function-cases are covered by 'javaInspection.isEntryPoint(lightElement)' call
+            // but not all of them: light method for parameterless main still points to parameterless name
+            // that is not an actual entry point from Java language point of view
+            if (declaration.isMainFunction()) return true
+
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
