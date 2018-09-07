@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
 import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
+import org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt;
 
 public class Usage {
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
@@ -33,18 +34,22 @@ public class Usage {
 
     @NotNull
     public static <A extends CommonToolArguments> String render(@NotNull CLITool<A> tool, @NotNull A arguments) {
+        boolean extraHelp = arguments.getExtraHelp();
         StringBuilder sb = new StringBuilder();
         appendln(sb, "Usage: " + tool.executableScriptFileName() + " <options> <source files>");
-        appendln(sb, "where " + (arguments.getExtraHelp() ? "advanced" : "possible") + " options include:");
+        appendln(sb, "where " + (extraHelp ? "advanced" : "possible") + " options include:");
         KClass<? extends CommonToolArguments> kClass = JvmClassMappingKt.getKotlinClass(arguments.getClass());
         for (KCallable<?> callable : kClass.getMembers()) {
             if (!(callable instanceof KProperty1)) continue;
-            propertyUsage(sb, (KProperty1) callable, arguments.getExtraHelp());
+            propertyUsage(sb, (KProperty1) callable, extraHelp);
         }
 
-        if (arguments.getExtraHelp()) {
+        if (extraHelp) {
             appendln(sb, "");
             appendln(sb, "Advanced options are non-standard and may be changed or removed without any notice.");
+        }
+        else {
+            renderArgfileUsage(sb);
         }
 
         return sb.toString();
@@ -82,6 +87,17 @@ public class Usage {
 
         sb.append(" ");
         appendln(sb, argument.description().replace("\n", "\n" + StringsKt.repeat(" ", OPTION_NAME_PADDING_WIDTH)));
+    }
+
+    private static void renderArgfileUsage(@NotNull StringBuilder sb) {
+        int descriptionStart = sb.length() + OPTION_NAME_PADDING_WIDTH;
+        sb.append("  ");
+        sb.append(PreprocessCommandLineArgumentsKt.ARGFILE_ARGUMENT);
+        sb.append("<argfile>");
+        while (sb.length() < descriptionStart) {
+            sb.append(" ");
+        }
+        appendln(sb, "Expand compiler arguments from the given file, containing one argument or file path per line");
     }
 
     private static void appendln(@NotNull StringBuilder sb, @NotNull String string) {

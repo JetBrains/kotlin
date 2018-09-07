@@ -45,10 +45,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt.ARGFILE_ARGUMENT;
+
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static final String TESTDATA_DIR = "$TESTDATA_DIR$";
 
-    private static final String EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX = "-Xargfile=";
     private static final String BUILD_FILE_ARGUMENT_PREFIX = "-Xbuild-file=";
 
     public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
@@ -206,10 +207,8 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             return createTempFileWithPathsReplaced(argWithTestPathsReplaced, BUILD_FILE_ARGUMENT_PREFIX, ".xml", testDataDir, tempDir);
         }
 
-        if (arg.startsWith(EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX)) {
-            return createTempFileWithPathsReplaced(
-                    argWithTestPathsReplaced, EXPERIMENTAL_ARGFILE_ARGUMENT_PREFIX, "", testDataDir, tempDir
-            );
+        if (arg.startsWith(ARGFILE_ARGUMENT)) {
+            return createTempFileWithPathsReplaced(argWithTestPathsReplaced, ARGFILE_ARGUMENT, "", testDataDir, tempDir);
         }
 
         return argWithTestPathsReplaced;
