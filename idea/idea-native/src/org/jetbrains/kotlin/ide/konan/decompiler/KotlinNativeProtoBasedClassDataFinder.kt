@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.analyser.index
+package org.jetbrains.kotlin.ide.konan.decompiler
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
-//todo: Fix in Kotlin plugin
-class KonanProtoBasedClassDataFinder(
+class KotlinNativeProtoBasedClassDataFinder(
     proto: KonanProtoBuf.LinkDataPackageFragment,
     private val nameResolver: NameResolver,
     private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
@@ -28,6 +27,6 @@ class KonanProtoBasedClassDataFinder(
 
     override fun findClassData(classId: ClassId): ClassData? {
         val classProto = classIdToProto[classId] ?: return null
-        return ClassData(nameResolver, classProto, KonanMetadataVersion.DEFAULT_INSTANCE, classSource(classId))
+        return ClassData(nameResolver, classProto, KotlinNativeMetadataVersion.DEFAULT_INSTANCE, classSource(classId))
     }
 }

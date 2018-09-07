@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.ide.konan.index
 
 import com.intellij.util.indexing.FileBasedIndex
-import org.jetbrains.konan.analyser.index.KonanDescriptorManager
-import org.jetbrains.konan.analyser.index.KonanMetaFileType
+import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeDescriptorManager
+import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileType
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinFileIndexBase
 import org.jetbrains.kotlin.name.FqName
 
@@ -15,18 +15,18 @@ object KotlinNativeMetaFileIndex : KotlinFileIndexBase<KotlinNativeMetaFileIndex
 
     override fun getIndexer() = INDEXER
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KonanMetaFileType }
+    override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KotlinNativeMetaFileType }
 
     override fun getVersion() = VERSION
 
-    // this is to express intention to index all Kotlin/Native metadata files irrespectively to file size
-    override fun getFileTypesWithSizeLimitNotApplicable() = listOf(KonanMetaFileType)
+    // This is to express intention to index all Kotlin/Native metadata files irrespectively to file size:
+    override fun getFileTypesWithSizeLimitNotApplicable() = listOf(KotlinNativeMetaFileType)
 
     private const val VERSION = 4
 
     /*todo: check version?!*/
     private val INDEXER = indexer { fileContent ->
-        val fragment = KonanDescriptorManager.getInstance().getCachedPackageFragment(fileContent.file)
+        val fragment = KotlinNativeDescriptorManager.getInstance().getCachedPackageFragment(fileContent.file)
         FqName(fragment.fqName)
     }
 }

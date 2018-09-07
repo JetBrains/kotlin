@@ -3,12 +3,12 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.analyser.index;
+package org.jetbrains.kotlin.ide.konan.decompiler;
 
 import org.jetbrains.kotlin.idea.util.KotlinBinaryExtension;
 
-public class KonanMetaBinary extends KotlinBinaryExtension {
-    public KonanMetaBinary() {
-        super(KonanMetaFileType.INSTANCE);
+public class KotlinNativeMetaBinary extends KotlinBinaryExtension {
+    public KotlinNativeMetaBinary() {
+        super(KotlinNativeMetaFileType.INSTANCE);
     }
 }

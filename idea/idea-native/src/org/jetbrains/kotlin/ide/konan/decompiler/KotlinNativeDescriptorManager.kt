@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.analyser.index
+package org.jetbrains.kotlin.ide.konan.decompiler
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
@@ -12,12 +12,12 @@ import com.intellij.util.containers.ContainerUtil.createConcurrentWeakValueMap
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.serialization.konan.parsePackageFragment
 
-class KonanDescriptorManager : ApplicationComponent {
+class KotlinNativeDescriptorManager : ApplicationComponent {
 
     companion object {
-
         @JvmStatic
-        fun getInstance(): KonanDescriptorManager = ApplicationManager.getApplication().getComponent(KonanDescriptorManager::class.java)
+        fun getInstance(): KotlinNativeDescriptorManager =
+            ApplicationManager.getApplication().getComponent(KotlinNativeDescriptorManager::class.java)
     }
 
     private val protoCache = createConcurrentWeakValueMap<VirtualFile, KonanProtoBuf.LinkDataPackageFragment>()

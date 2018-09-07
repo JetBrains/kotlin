@@ -3,13 +3,12 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.analyser.index
+package org.jetbrains.kotlin.ide.konan.decompiler
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
-import org.jetbrains.konan.KonanDecompiledFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
@@ -30,8 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.IOException
 
-//todo: Fix in Kotlin plugin
-abstract class KonanMetadataDecompilerBase<out V : BinaryVersion>(
+abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
     private val fileType: FileType,
     private val targetPlatform: TargetPlatform,
     private val serializerProtocol: SerializerExtensionProtocol,
@@ -41,7 +39,13 @@ abstract class KonanMetadataDecompilerBase<out V : BinaryVersion>(
     stubVersion: Int
 ) : ClassFileDecompilers.Full() {
 
-    private val stubBuilder = KonanMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
+    private val stubBuilder =
+        KotlinNativeMetadataStubBuilder(
+            stubVersion,
+            fileType,
+            serializerProtocol,
+            ::readFileSafely
+        )
 
     private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
@@ -52,7 +56,12 @@ abstract class KonanMetadataDecompilerBase<out V : BinaryVersion>(
     override fun getStubBuilder() = stubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean) =
-        KotlinDecompiledFileViewProvider(manager, file, physical) { provider -> KonanDecompiledFile(provider, ::buildDecompiledText) }
+        KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
+            KotlinNativeDecompiledFile(
+                provider,
+                ::buildDecompiledText
+            )
+        }
 
     private fun readFileSafely(file: VirtualFile): FileWithMetadata? {
         if (!file.isValid) return null
@@ -75,7 +84,13 @@ abstract class KonanMetadataDecompilerBase<out V : BinaryVersion>(
 
         return when (file) {
             is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
-            is FileWithMetadata.Compatible -> decompiledText(file, targetPlatform, serializerProtocol, flexibleTypeDeserializer, renderer)
+            is FileWithMetadata.Compatible -> decompiledText(
+                file,
+                targetPlatform,
+                serializerProtocol,
+                flexibleTypeDeserializer,
+                renderer
+            )
             null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, invalidBinaryVersion)
         }
     }
@@ -99,7 +114,7 @@ sealed class FileWithMetadata {
     }
 }
 
-//todo: this function is extracted for KonanMetadataStubBuilder, that's the difference from Big Kotlin.
+//todo: this function is extracted for KotlinNativeMetadataStubBuilder, that's the difference from Big Kotlin.
 fun decompiledText(
     file: FileWithMetadata.Compatible, targetPlatform: TargetPlatform,
     serializerProtocol: SerializerExtensionProtocol,
@@ -107,7 +122,7 @@ fun decompiledText(
     renderer: DescriptorRenderer
 ): DecompiledText {
     val packageFqName = file.packageFqName
-    val resolver = KonanMetadataDeserializerForDecompiler(
+    val resolver = KotlinNativeMetadataDeserializerForDecompiler(
         packageFqName, file.proto, file.nameResolver,
         targetPlatform, serializerProtocol, flexibleTypeDeserializer
     )

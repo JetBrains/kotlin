@@ -58,7 +58,6 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
         )
 
         val moduleDescriptors = moduleContent.moduleInfo.createResolvedModuleDescriptors(
-            moduleContext.project,
             moduleContext.storageManager,
             moduleContext.module.builtIns,
             languageVersionSettings
