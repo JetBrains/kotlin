@@ -1,3 +1,3 @@
 fun useB() {
-    getB().x.hashCode()
+    getB().x.string()
 }
