@@ -245,7 +245,7 @@ public class FunctionCodegen {
             parentBodyCodegen.addAdditionalTask(new JvmStaticInCompanionObjectGenerator(functionDescriptor, origin, state, parentBodyCodegen));
         }
 
-        generateBridgeForMainFunctionIfNecessary(state, v, functionDescriptor, jvmSignature, origin);
+        generateBridgeForMainFunctionIfNecessary(state, v, functionDescriptor, jvmSignature, origin, methodContext.getParentContext());
 
         boolean isOpenSuspendInClass =
                 functionDescriptor.isSuspend() &&
@@ -848,7 +848,7 @@ public class FunctionCodegen {
         return parameter.getName().asString();
     }
 
-    private static void generateFacadeDelegateMethodBody(
+    public static void generateFacadeDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
             @NotNull MultifileClassFacadeContext context

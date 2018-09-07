@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
+import org.jetbrains.kotlin.codegen.context.MultifileClassFacadeContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
@@ -480,7 +481,8 @@ fun generateBridgeForMainFunctionIfNecessary(
     packagePartClassBuilder: ClassBuilder,
     functionDescriptor: FunctionDescriptor,
     signatureOfRealDeclaration: JvmMethodGenericSignature,
-    origin: JvmDeclarationOrigin
+    origin: JvmDeclarationOrigin,
+    parentContext: CodegenContext<*>
 ) {
     val originElement = origin.element ?: return
     if (functionDescriptor.name.asString() != "main" || !DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) return
@@ -491,6 +493,24 @@ fun generateBridgeForMainFunctionIfNecessary(
 
     if (!functionDescriptor.isSuspend && !isParameterless) return
     if (!state.mainFunctionDetector.isMain(unwrappedFunctionDescriptor, false, true)) return
+
+    val bridgeMethodVisitor = packagePartClassBuilder.newMethod(
+        Synthetic(originElement, functionDescriptor),
+        ACC_PUBLIC or ACC_STATIC or ACC_SYNTHETIC,
+        "main",
+        METHOD_DESCRIPTOR_FOR_MAIN, null, null
+    )
+
+    if (parentContext is MultifileClassFacadeContext) {
+        bridgeMethodVisitor.visitCode()
+        FunctionCodegen.generateFacadeDelegateMethodBody(
+            bridgeMethodVisitor,
+            Method("main", METHOD_DESCRIPTOR_FOR_MAIN),
+            parentContext
+        )
+        bridgeMethodVisitor.visitEnd()
+        return
+    }
 
     val lambdaInternalName =
         if (functionDescriptor.isSuspend)
@@ -504,12 +524,7 @@ fun generateBridgeForMainFunctionIfNecessary(
         else
             null
 
-    packagePartClassBuilder.newMethod(
-        Synthetic(originElement, functionDescriptor),
-        ACC_PUBLIC or ACC_STATIC or ACC_SYNTHETIC,
-        "main",
-        METHOD_DESCRIPTOR_FOR_MAIN, null, null
-    ).apply {
+    bridgeMethodVisitor.apply {
         visitCode()
 
         if (lambdaInternalName != null) {

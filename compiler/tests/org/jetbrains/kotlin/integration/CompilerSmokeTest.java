@@ -48,6 +48,13 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
     }
 
+    public void testHelloAppSuspendMainInMultifile() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
+        run("hello.run", "-cp", jar, "Hello.Foo", "O", "K");
+    }
+
     public void testHelloAppParameterlessMain() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 

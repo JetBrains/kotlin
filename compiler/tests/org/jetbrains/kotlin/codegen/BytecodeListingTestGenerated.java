@@ -332,6 +332,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/main"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("multifileSuspend.kt")
+        public void testMultifileSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/multifileSuspend.kt");
+        }
+
         @TestMetadata("parameterlessMain.kt")
         public void testParameterlessMain() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/main/parameterlessMain.kt");
