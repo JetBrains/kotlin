@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.gradle.ArgsInfo
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
@@ -95,7 +98,7 @@ class KotlinGradleProjectSettingsDataService : AbstractProjectDataService<Projec
             if (settings.useProjectSettings) null else settings
         }
         val languageVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.languageLevel }.singleOrNull()
-        val apiVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.apiLevel}.singleOrNull()
+        val apiVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.apiLevel }.singleOrNull()
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             if (languageVersion != null) {
                 this.languageVersion = languageVersion.versionString
@@ -144,6 +147,15 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
             val ideModule = modelsProvider.findIdeModule(moduleData) ?: continue
             val kotlinFacet = configureFacetByGradleModule(ideModule, modelsProvider, moduleNode, null) ?: continue
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
+        }
+
+        val property = GradlePropertiesFileUtils.readProperty(project, GradlePropertiesFileUtils.KOTLIN_CODE_STYLE_GRADLE_SETTING)
+        when (property) {
+            KotlinObsoleteCodeStyle.CODE_STYLE_SETTING ->
+                ProjectCodeStyleImporter.apply(project, KotlinObsoleteCodeStyle.INSTANCE)
+            KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING ->
+                ProjectCodeStyleImporter.apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
+            else -> return
         }
     }
 }
@@ -260,7 +272,7 @@ fun configureFacetByGradleModule(
     }
 
     val compilerVersion = moduleNode.findAll(BuildScriptClasspathData.KEY).firstOrNull()?.data?.let(::findKotlinPluginVersion)
-            ?: return null
+        ?: return null
     val platformKind = detectPlatformKindByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
 
     // TODO there should be a way to figure out the correct platform version
@@ -326,15 +338,7 @@ internal fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List
     arguments.classpath = if (newClasspath.isNotEmpty()) newClasspath.joinToString(File.pathSeparator) else null
 }
 
-private val gradlePropertyFiles = listOf("local.properties", "gradle.properties")
-
 internal fun findKotlinCoroutinesProperty(project: Project): String {
-    for (propertyFileName in gradlePropertyFiles) {
-        val propertyFile = project.baseDir.findChild(propertyFileName) ?: continue
-        val properties = Properties()
-        properties.load(propertyFile.inputStream)
-        properties.getProperty("kotlin.coroutines")?.let { return it }
-    }
-
-    return CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
+    return GradlePropertiesFileUtils.readProperty(project, "kotlin.coroutines")
+        ?: CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
 }
