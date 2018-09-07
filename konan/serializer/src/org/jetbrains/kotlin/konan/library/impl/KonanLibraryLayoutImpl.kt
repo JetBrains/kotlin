@@ -42,7 +42,7 @@ internal fun zippedKonanLibraryChecks(klibFile: File) {
     check(klibFile.exists) { "Could not find $klibFile." }
     check(klibFile.isFile) { "Expected $klibFile to be a regular file." }
 
-    val extension = klibFile.ext
+    val extension = klibFile.extension
     check(extension.isEmpty() || extension == KLIB_FILE_EXTENSION) { "Unexpected file ext: $extension" }
 }
 

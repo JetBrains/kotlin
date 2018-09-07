@@ -25,7 +25,7 @@ data class File constructor(internal val javaPath: Path) {
         get() = File(absolutePath)
     val name: String
         get() = javaPath.fileName.toString()
-    val ext: String
+    val extension: String
         get() = name.substringAfterLast('.', "")
     val parent: String
         get() = javaPath.parent.toString()

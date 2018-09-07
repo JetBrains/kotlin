@@ -47,7 +47,7 @@ internal class KotlinNativePluginSearchPathResolver(bundledLibraryPaths: Iterabl
         fun checkAsFile(file: File): Boolean = file.isFile
 
         fun checkAsDirectory(dir: File): Boolean =
-            dir.isDirectory && File(dir, "linkdata").listFilesOrEmpty.any { it.ext == KLIB_METADATA_FILE_EXTENSION }
+            dir.isDirectory && File(dir, "linkdata").listFilesOrEmpty.any { it.extension == KLIB_METADATA_FILE_EXTENSION }
 
         val candidatePath = candidate.path
         File(candidatePath.removeSuffix(KLIB_FILE_EXTENSION_WITH_DOT)).let { if (checkAsDirectory(it)) return it }
