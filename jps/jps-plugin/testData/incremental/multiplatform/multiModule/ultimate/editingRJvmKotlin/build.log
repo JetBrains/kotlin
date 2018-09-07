@@ -1,9 +1,17 @@
 ================ Step #1 create new service =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -47,9 +55,17 @@ Exit code: OK
 ================ Step #2 edit new service =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -97,9 +113,17 @@ Exit code: OK
 ================ Step #3 delete new service =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------

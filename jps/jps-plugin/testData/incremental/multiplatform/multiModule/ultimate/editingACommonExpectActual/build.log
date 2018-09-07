@@ -1,9 +1,17 @@
 ================ Step #1 create new service in aCommon =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -14,14 +22,22 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-[Module 'aJsServer' production] Expected function 'aCommon_platformDependentACommonNew' has no actual declaration in module
+[aJsServer] Expected function 'aCommon_platformDependentACommonNew' has no actual declaration in module
 
 ================ Step #2 create new service in aJvmClient =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -32,14 +48,22 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-[Module 'aJsServer' production] Expected function 'aCommon_platformDependentACommonNew' has no actual declaration in module
+[aJsServer] Expected function 'aCommon_platformDependentACommonNew' has no actual declaration in module
 
 ================ Step #3 create new service in aJvmServer =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -50,14 +74,22 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-[Module 'aJsServer' production] Expected function 'aCommon_platformDependentACommonNew' has no actual declaration in module
+[aJsServer] Expected function 'aCommon_platformDependentACommonNew' has no actual declaration in module
 
 ================ Step #4 create new service in aJsClient =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -68,14 +100,22 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-[Module 'aJsServer' production] Expected function 'aCommon_platformDependentACommonNew' has no actual declaration in module
+[aJsServer] Expected function 'aCommon_platformDependentACommonNew' has no actual declaration in module
 
 ================ Step #5 create new service in aJsServer =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -166,9 +206,17 @@ Exit code: NOTHING_DONE
 ================ Step #6 change new service in aCommon =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -309,9 +357,17 @@ Exit code: NOTHING_DONE
 ================ Step #7 change new service in aJvmClient: java =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -358,9 +414,17 @@ Exit code: NOTHING_DONE
 ================ Step #8 change new service in aJvmClient: kotlin =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -413,9 +477,17 @@ Exit code: NOTHING_DONE
 ================ Step #9 change new service in aJvmServer: java =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -462,9 +534,17 @@ Exit code: NOTHING_DONE
 ================ Step #10 change new service in aJvmServer: kotlin =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Exit code: NOTHING_DONE
 ------------------------------------------

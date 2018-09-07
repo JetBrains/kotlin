@@ -1,9 +1,17 @@
 ================ Step #1 create new service =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Compiling files:
   raJs/src/serviceRaJsNewImpl.kt
@@ -47,9 +55,17 @@ Exit code: NOTHING_DONE
 ================ Step #2 edit new service =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Building raJs
 Cleaning output files:
   out/production/raJs/raJs.js
@@ -98,9 +114,17 @@ Exit code: NOTHING_DONE
 ================ Step #3 delete new service =================
 
 Building aCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building bCommon
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonServer
+Exit code: NOTHING_DONE
+------------------------------------------
 Building aCommonClient
+Exit code: NOTHING_DONE
+------------------------------------------
 Cleaning output files:
   out/production/raJs/raJs.js
   out/production/raJs/raJs.meta.js

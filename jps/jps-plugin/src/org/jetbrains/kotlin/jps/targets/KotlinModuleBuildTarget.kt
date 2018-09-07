@@ -64,6 +64,8 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     abstract val isIncrementalCompilationEnabled: Boolean
 
+    open fun isEnabled(chunkCompilerArguments: CommonCompilerArguments): Boolean = true
+
     @Suppress("LeakingThis")
     val localCacheVersionManager = localCacheVersionManager(
         kotlinContext.dataPaths.getTargetDataRoot(jpsModuleBuildTarget),
