@@ -2,7 +2,6 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
-
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
@@ -395,6 +394,38 @@ class NewMultiplatformIT : BaseGradleIT() {
                     }.toSet(),
                     paths
                 )
+            }
+        }
+    }
+
+    @Test
+    fun testResolveMppProjectDependencyToMetadata() {
+        val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+        val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
+
+        val pathPrefix = "metadataDependency: "
+
+        with(appProject) {
+            setupWorkingDir()
+            libProject.setupWorkingDir()
+
+            libProject.projectDir.copyRecursively(projectDir.resolve(libProject.projectDir.name))
+            projectDir.resolve("settings.gradle").appendText("\ninclude '${libProject.projectDir.name}'")
+            gradleBuildScript().modify {
+                it.replace("'com.example:sample-lib:1.0'", "project(':${libProject.projectDir.name}')") +
+                        "\n" + """
+                        task('printMetadataFiles') {
+                           doFirst {
+                               configurations.getByName('commonMainImplementation$METADATA_CONFIGURATION_NAME_SUFFIX')
+                                   .files.each { println '$pathPrefix' + it.name }
+                           }
+                        }
+                        """.trimIndent()
+            }
+
+            build("printMetadataFiles") {
+                assertSuccessful()
+                assertContains(pathPrefix + "sample-lib-metadata-1.0.jar")
             }
         }
     }

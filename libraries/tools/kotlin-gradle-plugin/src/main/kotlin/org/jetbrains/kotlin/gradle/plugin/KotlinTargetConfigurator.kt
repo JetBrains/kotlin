@@ -173,7 +173,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         val runtimeOnlyConfiguration = configurations.maybeCreate(mainCompilation.runtimeOnlyConfigurationName)
 
-        configurations.maybeCreate(target.apiElementsConfigurationName).apply {
+        val apiElementsConfiguration = configurations.maybeCreate(target.apiElementsConfigurationName).apply {
             description = "API elements for main."
             isVisible = false
             isCanBeResolved = false
@@ -187,20 +187,21 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             usesPlatformOf(target)
         }
 
-        val runtimeElementsConfiguration = configurations.maybeCreate(target.runtimeElementsConfigurationName).apply {
-            description = "Elements of runtime for main."
-            isVisible = false
-            isCanBeConsumed = true
-            isCanBeResolved = false
-            attributes.attribute<Usage>(USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_RUNTIME_JARS))
-            if (mainCompilation is KotlinCompilationToRunnableFiles) {
+        if (mainCompilation is KotlinCompilationToRunnableFiles) {
+            val runtimeElementsConfiguration = configurations.maybeCreate(target.runtimeElementsConfigurationName).apply {
+                description = "Elements of runtime for main."
+                isVisible = false
+                isCanBeConsumed = true
+                isCanBeResolved = false
+                attributes.attribute<Usage>(USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_RUNTIME_JARS))
                 val runtimeConfiguration = configurations.maybeCreate(mainCompilation.deprecatedRuntimeConfigurationName)
                 extendsFrom(implementationConfiguration, runtimeOnlyConfiguration, runtimeConfiguration)
+                usesPlatformOf(target)
             }
-            usesPlatformOf(target)
+            defaultConfiguration.extendsFrom(runtimeElementsConfiguration)
+        } else {
+            defaultConfiguration.extendsFrom(apiElementsConfiguration)
         }
-
-        defaultConfiguration.extendsFrom(runtimeElementsConfiguration).usesPlatformOf(target)
 
         if (createTestCompilation) {
             val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
