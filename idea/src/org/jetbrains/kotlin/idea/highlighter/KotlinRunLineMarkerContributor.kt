@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -33,7 +34,7 @@ class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
 
         if (function.nameIdentifier != element) return null
 
-        val detector = MainFunctionDetector { someFunction ->
+        val detector = MainFunctionDetector(function.languageVersionSettings) { someFunction ->
             someFunction.resolveToDescriptorIfAny()
         }
 

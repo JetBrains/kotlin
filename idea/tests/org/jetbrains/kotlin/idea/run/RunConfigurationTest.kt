@@ -30,6 +30,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PsiTestUtil
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.search.allScope
@@ -69,7 +70,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                 val assertIsNotMain = "no" in options
 
                 val isMainFunction =
-                    MainFunctionDetector { it.resolveToDescriptorIfAny() }.isMain(function)
+                    MainFunctionDetector(LanguageVersionSettingsImpl.DEFAULT) { it.resolveToDescriptorIfAny() }.isMain(function)
 
                 if (assertIsMain) {
                     Assert.assertTrue("The function ${function.fqName?.asString()} should be main", isMainFunction)

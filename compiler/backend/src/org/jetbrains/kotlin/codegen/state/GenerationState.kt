@@ -181,7 +181,7 @@ class GenerationState private constructor(
         filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS
     )
     val bindingContext: BindingContext = bindingTrace.bindingContext
-    val mainFunctionDetector = MainFunctionDetector(bindingContext)
+    val mainFunctionDetector = MainFunctionDetector(bindingContext, languageVersionSettings)
     private val isIrBackend = configuration.get(JVMConfigurationKeys.IR) ?: false
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
         this.bindingContext,

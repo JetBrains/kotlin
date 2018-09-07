@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -31,17 +32,20 @@ import org.jetbrains.kotlin.types.Variance
 
 class MainFunctionDetector {
     private val getFunctionDescriptor: (KtNamedFunction) -> FunctionDescriptor?
+    private val languageVersionSettings: LanguageVersionSettings
 
     /** Assumes that the function declaration is already resolved and the descriptor can be found in the `bindingContext`.  */
-    constructor(bindingContext: BindingContext) {
+    constructor(bindingContext: BindingContext, languageVersionSettings: LanguageVersionSettings) {
         this.getFunctionDescriptor = { function ->
             bindingContext.get(BindingContext.FUNCTION, function)
                 ?: throw IllegalStateException("No descriptor resolved for " + function + " " + function.text)
         }
+        this.languageVersionSettings = languageVersionSettings
     }
 
-    constructor(functionResolver: (KtNamedFunction) -> FunctionDescriptor?) {
+    constructor(languageVersionSettings: LanguageVersionSettings, functionResolver: (KtNamedFunction) -> FunctionDescriptor?) {
         this.getFunctionDescriptor = functionResolver
+        this.languageVersionSettings = languageVersionSettings
     }
 
     fun hasMain(declarations: List<KtDeclaration>): Boolean {

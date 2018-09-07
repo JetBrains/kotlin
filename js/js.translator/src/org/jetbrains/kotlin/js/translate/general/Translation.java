@@ -463,7 +463,7 @@ public final class Translation {
     ) {
         StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext());
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext(), config.getLanguageVersionSettings());
         FunctionDescriptor functionDescriptor = mainFunctionDetector.getMainFunction(moduleDescriptor);
         if (functionDescriptor == null) {
             return null;
