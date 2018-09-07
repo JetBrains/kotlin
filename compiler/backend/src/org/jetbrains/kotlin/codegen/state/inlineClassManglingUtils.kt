@@ -27,6 +27,16 @@ fun getInlineClassSignatureManglingSuffix(descriptor: CallableMemberDescriptor):
     return getInlineClassSignatureManglingSuffix(actualValueParameterTypes)
 }
 
+fun shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor: CallableMemberDescriptor): Boolean {
+    if (descriptor !is ClassConstructorDescriptor) return false
+    if (Visibilities.isPrivate(descriptor.visibility)) return false
+    if (descriptor.constructedClass.isInline) return false
+
+    // TODO inner class in inline class
+
+    return descriptor.valueParameters.any { it.type.requiresFunctionNameMangling() }
+}
+
 fun getInlineClassSignatureManglingSuffix(valueParameterTypes: List<KotlinType>) =
     if (valueParameterTypes.none { it.requiresFunctionNameMangling() })
         null

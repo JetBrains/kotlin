@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.InlineClassManglingUtilsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
@@ -2256,10 +2257,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         descriptor = CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor);
 
-        // $default method is not private, so you need no accessor to call it
-        return CallUtilKt.usesDefaultArguments(resolvedCall)
-               ? descriptor
-               : context.accessibleDescriptor(descriptor, getSuperCallTarget(resolvedCall.getCall()));
+        if (CallUtilKt.usesDefaultArguments(resolvedCall)) {
+            // $default method is not private, so you need no accessor to call it
+            return descriptor;
+        }
+        else if (InlineClassManglingUtilsKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) {
+            // Constructors with inline class type value parameters should always be called using an accessor.
+            // NB this will require accessors even if the constructor itself is in a different module.
+            return new AccessorForConstructorDescriptor(
+                    (ClassConstructorDescriptor) descriptor,
+                    descriptor.getContainingDeclaration(),
+                    getSuperCallTarget(resolvedCall.getCall()),
+                    AccessorKind.NORMAL
+            );
+        }
+        else {
+            return context.accessibleDescriptor(descriptor, getSuperCallTarget(resolvedCall.getCall()));
+        }
     }
 
     @NotNull

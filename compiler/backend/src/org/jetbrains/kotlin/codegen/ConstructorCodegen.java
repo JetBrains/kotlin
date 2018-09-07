@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.context.ConstructorContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.InlineClassManglingUtilsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
@@ -108,7 +109,14 @@ public class ConstructorCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
+        registerAccessorForHiddenConstructorIfNeeded(constructorDescriptor);
+
         new DefaultParameterValueSubstitutor(state).generatePrimaryConstructorOverloadsIfNeeded(constructorDescriptor, v, memberCodegen, kind, myClass);
+    }
+
+    private void registerAccessorForHiddenConstructorIfNeeded(ClassConstructorDescriptor descriptor) {
+        if (!InlineClassManglingUtilsKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) return;
+        context.getAccessor(descriptor, AccessorKind.NORMAL, null, null);
     }
 
     public void generateSecondaryConstructor(
@@ -138,6 +146,8 @@ public class ConstructorCodegen {
         new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
                 constructor, constructorDescriptor, constructorDescriptor, kind, v, memberCodegen
         );
+
+        registerAccessorForHiddenConstructorIfNeeded(constructorDescriptor);
     }
 
     private void generateDelegatorToConstructorCall(

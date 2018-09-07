@@ -78,6 +78,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/constructorVararg.kt");
     }
 
+    @TestMetadata("constructorWithInlineClassParametersInBinaryDependencies.kt")
+    public void testConstructorWithInlineClassParametersInBinaryDependencies() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/constructorWithInlineClassParametersInBinaryDependencies.kt");
+    }
+
     @TestMetadata("copySamOnInline.kt")
     public void testCopySamOnInline() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/copySamOnInline.kt");

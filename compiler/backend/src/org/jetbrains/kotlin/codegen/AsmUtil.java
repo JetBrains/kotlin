@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.InlineClassManglingUtilsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.*;
@@ -399,6 +400,14 @@ public class AsmUtil {
 
         if (memberDescriptor instanceof FunctionDescriptor &&
             isInlineClassWrapperConstructor((FunctionDescriptor) memberDescriptor, kind)) {
+            return ACC_PRIVATE;
+        }
+
+        if (kind != OwnerKind.ERASED_INLINE_CLASS &&
+            memberDescriptor instanceof ConstructorDescriptor &&
+            !(memberDescriptor instanceof AccessorForConstructorDescriptor) &&
+            InlineClassManglingUtilsKt.shouldHideConstructorDueToInlineClassTypeValueParameters((ConstructorDescriptor) memberDescriptor)
+        ) {
             return ACC_PRIVATE;
         }
 

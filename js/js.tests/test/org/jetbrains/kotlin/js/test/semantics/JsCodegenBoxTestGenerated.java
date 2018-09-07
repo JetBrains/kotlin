@@ -11538,6 +11538,69 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassType.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class HiddenConstructor extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInHiddenConstructor() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/hiddenConstructor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("constructorWithDefaultParameters.kt")
+            public void testConstructorWithDefaultParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParameters.kt");
+            }
+
+            @TestMetadata("delegatingSuperConstructorCall.kt")
+            public void testDelegatingSuperConstructorCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCall.kt");
+            }
+
+            @TestMetadata("delegatingSuperConstructorCallInSecondaryConstructor.kt")
+            public void testDelegatingSuperConstructorCallInSecondaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructor.kt");
+            }
+
+            @TestMetadata("delegatingThisConstructorCall.kt")
+            public void testDelegatingThisConstructorCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCall.kt");
+            }
+
+            @TestMetadata("enumClassConstructor.kt")
+            public void testEnumClassConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructor.kt");
+            }
+
+            @TestMetadata("innerClassConstructor.kt")
+            public void testInnerClassConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructor.kt");
+            }
+
+            @TestMetadata("primaryConstructor.kt")
+            public void testPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructor.kt");
+            }
+
+            @TestMetadata("privateConstructor.kt")
+            public void testPrivateConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructor.kt");
+            }
+
+            @TestMetadata("sealedClassConstructor.kt")
+            public void testSealedClassConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructor.kt");
+            }
+
+            @TestMetadata("secondaryConstructor.kt")
+            public void testSecondaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/innerNested")

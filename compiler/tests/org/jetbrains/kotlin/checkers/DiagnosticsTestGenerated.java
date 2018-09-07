@@ -10872,6 +10872,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclarationDisabled.kt");
             }
 
+            @TestMetadata("constructorsJvmSignaturesClash.kt")
+            public void testConstructorsJvmSignaturesClash() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/constructorsJvmSignaturesClash.kt");
+            }
+
             @TestMetadata("delegatedPropertyInInlineClass.kt")
             public void testDelegatedPropertyInInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/delegatedPropertyInInlineClass.kt");
