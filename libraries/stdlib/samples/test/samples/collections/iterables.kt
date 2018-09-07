@@ -17,7 +17,6 @@
 package samples.collections
 
 import samples.*
-import kotlin.coroutines.experimental.buildIterator
 
 @RunWith(Enclosed::class)
 class Iterables {

@@ -2,8 +2,6 @@ package samples.collections
 
 import samples.*
 import kotlin.test.*
-import kotlin.coroutines.experimental.buildIterator
-import kotlin.coroutines.experimental.buildSequence
 
 @RunWith(Enclosed::class)
 class Sequences {
