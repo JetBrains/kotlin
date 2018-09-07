@@ -14,12 +14,12 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.jps.model.expectedByModules
+import org.jetbrains.kotlin.jps.model.isTestModule
 import org.jetbrains.kotlin.jps.model.sourceSetModules
 import java.io.File
 
@@ -54,8 +54,10 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
         }
 
         // new multiplatform model support:
-        module.sourceSetModules.forEach { sourceSetModule ->
-            addModuleSourceRoots(result, sourceSetModule, target)
+        if (target.isTests == module.isTestModule) {
+            module.sourceSetModules.forEach { sourceSetModule ->
+                addModuleSourceRoots(result, sourceSetModule, target)
+            }
         }
 
         // legacy multiplatform model support:

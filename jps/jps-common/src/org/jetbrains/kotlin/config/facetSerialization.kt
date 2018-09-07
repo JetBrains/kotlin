@@ -131,6 +131,7 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
                 }
             } else null
         } ?: KotlinModuleKind.DEFAULT
+        isTestModule = element.getAttributeValue("isTestModule")?.toBoolean() ?: false
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)
@@ -289,6 +290,7 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     if (kind != KotlinModuleKind.DEFAULT) {
         element.addContent(Element("newMppModelJpsModuleKind").apply { addContent(kind.name) })
+        element.setAttribute("isTestModule", isTestModule.toString())
     }
     productionOutputPath?.let {
         if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
