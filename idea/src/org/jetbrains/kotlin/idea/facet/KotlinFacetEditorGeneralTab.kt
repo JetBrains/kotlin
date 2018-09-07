@@ -147,13 +147,13 @@ class KotlinFacetEditorGeneralTab(
             compilerConfigurable.reset()
         }
 
-        private val chosenPlatform: IdePlatform<*, *>?
+        val chosenPlatform: IdePlatform<*, *>?
             get() = targetPlatformComboBox.selectedItemTyped
     }
 
     inner class ArgumentConsistencyValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val platform = editor.targetPlatformComboBox.selectedItemTyped ?: return ValidationResult.OK
+            val platform = editor.chosenPlatform ?: return ValidationResult.OK
             val primaryArguments = platform.createArguments().apply {
                 editor.compilerConfigurable.applyTo(
                         this,
@@ -270,7 +270,7 @@ class KotlinFacetEditorGeneralTab(
 
     override fun isModified(): Boolean {
         if (editor.useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
-        if (editor.targetPlatformComboBox.selectedItemTyped != configuration.settings.platform) return true
+        if (editor.chosenPlatform != configuration.settings.platform) return true
         return !editor.useProjectSettingsCheckBox.isSelected && editor.compilerConfigurable.isModified
     }
 
@@ -288,7 +288,7 @@ class KotlinFacetEditorGeneralTab(
             editor.compilerConfigurable.apply()
             with(configuration.settings) {
                 useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
-                editor.targetPlatformComboBox.selectedItemTyped?.let {
+                editor.chosenPlatform?.let {
                     if (it != platform) {
                         val platformArguments = when {
                             it.isJvm -> editor.compilerConfigurable.k2jvmCompilerArguments
