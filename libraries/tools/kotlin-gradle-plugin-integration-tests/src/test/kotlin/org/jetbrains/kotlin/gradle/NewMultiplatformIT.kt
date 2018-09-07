@@ -551,4 +551,29 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTasksExecuted(hostTestTask)
         }
     }
+
+    @Test
+    fun testCinterop() = with(Project("new-mpp-native-cinterop", gradleVersion)) {
+        val host = nativeHostTargetName
+        build(":projectLibrary:build") {
+            assertSuccessful()
+            assertTasksExecuted(":projectLibrary:cinteropStdio${host.capitalize()}")
+            assertTrue(output.contains("Project test"), "No test output found")
+            assertFileExists("projectLibrary/build/classes/kotlin/$host/main/projectLibrary-cinterop-stdio.klib")
+        }
+
+        build(":publishedLibrary:build", ":publishedLibrary:publish") {
+            assertSuccessful()
+            assertTasksExecuted(":publishedLibrary:cinteropStdio${host.capitalize()}")
+            assertTrue(output.contains("Published test"), "No test output found")
+            assertFileExists("publishedLibrary/build/classes/kotlin/$host/main/publishedLibrary-cinterop-stdio.klib")
+            assertFileExists("repo/org/example/publishedLibrary-$host/1.0/publishedLibrary-$host-1.0-cinterop-stdio.klib")
+        }
+
+        build(":build") {
+            assertSuccessful()
+            assertTrue(output.contains("Dependent: Project print"), "No test output found")
+            assertTrue(output.contains("Dependent: Published print"), "No test output found")
+        }
+    }
 }

@@ -1,0 +1,49 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url  "http://dl.bintray.com/kotlin/kotlinx.html/" }
+    maven { url 'repo' }
+}
+
+kotlin {
+    sourceSets {
+        allNative {
+            dependencies {
+                implementation project(':projectLibrary')
+                implementation 'org.example:publishedLibrary:1.0'
+            }
+        }
+        nativeTest
+
+        macos64Main { dependsOn sourceSets.allNative }
+        linux64Main { dependsOn sourceSets.allNative }
+        mingw64Main { dependsOn sourceSets.allNative }
+
+        macos64Test { dependsOn sourceSets.nativeTest }
+        linux64Test { dependsOn sourceSets.nativeTest }
+        mingw64Test { dependsOn sourceSets.nativeTest }
+    }
+
+    targets {
+        fromPreset(presets.macosX64, 'macos64')
+        fromPreset(presets.linuxX64, 'linux64')
+        fromPreset(presets.mingwX64, 'mingw64')
+
+        configure([macos64, linux64, mingw64]) {
+            compilations.main.outputKinds ['EXECUTABLE']
+        }
+    }
+}

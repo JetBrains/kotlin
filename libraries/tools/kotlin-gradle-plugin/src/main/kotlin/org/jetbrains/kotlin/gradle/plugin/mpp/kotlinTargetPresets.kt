@@ -302,3 +302,6 @@ internal val KonanTarget.presetName: String
         KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
         else -> lowerCamelCaseName(*this.name.split('_').toTypedArray())
     }
+
+internal val KotlinNativeCompilation.isMainCompilation: Boolean
+    get() = name == KotlinCompilation.MAIN_COMPILATION_NAME

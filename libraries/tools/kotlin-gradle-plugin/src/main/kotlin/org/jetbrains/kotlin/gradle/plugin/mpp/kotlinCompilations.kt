@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
+import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
@@ -269,6 +271,9 @@ class KotlinNativeCompilation(
     override val output: SourceSetOutput
 ) : AbstractKotlinCompilation(target, name) {
 
+    private val project: Project
+        get() = target.project
+
     // A FileCollection containing source files from all source sets used by this compilation
     // (taking into account dependencies between source sets). Used by both compilation
     // and linking tasks.
@@ -278,6 +283,8 @@ class KotlinNativeCompilation(
     var isTestCompilation = false
 
     var friendCompilationName: String? = null
+
+    var interopFiles: FileCollection = project.files()
 
     internal val friendCompilation: KotlinNativeCompilation?
         get() = friendCompilationName?.let {
@@ -319,6 +326,24 @@ class KotlinNativeCompilation(
 
     var entryPoint: String? = null
     fun entryPoint(value: String) { entryPoint = value }
+
+    // Interop DSL.
+    val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
+        DefaultCInteropSettings(project, cinteropName,this)
+    }
+
+    var linkerOpts = mutableListOf<String>()
+
+    fun cinterops(action: NamedDomainObjectContainer<DefaultCInteropSettings>.() -> Unit) = cinterops.action()
+    fun cinterops(action: Closure<Unit>) = cinterops(ConfigureUtil.configureUsing(action))
+    fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
+
+    fun linkerOpts(vararg values: String) = linkerOpts(values.toList())
+    fun linkerOpts(values: List<String>) {
+        linkerOpts.addAll(values)
+    }
+
+    // Task accessors.
 
     fun findLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeCompile? = binaryTasks[kind to buildType]
 
@@ -381,7 +406,6 @@ class KotlinNativeCompilation(
         // TODO: support optional expectations
         allSources += sourceSet.kotlin
     }
-
 }
 
 private object CompilationSourceSetUtil {

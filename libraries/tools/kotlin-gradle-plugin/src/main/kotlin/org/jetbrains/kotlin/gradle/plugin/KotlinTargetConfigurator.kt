@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -387,9 +388,6 @@ open class KotlinNativeTargetConfigurator(
     private val Collection<*>.isDimensionVisible: Boolean
         get() = size > 1
 
-    private val KotlinNativeCompilation.isMainCompilation: Boolean
-        get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
-
     private fun Project.createTestTask(compilation: KotlinNativeCompilation, testExecutableLinkTask: KotlinNativeCompile) {
         val compilationSuffix = compilation.name.takeIf { it != KotlinCompilation.TEST_COMPILATION_NAME }.orEmpty()
         val taskName = lowerCamelCaseName(compilation.target.targetName, compilationSuffix, testTaskNameSuffix)
@@ -430,7 +428,7 @@ open class KotlinNativeTargetConfigurator(
         return buildDir.resolve("bin/$targetSubDirectory${compilation.name}/$buildTypeSubDirectory/$kindSubDirectory")
     }
 
-    private fun Project.klibOutputDirectory(
+    private fun Project. klibOutputDirectory(
         compilation: KotlinNativeCompilation
     ): File {
         val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
@@ -481,7 +479,6 @@ open class KotlinNativeTargetConfigurator(
 
     private fun Project.createBinaryLinkTasks(compilation: KotlinNativeCompilation) = whenEvaluated {
         val konanTarget = compilation.target.konanTarget
-        val buildTypes = compilation.buildTypes
         val availableOutputKinds = compilation.outputKinds.filter { it.availableFor(konanTarget) }
         val linkAll = project.tasks.maybeCreate(compilation.linkAllTaskName)
 
@@ -506,6 +503,7 @@ open class KotlinNativeTargetConfigurator(
                     registerOutputFiles(binaryOutputDirectory(buildType, kind, compilation))
                     addCompilerPlugins()
 
+                    dependsOn(compilation.compileKotlinTaskName)
                     dependsOnCompilerDownloading()
                     linkAll.dependsOn(this)
                 }
@@ -523,7 +521,12 @@ open class KotlinNativeTargetConfigurator(
         }
     }
 
-    private fun Project.createKlibPublishableArtifact(compilation: KotlinNativeCompilation, compileTask: KotlinNativeCompile) {
+    private fun Project.createKlibArtifact(
+        compilation: KotlinNativeCompilation,
+        artifactFile: File,
+        classifier: String?,
+        producingTask: Task
+    ) {
         if (!compilation.target.konanTarget.enabledOnCurrentHost) {
             return
         }
@@ -533,10 +536,10 @@ open class KotlinNativeTargetConfigurator(
             compilation.name,
             "klib",
             "klib",
-            null,
+            classifier,
             Date(),
-            compileTask.outputFile.get(),
-            compileTask
+            artifactFile,
+            producingTask
         )
         project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
 
@@ -545,6 +548,17 @@ open class KotlinNativeTargetConfigurator(
             attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
         }
     }
+
+    private fun Project.createRegularKlibArtifact(
+        compilation: KotlinNativeCompilation,
+        compileTask: KotlinNativeCompile
+    ) = createKlibArtifact(compilation, compileTask.outputFile.get(), null, compileTask)
+
+    private fun Project.createCInteropKlibArtifact(
+        interop: DefaultCInteropSettings,
+        interopTask: CInteropProcess
+    ) = createKlibArtifact(interop.compilation, interopTask.outputFile, "cinterop-${interop.name}", interopTask)
+
 
     private fun Project.createKlibCompilationTask(compilation: KotlinNativeCompilation) {
         val compileTask = tasks.create(
@@ -577,7 +591,29 @@ open class KotlinNativeTargetConfigurator(
                 dependsOn(compileTask)
                 dependsOn(compilation.linkAllTaskName)
             }
-            createKlibPublishableArtifact(compilation, compileTask)
+            createRegularKlibArtifact(compilation, compileTask)
+        }
+    }
+
+    private fun Project.createCInteropTasks(compilation: KotlinNativeCompilation) {
+        compilation.cinterops.all { interop ->
+            val interopTask = tasks.create(interop.interopProcessingTaskName, CInteropProcess::class.java).apply {
+                settings = interop
+                destinationDir = provider { klibOutputDirectory(compilation) }
+                group = INTEROP_GROUP
+                description =  "Generates Kotlin/Native interop library '${interop.name}' " +
+                        "for compilation '${compilation.name}'" +
+                        "of target '${konanTarget.name}'."
+                enabled = compilation.target.konanTarget.enabledOnCurrentHost
+
+                dependsOnCompilerDownloading()
+                val interopOutput = project.files(outputFileProvider).builtBy(this)
+                with(compilation) {
+                    interopFiles += interopOutput
+                    output.tryAddClassesDir { interopOutput }
+                }
+            }
+            createCInteropKlibArtifact(interop, interopTask)
         }
     }
 
@@ -585,6 +621,7 @@ open class KotlinNativeTargetConfigurator(
         tasks.create(target.artifactsTaskName)
         target.compilations.all {
             createKlibCompilationTask(it)
+            createCInteropTasks(it)
             createBinaryLinkTasks(it)
         }
 
@@ -598,6 +635,10 @@ open class KotlinNativeTargetConfigurator(
 
     object NativeArtifactFormat {
         const val KLIB = "org.jetbrains.kotlin.klib"
+    }
+
+    companion object {
+        const val INTEROP_GROUP = "interop"
     }
 }
 
