@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.MavenComparableVersion
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
@@ -111,6 +109,30 @@ private data class DeprecatedExperimentalCoroutine(
             "Experimental coroutines support will be dropped in 1.4"
         else
             "Experimental coroutine cannot be used with API version 1.3"
+}
+
+private data class DeprecatedOperatorMod(
+    val languageVersionSettings: LanguageVersionSettings,
+    val currentDeprecation: Deprecation
+) : Deprecation {
+    init {
+        assert(shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
+            "Deprecation created for mod that shouldn't have any deprecations; languageVersionSettings: $languageVersionSettings"
+        }
+    }
+
+    override val deprecationLevel: DeprecationLevelValue
+        get() = when (languageVersionSettings.apiVersion) {
+            ApiVersion.KOTLIN_1_1, ApiVersion.KOTLIN_1_2 -> WARNING
+            ApiVersion.KOTLIN_1_3 -> ERROR
+            else -> ERROR
+        }
+
+    override val message: String?
+        get() = currentDeprecation.message
+
+    override val target: DeclarationDescriptor
+        get() = currentDeprecation.target
 }
 
 private data class DeprecatedByVersionRequirement(
@@ -293,10 +315,9 @@ class DeprecationResolver(
 
     private fun DeclarationDescriptor.getOwnDeprecations(): List<Deprecation> {
         // The problem is that declaration `mod` in built-ins has @Deprecated annotation but actually it was deprecated only in version 1.1
-        if (this is FunctionDescriptor && this.isOperatorMod() && KotlinBuiltIns.isUnderKotlinPackage(this)) {
-            if (!shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
-                return emptyList()
-            }
+        val isBuiltInOperatorMod = this is FunctionDescriptor && this.isOperatorMod() && KotlinBuiltIns.isUnderKotlinPackage(this)
+        if (isBuiltInOperatorMod && !shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
+            return emptyList()
         }
 
         val result = SmartList<Deprecation>()
@@ -306,8 +327,13 @@ class DeprecationResolver(
                 ?: target.annotations.findAnnotation(JAVA_DEPRECATED)
             if (annotation != null) {
                 val deprecatedByAnnotation = DeprecatedByAnnotation(annotation, target)
-                val deprecation = when (target) {
-                    is TypeAliasConstructorDescriptor -> DeprecatedTypealiasByAnnotation(target.typeAliasDescriptor, deprecatedByAnnotation)
+                val deprecation = when {
+                    target is TypeAliasConstructorDescriptor ->
+                        DeprecatedTypealiasByAnnotation(target.typeAliasDescriptor, deprecatedByAnnotation)
+
+                    isBuiltInOperatorMod ->
+                        DeprecatedOperatorMod(languageVersionSettings, deprecatedByAnnotation)
+
                     else -> deprecatedByAnnotation
                 }
                 result.add(deprecation)

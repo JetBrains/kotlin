@@ -14156,6 +14156,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public void testResolveToModWhenNoOperatorRemFeature() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorRem/resolveToModWhenNoOperatorRemFeature.kt");
             }
+
+            @TestMetadata("warningOnExplicitModCall1_1.kt")
+            public void testWarningOnExplicitModCall1_1() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorRem/warningOnExplicitModCall1_1.kt");
+            }
+
+            @TestMetadata("warningOnExplicitModCall1_2.kt")
+            public void testWarningOnExplicitModCall1_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorRem/warningOnExplicitModCall1_2.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/operatorsOverloading")
