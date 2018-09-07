@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.gradle.internal;
+package org.jetbrains.kotlin.ide.konan.gradle;
 
 import com.intellij.codeInspection.LocalInspectionEP;
 import com.intellij.openapi.components.ApplicationComponent;

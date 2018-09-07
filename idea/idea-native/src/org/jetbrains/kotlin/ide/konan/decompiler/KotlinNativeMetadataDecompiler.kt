@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.analyser.index
+package org.jetbrains.kotlin.ide.konan.decompiler
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeConsumer
@@ -15,30 +15,32 @@ import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.serialization.konan.KonanSerializerProtocol
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 
-class KonanMetadataDecompiler : KonanMetadataDecompilerBase<KonanMetadataVersion>(
-    KonanMetaFileType, KonanPlatform, KonanSerializerProtocol, NullFlexibleTypeDeserializer,
-    KonanMetadataVersion.DEFAULT_INSTANCE, KonanMetadataVersion.INVALID_VERSION, KonanMetaFileType.STUB_VERSION
+class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<KotlinNativeMetadataVersion>(
+    KotlinNativeMetaFileType, KonanPlatform, KonanSerializerProtocol, NullFlexibleTypeDeserializer,
+    KotlinNativeMetadataVersion.DEFAULT_INSTANCE,
+    KotlinNativeMetadataVersion.INVALID_VERSION,
+    KotlinNativeMetaFileType.STUB_VERSION
 ) {
 
     override fun doReadFile(file: VirtualFile): FileWithMetadata? {
-        val proto = KonanDescriptorManager.getInstance().getCachedPackageFragment(file)
+        val proto = KotlinNativeDescriptorManager.getInstance().getCachedPackageFragment(file)
         return FileWithMetadata.Compatible(proto, KonanSerializerProtocol) //todo: check version compatibility
     }
 }
 
-class KonanMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
+class KotlinNativeMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatible(): Boolean = true //todo: ?
 
     companion object {
         @JvmField
-        val DEFAULT_INSTANCE = KonanMetadataVersion(1, 1, 0)
+        val DEFAULT_INSTANCE = KotlinNativeMetadataVersion(1, 1, 0)
 
         @JvmField
-        val INVALID_VERSION = KonanMetadataVersion()
+        val INVALID_VERSION = KotlinNativeMetadataVersion()
     }
 }
 
-object KonanMetaFileType : FileType {
+object KotlinNativeMetaFileType : FileType {
     override fun getName() = "KNM"
     override fun getDescription() = "Kotlin/Native Metadata"
     override fun getDefaultExtension() = KLIB_METADATA_FILE_EXTENSION
@@ -50,7 +52,7 @@ object KonanMetaFileType : FileType {
     const val STUB_VERSION = 2
 }
 
-class KonanMetaFileTypeFactory : FileTypeFactory() {
+class KotlinNativeMetaFileTypeFactory : FileTypeFactory() {
 
-    override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(KonanMetaFileType, KonanMetaFileType.defaultExtension)
+    override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(KotlinNativeMetaFileType, KotlinNativeMetaFileType.defaultExtension)
 }

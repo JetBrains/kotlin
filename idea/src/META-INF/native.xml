@@ -1,26 +1,26 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
     <application-components>
         <component>
-            <implementation-class>org.jetbrains.konan.KonanApplicationComponent</implementation-class>
+            <implementation-class>org.jetbrains.kotlin.ide.konan.KotlinNativeApplicationComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>org.jetbrains.konan.analyser.index.KonanDescriptorManager</implementation-class>
+            <implementation-class>org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeDescriptorManager</implementation-class>
         </component>
     </application-components>
 
     <extensions defaultExtensionNs="com.intellij">
-        <psi.classFileDecompiler implementation="org.jetbrains.konan.analyser.index.KonanMetadataDecompiler"/>
+        <psi.classFileDecompiler implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetadataDecompiler"/>
 
         <fileType.fileViewProviderFactory filetype="KNM"
                                           implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
         <filetype.stubBuilder filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
         <filetype.decompiler filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
-        <fileTypeFactory implementation="org.jetbrains.konan.analyser.index.KonanMetaFileTypeFactory"/>
+        <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileTypeFactory"/>
         <fileBasedIndex implementation="org.jetbrains.kotlin.ide.konan.index.KotlinNativeMetaFileIndex"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <binaryExtension implementation="org.jetbrains.konan.analyser.index.KonanMetaBinary"/>
+        <binaryExtension implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaBinary"/>
         <idePlatformKind implementation="org.jetbrains.kotlin.ide.konan.NativeIdePlatformKind"/>
         <idePlatformKindTooling implementation="org.jetbrains.kotlin.ide.konan.NativeIdePlatformKindTooling"/>
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.ide.konan.NativePlatformKindResolution"/>

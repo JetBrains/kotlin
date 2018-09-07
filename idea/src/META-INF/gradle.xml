@@ -14,7 +14,7 @@
     <!-- NATIVE PART -->
     <application-components>
         <component>
-            <implementation-class>org.jetbrains.konan.gradle.internal.KotlinNativeIdeInitializer</implementation-class>
+            <implementation-class>org.jetbrains.kotlin.ide.konan.gradle.KotlinNativeIdeInitializer</implementation-class>
         </component>
     </application-components>
     <!-- /NATIVE PART -->

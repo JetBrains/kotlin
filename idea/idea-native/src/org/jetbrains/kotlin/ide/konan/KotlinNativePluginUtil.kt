@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.serialization.konan.KonanResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.StorageManager
 
-const val KONAN_CURRENT_ABI_VERSION = 1
+const val KOTLIN_NATIVE_CURRENT_ABI_VERSION = 1
 
 fun createFileStub(project: Project, text: String): PsiFileStub<*> {
     val virtualFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, text)
@@ -41,13 +41,12 @@ fun createFileStub(project: Project, text: String): PsiFileStub<*> {
 fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
 
 fun ModuleInfo.createResolvedModuleDescriptors(
-    project: Project,
     storageManager: StorageManager,
     builtIns: KotlinBuiltIns,
     languageVersionSettings: LanguageVersionSettings
 ): KonanResolvedModuleDescriptors {
 
-    // This is to preserve "capabilities" from the original IntelliJ LibraryInfo:
+    // This is to preserve "capabilities" from the original IDEA LibraryInfo:
     val libraryMap =
         this.dependencies().filterIsInstance<LibraryInfo>().flatMap { dependency ->
             if (dependency.platform == KonanPlatform) {
@@ -62,7 +61,7 @@ fun ModuleInfo.createResolvedModuleDescriptors(
     val libraryPaths = libraryMap.keys.toList()
 
     val resolvedLibraries = KotlinNativePluginSearchPathResolver(libraryPaths)
-        .libraryResolver(KONAN_CURRENT_ABI_VERSION)
+        .libraryResolver(KOTLIN_NATIVE_CURRENT_ABI_VERSION)
         .resolveWithDependencies(libraryPaths)
 
     return DefaultResolvedDescriptorsFactory.createResolved(
@@ -71,6 +70,6 @@ fun ModuleInfo.createResolvedModuleDescriptors(
         builtIns,
         languageVersionSettings,
         null
-        // This is to preserve "capabilities" from the original IntelliJ LibraryInfo:
-    ) { konanLibrary -> libraryMap[konanLibrary.libraryFile.path]?.capabilities ?: emptyMap() }
+        // This is to preserve "capabilities" from the original IDEA LibraryInfo:
+    ) { library -> libraryMap[library.libraryFile.path]?.capabilities ?: emptyMap() }
 }

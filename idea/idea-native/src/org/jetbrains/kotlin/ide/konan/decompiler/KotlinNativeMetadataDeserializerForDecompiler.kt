@@ -4,7 +4,7 @@
  */
 
 
-package org.jetbrains.konan.analyser.index
+package org.jetbrains.kotlin.ide.konan.decompiler
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 
-//todo: Fix in Kotlin plugin
-class KonanMetadataDeserializerForDecompiler(
+class KotlinNativeMetadataDeserializerForDecompiler(
     packageFqName: FqName,
     private val proto: KonanProtoBuf.LinkDataPackageFragment,
     private val nameResolver: NameResolver,
@@ -40,7 +39,8 @@ class KonanMetadataDeserializerForDecompiler(
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
         deserializationComponents = DeserializationComponents(
-            storageManager, moduleDescriptor, DeserializationConfiguration.Default, KonanProtoBasedClassDataFinder(proto, nameResolver),
+            storageManager, moduleDescriptor, DeserializationConfiguration.Default,
+            KotlinNativeProtoBasedClassDataFinder(proto, nameResolver),
             AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
             ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), createLoggingErrorReporter(LOG),
             LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses, ContractDeserializer.DEFAULT,
@@ -57,7 +57,7 @@ class KonanMetadataDeserializerForDecompiler(
             createDummyPackageFragment(facadeFqName),
             proto.`package`,
             nameResolver,
-            KonanMetadataVersion.DEFAULT_INSTANCE,
+            KotlinNativeMetadataVersion.DEFAULT_INSTANCE,
             containerSource = null,
             components = deserializationComponents
         ) { emptyList() }
@@ -66,7 +66,7 @@ class KonanMetadataDeserializerForDecompiler(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(KonanMetadataDeserializerForDecompiler::class.java)
+        private val LOG = Logger.getInstance(KotlinNativeMetadataDeserializerForDecompiler::class.java)
     }
 }
 
