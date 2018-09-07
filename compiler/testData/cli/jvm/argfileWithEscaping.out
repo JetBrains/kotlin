@@ -1,4 +1,5 @@
-warning: flag is not supported by this version of the compiler: -Xsome escaped " sequence /
+warning: flag is not supported by this version of the compiler: -Xdouble ' quote ' escaped " sequence /
+warning: flag is not supported by this version of the compiler: -Xsingle " quote " escaped ' sequence /
 compiler/testData/cli/jvm/apiVersion.kt:2:15: error: unresolved reference: sealedSubclasses
     ""::class.sealedSubclasses
               ^

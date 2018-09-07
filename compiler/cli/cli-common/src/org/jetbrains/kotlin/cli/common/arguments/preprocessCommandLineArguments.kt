@@ -12,7 +12,8 @@ import java.io.Reader
 
 private const val EXPERIMENTAL_ARGFILE_ARGUMENT = "-Xargfile"
 
-private const val QUOTATION_MARK = '"'
+private const val SINGLE_QUOTE = '\''
+private const val DOUBLE_QUOTE = '"'
 private const val BACKSLASH = '\\'
 private const val WHITESPACE = ' '
 private const val NEWLINE = '\n'
@@ -56,7 +57,7 @@ private fun Reader.parseNextArgument(): String? {
     loop@ while (r != null) {
         when (r) {
             WHITESPACE, NEWLINE -> break@loop
-            QUOTATION_MARK -> consumeRestOfEscapedSequence(sb)
+            DOUBLE_QUOTE, SINGLE_QUOTE -> consumeRestOfEscapedSequence(sb, r)
             BACKSLASH -> nextChar()?.apply(sb::append)
             else -> sb.append(r)
         }
@@ -67,9 +68,9 @@ private fun Reader.parseNextArgument(): String? {
     return sb.toString().takeIf { it.isNotEmpty() }
 }
 
-private fun Reader.consumeRestOfEscapedSequence(sb: StringBuilder) {
+private fun Reader.consumeRestOfEscapedSequence(sb: StringBuilder, quote: Char) {
     var ch = nextChar()
-    while (ch != null && ch != QUOTATION_MARK) {
+    while (ch != null && ch != quote) {
         if (ch == BACKSLASH) nextChar()?.apply(sb::append) else sb.append(ch)
         ch = nextChar()
     }
