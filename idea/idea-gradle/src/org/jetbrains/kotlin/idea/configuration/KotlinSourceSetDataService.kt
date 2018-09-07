@@ -116,6 +116,8 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
         with(kotlinFacet.configuration.settings) {
             kind = kotlinSourceSet.kotlinModule.kind
 
+            isTestModule = kotlinSourceSet.isTestModule
+
             sourceSetNames = kotlinSourceSet.sourceSetIdsByName.values.mapNotNull { sourceSetId ->
                 val node = mainModuleNode.findChildModuleById(sourceSetId) ?: return@mapNotNull null
                 val data = node.data as? ModuleData ?: return@mapNotNull null

@@ -215,6 +215,7 @@ class KotlinFacetSettings {
 
     var kind: KotlinModuleKind = KotlinModuleKind.DEFAULT
     var sourceSetNames: List<String> = emptyList()
+    var isTestModule: Boolean = false
 }
 
 interface KotlinFacetSettingsProvider {

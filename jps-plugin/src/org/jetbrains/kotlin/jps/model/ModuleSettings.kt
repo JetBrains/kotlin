@@ -22,6 +22,9 @@ val JpsModule.platform: IdePlatform<*, *>?
 val JpsModule.kotlinKind: KotlinModuleKind
     get() = kotlinFacet?.settings?.kind ?: KotlinModuleKind.DEFAULT
 
+val JpsModule.isTestModule: Boolean
+    get() = kotlinFacet?.settings?.isTestModule ?: false
+
 /**
  * Modules which is imported from sources sets of the compilation represented by this module.
  * This module is not included.
