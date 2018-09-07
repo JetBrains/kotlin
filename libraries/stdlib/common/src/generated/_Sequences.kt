@@ -1658,7 +1658,7 @@ public fun <T> Sequence<T>.zipWithNext(): Sequence<Pair<T, T>> {
  */
 @SinceKotlin("1.2")
 public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequence<R> {
-    return buildSequence result@ {
+    return sequence result@ {
         val iterator = iterator()
         if (!iterator.hasNext()) return@result
         var current = iterator.next()

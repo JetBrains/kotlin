@@ -944,7 +944,7 @@ object Generators : TemplateGroupBase() {
         }
         body(Sequences) {
             """
-            return buildSequence result@ {
+            return sequence result@ {
                 val iterator = iterator()
                 if (!iterator.hasNext()) return@result
                 var current = iterator.next()
