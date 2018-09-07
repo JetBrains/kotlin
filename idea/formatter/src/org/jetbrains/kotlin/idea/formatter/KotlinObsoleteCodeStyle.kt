@@ -21,6 +21,7 @@ class KotlinObsoleteCodeStyle : KotlinPredefinedCodeStyle(CODE_STYLE_TITLE, Kotl
         val INSTANCE = KotlinObsoleteCodeStyle()
 
         const val CODE_STYLE_ID = "KOTLIN_OLD_DEFAULTS"
+        const val CODE_STYLE_SETTING = "obsolete"
         const val CODE_STYLE_TITLE = "Kotlin obsolete IntelliJ IDEA codestyle"
 
         fun apply(settings: CodeStyleSettings) {

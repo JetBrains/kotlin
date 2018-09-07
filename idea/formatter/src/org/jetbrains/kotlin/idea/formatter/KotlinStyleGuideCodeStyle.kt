@@ -32,6 +32,7 @@ class KotlinStyleGuideCodeStyle : KotlinPredefinedCodeStyle("Kotlin style guide"
         val INSTANCE = KotlinStyleGuideCodeStyle()
 
         const val CODE_STYLE_ID = "KOTLIN_OFFICIAL"
+        const val CODE_STYLE_SETTING = "official"
         const val CODE_STYLE_TITLE = "Kotlin Coding Conventions"
 
         fun apply(settings: CodeStyleSettings) {
