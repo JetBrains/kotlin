@@ -97,7 +97,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
     override fun isScript(fileName: String) = findScriptDefinition(fileName) != null
 
     override fun getKnownFilenameExtensions(): Sequence<String> = lock.read {
-        cachedDefinitions?.map { it.fileExtension } ?: emptySequence()
+        cachedDefinitions.map { it.fileExtension }
     }
 
     companion object {
