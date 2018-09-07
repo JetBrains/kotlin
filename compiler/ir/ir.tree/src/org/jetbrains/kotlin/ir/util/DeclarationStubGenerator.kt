@@ -83,14 +83,7 @@ class DeclarationStubGenerator(
         IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
             val getterDescriptor = descriptor.getter
             if (descriptor.hasBackingField(bindingContext)) {
-                irProperty.backingField =
-                        symbolTable.declareField(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            origin,
-                            descriptor.original,
-                            descriptor.type.toIrType()
-                        )
+                irProperty.backingField = generateFieldStub(descriptor)
             }
             if (getterDescriptor != null) {
                 irProperty.getter = generateFunctionStub(getterDescriptor)
@@ -98,6 +91,21 @@ class DeclarationStubGenerator(
 
             irProperty.setter = descriptor.setter?.let { generateFunctionStub(it) }
         }
+
+    private fun generateFieldStub(descriptor: PropertyDescriptor): IrField {
+        val referenced = symbolTable.referenceField(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
+
+        return symbolTable.declareField(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            origin,
+            descriptor.original,
+            descriptor.type.toIrType()
+        )
+    }
 
     fun generateFunctionStub(descriptor: FunctionDescriptor): IrSimpleFunction {
         val referenced = symbolTable.referenceSimpleFunction(descriptor)
