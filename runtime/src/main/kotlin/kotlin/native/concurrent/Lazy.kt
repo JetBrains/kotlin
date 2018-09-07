@@ -36,8 +36,9 @@ internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
                     if (!ensureAcyclicAndSet(this, 0, result)) {
                         throw InvalidMutabilityException("Setting cyclic data via lazy in $this: $result")
                     }
-                    // Clear initializer_ reference.
-                    ensureAcyclicAndSet(this, 1, null)
+                    // Do not clear initializer_ reference, as it may break freezing invariants and zero out
+                    // still valid object. It seems to be safe only in case when `this` is not reachable from
+                    // initializer.
                     @Suppress("UNCHECKED_CAST")
                     return result as T
                 }

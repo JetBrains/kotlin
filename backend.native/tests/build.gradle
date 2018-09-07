@@ -713,6 +713,11 @@ task lazy1(type: RunKonanTest) {
     source = "runtime/workers/lazy1.kt"
 }
 
+task lazy2(type: RunStandaloneKonanTest) {
+    goldValue = "123\nOK\n"
+    source = "runtime/workers/lazy2.kt"
+}
+
 task enumIdentity(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
     goldValue = "true\n"
