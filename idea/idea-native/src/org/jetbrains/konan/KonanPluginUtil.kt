@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.konan.utils.KonanFactories.DefaultResolvedDescriptorsFactory
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.konan.KonanResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.StorageManager
@@ -69,8 +70,12 @@ fun ModuleInfo.createResolvedModuleDescriptors(
     // This is to preserve "capabilities" from the original IntelliJ LibraryInfo:
     val libraryMap =
         this.dependencies().filterIsInstance<LibraryInfo>().flatMap { dependency ->
-            dependency.getLibraryRoots().map { file ->
-                file to dependency
+            if (dependency.platform == KonanPlatform) {
+                dependency.getLibraryRoots().map { file ->
+                    file to dependency
+                }
+            } else {
+                emptyList()
             }
         }.toMap()
 
