@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ide.konan
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PredefinedKonanTargets
 import java.nio.file.Path
@@ -22,8 +23,12 @@ internal class KotlinNativePluginSearchPathResolver(bundledLibraryPaths: Iterabl
         val platformLibsRoot = bundledLibraryPaths.firstParentPath { it.parent.endsWith(KONAN_ALL_PLATFORM_LIBS_PATH) }
         val platformName = platformLibsRoot?.fileName?.toString()
 
-        target = platformName?.let { PredefinedKonanTargets.getByName(it) } ?:
-                error("Unexpected Kotlin/Native target platform name: $platformName")
+        target = if (platformName != null) {
+            PredefinedKonanTargets.getByName(platformName) ?: error("Unexpected Kotlin/Native target platform name: $platformName")
+        } else {
+            // If not possible to determine platform by platform libs root, then fallback to the host platform:
+            HostManager.host
+        }
 
         searchRoots = listOfNotNull(commonLibsRoot, platformLibsRoot).map { File(it) }
     }
