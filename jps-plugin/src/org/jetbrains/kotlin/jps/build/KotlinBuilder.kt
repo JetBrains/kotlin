@@ -184,7 +184,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val kotlinChunk = kotlinContext.getChunk(chunk) ?: return
         kotlinContext.checkChunkCacheVersion(kotlinChunk)
 
-        if (!kotlinContext.rebuildingAllKotlin) {
+        if (!kotlinContext.rebuildingAllKotlin && kotlinChunk.isEnabled) {
             markAdditionalFilesForInitialRound(kotlinChunk, chunk, kotlinContext)
         }
 
@@ -327,10 +327,17 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
+        val kotlinChunk = chunk.toKotlinChunk(context)!!
+
+        if (!kotlinChunk.isEnabled) {
+            return NOTHING_DONE
+        }
+
         val kotlinContext = context.kotlin
         val projectDescriptor = context.projectDescriptor
         val dataManager = projectDescriptor.dataManager
         val targets = chunk.targets
+
         val isChunkRebuilding = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
                 || targets.any { kotlinContext.rebuildAfterCacheVersionChanged[it] == true }
 
@@ -361,7 +368,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return ABORT
         }
 
-        val kotlinChunk = chunk.toKotlinChunk(context)!!
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project, representativeTarget)
         val exceptActualTracer = ExpectActualTrackerImpl()
@@ -376,12 +382,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             messageCollector
         ) ?: return ABORT
 
-        val commonArguments = kotlinChunk.compilerArguments.apply {
-            reportOutputFiles = true
-            version = true // Always report the version to help diagnosing user issues if they submit the compiler output
-            if (languageVersion == null) languageVersion = VersionView.RELEASED_VERSION.versionString
-        }
-
         if (LOG.isDebugEnabled) {
             LOG.debug("Compiling files: ${kotlinDirtyFilesHolder.allDirtyFiles}")
         }
@@ -391,7 +391,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             kotlinChunk,
             chunk,
             representativeTarget,
-            commonArguments,
+            kotlinChunk.compilerArguments,
             context,
             kotlinDirtyFilesHolder,
             fsOperations,

@@ -32,5 +32,5 @@ abstract class AbstractMultiplatformJpsTest : AbstractIncrementalJpsTest() {
     }
 
     override val ModulesTxt.Module.sourceFilePrefix: String
-        get() = indexedName
+        get() = "${indexedName}_"
 }

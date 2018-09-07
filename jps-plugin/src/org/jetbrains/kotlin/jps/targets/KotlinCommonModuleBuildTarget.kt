@@ -27,6 +27,11 @@ private const val COMMON_BUILD_META_INFO_FILE_NAME = "common-build-meta-info.txt
 class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuildTarget<CommonBuildMetaInfo>(kotlinContext, jpsModuleBuildTarget) {
 
+    override fun isEnabled(chunkCompilerArguments: CommonCompilerArguments): Boolean {
+        val k2MetadataArguments = module.k2MetadataCompilerArguments
+        return k2MetadataArguments.enabledInJps || (chunkCompilerArguments as? K2MetadataCompilerArguments)?.enabledInJps == true
+    }
+
     override val isIncrementalCompilationEnabled: Boolean
         get() = false
 
@@ -47,18 +52,15 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
     ): Boolean {
         reportAndSkipCircular(chunk, environment)
 
-        val k2MetadataArguments = module.k2MetadataCompilerArguments
-        if (k2MetadataArguments.enabledInJps || (commonArguments as? K2MetadataCompilerArguments)?.enabledInJps == true) {
-            JpsKotlinCompilerRunner().runK2MetadataCompiler(
-                commonArguments,
-                k2MetadataArguments,
-                module.kotlinCompilerSettings,
-                environment,
-                destination,
-                dependenciesOutputDirs + libraryFiles,
-                sourceFiles // incremental K2MetadataCompiler not supported yet
-            )
-        }
+        JpsKotlinCompilerRunner().runK2MetadataCompiler(
+            commonArguments,
+            module.k2MetadataCompilerArguments,
+            module.kotlinCompilerSettings,
+            environment,
+            destination,
+            dependenciesOutputDirs + libraryFiles,
+            sourceFiles // incremental K2MetadataCompiler not supported yet
+        )
 
         return true
     }

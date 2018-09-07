@@ -84,7 +84,8 @@ abstract class AbstractIncrementalJpsTest(
     protected lateinit var projectDescriptor: ProjectDescriptor
     // is used to compare lookup dumps in a human readable way (lookup symbols are hashed in an actual lookup storage)
     protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
-    private var isICEnabledBackup: Boolean = false
+    private var isJvmICEnabledBackup: Boolean = false
+    private var isJsICEnabledBackup: Boolean = false
 
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
@@ -121,9 +122,13 @@ abstract class AbstractIncrementalJpsTest(
 
     override fun setUp() {
         super.setUp()
+
         lookupsDuringTest = hashSetOf()
-        isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+        isJvmICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+        isJsICEnabledBackup = IncrementalCompilation.isEnabledForJs()
+
         IncrementalCompilation.setIsEnabledForJvm(true)
+        IncrementalCompilation.setIsEnabledForJs(true)
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -132,11 +137,16 @@ abstract class AbstractIncrementalJpsTest(
 
     override fun tearDown() {
         restoreSystemProperties()
+
         (AbstractIncrementalJpsTest::myProject).javaField!![this] = null
         (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
         (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
+
         lookupsDuringTest.clear()
-        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
+
+        IncrementalCompilation.setIsEnabledForJvm(isJvmICEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJs(isJsICEnabledBackup)
+
         super.tearDown()
     }
 
@@ -423,9 +433,7 @@ abstract class AbstractIncrementalJpsTest(
     protected open fun performAdditionalModifications(modifications: List<Modification>) {
     }
 
-    protected open fun generateModuleSources(modulesTxt: ModulesTxt) {
-
-    }
+    protected open fun generateModuleSources(modulesTxt: ModulesTxt) = Unit
 
     // null means one module
     private fun configureModules(): ModulesTxt? {
@@ -498,7 +506,7 @@ abstract class AbstractIncrementalJpsTest(
         modulesTxt.modules.forEach { module ->
             val sourceDirName = "${module.name}/src"
             val sourceDestinationDir = File(workDir, sourceDirName)
-            val sourcesMapping = copyTestSources(testDataDir, sourceDestinationDir, module.sourceFilePrefix)
+            val sourcesMapping = copyTestSources(testDataSrc, sourceDestinationDir, module.sourceFilePrefix)
             mapWorkingToOriginalFile.putAll(sourcesMapping)
 
             preProcessSources(sourceDestinationDir)

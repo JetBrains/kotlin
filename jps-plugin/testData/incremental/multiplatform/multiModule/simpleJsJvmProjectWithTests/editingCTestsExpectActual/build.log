@@ -1,6 +1,8 @@
 ================ Step #1 create new service in cTests =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -8,6 +10,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Compiling files:
   cTests/src/serviceCTestsNewHeader.kt
@@ -15,11 +19,13 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-[Module 'pJsTests' production] Expected function 'cTests_platformDependentCTestsNew' has no actual declaration in module
+[pJsTests] Expected function 'cTests_platformDependentCTestsNew' has no actual declaration in module
 
 ================ Step #2 create new service in pJvmTests =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -27,6 +33,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Compiling files:
   cTests/src/serviceCTestsNewHeader.kt
@@ -34,11 +42,13 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-[Module 'pJsTests' production] Expected function 'cTests_platformDependentCTestsNew' has no actual declaration in module
+[pJsTests] Expected function 'cTests_platformDependentCTestsNew' has no actual declaration in module
 
 ================ Step #3 create new service in pJsTests =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -46,6 +56,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Compiling files:
   cTests/src/serviceCTestsNewHeader.kt
@@ -71,16 +83,14 @@ Compiling files:
   cTests/src/serviceCTestsNewHeader.kt
   pJvmTests/src/servicePJvmTestsNewImpl.kt
 End of files
-Marked as dirty by Kotlin:
-  cTests/src/serviceCTestsNewHeader.kt
-Exit code: ADDITIONAL_PASS_REQUIRED
-------------------------------------------
-Exit code: NOTHING_DONE
+Exit code: OK
 ------------------------------------------
 
 ================ Step #4 change new service in cTests =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -88,6 +98,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Cleaning output files:
   out/production/pJsTests/pJsTests.js
@@ -98,6 +110,8 @@ Compiling files:
   cTests/src/serviceCTestsNewHeader.kt
   pJsTests/src/servicePJsTestsNewImpl.kt
 End of files
+Exit code: OK
+------------------------------------------
 Marked as dirty by Kotlin:
   pJsTests/src/servicePJsTestsNewImpl.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
@@ -148,6 +162,8 @@ Exit code: NOTHING_DONE
 ================ Step #5 change new service in pJvmTests: java =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -155,6 +171,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -171,6 +189,8 @@ End of files
 ================ Step #6 change new service in pJvmTests: kotlin =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -178,6 +198,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -200,6 +222,8 @@ Exit code: NOTHING_DONE
 ================ Step #7 change new service in pJsTests =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -207,6 +231,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Cleaning output files:
   out/production/pJsTests/pJsTests.js
@@ -217,6 +243,8 @@ Compiling files:
   cTests/src/serviceCTestsNewHeader.kt
   pJsTests/src/servicePJsTestsNewImpl.kt
 End of files
+Exit code: OK
+------------------------------------------
 Marked as dirty by Kotlin:
   cTests/src/serviceCTestsNewHeader.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
@@ -230,6 +258,8 @@ Exit code: NOTHING_DONE
 ================ Step #8 delete new service in pJvmTests =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -237,6 +267,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -258,6 +290,8 @@ COMPILATION FAILED
 ================ Step #9 delete new service in pJsTests =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -265,6 +299,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Cleaning output files:
   out/production/pJsTests/pJsTests.js
   out/production/pJsTests/pJsTests.meta.js
@@ -284,6 +320,8 @@ COMPILATION FAILED
 ================ Step #10 delete new service in cTests =================
 
 Building cMain
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsMain
 Exit code: NOTHING_DONE
 ------------------------------------------
@@ -291,6 +329,8 @@ Building pJvmMain
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building cTests
+Exit code: NOTHING_DONE
+------------------------------------------
 Building pJsTests
 Compiling files:
 End of files
