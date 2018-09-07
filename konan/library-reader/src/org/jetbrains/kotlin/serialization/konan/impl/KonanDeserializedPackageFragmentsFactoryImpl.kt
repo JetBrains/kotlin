@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.serialization.konan.impl
 
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.exportForwardDeclarations
 import org.jetbrains.kotlin.konan.library.isInterop
@@ -19,8 +18,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.konan.KonanDeserializedPackageFragmentsFactory
 import org.jetbrains.kotlin.serialization.konan.KonanPackageFragment
+import org.jetbrains.kotlin.serialization.konan.KonanSerializerProtocol
+import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -64,6 +66,58 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserialized
         result.add(ExportedForwardDeclarationsPackageFragmentDescriptor(moduleDescriptor, mainPackageFqName, exportForwardDeclarations))
 
         return result
+    }
+
+
+    override fun createPackageFragmentProvider(
+        library: KonanLibrary,
+        packageAccessedHandler: PackageAccessedHandler?,
+        packageFragmentNames: List<String>,
+        storageManager: StorageManager,
+        moduleDescriptor: ModuleDescriptor,
+        configuration: DeserializationConfiguration
+    ): PackageFragmentProvider {
+
+        val deserializedPackageFragments = createDeserializedPackageFragments(
+            library, packageFragmentNames, moduleDescriptor, packageAccessedHandler, storageManager
+        )
+
+        val syntheticPackageFragments = createSyntheticPackageFragments(
+            library, deserializedPackageFragments, moduleDescriptor
+        )
+
+        val provider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments)
+
+        val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
+
+        val annotationAndConstantLoader = AnnotationAndConstantLoaderImpl(
+            moduleDescriptor,
+            notFoundClasses,
+            KonanSerializerProtocol
+        )
+
+        val components = DeserializationComponents(
+            storageManager,
+            moduleDescriptor,
+            configuration,
+            DeserializedClassDataFinder(provider),
+            annotationAndConstantLoader,
+            provider,
+            LocalClassifierTypeSettings.Default,
+            ErrorReporter.DO_NOTHING,
+            LookupTracker.DO_NOTHING,
+            NullFlexibleTypeDeserializer,
+            emptyList(),
+            notFoundClasses,
+            ContractDeserializer.DEFAULT,
+            extensionRegistryLite = KonanSerializerProtocol.extensionRegistry
+        )
+
+        for (packageFragment in deserializedPackageFragments) {
+            packageFragment.initialize(components)
+        }
+
+        return provider
     }
 }
 

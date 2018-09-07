@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.ide.konan.createResolvedModuleDescriptors
+import org.jetbrains.kotlin.ide.konan.createPackageFragmentProviderForLibraryModule
+import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -43,7 +44,7 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
             moduleContext.project,
             moduleContext.storageManager,
             moduleContent.syntheticFiles,
-            moduleContent.moduleContentScope!!,
+            moduleContent.moduleContentScope,
             moduleContent.moduleInfo
         )
 
@@ -57,16 +58,21 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
             languageVersionSettings
         )
 
-        val moduleDescriptors = moduleContent.moduleInfo.createResolvedModuleDescriptors(
-            moduleContext.storageManager,
-            moduleContext.module.builtIns,
-            languageVersionSettings
-        )
-
         val packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
         val fragmentProviders = mutableListOf(packageFragmentProvider)
-        moduleDescriptors.resolvedDescriptors.mapTo(fragmentProviders) { it.packageFragmentProvider }
-        fragmentProviders.add(moduleDescriptors.forwardDeclarationsModule.packageFragmentProvider)
+
+        val moduleInfo = moduleContent.moduleInfo
+
+        if (moduleInfo is LibraryInfo) {
+            val libPackageFragmentProviders = moduleInfo.createPackageFragmentProviderForLibraryModule(
+                moduleContext.project,
+                moduleContext.storageManager,
+                languageVersionSettings,
+                moduleDescriptor
+            )
+            fragmentProviders.addAll(libPackageFragmentProviders)
+            //TODO: Forward declarations?
+        }
 
         return ResolverForModule(CompositePackageFragmentProvider(fragmentProviders), container)
     }
