@@ -1,43 +1,43 @@
 ### Q: How do I run my program?
 
-A: Define top level function `fun main(args: Array<String>)`, please ensure it's not
-in a package. Also compiler switch `-entry` could be use to make any function taking
-`Array<String>` and returning `Unit` be an entry point.
+A: Define a top level function `fun main(args: Array<String>)`, please ensure it's not
+in a package. Also compiler switch `-entry` could be used to make any function taking
+`Array<String>` and return `Unit` as an entry point.
 
 
 ### Q: What is Kotlin/Native memory management model?
 
-A: Kotlin/Native provides automated memory management scheme, similar to what Java or Swift provides.
-Current implementation includes automated reference counter with cycle collector to collect cyclical
+A: Kotlin/Native provides an automated memory management scheme, similar to what Java or Swift provides.
+The current implementation includes an automated reference counter with a cycle collector to collect cyclical
 garbage.
 
 
-### Q: How do I create shared library?
+### Q: How do I create a shared library?
 
-A: Use `-produce dynamic` compiler switch, or `konanArtifacts { dynamic('foo') {} }` in Gradle.
-It will produce platform-specific shared object (.so on Linux, .dylib on macOS and .dll on Windows targets) and
-C language header, allowing to use all public APIs available in your Kotlin/Native program from C/C++ code.
-See `samples/python_extension` as an example of using such shared object to provide a bridge between Python and
+A: Use the `-produce dynamic` compiler switch, or `konanArtifacts { dynamic('foo') {} }` in Gradle.
+It will produce a platform-specific shared object (.so on Linux, .dylib on macOS, and .dll on Windows targets) and a
+C language header, allowing the use of all public APIs available in your Kotlin/Native program from C/C++ code.
+See `samples/python_extension` for an example of using such a shared object to provide a bridge between Python and
 Kotlin/Native.
 
 
-### Q: How do I create static library or an object file?
+### Q: How do I create a static library or an object file?
 
-A: Use `-produce static` compiler switch, or `konanArtifacts { static('foo') {} }` in Gradle.
-It will produce platform-specific static object (.a library format) and C language header, allowing to
-use all public APIs available in your Kotlin/Native program from C/C++ code.
-
-
-### Q: How do I run Kotlin/Native behind corporate proxy?
-
-A: As Kotlin/Native need to download platform specific toolchain, you need to specify
-`-Dhttp.proxyHost=xxx -Dhttp.proxyPort=xxx` as compiler's or `gradlew` arguments,
-or set it via `JAVA_OPTS` environment variable.
+A: Use the `-produce static` compiler switch, or `konanArtifacts { static('foo') {} }` in Gradle.
+It will produce a platform-specific static object (.a library format) and a C language header, allowing you to
+use all the public APIs available in your Kotlin/Native program from C/C++ code.
 
 
-### Q: How do I specify custom Objective-C prefix/name for my Kotlin framework?
+### Q: How do I run Kotlin/Native behind a corporate proxy?
 
-A: Use `-module_name` compiler option or matching Gradle DSL statement, i.e.
+A: As Kotlin/Native needs to download a platform specific toolchain, you need to specify
+`-Dhttp.proxyHost=xxx -Dhttp.proxyPort=xxx` as the compiler's or `gradlew` arguments,
+or set it via the `JAVA_OPTS` environment variable.
+
+
+### Q: How do I specify a custom Objective-C prefix/name for my Kotlin framework?
+
+A: Use the `-module_name` compiler option or matching Gradle DSL statement, i.e.
 ```
 framework("MyCustomFramework") {
     extraOpts '-module_name', 'TheName'
@@ -47,21 +47,21 @@ framework("MyCustomFramework") {
 
 ### Q: Why do I see `InvalidMutabilityException`?
 
-A: It likely happens, because you are trying to mutate a frozen object. Object could transfer to the
-frozen state either explicitly, as objects reachable from objects on which `kotlin.native.concurrent.freeze` is called,
-or implicitly (i.e. reachable from `enum` or global singleton object - see next question).
+A: It likely happens, because you are trying to mutate a frozen object. An object can transfer to the
+frozen state either explicitly, as objects reachable from objects on which the `kotlin.native.concurrent.freeze` is called,
+or implicitly (i.e. reachable from `enum` or global singleton object - see the next question).
 
 
 ### Q: How do I make a singleton object mutable?
 
 A: Currently, singleton objects are immutable (i.e. frozen after creation), and it's generally considered
-a good practise to have global state immutable. If for some reasons you need mutable state inside such an
-object, use `@konan.ThreadLocal` annotation on the object. Also `kotlin.native.concurrent.AtomicReference` class could be
-used to store different pointers to frozen objects in a frozen object and atomically update those.
+good practise to have the global state immutable. If for some reason you need a mutable state inside such an
+object, use the `@konan.ThreadLocal` annotation on the object. Also the `kotlin.native.concurrent.AtomicReference` class could be
+used to store different pointers to frozen objects in a frozen object and automatically update them.
 
-### Q: How can I compile my project against Kotlin/Native master?
+### Q: How can I compile my project against the Kotlin/Native master?
 
-A: We release dev builds frequently, usually at least once a week. You can check the [list of available versions](https://bintray.com/jetbrains/kotlin-native-dependencies/kotlin-native-gradle-plugin). But in the case we recently fixed an issue and you want to check before a release is done, you can do:
+A: We release dev builds frequently, usually at least once a week. You can check the [list of available versions](https://bintray.com/jetbrains/kotlin-native-dependencies/kotlin-native-gradle-plugin). But if we recently fixed an issue and you want to check it before a release is done, you can do:
 
 <details>
     
