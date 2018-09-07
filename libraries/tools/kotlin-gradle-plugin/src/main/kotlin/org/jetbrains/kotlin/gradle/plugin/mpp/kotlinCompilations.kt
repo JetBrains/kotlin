@@ -275,13 +275,6 @@ class KotlinNativeCompilation(
     // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
     internal var allSources: FileCollection = target.project.files()
 
-    val linkAllTaskName: String
-        get() = lowerCamelCaseName(
-            "link",
-            compilationName.takeIf { it != "main" }.orEmpty(),
-            target.disambiguationClassifier
-        )
-
     var isTestCompilation = false
 
     var friendCompilationName: String? = null
@@ -350,6 +343,26 @@ class KotlinNativeCompilation(
         getBinary(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
 
     // Naming
+
+    val linkAllTaskName: String
+        get() = lowerCamelCaseName(
+            "link",
+            compilationName.takeIf { it != "main" }.orEmpty(),
+            target.disambiguationClassifier
+        )
+
+    fun linkTaskName(kind: NativeOutputKind, buildType: NativeBuildType): String =
+        lowerCamelCaseName(
+            "link",
+            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
+            buildType.name.toLowerCase(),
+            kind.taskNameClassifier,
+            target.disambiguationClassifier
+        )
+
+    fun linkTaskName(kind: String, buildType: String) =
+        linkTaskName(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
+
     override val compileDependencyConfigurationName: String
         get() = lowerCamelCaseName(
             target.disambiguationClassifier,

@@ -146,7 +146,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         project.tasks.create(compilation.compileAllTaskName).apply {
             group = LifecycleBasePlugin.BUILD_GROUP
-            description = "Assembles " + compilation.output + ""
+            description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
             dependsOn(
                 compilation.output.dirs,
                 compilation.compileKotlinTaskName
@@ -387,13 +387,6 @@ open class KotlinNativeTargetConfigurator(
     private val Collection<*>.isDimensionVisible: Boolean
         get() = size > 1
 
-    private fun createDimensionSuffix(dimensionName: String, multivalueProperty: Collection<*>): String =
-        if (multivalueProperty.isDimensionVisible) {
-            dimensionName.toLowerCase().capitalize()
-        } else {
-            ""
-        }
-
     private val KotlinNativeCompilation.isMainCompilation: Boolean
         get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
 
@@ -496,14 +489,8 @@ open class KotlinNativeTargetConfigurator(
             for (kind in availableOutputKinds) {
                 val compilerOutputKind = kind.compilerOutputKind
 
-                val compilationSuffix = compilation.name
-                val buildTypeSuffix = createDimensionSuffix(buildType.name, buildTypes)
-                val targetSuffix = compilation.target.name
-                val kindSuffix = kind.taskNameClassifier
-                val taskName = lowerCamelCaseName("link", compilationSuffix, buildTypeSuffix, kindSuffix, targetSuffix)
-
                 val linkTask = project.tasks.create(
-                    taskName,
+                    compilation.linkTaskName(kind, buildType),
                     KotlinNativeCompile::class.java
                 ).apply {
                     this.compilation = compilation

@@ -482,10 +482,10 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         val taskSuffix = nativeHostTargetName.capitalize()
         val linkTasks = listOf(
-            ":linkMainDebugShared$taskSuffix",
-            ":linkMainReleaseShared$taskSuffix",
-            ":linkMainDebugStatic$taskSuffix",
-            ":linkMainReleaseStatic$taskSuffix"
+            ":linkDebugShared$taskSuffix",
+            ":linkReleaseShared$taskSuffix",
+            ":linkDebugStatic$taskSuffix",
+            ":linkReleaseStatic$taskSuffix"
         )
 
         build("assemble") {
