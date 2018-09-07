@@ -100,6 +100,9 @@ public class KotlinTestUtils {
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
 
+    private static final boolean PRINT_STACKTRACE_FOR_IGNORED_TESTS =
+            Boolean.getBoolean("org.jetbrains.kotlin.print.stacktrace.for.ignored.tests");
+
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = true;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
@@ -1077,7 +1080,9 @@ public class KotlinTestUtils {
                 throw e;
             }
 
-            e.printStackTrace();
+            if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
+                e.printStackTrace();
+            }
             return;
         }
 
