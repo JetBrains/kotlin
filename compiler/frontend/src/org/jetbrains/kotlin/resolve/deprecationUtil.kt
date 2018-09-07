@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
@@ -218,9 +219,21 @@ enum class DeprecationLevelValue {
     WARNING, ERROR, HIDDEN
 }
 
+@DefaultImplementation(CoroutineCompatibilitySupport::class)
+class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) {
+    constructor() : this(true)
+
+    companion object {
+        val ENABLED = CoroutineCompatibilitySupport(true)
+
+        val DISABLED = CoroutineCompatibilitySupport(false)
+    }
+}
+
 class DeprecationResolver(
     storageManager: StorageManager,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val coroutineCompatibilitySupport: CoroutineCompatibilitySupport
 ) {
     private val deprecations = storageManager.createMemoizedFunction { descriptor: DeclarationDescriptor ->
         val deprecations = descriptor.getOwnDeprecations()
@@ -364,10 +377,13 @@ class DeprecationResolver(
 
     private fun getDeprecationByCoroutinesVersion(target: DeclarationDescriptor): DeprecatedExperimentalCoroutine? {
         if (target !is DeserializedMemberDescriptor) return null
-        return when (target.coroutinesExperimentalCompatibilityMode) {
-            COMPATIBLE -> null
-            NEEDS_WRAPPER -> DeprecatedExperimentalCoroutine(target, WARNING)
-            INCOMPATIBLE -> DeprecatedExperimentalCoroutine(target, ERROR)
+
+        target.coroutinesExperimentalCompatibilityMode.let { mode ->
+            return when {
+                mode == COMPATIBLE -> null
+                mode == NEEDS_WRAPPER && coroutineCompatibilitySupport.enabled -> DeprecatedExperimentalCoroutine(target, WARNING)
+                else -> DeprecatedExperimentalCoroutine(target, ERROR)
+            }
         }
     }
 

@@ -208,7 +208,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             // Ideally, we should run full resolution (with all classifier usage checkers) on classifiers used in "-Xexperimental" and
             // "-Xuse-experimental" arguments. However, it's not easy to do this. This should be solved in the future with the support of
             // module annotations. For now, we only check deprecations because this is needed to correctly retire unneeded compiler arguments.
-            val deprecationResolver = DeprecationResolver(LockBasedStorageManager(), languageVersionSettings)
+            val deprecationResolver = DeprecationResolver(LockBasedStorageManager(), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED)
 
             fun checkAnnotation(fqName: String): Boolean {
                 val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_NON_TRACKED_SCOPE)
