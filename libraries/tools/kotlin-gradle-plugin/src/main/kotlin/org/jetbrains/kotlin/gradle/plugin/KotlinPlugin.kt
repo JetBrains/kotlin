@@ -94,6 +94,10 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     open fun run() {
         addKotlinDirectoriesToJavaSourceSet()
         doTargetSpecificProcessing()
+
+        if (kotlinCompilation is KotlinWithJavaCompilation) {
+            createAdditionalClassesTaskForIdeRunner()
+        }
     }
 
     private fun addKotlinDirectoriesToJavaSourceSet() {
@@ -125,6 +129,16 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
         // Build a lazily-resolved file collection that filters out Java sources from sources of this sourceDirectorySet
         return getSourceDirectories(sourceDirectorySet).minus(getSourceDirectories(javaSourceSet.java))
+    }
+
+    private fun createAdditionalClassesTaskForIdeRunner() {
+        // Workaround: as per KT-26641, when there's a Kotlin compilation with a Java source set, we create another task
+        // that has a name composed as '<IDE module name>Classes`, where the IDE module name is the default source set name:
+        val expectedClassesTaskName = "${kotlinCompilation.defaultSourceSetName}Classes"
+        project.tasks.run {
+            if (findByName(expectedClassesTaskName) == null)
+                create(expectedClassesTaskName) { task -> task.dependsOn(getByName(kotlinCompilation.compileAllTaskName)) }
+        }
     }
 
     protected abstract fun doCreateTask(project: Project, taskName: String): T

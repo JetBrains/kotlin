@@ -130,11 +130,7 @@ abstract class AbstractKotlinCompilation(
         )
 
     override val compileAllTaskName: String
-        get() = lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            "classes"
-        )
+        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "classes")
 
     override lateinit var compileDependencyFiles: FileCollection
 
