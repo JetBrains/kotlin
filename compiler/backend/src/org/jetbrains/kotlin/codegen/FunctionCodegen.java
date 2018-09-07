@@ -447,31 +447,6 @@ public class FunctionCodegen {
         endVisit(mv, null, origin.getElement());
     }
 
-    private void generateDelegateForDefaultImpl(
-            @NotNull FunctionDescriptor functionDescriptor,
-            @Nullable PsiElement element
-    ) {
-        Method defaultImplMethod = typeMapper.mapAsmMethod(functionDescriptor, OwnerKind.DEFAULT_IMPLS);
-
-        CodegenUtilKt.generateMethod(
-                v, "Default Impl delegate in interface", Opcodes.ACC_SYNTHETIC | Opcodes.ACC_STATIC | Opcodes.ACC_PUBLIC,
-                new Method(defaultImplMethod.getName() + JvmAbi.DEFAULT_IMPLS_DELEGATE_SUFFIX, defaultImplMethod.getDescriptor()),
-                element, JvmDeclarationOrigin.NO_ORIGIN,
-                state, adapter -> {
-                    Method interfaceMethod = typeMapper.mapAsmMethod(functionDescriptor, OwnerKind.IMPLEMENTATION);
-                    Type type = typeMapper.mapOwner(functionDescriptor);
-                    generateDelegateToMethodBody(
-                            -1, adapter,
-                            interfaceMethod,
-                            type.getInternalName(),
-                            Opcodes.INVOKESPECIAL,
-                            true
-                    );
-                    return null;
-                }
-        );
-    }
-
     public static void generateParameterAnnotations(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodVisitor mv,
