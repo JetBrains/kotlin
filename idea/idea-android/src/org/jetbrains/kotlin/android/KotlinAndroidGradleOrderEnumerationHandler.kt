@@ -11,13 +11,12 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ModuleRootModel
+import com.intellij.openapi.roots.OrderEnumerationHandler
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.idea.caches.project.isMPPModule
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.platform.impl.isCommon
-import org.jetbrains.plugins.gradle.execution.GradleOrderEnumeratorHandler
 import org.jetbrains.plugins.gradle.model.ExternalSourceDirectorySet
 import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -33,9 +32,7 @@ import java.io.File
    Everything works for Java-only projects because there's only a single classes directory,
    but Kotlin Gradle plugin adds a separate output directory, and it's not attached by default.
  */
-class AndroidGradleOrderEnumerationHandler(module: Module) : GradleOrderEnumeratorHandler(module) {
-    override fun shouldProcessDependenciesRecursively() = false
-
+class KotlinAndroidGradleOrderEnumerationHandler(private val module: Module) : OrderEnumerationHandler() {
     override fun addCustomModuleRoots(
         type: OrderRootType,
         rootModel: ModuleRootModel,
@@ -85,17 +82,11 @@ class AndroidGradleOrderEnumerationHandler(module: Module) : GradleOrderEnumerat
         return true
     }
 
-    class FactoryImpl : Factory() {
+    class FactoryImpl : OrderEnumerationHandler.Factory() {
         override fun isApplicable(module: Module): Boolean {
-            return ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module)
-                    && !module.isMultiplatformModule()
+            return ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module) && !module.isMPPModule
         }
 
-        override fun createHandler(module: Module) = AndroidGradleOrderEnumerationHandler(module)
+        override fun createHandler(module: Module) = KotlinAndroidGradleOrderEnumerationHandler(module)
     }
-}
-
-private fun Module.isMultiplatformModule(): Boolean {
-    val settings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
-    return settings.platform.isCommon || settings.implementedModuleNames.isNotEmpty()
 }

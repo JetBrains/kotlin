@@ -11,6 +11,10 @@
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
     </extensions>
 
+    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+        <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleOrderEnumerationHandler$Factory" order="first"/>
+    </extensions>
+
     <!-- NATIVE PART -->
     <application-components>
         <component>
