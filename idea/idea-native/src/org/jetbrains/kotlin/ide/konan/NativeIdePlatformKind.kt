@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ide.konan
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.konan.K2NativeCompilerArguments
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<NativeIdePlatformKind, CommonCompilerArguments>? {
-        return if (arguments is K2NativeCompilerArguments) Platform
+        return if (arguments is FakeK2NativeCompilerArguments) Platform
         else null
     }
 
@@ -24,19 +23,22 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
     override val platforms get() = listOf(Platform)
     override val defaultPlatform get() = Platform
 
-    override val argumentsClass get() = K2NativeCompilerArguments::class.java
+    override val argumentsClass get() = FakeK2NativeCompilerArguments::class.java
 
     override val name get() = "Native"
 
-    object Platform : IdePlatform<NativeIdePlatformKind, K2NativeCompilerArguments>() {
+    object Platform : IdePlatform<NativeIdePlatformKind, FakeK2NativeCompilerArguments>() {
         override val kind get() = NativeIdePlatformKind
         override val version get() = TargetPlatformVersion.NoVersion
-        override fun createArguments(init: K2NativeCompilerArguments.() -> Unit) = K2NativeCompilerArguments().apply(init)
+        override fun createArguments(init: FakeK2NativeCompilerArguments.() -> Unit) = FakeK2NativeCompilerArguments().apply(init)
     }
 
     override fun equals(other: Any?): Boolean = other === NativeIdePlatformKind
     override fun hashCode(): Int = javaClass.hashCode()
 }
+
+// These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
+class FakeK2NativeCompilerArguments : CommonCompilerArguments()
 
 val IdePlatformKind<*>?.isKotlinNative
     get() = this === NativeIdePlatformKind
