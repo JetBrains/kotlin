@@ -69,7 +69,7 @@ internal const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
 internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
 
 private const val NON_LOCAL_RETURN = "$$$$\$NON_LOCAL_RETURN$$$$$"
-private const val CAPTURED_FIELD_PREFIX = "$"
+const val CAPTURED_FIELD_PREFIX = "$"
 private const val NON_CAPTURED_FIELD_PREFIX = "$$"
 private const val INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker"
 private const val INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall"
