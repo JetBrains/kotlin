@@ -17,15 +17,5 @@
             <implementation-class>org.jetbrains.konan.gradle.internal.KotlinNativeIdeInitializer</implementation-class>
         </component>
     </application-components>
-
-    <project-components>
-        <component>
-            <interface-class>org.jetbrains.konan.settings.KonanProjectComponent</interface-class>
-            <implementation-class>org.jetbrains.konan.gradle.GradleKonanProjectComponent</implementation-class>
-        </component>
-    </project-components>
-
-    <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
-        <konanModelProvider implementation="org.jetbrains.konan.gradle.GradleKonanModelProvider"/>
-    </extensions>
+    <!-- /NATIVE PART -->
 </idea-plugin>
