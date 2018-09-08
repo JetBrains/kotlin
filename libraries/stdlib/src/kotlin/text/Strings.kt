@@ -1065,7 +1065,7 @@ private class DelimitedRangesSequence(
     private val input: CharSequence,
     private val startIndex: Int,
     private val limit: Int,
-    private val getNextMatch: CharSequence.(Int) -> Pair<Int, Int>?
+    private val getNextMatch: CharSequence.(currentIndex: Int) -> Pair<Int, Int>?
 ) : Sequence<IntRange> {
 
     override fun iterator(): Iterator<IntRange> = object : Iterator<IntRange> {
@@ -1132,8 +1132,8 @@ private class DelimitedRangesSequence(
 private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     require(limit >= 0, { "Limit must be non-negative, but was $limit." })
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex ->
-        indexOfAny(delimiters, startIndex, ignoreCase = ignoreCase).let { if (it < 0) null else it to 1 }
+    return DelimitedRangesSequence(this, startIndex, limit, { currentIndex ->
+        indexOfAny(delimiters, currentIndex, ignoreCase = ignoreCase).let { if (it < 0) null else it to 1 }
     })
 }
 
@@ -1156,7 +1156,7 @@ private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startI
     require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
     val delimitersList = delimiters.asList()
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimitersList, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
+    return DelimitedRangesSequence(this, startIndex, limit, { currentIndex -> findAnyOf(delimitersList, currentIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
 
 }
 
