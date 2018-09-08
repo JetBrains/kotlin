@@ -296,11 +296,12 @@ public class RangeTest {
         assertTrue(Double.MAX_VALUE in halfInfRange)
     }
 
+    @Suppress("EmptyRange")
     @Test fun isEmpty() {
         assertTrue((2..1).isEmpty())
         assertTrue((2L..0L).isEmpty())
-        assertTrue((1.toShort()..-1.toShort()).isEmpty())
-        assertTrue((0.toByte()..-1.toByte()).isEmpty())
+        assertTrue((1.toShort()..(-1).toShort()).isEmpty())
+        assertTrue((0.toByte()..(-1).toByte()).isEmpty())
         assertTrue((0f..-3.14f).isEmpty())
         assertTrue((-2.72..-3.14).isEmpty())
         assertTrue(('z'..'x').isEmpty())
@@ -315,6 +316,7 @@ public class RangeTest {
         assertTrue(("range".."progression").isEmpty())
     }
 
+    @Suppress("ReplaceAssertBooleanWithAssertEquality", "EmptyRange")
     @Test fun emptyEquals() {
         assertTrue(IntRange.EMPTY == IntRange.EMPTY)
         assertEquals(IntRange.EMPTY, IntRange.EMPTY)
@@ -340,14 +342,15 @@ public class RangeTest {
         assertFalse(("aa".."bb") == ("aaa".."bbb"))
     }
 
+    @Suppress("EmptyRange")
     @Test fun emptyHashCode() {
         assertEquals((0..42).hashCode(), (0..42).hashCode())
         assertEquals((1.23..4.56).hashCode(), (1.23..4.56).hashCode())
 
         assertEquals((0..-1).hashCode(), IntRange.EMPTY.hashCode())
         assertEquals((2L..1L).hashCode(), (1L..0L).hashCode())
-        assertEquals((0.toShort()..-1.toShort()).hashCode(), (42.toShort()..0.toShort()).hashCode())
-        assertEquals((0.toByte()..-1.toByte()).hashCode(), (42.toByte()..0.toByte()).hashCode())
+        assertEquals((0.toShort()..(-1).toShort()).hashCode(), (42.toShort()..0.toShort()).hashCode())
+        assertEquals((0.toByte()..(-1).toByte()).hashCode(), (42.toByte()..0.toByte()).hashCode())
         assertEquals((0f..-3.14f).hashCode(), (2.39f..1.41f).hashCode())
         assertEquals((0.0..-10.0).hashCode(), (10.0..0.0).hashCode())
         assertEquals(('z'..'x').hashCode(), ('l'..'k').hashCode())
@@ -390,8 +393,8 @@ public class RangeTest {
         assertFailsWithIllegalArgument { 'a'..'z' step 0 }
 
         assertFailsWithIllegalArgument { 0 downTo -5 step 0 }
-        assertFailsWithIllegalArgument { 0.toByte() downTo -5.toByte() step 0 }
-        assertFailsWithIllegalArgument { 0.toShort() downTo -5.toShort() step 0 }
+        assertFailsWithIllegalArgument { 0.toByte() downTo (-5).toByte() step 0 }
+        assertFailsWithIllegalArgument { 0.toShort() downTo (-5).toShort() step 0 }
         assertFailsWithIllegalArgument { 0L downTo -5L step 0L }
         assertFailsWithIllegalArgument { 'z' downTo 'a' step 0 }
 
@@ -403,8 +406,8 @@ public class RangeTest {
 
 
         assertFailsWithIllegalArgument { 0 downTo -5 step -2 }
-        assertFailsWithIllegalArgument { 0.toByte() downTo -5.toByte() step -2 }
-        assertFailsWithIllegalArgument { 0.toShort() downTo -5.toShort() step -2 }
+        assertFailsWithIllegalArgument { 0.toByte() downTo (-5).toByte() step -2 }
+        assertFailsWithIllegalArgument { 0.toShort() downTo (-5).toShort() step -2 }
         assertFailsWithIllegalArgument { 0L downTo -5L step -2L }
         assertFailsWithIllegalArgument { 'z' downTo 'a' step -2 }
     }

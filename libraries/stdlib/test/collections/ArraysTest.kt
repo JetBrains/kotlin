@@ -233,12 +233,6 @@ class ArraysTest {
     }
 
     @Test fun contentDeepToString() {
-        // Don't run this test unless primitive array `is` checks are supported (KT-17137)
-        if ((intArrayOf() as Any) is Array<*>) {
-            assertTrue(true)
-            return
-        }
-
         val arr = arrayOf(
             "aa", 1, null, arrayOf(arrayOf("foo")), charArrayOf('d'), booleanArrayOf(false),
             intArrayOf(-1), longArrayOf(-1), shortArrayOf(-1), byteArrayOf(-1),
