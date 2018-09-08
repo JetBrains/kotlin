@@ -34,6 +34,7 @@ internal actual inline fun copyToArrayImpl(collection: Collection<*>): Array<Any
     kotlin.jvm.internal.collectionToArray(collection)
 
 @kotlin.internal.InlineOnly
+@Suppress("UNCHECKED_CAST")
 internal actual inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
     kotlin.jvm.internal.collectionToArray(collection, array as Array<Any?>) as Array<T>
 
