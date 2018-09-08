@@ -2110,6 +2110,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/shadowing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("ExtensionShadows.kt")
+            public void testExtensionShadows() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/shadowing/ExtensionShadows.kt");
+            }
+
             @TestMetadata("InInitializer1.kt")
             public void testInInitializer1() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/shadowing/InInitializer1.kt");
@@ -2198,6 +2203,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("PreferMoreSpecificExtensionGeneric.kt")
             public void testPreferMoreSpecificExtensionGeneric() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtensionGeneric.kt");
+            }
+
+            @TestMetadata("PreferMoreSpecificExtensionGenericWithMultipleParam.kt")
+            public void testPreferMoreSpecificExtensionGenericWithMultipleParam() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtensionGenericWithMultipleParam.kt");
             }
 
             @TestMetadata("PreferMoreSpecificExtensionGenericWithParam.kt")
