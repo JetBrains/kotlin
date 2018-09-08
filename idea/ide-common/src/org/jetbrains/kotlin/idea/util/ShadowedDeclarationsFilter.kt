@@ -246,6 +246,15 @@ class ShadowedDeclarationsFilter(
                 if (p1.varargElementType != p2.varargElementType) return false // both should be vararg or or both not
                 if (p1.type != p2.type) return false
             }
+
+            val typeParameters1 = function.typeParameters
+            val typeParameters2 = other.function.typeParameters
+            if (typeParameters1.size != typeParameters2.size) return false
+            for (i in typeParameters1.indices) {
+                val t1 = typeParameters1[i]
+                val t2 = typeParameters2[i]
+                if (t1.upperBounds != t2.upperBounds) return false
+            }
             return true
         }
 
