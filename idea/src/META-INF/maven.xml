@@ -17,6 +17,8 @@
 
   <extensions defaultExtensionNs="org.jetbrains.idea.maven">
     <importer implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenImporter" />
+    <importer implementation="org.jetbrains.kotlin.idea.maven.KotlinCodeStyleMavenImporter" />
+
     <archetypesProvider implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenArchetypesProvider" />
 
     <pluginDescriptor mavenId="org.jetbrains.kotlin:kotlin-maven-plugin">

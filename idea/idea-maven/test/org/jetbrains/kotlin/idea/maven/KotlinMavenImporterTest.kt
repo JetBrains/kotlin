@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.kotlinCodeStyleDefaults
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
@@ -265,6 +269,48 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         assertSources("project", "src/main/java", "src/main/kotlin")
         assertTestSources("project", "src/test/java", "src/test/kotlin")
+    }
+
+    fun testImportObsoleteCodeStyle() {
+        Assert.assertNull(CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults())
+
+        importProject(
+            """
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <properties>
+                <kotlin.code.style>obsolete</kotlin.code.style>
+            </properties>
+            """
+        )
+
+        Assert.assertEquals(
+            KotlinObsoleteCodeStyle.CODE_STYLE_ID,
+            CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults()
+        )
+    }
+
+    fun testImportOfficialCodeStyle() {
+        Assert.assertNull(CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults())
+
+        importProject(
+            """
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <properties>
+                <kotlin.code.style>official</kotlin.code.style>
+            </properties>
+            """
+        )
+
+        Assert.assertEquals(
+            KotlinStyleGuideCodeStyle.CODE_STYLE_ID,
+            CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults()
+        )
     }
 
     fun testReImportRemoveDir() {
