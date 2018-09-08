@@ -35,6 +35,11 @@ dependencies {
     testCompile(projectTests(":idea:idea-gradle"))
     testCompile(commonDep("junit:junit"))
 
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+
     testCompile(intellijDep())
     testCompile(intellijPluginDep("properties"))
     testCompileOnly(intellijPluginDep("android"))
