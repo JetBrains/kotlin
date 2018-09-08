@@ -36,6 +36,7 @@ import kotlin.internal.InlineOnly
  */
 @SinceKotlin("1.3")
 @InlineOnly
+@Suppress("UNUSED_PARAMETER", "RedundantSuspendModifier")
 public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
     throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
 
