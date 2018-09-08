@@ -154,8 +154,10 @@ public class SequenceTest {
         assertFailsWith<IllegalArgumentException> { fibonacci().drop(-1) }
 
         val dropMax = fibonacci().drop(Int.MAX_VALUE)
-        val dropMore = dropMax.drop(Int.MAX_VALUE)
-        val takeMore = dropMax.take(Int.MAX_VALUE)
+        run @Suppress("UNUSED_VARIABLE") {
+            val dropMore = dropMax.drop(Int.MAX_VALUE)
+            val takeMore = dropMax.take(Int.MAX_VALUE)
+        }
 
     }
 
