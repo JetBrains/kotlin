@@ -179,7 +179,7 @@ class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>
         }
     }
 
-    override fun parametrize(): Sequence<Pair<Family, PrimitiveType?>> = buildSequence {
+    override fun parametrize(): Sequence<Pair<Family, PrimitiveType?>> = defineSequence {
         for ((family, primitives) in familyPrimitives) {
             if (primitives.isEmpty())
                 yield(family to null)

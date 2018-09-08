@@ -6,13 +6,13 @@
 package test.coroutines
 
 import kotlin.test.*
-import kotlin.coroutines.experimental.buildSequence
+import kotlin.coroutines.experimental.defineSequence
 import kotlin.coroutines.experimental.buildIterator
 
 class SequenceBuilderTest {
     @Test
     fun testSimple() {
-        val result = buildSequence {
+        val result = defineSequence {
             for (i in 1..3) {
                 yield(2 * i)
             }
@@ -25,7 +25,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testCallHasNextSeveralTimes() {
-        val result = buildSequence {
+        val result = defineSequence {
             yield(1)
         }
 
@@ -46,7 +46,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testManualIteration() {
-        val result = buildSequence {
+        val result = defineSequence {
             yield(1)
             yield(2)
             yield(3)
@@ -74,7 +74,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testEmptySequence() {
-        val result = buildSequence<Int> {}
+        val result = defineSequence<Int> {}
         val iterator = result.iterator()
 
         assertFalse(iterator.hasNext())
@@ -86,10 +86,10 @@ class SequenceBuilderTest {
     @Test
     fun testLaziness() {
         var sharedVar = -2
-        val result = buildSequence {
+        val result = defineSequence {
             while (true) {
                 when (sharedVar) {
-                    -1 -> return@buildSequence
+                    -1 -> return@defineSequence
                     -2 -> error("Invalid state: -2")
                     else -> yield(sharedVar)
                 }
@@ -118,10 +118,10 @@ class SequenceBuilderTest {
     @Test
     fun testExceptionInCoroutine() {
         var sharedVar = -2
-        val result = buildSequence {
+        val result = defineSequence {
             while (true) {
                 when (sharedVar) {
-                    -1 -> return@buildSequence
+                    -1 -> return@defineSequence
                     -2 -> throw UnsupportedOperationException("-2 is unsupported")
                     else -> yield(sharedVar)
                 }
@@ -142,7 +142,7 @@ class SequenceBuilderTest {
     @Test
     fun testParallelIteration() {
         var inc = 0
-        val result = buildSequence {
+        val result = defineSequence {
             for (i in 1..3) {
                 inc++
                 yield(inc * i)
@@ -154,7 +154,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllIterator() {
-        val result = buildSequence {
+        val result = defineSequence {
             yieldAll(listOf(1, 2, 3).iterator())
         }
         assertEquals(listOf(1, 2, 3), result.toList())
@@ -162,7 +162,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllSequence() {
-        val result = buildSequence {
+        val result = defineSequence {
             yieldAll(sequenceOf(1, 2, 3))
         }
         assertEquals(listOf(1, 2, 3), result.toList())
@@ -170,7 +170,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllCollection() {
-        val result = buildSequence {
+        val result = defineSequence {
             yieldAll(listOf(1, 2, 3))
         }
         assertEquals(listOf(1, 2, 3), result.toList())
@@ -178,7 +178,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllCollectionMixedFirst() {
-        val result = buildSequence {
+        val result = defineSequence {
             yield(0)
             yieldAll(listOf(1, 2, 3))
         }
@@ -187,7 +187,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllCollectionMixedLast() {
-        val result = buildSequence {
+        val result = defineSequence {
             yieldAll(listOf(1, 2, 3))
             yield(4)
         }
@@ -196,7 +196,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllCollectionMixedBoth() {
-        val result = buildSequence {
+        val result = defineSequence {
             yield(0)
             yieldAll(listOf(1, 2, 3))
             yield(4)
@@ -206,7 +206,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllCollectionMixedLong() {
-        val result = buildSequence {
+        val result = defineSequence {
             yield(0)
             yieldAll(listOf(1, 2, 3))
             yield(4)
@@ -221,7 +221,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllCollectionOneEmpty() {
-        val result = buildSequence<Int> {
+        val result = defineSequence<Int> {
             yieldAll(listOf())
         }
         assertEquals(listOf(), result.toList())
@@ -229,7 +229,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testYieldAllCollectionManyEmpty() {
-        val result = buildSequence<Int> {
+        val result = defineSequence<Int> {
             yieldAll(listOf())
             yieldAll(listOf())
             yieldAll(listOf())
@@ -240,7 +240,7 @@ class SequenceBuilderTest {
     @Test
     fun testYieldAllSideEffects() {
         val effects = arrayListOf<Any>()
-        val result = buildSequence {
+        val result = defineSequence {
             effects.add("a")
             yieldAll(listOf(1, 2))
             effects.add("b")

@@ -2069,7 +2069,7 @@ public abstract class kotlin/coroutines/experimental/SequenceBuilder {
 
 public final class kotlin/coroutines/experimental/SequenceBuilderKt {
 	public static final fun buildIterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
-	public static final fun buildSequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
+	public static final fun defineSequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 }
 
 public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {

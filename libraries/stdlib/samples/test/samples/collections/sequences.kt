@@ -3,7 +3,7 @@ package samples.collections
 import samples.*
 import kotlin.test.*
 import kotlin.coroutines.experimental.buildIterator
-import kotlin.coroutines.experimental.buildSequence
+import kotlin.coroutines.experimental.defineSequence
 
 @RunWith(Enclosed::class)
 class Sequences {
@@ -112,7 +112,7 @@ class Sequences {
 
         @Sample
         fun buildFibonacciSequence() {
-            fun fibonacci() = buildSequence {
+            fun fibonacci() = defineSequence {
                 var terms = Pair(0, 1)
 
                 // this sequence is infinite
@@ -126,8 +126,8 @@ class Sequences {
         }
 
         @Sample
-        fun buildSequenceYieldAll() {
-            val sequence = buildSequence {
+        fun defineSequenceYieldAll() {
+            val sequence = defineSequence {
                 val start = 0
                 // yielding a single value
                 yield(start)

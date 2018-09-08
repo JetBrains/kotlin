@@ -20,9 +20,9 @@ class SuspendingCallHintsTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testSimple() {
         check(
-            """import kotlin.coroutines.experimental.buildSequence
+            """import kotlin.coroutines.experimental.defineSequence
 
-             val x = buildSequence {<hint text="this: SequenceBuilder<Int>" />
+             val x = defineSequence {<hint text="this: SequenceBuilder<Int>" />
                  <hint text="#" />yield(1)
              } """
         )

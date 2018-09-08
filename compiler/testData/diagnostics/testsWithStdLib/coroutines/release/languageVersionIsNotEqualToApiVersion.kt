@@ -24,10 +24,10 @@ fun builder(c: <!UNSUPPORTED!>suspend<!> () -> Unit) {}
 }
 
 fun test2() {
-    kotlin.coroutines.experimental.buildSequence<Int> {
+    kotlin.coroutines.experimental.defineSequence<Int> {
         yield(1<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
-    kotlin.sequences.<!UNRESOLVED_REFERENCE!>buildSequence<!><Int> {
+    kotlin.sequences.<!UNRESOLVED_REFERENCE!>defineSequence<!><Int> {
         <!UNRESOLVED_REFERENCE!>yield<!>(1)
     }
 }

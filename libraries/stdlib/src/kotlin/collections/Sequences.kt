@@ -563,7 +563,7 @@ public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
  * The returned sequence is constrained to be iterated only once.
  *
  * @see constrainOnce
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.coroutines.experimental.defineSequence
  *
  * @sample samples.collections.Sequences.Building.generateSequence
  */
@@ -580,7 +580,7 @@ public fun <T : Any> generateSequence(nextFunction: () -> T?): Sequence<T> {
  *
  * The sequence can be iterated multiple times, each time starting with [seed].
  *
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.coroutines.experimental.defineSequence
  *
  * @sample samples.collections.Sequences.Building.generateSequenceWithSeed
  */
@@ -600,10 +600,9 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
  *
  * The sequence can be iterated multiple times.
  *
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.coroutines.experimental.defineSequence
  *
  * @sample samples.collections.Sequences.Building.generateSequenceWithLazySeed
  */
 public fun <T : Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
     GeneratorSequence(seedFunction, nextFunction)
-

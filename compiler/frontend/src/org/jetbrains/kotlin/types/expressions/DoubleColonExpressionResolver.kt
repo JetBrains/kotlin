@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.lang.UnsupportedOperationException
 import java.util.*
 import javax.inject.Inject
-import kotlin.coroutines.experimental.buildSequence
+import kotlin.coroutines.experimental.defineSequence
 
 sealed class DoubleColonLHS(val type: KotlinType) {
     /**
@@ -699,13 +699,13 @@ class DoubleColonExpressionResolver(
                 ?.apply { commitTrace() }?.results
         }
 
-        val resultSequence = buildSequence {
+        val resultSequence = defineSequence {
             when (lhs) {
                 is DoubleColonLHS.Type -> {
                     val classifier = lhsType.constructor.declarationDescriptor
                     if (classifier !is ClassDescriptor) {
                         c.trace.report(CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(expression))
-                        return@buildSequence
+                        return@defineSequence
                     }
 
                     val qualifier = c.trace.get(BindingContext.QUALIFIER, expression.receiverExpression!!)

@@ -21,12 +21,12 @@ class RestrictedController<T> {
     }
 }
 
-fun <T> buildSequence(<!UNUSED_PARAMETER!>c<!>: suspend RestrictedController<T>.() -> Unit) {}
+fun <T> defineSequence(<!UNUSED_PARAMETER!>c<!>: suspend RestrictedController<T>.() -> Unit) {}
 suspend fun <T> RestrictedController<T>.yield2(<!UNUSED_PARAMETER!>x<!>: T) {}
 
 fun test() {
-    buildSequence<Int> a@{
-        buildSequence<Int> b@{
+    defineSequence<Int> a@{
+        defineSequence<Int> b@{
             yield(1)
             yield2(1)
             this@b.yield(1)
@@ -45,8 +45,8 @@ fun test() {
         }
     }
 
-    buildSequence<Int> {
-        buildSequence<String> {
+    defineSequence<Int> {
+        defineSequence<String> {
             yield("a")
             yield2("a")
             this.yield("b")
@@ -65,10 +65,10 @@ fun test() {
         }
     }
 
-    buildSequence<Int> a@{
+    defineSequence<Int> a@{
         yield(1)
         yield2(1)
-        buildSequence {
+        defineSequence {
             yield("")
             yield2("")
             this@a.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>(1)
@@ -84,7 +84,7 @@ fun test() {
         }
     }
 
-    buildSequence<String> {
+    defineSequence<String> {
         yield("")
         RestrictedController<String>().<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("1")
     }

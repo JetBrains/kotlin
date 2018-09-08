@@ -5,7 +5,7 @@
 
 package templates
 
-import kotlin.coroutines.experimental.buildSequence
+import kotlin.coroutines.experimental.defineSequence
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubtypeOf
@@ -17,7 +17,7 @@ fun templateGroupOf(vararg templates: MemberTemplate): TemplateGroup = { templat
 
 abstract class TemplateGroupBase : TemplateGroup {
 
-    override fun invoke(): Sequence<MemberTemplate> = buildSequence {
+    override fun invoke(): Sequence<MemberTemplate> = defineSequence {
         with(this@TemplateGroupBase) {
             this::class.members.filter { it.name.startsWith("f_") }.forEach {
                 require(it.parameters.size == 1) { "Member $it violates naming convention" }

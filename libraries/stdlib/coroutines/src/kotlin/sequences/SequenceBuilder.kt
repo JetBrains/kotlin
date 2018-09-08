@@ -18,11 +18,11 @@ import kotlin.coroutines.intrinsics.*
  *
  * @see kotlin.sequences.generateSequence
  *
- * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+ * @sample samples.collections.Sequences.Building.defineSequenceYieldAll
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @SinceKotlin("1.3")
-public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIterator(builderAction) }
+public fun <T> defineSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIterator(builderAction) }
 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
@@ -40,10 +40,10 @@ public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Uni
 /**
  * Builder for a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
  *
- * @see buildSequence
+ * @see defineSequence
  * @see buildIterator
  *
- * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+ * @sample samples.collections.Sequences.Building.defineSequenceYieldAll
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @RestrictsSuspension
@@ -52,7 +52,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
     /**
      * Yields a value to the [Iterator] being built.
      *
-     * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+     * @sample samples.collections.Sequences.Building.defineSequenceYieldAll
      * @sample samples.collections.Sequences.Building.buildFibonacciSequence
      */
     @kotlin.internal.RequireKotlin("1.3") // TODO: This is needed for tests only and can be safely removed after 1.3 is released
@@ -63,7 +63,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      *
      * The sequence of values returned by the given iterator can be potentially infinite.
      *
-     * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+     * @sample samples.collections.Sequences.Building.defineSequenceYieldAll
      */
     @kotlin.internal.RequireKotlin("1.3") // TODO: This is needed for tests only and can be safely removed after 1.3 is released
     public abstract suspend fun yieldAll(iterator: Iterator<T>)
@@ -71,7 +71,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
     /**
      * Yields a collections of values to the [Iterator] being built.
      *
-     * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+     * @sample samples.collections.Sequences.Building.defineSequenceYieldAll
      */
     @kotlin.internal.RequireKotlin("1.3") // TODO: This is needed for tests only and can be safely removed after 1.3 is released
     public suspend fun yieldAll(elements: Iterable<T>) {
@@ -84,7 +84,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      *
      * The sequence can be potentially infinite.
      *
-     * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+     * @sample samples.collections.Sequences.Building.defineSequenceYieldAll
      */
     @kotlin.internal.RequireKotlin("1.3") // TODO: This is needed for tests only and can be safely removed after 1.3 is released
     public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())

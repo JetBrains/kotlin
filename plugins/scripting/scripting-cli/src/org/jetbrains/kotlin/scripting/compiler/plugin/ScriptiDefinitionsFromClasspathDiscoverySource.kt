@@ -15,7 +15,7 @@ import java.io.File
 import java.io.IOException
 import java.net.URLClassLoader
 import java.util.jar.JarFile
-import kotlin.coroutines.experimental.buildSequence
+import kotlin.coroutines.experimental.defineSequence
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptingEnvironment
@@ -47,7 +47,7 @@ internal fun discoverScriptTemplatesInClasspath(
     baseClassLoader: ClassLoader,
     scriptResolverEnv: Map<String, Any?>,
     messageCollector: MessageCollector
-): Sequence<KotlinScriptDefinition> = buildSequence {
+): Sequence<KotlinScriptDefinition> = defineSequence {
     // TODO: try to find a way to reduce classpath (and classloader) to minimal one needed to load script definition and its dependencies
     val loader = LazyClasspathWithClassLoader(baseClassLoader) { classpath }
 
@@ -135,7 +135,7 @@ internal fun loadScriptTemplatesFromClasspath(
     messageCollector: MessageCollector
 ): Sequence<KotlinScriptDefinition> =
     if (scriptTemplates.isEmpty()) emptySequence()
-    else buildSequence {
+    else defineSequence {
         // trying the direct classloading from baseClassloader first, since this is the most performant variant
         val (initialLoadedDefinitions, initialNotFoundTemplates) = scriptTemplates.partitionMapNotNull {
             loadScriptDefinition(baseClassLoader, it, scriptResolverEnv, messageCollector)

@@ -8,7 +8,7 @@ import COROUTINES_PACKAGE.*
 import COROUTINES_PACKAGE.intrinsics.*
 
 val f = run {
-    buildSequence {
+    defineSequence {
         if (true) {
             yield("OK")
         }
