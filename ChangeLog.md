@@ -3676,7 +3676,7 @@
 
 ### Standard Library
 - [`KEEP-23`](https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/group-and-fold.md) Operation to group by key and fold each group simultaneously
-- [`KT-15774`](https://youtrack.jetbrains.com/issue/KT-15774) `defineSequence` and `buildIterator` functions with `yield` and `yieldAll` based on coroutines
+- [`KT-15774`](https://youtrack.jetbrains.com/issue/KT-15774) `defineSequence` and `defineIterator` functions with `yield` and `yieldAll` based on coroutines
 - [`KT-6903`](https://youtrack.jetbrains.com/issue/KT-6903) Add `also` extension, which is like `apply`, but with `it` instead of `this` inside lambda.
 - [`KT-7858`](https://youtrack.jetbrains.com/issue/KT-7858) Add extension function `takeIf` to match a value against predicate and return null when it does not match
 - [`KT-11851`](https://youtrack.jetbrains.com/issue/KT-11851) Provide extension `Map.getValue(key: K): V` which throws or returns default when key is not found

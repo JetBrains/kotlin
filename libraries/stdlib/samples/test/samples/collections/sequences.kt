@@ -2,7 +2,7 @@ package samples.collections
 
 import samples.*
 import kotlin.test.*
-import kotlin.coroutines.experimental.buildIterator
+import kotlin.coroutines.experimental.defineIterator
 import kotlin.coroutines.experimental.defineSequence
 
 @RunWith(Enclosed::class)
@@ -141,12 +141,12 @@ class Sequences {
         }
 
         @Sample
-        fun buildIterator() {
+        fun defineIterator() {
             val collection = listOf(1, 2, 3)
             val wrappedCollection = object : AbstractCollection<Any>() {
                 override val size: Int = collection.size + 2
 
-                override fun iterator(): Iterator<Any> = buildIterator {
+                override fun iterator(): Iterator<Any> = defineIterator {
                     yield("first")
                     yieldAll(collection)
                     yield("last")

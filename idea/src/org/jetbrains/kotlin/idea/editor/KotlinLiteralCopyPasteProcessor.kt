@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.*
 import kotlin.coroutines.experimental.SequenceBuilder
-import kotlin.coroutines.experimental.buildIterator
+import kotlin.coroutines.experimental.defineIterator
 
 private val PsiElement.templateContentRange: TextRange?
     get() = this.getParentOfType<KtStringTemplateExpression>(false)?.let{
@@ -233,7 +233,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
         if (inputString.isEmpty()) {
             return emptySequence<TemplateChunk>().iterator()
         }
-        return buildIterator {
+        return defineIterator {
             var from = 0
             var to = 0
             while (to < inputString.length) {

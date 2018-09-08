@@ -22,16 +22,16 @@ import kotlin.coroutines.intrinsics.*
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @SinceKotlin("1.3")
-public fun <T> defineSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIterator(builderAction) }
+public fun <T> defineSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { defineIterator(builderAction) }
 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
  *
- * @sample samples.collections.Sequences.Building.buildIterator
+ * @sample samples.collections.Sequences.Building.defineIterator
  * @sample samples.collections.Iterables.Building.iterable
  */
 @SinceKotlin("1.3")
-public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
+public fun <T> defineIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
     val iterator = SequenceBuilderIterator<T>()
     iterator.nextStep = builderAction.createCoroutineUnintercepted(receiver = iterator, completion = iterator)
     return iterator
@@ -41,7 +41,7 @@ public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Uni
  * Builder for a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
  *
  * @see defineSequence
- * @see buildIterator
+ * @see defineIterator
  *
  * @sample samples.collections.Sequences.Building.defineSequenceYieldAll
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence

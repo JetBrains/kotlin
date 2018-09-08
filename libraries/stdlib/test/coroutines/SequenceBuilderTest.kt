@@ -7,7 +7,7 @@ package test.coroutines
 
 import kotlin.test.*
 import kotlin.coroutines.experimental.defineSequence
-import kotlin.coroutines.experimental.buildIterator
+import kotlin.coroutines.experimental.defineIterator
 
 class SequenceBuilderTest {
     @Test
@@ -278,7 +278,7 @@ class SequenceBuilderTest {
 
     @Test
     fun testInfiniteYieldAll() {
-        val values = buildIterator {
+        val values = defineIterator {
             while (true) {
                 yieldAll((1..5).map { it })
             }
