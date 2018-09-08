@@ -136,8 +136,8 @@ class OrderingTest {
     @Test
     fun sortUsingCustomComparator() {
         val comparator = object : Comparator<Item> {
-            override fun compare(o1: Item, o2: Item): Int {
-                return compareValuesBy(o1, o2, { it.name }, { it.rating })
+            override fun compare(a: Item, b: Item): Int {
+                return compareValuesBy(a, b, { it.name }, { it.rating })
             }
 
             override fun equals(other: Any?): Boolean {
