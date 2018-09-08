@@ -65,6 +65,12 @@ dependencies {
     testCompile(projectTests(":idea")) { isTransitive = false }
     testCompile(projectTests(":generators:test-generator"))
     testCompile(commonDep("junit:junit"))
+
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+
     if (intellijUltimateEnabled) {
         testCompileOnly(intellijUltimateDep()) { includeJars("gson", "annotations", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject) }
     }
