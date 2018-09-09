@@ -441,4 +441,16 @@ object Mapping : TemplateGroupBase() {
         }
     }
 
+    val f_withEach = fn("withEach(operation: T.() -> Unit)") {
+      include(Iterables)
+    } builder {
+      doc { "For each element of this [Iterable], calls the specified function [operation] with the element as its receiver." }
+      returns("Unit")
+      body {
+        """
+        forEach { it.operation() }
+        """
+      }
+    }
+
 }
