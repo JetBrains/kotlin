@@ -149,14 +149,8 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
         }
 
-        val property = GradlePropertiesFileUtils.readProperty(project, GradlePropertiesFileUtils.KOTLIN_CODE_STYLE_GRADLE_SETTING)
-        when (property) {
-            KotlinObsoleteCodeStyle.CODE_STYLE_SETTING ->
-                ProjectCodeStyleImporter.apply(project, KotlinObsoleteCodeStyle.INSTANCE)
-            KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING ->
-                ProjectCodeStyleImporter.apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
-            else -> return
-        }
+        val codeStyleStr = GradlePropertiesFileUtils.readProperty(project, GradlePropertiesFileUtils.KOTLIN_CODE_STYLE_GRADLE_SETTING)
+        ProjectCodeStyleImporter.apply(project, codeStyleStr)
     }
 }
 

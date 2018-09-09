@@ -12,6 +12,20 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.impl.source.codeStyle.CodeStyleSchemesImpl
 
 object ProjectCodeStyleImporter {
+    fun apply(project: Project, codeStyleStr: String?): Boolean {
+        return when (codeStyleStr) {
+            KotlinObsoleteCodeStyle.CODE_STYLE_SETTING -> {
+                ProjectCodeStyleImporter.apply(project, KotlinObsoleteCodeStyle.INSTANCE)
+                true
+            }
+            KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING -> {
+                ProjectCodeStyleImporter.apply(project, KotlinStyleGuideCodeStyle.INSTANCE)
+                true
+            }
+            else -> false
+        }
+    }
+
     fun apply(project: Project, codeStyle: KotlinPredefinedCodeStyle) {
         val schemeManager = CodeStyleSettingsManager.getInstance(project)
         val schemesModel = CodeStyleSchemesModel(project)
