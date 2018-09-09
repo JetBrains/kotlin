@@ -126,9 +126,6 @@ internal fun Result<*>.throwOnFailure() {
  */
 @InlineOnly
 public inline fun <R> runCatching(block: () -> R): Result<R> {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-    }
     return try {
         Result.success(block())
     } catch (e: Throwable) {
@@ -142,9 +139,6 @@ public inline fun <R> runCatching(block: () -> R): Result<R> {
  */
 @InlineOnly
 public inline fun <T, R> T.runCatching(block: T.() -> R): Result<R> {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-    }
     return try {
         Result.success(block())
     } catch (e: Throwable) {
@@ -249,9 +243,6 @@ public inline fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
  */
 @InlineOnly
 public inline fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Result<R> {
-    contract {
-        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
-    }
     return when(val exception = exceptionOrNull()) {
         null -> runCatching { transform(value as T) }
         else -> Result(value)
@@ -287,9 +278,6 @@ public inline fun <R, T: R> Result<T>.recover(transform: (exception: Throwable) 
  */
 @InlineOnly
 public inline fun <R, T: R> Result<T>.recoverCatching(transform: (exception: Throwable) -> R): Result<R> {
-    contract {
-        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
-    }
     val value = value // workaround for inline classes BE bug
     return when(val exception = exceptionOrNull()) {
         null -> this
