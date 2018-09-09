@@ -423,6 +423,17 @@ class Collections {
 
             assertPrints(deltas, "[3, 5, 7, 9, 11]")
         }
+
+        @Sample
+        fun withEach() {
+          val substringList = mutableListOf<String>()
+          listOf("foo", "bar").withEach {
+            substringList.add(substring(0, 1))
+          }
+          assertEquals(2, substringList.size)
+          assertEquals("f", substringList[0])
+          assertEquals("b", substringList[1])
+        }
     }
 
     class Aggregates {
