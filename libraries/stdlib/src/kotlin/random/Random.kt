@@ -50,13 +50,13 @@ public abstract class Random {
     /**
      * Gets the next random `Int` from the random number generator in the specified range.
      *
-     * Generates an `Int` random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+     * Generates an `Int` random value uniformly distributed between the specified [from] (inclusive) and the specified [until] (exclusive).
      *
-     * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
+     * @throws IllegalArgumentException if [from] is greater than or equal to [until].
      */
-    public open fun nextInt(origin: Int, bound: Int): Int {
-        checkRangeBounds(origin, bound)
-        val n = bound - origin
+    public open fun nextInt(from: Int, until: Int): Int {
+        checkRangeBounds(from, until)
+        val n = until - from
         if (n > 0 || n == Int.MIN_VALUE) {
             val rnd = if (n and -n == n) {
                 val bitCount = fastLog2(n)
@@ -69,11 +69,11 @@ public abstract class Random {
                 } while (bits - v + (n - 1) < 0)
                 v
             }
-            return origin + rnd
+            return from + rnd
         } else {
             while (true) {
                 val rnd = nextInt()
-                if (rnd in origin until bound) return rnd
+                if (rnd in from until until) return rnd
             }
         }
     }
@@ -114,13 +114,13 @@ public abstract class Random {
     /**
      * Gets the next random `Long` from the random number generator in the specified range.
      *
-     * Generates a `Long` random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+     * Generates a `Long` random value uniformly distributed between the specified [from] (inclusive) and the specified [until] (exclusive).
      *
-     * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
+     * @throws IllegalArgumentException if [from] is greater than or equal to [until].
      */
-    public open fun nextLong(origin: Long, bound: Long): Long {
-        checkRangeBounds(origin, bound)
-        val n = bound - origin
+    public open fun nextLong(from: Long, until: Long): Long {
+        checkRangeBounds(from, until)
+        val n = until - from
         if (n > 0) {
             val rnd: Long
             if (n and -n == n) {
@@ -148,11 +148,11 @@ public abstract class Random {
                 } while (bits - v + (n - 1) < 0)
                 rnd = v
             }
-            return origin + rnd
+            return from + rnd
         } else {
             while (true) {
                 val rnd = nextLong()
-                if (rnd in origin until bound) return rnd
+                if (rnd in from until until) return rnd
             }
         }
     }
@@ -194,22 +194,22 @@ public abstract class Random {
     /**
      * Gets the next random `Double` from the random number generator in the specified range.
      *
-     * Generates a `Double` random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+     * Generates a `Double` random value uniformly distributed between the specified [from] (inclusive) and the specified [until] (exclusive).
      *
-     * [origin] and [bound] must be finite otherwise the behavior is unspecified.
+     * [from] and [until] must be finite otherwise the behavior is unspecified.
      *
-     * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
+     * @throws IllegalArgumentException if [from] is greater than or equal to [until].
      */
-    public open fun nextDouble(origin: Double, bound: Double): Double {
-        checkRangeBounds(origin, bound)
-        val size = bound - origin
-        val r = if (size.isInfinite() && origin.isFinite() && bound.isFinite()) {
-            val r1 = nextDouble() * (bound / 2 - origin / 2)
-            origin + r1 + r1
+    public open fun nextDouble(from: Double, until: Double): Double {
+        checkRangeBounds(from, until)
+        val size = until - from
+        val r = if (size.isInfinite() && from.isFinite() && until.isFinite()) {
+            val r1 = nextDouble() * (until / 2 - from / 2)
+            from + r1 + r1
         } else {
-            origin + nextDouble() * size
+            from + nextDouble() * size
         }
-        return if (r >= bound) bound.nextDown() else r
+        return if (r >= until) until.nextDown() else r
     }
 
     /**
@@ -275,19 +275,19 @@ public abstract class Random {
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()
         override fun nextInt(bound: Int): Int = defaultRandom.nextInt(bound)
-        override fun nextInt(origin: Int, bound: Int): Int = defaultRandom.nextInt(origin, bound)
+        override fun nextInt(from: Int, until: Int): Int = defaultRandom.nextInt(from, until)
         override fun nextInt(range: IntRange): Int = defaultRandom.nextInt(range)
 
         override fun nextLong(): Long = defaultRandom.nextLong()
         override fun nextLong(bound: Long): Long = defaultRandom.nextLong(bound)
-        override fun nextLong(origin: Long, bound: Long): Long = defaultRandom.nextLong(origin, bound)
+        override fun nextLong(from: Long, until: Long): Long = defaultRandom.nextLong(from, until)
         override fun nextLong(range: LongRange): Long = defaultRandom.nextLong(range)
 
         override fun nextBoolean(): Boolean = defaultRandom.nextBoolean()
 
         override fun nextDouble(): Double = defaultRandom.nextDouble()
         override fun nextDouble(bound: Double): Double = defaultRandom.nextDouble(bound)
-        override fun nextDouble(origin: Double, bound: Double): Double = defaultRandom.nextDouble(origin, bound)
+        override fun nextDouble(from: Double, until: Double): Double = defaultRandom.nextDouble(from, until)
 
         override fun nextFloat(): Float = defaultRandom.nextFloat()
 
