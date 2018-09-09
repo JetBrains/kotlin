@@ -8,6 +8,13 @@ package test.kotlin
 import kotlin.test.*
 
 class ResultTest {
+
+    class CustomException(message: String) : Exception(message) {
+        override fun toString(): String = "CustomException: $message"
+    }
+
+    fun error(message: String): Nothing = throw CustomException(message)
+
     @Test
     fun testRunCatchingSuccess() {
         val ok = runCatching { "OK" }
@@ -28,7 +35,7 @@ class ResultTest {
 
     @Test
     fun testConstructedFailure() {
-        val fail = Result.failure<Unit>(IllegalStateException("F"))
+        val fail = Result.failure<Unit>(CustomException("F"))
         checkFailure(fail, "F", true)
     }
 
@@ -70,11 +77,11 @@ class ResultTest {
         assertEquals(null, fail.getOrNull())
         assertEquals(null, fail.getOrElse { null })
         assertEquals("DEF", fail.getOrDefault("DEF"))
-        assertEquals("EX:java.lang.IllegalStateException: $msg", fail.getOrElse { "EX:$it" })
-        assertEquals("EX:java.lang.IllegalStateException: $msg", fail.fold({ "V:$it" }, { "EX:$it" }))
+        assertEquals("EX:CustomException: $msg", fail.getOrElse { "EX:$it" })
+        assertEquals("EX:CustomException: $msg", fail.fold({ "V:$it" }, { "EX:$it" }))
         assertEquals(msg, fail.exceptionOrNull()!!.message)
         assertEquals(msg, fail.fold(onSuccess = { null }, onFailure = { it })!!.message)
-        assertEquals("Failure(java.lang.IllegalStateException: $msg)", fail.toString())
+        assertEquals("Failure(CustomException: $msg)", fail.toString())
         assertEquals(fail, fail)
         if (topLevel) {
             checkFailure(fail.map { 42 }, msg)
