@@ -445,6 +445,7 @@ object Mapping : TemplateGroupBase() {
       include(Iterables)
     } builder {
       doc { "For each element of this [Iterable], calls the specified function [operation] with the element as its receiver." }
+      sample("samples.collections.Collections.Transformations.withEach")
       returns("Unit")
       body {
         """
