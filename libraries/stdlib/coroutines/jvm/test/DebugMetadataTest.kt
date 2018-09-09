@@ -33,7 +33,7 @@ private class MyContinuation : BaseContinuationImpl(null) {
 
     var label = 0
 
-    override fun invokeSuspend(result: SuccessOrFailure<Any?>): Any? = null
+    override fun invokeSuspend(result: Result<Any?>): Any? = null
 }
 
 class DebugMetadataTest {

@@ -45,7 +45,7 @@ class CoroutinesReferenceValuesTest {
         bad.startCoroutine(object : Continuation<BadClass> {
             override val context: CoroutineContext = EmptyCoroutineContext
 
-            override fun resumeWith(result_: SuccessOrFailure<BadClass>) {
+            override fun resumeWith(result_: Result<BadClass>) {
                 assertTrue(result == null)
                 result = result_.getOrThrow()
             }

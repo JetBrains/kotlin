@@ -19,7 +19,7 @@ fun build(x: suspend () -> Unit) {
         x.startCoroutine(object : Continuation<Unit> {
             override val context = EmptyCoroutineContext
 
-            override fun resumeWith(x: SuccessOrFailure<Unit>) {
+            override fun resumeWith(x: Result<Unit>) {
                 complete = true
             }
         })

@@ -4,7 +4,7 @@
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
-    x.resumeWith(SuccessOrFailure.success("OK"))
+    x.resumeWith(Result.success("OK"))
 }
 
 suspend fun suspendThere(param: Int, param2: String, param3: Long): String {

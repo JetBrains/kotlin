@@ -1,10 +1,10 @@
 // FIX: Add '.getOrThrow()' to function result (breaks use-sites!)
 package kotlin
 
-class SuccessOrFailure<T>(val value: T?) {
+class Result<T>(val value: T?) {
     fun getOrThrow(): T = value ?: throw AssertionError("")
 
-    operator fun plus(other: SuccessOrFailure<T>) = other
+    operator fun plus(other: Result<T>) = other
 }
 
-fun <caret>incorrect() = SuccessOrFailure("123") + SuccessOrFailure("456")
+fun <caret>incorrect() = Result("123") + Result("456")

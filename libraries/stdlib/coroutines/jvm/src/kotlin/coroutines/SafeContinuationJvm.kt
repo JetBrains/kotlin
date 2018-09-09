@@ -34,7 +34,7 @@ internal actual constructor(
         )
     }
 
-    public actual override fun resumeWith(result: SuccessOrFailure<T>) {
+    public actual override fun resumeWith(result: Result<T>) {
         while (true) { // lock-free loop
             val cur = this.result // atomic read
             when {
@@ -57,7 +57,7 @@ internal actual constructor(
         }
         return when {
             result === RESUMED -> COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
-            result is SuccessOrFailure.Failure -> throw result.exception
+            result is Result.Failure -> throw result.exception
             else -> result // either COROUTINE_SUSPENDED or data
         }
     }

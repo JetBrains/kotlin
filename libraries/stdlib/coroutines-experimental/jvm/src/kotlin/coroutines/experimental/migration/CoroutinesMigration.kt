@@ -79,7 +79,7 @@ private class ExperimentalContinuationMigration<T>(val continuation: Continuatio
 
 private class ContinuationMigration<T>(val continuation: ExperimentalContinuation<T>): Continuation<T> {
     override val context: CoroutineContext = continuation.context.toCoroutineContext()
-    override fun resumeWith(result: SuccessOrFailure<T>) {
+    override fun resumeWith(result: Result<T>) {
         result
             .onSuccess { continuation.resume(it) }
             .onFailure { continuation.resumeWithException(it) }

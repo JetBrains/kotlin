@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 
-class ResultIsSuccessOrFailureInspection : AbstractKotlinInspection() {
+class ResultIsResultInspection : AbstractKotlinInspection() {
 
     private fun MemberScope.hasCorrespondingNonCatchingFunction(
         nameWithoutCatching: String,
@@ -85,13 +85,13 @@ class ResultIsSuccessOrFailureInspection : AbstractKotlinInspection() {
         if (name in ALLOWED_NAMES) return
         if (function is KtNamedFunction) {
             val receiverTypeReference = function.receiverTypeReference
-            // Filter SuccessOrFailure extensions
+            // Filter Result extensions
             if (receiverTypeReference != null && SHORT_NAME in receiverTypeReference.text) return
         }
         if (function is KtFunctionLiteral || returnTypeText == null) {
             // Heuristics to save performance
             val text = function.bodyExpression?.text
-            // Check there is something creating SuccessOrFailure in function text
+            // Check there is something creating Result in function text
             if (text != null && ALLOWED_NAMES.none { it in text } && SHORT_NAME !in text && CATCHING !in text) return
         }
 
@@ -192,7 +192,7 @@ class ResultIsSuccessOrFailureInspection : AbstractKotlinInspection() {
     }
 
     companion object {
-        private const val SHORT_NAME = "SuccessOrFailure"
+        private const val SHORT_NAME = "Result"
 
         private const val FULL_NAME = "kotlin.$SHORT_NAME"
 

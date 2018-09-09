@@ -12,7 +12,7 @@ suspend fun delay(): Unit = suspendCoroutine { c ->
 
 fun build(c: suspend () -> Unit) {
     c.startCoroutine(object : Continuation<Unit> {
-        override fun resumeWith(x: SuccessOrFailure<Unit>) {
+        override fun resumeWith(x: Result<Unit>) {
             stopped = true
         }
 

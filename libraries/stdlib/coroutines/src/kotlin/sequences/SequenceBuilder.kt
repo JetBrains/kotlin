@@ -172,7 +172,7 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
     }
 
     // Completion continuation implementation
-    override fun resumeWith(result: SuccessOrFailure<Unit>) {
+    override fun resumeWith(result: Result<Unit>) {
         result.getOrThrow() // just rethrow exception if it is there
         state = State_Done
     }

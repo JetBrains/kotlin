@@ -30,7 +30,7 @@ var proceed = {}
 
 suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<Unit> { cont ->
     proceed = {
-        cont.resumeWith(SuccessOrFailure.success(Unit))
+        cont.resumeWith(Result.success(Unit))
     }
     COROUTINE_SUSPENDED
 }

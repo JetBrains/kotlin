@@ -35,7 +35,7 @@ class RedundantRunCatchingInspection : AbstractCallChainChecker() {
         private val conversions = listOf(
             Conversion(
                 "kotlin.runCatching",
-                "kotlin.SuccessOrFailure.getOrThrow",
+                "kotlin.Result.getOrThrow",
                 "run"
             )
         )

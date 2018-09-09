@@ -3021,8 +3021,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.ResultIsSuccessOrFailureInspection"
-                     displayName="Function returning SuccessOrFailure"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.ResultIsResultInspection"
+                     displayName="Function returning Result"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"

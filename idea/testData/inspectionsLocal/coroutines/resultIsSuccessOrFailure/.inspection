@@ -1,1 +1,1 @@
-org.jetbrains.kotlin.idea.inspections.coroutines.ResultIsSuccessOrFailureInspection
+org.jetbrains.kotlin.idea.inspections.coroutines.ResultIsResultInspection

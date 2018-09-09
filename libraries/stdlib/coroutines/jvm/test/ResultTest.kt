@@ -7,7 +7,7 @@ package test.kotlin
 
 import kotlin.test.*
 
-class SuccessOrFailureTest {
+class ResultTest {
     @Test
     fun testRunCatchingSuccess() {
         val ok = runCatching { "OK" }
@@ -22,17 +22,17 @@ class SuccessOrFailureTest {
 
     @Test
     fun testConstructedSuccess() {
-        val ok = SuccessOrFailure.success("OK")
+        val ok = Result.success("OK")
         checkSuccess(ok, "OK", true)
     }
 
     @Test
     fun testConstructedFailure() {
-        val fail = SuccessOrFailure.failure<Unit>(IllegalStateException("F"))
+        val fail = Result.failure<Unit>(IllegalStateException("F"))
         checkFailure(fail, "F", true)
     }
 
-    private fun <T> checkSuccess(ok: SuccessOrFailure<T>, v: T, topLevel: Boolean = false) {
+    private fun <T> checkSuccess(ok: Result<T>, v: T, topLevel: Boolean = false) {
         assertTrue(ok.isSuccess)
         assertFalse(ok.isFailure)
         assertEquals(v, ok.getOrThrow())
@@ -44,7 +44,7 @@ class SuccessOrFailureTest {
         assertEquals("V:$v", ok.fold({ "V:$it" }, { "EX:$it" }))
         assertEquals(null, ok.exceptionOrNull())
         assertEquals(null, ok.fold(onSuccess = { null }, onFailure = { it }))
-        assertEquals(v.toString(), ok.toString())
+        assertEquals("Success($v)", ok.toString())
         assertEquals(ok, ok)
         if (topLevel) {
             checkSuccess(ok.map { 42 }, 42)
@@ -62,7 +62,7 @@ class SuccessOrFailureTest {
         assertEquals(0, fCnt)
     }
 
-    private fun <T> checkFailure(fail: SuccessOrFailure<T>, msg: String, topLevel: Boolean = false) {
+    private fun <T> checkFailure(fail: Result<T>, msg: String, topLevel: Boolean = false) {
         assertFalse(fail.isSuccess)
         assertTrue(fail.isFailure)
         assertFails { fail.getOrThrow() }

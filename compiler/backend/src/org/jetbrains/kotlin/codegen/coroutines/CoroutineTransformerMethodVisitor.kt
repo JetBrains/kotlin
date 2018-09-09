@@ -759,11 +759,11 @@ private fun InstructionAdapter.generateResumeWithExceptionCheck(isReleaseCorouti
     val noExceptionLabel = Label()
 
     if (isReleaseCoroutines) {
-        instanceOf(AsmTypes.SUCCESS_OR_FAILURE_FAILURE)
+        instanceOf(AsmTypes.RESULT_FAILURE)
         ifeq(noExceptionLabel)
         // TODO: do we need this checkcast?
-        checkcast(AsmTypes.SUCCESS_OR_FAILURE_FAILURE)
-        getfield(AsmTypes.SUCCESS_OR_FAILURE_FAILURE.internalName, "exception", AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
+        checkcast(AsmTypes.RESULT_FAILURE)
+        getfield(AsmTypes.RESULT_FAILURE.internalName, "exception", AsmTypes.JAVA_THROWABLE_TYPE.descriptor)
     } else {
         ifnull(noExceptionLabel)
     }

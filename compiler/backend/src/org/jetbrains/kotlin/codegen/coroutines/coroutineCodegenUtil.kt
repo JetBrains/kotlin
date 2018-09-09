@@ -303,16 +303,16 @@ fun <D : FunctionDescriptor> D.createCustomCopy(
 private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction(isReleaseCoroutines: Boolean) =
     module.getContinuationOfTypeOrAny(returnType!!, if (this.needsExperimentalCoroutinesWrapper()) false else isReleaseCoroutines)
 
-fun ModuleDescriptor.getSuccessOrFailure(kotlinType: KotlinType) =
+fun ModuleDescriptor.getResult(kotlinType: KotlinType) =
     module.resolveTopLevelClass(
-        DescriptorUtils.SUCCESS_OR_FAILURE_FQ_NAME,
+        DescriptorUtils.RESULT_FQ_NAME,
         NoLookupLocation.FROM_BACKEND
     )?.defaultType?.let {
         KotlinTypeFactory.simpleType(
             it,
             arguments = listOf(kotlinType.asTypeProjection())
         )
-    } ?: ErrorUtils.createErrorType("For SuccessOrFailure")
+    } ?: ErrorUtils.createErrorType("For Result")
 
 private fun MethodNode.invokeNormalizeContinuation(languageVersionSettings: LanguageVersionSettings) {
     visitMethodInsn(

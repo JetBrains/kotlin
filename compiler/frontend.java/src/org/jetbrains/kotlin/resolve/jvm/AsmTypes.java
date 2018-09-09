@@ -36,7 +36,7 @@ public class AsmTypes {
     public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
     public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
 
-    public static final Type SUCCESS_OR_FAILURE_FAILURE = Type.getObjectType("kotlin/SuccessOrFailure$Failure");
+    public static final Type RESULT_FAILURE = Type.getObjectType("kotlin/Result$Failure");
 
     public static final Type[] PROPERTY_REFERENCE_IMPL = {
             Type.getObjectType("kotlin/jvm/internal/PropertyReference0Impl"),

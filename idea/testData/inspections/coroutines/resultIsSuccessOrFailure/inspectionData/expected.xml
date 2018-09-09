@@ -5,8 +5,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function returning SuccessOrFailure with a name that does not end with Catching</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function returning Result with a name that does not end with Catching</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -14,8 +14,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function returning SuccessOrFailure with a name that does not end with Catching</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function returning Result with a name that does not end with Catching</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -23,8 +23,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function 'incorrectCatching' returning 'SuccessOrFailure&lt;Double&gt;' without the corresponding function 'incorrect' returning 'Double'</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function 'incorrectCatching' returning 'Result&lt;Double&gt;' without the corresponding function 'incorrect' returning 'Double'</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -32,8 +32,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function 'strangeCatching' returning 'SuccessOrFailure&lt;Boolean&gt;' without the corresponding function 'strange' returning 'Boolean'</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function 'strangeCatching' returning 'Result&lt;Boolean&gt;' without the corresponding function 'strange' returning 'Boolean'</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -41,8 +41,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function returning SuccessOrFailure with a name that does not end with Catching</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function returning Result with a name that does not end with Catching</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -50,8 +50,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function returning SuccessOrFailure with a name that does not end with Catching</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function returning Result with a name that does not end with Catching</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -59,8 +59,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function 'classIncorrectCatching' returning 'SuccessOrFailure&lt;Double&gt;' without the corresponding function 'classIncorrect' returning 'Double'</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function 'classIncorrectCatching' returning 'Result&lt;Double&gt;' without the corresponding function 'classIncorrect' returning 'Double'</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -68,8 +68,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function returning SuccessOrFailure with a name that does not end with Catching</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function returning Result with a name that does not end with Catching</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -77,8 +77,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function returning SuccessOrFailure with a name that does not end with Catching</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function returning Result with a name that does not end with Catching</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -86,8 +86,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function returning SuccessOrFailure with a name that does not end with Catching</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function returning Result with a name that does not end with Catching</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -95,8 +95,8 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function 'calcComplexCatching' returning 'SuccessOrFailure&lt;Double&gt;' without the corresponding function 'calcComplex' returning 'Double'</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function 'calcComplexCatching' returning 'Result&lt;Double&gt;' without the corresponding function 'calcComplex' returning 'Double'</description>
   </problem>
   <problem>
     <file>test.kt</file>
@@ -104,7 +104,7 @@
     <module>light_idea_test_case</module>
     <package>&lt;default&gt;</package>
     <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning SuccessOrFailure</problem_class>
-    <description>Function 'extensionActCatching' returning 'SuccessOrFailure&lt;Int&gt;' without the corresponding function 'extensionAct' returning 'Int'</description>
+    <problem_class severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function returning Result</problem_class>
+    <description>Function 'extensionActCatching' returning 'Result&lt;Int&gt;' without the corresponding function 'extensionAct' returning 'Int'</description>
   </problem>
 </problems>

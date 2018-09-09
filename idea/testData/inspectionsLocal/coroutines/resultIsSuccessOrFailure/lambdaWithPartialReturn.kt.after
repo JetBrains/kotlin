@@ -1,15 +1,15 @@
 package kotlin
 
-class SuccessOrFailure<T>(val value: T?) {
+class Result<T>(val value: T?) {
     fun getOrThrow(): T = value ?: throw AssertionError("")
 }
 
 fun test(arg: Boolean) {
     val x = foo@{
         (if (!arg) {
-            return@foo SuccessOrFailure(true).getOrThrow()
+            return@foo Result(true).getOrThrow()
         } else {
-            SuccessOrFailure(false)
+            Result(false)
         }).getOrThrow()
     }
 }

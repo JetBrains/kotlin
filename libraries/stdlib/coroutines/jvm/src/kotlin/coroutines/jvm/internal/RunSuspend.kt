@@ -24,9 +24,9 @@ private class RunSuspend : Continuation<Unit> {
     override val context: CoroutineContext
         get() = EmptyCoroutineContext
 
-    var result: SuccessOrFailure<Unit>? = null
+    var result: Result<Unit>? = null
 
-    override fun resumeWith(result: SuccessOrFailure<Unit>) = synchronized(this) {
+    override fun resumeWith(result: Result<Unit>) = synchronized(this) {
         this.result = result
         (this as Object).notifyAll()
     }

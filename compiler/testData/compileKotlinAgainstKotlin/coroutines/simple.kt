@@ -19,7 +19,7 @@ fun builder(x: suspend () -> Unit) {
     x.startCoroutine(object : Continuation<Any?> {
         override val context: CoroutineContext = EmptyCoroutineContext
 
-        override fun resumeWith(result: SuccessOrFailure<Any?>) {
+        override fun resumeWith(result: Result<Any?>) {
             result.getOrThrow()
         }
     })

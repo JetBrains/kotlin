@@ -2168,14 +2168,14 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertySetterWithInlineClassTypeArgument.kt");
         }
 
+        @TestMetadata("resultApiDoesntUseBox.kt")
+        public void testResultApiDoesntUseBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiDoesntUseBox.kt");
+        }
+
         @TestMetadata("skipCallToUnderlyingValueOfInlineClass.kt")
         public void testSkipCallToUnderlyingValueOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
-        }
-
-        @TestMetadata("successOrFailureApiDoesntUseErasedClass.kt")
-        public void testSuccessOrFailureApiDoesntUseErasedClass() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/successOrFailureApiDoesntUseErasedClass.kt");
         }
 
         @TestMetadata("toStringIsCalledByInlineClass.kt")

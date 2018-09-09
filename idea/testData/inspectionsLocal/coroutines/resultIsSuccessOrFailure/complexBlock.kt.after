@@ -3,28 +3,28 @@
 
 package kotlin
 
-class SuccessOrFailure<T>(val value: T?) {
+class Result<T>(val value: T?) {
     fun getOrThrow(): T = value ?: throw AssertionError("")
 }
 
 fun incorrectBlock(arg: Boolean, arg2: Boolean?): Int {
     if (arg) {
         class Local {
-            fun foo(): SuccessOrFailure<String> {
-                return SuccessOrFailure("NO")
+            fun foo(): Result<String> {
+                return Result("NO")
             }
         }
-        return SuccessOrFailure(1).getOrThrow()
+        return Result(1).getOrThrow()
     } else {
         when (arg2) {
             true -> {
-                val x = fun(): SuccessOrFailure<Boolean> {
-                    return SuccessOrFailure(false)
+                val x = fun(): Result<Boolean> {
+                    return Result(false)
                 }
                 if (x().getOrThrow()) {
-                    return SuccessOrFailure(2).getOrThrow()
+                    return Result(2).getOrThrow()
                 } else {
-                    return SuccessOrFailure(0).getOrThrow()
+                    return Result(0).getOrThrow()
                 }
             }
             else -> {
@@ -32,9 +32,9 @@ fun incorrectBlock(arg: Boolean, arg2: Boolean?): Int {
                     listOf(1, 2, 3).forEach {
                         if (it == 2) return@forEach
                     }
-                    return SuccessOrFailure(3).getOrThrow()
+                    return Result(3).getOrThrow()
                 }
-                return SuccessOrFailure(4).getOrThrow()
+                return Result(4).getOrThrow()
             }
         }
     }

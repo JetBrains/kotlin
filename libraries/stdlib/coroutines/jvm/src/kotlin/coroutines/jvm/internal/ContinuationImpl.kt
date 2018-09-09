@@ -18,7 +18,7 @@ internal abstract class BaseContinuationImpl(
     public val completion: Continuation<Any?>?
 ) : Continuation<Any?>, CoroutineStackFrame, Serializable {
     // This implementation is final. This fact is used to unroll resumeWith recursion.
-    public final override fun resumeWith(result: SuccessOrFailure<Any?>) {
+    public final override fun resumeWith(result: Result<Any?>) {
         // Invoke "resume" debug probe only once, even if previous frames are "resumed" in the loop below, too
         probeCoroutineResumed(this)
         // This loop unrolls recursion in current.resumeWith(param) to make saner and shorter stack traces on resume
@@ -27,13 +27,13 @@ internal abstract class BaseContinuationImpl(
         while (true) {
             with(current) {
                 val completion = completion!! // fail fast when trying to resume continuation without completion
-                val outcome: SuccessOrFailure<Any?> =
+                val outcome: Result<Any?> =
                     try {
                         val outcome = invokeSuspend(param)
                         if (outcome === COROUTINE_SUSPENDED) return
-                        SuccessOrFailure.success(outcome)
+                        Result.success(outcome)
                     } catch (exception: Throwable) {
-                        SuccessOrFailure.failure(exception)
+                        Result.failure(exception)
                     }
                 releaseIntercepted() // this state machine instance is terminating
                 if (completion is BaseContinuationImpl) {
@@ -49,7 +49,7 @@ internal abstract class BaseContinuationImpl(
         }
     }
 
-    protected abstract fun invokeSuspend(result: SuccessOrFailure<Any?>): Any?
+    protected abstract fun invokeSuspend(result: Result<Any?>): Any?
 
     protected open fun releaseIntercepted() {
         // does nothing here, overridden in ContinuationImpl
@@ -124,7 +124,7 @@ internal object CompletedContinuation : Continuation<Any?> {
     override val context: CoroutineContext
         get() = error("This continuation is already complete")
 
-    override fun resumeWith(result: SuccessOrFailure<Any?>) {
+    override fun resumeWith(result: Result<Any?>) {
         error("This continuation is already complete")
     }
 
