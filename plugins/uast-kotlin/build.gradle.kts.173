@@ -21,7 +21,11 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompileOnly(intellijDep()) { includeJars("idea_rt") }
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
 
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":idea:idea-gradle"))
