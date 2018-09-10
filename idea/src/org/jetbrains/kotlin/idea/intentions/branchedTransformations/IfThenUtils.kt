@@ -303,7 +303,7 @@ internal fun KtIfExpression.shouldBeTransformed(): Boolean {
         is KtIsExpression -> {
             val baseClause = (if (condition.isNegated) `else` else then)?.unwrapBlockOrParenthesis()
             when {
-                baseClause.isClauseTransformableToLetOnly() -> false
+                baseClause.isClauseTransformableToLetOnly(checkedExpression()) -> false
                 !isMultiLine() -> true
                 else -> baseClause !is KtDotQualifiedExpression
             }
