@@ -2063,11 +2063,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/checkOuterInlineFunctionCall.kt");
         }
 
-        @TestMetadata("constructorWithInlineClassParametersIsNotMangled.kt")
-        public void testConstructorWithInlineClassParametersIsNotMangled() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/constructorWithInlineClassParametersIsNotMangled.kt");
-        }
-
         @TestMetadata("equalsIsCalledByInlineClass.kt")
         public void testEqualsIsCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsIsCalledByInlineClass.kt");
