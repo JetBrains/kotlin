@@ -139,6 +139,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/inheritanceSimple.kt");
     }
 
+    @TestMetadata("inlineClasses.kt")
+    public void testInlineClasses() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/inlineClasses.kt");
+    }
+
     @TestMetadata("innerClassesWithTypeParameters.kt")
     public void testInnerClassesWithTypeParameters() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/innerClassesWithTypeParameters.kt");
