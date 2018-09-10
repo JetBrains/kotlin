@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.targets
 
-import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.library.JpsOrderRootType
@@ -86,16 +85,19 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
     }
 
     override fun compileModuleChunk(
-        chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean {
-        require(chunk.representativeTarget() == jpsModuleBuildTarget)
-        if (reportAndSkipCircular(chunk, environment)) return false
+        require(chunk.representativeTarget == this)
+
+        if (reportAndSkipCircular(environment)) return false
 
         val sources = collectSourcesToCompile(dirtyFilesHolder)
-        if (!checkShouldCompileAndLog(dirtyFilesHolder, sources)) return false
+
+        if (!sources.logFiles()) {
+            return false
+        }
 
         val libraries = libraryFiles + dependenciesMetaFiles
 
@@ -104,7 +106,8 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
             module.k2JsCompilerArguments,
             module.kotlinCompilerSettings,
             environment,
-            sources,
+            sources.allFiles,
+            sources.crossCompiledFiles,
             sourceMapRoots,
             libraries,
             friendBuildTargetsMetaFiles,

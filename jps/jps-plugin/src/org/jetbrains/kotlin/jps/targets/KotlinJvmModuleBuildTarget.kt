@@ -74,6 +74,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         with(builder) {
             register(
                 IncrementalCompilationComponents::class.java,
+                @Suppress("UNCHECKED_CAST")
                 IncrementalCompilationComponentsImpl(
                     incrementalCaches.mapKeys { it.key.targetId } as Map<TargetId, IncrementalCache>
                 )
@@ -82,27 +83,28 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     }
 
     override fun compileModuleChunk(
-        chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean {
-        if (chunk.modules.size > 1) {
+        require(chunk.representativeTarget == this)
+
+        if (chunk.targets.size > 1) {
             environment.messageCollector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
-                "Circular dependencies are only partially supported. The following modules depend on each other: "
-                        + chunk.modules.joinToString(", ") { it.name } + " "
-                        + "Kotlin will compile them, but some strange effect may happen"
+                "Circular dependencies are only partially supported. " +
+                        "The following modules depend on each other: ${chunk.presentableShortName}. " +
+                        "Kotlin will compile them, but some strange effect may happen"
             )
         }
 
         val filesSet = dirtyFilesHolder.allDirtyFiles
 
-        val moduleFile = generateModuleDescription(chunk, dirtyFilesHolder)
+        val moduleFile = generateChunkModuleDescription(dirtyFilesHolder)
         if (moduleFile == null) {
             if (KotlinBuilder.LOG.isDebugEnabled) {
                 KotlinBuilder.LOG.debug(
-                    "Not compiling, because no files affected: " + chunk.targets.joinToString { it.presentableName }
+                    "Not compiling, because no files affected: " + chunk.presentableShortName
                 )
             }
 
@@ -110,13 +112,15 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             return false
         }
 
-        val module = chunk.representativeTarget().module
+        val module = chunk.representativeTarget.module
 
         if (KotlinBuilder.LOG.isDebugEnabled) {
             val totalRemovedFiles = dirtyFilesHolder.allRemovedFilesFiles.size
-            KotlinBuilder.LOG.debug("Compiling to JVM ${filesSet.size} files"
-                                            + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
-                                            + " in " + chunk.targets.joinToString { it.presentableName })
+            KotlinBuilder.LOG.debug(
+                "Compiling to JVM ${filesSet.size} files"
+                        + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
+                        + " in " + chunk.presentableShortName
+            )
         }
 
         try {
@@ -137,35 +141,35 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         return true
     }
 
-    private fun generateModuleDescription(chunk: ModuleChunk, dirtyFilesHolder: KotlinDirtySourceFilesHolder): File? {
+    private fun generateChunkModuleDescription(dirtyFilesHolder: KotlinDirtySourceFilesHolder): File? {
         val builder = KotlinModuleXmlBuilder()
 
         var hasDirtySources = false
 
-        val targets = chunk.targets.mapNotNull { kotlinContext.targetsBinding[it] as? KotlinJvmModuleBuildTarget }
+        val targets = chunk.targets
 
         val outputDirs = targets.map { it.outputDir }.toSet()
 
         for (target in targets) {
+            target as KotlinJvmModuleBuildTarget
+
             val outputDir = target.outputDir
             val friendDirs = target.friendOutputDirs
 
-            val moduleSources = collectSourcesToCompile(target, dirtyFilesHolder).toSet()
-            val commonSources = sources
-                .filter { it.value.isIncludedSourceRoot && it.key in moduleSources }
-                .map { it.key }
+            val sources = target.collectSourcesToCompile(dirtyFilesHolder)
 
-            val hasDirtyOrRemovedSources = checkShouldCompileAndLog(target, dirtyFilesHolder, moduleSources)
-            if (hasDirtyOrRemovedSources) hasDirtySources = true
+            if (sources.logFiles()) {
+                hasDirtySources = true
+            }
 
             val kotlinModuleId = target.targetId
             builder.addModule(
                 kotlinModuleId.name,
                 outputDir.absolutePath,
-                moduleSources,
+                sources.allFiles,
                 target.findSourceRoots(dirtyFilesHolder.context),
                 target.findClassPathRoots(),
-                commonSources,
+                sources.crossCompiledFiles,
                 target.findModularJdkRoot(),
                 kotlinModuleId.type,
                 isTests,
@@ -177,15 +181,15 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
         if (!hasDirtySources) return null
 
-        val scriptFile = createTempFileForModuleDesc(chunk)
+        val scriptFile = createTempFileForChunkModuleDesc()
         FileUtil.writeToFile(scriptFile, builder.asText().toString())
         return scriptFile
     }
 
-    private fun createTempFileForModuleDesc(chunk: ModuleChunk): File {
+    private fun createTempFileForChunkModuleDesc(): File {
         val readableSuffix = buildString {
-            append(StringUtil.sanitizeJavaIdentifier(chunk.representativeTarget().module.name))
-            if (chunk.containsTests()) {
+            append(StringUtil.sanitizeJavaIdentifier(chunk.representativeTarget.module.name))
+            if (chunk.containsTests) {
                 append("-test")
             }
         }
@@ -276,7 +280,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
             val files = HashSet<File>()
             files.addAll(dirtyFilesHolder.getRemovedFiles(it))
-            files.addAll(dirtyFilesHolder.getDirtyFiles(it))
+            files.addAll(dirtyFilesHolder.getDirtyFiles(it).keys)
             files
         }
 

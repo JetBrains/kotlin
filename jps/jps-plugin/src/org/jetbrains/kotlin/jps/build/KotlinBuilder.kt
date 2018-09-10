@@ -234,7 +234,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val removedClasses = HashSet<String>()
         for (target in kotlinChunk.targets) {
             val cache = incrementalCaches[target] ?: continue
-            val dirtyFiles = dirtyFilesHolder.getDirtyFiles(target.jpsModuleBuildTarget)
+            val dirtyFiles = dirtyFilesHolder.getDirtyFiles(target.jpsModuleBuildTarget).keys
             val removedFiles = dirtyFilesHolder.getRemovedFiles(target.jpsModuleBuildTarget)
 
             val existingClasses = JpsKotlinCompilerRunner().classesFqNamesByFiles(environment, dirtyFiles)
@@ -497,17 +497,17 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
                 if (cache != null && targetDirtyFiles != null) {
                     val complementaryFiles = cache.clearComplementaryFilesMapping(
-                        targetDirtyFiles.dirty + targetDirtyFiles.removed
+                        targetDirtyFiles.dirty.keys + targetDirtyFiles.removed
                     )
 
                     fsOperations.markFilesForCurrentRound(jpsTarget, complementaryFiles)
 
-                    cache.markDirty(targetDirtyFiles.dirty + targetDirtyFiles.removed)
+                    cache.markDirty(targetDirtyFiles.dirty.keys + targetDirtyFiles.removed)
                 }
             }
         }
 
-        val isDoneSomething = representativeTarget.compileModuleChunk(chunk, commonArguments, dirtyFilesHolder, environment)
+        val isDoneSomething = representativeTarget.compileModuleChunk(commonArguments, dirtyFilesHolder, environment)
 
         return if (isDoneSomething) environment.outputItemsCollector else null
     }
