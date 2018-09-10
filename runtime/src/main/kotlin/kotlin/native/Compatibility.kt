@@ -17,6 +17,10 @@ public annotation class Volatile
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Synchronized
 
+/**
+ * An actual implementation of `synchronized` method. This method is not supported in Kotlin/Native
+ * @throws UnsupportedOperationException always
+ */
 @kotlin.internal.InlineOnly
 public actual inline fun <R> synchronized(@Suppress("UNUSED_PARAMETER") lock: Any, block: () -> R): R =
         throw UnsupportedOperationException("synchronized() is unsupported")

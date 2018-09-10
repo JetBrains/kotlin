@@ -7,11 +7,14 @@ package kotlin.native
 
 /**
  * A vector of bits growing if necessary and allowing one to set/clear/read bits from it by a bit index.
+ *
+ * @constructor creates an empty bit set with the specified [size]
+ * @param seze the size of one element in the array used to store bits.
  */
 public class BitSet(size: Int = ELEMENT_SIZE) {
 
     companion object {
-        // Size of one element in the array used to store bits.
+        // Default size of one element in the array used to store bits.
         private const val ELEMENT_SIZE = 64
         private const val MAX_BIT_OFFSET = ELEMENT_SIZE - 1
         private const val ALL_TRUE = -1L // 0xFFFF_FFFF_FFFF_FFFF
@@ -35,8 +38,9 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
     var size: Int = size
         private set
 
-    // TODO: Add more constructors.
-
+    /**
+     * Creates a bit set of given [length] filling elements using [initializer]
+     */
     constructor(length: Int, initializer: (Int) -> Boolean): this(length) {
         for (i in 0 until length) {
             set(i, initializer(i))
@@ -111,7 +115,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
 
     /**
      * Checks if index is valid and extends the `bits` array if the index exceeds its size.
-     * Throws [IndexOutOfBoundsException] if [index] < 0.
+     * @throws [IndexOutOfBoundsException] if [index] < 0.
      */
     private fun ensureCapacity(index: Int) {
         if (index < 0) {
@@ -220,7 +224,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
      * (if [lookFor] == false) bit after [startIndex] (inclusive).
      * Returns -1 (for [lookFor] == true) or [size] (for lookFor == false)
      * if there is no such bits between [startIndex] and [size] - 1.
-     * Throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
     private fun nextBit(startIndex: Int, lookFor: Boolean): Int {
         if (startIndex < 0) {
@@ -254,7 +258,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
     /**
      * Returns an index of a next bit which value is `true` after [startIndex] (inclusive).
      * Returns -1 if there is no such bits after [startIndex].
-     * Throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
     fun nextSetBit(startIndex: Int = 0): Int = nextBit(startIndex, true)
 
@@ -262,7 +266,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
      * Returns an index of a next bit which value is `false` after [startIndex] (inclusive).
      * Returns [size] if there is no such bits between [startIndex] and [size] - 1 assuming that the set has an infinite
      * sequence of `false` bits after (size - 1)-th.
-     * Throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
     fun nextClearBit(startIndex: Int = 0): Int = nextBit(startIndex, false)
 
@@ -315,7 +319,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
      * Returns the biggest index of a bit which value is `true` before [startIndex] (inclusive).
      * Returns -1 if there is no such bits before [startIndex] or if [startIndex] == -1.
      * If [startIndex] >= size will search from (size - 1)-th bit.
-     * Throws IndexOutOfBoundException if [startIndex] < -1.
+     * @throws IndexOutOfBoundException if [startIndex] < -1.
      */
     fun previousSetBit(startIndex: Int): Int = previousBit(startIndex, true)
 
@@ -324,7 +328,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
      * Returns -1 if there is no such bits before [startIndex] or if [startIndex] == -1.
      * If [startIndex] >= size will return [startIndex] assuming that the set has an infinite
      * sequence of `false` bits after (size - 1)-th.
-     * Throws IndexOutOfBoundException if [startIndex] < -1.
+     * @throws IndexOutOfBoundException if [startIndex] < -1.
      */
     fun previousClearBit(startIndex: Int): Int = previousBit(startIndex, false)
 

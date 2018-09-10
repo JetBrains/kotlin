@@ -33,12 +33,15 @@ inline val nativeNullPtr: NativePtr
 fun <T : CVariable> typeOf(): CVariable.Type = throw Error("typeOf() is called with erased argument")
 
 /**
- * Returns interpretation of entity with given pointer, or `null` if it is null.
+ * Performs type cast of the native pointer to given interop type, including null values.
  *
  * @param T must not be abstract
  */
 @Intrinsic external fun <T : NativePointed> interpretNullablePointed(ptr: NativePtr): T?
 
+/**
+ *  Performs type cast of the [CPointer] from the given raw pointer.
+ */
 @Intrinsic external fun <T : CPointed> interpretCPointer(rawValue: NativePtr): CPointer<T>?
 
 @Intrinsic external fun NativePointed.getRawPointer(): NativePtr
@@ -47,6 +50,12 @@ fun <T : CVariable> typeOf(): CVariable.Type = throw Error("typeOf() is called w
 
 internal fun CPointer<*>.cPointerToString() = "CPointer(raw=$rawValue)"
 
+/**
+ * Returns a pointer to C function which calls given Kotlin *static* function.
+ *
+ * @param function must be *static*, i.e. an (unbound) reference to a Kotlin function or
+ * a closure which doesn't capture any variable
+ */
 @Intrinsic external fun <R> staticCFunction(@VolatileLambda function: () -> R): CPointer<CFunction<() -> R>>
 
 @Intrinsic external fun <P1, R> staticCFunction(@VolatileLambda function: (P1) -> R): CPointer<CFunction<(P1) -> R>>

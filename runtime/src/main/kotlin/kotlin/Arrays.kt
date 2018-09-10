@@ -87,6 +87,7 @@ public final class CharArray {
         }
     }
 
+    /** Returns the number of elements in the array. */
     public val size: Int
         get() = getArrayLength()
 
@@ -138,6 +139,7 @@ public final class ShortArray {
         }
     }
 
+    /** Returns the number of elements in the array. */
     public val size: Int
         get() = getArrayLength()
 
@@ -189,6 +191,7 @@ public final class IntArray {
         }
     }
 
+    /** Returns the number of elements in the array. */
     public val size: Int
         get() = getArrayLength()
 
@@ -240,6 +243,7 @@ public final class LongArray {
         }
     }
 
+    /** Returns the number of elements in the array. */
     public val size: Int
         get() = getArrayLength()
 
@@ -291,6 +295,7 @@ public final class FloatArray {
         }
     }
 
+    /** Returns the number of elements in the array. */
     public val size: Int
         get() = getArrayLength()
 
@@ -338,6 +343,7 @@ public final class DoubleArray {
         }
     }
 
+    /** Returns the number of elements in the array. */
     public val size: Int
         get() = getArrayLength()
 
@@ -385,6 +391,7 @@ public final class BooleanArray {
         }
     }
 
+    /** Returns the number of elements in the array. */
     public val size: Int
         get() = getArrayLength()
 

@@ -24,6 +24,9 @@ private external fun bigIntDigitGeneratorInstImpl(results: IntArray, uArray: Int
 @SymbolName("Kotlin_native_NumberConverter_ceil")
 private external fun ceil(x: Double): Double
 
+/**
+ * Converts [Float] or [Double] numbers to the [String] representation
+ */
 class NumberConverter {
 
     private var setCount: Int = 0 // Number of times u and k have been gotten.

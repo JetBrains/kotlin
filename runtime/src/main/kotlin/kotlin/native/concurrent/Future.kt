@@ -12,11 +12,11 @@ import kotlin.native.internal.Frozen
  */
 enum class FutureState(val value: Int) {
     INVALID(0),
-    // Future is scheduled for execution.
+    /** Future is scheduled for execution. */
     SCHEDULED(1),
-    // Future result is computed.
+    /** Future result is computed. */
     COMPUTED(2),
-    // Future is cancelled.
+    /** Future is cancelled. */
     CANCELLED(3)
 }
 
@@ -27,6 +27,9 @@ enum class FutureState(val value: Int) {
 public class Future<T> internal constructor(val id: Int) {
     /**
      * Blocks execution until the future is ready.
+     *
+     * @return the execution result of [code] consumed futures's computaiton
+     * @throws IllegalStateException if current future has [FutureState.INVALID] or [FutureState.CANCELLED] state
      */
     public inline fun <R> consume(code: (T) -> R): R =
             when (state) {
@@ -41,11 +44,15 @@ public class Future<T> internal constructor(val id: Int) {
             }
 
     /**
+     * The result of the future computation.
      * Blocks execution until the future is ready. Second attempt to get will result in an error.
      */
     public val result: T
             get() = consume { it -> it }
 
+    /**
+     * A [FutureState] of this future
+     */
     public val state: FutureState
         get() = FutureState.values()[stateOfFuture(id)]
 
@@ -58,7 +65,9 @@ public class Future<T> internal constructor(val id: Int) {
 
 /**
  * Wait for availability of futures in the collection. Returns set with all futures which have
- * value available for the consumption.
+ * value available for the consumption, i.e. [FutureState.COMPUTED]
+ *
+ * @param millis the amount of time to wait for the computed future
  */
 public fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Future<T>> {
     val result = mutableSetOf<Future<T>>()

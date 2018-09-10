@@ -78,11 +78,12 @@
 <a name="detach"></a>
 ## Object subgraph detachment
 
-   An object subgraph without external references can be disconnected using `detachObjectGraph` to
+   An object subgraph without external references can be disconnected using `DetachedObjectGraph<T>` to
   a `COpaquePointer` value, which could be stored in `void*` data, so the disconnected object subgraphs
-  can be stored in a C data structure, and later attached back with `attachObjectGraph<T>` in an arbitrary thread
+  can be stored in a C data structure, and later attached back with `DetachedObjectGraph<T>.attach()` in an arbitrary thread
   or a worker. Combining it with [raw memory sharing](#shared) it allows side channel object transfer between
   concurrent threads, if the worker mechanisms are insufficient for a particular task.
+
 
 <a name="shared"></a>
 ## Raw shared memory

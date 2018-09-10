@@ -5,5 +5,7 @@
 
 package kotlin.collections
 
-// A marker interface indicating the fast indexed access support
+/**
+ * Marker interface indicating that the [List] implementation supports fast indexed access.
+ */
 public actual interface RandomAccess

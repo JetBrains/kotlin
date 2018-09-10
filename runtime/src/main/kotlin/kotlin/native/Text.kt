@@ -15,7 +15,8 @@ public fun ByteArray.stringFromUtf8(start: Int = 0, size: Int = this.size) : Str
 private external fun ByteArray.stringFromUtf8Impl(start: Int, size: Int) : String
 
 /**
- * Converts an UTF-8 array into a [String]. Throws [IllegalCharacterConversionException] if the input is invalid.
+ * Converts an UTF-8 array into a [String].
+ * @throws [IllegalCharacterConversionException] if the input is invalid.
  */
 public fun ByteArray.stringFromUtf8OrThrow(start: Int = 0, size: Int = this.size) : String =
         stringFromUtf8OrThrowImpl(start, size)
@@ -33,7 +34,8 @@ public fun String.toUtf8(start: Int = 0, size: Int = this.length) : ByteArray =
 private external fun String.toUtf8Impl(start: Int, size: Int) : ByteArray
 
 /**
- * Converts a [String] into an UTF-8 array. Throws [IllegalCharacterConversionException] if the input is invalid.
+ * Converts a [String] into an UTF-8 array.
+ * @throws [IllegalCharacterConversionException] if the input is invalid.
  */
 public fun String.toUtf8OrThrow(start: Int = 0, size: Int = this.length) : ByteArray =
         toUtf8OrThrowImpl(start, size)

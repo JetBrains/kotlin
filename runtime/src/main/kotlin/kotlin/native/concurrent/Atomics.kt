@@ -17,27 +17,38 @@ import kotlinx.cinterop.NativePtr
  */
 @Frozen
 public class AtomicInt(private var value_: Int) {
-
+    /**
+     * The value being held by this class.
+     */
     public var value: Int
             get() = getImpl()
             set(new) = setImpl(new)
 
     /**
      * Increments the value by [delta] and returns the new value.
+     *
+     * @param delta the value to add
+     * @return the new value
      */
     @SymbolName("Kotlin_AtomicInt_addAndGet")
     external public fun addAndGet(delta: Int): Int
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
-     * Returns the old value.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @return the old value
      */
     @SymbolName("Kotlin_AtomicInt_compareAndSwap")
     external public fun compareAndSwap(expected: Int, new: Int): Int
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
-     * Returns true if successful.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @return true if successful
      */
     @SymbolName("Kotlin_AtomicInt_compareAndSet")
     external public fun compareAndSet(expected: Int, new: Int): Boolean
@@ -58,6 +69,8 @@ public class AtomicInt(private var value_: Int) {
 
     /**
      * Returns the string representation of this object.
+     *
+     * @return the string representation
      */
     public override fun toString(): String = value.toString()
 
@@ -71,32 +84,46 @@ public class AtomicInt(private var value_: Int) {
 
 @Frozen
 public class AtomicLong(private var value_: Long = 0)  {
-
+    /**
+     * The value being held by this class.
+     */
     public var value: Long
         get() = getImpl()
         set(new) = setImpl(new)
 
     /**
      * Increments the value by [delta] and returns the new value.
+     *
+     * @param delta the value to add
+     * @return the new value
      */
     @SymbolName("Kotlin_AtomicLong_addAndGet")
     external public fun addAndGet(delta: Long): Long
 
     /**
      * Increments the value by [delta] and returns the new value.
+     *
+     * @param delta the value to add
+     * @return the new value
      */
     public fun addAndGet(delta: Int): Long = addAndGet(delta.toLong())
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
-     * Returns the old value.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @return the old value
      */
     @SymbolName("Kotlin_AtomicLong_compareAndSwap")
     external public fun compareAndSwap(expected: Long, new: Long): Long
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
-     * Returns true if successful.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @return true if successful, false if state is unchanged
      */
     @SymbolName("Kotlin_AtomicLong_compareAndSet")
     external public fun compareAndSet(expected: Long, new: Long): Boolean
@@ -117,6 +144,8 @@ public class AtomicLong(private var value_: Long = 0)  {
 
     /**
      * Returns the string representation of this object.
+     *
+     * @return the string representation of this object
      */
     public override fun toString(): String = value.toString()
 
@@ -130,26 +159,39 @@ public class AtomicLong(private var value_: Long = 0)  {
 
 @Frozen
 public class AtomicNativePtr(private var value_: NativePtr) {
-
+    /**
+     * The value being held by this class.
+     */
     public var value: NativePtr
         get() = getImpl()
         set(new) = setImpl(new)
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
-     * Returns the old value.
+     * If [new] value is not null, it must be frozen or permanent object.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @throws InvalidMutabilityException if [new] is not frozen or a permanent object
+     * @return the old value
      */
     @SymbolName("Kotlin_AtomicNativePtr_compareAndSwap")
     external public fun compareAndSwap(expected: NativePtr, new: NativePtr): NativePtr
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @return true if successful
      */
     @SymbolName("Kotlin_AtomicNativePtr_compareAndSet")
     external public fun compareAndSet(expected: NativePtr, new: NativePtr): Boolean
 
     /**
      * Returns the string representation of this object.
+     *
+     * @return string representation of this object
      */
     public override fun toString(): String = value.toString()
 
@@ -173,17 +215,19 @@ public class AtomicReference<T>(private var value_: T) {
     private var lock: Int = 0
 
     /**
-     * Creates a new atomic reference pointing to given [ref]. If reference is not frozen,
-     * @InvalidMutabilityException is thrown.
+     * Creates a new atomic reference pointing to given [ref].
+     * @throws InvalidMutabilityException if reference is not frozen.
      */
     init {
         checkIfFrozen(value)
     }
 
     /**
-     * Sets the value to [new] value
-     * If [new] value is not null, it must be frozen or permanent object, otherwise an
-     * @InvalidMutabilityException is thrown.
+     * The referenced value.
+     * Gets the value or sets the [new] value. If [new] value is not null,
+     * it must be frozen or permanent object.
+     *
+     * @throws InvalidMutabilityException if the value is not frozen or a permanent object
      */
     public var value: T
         get() = @Suppress("UNCHECKED_CAST")(getImpl() as T)
@@ -191,18 +235,30 @@ public class AtomicReference<T>(private var value_: T) {
 
     /**
      * Compares value with [expected] and replaces it with [new] value if values matches.
-     * If [new] value is not null, it must be frozen or permanent object, otherwise an
-     * @InvalidMutabilityException is thrown.
-     * Returns the old value.
+     * If [new] value is not null, it must be frozen or permanent object.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @throws InvalidMutabilityException if the value is not frozen or a permanent object
+     * @return the old value
      */
     @SymbolName("Kotlin_AtomicReference_compareAndSwap")
     external public fun compareAndSwap(expected: T, new: T): T
 
+    /**
+     * Compares value with [expected] and replaces it with [new] value if values matches.
+     *
+     * @param expected the expected value
+     * @param new the new value
+     * @return true if successful
+     */
     @SymbolName("Kotlin_AtomicReference_compareAndSet")
     external public fun compareAndSet(expected: T, new: T): Boolean
 
     /**
      * Returns the string representation of this object.
+     *
+     * @return string representation of this object
      */
     public override fun toString(): String = "Atomic reference to $value"
 

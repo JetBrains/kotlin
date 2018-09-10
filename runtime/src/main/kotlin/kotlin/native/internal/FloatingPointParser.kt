@@ -26,17 +26,10 @@ import kotlin.comparisons.*
  * represents and multiplying by 10 raised to the power of the
  * exponent. Returns the closest double value to the real number.
 
- * @param s
- * *            the String that will be parsed to a floating point
- * *
- * @param e
- * *            an int represent the 10 to part
- * *
+ * @param s the String that will be parsed to a floating point
+ * @param e an int represent the 10 to part
  * @return the double closest to the real number
- * *
- * *
- * @exception NumberFormatException
- * *                if the String doesn't represent a positive integer value
+ * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 @SymbolName("Kotlin_native_FloatingPointParser_parseDoubleImpl")
 private external fun parseDoubleImpl(s: String, e: Int): Double
@@ -48,17 +41,10 @@ private external fun parseDoubleImpl(s: String, e: Int): Double
  * represents and multiplying by 10 raised to the power of the
  * exponent. Returns the closest float value to the real number.
 
- * @param s
- * *            the String that will be parsed to a floating point
- * *
- * @param e
- * *            an int represent the 10 to part
- * *
+ * @param s the String that will be parsed to a floating point
+ * @param e an int represent the 10 to part
  * @return the float closest to the real number
- * *
- * *
- * @exception NumberFormatException
- * *                if the String doesn't represent a positive integer value
+ * @exception NumberFormatException if the String doesn't represent a positive integer value
  */
 @SymbolName("Kotlin_native_FloatingPointParser_parseFloatImpl")
 private external fun parseFloatImpl(s: String, e: Int): Float
@@ -89,14 +75,9 @@ object FloatingPointParser {
      * taking the positive integer the String represents and multiplying by 10
      * raised to the power of the exponent.
 
-     * @param string
-     * *            the String that will be parsed to a floating point
-     * *
+     * @param string the String that will be parsed to a floating point
      * @return a StringExponentPair with necessary values
-     * *
-     * *
-     * @exception NumberFormatException
-     * *                if the String doesn't pass basic tests
+     * @exception NumberFormatException if the String doesn't pass basic tests
      */
     private fun initialParse(string: String): StringExponentPair {
         var s = string
@@ -306,15 +287,10 @@ object FloatingPointParser {
 
     /**
      * Returns the closest double value to the real number in the string.
-
-     * @param string
-     * *            the String that will be parsed to a floating point
-     * *
+     *
+     * @param string the String that will be parsed to a floating point
      * @return the double closest to the real number
-     * *
-     * *
-     * @exception NumberFormatException
-     * *                if the String doesn't represent a double
+     * @exception NumberFormatException if the String doesn't represent a double
      */
     fun parseDouble(string: String): Double {
         var s = string
@@ -358,15 +334,10 @@ object FloatingPointParser {
 
     /**
      * Returns the closest float value to the real number in the string.
-
-     * @param s
-     * *            the String that will be parsed to a floating point
-     * *
+     *
+     * @param s the String that will be parsed to a floating point
      * @return the float closest to the real number
-     * *
-     * *
-     * @exception NumberFormatException
-     * *                if the String doesn't represent a float
+     * @exception NumberFormatException if the String doesn't represent a float
      */
     fun parseFloat(string: String): Float {
         var s = string

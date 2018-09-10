@@ -7,13 +7,17 @@ package kotlin.native.concurrent
 
 /**
  * Exception thrown whenever freezing is not possible.
- * [blocker] is an object preventing freezing, usually one marked with [ensureNeverFrozen] earlier.
+ *
+ * @param toFreeze an object intended to be frozen.
+ * @param blocker an object preventing freezing, usually one marked with [ensureNeverFrozen] earlier.
  */
 public class FreezingException(toFreeze: Any, blocker: Any) :
         RuntimeException("freezing of $toFreeze has failed, first blocker is $blocker")
 
 /**
  * Exception thrown whenever we attempt to mutate frozen objects.
+ *
+ * @param where a frozen object that was attempted to mutate
  */
 public class InvalidMutabilityException(where: Any) :
         RuntimeException("mutation attempt of frozen $where (hash is 0x${where.hashCode().toString(16)})")
@@ -21,6 +25,10 @@ public class InvalidMutabilityException(where: Any) :
 /**
  * Freezes object subgraph reachable from this object. Frozen objects can be freely
  * shared between threads/workers.
+ *
+ * @throws FreezingException if freezing is not possible
+ * @return the object itself
+ * @see ensureNeverFrozen
  */
 public fun <T> T.freeze(): T {
     freezeInternal(this)
@@ -29,13 +37,18 @@ public fun <T> T.freeze(): T {
 
 /**
  * Checks if given object is null or frozen or permanent (i.e. instantiated at compile-time).
+ *
+ * @return true if given object is null or frozen or permanent
  */
 public val Any?.isFrozen
     get() = isFrozenInternal(this)
 
 /**
  * This function ensures that if we see such an object during freezing attempt - freeze fails and
- * [FreezingException] is thrown. Is object is already frozen - [FreezingException] is thrown immediately.
+ * [FreezingException] is thrown.
+ *
+ * @throws FreezingException thrown immediately if this object is already frozen
+ * @see freeze
  */
 @SymbolName("Kotlin_Worker_ensureNeverFrozen")
 public external fun Any.ensureNeverFrozen()

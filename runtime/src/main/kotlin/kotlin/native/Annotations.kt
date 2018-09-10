@@ -60,8 +60,9 @@ public annotation class SharedImmutable
 
 /**
  * Makes top level function available from C/C++ code with the given name.
- * `externName` controls the name of top level function, `shortName` controls the short name.
- * If `externName` is empty, no top level declaration is being created.
+ *
+ * [externName] controls the name of top level function, [shortName] controls the short name.
+ * If [externName] is empty, no top level declaration is being created.
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)

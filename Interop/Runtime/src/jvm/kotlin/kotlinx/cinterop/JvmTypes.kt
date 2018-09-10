@@ -49,6 +49,11 @@ inline fun <reified T : NativePointed> interpretNullablePointed(ptr: NativePtr):
     }
 }
 
+/**
+ * Creates a [CPointer] from the raw pointer of [NativePtr].
+ *
+ * @return a [CPointer] representation, or `null` if the [rawValue] represents native `nullptr`.
+ */
 fun <T : CPointed> interpretCPointer(rawValue: NativePtr) =
         if (rawValue == nativeNullPtr) {
             null

@@ -11,7 +11,7 @@ package kotlin.native
 external public fun initRuntimeIfNeeded(): Unit
 
 /**
- * Deiitializes Kotlin runtime for the current thread, if was inited.
+ * Deinitializes Kotlin runtime for the current thread, if was inited.
  */
 @SymbolName("Kotlin_deinitRuntimeIfNeeded")
 external public fun deinitRuntimeIfNeeded(): Unit

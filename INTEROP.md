@@ -188,7 +188,7 @@ i.e. the value located in memory rather than simple immutable self-contained
 value. Think C++ references, as similar concept.
 For structs (and `typedef`s to structs) this representation is the main one
 and has the same name as the struct itself, for Kotlin enums it is named
-`${type}.Var`, for `CPointer<T>` it is `CPointerVar<T>`, and for most other
+`${type}Var`, for `CPointer<T>` it is `CPointerVar<T>`, and for most other
 types it is `${type}Var`.
 
 For those types that have both representations, the "lvalue" one has mutable
@@ -343,7 +343,7 @@ In all cases the C string is supposed to be encoded as UTF-8.
 ### Scope-local pointers ###
 
 It is possible to create scope-stable pointer of C representation of `CValues<T>`
-instance using `CValues<T>.ptr` extension property available under memScoped { ... }.
+instance using `CValues<T>.ptr` extension property available under `memScoped { ... }`.
 It allows to use APIs which requires C pointers with lifetime bound to certain `MemScope`. For example:
 ```
 memScoped {
@@ -400,11 +400,11 @@ provided by user when configuring the callback. It is passed to some C function
 However references to Kotlin objects can't be directly passed to C.
 So they require wrapping before configuring callback and then unwrapping in
 the callback itself, to safely swim from Kotlin to Kotlin through the C world.
-Such wrapping is possible with `StableObjPtr` class.
+Such wrapping is possible with `StableRef` class.
 
 To wrap the reference:
 ```
-val stablePtr = StableObjPtr.create(kotlinReference)
+val stablePtr = StableRef.create(kotlinReference)
 val voidPtr = stablePtr.value
 ```
 where the `voidPtr` is `COpaquePointer` and can be passed to the C function.
@@ -412,13 +412,13 @@ where the `voidPtr` is `COpaquePointer` and can be passed to the C function.
 To unwrap the reference:
 
 ```
-val stablePtr = StableObjPtr.fromValue(voidPtr)
+val stablePtr = StableRef.fromValue(voidPtr)
 val kotlinReference = stablePtr.get()
 ```
 where `kotlinReference` is the original wrapped reference (however it's type is
 `Any` so it may require casting).
 
-The created `StableObjPtr` should eventually be manually disposed using
+The created `StableRef` should eventually be manually disposed using
 `.dispose()` method to prevent memory leaks:
 
 ```

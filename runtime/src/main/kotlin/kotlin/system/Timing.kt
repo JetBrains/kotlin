@@ -5,30 +5,39 @@
 
 package kotlin.system
 
+/**
+ * Gets current system time in milliseconds since epoch
+ */
 @SymbolName("Kotlin_system_getTimeMillis")
 public external fun getTimeMillis() : Long
 
+/**
+ * Gets current system time in nanoseconds since epoch
+ */
 @SymbolName("Kotlin_system_getTimeNanos")
 public external fun getTimeNanos() : Long
 
+/**
+ * Gets current system time in microseconds since epoch
+ */
 @SymbolName("Kotlin_system_getTimeMicros")
 public external fun getTimeMicros() : Long
 
-/** Executes the given block and returns elapsed time in milliseconds. */
+/** Executes the given [block] and returns elapsed time in milliseconds. */
 public inline fun measureTimeMillis(block: () -> Unit) : Long {
     val start = getTimeMillis()
     block()
     return getTimeMillis() - start
 }
 
-/** Executes the given block and returns elapsed time in microseconds (Kotlin/Native only). */
+/** Executes the given [block] and returns elapsed time in microseconds (Kotlin/Native only). */
 public inline fun measureTimeMicros(block: () -> Unit) : Long {
     val start = getTimeMicros()
     block()
     return getTimeMicros() - start
 }
 
-/** Executes the given block and returns elapsed time in nanoseconds. */
+/** Executes the given [block] and returns elapsed time in nanoseconds. */
 public inline fun measureNanoTime(block: () -> Unit) : Long {
     val start = getTimeNanos()
     block()
