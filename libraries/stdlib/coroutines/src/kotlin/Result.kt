@@ -227,8 +227,8 @@ public inline fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
-    return when(val exception = exceptionOrNull()) {
-        null -> Result.success(transform(value as T))
+    return when {
+        isSuccess -> Result.success(transform(value as T))
         else -> Result(value)
     }
 }
@@ -243,8 +243,8 @@ public inline fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
  */
 @InlineOnly
 public inline fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Result<R> {
-    return when(val exception = exceptionOrNull()) {
-        null -> runCatching { transform(value as T) }
+    return when {
+        isSuccess -> runCatching { transform(value as T) }
         else -> Result(value)
     }
 }
