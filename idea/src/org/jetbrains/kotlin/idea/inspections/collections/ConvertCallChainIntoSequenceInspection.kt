@@ -24,15 +24,14 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -97,13 +96,15 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         val calls = expression.collectCallExpression(context).reversed()
         val firstCall = calls.firstOrNull() ?: return
         val lastCall = calls.lastOrNull() ?: return
-        val first = firstCall.getQualifiedExpressionForSelector() ?: return
+        val first = firstCall.getQualifiedExpressionForSelector() ?: firstCall
         val last = lastCall.getQualifiedExpressionForSelector() ?: return
         val endWithTermination = lastCall.isTermination(context)
 
         val psiFactory = KtPsiFactory(expression)
         val dot = buildString {
-            if (first.receiverExpression.siblings().filterIsInstance<PsiWhiteSpace>().any { it.textContains('\n') }) append("\n")
+            if (first is KtQualifiedExpression
+                && first.receiverExpression.siblings().filterIsInstance<PsiWhiteSpace>().any { it.textContains('\n') }
+            ) append("\n")
             if (first is KtSafeQualifiedExpression) append("?")
             append(".")
         }
@@ -111,8 +112,10 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         val firstCommentSaver = CommentSaver(first)
         val firstReplaced = first.replaced(
             psiFactory.buildExpression {
-                appendExpression(first.receiverExpression)
-                appendFixedText(dot)
+                if (first is KtQualifiedExpression) {
+                    appendExpression(first.receiverExpression)
+                    appendFixedText(dot)
+                }
                 appendExpression(psiFactory.createExpression("asSequence()"))
                 appendFixedText(dot)
                 appendExpression(firstCall)
@@ -147,12 +150,15 @@ private fun KtQualifiedExpression.findCallChain(): CallChain? {
     val calls = collectCallExpression(context)
     if (calls.isEmpty()) return null
 
+    val lastCall = calls.last()
     val receiverType =
-        (calls.last().getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
+        (lastCall.getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
+            ?: lastCall.implicitReceiver(context)?.type
     if (receiverType?.isCollection() != true) return null
 
-    val qualified = calls.first().getQualifiedExpressionForSelector() ?: return null
-    return CallChain(qualified, calls.last(), calls.size)
+    val firstCall = calls.first()
+    val qualified = firstCall.getQualifiedExpressionForSelector() ?: firstCall.getQualifiedExpressionForReceiver() ?: return null
+    return CallChain(qualified, lastCall, calls.size)
 }
 
 private fun KtQualifiedExpression.collectCallExpression(context: BindingContext): List<KtCallExpression> {
@@ -162,6 +168,10 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
         val call = qualified.callExpression ?: return
         calls.add(call)
         val receiver = qualified.receiverExpression
+        if (receiver is KtCallExpression && receiver.implicitReceiver(context) != null) {
+            calls.add(receiver)
+            return
+        }
         if (receiver is KtQualifiedExpression) collect(receiver)
     }
     collect(this)
@@ -177,6 +187,10 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
     if (transformationCalls.size < 2) return emptyList()
 
     return transformationCalls
+}
+
+private fun KtExpression.implicitReceiver(context: BindingContext): ImplicitReceiver? {
+    return getResolvedCall(context)?.getImplicitReceiverValue()
 }
 
 private fun KotlinType.isCollection(): Boolean {
