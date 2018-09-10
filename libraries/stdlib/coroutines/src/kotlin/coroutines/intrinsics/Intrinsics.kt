@@ -45,7 +45,7 @@ public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline 
  */
 // It is implemented as property with getter to avoid ProGuard <clinit> problem with multifile IntrinsicsKt class
 @SinceKotlin("1.3")
-public expect val COROUTINE_SUSPENDED: Any
+public val COROUTINE_SUSPENDED: Any get() = CoroutineSingletons.COROUTINE_SUSPENDED
 
 // Using enum here ensures two important properties:
 //  1. It makes SafeContinuation serializable with all kinds of serialization frameworks (since all of them natively support enums)

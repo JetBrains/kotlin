@@ -127,6 +127,3 @@ private inline fun <T> createCoroutineFromSuspendFunction(
         }
     }
 }
-
-@SinceKotlin("1.3")
-public actual val COROUTINE_SUSPENDED: Any = CoroutineSingletons.COROUTINE_SUSPENDED
