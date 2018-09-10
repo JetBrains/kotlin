@@ -120,7 +120,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     InlineClassDeclarationChecker,
     PropertiesWithBackingFieldsInsideInlineClass(),
     AnnotationClassTargetAndRetentionChecker(),
-    ReservedMembersAndConstructsForInlineClass()
+    ReservedMembersAndConstructsForInlineClass(),
+    ResultClassInReturnTypeChecker()
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
