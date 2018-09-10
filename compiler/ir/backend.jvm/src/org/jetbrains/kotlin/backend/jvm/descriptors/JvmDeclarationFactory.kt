@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -48,7 +45,8 @@ import java.util.*
 class JvmDeclarationFactory(
     private val psiSourceManager: PsiSourceManager,
     private val builtIns: KotlinBuiltIns,
-    private val state: GenerationState
+    private val state: GenerationState,
+    private val symbolTable: SymbolTable
 ) : DeclarationFactory {
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val outerThisDeclarations = HashMap<IrClass, IrField>()
@@ -140,7 +138,11 @@ class JvmDeclarationFactory(
                 if (i == 0) {
                     IrValueParameterImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS, IrValueParameterSymbolImpl(v), outerThisType.toIrType()!!, null)
+                        JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS,
+                        IrValueParameterSymbolImpl(v),
+                        outerThisType.toIrType(symbolTable)!!,
+                        null
+                    )
                 } else {
                     val oldParameter = oldConstructor.valueParameters[i - 1]
                     IrValueParameterImpl(
@@ -210,7 +212,9 @@ class JvmDeclarationFactory(
                 interfaceFun.descriptor.original,
                 interfaceFun.parentAsClass.descriptor,
                 state.typeMapper
-            ).createFunctionAndMapVariables(interfaceFun, origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS)
+            ).createFunctionAndMapVariables(
+                interfaceFun, defaultImpls, symbolTable = symbolTable, origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
+            )
         }
     }
 
@@ -219,7 +223,9 @@ class JvmDeclarationFactory(
             IrClassImpl(
                 interfaceClass.startOffset, interfaceClass.endOffset, JvmLoweredDeclarationOrigin.DEFAULT_IMPLS,
                 createDefaultImplsClassDescriptor(interfaceClass.descriptor)
-            )
+            ).also {
+                it.parent = interfaceClass
+            }
         }
 
     companion object {

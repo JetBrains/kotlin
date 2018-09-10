@@ -45,15 +45,16 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         fun transform(delegatingConstructorCall: IrDelegatingConstructorCall): IrExpression
     }
 
-    private val unsubstitutedArrayOfFun = context.ir.symbols.arrayOf.descriptor
+    private val arrayOfFun = context.ir.symbols.arrayOf.owner
+    private val unsubstitutedArrayOfFunDescriptor = arrayOfFun.descriptor
 
     private fun createArrayOfExpression(arrayElementType: KotlinType, arrayElements: List<IrExpression>): IrExpression {
-        val typeParameter0 = unsubstitutedArrayOfFun.typeParameters[0]
+        val typeParameter0 = unsubstitutedArrayOfFunDescriptor.typeParameters[0]
         val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameter0.typeConstructor to TypeProjectionImpl(arrayElementType)))
-        val substitutedArrayOfFun = unsubstitutedArrayOfFun.substitute(typeSubstitutor)!!
+        val substitutedArrayOfDescriptor = unsubstitutedArrayOfFunDescriptor.substitute(typeSubstitutor)!!
 
 
-        val valueParameter0 = substitutedArrayOfFun.valueParameters[0]
+        val valueParameter0 = substitutedArrayOfDescriptor.valueParameters[0]
         val arg0VarargType = valueParameter0.type
         val arg0VarargElementType = valueParameter0.varargElementType!!
         val arg0 =
@@ -62,10 +63,12 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         return IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            substitutedArrayOfFun.returnType!!.toIrType()!!,
-            substitutedArrayOfFun,
-            substitutedArrayOfFun.typeParametersCount
+            substitutedArrayOfDescriptor.returnType!!.toIrType()!!,
+            arrayOfFun.symbol,
+            substitutedArrayOfDescriptor,
+            arrayOfFun.typeParameters.size
         ).apply {
+            putTypeArgument(0, arrayElementType.toIrType()!!)
             putValueArgument(0, arg0)
         }
     }
@@ -186,23 +189,24 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             return enumEntryClass
         }
 
-        private fun createFieldForEnumEntry(enumEntry: IrEnumEntry) =
-            context.declarationFactory.getFieldForEnumEntry(enumEntry, enumEntry.initializerExpression!!.type).also {
+        private fun createFieldForEnumEntry(enumEntry: IrEnumEntry): IrField {
+            return context.declarationFactory.getFieldForEnumEntry(enumEntry, enumEntry.initializerExpression!!.type).also {
                 it.initializer = IrExpressionBodyImpl(enumEntry.initializerExpression!!)
                 enumEntryFields.add(it)
                 enumEntriesByField[it] = enumEntry
             }
+        }
 
         private fun setupSynthesizedEnumClassMembers() {
             val irField = createSyntheticValuesFieldDeclaration()
 
             irClass.declarations.add(irField)
 
-            valuesFunction = findFunctionDescriptorForMemberWithSyntheticBodyKind(IrSyntheticBodyKind.ENUM_VALUES)
-            valueOfFunction = findFunctionDescriptorForMemberWithSyntheticBodyKind(IrSyntheticBodyKind.ENUM_VALUEOF)
+            valuesFunction = findFunctionForMemberWithSyntheticBodyKind(IrSyntheticBodyKind.ENUM_VALUES)
+            valueOfFunction = findFunctionForMemberWithSyntheticBodyKind(IrSyntheticBodyKind.ENUM_VALUEOF)
         }
 
-        private fun findFunctionDescriptorForMemberWithSyntheticBodyKind(kind: IrSyntheticBodyKind): IrFunction =
+        private fun findFunctionForMemberWithSyntheticBodyKind(kind: IrSyntheticBodyKind): IrFunction =
             irClass.declarations.asSequence().filterIsInstance<IrFunction>()
                 .first {
                     it.body.let { body ->
@@ -221,7 +225,10 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 createSyntheticValuesFieldDescriptor(valuesArrayType),
                 valuesArrayType.toIrType()!!,
                 IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValuesInitializer)
-            ).also { valuesField = it }
+            ).also {
+                it.parent = irClass
+                valuesField = it
+            }
         }
 
         private fun createSyntheticValuesFieldInitializerExpression(): IrExpression =
@@ -458,19 +465,21 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             }
 
             private fun createEnumValueOfBody(): IrBody {
-                val unsubstitutedValueOf = context.irBuiltIns.enumValueOf
-                val typeParameterT = unsubstitutedValueOf.typeParameters[0]
+                val unsubstitutedValueOfDescriptor = context.irBuiltIns.enumValueOf
+                val valueOfSymbol = context.irBuiltIns.enumValueOfSymbol
+                val typeParameterT = unsubstitutedValueOfDescriptor.typeParameters[0]
                 val enumClassType = irClass.descriptor.defaultType
                 val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
-                val substitutedValueOf = unsubstitutedValueOf.substitute(typeSubstitutor)!!
+                val substitutedValueOfDescriptor = unsubstitutedValueOfDescriptor.substitute(typeSubstitutor)!!
 
                 val irValueOfCall =
                     IrCallImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
-                        substitutedValueOf.returnType!!.toIrType()!!,
-                        substitutedValueOf,
-                        substitutedValueOf.typeParametersCount
+                        substitutedValueOfDescriptor.returnType!!.toIrType()!!,
+                        valueOfSymbol,
+                        substitutedValueOfDescriptor,
+                        substitutedValueOfDescriptor.typeParametersCount
                     )
                 irValueOfCall.putValueArgument(
                     0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueOfFunction.valueParameters[0].symbol)
@@ -491,11 +500,14 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             }
 
             private fun createEnumValuesBody(valuesField: IrField): IrBody {
-                val cloneFun = valuesField.type.toKotlinType().memberScope.findSingleFunction(Name.identifier("clone"))
+                val cloneFunDescriptor = valuesField.type.toKotlinType().memberScope.findSingleFunction(Name.identifier("clone")).original
+                val cloneFun = context.ir.symbols.externalSymbolTable.referenceSimpleFunction(cloneFunDescriptor).owner
 
-                val irCloneValues = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, cloneFun.returnType!!.toIrType()!!, cloneFun, 0).apply {
-                    dispatchReceiver = IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valuesField.symbol, valuesField.symbol.owner.type)
-                }
+                val irCloneValues =
+                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, cloneFun.returnType, cloneFun.symbol, cloneFunDescriptor, 0).apply {
+                        dispatchReceiver =
+                                IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valuesField.symbol, valuesField.symbol.owner.type)
+                    }
 
                 return IrBlockBodyImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,

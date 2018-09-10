@@ -109,7 +109,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                     )
                     val invokeFunDescriptor = context.getClass(FqName("kotlin.jvm.functions.FunctionN"))
                         .getFunction("invoke", listOf(expression.type.toKotlinType()))
-                    val invokeFunSymbol = context.ir.symbols.externalSymbolTable.referenceSimpleFunction(invokeFunDescriptor)
+                    val invokeFunSymbol = context.ir.symbols.externalSymbolTable.referenceSimpleFunction(invokeFunDescriptor.original)
 
                     IrCallImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -741,11 +741,12 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                         }
 
                     val clazzDescriptor = globalContext.getClass(FqName("java.lang.Class"))
-                    val clazz = IrClassReferenceImpl(
+                    val clazzSymbol = globalContext.ir.symbols.externalSymbolTable.referenceClass(clazzDescriptor)
+                    val clazzRef = IrClassReferenceImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
                         clazzDescriptor.toIrType(),
-                        clazzDescriptor,
+                        clazzSymbol,
                         CrIrType(type)
                     )
 
@@ -763,17 +764,19 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                             -1, -1, globalContext.irBuiltIns.stringType,
                             state.moduleName
                         )
-                        val function = reflectionClass.getStaticFunction("getOrCreateKotlinPackage", emptyList())
-                        irCall(IrSimpleFunctionSymbolImpl(function), function.returnType!!.toIrType()!!).apply {
-                            putValueArgument(0, clazz)
+                        val functionDescriptor = reflectionClass.getStaticFunction("getOrCreateKotlinPackage", emptyList())
+                        val functionSymbol = globalContext.ir.symbols.externalSymbolTable.referenceSimpleFunction(functionDescriptor)
+                        irCall(functionSymbol, functionSymbol.owner.returnType).apply {
+                            putValueArgument(0, clazzRef)
                             putValueArgument(1, module)
                         }
                     } else {
-                        val function = reflectionClass.staticScope
+                        val functionDescriptor = reflectionClass.staticScope
                             .getContributedFunctions(Name.identifier("getOrCreateKotlinClass"), NoLookupLocation.FROM_BACKEND)
                             .single { it.valueParameters.size == 1 }
-                        irCall(IrSimpleFunctionSymbolImpl(function), function.returnType!!.toIrType()!!).apply {
-                            putValueArgument(0, clazz)
+                        val functionSymbol = globalContext.ir.symbols.externalSymbolTable.referenceSimpleFunction(functionDescriptor)
+                        irCall(functionSymbol, functionSymbol.owner.returnType).apply {
+                            putValueArgument(0, clazzRef)
                         }
                     }
                 }

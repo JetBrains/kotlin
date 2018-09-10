@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -50,7 +51,8 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
         val publicInstanceField = context.declarationFactory.getFieldForObjectInstance(irClass)
 
         val constructor = irClass.descriptor.unsubstitutedPrimaryConstructor
-                ?: throw AssertionError("Object should have a primary constructor: ${irClass.descriptor}")
+            ?: throw AssertionError("Object should have a primary constructor: ${irClass.descriptor}")
+        val constructorSymbol = context.ir.symbols.externalSymbolTable.referenceConstructor(constructor)
 
         val publicInstanceOwner = if (irClass.descriptor.isCompanionObject) parentScope!!.irElement as IrDeclarationContainer else irClass
         if (isCompanionObjectInInterfaceNotIntrinsic(irClass.descriptor)) {
@@ -62,12 +64,18 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
                 CallableMemberDescriptor.Kind.SYNTHESIZED,
                 false
             ) as PropertyDescriptor
-            privateInstance.name
-            val field = createInstanceFieldWithInitializer(IrFieldSymbolImpl(privateInstance), constructor, irClass, irClass.defaultType)
+            val fieldSymbol = context.ir.symbols.externalSymbolTable.referenceField(privateInstance)
+            val field = createInstanceFieldWithInitializer(
+                fieldSymbol,
+                constructorSymbol,
+                irClass,
+                irClass.defaultType
+            )
             publicInstanceField.initializer =
                     IrExpressionBodyImpl(IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol, irClass.defaultType))
         } else {
-            val constructorCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irClass.defaultType, constructor, 0)
+            val constructorCall =
+                IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irClass.defaultType, constructorSymbol, constructorSymbol.descriptor, 0)
             publicInstanceField.initializer = IrExpressionBodyImpl(constructorCall)
         }
 
@@ -77,13 +85,13 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
 
     private fun createInstanceFieldWithInitializer(
         fieldSymbol: IrFieldSymbol,
-        constructor: ClassConstructorDescriptor,
+        constructorSymbol: IrConstructorSymbol,
         instanceOwner: IrDeclarationContainer,
         objectType: IrType
     ): IrField =
         createFieldWithCustomInitializer(
             fieldSymbol,
-            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectType, constructor, 0),
+            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectType, constructorSymbol, constructorSymbol.descriptor, 0),
             instanceOwner,
             objectType
         )

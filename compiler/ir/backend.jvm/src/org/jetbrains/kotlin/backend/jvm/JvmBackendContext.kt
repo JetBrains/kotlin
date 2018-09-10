@@ -34,7 +34,7 @@ class JvmBackendContext(
     irModuleFragment: IrModuleFragment, symbolTable: SymbolTable
 ) : CommonBackendContext {
     override val builtIns = state.module.builtIns
-    override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(psiSourceManager, builtIns, state)
+    override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(psiSourceManager, builtIns, state, symbolTable)
     override val sharedVariablesManager = JvmSharedVariablesManager(builtIns, irBuiltIns)
 
     override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {

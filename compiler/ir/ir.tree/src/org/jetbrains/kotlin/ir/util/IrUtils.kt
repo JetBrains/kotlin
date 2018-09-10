@@ -142,13 +142,13 @@ fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.
 fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
     this.descriptor.valueParameters.any { this.getValueArgument(it) == null }
 
-fun IrFunction.createParameterDeclarations() {
+fun IrFunction.createParameterDeclarations(symbolTable: SymbolTable? = null) {
     fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
         innerStartOffset(this), innerEndOffset(this),
         IrDeclarationOrigin.DEFINED,
         this,
-        type.toIrType()!!,
-        (this as? ValueParameterDescriptor)?.varargElementType?.toIrType()
+        type.toIrType(symbolTable)!!,
+        (this as? ValueParameterDescriptor)?.varargElementType?.toIrType(symbolTable)
     ).also {
         it.parent = this@createParameterDeclarations
     }
@@ -330,6 +330,16 @@ val IrClass.isClass get() = kind == ClassKind.CLASS
 val IrClass.isObject get() = kind == ClassKind.OBJECT
 
 val IrDeclaration.parentAsClass get() = parent as IrClass
+
+tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
+    if (this is IrPackageFragment) return this
+    val vParent = (this as? IrDeclaration)?.parent
+    return when (vParent) {
+        is IrPackageFragment -> vParent
+        is IrClass -> vParent.getPackageFragment()
+        else -> null
+    }
+}
 
 fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
