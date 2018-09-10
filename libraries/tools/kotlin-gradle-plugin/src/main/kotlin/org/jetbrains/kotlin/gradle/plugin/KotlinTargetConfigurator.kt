@@ -404,7 +404,7 @@ open class KotlinNativeTargetConfigurator(
             // TODO: Provide a normal test path!
             outputDir = project.layout.buildDirectory.dir("test-results").get().asFile
 
-            if (project.hasProperty("teamcity")) {
+            if (project.hasProperty("teamcity.version")) {
                 args("--ktest_logger=TEAMCITY")
             }
 

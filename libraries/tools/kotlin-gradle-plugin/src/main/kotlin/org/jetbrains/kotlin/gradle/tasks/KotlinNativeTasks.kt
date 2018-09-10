@@ -57,7 +57,7 @@ open class KotlinNativeCompile : AbstractCompile() {
     val libraries: FileCollection
         @InputFiles get() = compilation.compileDependencyFiles
 
-    val friendModule: FileCollection?
+    private val friendModule: FileCollection?
         // It's already taken into account in libraries
         @Internal get() = compilation.friendCompilation?.output
 
