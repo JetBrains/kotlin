@@ -1147,6 +1147,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/variableAsFunctionCall.kt");
         }
 
+        @TestMetadata("variableAsFunctionCallWithGenerics.kt")
+        public void testVariableAsFunctionCallWithGenerics() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/variableAsFunctionCallWithGenerics.kt");
+        }
+
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/when.kt");
