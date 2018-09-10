@@ -7,6 +7,7 @@ public val topLevelP: kotlin.Result<kotlin.Int>
 public val topLevelPInferred: kotlin.Result<kotlin.Int>
 internal val topLevelPInternal: kotlin.Result<kotlin.Int>
 private val topLevelPPrivate: kotlin.Result<kotlin.Int>
+private val topLevelPPrivateCustomGetter: kotlin.Result<kotlin.Int>
 private val topLevelPPrivateInferred: kotlin.Result<kotlin.Int>
 public fun local(/*0*/ r: kotlin.Result<kotlin.Int>): kotlin.Unit
 public fun params(/*0*/ r1: kotlin.Result<kotlin.Int>, /*1*/ r2: kotlin.Result<kotlin.Int>?, /*2*/ r3: ResultAlias<kotlin.String> /* = kotlin.Result<kotlin.String> */, /*3*/ r4: kotlin.collections.List<kotlin.Result<kotlin.Int>>, /*4*/ r5: InlineResult<kotlin.Int>, /*5*/ vararg r6: kotlin.Result<kotlin.Int> /*kotlin.Array<out kotlin.Result<kotlin.Int>>*/): kotlin.Unit

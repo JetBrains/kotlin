@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -22,25 +23,24 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
         if (declaration !is KtCallableDeclaration || descriptor !is CallableMemberDescriptor) return
 
         val returnType = descriptor.returnType ?: return
-        if (isForbiddenReturnType(returnType, descriptor)) {
+        if (isForbiddenReturnType(returnType, declaration, descriptor)) {
             val typeReferenceOrDeclarationName = declaration.typeReference ?: declaration.nameIdentifier ?: return
             context.trace.reportDiagnosticOnce(Errors.RESULT_CLASS_IN_RETURN_TYPE.on(typeReferenceOrDeclarationName))
         }
     }
 
-    private fun isForbiddenReturnType(returnType: KotlinType, declarationDescriptor: DeclarationDescriptor): Boolean {
+    private fun isForbiddenReturnType(
+        returnType: KotlinType, declaration: KtDeclaration, declarationDescriptor: DeclarationDescriptor
+    ): Boolean {
         if (!returnType.isResultType()) return false
 
         if (declarationDescriptor is PropertyDescriptor || declarationDescriptor is PropertyGetterDescriptor) {
-            val visibility = (declarationDescriptor as DeclarationDescriptorWithVisibility).effectiveVisibility()
-            return when (visibility) {
-                is EffectiveVisibility.Private, is EffectiveVisibility.Local,
-                is EffectiveVisibility.InternalOrPackage, is EffectiveVisibility.InternalProtected,
-                is EffectiveVisibility.InternalProtectedBound -> false
-
-                is EffectiveVisibility.Public, is EffectiveVisibility.Protected,
-                is EffectiveVisibility.ProtectedBound -> true
+            if (declaration is KtProperty && declaration.getter?.hasBody() == true) {
+                return true
             }
+
+            val visibility = (declarationDescriptor as DeclarationDescriptorWithVisibility).visibility
+            return !Visibilities.isPrivate(visibility) && visibility != Visibilities.LOCAL
         }
 
         return true

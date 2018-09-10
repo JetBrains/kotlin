@@ -138,6 +138,6 @@ object IObject {
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val u = <!EXPERIMENTAL_UNSIGNED_LITERALS!>42u<!>
 
-    @JvmField
-    internal val r: Result<Int> = TODO()
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    private val r: Result<Int> = TODO()
 }

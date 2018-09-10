@@ -76,7 +76,7 @@ public interface I {
 public object IObject {
     private constructor IObject()
     @field:kotlin.jvm.JvmField public final val c: Foo
-    @field:kotlin.jvm.JvmField internal final val r: kotlin.Result<kotlin.Int>
+    @field:kotlin.jvm.JvmField private final val r: kotlin.Result<kotlin.Int>
     @field:kotlin.jvm.JvmField public final val u: kotlin.UInt = 42.toUInt()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

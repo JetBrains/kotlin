@@ -28,9 +28,13 @@ fun returnContainer(): List<Result<Int>> = TODO()
 
 val topLevelP: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
 val <!RESULT_CLASS_IN_RETURN_TYPE!>topLevelPInferred<!> = topLevelP
-internal val topLevelPInternal: Result<Int> = TODO()
+internal val topLevelPInternal: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
+
 private val topLevelPPrivate: Result<Int> = TODO()
 private val topLevelPPrivateInferred = topLevelP
+
+private val topLevelPPrivateCustomGetter: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!>
+    get() = TODO()
 
 val asFunctional: () -> Result<Int> = TODO()
 
@@ -41,7 +45,9 @@ open class PublicCls(
     val r4: <!RESULT_CLASS_IN_RETURN_TYPE!>ResultAlias<Int>?<!>,
 
     val r5: InlineResult<Int>,
-    internal val r6: Result<Int>,
+
+    internal val r6: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!>,
+
     private val r7: Result<Int>,
     val r8: List<Result<Int>>
 ) {
@@ -51,11 +57,11 @@ open class PublicCls(
 
     val <!RESULT_CLASS_IN_RETURN_TYPE!>p4<!> = p1
 
-    internal val p5: Result<Int> = TODO()
+    internal val p5: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
+
     private var p6: Result<Int> = TODO()
 
-    internal val p7 = p1
-
+    internal val <!RESULT_CLASS_IN_RETURN_TYPE!>p7<!> = p1
     protected val <!RESULT_CLASS_IN_RETURN_TYPE!>p8<!> = p1
 
     fun returnInCls(): <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
@@ -64,36 +70,38 @@ open class PublicCls(
 }
 
 internal open class InternalCls(
-    val r1: Result<Int>,
-    val r2: ResultAlias<Int>?,
+    val r1: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!>,
+    val r2: <!RESULT_CLASS_IN_RETURN_TYPE!>ResultAlias<Int>?<!>,
+
     val r3: List<Result<Int>>
 ) {
     companion object {
-        val cr1: Result<Int> = TODO()
+        val cr1: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
+
         private val cr2: Result<Int> = TODO()
     }
 
-    val p1 = r1
-    val p2: Result<String> = TODO()
+    val <!RESULT_CLASS_IN_RETURN_TYPE!>p1<!> = r1
+    val p2: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<String><!> = TODO()
 
-    protected val p3 = p1
+    protected val <!RESULT_CLASS_IN_RETURN_TYPE!>p3<!> = p1
 
     fun returnInInternal(): <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
     protected fun returnInClsProtected(): <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
 }
 
 private class PrivateCls(
-    val r1: Result<Int>,
-    val r2: ResultAlias<Int>?,
+    val r1: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!>,
+    val r2: <!RESULT_CLASS_IN_RETURN_TYPE!>ResultAlias<Int>?<!>,
     val r3: List<Result<Int>>
 ) {
     companion object {
-        val cr1: Result<Int> = TODO()
+        val cr1: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
         private val cr2: Result<Int> = TODO()
     }
 
-    val p1 = r1
-    val p2: Result<String> = TODO()
+    val <!RESULT_CLASS_IN_RETURN_TYPE!>p1<!> = r1
+    val p2: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<String><!> = TODO()
 
     fun returnInPrivate(): <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
 }
@@ -105,8 +113,8 @@ fun local(r: Result<Int>) {
     fun localFun(): <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = TODO()
 
     class F {
-        val p1: Result<Int> = r
-        val p2 = r
+        val p1: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = r
+        val <!RESULT_CLASS_IN_RETURN_TYPE!>p2<!> = r
     }
 }
 

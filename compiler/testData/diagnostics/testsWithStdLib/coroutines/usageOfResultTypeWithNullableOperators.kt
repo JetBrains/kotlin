@@ -3,7 +3,7 @@
 fun <T> id(x: T): T = x
 
 private val asFun: () -> Result<Int>? = TODO()
-private val Int.intResult: Result<Int>?
+private val Int.intResult: <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int>?<!>
     get() = null
 
 fun returnInt(): Int? = 0
