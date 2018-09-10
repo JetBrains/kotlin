@@ -173,7 +173,7 @@ targetList.each { target ->
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
-                     '--runtime', project(':runtime').file("build/${target}/runtime.bc"),
+                     '-Xruntime', project(':runtime').file("build/${target}/runtime.bc"),
                      *project.globalBuildArgs]
 
     task("${target}Stdlib", type: JavaExec) {
@@ -182,7 +182,7 @@ targetList.each { target ->
         jvmArgs = konanJvmArgs
         args = [*konanArgs,
                 '-output', project(':runtime').file("build/${target}Stdlib"),
-                '-produce', 'library', '-module_name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
+                '-produce', 'library', '-module-name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
                 '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
                 '-Xuse-experimental=kotlin.contracts.ExperimentalContracts',
                 commonSrc.absolutePath,
