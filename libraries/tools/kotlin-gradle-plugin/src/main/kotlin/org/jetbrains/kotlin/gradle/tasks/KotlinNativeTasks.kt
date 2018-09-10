@@ -59,9 +59,6 @@ open class KotlinNativeCompile : DefaultTask() {
     val kotlinNativeVersion: String
         @Input get() = KonanCompilerDownloadTask.compilerVersion.toString()
 
-    val kotlinNativeHome: File
-        @Input get() = project.file(project.konanHome)
-
     @OutputFile
     val outputFile: Property<File> = project.objects.property(File::class.java)
 
@@ -134,7 +131,7 @@ open class KotlinNativeCompile : DefaultTask() {
 
             libraries.files.filter {
                 // Support only klib files for now.
-                it.extension == "klib" || !it.providedByCompiler
+                it.extension == "klib" && !it.providedByCompiler
             }.forEach { library ->
                 library.parent?.let { addArg("-r", it) }
                 addArg("-l", library.nameWithoutExtension)
