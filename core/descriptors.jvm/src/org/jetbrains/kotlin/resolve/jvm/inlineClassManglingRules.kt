@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.load.kotlin.getRepresentativeUpperBound
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
 import java.security.MessageDigest
@@ -29,11 +30,14 @@ fun requiresFunctionNameMangling(valueParameterTypes: List<KotlinType>): Boolean
     return valueParameterTypes.any { it.requiresFunctionNameMangling() }
 }
 
+fun DeclarationDescriptor.isInlineClassThatRequiresMangling(): Boolean =
+    isInlineClass() && !isDontMangleClass(this as ClassDescriptor)
+
 private fun KotlinType.requiresFunctionNameMangling() =
     isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
 
 private fun KotlinType.isInlineClassThatRequiresMangling() =
-    isInlineClassType() && !isDontMangleClass(this.constructor.declarationDescriptor as ClassDescriptor)
+    constructor.declarationDescriptor?.isInlineClassThatRequiresMangling() == true
 
 private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
     classDescriptor.fqNameSafe == DescriptorUtils.RESULT_FQ_NAME

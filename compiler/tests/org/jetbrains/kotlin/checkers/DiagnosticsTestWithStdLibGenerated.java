@@ -243,6 +243,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmName.kt");
             }
 
+            @TestMetadata("jvmNameOnMangledNames.kt")
+            public void testJvmNameOnMangledNames() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/jvmNameOnMangledNames.kt");
+            }
+
             @TestMetadata("multifileClassPart.kt")
             public void testMultifileClassPart() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/multifileClassPart.kt");

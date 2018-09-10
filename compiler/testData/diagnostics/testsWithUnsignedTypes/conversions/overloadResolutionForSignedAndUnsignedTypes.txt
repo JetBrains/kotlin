@@ -2,13 +2,13 @@ package
 
 public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
 public fun foo(/*0*/ x: kotlin.UByte): kotlin.String
-@kotlin.jvm.JvmName(name = "fooUInt") public fun foo(/*0*/ x: kotlin.UInt): kotlin.String
+public fun foo(/*0*/ x: kotlin.UInt): kotlin.String
 public fun foo(/*0*/ x: kotlin.ULong): kotlin.String
 public fun foo(/*0*/ x: kotlin.UShort): kotlin.String
 public fun fooByte(/*0*/ x: kotlin.Byte): kotlin.Int
-@kotlin.jvm.JvmName(name = "fooUByte") public fun fooByte(/*0*/ x: kotlin.UByte): kotlin.String
+public fun fooByte(/*0*/ x: kotlin.UByte): kotlin.String
 public fun fooLong(/*0*/ x: kotlin.Long): kotlin.Int
-@kotlin.jvm.JvmName(name = "fooULong") public fun fooLong(/*0*/ x: kotlin.ULong): kotlin.String
+public fun fooLong(/*0*/ x: kotlin.ULong): kotlin.String
 public fun fooShort(/*0*/ x: kotlin.Short): kotlin.Int
-@kotlin.jvm.JvmName(name = "fooUByte") public fun fooShort(/*0*/ x: kotlin.UShort): kotlin.String
+public fun fooShort(/*0*/ x: kotlin.UShort): kotlin.String
 public fun test(): kotlin.Unit
