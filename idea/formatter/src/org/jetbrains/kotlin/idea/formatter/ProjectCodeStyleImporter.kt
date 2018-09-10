@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.application.options.codeStyle.CodeStyleSchemesModel
 import com.intellij.openapi.project.Project
-import com.intellij.psi.codeStyle.CodeStyleSchemes
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import com.intellij.psi.impl.source.codeStyle.CodeStyleSchemesImpl
 
 object ProjectCodeStyleImporter {
     fun apply(project: Project, codeStyleStr: String?): Boolean {
@@ -26,34 +24,24 @@ object ProjectCodeStyleImporter {
         }
     }
 
-    fun apply(project: Project, codeStyle: KotlinPredefinedCodeStyle) {
-        val schemeManager = CodeStyleSettingsManager.getInstance(project)
-        val schemesModel = CodeStyleSchemesModel(project)
+    fun apply(project: Project, predefinedCodeStyle: KotlinPredefinedCodeStyle) {
+        val settingsManager = CodeStyleSettingsManager.getInstance(project)
 
-        val projectScheme = schemesModel.projectScheme
-
-        val currentScheme =
-            if (schemeManager.USE_PER_PROJECT_SETTINGS)
-                projectScheme
-            else
-                CodeStyleSchemes.getInstance().findPreferredScheme(schemeManager.PREFERRED_PROJECT_CODE_STYLE)
-
-        if (projectScheme != currentScheme) {
-            schemeManager.USE_PER_PROJECT_SETTINGS = true
-            schemeManager.PREFERRED_PROJECT_CODE_STYLE = null
-
-            CodeStyleSchemesImpl.getSchemeManager().setSchemes(listOf(), null, null)
+        val currentSettings = settingsManager.currentSettings
+        if (predefinedCodeStyle.codeStyleId == currentSettings.kotlinCodeStyleDefaults()) {
+            // Don't bother user that already have correct code style
+            return
         }
 
-        val codeStyleSettings = projectScheme.codeStyleSettings
-
-        val kotlinCommonSettings = codeStyleSettings.kotlinCommonSettings
-        val kotlinCustomSettings = codeStyleSettings.kotlinCustomSettings
-
-        val defaults = kotlinCustomSettings.CODE_STYLE_DEFAULTS ?: kotlinCommonSettings.CODE_STYLE_DEFAULTS
-        if (defaults != codeStyle.codeStyleId) {
-            codeStyle.apply(codeStyleSettings)
-            schemeManager.mainProjectCodeStyle = codeStyleSettings
+        val projectSettingsUpdated: CodeStyleSettings = if (settingsManager.USE_PER_PROJECT_SETTINGS) {
+            settingsManager.currentSettings.clone()
+        } else {
+            CodeStyleSettings()
         }
+
+        settingsManager.USE_PER_PROJECT_SETTINGS = true
+
+        predefinedCodeStyle.apply(projectSettingsUpdated)
+        settingsManager.mainProjectCodeStyle = projectSettingsUpdated
     }
 }
