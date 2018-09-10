@@ -38,6 +38,10 @@ public class RangeTest {
 
         assertFalse(Long.MAX_VALUE in range)
 
+        assertFalse(null in range)
+        assertTrue(1 as Int? in range)
+        assertFalse(10 as Int? in range)
+
         val openRange = 1 until 10
         assertTrue(9 in openRange)
         assertFalse(10 in openRange)
@@ -72,6 +76,8 @@ public class RangeTest {
         }
 
         assertFalse(Long.MAX_VALUE in range)
+
+        // assertTrue(1.toByte() as Byte? in range) // expected not to compile
 
         val openRange = 1.toByte() until 10.toByte()
         assertTrue(9.toByte() in openRange)
@@ -108,6 +114,8 @@ public class RangeTest {
         }
 
         assertFalse(Long.MAX_VALUE in range)
+
+        // assertTrue(1.toShort() as Short? in range) // expected not to compile
 
         val openRange = 1.toShort() until 10.toShort()
         assertTrue(9.toShort() in openRange)
@@ -147,6 +155,9 @@ public class RangeTest {
             assertFalse(Double.MAX_VALUE in range)
         }
 
+        assertFalse(null in range)
+        assertTrue(1L as Long? in range)
+        assertFalse(10L as Long? in range)
 
         val openRange = 1L until 10L
         assertTrue(9L in openRange)
@@ -176,6 +187,10 @@ public class RangeTest {
 
         assertTrue('v' in (range as ClosedRange<Char>))
         assertFalse((range as ClosedRange<Char>).isEmpty())
+
+        assertFalse(null in range)
+        assertTrue('p' as Char? in range)
+        assertFalse('z' as Char? in range)
 
         val openRange = 'A' until 'Z'
         assertTrue('Y' in openRange)

@@ -98,6 +98,17 @@ public operator fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = Com
 public operator fun Double.rangeTo(that: Double): ClosedFloatingPointRange<Double> = ClosedDoubleRange(this, that)
 
 
+/**
+ * Returns `true` if this iterable range contains the specified [element].
+ *
+ * Always returns `false` if the [element] is `null`.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any, R : Iterable<T>, R : ClosedRange<T> =
+    element != null && contains(element)
+
+
 internal fun checkStepIsPositive(isPositive: Boolean, step: Number) {
     if (!isPositive) throw IllegalArgumentException("Step must be positive, was: $step.")
 }

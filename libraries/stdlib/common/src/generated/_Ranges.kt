@@ -94,6 +94,39 @@ public fun CharRange.random(random: Random): Char {
 }
 
 /**
+ * Returns `true` if this range contains the specified [element].
+ * 
+ * Always returns `false` if the [element] is `null`.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline operator fun IntRange.contains(element: Int?): Boolean {
+    return element != null && contains(element)
+}
+
+/**
+ * Returns `true` if this range contains the specified [element].
+ * 
+ * Always returns `false` if the [element] is `null`.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline operator fun LongRange.contains(element: Long?): Boolean {
+    return element != null && contains(element)
+}
+
+/**
+ * Returns `true` if this range contains the specified [element].
+ * 
+ * Always returns `false` if the [element] is `null`.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline operator fun CharRange.contains(element: Char?): Boolean {
+    return element != null && contains(element)
+}
+
+/**
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")

@@ -174,6 +174,25 @@ object RangeOps : TemplateGroupBase() {
         }
     }
 
+    val f_contains_nullable = fn("contains(element: T?)") {
+        include(RangesOfPrimitives, rangePrimitives)
+    } builder {
+        since("1.3")
+        operator()
+        inlineOnly()
+
+        doc {
+            """
+            Returns `true` if this ${f.collection} contains the specified [element].
+
+            Always returns `false` if the [element] is `null`.
+            """
+        }
+
+        returns("Boolean")
+        body { "return element != null && contains(element)" }
+    }
+
     val f_toPrimitiveExactOrNull = fn("to{}ExactOrNull()").byTwoPrimitives {
         include(Primitives, numericPermutations)
         filter { _, (fromType, toType) -> fromType.capacity > toType.capacity && toType.isIntegral() }

@@ -73,6 +73,30 @@ public fun ULongRange.random(random: Random): ULong {
 }
 
 /**
+ * Returns `true` if this range contains the specified [element].
+ * 
+ * Always returns `false` if the [element] is `null`.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun UIntRange.contains(element: UInt?): Boolean {
+    return element != null && contains(element)
+}
+
+/**
+ * Returns `true` if this range contains the specified [element].
+ * 
+ * Always returns `false` if the [element] is `null`.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline operator fun ULongRange.contains(element: ULong?): Boolean {
+    return element != null && contains(element)
+}
+
+/**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
  * The [to] value should be less than or equal to `this` value.
