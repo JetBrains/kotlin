@@ -1001,6 +1001,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                     target: KotlinModuleBuildTarget<*>?,
                     attributesDiff: CacheAttributesDiff<*>
                 ) {}
+                override fun addCustomMessage(message: String) {}
                 override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {}
                 override fun markedAsDirtyBeforeRound(files: Iterable<File>) {}
                 override fun markedAsDirtyAfterRound(files: Iterable<File>) {}

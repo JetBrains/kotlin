@@ -552,6 +552,7 @@ abstract class AbstractIncrementalJpsTest(
     private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase(), TestingBuildLogger {
         private val markedDirtyBeforeRound = ArrayList<File>()
         private val markedDirtyAfterRound = ArrayList<File>()
+        private val customMessages = mutableListOf<String>()
 
         override fun invalidOrUnusedCache(
             chunk: KotlinChunk?,
@@ -588,7 +589,15 @@ abstract class AbstractIncrementalJpsTest(
             logDirtyFiles(markedDirtyBeforeRound)
         }
 
+        override fun addCustomMessage(message: String) {
+            customMessages.add(message)
+        }
+
         override fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) {
+            customMessages.forEach {
+                logLine(it)
+            }
+            customMessages.clear()
             logDirtyFiles(markedDirtyAfterRound)
             logLine("Exit code: $exitCode")
             logLine("------------------------------------------")

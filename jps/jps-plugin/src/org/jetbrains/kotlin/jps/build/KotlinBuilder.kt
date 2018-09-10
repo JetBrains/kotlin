@@ -31,11 +31,12 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.KotlinModuleKind
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.jps.incremental.withLookupStorage
 import org.jetbrains.kotlin.jps.model.kotlinKind
 import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
+import org.jetbrains.kotlin.jps.targets.KotlinUnsupportedModuleBuildTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -327,13 +329,23 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
+        val kotlinContext = context.kotlin
         val kotlinChunk = chunk.toKotlinChunk(context)!!
+
+        if (representativeTarget is KotlinUnsupportedModuleBuildTarget) {
+            val msg = "${representativeTarget.kind} is not yet supported in IDEA internal build system. " +
+                    "Please use Gradle to build ${kotlinChunk.presentableShortName}."
+
+            kotlinContext.testingLogger?.addCustomMessage(msg)
+            messageCollector.report(STRONG_WARNING, msg)
+
+            return NOTHING_DONE
+        }
 
         if (!kotlinChunk.isEnabled) {
             return NOTHING_DONE
         }
 
-        val kotlinContext = context.kotlin
         val projectDescriptor = context.projectDescriptor
         val dataManager = projectDescriptor.dataManager
         val targets = chunk.targets
