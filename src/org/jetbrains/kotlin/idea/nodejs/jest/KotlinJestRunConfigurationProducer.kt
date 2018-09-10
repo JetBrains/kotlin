@@ -14,16 +14,14 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
-import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
+import org.jetbrains.kotlin.idea.js.asJsModule
+import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementInfo
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
 import org.jetbrains.kotlin.idea.run.addBuildTask
-import org.jetbrains.kotlin.idea.util.projectStructure.module
 
 typealias JestTestElementInfo = TestElementInfo<JestRunSettings>
 
@@ -74,29 +72,24 @@ class KotlinJestRunConfigurationProducer :
     override val isForTests: Boolean
         get() = true
 
-    override fun getConfigurationData(element: PsiElement): JestConfigData? {
-        val module = element.module
-        val jsModule = module?.jsOrJsImpl() ?: return null
+    override fun getConfigurationData(
+        context: ConfigurationContext
+    ): JestConfigData? {
+        val element = context.psiLocation ?: return null
+        val module = context.module?.asJsModule() ?: return null
 
-        val file = if (jsModule != module) {
-            jsModule.moduleFile
-        } else {
-            PsiUtilCore.getVirtualFile(element)
-        } ?: return null
+        val file = module.moduleFile
 
-        val project = module.project
-
-        if (!isTestRunnerPackageAvailableFor(project, file)) return null
+        if (!isTestRunnerPackageAvailableFor(module.project, file)) return null
 
         val testFilePath = module.jsTestOutputFilePath ?: return null
         val testElementPath = TestElementPath.forElement(element, module) ?: return null
 
-        return JestConfigData(element, jsModule, testFilePath, testElementPath)
+        return JestConfigData(element, module, testFilePath, testElementPath)
     }
 
     override fun isConfigurationFromCompatibleContext(configuration: JestRunConfiguration, context: ConfigurationContext): Boolean {
-        val element = context.psiLocation ?: return false
-        val configData = getConfigurationData(element) ?: return false
+        val configData = getConfigurationData(context) ?: return false
         val (thisRunSettings, _) = createTestElementRunInfo(configData, configuration.runSettings)
         val thatRunSettings = configuration.runSettings
 
@@ -117,8 +110,7 @@ class KotlinJestRunConfigurationProducer :
         context: ConfigurationContext,
         sourceElement: Ref<PsiElement>
     ): Boolean {
-        val element = context.psiLocation ?: return false
-        val configData = getConfigurationData(element) ?: return false
+        val configData = getConfigurationData(context) ?: return false
         val (runSettings, enclosingTestElement) = createTestElementRunInfo(configData, configuration.runSettings)
         configuration.runSettings = runSettings
         sourceElement.set(enclosingTestElement)
