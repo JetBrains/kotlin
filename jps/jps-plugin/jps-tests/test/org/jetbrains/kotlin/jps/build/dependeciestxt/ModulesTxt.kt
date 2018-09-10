@@ -27,6 +27,7 @@ import kotlin.reflect.full.memberProperties
  * See [README.md] for more details.
  */
 data class ModulesTxt(
+    val muted: Boolean,
     val file: File,
     val fileName: String,
     val modules: List<Module>,
@@ -107,6 +108,8 @@ data class ModulesTxt(
 }
 
 class ModulesTxtBuilder {
+    var muted = false
+
     val modules = mutableMapOf<String, ModuleRef>()
     private val dependencies = mutableListOf<DependencyBuilder>()
 
@@ -173,7 +176,7 @@ class ModulesTxtBuilder {
         val dependencies = dependencies.map { it.build() }
         val modules = modules.values.mapIndexed { index, moduleRef -> moduleRef.build(index) }
 
-        return ModulesTxt(file, fileTitle, modules, dependencies)
+        return ModulesTxt(muted, file, fileTitle, modules, dependencies)
     }
 
     private fun parseDeclaration(line: String) = doParseDeclaration(removeComments(line))
@@ -183,6 +186,9 @@ class ModulesTxtBuilder {
     private fun doParseDeclaration(line: String) {
         when {
             line.isEmpty() -> Unit // skip empty lines
+            line == "MUTED" -> {
+                muted = true
+            }
             line.contains("->") -> {
                 val (from, rest) = line.split("->", limit = 2)
                 if (rest.isBlank()) {

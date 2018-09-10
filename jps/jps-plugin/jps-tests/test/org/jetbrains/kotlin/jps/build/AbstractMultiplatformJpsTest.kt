@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
 import org.jetbrains.kotlin.jps.build.dependeciestxt.MppJpsIncTestsGenerator
 import java.io.File
 
-abstract class AbstractMultiplatformJpsTest : AbstractIncrementalJpsTest() {
+abstract class AbstractMultiplatformJpsTestWithGeneratedContent : AbstractIncrementalJpsTest() {
     override val modulesTxtFile: File
         get() = File(testDataDir.parent, "dependencies.txt").also {
             check(it.exists()) {
                 "`dependencies.txt` should be in parent dir. " +
-                        "See jps-plugin/testData/incremental/multiplatform/multiModule/README.md for details"
+                        "See `jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/README.md` for details"
             }
         }
 
@@ -27,7 +27,8 @@ abstract class AbstractMultiplatformJpsTest : AbstractIncrementalJpsTest() {
         val testCaseName = testDataDir.name
 
         val generator = MppJpsIncTestsGenerator(modulesTxt) { testDataSrc }
-        val testCase = generator.testCases.find { it.name == testCaseName } ?: error("Unsupported test case name: $testCaseName")
+        val testCase = generator.testCases.find { it.name == testCaseName }
+            ?: error("Test case `$testCaseName` is not configured in ${modulesTxt.fileName}")
         testCase.generate()
     }
 

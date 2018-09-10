@@ -11,7 +11,12 @@ import java.io.File
  * Utility for generating common/platform module stub contents based on it's dependencies.
  */
 fun actualizeMppJpsIncTestCaseDirs(rootDir: String, dir: String) {
-    File("$rootDir/$dir").listFiles { it: File -> it.isDirectory }.forEach { dirFile ->
+    val rootDirFile = File("$rootDir/$dir")
+    check(rootDirFile.isDirectory) { "`$rootDirFile` is not a directory" }
+
+    rootDirFile.listFiles { it: File -> it.isDirectory }.forEach { dirFile ->
+        check(dirFile.isDirectory) { "`$dirFile` is not a directory" }
+
         val dependenciesTxtFile = File(dirFile, "dependencies.txt")
         if (dependenciesTxtFile.exists()) {
             val fileTitle = "$dir/${dirFile.name}/dependencies.txt"

@@ -43,18 +43,21 @@ import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesDiff
 import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import org.jetbrains.kotlin.incremental.testingUtils.*
-import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
+import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
 import org.jetbrains.kotlin.jps.incremental.CompositeLookupsCacheAttributesManager
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.incremental.withLookupStorage
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
+import org.jetbrains.kotlin.jps.model.kotlinFacet
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
@@ -301,6 +304,8 @@ abstract class AbstractIncrementalJpsTest(
         Disposer.register(testRootDisposable, Disposable { FileUtilRt.delete(workDir) })
 
         val modulesTxt = configureModules()
+        if (modulesTxt?.muted == true) return
+
         initialMake()
 
         val otherMakeResults = performModificationsAndMake(modulesTxt?.modules?.map { it.name })
@@ -447,9 +452,13 @@ abstract class AbstractIncrementalJpsTest(
         if (modulesTxt == null) configureSingleModuleProject(jdk)
         else configureMultiModuleProject(modulesTxt, jdk)
 
-        addStdlib()
+        overrideModuleSettings()
+        configureRequiredLibraries()
 
         return modulesTxt
+    }
+
+    open fun overrideModuleSettings() {
     }
 
     private fun configureSingleModuleProject(jdk: JpsSdk<JpsDummyElement>?) {
@@ -513,9 +522,19 @@ abstract class AbstractIncrementalJpsTest(
         }
     }
 
-    protected open fun addStdlib() {
-        AbstractKotlinJpsBuildTestCase.addKotlinStdlibDependency(myProject)
-        AbstractKotlinJpsBuildTestCase.addKotlinTestDependency(myProject)
+    private fun configureRequiredLibraries() {
+        myProject.modules.forEach { module ->
+            when (module.kotlinFacet?.settings?.compilerArguments) {
+                null, is K2JVMCompilerArguments -> {
+                    JpsModuleRootModificationUtil.addDependency(module, requireLibrary(KotlinJpsLibrary.JvmStdLib))
+                    JpsModuleRootModificationUtil.addDependency(module, requireLibrary(KotlinJpsLibrary.JvmTest))
+                }
+                is K2JSCompilerArguments -> {
+                    JpsModuleRootModificationUtil.addDependency(module, requireLibrary(KotlinJpsLibrary.JsStdLib))
+                    JpsModuleRootModificationUtil.addDependency(module, requireLibrary(KotlinJpsLibrary.JsTest))
+                }
+            }
+        }
     }
 
     protected open fun preProcessSources(srcDir: File) {

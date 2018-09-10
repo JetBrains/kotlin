@@ -567,6 +567,19 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         }
     }
 
+    @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/custom")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Custom extends AbstractIncrementalJpsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCustom() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/custom"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
     @TestMetadata("jps-plugin/testData/incremental/pureKotlin")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
