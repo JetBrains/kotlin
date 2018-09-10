@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveEmptyPrimaryConstructorIntention
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -91,11 +93,22 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         }
 
         fun runRemoveUnusedTypeParameters(typeParameters: List<KtTypeParameter>) {
-            val unusedTypeParams = typeParameters.filter { ReferencesSearch.search(it).findFirst() == null }
+            val unusedTypeParams = typeParameters.filter { typeParameter ->
+                ReferencesSearch.search(typeParameter).none { (it as? KtSimpleNameReference)?.expression?.parent !is KtTypeConstraint }
+            }
             if (unusedTypeParams.isEmpty()) return
             runWriteAction {
                 unusedTypeParams.forEach { typeParameter ->
                     val typeParameterList = typeParameter.parent as? KtTypeParameterList ?: return@forEach
+                    val typeConstraintList = typeParameterList.parent.getChildOfType<KtTypeConstraintList>()
+                    if (typeConstraintList != null) {
+                        val typeConstraint = typeConstraintList.constraints.find { it.subjectTypeParameterName?.text == typeParameter.text }
+                        if (typeConstraint != null) EditCommaSeparatedListHelper.removeItem(typeConstraint)
+                        if (typeConstraintList.constraints.size == 0) {
+                            val prev = typeConstraintList.getPrevSiblingIgnoringWhitespaceAndComments()
+                            if (prev?.node?.elementType == KtTokens.WHERE_KEYWORD) prev?.delete()
+                        }
+                    }
                     if (typeParameterList.parameters.size == 1)
                         typeParameterList.delete()
                     else

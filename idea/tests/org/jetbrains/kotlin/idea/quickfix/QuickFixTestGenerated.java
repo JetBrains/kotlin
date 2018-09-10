@@ -1866,6 +1866,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter7.kt");
         }
 
+        @TestMetadata("removeUnusedParameterWithTypeParameterAndTypeConstraint.kt")
+        public void testRemoveUnusedParameterWithTypeParameterAndTypeConstraint() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameterAndTypeConstraint.kt");
+        }
+
+        @TestMetadata("removeUnusedParameterWithTypeParameterAndTypeConstraint2.kt")
+        public void testRemoveUnusedParameterWithTypeParameterAndTypeConstraint2() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameterAndTypeConstraint2.kt");
+        }
+
         @TestMetadata("removeUnusedPrimaryConstructorParameter.kt")
         public void testRemoveUnusedPrimaryConstructorParameter() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/removeUnusedPrimaryConstructorParameter.kt");
