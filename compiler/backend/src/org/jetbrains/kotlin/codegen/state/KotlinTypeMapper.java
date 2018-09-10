@@ -1417,7 +1417,7 @@ public class KotlinTypeMapper {
     private static boolean isJvmPrimitive(@NotNull KotlinType kotlinType) {
         if (KotlinBuiltIns.isPrimitiveType(kotlinType)) return true;
 
-        if (InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
+        if (InlineClassesUtilsKt.isInlineClassType(kotlinType) && !KotlinTypeKt.isError(kotlinType)) {
             return AsmUtil.isPrimitive(mapInlineClassType(kotlinType));
         }
 
