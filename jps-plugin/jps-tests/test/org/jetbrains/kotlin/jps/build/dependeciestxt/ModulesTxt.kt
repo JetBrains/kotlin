@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.KotlinModuleKind.COMPILATION_AND_SOURCE_SET_HOLDER
 import org.jetbrains.kotlin.config.KotlinModuleKind.SOURCE_SET_HOLDER
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt.Dependency.Kind.*
+import org.jetbrains.kotlin.platform.impl.FakeK2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJvm
 import java.io.File
@@ -168,15 +169,19 @@ class ModulesTxtBuilder {
     }
 
     fun readFile(file: File, fileTitle: String = file.toString()): ModulesTxt {
-        file.forEachLine { line ->
-            parseDeclaration(line)
+        try {
+            file.forEachLine { line ->
+                parseDeclaration(line)
+            }
+
+            // dependencies need to be build first: module.build() requires it
+            val dependencies = dependencies.map { it.build() }
+            val modules = modules.values.mapIndexed { index, moduleRef -> moduleRef.build(index) }
+
+            return ModulesTxt(muted, file, fileTitle, modules, dependencies)
+        } catch (t: Throwable) {
+            throw Error("Error while reading $file: ${t.message}", t)
         }
-
-        // dependencies need to be build first: module.build() requires it
-        val dependencies = dependencies.map { it.build() }
-        val modules = modules.values.mapIndexed { index, moduleRef -> moduleRef.build(index) }
-
-        return ModulesTxt(muted, file, fileTitle, modules, dependencies)
     }
 
     private fun parseDeclaration(line: String) = doParseDeclaration(removeComments(line))
@@ -251,6 +256,7 @@ class ModulesTxtBuilder {
                 "common" -> settings.compilerArguments = K2MetadataCompilerArguments()
                 "jvm" -> settings.compilerArguments = K2JVMCompilerArguments()
                 "js" -> settings.compilerArguments = K2JSCompilerArguments()
+                "native" -> settings.compilerArguments = FakeK2NativeCompilerArguments()
                 else -> {
                     val flagProperty = ModulesTxt.Module.flags[flag]
                     if (flagProperty != null) flagProperty.set(module, true)

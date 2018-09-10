@@ -29,6 +29,7 @@ interface TestingBuildLogger {
     fun invalidOrUnusedCache(chunk: KotlinChunk?, target: KotlinModuleBuildTarget<*>?, attributesDiff: CacheAttributesDiff<*>)
     fun chunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk)
     fun afterChunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk)
+    fun addCustomMessage(message: String)
     fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode)
     fun markedAsDirtyBeforeRound(files: Iterable<File>)
     fun markedAsDirtyAfterRound(files: Iterable<File>)

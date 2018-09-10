@@ -29,6 +29,37 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IgnoreAndWarnAboutNative extends AbstractMultiplatformJpsTestWithGeneratedContent {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInIgnoreAndWarnAboutNative() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("editingCKotlin")
+        public void testEditingCKotlin() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative/editingCKotlin/");
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative/editingCKotlin")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EditingCKotlin extends AbstractMultiplatformJpsTestWithGeneratedContent {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEditingCKotlin() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+    }
+
     @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
