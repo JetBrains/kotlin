@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.targets
 
-import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.library.JpsOrderRootType
@@ -45,12 +44,13 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
         get() = "metadata-compiler"
 
     override fun compileModuleChunk(
-        chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean {
-        reportAndSkipCircular(chunk, environment)
+        require(chunk.representativeTarget == this)
+
+        reportAndSkipCircular(environment)
 
         JpsKotlinCompilerRunner().runK2MetadataCompiler(
             commonArguments,

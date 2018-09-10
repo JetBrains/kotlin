@@ -137,21 +137,25 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     /**
      * All sources of this target (including non dirty).
-     * Initialized lazily based on global context and will be updated on each round based on round local context.
      *
+     * Lazy initialization is required since value is required only in rare cases.
+     *
+     * Before first round initialized lazily based on global context.
+     * This is required for friend build targets, when friends are not compiled in this build run.
+     *
+     * Lazy value will be invalidated on each round (should be recalculated based on round local context).
      * Update required since source roots can be changed, for example groovy can provide new temporary source roots with stubs.
-     * Lazy initialization is required for friend build targets, when friends are not compiled in this build run.
+     *
+     * Ugly delegation to lazy is used to capture local compile context and reset calculated value.
      */
     val sources: Map<File, Source>
-        get() = _sources ?: synchronized(this) {
-            _sources ?: updateSourcesList(jpsGlobalContext)
-        }
+        get() = _sources.value
 
     @Volatile
-    private var _sources: Map<File, Source>? = null
+    private var _sources: Lazy<Map<File, Source>> = lazy { updateSourcesList(jpsGlobalContext) }
 
     fun nextRound(localContext: CompileContext) {
-        updateSourcesList(localContext)
+        _sources = lazy { updateSourcesList(localContext) }
     }
 
     private fun updateSourcesList(localContext: CompileContext): Map<File, Source> {
@@ -165,34 +169,33 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         val buildRootIndex = localContext.projectDescriptor.buildRootIndex
         val roots = buildRootIndex.getTargetRoots(jpsModuleBuildTarget, localContext)
         roots.forEach { rootDescriptor ->
-            val isIncludedSourceRoot = rootDescriptor is KotlinIncludedModuleSourceRoot
+            val isCrossCompiled = rootDescriptor is KotlinIncludedModuleSourceRoot
 
             rootDescriptor.root.walkTopDown()
                 .onEnter { file -> file !in moduleExcludes }
                 .forEach { file ->
                     if (!compilerExcludes.isExcluded(file) && file.isFile && file.isKotlinSourceFile) {
-                        result[file] = Source(file, isIncludedSourceRoot)
+                        result[file] = Source(file, isCrossCompiled)
                     }
                 }
 
         }
 
-        this._sources = result
         return result
     }
 
     /**
-     * @property isIncludedSourceRoot sources that are cross-compiled to multiple targets
+     * @property isCrossCompiled sources that are cross-compiled to multiple targets
      */
     class Source(
         val file: File,
-        val isIncludedSourceRoot: Boolean
+        val isCrossCompiled: Boolean
     )
 
-    fun isFromIncludedSourceRoot(file: File): Boolean = sources[file]?.isIncludedSourceRoot == true
+    fun isFromIncludedSourceRoot(file: File): Boolean = sources[file]?.isCrossCompiled == true
 
     val sourceFiles: Collection<File>
-        get() = sources.values.map { it.file }
+        get() = sources.keys
 
     override fun toString() = jpsModuleBuildTarget.toString()
 
@@ -200,23 +203,19 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
      * Called for `ModuleChunk.representativeTarget`
      */
     abstract fun compileModuleChunk(
-        chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean
 
-    protected fun reportAndSkipCircular(
-        chunk: ModuleChunk,
-        environment: JpsCompilerEnvironment
-    ): Boolean {
-        if (chunk.modules.size > 1) {
+    protected fun reportAndSkipCircular(environment: JpsCompilerEnvironment): Boolean {
+        if (chunk.targets.size > 1) {
             // We do not support circular dependencies, but if they are present, we do our best should not break the build,
             // so we simply yield a warning and report NOTHING_DONE
             environment.messageCollector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "Circular dependencies are not supported. The following modules depend on each other: "
-                        + chunk.modules.joinToString(", ") { it.name } + " "
+                        + chunk.presentableShortName + " "
                         + "Kotlin is not compiled for these modules"
             )
 
@@ -273,46 +272,45 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         }
     }
 
-    protected fun collectSourcesToCompile(dirtyFilesHolder: KotlinDirtySourceFilesHolder) =
-        collectSourcesToCompile(this, dirtyFilesHolder)
-
     /**
      * Should be used only for particular target in chunk (jvm)
+     *
+     * Should not be cached since may be vary in different rounds.
      */
     protected fun collectSourcesToCompile(
-        target: KotlinModuleBuildTarget<BuildMetaInfoType>,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder
-    ): Collection<File> {
-        // Should not be cached since may be vary in different rounds
+    ) = SourcesToCompile(
+        sources = when {
+            chunk.representativeTarget.isIncrementalCompilationEnabled ->
+                dirtyFilesHolder.getDirtyFiles(jpsModuleBuildTarget).values
+            else -> sources.values
+        },
+        removedFiles = dirtyFilesHolder.getRemovedFiles(jpsModuleBuildTarget)
+    )
 
-        val jpsModuleTarget = target.jpsModuleBuildTarget
-        return when {
-            isIncrementalCompilationEnabled -> dirtyFilesHolder.getDirtyFiles(jpsModuleTarget)
-            else -> target.sourceFiles
-        }
-    }
+    inner class SourcesToCompile(
+        sources: Collection<KotlinModuleBuildTarget.Source>,
+        val removedFiles: Collection<File>
+    ) {
+        val allFiles = sources.map { it.file }
+        val crossCompiledFiles = sources.filter { it.isCrossCompiled }.map { it.file }
 
-    protected fun checkShouldCompileAndLog(dirtyFilesHolder: KotlinDirtySourceFilesHolder, moduleSources: Collection<File>) =
-        checkShouldCompileAndLog(this, dirtyFilesHolder, moduleSources)
+        /**
+         * @return true, if there are removed files or files to compile
+         */
+        fun logFiles(): Boolean {
+            val hasRemovedSources = removedFiles.isNotEmpty()
+            val hasDirtyOrRemovedSources = allFiles.isNotEmpty() || hasRemovedSources
 
-    /**
-     * Should be used only for particular target in chunk (jvm)
-     */
-    protected fun checkShouldCompileAndLog(
-        target: KotlinModuleBuildTarget<BuildMetaInfoType>,
-        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
-        moduleSources: Collection<File>
-    ): Boolean {
-        val hasRemovedSources = dirtyFilesHolder.getRemovedFiles(target.jpsModuleBuildTarget).isNotEmpty()
-        val hasDirtyOrRemovedSources = moduleSources.isNotEmpty() || hasRemovedSources
-        if (hasDirtyOrRemovedSources) {
-            val logger = jpsGlobalContext.loggingManager.projectBuilderLogger
-            if (logger.isEnabled) {
-                logger.logCompiledFiles(moduleSources, KotlinBuilder.KOTLIN_BUILDER_NAME, "Compiling files:")
+            if (hasDirtyOrRemovedSources) {
+                val logger = jpsGlobalContext.loggingManager.projectBuilderLogger
+                if (logger.isEnabled) {
+                    logger.logCompiledFiles(allFiles, KotlinBuilder.KOTLIN_BUILDER_NAME, "Compiling files:")
+                }
             }
-        }
 
-        return hasDirtyOrRemovedSources
+            return hasDirtyOrRemovedSources
+        }
     }
 
     abstract val buildMetaInfoFactory: BuildMetaInfoFactory<BuildMetaInfoType>
