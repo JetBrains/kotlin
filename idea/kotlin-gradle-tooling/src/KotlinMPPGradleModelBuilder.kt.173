@@ -297,6 +297,18 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             }
         }
         for (sourceSet in sourceSets) {
+            val name = sourceSet.name
+            if (name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
+                sourceSet.platform = KotlinPlatform.COMMON
+                sourceSet.isTestModule = false
+                continue
+            }
+            if (name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) {
+                sourceSet.platform = KotlinPlatform.COMMON
+                sourceSet.isTestModule = true
+                continue
+            }
+
             val compilations = sourceSetToCompilations[sourceSet]
             if (compilations != null) {
                 sourceSet.platform = compilations.map { it.platform }.distinct().singleOrNull() ?: KotlinPlatform.COMMON
