@@ -9,7 +9,6 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
@@ -42,6 +41,11 @@ open class DefaultCInteropSettings @Inject constructor(
 
     val target: KotlinNativeTarget
         get() = compilation.target
+
+    override val dependencyConfigurationName: String
+        get() = compilation.disambiguateName("${name.capitalize()}CInterop")
+
+    override var dependencyFiles: FileCollection = project.files()
 
     val interopProcessingTaskName: String
         get() = lowerCamelCaseName(

@@ -24,6 +24,9 @@ interface CInteropSettings: Named {
     // TODO: Provide an interface for native compilations.
     val compilation: KotlinCompilation
 
+    val dependencyConfigurationName: String
+    var dependencyFiles: FileCollection
+
     // DSL.
     fun defFile(file: Any)
 

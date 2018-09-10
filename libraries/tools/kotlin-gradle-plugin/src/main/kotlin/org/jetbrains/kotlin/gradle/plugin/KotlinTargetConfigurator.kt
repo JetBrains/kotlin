@@ -30,6 +30,8 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -601,7 +603,7 @@ open class KotlinNativeTargetConfigurator(
                 settings = interop
                 destinationDir = provider { klibOutputDirectory(compilation) }
                 group = INTEROP_GROUP
-                description =  "Generates Kotlin/Native interop library '${interop.name}' " +
+                description = "Generates Kotlin/Native interop library '${interop.name}' " +
                         "for compilation '${compilation.name}'" +
                         "of target '${konanTarget.name}'."
                 enabled = compilation.target.konanTarget.enabledOnCurrentHost
@@ -609,7 +611,7 @@ open class KotlinNativeTargetConfigurator(
                 dependsOnCompilerDownloading()
                 val interopOutput = project.files(outputFileProvider).builtBy(this)
                 with(compilation) {
-                    interopFiles += interopOutput
+                    project.dependencies.add(compileDependencyConfigurationName, interopOutput)
                     output.tryAddClassesDir { interopOutput }
                 }
             }
@@ -621,13 +623,35 @@ open class KotlinNativeTargetConfigurator(
         tasks.create(target.artifactsTaskName)
         target.compilations.all {
             createKlibCompilationTask(it)
-            createCInteropTasks(it)
             createBinaryLinkTasks(it)
         }
 
         with(configurations.getByName(target.apiElementsConfigurationName)) {
             outgoing.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
         }
+    }
+
+    protected fun configureCInterops(target: KotlinNativeTarget): Unit = with(target.project) {
+        target.compilations.all { compilation ->
+            createCInteropTasks(compilation)
+            compilation.cinterops.all {
+                defineConfigurationsForCInterop(compilation, it, target, configurations)
+            }
+        }
+
+        if (createTestCompilation) {
+            val mainCompilation = target.compilations.getByName(MAIN_COMPILATION_NAME)
+            target.compilations.findByName(TEST_COMPILATION_NAME)?.apply {
+                cinterops.all {
+                    it.dependencyFiles += mainCompilation.output
+                }
+            }
+        }
+    }
+
+    override fun configureTarget(target: KotlinNativeTarget) {
+        super.configureTarget(target)
+        configureCInterops(target)
     }
 
     private fun Task.dependsOnCompilerDownloading() =
@@ -639,6 +663,25 @@ open class KotlinNativeTargetConfigurator(
 
     companion object {
         const val INTEROP_GROUP = "interop"
+
+        protected fun defineConfigurationsForCInterop(
+            compilation: KotlinNativeCompilation,
+            cinterop: CInteropSettings,
+            target: KotlinTarget,
+            configurations: ConfigurationContainer
+        ) {
+            val compileOnlyConfiguration = configurations.getByName(compilation.compileOnlyConfigurationName)
+            val implementationConfiguration = configurations.getByName(compilation.implementationConfigurationName)
+
+            cinterop.dependencyFiles = configurations.maybeCreate(cinterop.dependencyConfigurationName).apply {
+                extendsFrom(compileOnlyConfiguration, implementationConfiguration)
+                usesPlatformOf(target)
+                isVisible = false
+                isCanBeConsumed = false
+                attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(Usage.JAVA_API))
+                description = "Dependencies for cinterop '${cinterop.name}' (compilation '${compilation.name}')."
+            }
+        }
     }
 }
 

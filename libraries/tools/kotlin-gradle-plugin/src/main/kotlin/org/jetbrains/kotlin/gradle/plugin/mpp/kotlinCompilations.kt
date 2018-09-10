@@ -284,8 +284,6 @@ class KotlinNativeCompilation(
 
     var friendCompilationName: String? = null
 
-    var interopFiles: FileCollection = project.files()
-
     internal val friendCompilation: KotlinNativeCompilation?
         get() = friendCompilationName?.let {
             target.compilations.getByName(it)
