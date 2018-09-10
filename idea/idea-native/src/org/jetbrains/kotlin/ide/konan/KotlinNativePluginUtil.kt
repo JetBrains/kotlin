@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.library.MetadataReader
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultPackageFragmentsFactory
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -64,7 +63,6 @@ fun LibraryInfo.createPackageFragmentProviderForLibraryModule(
             createKonanLibrary(
                 libraryRoot,
                 KOTLIN_NATIVE_CURRENT_ABI_VERSION,
-                HostManager.host /* TODO: Inlined from KonanPaths, and looks like a bit incorrect */,
                 metadataReader = CachingIdeMetadataReaderImpl
             )
         konanLibrary.createPackageFragmentProvider(storageManager, languageVersionSettings, moduleDescriptor)
