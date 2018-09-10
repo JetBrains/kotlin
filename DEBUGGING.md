@@ -1,7 +1,13 @@
+---
+type: doc
+layout: reference
+title: "Debugging"
+---
+
 ## Debugging
 
-Currently Kotlin native compiler produces debug info compatible with DWARF 2 specification, so modern debugger tools could
-perform following operations:
+Currently the Kotlin/Native compiler produces debug info compatible with the DWARF 2 specification, so modern debugger tools can
+perform the following operations:
 - breakpoints
 - stepping
 - inspection of type information
@@ -9,14 +15,14 @@ perform following operations:
 
 ### Producing binaries with debug info with Kotlin/Native compiler
 
-To produce binaries with the Kotlin/Native compiler it's sufficient to use ``-g`` option on the command line.<br/>
+To produce binaries with the Kotlin/Native compiler it's sufficient to use the ``-g`` option on the command line.<br/>
 _Example:_
 
 ```
 0:b-debugger-fixes:minamoto@unit-703(0)# cat - > hello.kt
 fun main(args: Array<String>) {
   println("Hello world");
-  println("I need your clothes, boots and your motocycle");
+  println("I need your clothes, your boots, and your motocycle");
 }
 0:b-debugger-fixes:minamoto@unit-703(0)# dist/bin/konanc -g hello.kt -o terminator.kexe
 KtFile: hello.kt
@@ -32,7 +38,7 @@ Process 28473 stopped
     frame #0: 0x00000001000012e4 terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) at hello.kt:2
    1    fun main(args: Array<String>) {
 -> 2      println("Hello world");
-   3      println("I need your clothes, boots and your motocycle");
+   3      println("I need your clothes, your boots, and your motocycle");
    4    }
 (lldb) n
 Hello world
@@ -41,13 +47,13 @@ Process 28473 stopped
     frame #0: 0x00000001000012f0 terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) at hello.kt:3
    1    fun main(args: Array<String>) {
    2      println("Hello world");
--> 3      println("I need your clothes, boots and your motocycle");
+-> 3      println("I need your clothes, your boots, and your motocycle");
    4    }
 (lldb)
 ```
 
 ### Breakpoints
-Modern debuggers provide several ways to set breakpoint, see below for per-tool breakdown:
+Modern debuggers provide several ways to set a breakpoint, see below for a tool-by-tool breakdown:
 
 #### lldb
 - by name
@@ -66,7 +72,7 @@ Breakpoint 1: where = terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) + 4
 (lldb) b -a 0x00000001000012e4
 Breakpoint 2: address = 0x00000001000012e4
 ````
-- by regex, ones might find it useful for debugging generated artifacts, like lambda etc (where used ``#`` symbol in name).
+- by regex, you might find it useful for debugging generated artifacts, like lambda etc. (where used ``#`` symbol in name).
 ````
 3: regex = 'main\(', locations = 1
   3.1: where = terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) + 4 at hello.kt:2, address = terminator.kexe[0x00000001000012e4], unresolved, hit count = 0
@@ -78,7 +84,7 @@ Breakpoint 2: address = 0x00000001000012e4
 Breakpoint 1 at 0x1000109b4
 struct ktype:kotlin.Unit &kfun:main(kotlin.Array<kotlin.String>);
 ````
-- by name __unusable__, because ``:`` is separator for breakpoint by location
+- by name __unusable__, because ``:`` is a separator for the breakpoint by location
 
 ``
 (gdb) b kfun:main(kotlin.Array<kotlin.String>)
@@ -99,10 +105,10 @@ Breakpoint 3 at 0x100001704: file /Users/minamoto/ws/.git-trees/hello.kt, line 2
 ````
 
 ### Stepping
-Stepping functions mostly the same way as for C/C++ programs
+Stepping functions works mostly the same way as for C/C++ programs
 
 ### Type info
-Some details about type information functionality in modern debuggers:
+Some details about the type information functionality in modern debuggers:
 
 #### lldb
 ````
@@ -131,7 +137,7 @@ struct ktype:Point {
 ````
 
 #### gdb
-Unfortunately ``ptype`` is affected with ``:`` and unusable.
+Unfortunately ``ptype`` is affected with ``:`` and is unusable.
 
 ### (var) Variable inspection
 
@@ -182,9 +188,9 @@ Process 4985 launched: './program.kexe' (x86_64)
 (lldb) 
 ```
 
-Getting representation of the object variable (var) could also be done using
-builtin runtime function `Konan_DebugPrint` (this approach also works for gdb,
-by module of command syntax):
+Getting representation of the object variable (var) could also be done using the
+built-in runtime function `Konan_DebugPrint` (this approach also works for gdb,
+using a module of command syntax):
 
 ````
 0:b-debugger-fixes:minamoto@unit-703(0)# cat ../debugger-plugin/1.kt | nl -p
@@ -227,9 +233,8 @@ Process 80496 launched: './program.kexe' (x86_64)
 
 ### Known issues
 - stepping in imported inline functions does not work
-- sometimes single stepping works incorrectly in other scenarious
+- single stepping sometimes works incorrectly in some other scenarios
 - variable inspections may not work properly
 
-_Note:_ Support DWARF 2 specification means that debugger tool recognize Kotlin as C89, because till DWARF 5 specification, there is no
-identifier for Kotlin language type in specification.
+_Note:_ Supporting the DWARF 2 specification means that the debugger tool recognizes Kotlin as C89, because before the DWARF 5 specification, there is no identifier for the Kotlin language type in specification.
 
