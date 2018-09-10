@@ -72,7 +72,7 @@ class BigNumbersTest {
         assertEquals(BigDecimal("2"), BigDecimal("4") / a)
         assertEquals(BigDecimal("-2"), -a)
         assertEquals(BigDecimal("-2"), -a % b)
-        assertEquals(BigDecimal("-2"), (-a).mod(b))
+        assertEquals(BigDecimal("-2"), @Suppress("DEPRECATION_ERROR") (-a).mod(b))
         assertEquals(BigDecimal("-2"), (-a).rem(b))
 
         assertEquals(BigDecimal("3"), a.inc())
