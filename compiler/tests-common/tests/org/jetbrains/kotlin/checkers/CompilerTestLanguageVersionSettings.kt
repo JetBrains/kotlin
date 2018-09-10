@@ -21,6 +21,7 @@ const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
 const val IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE = "IGNORE_DATA_FLOW_IN_ASSERT"
 const val JVM_DEFAULT_MODE = "JVM_DEFAULT_MODE"
 const val SKIP_METADATA_VERSION_CHECK = "SKIP_METADATA_VERSION_CHECK"
+const val ALLOW_RESULT_RETURN_TYPE = "ALLOW_RESULT_RETURN_TYPE"
 
 data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
@@ -58,8 +59,13 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTes
     val ignoreDataFlowInAssert = AnalysisFlag.ignoreDataFlowInAssert to directiveMap.containsKey(IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE)
     val enableJvmDefault = directiveMap[JVM_DEFAULT_MODE]?.let { AnalysisFlag.jvmDefaultMode to JvmDefaultMode.fromStringOrNull(it)!! }
     val skipMetadataVersionCheck = AnalysisFlag.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
+    val allowResultReturnType = AnalysisFlag.allowResultReturnType to directiveMap.containsKey(ALLOW_RESULT_RETURN_TYPE)
 
-    if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null && !ignoreDataFlowInAssert.second) return null
+    if (apiVersionString == null && languageFeaturesString == null && experimental == null &&
+        useExperimental == null && !ignoreDataFlowInAssert.second && !allowResultReturnType.second
+    ) {
+        return null
+    }
 
     val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
                      ?: error("Unknown API version: $apiVersionString")
@@ -72,7 +78,7 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTes
         languageFeatures, apiVersion, languageVersion,
         mapOf(
             *listOfNotNull(
-                experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert, skipMetadataVersionCheck
+                experimental, useExperimental, enableJvmDefault, ignoreDataFlowInAssert, skipMetadataVersionCheck, allowResultReturnType
             ).toTypedArray()
         )
     )

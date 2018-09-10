@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -19,6 +20,8 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (context.languageVersionSettings.getFlag(AnalysisFlag.allowResultReturnType)) return
+
         if (declaration !is KtCallableDeclaration || descriptor !is CallableMemberDescriptor) return
 
         val returnType = descriptor.returnType ?: return

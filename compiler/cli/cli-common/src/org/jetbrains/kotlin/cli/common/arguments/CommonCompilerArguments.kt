@@ -190,6 +190,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var commonSources: Array<String>? by FreezableVar(null)
 
+    @Argument(
+        value = "-Xallow-result-return-type",
+        description = "Allow compiling code when `kotlin.Result` is used as a return type"
+    )
+    var allowResultReturnType: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -198,6 +204,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlag.experimental, experimental?.toList().orEmpty())
             put(AnalysisFlag.useExperimental, useExperimental?.toList().orEmpty())
             put(AnalysisFlag.explicitApiVersion, apiVersion != null)
+            put(AnalysisFlag.allowResultReturnType, allowResultReturnType)
         }
     }
 
