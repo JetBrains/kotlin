@@ -313,7 +313,7 @@ internal fun KtIfExpression.shouldBeTransformed(): Boolean {
     return when (condition) {
         is KtBinaryExpression -> {
             val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
-            !baseClause.isClauseTransformableToLetOnly(checkedExpression())
+            !baseClause.isClauseTransformableToLetOnly(condition.checkedExpression())
         }
         else -> false
     }
