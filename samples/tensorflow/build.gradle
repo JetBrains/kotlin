@@ -6,9 +6,6 @@ buildscript {
         maven {
             url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
         }
-        maven {
-	        url "http://dl.bintray.com/kotlin/kotlin-eap"
-	    }
     }
 
     dependencies {
