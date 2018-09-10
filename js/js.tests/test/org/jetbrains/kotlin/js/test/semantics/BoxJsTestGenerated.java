@@ -5493,6 +5493,44 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/main")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Main extends AbstractBoxJsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMain() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/main"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("noArgs.kt")
+        public void testNoArgs() throws Exception {
+            runTest("js/js.translator/testData/box/main/noArgs.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("js/js.translator/testData/box/main/simple.kt");
+        }
+
+        @TestMetadata("suspendMain.kt")
+        public void testSuspendMain() throws Exception {
+            runTest("js/js.translator/testData/box/main/suspendMain.kt");
+        }
+
+        @TestMetadata("suspendMainNoArgs.kt")
+        public void testSuspendMainNoArgs() throws Exception {
+            runTest("js/js.translator/testData/box/main/suspendMainNoArgs.kt");
+        }
+
+        @TestMetadata("suspendMainThrows.kt")
+        public void testSuspendMainThrows() throws Exception {
+            runTest("js/js.translator/testData/box/main/suspendMainThrows.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/multiFile")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

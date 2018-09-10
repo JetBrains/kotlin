@@ -102,6 +102,8 @@ abstract class BasicBoxTest(
             fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
 
+        val actualMainCallParameters = if (CALL_MAIN_PATTERN.matcher(fileContent).find()) MainCallParameters.mainWithArguments(listOf("testArg")) else mainCallParameters
+
         val outputPrefixFile = getOutputPrefixFile(filePath)
         val outputPostfixFile = getOutputPostfixFile(filePath)
 
@@ -124,7 +126,7 @@ abstract class BasicBoxTest(
                 generateJavaScriptFile(
                     file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
-                    outputPrefixFile, outputPostfixFile, mainCallParameters, testPackage, testFunction
+                    outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction
                 )
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
@@ -771,6 +773,7 @@ abstract class BasicBoxTest(
         private val EXPECTED_REACHABLE_NODES = Pattern.compile("^// *$EXPECTED_REACHABLE_NODES_DIRECTIVE: *([0-9]+) *$", Pattern.MULTILINE)
         private val RECOMPILE_PATTERN = Pattern.compile("^// *RECOMPILE *$", Pattern.MULTILINE)
         private val SOURCE_MAP_SOURCE_EMBEDDING = Regex("^// *SOURCE_MAP_EMBED_SOURCES: ([A-Z]+)*\$", RegexOption.MULTILINE)
+        private val CALL_MAIN_PATTERN = Pattern.compile("^// *CALL_MAIN *$", Pattern.MULTILINE)
 
         val TEST_MODULE = "JS_TESTS"
         private val DEFAULT_MODULE = "main"
