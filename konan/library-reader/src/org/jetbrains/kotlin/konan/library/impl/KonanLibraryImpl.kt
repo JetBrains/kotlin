@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.*
+import org.jetbrains.kotlin.konan.library.KLIB_PROPERTY_ABI_VERSION
+import org.jetbrains.kotlin.konan.library.KLIB_PROPERTY_LINKED_OPTS
+import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.MetadataReader
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.konan.util.substitute
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 
 internal class KonanLibraryImpl(
     override val libraryFile: File,
@@ -59,9 +63,9 @@ internal class KonanLibraryImpl(
 
     override val dataFlowGraph by lazy { layout.inPlace { it.dataFlowGraphFile.let { if (it.exists) it.readBytes() else null } } }
 
-    override val moduleHeaderData: ByteArray by lazy { layout.inPlace { metadataReader.loadSerializedModule(it) } }
+    override val moduleHeaderData: KonanProtoBuf.LinkDataLibrary by lazy { layout.inPlace { metadataReader.loadSerializedModule(it) } }
 
-    override fun packageMetadata(fqName: String) = layout.inPlace { metadataReader.loadSerializedPackageFragment(it, fqName) }
+    override fun packageMetadata(packageFqName: String) = layout.inPlace { metadataReader.loadSerializedPackageFragment(it, packageFqName) }
 
     override fun toString() = "$libraryName[default=$isDefault]"
 }

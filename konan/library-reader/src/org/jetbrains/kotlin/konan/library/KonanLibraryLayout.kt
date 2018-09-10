@@ -44,5 +44,6 @@ interface KonanLibraryLayout {
     val dataFlowGraphFile
         get() = File(linkdataDir, "module_data_flow_graph")
 
-    fun packageFile(packageName: String) = File(linkdataDir, if (packageName == "") "root_package.knm" else "package_$packageName.knm")
+    fun packageFragmentFile(packageFqName: String) =
+        File(linkdataDir, if (packageFqName == "") "root_package.knm" else "package_$packageFqName.knm")
 }

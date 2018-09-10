@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 
 const val KLIB_PROPERTY_ABI_VERSION = "abi_version"
@@ -42,8 +43,8 @@ interface KonanLibrary {
     val targetList: List<String>
 
     val dataFlowGraph: ByteArray?
-    val moduleHeaderData: ByteArray
-    fun packageMetadata(fqName: String): ByteArray
+    val moduleHeaderData: KonanProtoBuf.LinkDataLibrary
+    fun packageMetadata(packageFqName: String): KonanProtoBuf.LinkDataPackageFragment
 }
 
 val KonanLibrary.uniqueName

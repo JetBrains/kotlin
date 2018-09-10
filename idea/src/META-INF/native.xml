@@ -4,7 +4,7 @@
             <implementation-class>org.jetbrains.kotlin.ide.konan.KotlinNativeApplicationComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeDescriptorManager</implementation-class>
+            <implementation-class>org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache</implementation-class>
         </component>
     </application-components>
 

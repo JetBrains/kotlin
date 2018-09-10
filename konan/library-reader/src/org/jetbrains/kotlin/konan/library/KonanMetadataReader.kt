@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.konan.library
 
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
+
 interface MetadataReader {
-    fun loadSerializedModule(libraryLayout: KonanLibraryLayout): ByteArray
-    fun loadSerializedPackageFragment(libraryLayout: KonanLibraryLayout, fqName: String): ByteArray
+    fun loadSerializedModule(libraryLayout: KonanLibraryLayout): KonanProtoBuf.LinkDataLibrary
+    fun loadSerializedPackageFragment(libraryLayout: KonanLibraryLayout, packageFqName: String): KonanProtoBuf.LinkDataPackageFragment
 }

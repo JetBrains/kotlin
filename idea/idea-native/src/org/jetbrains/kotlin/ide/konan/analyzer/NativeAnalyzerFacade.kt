@@ -65,7 +65,6 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
 
         if (moduleInfo is LibraryInfo) {
             val libPackageFragmentProviders = moduleInfo.createPackageFragmentProviderForLibraryModule(
-                moduleContext.project,
                 moduleContext.storageManager,
                 languageVersionSettings,
                 moduleDescriptor

@@ -68,7 +68,6 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserialized
         return result
     }
 
-
     override fun createPackageFragmentProvider(
         library: KonanLibrary,
         packageAccessedHandler: PackageAccessedHandler?,
