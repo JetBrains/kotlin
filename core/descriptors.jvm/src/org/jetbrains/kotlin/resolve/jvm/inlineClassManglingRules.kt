@@ -33,11 +33,11 @@ fun requiresFunctionNameMangling(valueParameterTypes: List<KotlinType>): Boolean
 fun DeclarationDescriptor.isInlineClassThatRequiresMangling(): Boolean =
     isInlineClass() && !isDontMangleClass(this as ClassDescriptor)
 
+fun KotlinType.isInlineClassThatRequiresMangling() =
+    constructor.declarationDescriptor?.isInlineClassThatRequiresMangling() == true
+
 private fun KotlinType.requiresFunctionNameMangling() =
     isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
-
-private fun KotlinType.isInlineClassThatRequiresMangling() =
-    constructor.declarationDescriptor?.isInlineClassThatRequiresMangling() == true
 
 private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
     classDescriptor.fqNameSafe == DescriptorUtils.RESULT_FQ_NAME
