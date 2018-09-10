@@ -1,0 +1,7 @@
+package
+
+private val asFun: () -> kotlin.Result<kotlin.Int>?
+private val kotlin.Int.intResult: kotlin.Result<kotlin.Int>?
+public fun </*0*/ T> id(/*0*/ x: T): T
+public fun nullableOperators(/*0*/ r1: kotlin.Result<kotlin.Int>?, /*1*/ b: kotlin.Boolean): kotlin.Unit
+public fun returnInt(): kotlin.Int?

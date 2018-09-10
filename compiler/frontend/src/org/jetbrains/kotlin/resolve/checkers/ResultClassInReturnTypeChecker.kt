@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ResultClassInReturnTypeChecker : DeclarationChecker {
     companion object {
-        private const val RESULT_NAME = "Result"
+        internal const val RESULT_NAME = "Result"
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -29,8 +29,7 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
     }
 
     private fun isForbiddenReturnType(returnType: KotlinType, declarationDescriptor: DeclarationDescriptor): Boolean {
-        val descriptor = returnType.constructor.declarationDescriptor ?: return false
-        if (!descriptor.isResultClass()) return false
+        if (!returnType.isResultType()) return false
 
         if (declarationDescriptor is PropertyDescriptor || declarationDescriptor is PropertyGetterDescriptor) {
             val visibility = (declarationDescriptor as DeclarationDescriptorWithVisibility).effectiveVisibility()
@@ -46,11 +45,15 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
 
         return true
     }
+}
 
-    private fun DeclarationDescriptor.isResultClass(): Boolean {
-        val container = containingDeclaration ?: return false
-        return container is PackageFragmentDescriptor &&
-                container.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
-                name.asString() == RESULT_NAME
-    }
+internal fun KotlinType.isResultType(): Boolean {
+    return this.constructor.declarationDescriptor?.isResultClass() == true
+}
+
+private fun DeclarationDescriptor.isResultClass(): Boolean {
+    val container = containingDeclaration ?: return false
+    return container is PackageFragmentDescriptor &&
+            container.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+            name.asString() == ResultClassInReturnTypeChecker.RESULT_NAME
 }
