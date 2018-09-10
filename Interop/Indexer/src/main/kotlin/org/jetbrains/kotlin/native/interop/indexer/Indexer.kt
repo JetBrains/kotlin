@@ -842,7 +842,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                 nsReturnsRetained = hasAttribute(cursor, NS_RETURNS_RETAINED),
                 isOptional = (clang_Cursor_isObjCOptional(cursor) != 0),
                 isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
-                isDesginatedInitializer = hasAttribute(cursor, OBJC_DESGINATED_INITIALIZER)
+                isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESGINATED_INITIALIZER)
         )
     }
 

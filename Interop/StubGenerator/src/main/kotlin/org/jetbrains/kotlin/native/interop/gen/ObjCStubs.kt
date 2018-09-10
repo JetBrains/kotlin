@@ -67,7 +67,8 @@ private fun ObjCMethod.getFirstKotlinParameterNameCandidate(forConstructorOrFact
 
 class ObjCMethodStub(private val stubGenerator: StubGenerator,
                      val method: ObjCMethod,
-                     private val container: ObjCContainer) : KotlinStub, NativeBacked {
+                     private val container: ObjCContainer,
+                     private val isDesignatedInitializer: Boolean) : KotlinStub, NativeBacked {
 
     override fun generate(context: StubGenerationContext): Sequence<String> =
             if (context.nativeBridges.isSupported(this)) {
@@ -86,7 +87,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                     when (container) {
                         is ObjCClass -> {
                             // TODO: consider generating non-designated initializers as factories.
-                            val designated = method.isDesginatedInitializer ||
+                            val designated = isDesignatedInitializer ||
                                     stubGenerator.configuration.disableDesignatedInitializerChecks
 
                             result.add("")
@@ -364,25 +365,8 @@ private val ObjCClassOrProtocol.superTypes: Sequence<ObjCClassOrProtocol>
 private fun ObjCClassOrProtocol.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.methods.asSequence().filter { it.isClass == isClass }
 
-private fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> {
-    // Note: Objective-C initializers act as usual methods and thus are inherited by subclasses.
-    // Swift considers all super initializers to be available (unless otherwise specified explicitly),
-    // but seems to consider them as non-designated if class declares its own ones.
-    // Simulate the similar behaviour:
-    return if (!isMeta && container.declaredMethods(isMeta).any { it.isDesginatedInitializer }) {
-        this.map {
-            if (it.isDesginatedInitializer) {
-                it.copy(isDesginatedInitializer = false)
-            } else {
-                it
-            }
-        }
-    } else {
-        this
-    }
-
-    // TODO: exclude methods that are marked as unavailable in [container].
-}
+private fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> =
+        this // TODO: exclude methods that are marked as unavailable in [container].
 
 private fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.immediateSuperTypes.flatMap { it.methodsWithInherited(isClass) }
@@ -391,6 +375,27 @@ private fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<Obj
 
 private fun ObjCClassOrProtocol.methodsWithInherited(isClass: Boolean): Sequence<ObjCMethod> =
         (this.declaredMethods(isClass) + this.inheritedMethods(isClass)).distinctBy { it.selector }
+
+private fun ObjCClass.getDesignatedInitializerSelectors(result: MutableSet<String>): Set<String> {
+    // Note: Objective-C initializers act as usual methods and thus are inherited by subclasses.
+    // Swift considers all super initializers to be available (unless otherwise specified explicitly),
+    // but seems to consider them as non-designated if class declares its own ones explicitly.
+    // Simulate the similar behaviour:
+    val explicitlyDesignatedInitializers = this.methods.filter { it.isExplicitlyDesignatedInitializer && !it.isClass }
+
+    if (explicitlyDesignatedInitializers.isNotEmpty()) {
+        explicitlyDesignatedInitializers.mapTo(result) { it.selector }
+    } else {
+        this.declaredMethods(isClass = false).filter { it.isInit }.mapTo(result) { it.selector }
+        this.baseClass?.getDesignatedInitializerSelectors(result)
+    }
+
+    this.superTypes.filterIsInstance<ObjCProtocol>()
+            .flatMap { it.declaredMethods(isClass = false) }.filter { it.isInit }
+            .mapTo(result) { it.selector }
+
+    return result
+}
 
 private fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
         container.superTypes.any { superType -> superType.methods.any(this::replaces) }
@@ -446,8 +451,17 @@ abstract class ObjCContainerStub(stubGenerator: StubGenerator,
         }
     }
 
+    private val designatedInitializerSelectors = if (container is ObjCClass && !isMeta) {
+        container.getDesignatedInitializerSelectors(mutableSetOf())
+    } else {
+        emptySet()
+    }
+
     private val methodToStub = methods.map {
-        it to ObjCMethodStub(stubGenerator, it, container)
+        it to ObjCMethodStub(
+                stubGenerator, it, container,
+                isDesignatedInitializer = it.selector in designatedInitializerSelectors
+        )
     }.toMap()
 
     private val methodStubs get() = methodToStub.values
@@ -568,7 +582,7 @@ class ObjCCategoryStub(
     // TODO: consider removing members that are also present in the class or its supertypes.
 
     private val methodToStub = category.methods.map {
-        it to ObjCMethodStub(stubGenerator, it, category)
+        it to ObjCMethodStub(stubGenerator, it, category, isDesignatedInitializer = false)
     }.toMap()
 
     private val methodStubs get() = methodToStub.values
