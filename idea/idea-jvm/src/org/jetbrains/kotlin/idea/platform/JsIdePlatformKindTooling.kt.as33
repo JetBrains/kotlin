@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor.Companion.getTestStateIcon
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
-import org.jetbrains.kotlin.idea.run.multiplatform.KotlinMultiplatformRunLocationsProvider
 import org.jetbrains.kotlin.idea.util.string.joinWithEscape
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
@@ -110,10 +109,7 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
     }
 
     private fun computeConfigurationContexts(declaration: KtNamedDeclaration): Sequence<ConfigurationContext> {
-        val location = PsiLocation(declaration)
-        return KotlinMultiplatformRunLocationsProvider().getAlternativeLocations(location).map {
-            ConfigurationContext.createEmptyContextForLocation(it)
-        }.ifEmpty { listOf(ConfigurationContext.createEmptyContextForLocation(location)) }.asSequence()
+        return sequenceOf(ConfigurationContext(declaration))
     }
 
     private fun DeclarationDescriptor.isIgnored(): Boolean =

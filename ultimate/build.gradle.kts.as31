@@ -38,6 +38,8 @@ dependencies {
     compile(project(":idea:idea-core")) { isTransitive = false }
     compile(project(":idea:ide-common")) { isTransitive = false }
     compile(project(":idea:idea-gradle")) { isTransitive = false }
+    compile(project(":compiler:util")) { isTransitive = false }
+    compile(project(":idea:idea-jps-common")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     if (intellijUltimateEnabled) {

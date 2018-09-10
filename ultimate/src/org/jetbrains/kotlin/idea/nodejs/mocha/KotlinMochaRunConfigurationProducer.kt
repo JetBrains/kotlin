@@ -26,20 +26,18 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.jetbrains.nodejs.mocha.MochaUtil
 import com.jetbrains.nodejs.mocha.execution.*
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
+import org.jetbrains.kotlin.idea.js.asJsModule
 import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementInfo
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
 import org.jetbrains.kotlin.idea.run.addBuildTask
-import org.jetbrains.kotlin.idea.util.projectStructure.module
 
 private typealias MochaTestElementInfo = TestElementInfo<MochaRunSettings>
 
@@ -104,22 +102,18 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), Kot
         return MochaTestElementInfo(builder.build(), configData.element)
     }
 
-    private fun getConfigurationData(element: PsiElement, context: ConfigurationContext?): MochaConfigData? {
-        val module = element.module
-        val jsModule = module?.jsOrJsImpl() ?: return null
-        val file = if (jsModule != module) {
-            jsModule.moduleFile
-        } else {
-            PsiUtilCore.getVirtualFile(element)
-        } ?: return null
+    override fun getConfigurationData(context: ConfigurationContext): MochaConfigData? {
+        val module = context.module?.asJsModule() ?: return null
+        val element = context.psiLocation ?: return null
+        val file = module.moduleFile ?: return null
         val project = module.project
 
         val testFilePath = module.jsTestOutputFilePath ?: return null
         val testElementPath = TestElementPath.forElement(element, module) ?: return null
 
-        val configData = MochaConfigData(element, jsModule, testFilePath, testElementPath)
+        val configData = MochaConfigData(element, module, testFilePath, testElementPath)
 
-        if (context?.getOriginalConfiguration(MochaConfigurationType.getInstance()) is MochaRunConfiguration) return configData
+        if (context.getOriginalConfiguration(MochaConfigurationType.getInstance()) is MochaRunConfiguration) return configData
 
         if (isTestRunnerPackageAvailableFor(project, file)) return configData
 
@@ -139,13 +133,8 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), Kot
     override val isForTests: Boolean
         get() = true
 
-    override fun getConfigurationData(element: PsiElement): MochaConfigData? {
-        return getConfigurationData(element, null)
-    }
-
     override fun isConfigurationFromCompatibleContext(configuration: MochaRunConfiguration, context: ConfigurationContext): Boolean {
-        val element = context.psiLocation ?: return false
-        val configData = getConfigurationData(element) ?: return false
+        val configData = getConfigurationData(context) ?: return false
         val (thisRunSettings, _) = createTestElementRunInfo(configData, configuration.runSettings)
         val thatRunSettings = configuration.runSettings
         val thisTestKind = thisRunSettings.testKind
@@ -165,8 +154,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), Kot
         context: ConfigurationContext,
         sourceElement: Ref<PsiElement>
     ): Boolean {
-        val element = context.psiLocation ?: return false
-        val configData = getConfigurationData(element, context) ?: return false
+        val configData = getConfigurationData(context) ?: return false
         val (runSettings, enclosingTestElement) = createTestElementRunInfo(configData, configuration.runSettings)
         if (runSettings.testKind == MochaTestKind.DIRECTORY) return false
         configuration.runSettings = runSettings
