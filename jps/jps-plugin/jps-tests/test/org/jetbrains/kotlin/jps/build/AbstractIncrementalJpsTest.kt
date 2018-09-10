@@ -281,8 +281,15 @@ abstract class AbstractIncrementalJpsTest(
         get() = File(testDataDir, "dependencies.txt")
 
     private fun readModulesTxt(): ModulesTxt? {
-        if (!modulesTxtFile.exists()) return null
-        return ModulesTxtBuilder().readFile(modulesTxtFile)
+        var actualModulesTxtFile = modulesTxtFile
+
+        if (!actualModulesTxtFile.exists()) {
+            // also try `"_${fileName}.txt"`. Useful for sorting files in IDE.
+            actualModulesTxtFile = modulesTxtFile.parentFile.resolve("_" + modulesTxtFile.name)
+            if (!actualModulesTxtFile.exists()) return null
+        }
+
+        return ModulesTxtBuilder().readFile(actualModulesTxtFile)
     }
 
     protected open fun createBuildLog(incrementalMakeResults: List<AbstractIncrementalJpsTest.MakeResult>): String =
@@ -416,7 +423,7 @@ abstract class AbstractIncrementalJpsTest(
             TouchPolicy.TIMESTAMP
         )
 
-        val stepsTxt = File(testDataSrc, "steps.txt")
+        val stepsTxt = File(testDataSrc, "_steps.txt")
         val modificationNames = if (stepsTxt.exists()) stepsTxt.readLines() else null
 
         modifications.forEachIndexed { index, step ->
