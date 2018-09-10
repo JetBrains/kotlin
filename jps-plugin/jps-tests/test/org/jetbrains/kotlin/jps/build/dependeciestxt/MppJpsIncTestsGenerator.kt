@@ -273,7 +273,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
             }
 
         protected fun generateStepsTxt() {
-            File(dir, "steps.txt").setFileContent(steps.joinToString("\n"))
+            File(dir, "_steps.txt").setFileContent(steps.joinToString("\n"))
         }
 
         fun generateBaseContent() {
