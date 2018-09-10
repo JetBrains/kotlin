@@ -154,7 +154,7 @@ private fun KtQualifiedExpression.findCallChain(): CallChain? {
     val receiverType =
         (lastCall.getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
             ?: lastCall.implicitReceiver(context)?.type
-    if (receiverType?.isCollection() != true) return null
+    if (receiverType?.isMap(DefaultBuiltIns.Instance) == true) return null
 
     val firstCall = calls.first()
     val qualified = firstCall.getQualifiedExpressionForSelector() ?: firstCall.getQualifiedExpressionForReceiver() ?: return null
@@ -191,14 +191,6 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
 
 private fun KtExpression.implicitReceiver(context: BindingContext): ImplicitReceiver? {
     return getResolvedCall(context)?.getImplicitReceiverValue()
-}
-
-private fun KotlinType.isCollection(): Boolean {
-    val classDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return false
-    val className = classDescriptor.name.asString()
-    val builtIns = DefaultBuiltIns.Instance
-    return className.endsWith("List") && classDescriptor.isSubclassOf(builtIns.list)
-            || className.endsWith("Set") && classDescriptor.isSubclassOf(builtIns.set)
 }
 
 private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
