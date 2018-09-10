@@ -6306,6 +6306,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/number/kt2342.kt");
         }
 
+        @TestMetadata("kt26706.kt")
+        public void testKt26706() throws Exception {
+            runTest("js/js.translator/testData/box/number/kt26706.kt");
+        }
+
         @TestMetadata("longArray.kt")
         public void testLongArray() throws Exception {
             runTest("js/js.translator/testData/box/number/longArray.kt");
