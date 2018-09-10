@@ -16,13 +16,21 @@
 
 package org.jetbrains.kotlin.idea.inspections.collections
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.types.KotlinType
 
 fun KotlinType.isFunctionOfAnyKind() = constructor.declarationDescriptor?.getFunctionalClassKind() != null
+
+fun KotlinType?.isMap(builtIns: KotlinBuiltIns): Boolean {
+    val classDescriptor = this?.constructor?.declarationDescriptor as? ClassDescriptor ?: return false
+    return classDescriptor.name.asString().endsWith("Map") && classDescriptor.isSubclassOf(builtIns.map)
+}
 
 fun ResolvedCall<*>.hasLastFunctionalParameterWithResult(context: BindingContext, predicate: (KotlinType) -> Boolean): Boolean {
     val lastParameter = resultingDescriptor.valueParameters.lastOrNull() ?: return false
