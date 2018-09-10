@@ -43,14 +43,23 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
 
         extension.setEvaluatedHandler { evaluatedExtension ->
             if (evaluatedExtension.isExperimental) {
-                addAndroidExtensionsRuntimeIfNeeded(project)
+                evaluatedExtension.features.forEach {
+                    when (it) {
+                        AndroidExtensionsFeature.PARCELIZE.featureName -> {
+                            addAndroidExtensionsRuntimeIfNeeded(project, "kotlin-android-extensions-parcel-runtime")
+                        }
+                        AndroidExtensionsFeature.VIEWS.featureName -> {
+                            addAndroidExtensionsRuntimeIfNeeded(project, "kotlin-android-extensions-synthetic-runtime")
+                        }
+                    }
+                }
             }
         }
 
         registry.register(KotlinAndroidExtensionModelBuilder())
     }
 
-    private fun addAndroidExtensionsRuntimeIfNeeded(project: Project) {
+    private fun addAndroidExtensionsRuntimeIfNeeded(project: Project, artifactId: String) {
         val kotlinPluginVersion = project.getKotlinPluginVersion() ?: run {
             project.logger.error("Kotlin plugin should be enabled before 'kotlin-android-extensions'")
             return
@@ -69,7 +78,7 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
             if (name != requiredConfigurationName) return@all
 
             configuration.dependencies.add(project.dependencies.create(
-                    "org.jetbrains.kotlin:kotlin-android-extensions-runtime:$kotlinPluginVersion"))
+                    "org.jetbrains.kotlin:$artifactId:$kotlinPluginVersion"))
         }
     }
 }

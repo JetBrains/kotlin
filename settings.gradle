@@ -87,6 +87,8 @@ include ":kotlin-build-common",
         ":plugins:android-extensions-compiler",
         ":kotlin-android-extensions",
         ":kotlin-android-extensions-runtime",
+        ":kotlin-android-extensions-parcel-runtime",
+        ":kotlin-android-extensions-synthetic-runtime",
         ":plugins:android-extensions-ide",
         ":plugins:android-extensions-jps",
         ":kotlin-allopen-compiler-plugin",
@@ -247,6 +249,8 @@ project(':idea:idea-android-output-parser').projectDir = "$rootDir/idea/idea-and
 project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File
 project(':kotlin-android-extensions').projectDir = "$rootDir/prepare/android-extensions-compiler-gradle" as File
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
+project(':kotlin-android-extensions-parcel-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-parcel-runtime" as File
+project(':kotlin-android-extensions-synthetic-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-synthetic-runtime" as File
 project(':plugins:android-extensions-ide').projectDir = "$rootDir/plugins/android-extensions/android-extensions-idea" as File
 project(':plugins:android-extensions-jps').projectDir = "$rootDir/plugins/android-extensions/android-extensions-jps" as File
 project(':android-lint').projectDir = "$rootDir/prepare/android-lint" as File

@@ -8,13 +8,8 @@ plugins {
 jvmTarget = "1.6"
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
-    compileOnly(commonDep("com.google.android", "android"))
-}
-
-sourceSets {
-    "main" { projectDefault() }
-    "test" {}
+    compile(project(":kotlin-android-extensions-parcel-runtime"))
+    compile(project(":kotlin-android-extensions-synthetic-runtime"))
 }
 
 runtimeJar()
