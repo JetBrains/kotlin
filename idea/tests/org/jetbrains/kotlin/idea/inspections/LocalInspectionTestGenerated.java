@@ -166,6 +166,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/implicitReceiver.kt");
             }
 
+            @TestMetadata("implicitReceiver2.kt")
+            public void testImplicitReceiver2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/implicitReceiver2.kt");
+            }
+
+            @TestMetadata("implicitReceiver3.kt")
+            public void testImplicitReceiver3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/implicitReceiver3.kt");
+            }
+
             @TestMetadata("implicitReceiverInApply.kt")
             public void testImplicitReceiverInApply() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/implicitReceiverInApply.kt");
