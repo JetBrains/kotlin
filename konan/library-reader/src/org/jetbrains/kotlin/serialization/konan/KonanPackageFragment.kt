@@ -35,9 +35,7 @@ class KonanPackageFragment(
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
-    private val protoForNames: KonanProtoBuf.LinkDataPackageFragment by lazy {
-        parsePackageFragment(library.packageMetadata(fqName.asString()))
-    }
+    private val protoForNames: KonanProtoBuf.LinkDataPackageFragment by lazy { library.packageMetadata(fqName.asString()) }
 
     val proto: KonanProtoBuf.LinkDataPackageFragment
         get() = protoForNames.also { packageAccessedHandler?.markPackageAccessed(fqName) }

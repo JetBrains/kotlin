@@ -67,7 +67,11 @@ private fun createKotlinNativeBuiltIns(projectContext: ProjectContext): KotlinBu
     if (stdlib != null) {
 
         val (path, libraryInfo) = stdlib
-        val library = createKonanLibrary(File(path), KOTLIN_NATIVE_CURRENT_ABI_VERSION)
+        val library = createKonanLibrary(
+            File(path),
+            KOTLIN_NATIVE_CURRENT_ABI_VERSION,
+            metadataReader = CachingIdeMetadataReaderImpl
+        )
 
         val builtInsModule = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
             library,

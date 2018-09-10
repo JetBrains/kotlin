@@ -8,19 +8,15 @@ package org.jetbrains.kotlin.serialization.konan.impl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KonanModuleDescriptorFactory
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.serialization.konan.*
+import org.jetbrains.kotlin.serialization.konan.KonanDeserializedModuleDescriptorFactory
+import org.jetbrains.kotlin.serialization.konan.KonanDeserializedPackageFragmentsFactory
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class KonanDeserializedModuleDescriptorFactoryImpl(
@@ -61,7 +57,7 @@ internal class KonanDeserializedModuleDescriptorFactoryImpl(
         customCapabilities: Map<ModuleDescriptor.Capability<*>, Any?>
     ): ModuleDescriptorImpl {
 
-        val libraryProto = parseModuleHeader(library.moduleHeaderData)
+        val libraryProto = library.moduleHeaderData
 
         val moduleName = Name.special(libraryProto.moduleName)
         val moduleOrigin = DeserializedKonanModuleOrigin(library)
@@ -86,5 +82,4 @@ internal class KonanDeserializedModuleDescriptorFactoryImpl(
 
         return moduleDescriptor
     }
-
 }

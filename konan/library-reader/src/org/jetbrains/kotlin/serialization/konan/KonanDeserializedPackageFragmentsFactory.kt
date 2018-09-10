@@ -29,7 +29,6 @@ interface KonanDeserializedPackageFragmentsFactory {
         moduleDescriptor: ModuleDescriptor
     ): List<PackageFragmentDescriptor>
 
-
     fun createPackageFragmentProvider(
         library: KonanLibrary,
         packageAccessedHandler: PackageAccessedHandler?,

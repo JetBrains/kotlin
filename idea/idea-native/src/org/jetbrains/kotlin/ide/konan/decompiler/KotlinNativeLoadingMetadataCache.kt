@@ -8,26 +8,31 @@ package org.jetbrains.kotlin.ide.konan.decompiler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.vfs.*
-import com.intellij.util.containers.ContainerUtil.createConcurrentWeakValueMap
+import com.intellij.util.containers.ContainerUtil.createConcurrentSoftValueMap
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
+import org.jetbrains.kotlin.serialization.konan.parseModuleHeader
 import org.jetbrains.kotlin.serialization.konan.parsePackageFragment
 
-class KotlinNativeDescriptorManager : ApplicationComponent {
+class KotlinNativeLoadingMetadataCache : ApplicationComponent {
 
     companion object {
         @JvmStatic
-        fun getInstance(): KotlinNativeDescriptorManager =
-            ApplicationManager.getApplication().getComponent(KotlinNativeDescriptorManager::class.java)
+        fun getInstance(): KotlinNativeLoadingMetadataCache =
+            ApplicationManager.getApplication().getComponent(KotlinNativeLoadingMetadataCache::class.java)
     }
 
-    private val protoCache = createConcurrentWeakValueMap<VirtualFile, KonanProtoBuf.LinkDataPackageFragment>()
+    private val packageFragmentCache = createConcurrentSoftValueMap<VirtualFile, KonanProtoBuf.LinkDataPackageFragment>()
+    private val moduleHeaderCache = createConcurrentSoftValueMap<VirtualFile, KonanProtoBuf.LinkDataLibrary>()
 
-    fun getCachedPackageFragment(virtualFile: VirtualFile): KonanProtoBuf.LinkDataPackageFragment {
-        return protoCache.computeIfAbsent(virtualFile) {
-            val bytes = virtualFile.contentsToByteArray(false)
-            parsePackageFragment(bytes)
+    fun getCachedPackageFragment(virtualFile: VirtualFile): KonanProtoBuf.LinkDataPackageFragment =
+        packageFragmentCache.computeIfAbsent(virtualFile) {
+            parsePackageFragment(virtualFile.contentsToByteArray(false))
         }
-    }
+
+    fun getCachedModuleHeader(virtualFile: VirtualFile): KonanProtoBuf.LinkDataLibrary =
+        moduleHeaderCache.computeIfAbsent(virtualFile) {
+            parseModuleHeader(virtualFile.contentsToByteArray(false))
+        }
 
     override fun initComponent() {
         VirtualFileManager.getInstance().addVirtualFileListener(object : VirtualFileListener {
@@ -40,6 +45,7 @@ class KotlinNativeDescriptorManager : ApplicationComponent {
     }
 
     private fun invalidateCaches(virtualFile: VirtualFile) {
-        protoCache.remove(virtualFile)
+        packageFragmentCache.remove(virtualFile)
+        moduleHeaderCache.remove(virtualFile)
     }
 }

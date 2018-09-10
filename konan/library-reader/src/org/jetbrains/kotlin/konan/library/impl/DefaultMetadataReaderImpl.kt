@@ -7,12 +7,18 @@ package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.library.MetadataReader
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
+import org.jetbrains.kotlin.serialization.konan.parseModuleHeader
+import org.jetbrains.kotlin.serialization.konan.parsePackageFragment
 
-internal object DefaultMetadataReaderImpl : MetadataReader {
+object DefaultMetadataReaderImpl : MetadataReader {
 
-    override fun loadSerializedModule(libraryLayout: KonanLibraryLayout): ByteArray =
-        libraryLayout.moduleHeaderFile.readBytes()
+    override fun loadSerializedModule(libraryLayout: KonanLibraryLayout): KonanProtoBuf.LinkDataLibrary =
+        parseModuleHeader(libraryLayout.moduleHeaderFile.readBytes())
 
-    override fun loadSerializedPackageFragment(libraryLayout: KonanLibraryLayout, fqName: String): ByteArray =
-        libraryLayout.packageFile(fqName).readBytes()
+    override fun loadSerializedPackageFragment(
+        libraryLayout: KonanLibraryLayout,
+        packageFqName: String
+    ): KonanProtoBuf.LinkDataPackageFragment =
+        parsePackageFragment(libraryLayout.packageFragmentFile(packageFqName).readBytes())
 }
