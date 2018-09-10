@@ -83,7 +83,8 @@ dependencies {
     testRuntime(project(":kotlin-scripting-compiler"))
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
     testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
-    testRuntime(project(":kotlinx-serialization-compiler-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlinx-serialization-compiler-plugin"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))

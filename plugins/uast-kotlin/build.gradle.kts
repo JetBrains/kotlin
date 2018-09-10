@@ -38,7 +38,7 @@ dependencies {
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:kapt3-idea"))
-    testRuntime(project(":kotlinx-serialization-compiler-plugin"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin"))
     testRuntime(intellijDep())
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))
