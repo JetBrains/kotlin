@@ -199,17 +199,17 @@ private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
 
 private fun KtCallExpression.isTransformationOrTermination(context: BindingContext): Boolean {
     val fqName = transformationAndTerminations[calleeExpression?.text] ?: return false
-    return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
+    return isCalling(fqName, context)
 }
 
 private fun KtCallExpression.isTermination(context: BindingContext): Boolean {
     val fqName = terminations[calleeExpression?.text] ?: return false
-    return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
+    return isCalling(fqName, context)
 }
 
 private fun KtCallExpression.isLazyTermination(context: BindingContext): Boolean {
     val fqName = lazyTerminations[calleeExpression?.text] ?: return false
-    return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
+    return isCalling(fqName, context)
 }
 
 private val transformations = listOf(
