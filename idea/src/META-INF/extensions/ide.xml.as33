@@ -29,6 +29,11 @@
                         interface="org.jetbrains.kotlin.idea.completion.KotlinCompletionExtension"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
                         interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKind"
+                        interface="org.jetbrains.kotlin.platform.IdePlatformKind"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindTooling"
+                        interface="org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
