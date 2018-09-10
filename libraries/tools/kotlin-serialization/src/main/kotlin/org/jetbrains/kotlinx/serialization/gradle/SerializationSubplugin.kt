@@ -38,8 +38,8 @@ class SerializationGradleSubplugin : Plugin<Project> {
 class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
         const val SERIALIZATION_GROUP_NAME = "org.jetbrains.kotlin"
-        const val SERIALIZATION_ARTIFACT_NAME = "kotlinx-gradle-serialization-plugin"
-        const val SERIALIZATION_ARTIFACT_UNSHADED_NAME = "kotlinx-gradle-serialization-plugin-unshaded"
+        const val SERIALIZATION_ARTIFACT_NAME = "kotlinx-serialization"
+        const val SERIALIZATION_ARTIFACT_UNSHADED_NAME = "kotlinx-serialization-unshaded"
     }
 
     private var useUnshaded = false
