@@ -128,6 +128,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile) {
         freeCompilerArgs = [
                 "-version",
                 "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
         ]
     }
 }
