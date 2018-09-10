@@ -31,8 +31,10 @@ public class RangeTest {
         assertTrue(1.toShort() in range)
         assertTrue(1.toByte() in range)
         assertTrue(1.toLong() in range)
-        assertTrue(1.toFloat() in range)
-        assertTrue(1.toDouble() in range)
+        run @Suppress("DEPRECATION") {
+            assertTrue(1.toFloat() in range)
+            assertTrue(1.toDouble() in range)
+        }
 
         assertFalse(Long.MAX_VALUE in range)
 
@@ -64,8 +66,10 @@ public class RangeTest {
         assertTrue(1.toShort() in range)
         assertTrue(1.toInt() in range)
         assertTrue(1.toLong() in range)
-        assertTrue(1.toFloat() in range)
-        assertTrue(1.toDouble() in range)
+        run @Suppress("DEPRECATION") {
+            assertTrue(1.toFloat() in range)
+            assertTrue(1.toDouble() in range)
+        }
 
         assertFalse(Long.MAX_VALUE in range)
 
@@ -98,8 +102,10 @@ public class RangeTest {
         assertTrue(1.toByte() in range)
         assertTrue(1.toInt() in range)
         assertTrue(1.toLong() in range)
-        assertTrue(1.toFloat() in range)
-        assertTrue(1.toDouble() in range)
+        run @Suppress("DEPRECATION") {
+            assertTrue(1.toFloat() in range)
+            assertTrue(1.toDouble() in range)
+        }
 
         assertFalse(Long.MAX_VALUE in range)
 
@@ -134,10 +140,13 @@ public class RangeTest {
         assertTrue(1.toByte() in range)
         assertTrue(1.toShort() in range)
         assertTrue(1.toInt() in range)
-        assertTrue(1.toFloat() in range)
-        assertTrue(1.toDouble() in range)
+        run @Suppress("DEPRECATION") {
+            assertTrue(1.toFloat() in range)
+            assertTrue(1.toDouble() in range)
 
-        assertFalse(Double.MAX_VALUE in range)
+            assertFalse(Double.MAX_VALUE in range)
+        }
+
 
         val openRange = 1L until 10L
         assertTrue(9L in openRange)
@@ -194,10 +203,12 @@ public class RangeTest {
 
         assertFalse(range.isEmpty())
 
-        assertTrue(1.toByte() in range)
-        assertTrue(1.toShort() in range)
-        assertTrue(1.toInt() in range)
-        assertTrue(1.toLong() in range)
+        run @Suppress("DEPRECATION") {
+            assertTrue(1.toByte() in range)
+            assertTrue(1.toShort() in range)
+            assertTrue(1.toInt() in range)
+            assertTrue(1.toLong() in range)
+        }
         assertTrue(1.toFloat() in range)
 
         val zeroRange = 0.0..-0.0
@@ -240,10 +251,12 @@ public class RangeTest {
 
         assertFalse(range.isEmpty())
 
-        assertTrue(1.toByte() in range)
-        assertTrue(1.toShort() in range)
-        assertTrue(1.toInt() in range)
-        assertTrue(1.toLong() in range)
+        run @Suppress("DEPRECATION") {
+            assertTrue(1.toByte() in range)
+            assertTrue(1.toShort() in range)
+            assertTrue(1.toInt() in range)
+            assertTrue(1.toLong() in range)
+        }
         assertTrue(1.toDouble() in range)
 
         assertFalse(Double.MAX_VALUE in range)
