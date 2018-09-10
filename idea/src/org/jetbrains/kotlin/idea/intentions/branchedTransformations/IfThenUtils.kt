@@ -228,7 +228,7 @@ data class IfThenToSelectData(
                         else -> error("Illegal state")
                     }
                 }
-                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
+                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", receiverExpression, baseClause).insertSafeCalls(factory)
                 baseClause is KtCallExpression -> baseClause.replaceCallWithLet(receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
