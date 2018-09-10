@@ -106,6 +106,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/conditionComparesNullWithNull.kt");
             }
 
+            @TestMetadata("conditionInParentheses.kt")
+            public void testConditionInParentheses() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/conditionInParentheses.kt");
+            }
+
             @TestMetadata("conditionInvalidBinaryExp.kt")
             public void testConditionInvalidBinaryExp() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/conditionInvalidBinaryExp.kt");

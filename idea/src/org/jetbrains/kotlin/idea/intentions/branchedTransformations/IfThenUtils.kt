@@ -277,10 +277,10 @@ data class IfThenToSelectData(
 internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData? {
     val context = analyze()
 
-    val condition = condition as? KtOperationExpression ?: return null
+    val condition = condition?.unwrapBlockOrParenthesis() as? KtOperationExpression ?: return null
     val thenClause = then?.unwrapBlockOrParenthesis()
     val elseClause = `else`?.unwrapBlockOrParenthesis()
-    val receiverExpression = condition.checkedExpression() ?: return null
+    val receiverExpression = condition.checkedExpression()?.unwrapBlockOrParenthesis() ?: return null
 
     val (baseClause, negatedClause) = when (condition) {
         is KtBinaryExpression -> when (condition.operationToken) {
