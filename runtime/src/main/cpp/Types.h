@@ -50,6 +50,8 @@ typedef float   KFloat;
 typedef double  KDouble;
 typedef void*   KNativePtr;
 
+typedef const void* KConstNativePtr;
+
 typedef ObjHeader* KRef;
 typedef const ObjHeader* KConstRef;
 typedef const ArrayHeader* KString;

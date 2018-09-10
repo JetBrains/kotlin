@@ -19,8 +19,7 @@ public class FreezingException(toFreeze: Any, blocker: Any) :
  *
  * @param where a frozen object that was attempted to mutate
  */
-public class InvalidMutabilityException(where: Any) :
-        RuntimeException("mutation attempt of frozen $where (hash is 0x${where.hashCode().toString(16)})")
+public class InvalidMutabilityException(message: String) : RuntimeException(message)
 
 /**
  * Freezes object subgraph reachable from this object. Frozen objects can be freely

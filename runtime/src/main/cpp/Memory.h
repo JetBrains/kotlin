@@ -501,4 +501,35 @@ class ObjHolder {
    ObjHeader* obj_;
 };
 
+class KRefSharedHolder {
+ public:
+  inline ObjHeader** slotToInit() {
+    initRefOwner();
+    return &obj_;
+  }
+
+  inline void init(ObjHeader* obj) {
+    SetRef(slotToInit(), obj);
+  }
+
+  inline ObjHeader* ref() const {
+    verifyRefOwner();
+    return obj_;
+  }
+
+  inline void dispose() {
+    verifyRefOwner();
+    UpdateRef(&obj_, nullptr);
+  }
+
+ private:
+  typedef MemoryState* RefOwner;
+
+  ObjHeader* obj_;
+  RefOwner owner_;
+
+  void initRefOwner();
+  void verifyRefOwner() const;
+};
+
 #endif // RUNTIME_MEMORY_H

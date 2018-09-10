@@ -33,8 +33,7 @@ public open class Any {
      * * Whenever it is invoked on the same object more than once, the hashCode method must consistently return the same integer, provided no information used in equals comparisons on the object is modified.
      * * If two objects are equal according to the equals() method, then calling the hashCode method on each of the two objects must produce the same integer result.
      */
-    @SymbolName("Kotlin_Any_hashCode")
-    external public open fun hashCode(): Int
+    public open fun hashCode(): Int = this.identityHashCode()
 
     /**
      * Returns a string representation of the object.
@@ -42,10 +41,15 @@ public open class Any {
     public open fun toString(): String {
         val kClass = this::class
         val className = kClass.qualifiedName ?: kClass.simpleName ?: "<object>"
+        // TODO: consider using [identityHashCode].
         val unsignedHashCode = this.hashCode().toLong() and 0xffffffffL
         val hashCodeStr = unsignedHashCode.toString(16)
         return "$className@$hashCodeStr"
     }
 }
+
+@PublishedApi
+@SymbolName("Kotlin_Any_hashCode")
+external internal fun Any.identityHashCode(): Int
 
 public fun Any?.hashCode() = if (this != null) this.hashCode() else 0

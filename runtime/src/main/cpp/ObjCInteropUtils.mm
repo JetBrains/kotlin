@@ -21,6 +21,7 @@
 #import <objc/runtime.h>
 #import <Foundation/NSException.h>
 #import <Foundation/NSString.h>
+#import "Memory.h"
 
 namespace {
   Class nsStringClass = nullptr;
@@ -103,22 +104,22 @@ id MissingInitImp(id self, SEL _cmd) {
 @end;
 
 @implementation KotlinObjectHolder {
-  KRef ref_;
+  KRefSharedHolder refHolder;
 };
 
 -(id)initWithRef:(KRef)ref {
   if (self = [super init]) {
-    UpdateRef(&ref_, ref);
+    refHolder.init(ref);
   }
   return self;
 }
 
 -(KRef)ref {
-  return ref_;
+  return refHolder.ref();
 }
 
 -(void)dealloc {
-  UpdateRef(&ref_, nullptr);
+  refHolder.dispose();
   [super dealloc];
 }
 

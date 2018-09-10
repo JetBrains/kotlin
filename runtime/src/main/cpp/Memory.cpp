@@ -351,6 +351,11 @@ namespace {
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
 
+// TODO: use widely.
+inline void EnsureRuntimeInitialized() {
+  RuntimeCheck(memoryState != nullptr, "Unable to execute Kotlin code on uninitialized thread");
+}
+
 constexpr int kFrameOverlaySlots = sizeof(FrameOverlay) / sizeof(ObjHeader**);
 
 inline bool isFreeable(const ContainerHeader* header) {
@@ -406,6 +411,21 @@ inline void unlock(KInt* spinlock) {
 }
 
 } // namespace
+
+void KRefSharedHolder::initRefOwner() {
+  RuntimeAssert(owner_ == nullptr, "Must be uninitialized");
+  owner_ = memoryState;
+}
+
+void KRefSharedHolder::verifyRefOwner() const {
+  // Note: checking for 'permanentOrFrozen()' and retrieving 'type_info()'
+  // are supposed to be correct even for unowned object.
+  if (owner_ != memoryState && !obj_->container()->permanentOrFrozen()) {
+    EnsureRuntimeInitialized();
+    // TODO: add some info about the owner.
+    ThrowIllegalObjectSharingException(obj_->type_info(), obj_);
+  }
+}
 
 extern "C" {
 

@@ -136,11 +136,11 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
 @end;
 
 @implementation KotlinBase {
-  KRef kotlinObj;
+  KRefSharedHolder refHolder;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(kotlinObj);
+  RETURN_OBJ(refHolder.ref());
 }
 
 +(void)initialize {
@@ -165,7 +165,7 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
           class_getName(object_getClass(self))];
   }
 
-  AllocInstanceWithAssociatedObject(typeInfo, result, &result->kotlinObj);
+  AllocInstanceWithAssociatedObject(typeInfo, result, result->refHolder.slotToInit());
 
   return result;
 }
@@ -173,7 +173,7 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
 +(instancetype)createWrapper:(ObjHeader*)obj {
   KotlinBase* result = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
-  UpdateRef(&result->kotlinObj, obj);
+  result->refHolder.init(obj);
   [result autorelease];
 
   if (!obj->permanent()) {
@@ -185,7 +185,7 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
 }
 
 -(instancetype)retain {
-  ObjHeader* obj = kotlinObj;
+  ObjHeader* obj = refHolder.ref();
   if (obj->permanent()) { // TODO: consider storing `isPermanent` to self field.
     [super retain];
   } else {
@@ -195,7 +195,7 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
 }
 
 -(BOOL)_tryRetain {
-  ObjHeader* obj = kotlinObj;
+  ObjHeader* obj = refHolder.ref();
   if (obj->permanent()) {
     return [super _tryRetain];
   } else if (!obj->has_meta_object()) {
@@ -209,16 +209,16 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
 }
 
 -(oneway void)release {
-  ObjHeader* obj = kotlinObj;
+  ObjHeader* obj = refHolder.ref();
   if (obj->permanent()) {
     [super release];
   } else {
-    ReleaseRefFromAssociatedObject(kotlinObj);
+    ReleaseRefFromAssociatedObject(obj);
   }
 }
 
 -(void)releaseAsAssociatedObject {
-  RuntimeAssert(!kotlinObj->permanent(), "");
+  RuntimeAssert(!refHolder.ref()->permanent(), "");
   [super release];
 }
 

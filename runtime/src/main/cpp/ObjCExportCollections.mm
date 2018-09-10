@@ -182,21 +182,22 @@ static inline OBJ_GETTER(invokeAndAssociate, KRef (*func)(KRef* result), id obj)
 @end;
 
 @implementation KIteratorAsNSEnumerator {
-  KRef iterator;
+  KRefSharedHolder iteratorHolder;
 }
 
 -(void)dealloc {
-  UpdateRef(&iterator, nullptr);
+  iteratorHolder.dispose();
   [super dealloc];
 }
 
 +(id)createWithKIterator:(KRef)iterator {
   KIteratorAsNSEnumerator* result = [[[KIteratorAsNSEnumerator alloc] init] autorelease];
-  UpdateRef(&result->iterator, iterator);
+  result->iteratorHolder.init(iterator);
   return result;
 }
 
 - (id)nextObject {
+  KRef iterator = iteratorHolder.ref();
   if (Kotlin_Iterator_hasNext(iterator)) {
     ObjHolder holder;
     return refToObjCOrNSNull(Kotlin_Iterator_next(iterator, holder.slot()));
@@ -210,32 +211,32 @@ static inline OBJ_GETTER(invokeAndAssociate, KRef (*func)(KRef* result), id obj)
 @end;
 
 @implementation KListAsNSArray {
-  KRef list;
+  KRefSharedHolder listHolder;
 }
 
 -(void)dealloc {
-  UpdateRef(&list, nullptr);
+  listHolder.dispose();
   [super dealloc];
 }
 
 +(id)createWithKList:(KRef)list {
   KListAsNSArray* result = [[[KListAsNSArray alloc] init] autorelease];
-  UpdateRef(&result->list, list);
+  result->listHolder.init(list);
   return result;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(list);
+  RETURN_OBJ(listHolder.ref());
 }
 
 -(id)objectAtIndex:(NSUInteger)index {
   ObjHolder kotlinValueHolder;
-  KRef kotlinValue = Kotlin_List_get(list, index, kotlinValueHolder.slot());
+  KRef kotlinValue = Kotlin_List_get(listHolder.ref(), index, kotlinValueHolder.slot());
   return refToObjCOrNSNull(kotlinValue);
 }
 
 -(NSUInteger)count {
-  return Kotlin_Collection_getSize(list);
+  return Kotlin_Collection_getSize(listHolder.ref());
 }
 
 @end;
@@ -244,57 +245,57 @@ static inline OBJ_GETTER(invokeAndAssociate, KRef (*func)(KRef* result), id obj)
 @end;
 
 @implementation KMutableListAsNSMutableArray {
-  KRef list;
+  KRefSharedHolder listHolder;
 }
 
 -(void)dealloc {
-  UpdateRef(&list, nullptr);
+  listHolder.dispose();
   [super dealloc];
 }
 
 +(id)createWithKList:(KRef)list {
   KMutableListAsNSMutableArray* result = [[[KMutableListAsNSMutableArray alloc] init] autorelease];
-  UpdateRef(&result->list, list);
+  result->listHolder.init(list);
   return result;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(list);
+  RETURN_OBJ(listHolder.ref());
 }
 
 -(id)objectAtIndex:(NSUInteger)index {
   ObjHolder kotlinValueHolder;
-  KRef kotlinValue = Kotlin_List_get(list, index, kotlinValueHolder.slot());
+  KRef kotlinValue = Kotlin_List_get(listHolder.ref(), index, kotlinValueHolder.slot());
   return refToObjCOrNSNull(kotlinValue);
 }
 
 -(NSUInteger)count {
-  return Kotlin_Collection_getSize(list);
+  return Kotlin_Collection_getSize(listHolder.ref());
 }
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index {
   ObjHolder holder;
   KRef kotlinObject = refFromObjCOrNSNull(anObject, holder.slot());
-  Kotlin_MutableList_addObjectAtIndex(list, objCIndexToKotlinOrThrow(index), kotlinObject);
+  Kotlin_MutableList_addObjectAtIndex(listHolder.ref(), objCIndexToKotlinOrThrow(index), kotlinObject);
 }
 
 - (void)removeObjectAtIndex:(NSUInteger)index {
-  Kotlin_MutableList_removeObjectAtIndex(list, objCIndexToKotlinOrThrow(index));
+  Kotlin_MutableList_removeObjectAtIndex(listHolder.ref(), objCIndexToKotlinOrThrow(index));
 }
 
 - (void)addObject:(id)anObject {
   ObjHolder holder;
-  Kotlin_MutableCollection_addObject(list, refFromObjCOrNSNull(anObject, holder.slot()));
+  Kotlin_MutableCollection_addObject(listHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (void)removeLastObject {
-  Kotlin_MutableList_removeLastObject(list);
+  Kotlin_MutableList_removeLastObject(listHolder.ref());
 }
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject {
   ObjHolder holder;
   KRef kotlinObject = refFromObjCOrNSNull(anObject, holder.slot());
-  Kotlin_MutableList_setObject(list, objCIndexToKotlinOrThrow(index), kotlinObject);
+  Kotlin_MutableList_setObject(listHolder.ref(), objCIndexToKotlinOrThrow(index), kotlinObject);
 }
 
 @end;
@@ -317,41 +318,41 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 
 @implementation KSetAsNSSet {
-  KRef set;
+  KRefSharedHolder setHolder;
 }
 
 -(void)dealloc {
-  UpdateRef(&set, nullptr);
+  setHolder.dispose();
   [super dealloc];
 }
 
 +(id)createWithKSet:(KRef)set {
   KSetAsNSSet* result = [[[KSetAsNSSet alloc] init] autorelease];
-  UpdateRef(&result->set, set);
+  result->setHolder.init(set);
   return result;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(set);
+  RETURN_OBJ(setHolder.ref());
 }
 
 -(NSUInteger) count {
-  return Kotlin_Collection_getSize(set);
+  return Kotlin_Collection_getSize(setHolder.ref());
 }
 
 - (id)member:(id)object {
-  return KSet_getElement(set, object);
+  return KSet_getElement(setHolder.ref(), object);
 }
 
 // Not mandatory, just an optimization:
 - (BOOL)containsObject:(id)anObject {
   ObjHolder holder;
-  return Kotlin_Set_contains(set, refFromObjCOrNSNull(anObject, holder.slot()));
+  return Kotlin_Set_contains(setHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (NSEnumerator*)objectEnumerator {
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(set, holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref(), holder.slot())];
 }
 @end;
 
@@ -359,13 +360,13 @@ static inline id KSet_getElement(KRef set, id object) {
 @end;
 
 @implementation KotlinMutableSet {
-  KRef set;
+  KRefSharedHolder setHolder;
 }
 
 -(instancetype)init {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
-    Kotlin_MutableSet_createWithCapacity(8, &self->set);
+    Kotlin_MutableSet_createWithCapacity(8, self->setHolder.slotToInit());
   }
 
   return self;
@@ -374,7 +375,7 @@ static inline id KSet_getElement(KRef set, id object) {
 - (instancetype)initWithCapacity:(NSUInteger)numItems {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
-    Kotlin_MutableSet_createWithCapacity(objCCapacityToKotlin(numItems), &self->set);
+    Kotlin_MutableSet_createWithCapacity(objCCapacityToKotlin(numItems), self->setHolder.slotToInit());
   }
 
   return self;
@@ -395,47 +396,49 @@ static inline id KSet_getElement(KRef set, id object) {
 // ?
 
 -(void)dealloc {
-  UpdateRef(&set, nullptr);
+  setHolder.dispose();
   [super dealloc];
 }
 
-+(id)createWithKSet:(KRef)set {
-  KotlinMutableSet* result = [[[super allocWithZone:nullptr] init] autorelease];
-  UpdateRef(&result->set, set);
-  return result;
+-(instancetype)initWithKSet:(KRef)set {
+  if (self = [super init]) {
+    setHolder.init(set);
+  }
+
+  return self;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(set);
+  RETURN_OBJ(setHolder.ref());
 }
 
 -(NSUInteger) count {
-  return Kotlin_Collection_getSize(set);
+  return Kotlin_Collection_getSize(setHolder.ref());
 }
 
 - (id)member:(id)object {
-  return KSet_getElement(set, object);
+  return KSet_getElement(setHolder.ref(), object);
 }
 
 // Not mandatory, just an optimization:
 - (BOOL)containsObject:(id)anObject {
   ObjHolder holder;
-  return Kotlin_Set_contains(set, refFromObjCOrNSNull(anObject, holder.slot()));
+  return Kotlin_Set_contains(setHolder.ref(), refFromObjCOrNSNull(anObject, holder.slot()));
 }
 
 - (NSEnumerator*)objectEnumerator {
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(set, holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Set_iterator(setHolder.ref(), holder.slot())];
 }
 
 - (void)addObject:(id)object {
   ObjHolder holder;
-  Kotlin_MutableCollection_addObject(set, refFromObjCOrNSNull(object, holder.slot()));
+  Kotlin_MutableCollection_addObject(setHolder.ref(), refFromObjCOrNSNull(object, holder.slot()));
 }
 
 - (void)removeObject:(id)object {
   ObjHolder holder;
-  Kotlin_MutableCollection_removeObject(set, refFromObjCOrNSNull(object, holder.slot()));
+  Kotlin_MutableCollection_removeObject(setHolder.ref(), refFromObjCOrNSNull(object, holder.slot()));
 }
 @end;
 
@@ -457,38 +460,38 @@ static inline id KMap_get(KRef map, id aKey) {
 }
 
 @implementation KMapAsNSDictionary {
-  KRef map;
+  KRefSharedHolder mapHolder;
 }
 
 -(void)dealloc {
-  UpdateRef(&map, nullptr);
+  mapHolder.dispose();
   [super dealloc];
 }
 
 +(id)createWithKMap:(KRef)map {
   KMapAsNSDictionary* result = [[[KMapAsNSDictionary alloc] init] autorelease];
-  UpdateRef(&result->map, map);
+  result->mapHolder.init(map);
   return result;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(map);
+  RETURN_OBJ(mapHolder.ref());
 }
 
 // According to documentation, initWithObjects:forKeys:count: is required to be overridden when subclassing.
 // But that doesn't make any sense, since this class can't be arbitrary initialized.
 
 -(NSUInteger) count {
-  return Kotlin_Map_getSize(map);
+  return Kotlin_Map_getSize(mapHolder.ref());
 }
 
 - (id)objectForKey:(id)aKey {
-  return KMap_get(map, aKey);
+  return KMap_get(mapHolder.ref(), aKey);
 }
 
 - (NSEnumerator *)keyEnumerator {
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(map, holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref(), holder.slot())];
 }
 
 @end;
@@ -497,18 +500,18 @@ static inline id KMap_get(KRef map, id aKey) {
 @end;
 
 @implementation KotlinMutableDictionary {
-  KRef map;
+  KRefSharedHolder mapHolder;
 }
 
 -(void)dealloc {
-  UpdateRef(&map, nullptr);
+  mapHolder.dispose();
   [super dealloc];
 }
 
 -(instancetype)init {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
-    Kotlin_MutableMap_createWithCapacity(8, &self->map);
+    Kotlin_MutableMap_createWithCapacity(8, self->mapHolder.slotToInit());
   }
   return self;
 }
@@ -522,32 +525,34 @@ static inline id KMap_get(KRef map, id aKey) {
 - (instancetype)initWithCapacity:(NSUInteger)numItems {
   if (self = [super init]) {
     Kotlin_initRuntimeIfNeeded();
-    Kotlin_MutableMap_createWithCapacity(objCCapacityToKotlin(numItems), &self->map);
+    Kotlin_MutableMap_createWithCapacity(objCCapacityToKotlin(numItems), self->mapHolder.slotToInit());
   }
   return self;
 }
 
-+(id)createWithKMap:(KRef)map {
-  KotlinMutableDictionary* result = [[[KotlinMutableDictionary alloc] init] autorelease];
-  UpdateRef(&result->map, map);
-  return result;
+-(instancetype)initWithKMap:(KRef)map {
+  if (self = [super init]) {
+    mapHolder.init(map);
+  }
+
+  return self;
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(map);
+  RETURN_OBJ(mapHolder.ref());
 }
 
 -(NSUInteger) count {
-  return Kotlin_Map_getSize(map);
+  return Kotlin_Map_getSize(mapHolder.ref());
 }
 
 - (id)objectForKey:(id)aKey {
-  return KMap_get(map, aKey);
+  return KMap_get(mapHolder.ref(), aKey);
 }
 
 - (NSEnumerator *)keyEnumerator {
   ObjHolder holder;
-  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(map, holder.slot())];
+  return [KIteratorAsNSEnumerator createWithKIterator:Kotlin_Map_keyIterator(mapHolder.ref(), holder.slot())];
 }
 
 - (void)setObject:(id)anObject forKey:(id<NSCopying>)aKey {
@@ -559,14 +564,14 @@ static inline id KMap_get(KRef map, id aKey) {
 
   KRef kotlinValue = refFromObjCOrNSNull(anObject, valueHolder.slot());
 
-  Kotlin_MutableMap_set(map, kotlinKey, kotlinValue);
+  Kotlin_MutableMap_set(mapHolder.ref(), kotlinKey, kotlinValue);
 }
 
 - (void)removeObjectForKey:(id)aKey {
   ObjHolder holder;
   KRef kotlinKey = refFromObjCOrNSNull(aKey, holder.slot());
 
-  Kotlin_MutableMap_remove(map, kotlinKey);
+  Kotlin_MutableMap_remove(mapHolder.ref(), kotlinKey);
 }
 
 @end;
@@ -595,7 +600,7 @@ extern "C" id Kotlin_Interop_CreateNSSetFromKSet(KRef obj) {
 }
 
 extern "C" id Kotlin_Interop_CreateKotlinMutableSetFromKSet(KRef obj) {
-  return [KotlinMutableSet createWithKSet:obj];
+  return [[[KotlinMutableSet alloc] initWithKSet:obj] autorelease];
 }
 
 extern "C" id Kotlin_Interop_CreateNSDictionaryFromKMap(KRef obj) {
@@ -603,7 +608,7 @@ extern "C" id Kotlin_Interop_CreateNSDictionaryFromKMap(KRef obj) {
 }
 
 extern "C" id Kotlin_Interop_CreateKotlinMutableDictonaryFromKMap(KRef obj) {
-  return [KotlinMutableDictionary createWithKMap:obj];
+  return [[[KotlinMutableDictionary alloc] initWithKMap:obj] autorelease];
 }
 
 // Imported to ObjCExportUtils.kt:

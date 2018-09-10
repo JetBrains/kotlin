@@ -6,6 +6,7 @@
 package kotlin.native.concurrent
 
 import kotlin.native.internal.ExportForCppRuntime
+import kotlin.reflect.KClass
 import kotlinx.cinterop.*
 
 // Implementation details.
@@ -69,11 +70,22 @@ internal fun ThrowFreezingException(toFreeze: Any, blocker: Any): Nothing =
 
 @ExportForCppRuntime
 internal fun ThrowInvalidMutabilityException(where: Any): Nothing {
-    val kClass = where::class
+    val description = debugDescription(where::class, where.identityHashCode())
+    throw InvalidMutabilityException("mutation attempt of frozen $description")
+}
+
+@ExportForCppRuntime
+internal fun ThrowIllegalObjectSharingException(typeInfo: NativePtr, address: NativePtr) {
+    val kClass = kotlin.native.internal.KClassImpl<Any>(typeInfo)
+    val description = debugDescription(kClass, address.toLong().toInt())
+    throw IncorrectDereferenceException("illegal attempt to access non-shared $description from other thread")
+}
+
+private fun debugDescription(kClass: KClass<*>, identity: Int): String {
     val className = kClass.qualifiedName ?: kClass.simpleName ?: "<object>"
-    val unsignedHashCode = where.hashCode().toLong() and 0xffffffffL
-    val hashCodeStr = unsignedHashCode.toString(16)
-    throw InvalidMutabilityException("$className@$hashCodeStr")
+    val unsignedIdentity = identity.toLong() and 0xffffffffL
+    val identityStr = unsignedIdentity.toString(16)
+    return "$className@$identityStr"
 }
 
 @SymbolName("Kotlin_AtomicReference_checkIfFrozen")
