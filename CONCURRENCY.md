@@ -2,9 +2,9 @@
 
   Kotlin/Native runtime doesn't encourage a classical thread-oriented concurrency
  model with mutually exclusive code blocks and conditional variables, as this model is
- known to be error-prone and unreliable. Instead, we suggest collection of
- alternative approaches, allowing to use hardware concurrency and implement blocking IO.
- Those approaches are as following, and will be elaborated in further sections:
+ known to be error-prone and unreliable. Instead, we suggest a collection of
+ alternative approaches, allowing you to use hardware concurrency and implement blocking IO.
+ Those approaches are as follows, and they will be elaborated on in further sections:
    * Workers with message passing
    * Object subgraph ownership transfer
    * Object subgraph freezing
@@ -14,15 +14,15 @@
 
 ## Workers
 
-  Instead of threads Kotlin/Native runtime offers concept of workers: concurrently executing
- control flow streams with an associated request queue. Workers are very similar to actors
- in the Actor Model. Worker can exchange Kotlin objects with other workers, so that at the moment
- each mutable object is owned by the single worker, but ownership could be transferred.
+  Instead of threads Kotlin/Native runtime offers the concept of workers: concurrently executed
+ control flow streams with an associated request queue. Workers are very similar to the actors
+ in the Actor Model. A worker can exchange Kotlin objects with another worker, so that at any moment
+ each mutable object is owned by a single worker, but ownership can be transferred.
  See section [Object transfer and freezing](#transfer).
 
-  Once worker is started with `Worker.start` function call, it can be uniquely addressed with an integer
- worker id. Other workers, or non-worker concurrency primitives, such as OS threads, could send a message
- to the worker with `execute` call.
+  Once a worker is started with the `Worker.start` function call, it can be addressed with its own unique integer
+ worker id. Other workers, or non-worker concurrency primitives, such as OS threads, can send a message
+ to the worker with the `execute` call.
  ```kotlin
    val future = execute(TransferMode.SAFE, { SomeDataForWorker() }) {
        // data returned by the second function argument comes to the
@@ -39,58 +39,57 @@
       result -> println("result is $result")
    }
 ```
- The call to `execute` uses function passed as its second parameter to produce an object subgraph
- (i.e. set of mutually referring objects) which is passed as the whole to that worker, and no longer
+ The call to `execute` uses a function passed as its second parameter to produce an object subgraph
+ (i.e. set of mutually referring objects) which is then passed as a whole to that worker, it is then no longer
  available to the thread that initiated the request. This property is checked if the first parameter
- is `TransferMode.SAFE` by graph traversal and just assumed to be true, if it is `TransferMode.UNCHECKED`.
- Last parameter to `execute` is a special Kotlin lambda, which is not allowed to capture any state,
- and is actually invoked in target worker's context. Once processed, result is transferred to whoever consumes
- the future, and is attached to object graph of that worker/thread.
+ is `TransferMode.SAFE` by graph traversal and is just assumed to be true, if it is `TransferMode.UNSAFE`.
+ The last parameter to `execute` is a special Kotlin lambda, which is not allowed to capture any state,
+ and is actually invoked in the target worker's context. Once processed, the result is transferred to whatever consumes
+ it in the future, and it is attached to the object graph of that worker/thread.
 
   If an object is transferred in `UNSAFE` mode and is still accessible from multiple concurrent executors,
  program will likely crash unexpectedly, so consider that last resort in optimizing, not a general purpose
  mechanism.
 
-  For more complete example please refer to the [workers example](https://github.com/JetBrains/kotlin-native/tree/master/samples/workers)
+  For a more complete example please refer to the [workers example](https://github.com/JetBrains/kotlin-native/tree/master/samples/workers)
  in the Kotlin/Native repository.
 
 <a name="transfer"></a>
 ## Object transfer and freezing
 
-   Important invariant that Kotlin/Native runtime maintains is that object is either owned by a single
-  thread/worker, or is immutable (_shared XOR mutable_). This ensures that the same data has a single mutator, and so no need for
-  locking exists. To achieve such an invariant, we use concept of not externally referred object subgraphs.
-  This is a subgraph which has no external references from outside of the subgraph, what could be checked
-  algorithmically with O(N) complexity (in ARC systems), where N is number of elements in such a subgraph.
-  Such subgraphs are usually produced as a result of lambda expression, for example some builder, and may not
-  contain objects, referred externally.
+   An important invariant that Kotlin/Native runtime maintains is that the object is either owned by a single
+  thread/worker, or it is immutable (_shared XOR mutable_). This ensures that the same data has a single mutator, and so there is no need for locking to exist. To achieve such an invariant, we use the concept of not externally referred object subgraphs.
+  This is a subgraph which has no external references from outside of the subgraph, which could be checked
+  algorithmically with O(N) complexity (in ARC systems), where N is the number of elements in such a subgraph.
+  Such subgraphs are usually produced as a result of a lambda expression, for example some builder, and may not
+  contain objects, referred to externally.
 
-   Freezing is a runtime operation making given object subgraph immutable, by modifying the object header
-  so that future mutation attempts lead to throwing an `InvalidMutabilityException`. It is deep, so
-  if an object has a pointer to another objects - transitive closure of such objects will be frozen.
-  Freezing is the one way transformation, frozen objects cannot be unfrozen. Frozen objects have a nice
+   Freezing is a runtime operation making a given object subgraph immutable, by modifying the object header
+  so that future mutation attempts throw an `InvalidMutabilityException`. It is deep, so
+  if an object has a pointer to other objects - transitive closure of such objects will be frozen.
+  Freezing is a one way transformation, frozen objects cannot be unfrozen. Frozen objects have a nice
   property that due to their immutability, they can be freely shared between multiple workers/threads
-  not breaking the "mutable XOR shared" invariant.
+  without breaking the "mutable XOR shared" invariant.
 
-   If object is frozen could be checked with an extension property `isFrozen`, and if it is, object sharing
- is allowed. Currently, Kotlin/Native runtime only freezes enum objects after creation, although additional
+   If an object is frozen it can be checked with an extension property `isFrozen`, and if it is, object sharing
+ is allowed. Currently, Kotlin/Native runtime only freezes the enum objects after creation, although additional
  autofreezing of certain provably immutable objects could be implemented in the future.
 
 <a name="detach"></a>
 ## Object subgraph detachment
 
-   Object subgraph without external references could be disconnected using `detachObjectGraph` to
-  a `COpaquePointer` value, which could be stored in `void*` data, so disconnected object subgraphs
-  could be stored in C data structure, and later attached back with `attachObjectGraph<T>` in arbitrary thread
-  or worker. Combined with [raw memory sharing](#shared) it allows side channel object transfer between
-  concurrent threads, if worker mechanisms are insufficient for the particular task.
+   An object subgraph without external references can be disconnected using `detachObjectGraph` to
+  a `COpaquePointer` value, which could be stored in `void*` data, so the disconnected object subgraphs
+  can be stored in a C data structure, and later attached back with `attachObjectGraph<T>` in an arbitrary thread
+  or a worker. Combining it with [raw memory sharing](#shared) it allows side channel object transfer between
+  concurrent threads, if the worker mechanisms are insufficient for a particular task.
 
 <a name="shared"></a>
 ## Raw shared memory
 
-  Considering strong ties of Kotlin/Native with C via interoperability, in conjunction with other mechanisms
- mentioned above one could build popular data structures, like concurrent hashmap or shared cache with
- Kotlin/Native. One could rely upon shared C data, and store in it references to detached object subgraphs.
+  Considering the strong ties between Kotlin/Native and C via interoperability, in conjunction with the other mechanisms
+ mentioned above it is possible to build popular data structures, like concurrent hashmap or shared cache with
+ Kotlin/Native. It is possible to rely upon shared C data, and store in it references to detached object subgraphs.
  Consider the following .def file:
 ```
 package = global
@@ -103,7 +102,7 @@ typedef struct {
 
 SharedData sharedData;
 ```
-After running cinterop tool it allows sharing Kotlin data in versionized global structure,
+After running the cinterop tool it can share Kotlin data in a versionized global structure,
 and interact with it from Kotlin transparently via autogenerated Kotlin like this:
 ```kotlin
 class SharedData(rawPtr: NativePtr) : CStructVar(rawPtr) {
@@ -111,14 +110,14 @@ class SharedData(rawPtr: NativePtr) : CStructVar(rawPtr) {
     var kotlinObject: COpaquePointer?
 }
 ```
-So combined with the top level variable declared above, it allows seeing the same memory from different
+So in combination with the top level variable declared above, it can allow looking at the same memory from different
 threads and building traditional concurrent structures with platform-specific synchronization primitives.
 
 <a name="top_level"></a>
 ## Global variables and singletons
 
   Frequently, global variables are a source of unintended concurrency issues, so _Kotlin/Native_ implements
-following mechanisms to prevent unintended sharing of state via global objects:
+the following mechanisms to prevent the unintended sharing of state via global objects:
 
    * global variables, unless specially marked, can be only accessed from the main thread (that is, the thread
    _Kotlin/Native_ runtime was first initialized), if other thread access such a global, `IncorrectDereferenceException` is thrown
@@ -130,4 +129,4 @@ following mechanisms to prevent unintended sharing of state via global objects:
    unless cyclic frozen structures were attempted to be created
    * enums are always frozen
 
- Combined, those mechanisms allows natural race-freeze programming with code reuse across platforms in MPP projects.
+ Combined, these mechanisms allow natural race-freeze programming with code reuse across platforms in MPP projects.
