@@ -20,9 +20,12 @@ fun compareTo(a: dynamic, b: dynamic): Int {
         return primitiveCompareTo(a, b)
     }
 
-    // TODO: Replace to a.unsafeCast<Comparable<*>>().compareTo(b) when bridge is implemented
-    return js("a.compareTo(b)").unsafeCast<Int>()
+    return compareToDoNotIntrinsicify(a, b)
 }
+
+// TODO: Use @DoNotIntrincify annotation
+private fun <T : Comparable<T>> compareToDoNotIntrinsicify(a: Comparable<T>, b: T) =
+    a.compareTo(b)
 
 fun primitiveCompareTo(a: dynamic, b: dynamic): Int =
     js("a < b ? -1 : a > b ? 1 : 0").unsafeCast<Int>()

@@ -134,6 +134,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsToString = getInternalFunction("toString")
     val jsAnyToString = getInternalFunction("anyToString")
     val jsCompareTo = getInternalFunction("compareTo")
+    // TODO: Use annotations
+    val compareToDoNotIntrinsicify = getInternalFunction("compareToDoNotIntrinsicify")
     val jsEquals = getInternalFunction("equals")
 
     // Coroutines

@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.backend.common.utils.isSubtypeOfClass
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.ir.backend.js.ir.irCall
 import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -131,9 +127,8 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
         symbolToTransformer.run {
             add(irBuiltIns.eqeqeqSymbol, intrinsics.jsEqeqeq)
             add(irBuiltIns.eqeqSymbol, ::transformEqeqOperator)
-
-            // ieee754equals can only be applied in between statically known Floats or Doubles
-            add(irBuiltIns.ieee754equalsFunByOperandType, intrinsics.jsEqeqeq)
+            // ieee754equals can only be applied in between statically known Floats, Doubles, null or undefined
+            add(irBuiltIns.ieee754equalsFunByOperandType, ::chooseEqualityOperatorForPrimitiveTypes)
 
             add(irBuiltIns.booleanNotSymbol, intrinsics.jsNot)
 
@@ -237,11 +232,6 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             )
 
 
-            addWithPredicate(
-                Name.identifier("compareTo"), ::shouldReplaceCompareToWithRuntimeCall,
-                { call -> irCall(call, intrinsics.jsCompareTo, dispatchReceiverAsFirstArgument = true) }
-            )
-
             put(Name.identifier("toString")) { call ->
                 if (shouldReplaceToStringWithRuntimeCall(call)) {
                     if (call.isSuperToAny()) {
@@ -266,7 +256,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 }
             }
 
-
+            put(Name.identifier("compareTo"), ::transformCompareToMethodCall)
             put(Name.identifier("equals"), ::transformEqualsMethodCall)
         }
 
@@ -352,6 +342,12 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 }
             }
 
+            override fun visitFunction(declaration: IrFunction): IrStatement {
+                if (declaration.symbol == intrinsics.compareToDoNotIntrinsicify)
+                    return declaration
+                return super.visitFunction(declaration)
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 val call = super.visitCall(expression)
 
@@ -430,50 +426,6 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
         }
     }
 
-    private fun transformEqeqOperator(call: IrCall): IrExpression {
-        val lhs = call.getValueArgument(0)!!
-        val rhs = call.getValueArgument(1)!!
-
-        // Special optimization for "<expression> == null"
-        if (lhs.isNullConst() || rhs.isNullConst())
-            return irCall(call, intrinsics.jsEqeq.symbol)
-
-        return when (translateEquals(lhs.type, rhs.type)) {
-            is IdentityOperator -> irCall(call, intrinsics.jsEqeqeq.symbol)
-            is EqualityOperator -> irCall(call, intrinsics.jsEqeq.symbol)
-            is RuntimeFunctionCall -> irCall(call, intrinsics.jsEquals)
-            is RuntimeOrMethodCall -> {
-                assert(!lhs.type.isNullable())
-                val equalsMethod = lhs.type.findEqualsMethod(rhs.type)
-                if (equalsMethod != null) {
-                    irCall(call, equalsMethod.symbol, firstArgumentAsDispatchReceiver = true)
-                } else {
-                    irCall(call, intrinsics.jsEquals)
-                }
-            }
-        }
-    }
-
-    private fun IrType.findEqualsMethod(rhs: IrType): IrSimpleFunction? {
-        val classifier = classifierOrNull ?: return null
-        return ((classifier.owner as? IrClass) ?: return null).declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .filter {
-                it.name == Name.identifier("equals")
-                        && it.valueParameters.size == 1
-                        && rhs.isSubtypeOf(it.valueParameters[0].type)
-                        && !it.isFakeOverriddenFromAny()
-            }
-            .maxWith(  // Find the most specific function
-                Comparator { f1, f2 ->
-                    val t1 = f1.valueParameters[0].type
-                    val t2 = f2.valueParameters[0].type
-                    if (t1.isSubtypeOf(t2)) {
-                        if (t2.isSubtypeOf(t1)) 0 else 1
-                    } else -1
-                }
-            )
-    }
 
     private fun withLongCoercion(intrinsic: IrSimpleFunction): (IrCall) -> IrExpression = { call ->
         assert(call.valueArgumentsCount == 1)
@@ -528,176 +480,148 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
         }
     }
 
-    private fun transformEqualsMethodCall(call: IrCall): IrExpression {
-        val symbol = call.symbol
-        val function = (symbol.owner as? IrFunction) ?: return call
-        val lhs = function.dispatchReceiverParameter ?: function.extensionReceiverParameter ?: return call
-        val rhs = call.getValueArgument(0) ?: return call
-        return when (translateEquals(lhs.type, rhs.type)) {
-            is IdentityOperator -> irCall(call, intrinsics.jsEqeqeq.symbol)
-            is EqualityOperator -> irCall(call, intrinsics.jsEqeq.symbol)
-            is RuntimeFunctionCall -> irCall(call, intrinsics.jsEquals, true)
-            is RuntimeOrMethodCall -> if (symbol.owner.isFakeOverriddenFromAny()) {
-                if (call.isSuperToAny()) {
-                    irCall(call, intrinsics.jsEqeqeq.symbol, dispatchReceiverAsFirstArgument = true)
-                } else {
-                    irCall(call, intrinsics.jsEquals, dispatchReceiverAsFirstArgument = true)
-                }
-            } else {
+    private fun transformEqeqOperator(call: IrCall): IrExpression {
+        val lhs = call.getValueArgument(0)!!
+        val rhs = call.getValueArgument(1)!!
+
+
+        val lhsJsType = lhs.type.getPrimitiveType()
+        val rhsJsType = rhs.type.getPrimitiveType()
+
+        val equalsMethod = lhs.type.findEqualsMethod()
+        val isLhsPrimitive = lhsJsType != PrimitiveType.OTHER
+
+        return when {
+            lhs.type is IrDynamicType ->
+                irCall(call, intrinsics.jsEqeq.symbol)
+
+            // Special optimization for "<expression> == null"
+            lhs.isNullConst() || rhs.isNullConst() ->
+                irCall(call, intrinsics.jsEqeq.symbol)
+
+            // For non-float primitives of the same type use JS `==`
+            isLhsPrimitive && lhsJsType == rhsJsType && lhsJsType != PrimitiveType.FLOATING_POINT_NUMBER ->
+                chooseEqualityOperatorForPrimitiveTypes(call)
+
+            !isLhsPrimitive && !lhs.type.toKotlinType().isNullable() && equalsMethod != null ->
+                irCall(call, equalsMethod.symbol, firstArgumentAsDispatchReceiver = true)
+
+            else ->
+                irCall(call, intrinsics.jsEquals)
+        }
+    }
+
+    private fun chooseEqualityOperatorForPrimitiveTypes(call: IrCall): IrExpression = when {
+        call.allValueArgumentsAreNullable() ->
+            irCall(call, intrinsics.jsEqeq.symbol)
+        else ->
+            irCall(call, intrinsics.jsEqeqeq.symbol)
+    }
+
+    private fun IrCall.allValueArgumentsAreNullable() =
+        (0 until valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable() }
+
+    private fun transformCompareToMethodCall(call: IrCall): IrExpression {
+        val function = call.symbol.owner as IrSimpleFunction
+        if (function.parent !is IrClass) return call
+
+        fun IrSimpleFunction.isFakeOverriddenFromComparable(): Boolean = when {
+            origin != IrDeclarationOrigin.FAKE_OVERRIDE ->
+                parentAsClass.thisReceiver!!.type.isComparable()
+
+            else -> overriddenSymbols.all { it.owner.isFakeOverriddenFromComparable() }
+        }
+
+        return when {
+            // Use runtime function call in case when receiverType is a primitive JS type that doesn't have `compareTo` method,
+            // or has a potential to be primitive type (being fake overridden from `Comparable`)
+            function.isMethodOfPrimitiveJSType() || function.isFakeOverriddenFromComparable() ->
+                irCall(call, intrinsics.jsCompareTo, dispatchReceiverAsFirstArgument = true)
+
+            // Valid `compareTo` method must be present at this point
+            else ->
                 call
-            }
+        }
+    }
+
+
+    private fun transformEqualsMethodCall(call: IrCall): IrExpression {
+        val function = call.symbol.owner
+        return when {
+            // Nothing special
+            !function.isEqualsInheritedFromAny() -> call
+
+            // `Any.equals` works as identity operator
+            call.isSuperToAny() ->
+                irCall(call, intrinsics.jsEqeqeq.symbol, dispatchReceiverAsFirstArgument = true)
+
+            // Use runtime function call in case when receiverType is a primitive JS type that doesn't have `equals` method,
+            // or has a potential to be primitive type (being fake overridden from `Any`)
+            function.isMethodOfPotentiallyPrimitiveJSType() ->
+                irCall(call, intrinsics.jsEquals, dispatchReceiverAsFirstArgument = true)
+
+            // Valid `equals` method must be present at this point
+            else -> call
+        }
+    }
+
+    private fun IrType.findEqualsMethod(): IrSimpleFunction? {
+        val klass = getClass() ?: return null
+        return klass.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .filter { it.isEqualsInheritedFromAny() && !it.isFakeOverriddenFromAny() }
+            .also { assert(it.size <= 1) }
+            .singleOrNull()
+    }
+
+    private fun IrFunction.isMethodOfPrimitiveJSType() =
+        dispatchReceiverParameter?.type?.getPrimitiveType() != PrimitiveType.OTHER
+
+    private fun IrFunction.isMethodOfPotentiallyPrimitiveJSType() =
+        isMethodOfPrimitiveJSType() || isFakeOverriddenFromAny()
+
+    private fun IrFunction.isEqualsInheritedFromAny() =
+        name == Name.identifier("equals") &&
+                dispatchReceiverParameter != null &&
+                valueParameters.size == 1 &&
+                valueParameters[0].type.isNullableAny()
+
+    private fun shouldReplaceToStringWithRuntimeCall(call: IrCall): Boolean {
+        // TODO: (KOTLIN-CR-2079)
+        //  - User defined extension functions Any?.toString() call can be lost during lowering.
+        //  - Use direct method call for dynamic types???
+        //  - Define Any?.toString() in runtime library and stop intrincifying extensions
+
+        if (call.valueArgumentsCount > 0)
+            return false
+
+        val receiverParameterType = with(call.symbol.owner) {
+            dispatchReceiverParameter ?: extensionReceiverParameter
+        }?.type ?: return false
+
+        return receiverParameterType.run {
+            isArray() || isAny() || isNullable() || this is IrDynamicType || isString()
         }
     }
 }
 
-fun shouldReplaceToStringWithRuntimeCall(call: IrCall): Boolean {
-    // TODO: (KOTLIN-CR-2079)
-    //  - User defined extension functions Any?.toString() call can be lost during lowering.
-    //  - Use direct method call for dynamic types???
-    //  - Define Any?.toString() in runtime library and stop intrincifying extensions
+enum class PrimitiveType {
+    FLOATING_POINT_NUMBER,
+    INTEGER_NUMBER,
+    STRING,
+    BOOLEAN,
+    OTHER
+}
 
-    if (call.valueArgumentsCount > 0)
-        return false
-
-    val receiverParameterType = with(call.symbol.owner) {
-        dispatchReceiverParameter ?: extensionReceiverParameter
-    }?.type ?: return false
-
-    return receiverParameterType.run {
-        isArray() || isAny() || isNullable() || this is IrDynamicType || isString()
+fun IrType.getPrimitiveType() = makeNotNull().run {
+    when {
+        isBoolean() -> PrimitiveType.BOOLEAN
+        isByte() || isShort() || isInt() -> PrimitiveType.INTEGER_NUMBER
+        isFloat() || isDouble() -> PrimitiveType.FLOATING_POINT_NUMBER
+        isString() -> PrimitiveType.STRING
+        else -> PrimitiveType.OTHER
     }
 }
-
-fun shouldReplaceCompareToWithRuntimeCall(call: IrCall): Boolean {
-    // TODO: Replace all compareTo to with runtime call when Comparable<*>.compareTo() bridge is implemented
-    return call.symbol.owner.dispatchReceiverParameter?.run {
-        type is IrDynamicType
-                || type.isJsNumber()
-                || type.isNullableJsNumber()
-                || type.isBoolean() || type.isNullableBoolean()
-                || type.isString() || type.isNullableString()
-    } ?: false
-}
-
-/*
- Equality translation table:
-
-|                | JsN  | JsN? | Long | Long? | Bool | Bool? | String | String? | Other | Other? |
-|----------------|------|------|------|-------|------|-------|--------|---------|-------|--------|
-| JsN            | ===  | ===  | ==   | ==    | ===  | ===   | ===    | ===     | K.eq  | K.eq   |
-| JsN?           | ===  | ==   | ==   | ==    | ===  | K.eq  | ===    | K.eq    | K.eq  | K.eq   |
-| Long           | ==   | ==   | K.eq | K.eq  | ===  | ===   | ===    | ===     | K.eq  | K.eq   |
-| Long?          | ==   | ==   | K.eq | K.eq  | ===  | K.eq  | ===    | K.eq    | K.eq  | K.eq   |
-| Bool           | ===  | ===  | ===  | ===   | ===  | ===   | ===    | ===     | K.eq  | K.eq   |
-| Bool?          | ===  | K.eq | ===  | K.eq  | ===  | ==    | ===    | K.eq    | K.eq  | K.eq   |
-| String         | ===  | ===  | ===  | ===   | ===  | ===   | ===    | ===     | K.eq  | K.eq   |
-| String?        | ===  | K.eq | ===  | K.eq  | ===  | K.eq  | ===    | ==      | K.eq  | K.eq   |
-| Other with .eq | .eq  | .eq  | .eq  | .eq   | .eq  | .eq   | .eq    | .eq     | .eq   | .eq    |
-| Other w/o .eq  | K.eq | K.eq | K.eq | K.eq  | K.eq | K.eq  | K.eq   | K.eq    | K.eq  | K.eq   |
-| Other?         | K.eq | K.eq | K.eq | K.eq  | K.eq | K.eq  | K.eq   | K.eq    | K.eq  | K.eq   |
-
-
-JsNumber -- type lowered to JS Number
-    K.eq -- runtime library call
-     .eq -- .equals(x) method call
-
- */
-
-sealed class EqualityLoweringType
-object IdentityOperator : EqualityLoweringType()
-object EqualityOperator : EqualityLoweringType()
-object RuntimeFunctionCall : EqualityLoweringType()
-object RuntimeOrMethodCall : EqualityLoweringType()
-
-fun translateEquals(lhs: IrType, rhs: IrType): EqualityLoweringType = when {
-    lhs is IrDynamicType -> EqualityOperator
-    lhs.isJsNumber() -> translateEqualsForJsNumber(rhs)
-    lhs.isNullableJsNumber() -> translateEqualsForNullableJsNumber(rhs)
-    lhs.isLong() -> translateEqualsForLong(rhs)
-    lhs.isNullableLong() -> translateEqualsForNullableLong(rhs)
-    lhs.isBoolean() -> translateEqualsForBoolean(rhs)
-    lhs.isNullableBoolean() -> translateEqualsForNullableBoolean(rhs)
-    lhs.isString() -> translateEqualsForString(rhs)
-    lhs.isNullableString() -> translateEqualsForNullableString(rhs)
-    // TODO: Fix unbound symbols (in inline)
-    lhs.toKotlinType().isNullable() -> RuntimeFunctionCall
-    else -> RuntimeOrMethodCall
-}
-
-fun translateEqualsForJsNumber(rhs: IrType): EqualityLoweringType = when {
-    rhs.isJsNumber() || rhs.isNullableJsNumber() -> IdentityOperator
-    rhs.isLong() || rhs.isNullableLong() -> EqualityOperator
-    rhs.isBoolean() || rhs.isNullableBoolean() -> IdentityOperator
-    rhs.isString() || rhs.isNullableString() -> IdentityOperator
-    else -> RuntimeFunctionCall
-}
-
-fun translateEqualsForNullableJsNumber(rhs: IrType): EqualityLoweringType = when {
-    rhs.isJsNumber() -> IdentityOperator
-    rhs.isNullableJsNumber() -> EqualityOperator
-    rhs.isLong() || rhs.isNullableLong() -> EqualityOperator
-    rhs.isBoolean() || rhs.isString() -> IdentityOperator
-    else -> RuntimeFunctionCall
-}
-
-fun translateEqualsForLong(rhs: IrType): EqualityLoweringType = when {
-    rhs.isJsNumber() || rhs.isNullableJsNumber() -> EqualityOperator
-    rhs.isLong() || rhs.isNullableLong() -> RuntimeFunctionCall
-    rhs.isBoolean() || rhs.isNullableBoolean() -> IdentityOperator
-    rhs.isString() || rhs.isNullableString() -> IdentityOperator
-    else -> RuntimeFunctionCall
-}
-
-fun translateEqualsForNullableLong(rhs: IrType): EqualityLoweringType = when {
-    rhs.isJsNumber() || rhs.isNullableJsNumber() -> EqualityOperator
-    rhs.isLong() || rhs.isNullableLong() -> RuntimeFunctionCall
-    rhs.isBoolean() -> IdentityOperator
-    rhs.isString() -> IdentityOperator
-    else -> RuntimeFunctionCall
-}
-
-fun translateEqualsForBoolean(rhs: IrType): EqualityLoweringType = when {
-    rhs.isJsNumber() || rhs.isNullableJsNumber() -> IdentityOperator
-    rhs.isLong() || rhs.isNullableLong() -> IdentityOperator
-    rhs.isBoolean() || rhs.isNullableBoolean() -> IdentityOperator
-    rhs.isString() || rhs.isNullableString() -> IdentityOperator
-    else -> RuntimeFunctionCall
-}
-
-fun translateEqualsForNullableBoolean(rhs: IrType): EqualityLoweringType = when {
-    rhs.isJsNumber() -> IdentityOperator
-    rhs.isNullableJsNumber() -> RuntimeFunctionCall
-    rhs.isLong() -> IdentityOperator
-    rhs.isNullableLong() -> RuntimeFunctionCall
-    rhs.isBoolean() -> IdentityOperator
-    rhs.isNullableBoolean() -> EqualityOperator
-    rhs.isString() -> IdentityOperator
-    else -> RuntimeFunctionCall
-}
-
-fun translateEqualsForString(rhs: IrType): EqualityLoweringType = when {
-    rhs.isJsNumber() || rhs.isNullableJsNumber() -> IdentityOperator
-    rhs.isLong() || rhs.isNullableLong() -> IdentityOperator
-    rhs.isBoolean() || rhs.isNullableBoolean() -> IdentityOperator
-    rhs.isString() || rhs.isNullableString() -> IdentityOperator
-    else -> RuntimeFunctionCall
-}
-
-fun translateEqualsForNullableString(rhs: IrType): EqualityLoweringType = when {
-    rhs.isJsNumber() -> IdentityOperator
-    rhs.isNullableJsNumber() -> RuntimeFunctionCall
-    rhs.isLong() -> IdentityOperator
-    rhs.isNullableLong() -> RuntimeFunctionCall
-    rhs.isBoolean() -> IdentityOperator
-    rhs.isNullableBoolean() -> RuntimeFunctionCall
-    rhs.isString() -> IdentityOperator
-    rhs.isNullableString() -> EqualityOperator
-    else -> RuntimeFunctionCall
-}
-
-private fun IrType.isNullableJsNumber(): Boolean = isNullablePrimitiveType() && !isNullableLong() && !isNullableChar()
-
-private fun IrType.isJsNumber(): Boolean = isPrimitiveType() && !isLong() && !isChar()
 
 private fun MemberToTransformer.op(type: IrType, name: Name, v: IrSimpleFunctionSymbol) {
     op(type, name, v = { irCall(it, v, dispatchReceiverAsFirstArgument = true) })
@@ -718,6 +642,12 @@ private fun <V> MutableMap<SimpleMemberKey, V>.op(type: IrType, name: String, v:
 }
 
 private fun SymbolToTransformer.add(from: Map<SimpleType, IrSimpleFunction>, to: IrSimpleFunction) {
+    from.forEach { _, func ->
+        add(func.symbol, to)
+    }
+}
+
+private fun SymbolToTransformer.add(from: Map<SimpleType, IrSimpleFunction>, to: (IrCall) -> IrExpression) {
     from.forEach { _, func ->
         add(func.symbol, to)
     }

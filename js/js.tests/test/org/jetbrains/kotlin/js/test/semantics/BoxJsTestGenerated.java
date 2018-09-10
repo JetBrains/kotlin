@@ -6404,6 +6404,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/number/numberConversions.kt");
         }
 
+        @TestMetadata("numberEquals.kt")
+        public void testNumberEquals() throws Exception {
+            runTest("js/js.translator/testData/box/number/numberEquals.kt");
+        }
+
         @TestMetadata("numberIncDec.kt")
         public void testNumberIncDec() throws Exception {
             runTest("js/js.translator/testData/box/number/numberIncDec.kt");
