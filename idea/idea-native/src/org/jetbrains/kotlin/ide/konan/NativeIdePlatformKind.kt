@@ -32,9 +32,6 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
         override val version get() = TargetPlatformVersion.NoVersion
         override fun createArguments(init: FakeK2NativeCompilerArguments.() -> Unit) = FakeK2NativeCompilerArguments().apply(init)
     }
-
-    override fun equals(other: Any?): Boolean = other === NativeIdePlatformKind
-    override fun hashCode(): Int = javaClass.hashCode()
 }
 
 // These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
