@@ -2570,7 +2570,7 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
-public abstract interface class kotlin/contracts/CallsInPlace : kotlin/contracts/SimpleEffect {
+public abstract interface class kotlin/contracts/CallsInPlace : kotlin/contracts/Effect {
 }
 
 public abstract interface class kotlin/contracts/ConditionalEffect : kotlin/contracts/Effect {
@@ -2608,7 +2608,7 @@ public abstract interface class kotlin/contracts/Returns : kotlin/contracts/Simp
 public abstract interface class kotlin/contracts/ReturnsNotNull : kotlin/contracts/SimpleEffect {
 }
 
-public abstract interface class kotlin/contracts/SimpleEffect {
+public abstract interface class kotlin/contracts/SimpleEffect : kotlin/contracts/Effect {
 	public abstract fun implies (Z)Lkotlin/contracts/ConditionalEffect;
 }
 

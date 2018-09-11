@@ -7,6 +7,9 @@ package kotlin.contracts
 
 import kotlin.internal.ContractsDsl
 
+/**
+ * Abstract effect, the inheritors of which are used in [ContractBuilder] to describe the contract function.
+ */
 @ContractsDsl
 @ExperimentalContracts
 @SinceKotlin("1.3")
@@ -29,7 +32,7 @@ public interface ConditionalEffect : Effect
 @ContractsDsl
 @ExperimentalContracts
 @SinceKotlin("1.3")
-public interface SimpleEffect {
+public interface SimpleEffect : Effect {
     /**
      * The function to specify an additional condition for some `SimpleEffect`.
      *
@@ -71,4 +74,4 @@ public interface ReturnsNotNull : SimpleEffect
 @ContractsDsl
 @ExperimentalContracts
 @SinceKotlin("1.3")
-public interface CallsInPlace : SimpleEffect
+public interface CallsInPlace : Effect

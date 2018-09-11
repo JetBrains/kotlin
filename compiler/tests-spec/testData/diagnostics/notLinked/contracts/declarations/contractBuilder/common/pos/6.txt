@@ -1,7 +1,0 @@
-package
-
-public fun case_1(): kotlin.Boolean
-    Returns(TRUE) -> TRUE
-
-public fun case_2(): kotlin.Boolean
-    Returns(TRUE) -> TRUE || FALSE

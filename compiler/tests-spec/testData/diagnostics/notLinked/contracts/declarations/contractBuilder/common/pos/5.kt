@@ -8,14 +8,19 @@
  SECTION: contracts
  CATEGORY: declarations, contractBuilder, common
  NUMBER: 5
- DESCRIPTION: Contract function with CallsInPlace effect with not allowed implies.
+ DESCRIPTION: contracts with not allowed conditions with boolean constants or constant expressions in implies.
  UNEXPECTED BEHAVIOUR
- ISSUES: KT-26409
+ ISSUES: KT-26491
  */
 
 import kotlin.contracts.*
 
-fun case_1(value_1: Any?, block: () -> Unit) {
-    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) implies (value_1 != null) }
-    if (value_1 != null) block()
+fun case_1(): Boolean {
+    contract { returns(true) implies true }
+    return true
+}
+
+fun case_2(): Boolean {
+    contract { returns(true) implies (true || false) }
+    return true || false
 }
