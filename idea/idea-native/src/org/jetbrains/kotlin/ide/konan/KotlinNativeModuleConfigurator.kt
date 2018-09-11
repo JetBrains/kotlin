@@ -46,7 +46,7 @@ open class KotlinNativeModuleConfigurator : KotlinWithLibraryConfigurator() {
     override fun getLibraryJarDescriptors(sdk: Sdk?) = emptyList<LibraryJarDescriptor>()
 
     override val libraryMatcher: (Library, Project) -> Boolean = { library, _ ->
-        library.getFiles(OrderRootType.CLASSES).firstOrNull { it.nameWithoutExtension == KONAN_STDLIB_NAME } != null
+        library.getFiles(OrderRootType.CLASSES).any { it.nameWithoutExtension == KONAN_STDLIB_NAME }
     }
 
     override val libraryType: LibraryType<DummyLibraryProperties>? get() = null
