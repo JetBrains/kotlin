@@ -1,0 +1,69 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Ann
+
+@kotlin.Metadata
+public final class Sealed$Derived {
+    inner class Sealed$Derived
+    private method <init>(p0: int): void
+    public synthetic @Ann method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public final class Sealed$Inner {
+    synthetic final field this$0: Sealed
+    private final field z2: int
+    inner class Sealed$Inner
+    public synthetic @Ann method <init>(@java.lang.Synthetic p0: Sealed, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: Sealed, p1: int, p2: int, p3: java.lang.String): void
+    public final method getZ2(): int
+}
+
+@kotlin.Metadata
+public abstract class Sealed {
+    private final field z: int
+    inner class Sealed$Derived
+    inner class Sealed$Inner
+    private @Ann method <init>(@Ann p0: int): void
+    public synthetic method <init>(@Ann p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getZ(): int
+}
+
+@kotlin.Metadata
+public final class Test$Inner {
+    synthetic final field this$0: Test
+    private final field z2: int
+    inner class Test$Inner
+    public synthetic @Ann method <init>(@java.lang.Synthetic p0: Test, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: Test, p1: int, p2: int, p3: java.lang.String): void
+    public final method getZ2(): int
+}
+
+@kotlin.Metadata
+public final class Test {
+    private final field z: int
+    inner class Test$Inner
+    public synthetic @Ann method <init>(@Ann p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: int): void
+    public synthetic @Ann method <init>(p0: int, @Ann p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private @Ann method <init>(p0: int, @Ann p1: java.lang.String): void
+    private method <init>(p0: int, p1: int): void
+    public final method getZ(): int
+}
+
+@kotlin.Metadata
+public final class Z {
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

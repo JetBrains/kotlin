@@ -274,6 +274,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotationsOnHiddenConstructor.kt")
+        public void testAnnotationsOnHiddenConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotationsOnHiddenConstructor.kt");
+        }
+
         @TestMetadata("companionObjectInsideInlineClass.kt")
         public void testCompanionObjectInsideInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/companionObjectInsideInlineClass.kt");
