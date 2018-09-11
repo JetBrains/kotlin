@@ -14,10 +14,7 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Property
-import org.jetbrains.plugins.gradle.model.AbstractExternalDependency
-import org.jetbrains.plugins.gradle.model.DefaultExternalProjectDependency
-import org.jetbrains.plugins.gradle.model.ExternalDependency
-import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
+import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.util.DependencyResolver
@@ -135,13 +132,14 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 dependency to artifact
             }
             .groupBy { (it.second.id.componentIdentifier as ProjectComponentIdentifier).projectPath }
-        return dependencyResolver.resolveDependencies(configuration)
+        val resolvedDependencies = dependencyResolver.resolveDependencies(configuration)
             .apply {
                 forEach<ExternalDependency?> { (it as? AbstractExternalDependency)?.scope = scope }
             }
             .map { dependency ->
                 if (dependency !is ExternalProjectDependency
-                    || dependency.configurationName != Dependency.DEFAULT_CONFIGURATION) return@map dependency
+                    || dependency.configurationName != Dependency.DEFAULT_CONFIGURATION
+                ) return@map dependency
                 val artifacts = dependenciesByProjectPath[dependency.projectPath] ?: return@map dependency
                 val artifactConfiguration = artifacts.mapTo(LinkedHashSet()) {
                     it.first.configuration
@@ -162,6 +160,17 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                     this.classifier = classifier
                 }
             }
+        val singleDependencyFiles = resolvedDependencies.mapNotNullTo(LinkedHashSet<File>()) {
+            (it as? FileCollectionDependency)?.files?.singleOrNull()
+        }
+        // Workaround for duplicated dependencies specified as a file collection (KT-26675)
+        // Drop this code when the issue is fixed in the platform
+        return resolvedDependencies.filter { dependency ->
+            if (dependency !is FileCollectionDependency) return@filter true
+            val files = dependency.files
+            if (files.size <= 1) return@filter true
+            (files.any { it !in singleDependencyFiles })
+        }
     }
 
     private fun buildTargets(
