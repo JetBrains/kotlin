@@ -40,8 +40,3 @@ object NativeIdePlatformKind : IdePlatformKind<NativeIdePlatformKind>() {
 // These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
 class FakeK2NativeCompilerArguments : CommonCompilerArguments()
 
-val IdePlatformKind<*>?.isKotlinNative
-    get() = this === NativeIdePlatformKind
-
-val IdePlatform<*, *>?.isKotlinNative
-    get() = this === NativeIdePlatformKind.Platform
