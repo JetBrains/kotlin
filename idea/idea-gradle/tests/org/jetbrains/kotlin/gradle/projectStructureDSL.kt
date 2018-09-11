@@ -33,8 +33,13 @@ class MessageCollector {
     }
 }
 
-class ProjectInfo(project: Project, private val projectPath: String) {
-    private val messageCollector = MessageCollector()
+class ProjectInfo(
+    project: Project,
+    internal val projectPath: String,
+    internal val exhaustiveModuleList: Boolean,
+    internal val exhaustiveSourceSourceRootList: Boolean
+) {
+    internal val messageCollector = MessageCollector()
     private val moduleManager = ModuleManager.getInstance(project)
     private val expectedModuleNames = HashSet<String>()
     private var allModulesAsserter: (ModuleInfo.() -> Unit)? = null
@@ -50,7 +55,7 @@ class ProjectInfo(project: Project, private val projectPath: String) {
             messageCollector.report("No module found: '$name'")
             return
         }
-        val moduleInfo = ModuleInfo(module, messageCollector, projectPath)
+        val moduleInfo = ModuleInfo(module, this)
         allModulesAsserter?.let { moduleInfo.it() }
         moduleInfo.run(body)
         expectedModuleNames += name
@@ -59,10 +64,12 @@ class ProjectInfo(project: Project, private val projectPath: String) {
     fun run(body: ProjectInfo.() -> Unit = {}) {
         body()
 
-        val actualNames = moduleManager.modules.map { it.name }.sorted()
-        val expectedNames = expectedModuleNames.sorted()
-        if (actualNames != expectedNames) {
-            messageCollector.report("Expected module list $expectedNames doesn't match the actual one: $actualNames")
+        if (exhaustiveModuleList) {
+            val actualNames = moduleManager.modules.map { it.name }.sorted()
+            val expectedNames = expectedModuleNames.sorted()
+            if (actualNames != expectedNames) {
+                messageCollector.report("Expected module list $expectedNames doesn't match the actual one: $actualNames")
+            }
         }
 
         messageCollector.check()
@@ -71,8 +78,7 @@ class ProjectInfo(project: Project, private val projectPath: String) {
 
 class ModuleInfo(
     val module: Module,
-    private val messageCollector: MessageCollector,
-    private val projectPath: String
+    val projectInfo: ProjectInfo
 ) {
     private val rootModel = module.rootManager
     private val expectedDependencyNames = HashSet<String>()
@@ -82,7 +88,7 @@ class ModuleInfo(
             .flatMap { it.sourceFolders.asSequence() }
             .mapNotNull {
                 val path = it.file?.path ?: return@mapNotNull null
-                FileUtil.getRelativePath(projectPath, path, '/')!! to it
+                FileUtil.getRelativePath(projectInfo.projectPath, path, '/')!! to it
             }
             .toMap()
     }
@@ -90,21 +96,21 @@ class ModuleInfo(
     fun languageVersion(version: String) {
         val actualVersion = module.languageVersionSettings.languageVersion.versionString
         if (actualVersion != version) {
-            messageCollector.report("Module '${module.name}': expected language version '$version' but found '$actualVersion'")
+            projectInfo.messageCollector.report("Module '${module.name}': expected language version '$version' but found '$actualVersion'")
         }
     }
 
     fun apiVersion(version: String) {
         val actualVersion = module.languageVersionSettings.apiVersion.versionString
         if (actualVersion != version) {
-            messageCollector.report("Module '${module.name}': expected API version '$version' but found '$actualVersion'")
+            projectInfo.messageCollector.report("Module '${module.name}': expected API version '$version' but found '$actualVersion'")
         }
     }
 
     fun platform(platform: IdePlatform<*, *>) {
         val actualPlatform = module.platform
         if (actualPlatform != platform) {
-            messageCollector.report(
+            projectInfo.messageCollector.report(
                 "Module '${module.name}': expected platform '${platform.description}' but found '${actualPlatform?.description}'"
             )
         }
@@ -113,7 +119,7 @@ class ModuleInfo(
     fun additionalArguments(arguments: String?) {
         val actualArguments = KotlinFacet.get(module)?.configuration?.settings?.compilerSettings?.additionalArguments
         if (actualArguments != arguments) {
-            messageCollector.report(
+            projectInfo.messageCollector.report(
                 "Module '${module.name}': expected additional arguments '$arguments' but found '$actualArguments'"
             )
         }
@@ -121,8 +127,19 @@ class ModuleInfo(
 
     fun libraryDependency(libraryName: String, scope: DependencyScope) {
         val libraryEntry = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().singleOrNull { it.libraryName == libraryName }
+        checkLibrary(libraryEntry, libraryName, scope)
+    }
+
+    fun libraryDependencyByUrl(classesUrl: String, scope: DependencyScope) {
+        val libraryEntry = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().singleOrNull { entry ->
+            entry.library?.getUrls(OrderRootType.CLASSES)?.any { it == classesUrl } ?: false
+        }
+        checkLibrary(libraryEntry, classesUrl, scope)
+    }
+
+    private fun checkLibrary(libraryEntry: LibraryOrderEntry?, id: String, scope: DependencyScope) {
         if (libraryEntry == null) {
-            messageCollector.report("Module '${module.name}': No library dependency found: '$libraryName'")
+            projectInfo.messageCollector.report("Module '${module.name}': No library dependency found: '$id'")
             return
         }
         checkDependencyScope(libraryEntry, scope)
@@ -132,7 +149,7 @@ class ModuleInfo(
     fun moduleDependency(moduleName: String, scope: DependencyScope) {
         val moduleEntry = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().singleOrNull { it.moduleName == moduleName }
         if (moduleEntry == null) {
-            messageCollector.report("Module '${module.name}': No module dependency found: '$moduleName'")
+            projectInfo.messageCollector.report("Module '${module.name}': No module dependency found: '$moduleName'")
             return
         }
         checkDependencyScope(moduleEntry, scope)
@@ -142,13 +159,13 @@ class ModuleInfo(
     fun sourceFolder(pathInProject: String, rootType: JpsModuleSourceRootType<*>) {
         val sourceFolder = sourceFolderByPath[pathInProject]
         if (sourceFolder == null) {
-            messageCollector.report("Module '${module.name}': No source folder found: '$pathInProject'")
+            projectInfo.messageCollector.report("Module '${module.name}': No source folder found: '$pathInProject'")
             return
         }
         expectedSourceRoots += pathInProject
         val actualRootType = sourceFolder.rootType
         if (actualRootType != rootType) {
-            messageCollector.report(
+            projectInfo.messageCollector.report(
                 "Module '${module.name}', source root '$pathInProject': Expected root type $rootType doesn't match the actual one: $actualRootType"
             )
             return
@@ -158,7 +175,7 @@ class ModuleInfo(
     fun inheritProjectOutput() {
         val isInherited = CompilerModuleExtension.getInstance(module)?.isCompilerOutputPathInherited ?: true
         if (!isInherited) {
-            messageCollector.report("Module '${module.name}': project output is not inherited")
+            projectInfo.messageCollector.report("Module '${module.name}': project output is not inherited")
         }
     }
 
@@ -167,7 +184,7 @@ class ModuleInfo(
         val url = if (isProduction) compilerModuleExtension?.compilerOutputUrl else compilerModuleExtension?.compilerOutputUrlForTests
         val actualPathInProject = url?.let {
             FileUtil.getRelativePath(
-                projectPath,
+                projectInfo.projectPath,
                 JpsPathUtil.urlToPath(
                     it
                 ),
@@ -175,7 +192,7 @@ class ModuleInfo(
             )
         }
         if (actualPathInProject != pathInProject) {
-            messageCollector.report(
+            projectInfo.messageCollector.report(
                 "Module '${module.name}': Expected output path $pathInProject doesn't match the actual one: $actualPathInProject"
             )
             return
@@ -192,24 +209,38 @@ class ModuleInfo(
             .sorted()
         val expectedDependencyNames = expectedDependencyNames.sorted()
         if (actualDependencyNames != expectedDependencyNames) {
-            messageCollector.report("Module '${module.name}': Expected dependency list $expectedDependencyNames doesn't match the actual one: $actualDependencyNames")
+            projectInfo.messageCollector.report(
+                "Module '${module.name}': Expected dependency list $expectedDependencyNames doesn't match the actual one: $actualDependencyNames"
+            )
         }
 
-        val actualSourceRoots = sourceFolderByPath.keys.sorted()
-        val expectedSourceRoots = expectedSourceRoots.sorted()
-        if (actualSourceRoots != expectedSourceRoots) {
-            messageCollector.report("Module '${module.name}': Expected source root list $expectedSourceRoots doesn't match the actual one: $actualSourceRoots")
+        if (projectInfo.exhaustiveSourceSourceRootList) {
+            val actualSourceRoots = sourceFolderByPath.keys.sorted()
+            val expectedSourceRoots = expectedSourceRoots.sorted()
+            if (actualSourceRoots != expectedSourceRoots) {
+                projectInfo.messageCollector.report(
+                    "Module '${module.name}': Expected source root list $expectedSourceRoots doesn't match the actual one: $actualSourceRoots"
+                )
+            }
         }
     }
 
     private fun checkDependencyScope(library: ExportableOrderEntry, scope: DependencyScope) {
         val actualScope = library.scope
         if (actualScope != scope) {
-            messageCollector.report("Module '${module.name}': Dependency '${library.presentableName}': expected scope '$scope' but found '$actualScope'")
+            projectInfo.messageCollector.report(
+                "Module '${module.name}': Dependency '${library.presentableName}': expected scope '$scope' but found '$actualScope'"
+            )
         }
     }
 }
 
-fun checkProjectStructure(project: Project, projectPath: String, body: ProjectInfo.() -> Unit = {}) {
-    ProjectInfo(project, projectPath).run(body)
+fun checkProjectStructure(
+    project: Project,
+    projectPath: String,
+    exhaustiveModuleList: Boolean,
+    exhaustiveSourceSourceRootList: Boolean,
+    body: ProjectInfo.() -> Unit = {}
+) {
+    ProjectInfo(project, projectPath, exhaustiveModuleList, exhaustiveSourceSourceRootList).run(body)
 }

@@ -311,8 +311,68 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
         }
     }
 
-    private fun checkProjectStructure(body: ProjectInfo.() -> Unit = {}) {
-        checkProjectStructure(myProject, projectPath, body)
+    @Test
+    fun testFileCollectionDependency() {
+        createProjectSubFile(
+            "build.gradle",
+            """
+                buildscript {
+                    repositories {
+                        mavenLocal()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                    dependencies {
+                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+                    }
+                }
+
+                allprojects {
+                    repositories {
+                        mavenLocal()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                }
+
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    sourceSets {
+                        jvmMain {
+                            dependencies {
+                                implementation files("a", "b")
+                            }
+                        }
+                    }
+                    targets {
+                        fromPreset(presets.jvmWithJava, 'jvm')
+                    }
+                }
+            """.trimIndent()
+        )
+
+        importProject()
+
+        checkProjectStructure(
+            exhaustiveModuleList = false,
+            exhaustiveSourceSourceRootList = false
+        ) {
+            module("project_jvmMain") {
+                libraryDependencyByUrl("file://$projectPath/a", DependencyScope.COMPILE)
+                libraryDependencyByUrl("file://$projectPath/b", DependencyScope.COMPILE)
+                moduleDependency("project_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project_main", DependencyScope.COMPILE)
+            }
+        }
+    }
+
+    private fun checkProjectStructure(
+        exhaustiveModuleList: Boolean = true,
+        exhaustiveSourceSourceRootList: Boolean = true,
+        body: ProjectInfo.() -> Unit = {}
+    ) {
+        checkProjectStructure(myProject, projectPath, exhaustiveModuleList, exhaustiveSourceSourceRootList, body)
     }
 
     override fun importProject() {
