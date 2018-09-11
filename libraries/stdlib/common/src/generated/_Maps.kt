@@ -92,6 +92,16 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(des
 }
 
 /**
+ * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+@kotlin.internal.HidesMembers
+public inline fun <K, V> Map<out K, V>.withEach(operation: Map.Entry<K, V>.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
  * Returns `true` if all entries match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.all
