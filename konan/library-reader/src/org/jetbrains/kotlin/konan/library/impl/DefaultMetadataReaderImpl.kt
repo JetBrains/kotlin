@@ -18,7 +18,10 @@ object DefaultMetadataReaderImpl : MetadataReader {
 
     override fun loadSerializedPackageFragment(
         libraryLayout: KonanLibraryLayout,
-        packageFqName: String
+        packageFqName: String,
+        partIndex: Int
     ): KonanProtoBuf.LinkDataPackageFragment =
-        parsePackageFragment(libraryLayout.packageFragmentFile(packageFqName).readBytes())
+        parsePackageFragment(
+            libraryLayout.packageFragmentFile(packageFqName, partIndex).readBytes()
+        )
 }

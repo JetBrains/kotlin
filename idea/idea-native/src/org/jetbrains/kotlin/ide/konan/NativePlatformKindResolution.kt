@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
@@ -29,8 +32,11 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
         return if (virtualFile.isDirectory) {
-            virtualFile.findChild("linkdata")?.takeIf { it.isDirectory }
-                ?.children?.any { it.extension == KLIB_METADATA_FILE_EXTENSION } == true
+            val dir = virtualFile.findChild("linkdata") ?: return false
+            // False means we hit .knm file
+            !VfsUtil.processFilesRecursively(dir) {
+                it.extension != KLIB_METADATA_FILE_EXTENSION
+            }
         } else {
             virtualFile.extension == KLIB_FILE_EXTENSION
         }

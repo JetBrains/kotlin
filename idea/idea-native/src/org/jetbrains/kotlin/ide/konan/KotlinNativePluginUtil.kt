@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultPackageFragmentsFactory
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.library.KonanLibrarySource.KonanLibraryDir
 import org.jetbrains.kotlin.konan.library.KonanLibrarySource.KonanLibraryFile
 import org.jetbrains.kotlin.konan.library.MetadataReader
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
-import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultPackageFragmentsFactory
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
@@ -104,9 +104,10 @@ internal object CachingIdeMetadataReaderImpl : MetadataReader {
 
     override fun loadSerializedPackageFragment(
         libraryLayout: KonanLibraryLayout,
-        packageFqName: String
+        packageFqName: String,
+        partIndex: Int
     ): KonanProtoBuf.LinkDataPackageFragment =
-        cache.getCachedPackageFragment(libraryLayout.getVirtualFile(libraryLayout.packageFragmentFile(packageFqName)))
+        cache.getCachedPackageFragment(libraryLayout.getVirtualFile(libraryLayout.packageFragmentFile(packageFqName, partIndex)))
 
     private fun KonanLibraryLayout.getVirtualFile(file: File): VirtualFile {
         val source = this.source
