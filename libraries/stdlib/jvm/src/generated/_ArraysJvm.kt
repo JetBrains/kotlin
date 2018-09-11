@@ -295,9 +295,13 @@ public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: In
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @SinceKotlin("1.1")
+@JvmName("contentDeepEqualsInline")
 @kotlin.internal.InlineOnly
 public actual inline infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
-    return java.util.Arrays.deepEquals(this, other)
+    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+        return contentDeepEqualsImpl(other)
+    else
+        return java.util.Arrays.deepEquals(this, other)
 }
 
 /**
@@ -307,9 +311,13 @@ public actual inline infix fun <T> Array<out T>.contentDeepEquals(other: Array<o
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @SinceKotlin("1.1")
+@JvmName("contentDeepHashCodeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>.contentDeepHashCode(): Int {
-    return java.util.Arrays.deepHashCode(this)
+    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+        return contentDeepHashCodeImpl()
+    else
+        return java.util.Arrays.deepHashCode(this)
 }
 
 /**
@@ -322,9 +330,13 @@ public actual inline fun <T> Array<out T>.contentDeepHashCode(): Int {
  * @sample samples.collections.Arrays.ContentOperations.contentDeepToString
  */
 @SinceKotlin("1.1")
+@JvmName("contentDeepToStringInline")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>.contentDeepToString(): String {
-    return java.util.Arrays.deepToString(this)
+    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+        return contentDeepToStringImpl()
+    else
+        return java.util.Arrays.deepToString(this)
 }
 
 /**
