@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.openapi.diagnostic.Attachment
-import com.intellij.patterns.uast.capture
 import com.sun.jdi.ClassType
 import com.sun.jdi.InvalidStackFrameException
 import com.sun.jdi.ObjectReference
