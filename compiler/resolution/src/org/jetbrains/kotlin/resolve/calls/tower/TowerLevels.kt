@@ -72,7 +72,7 @@ internal abstract class AbstractScopeTowerLevel(
                 )?.let { diagnostics.add(VisibilityError(it)) }
             }
         }
-        return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)
+        return CandidateWithBoundDispatchReceiver(dispatchReceiver, descriptor, diagnostics)
     }
 
 }
