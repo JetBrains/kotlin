@@ -1422,4 +1422,10 @@ ${"    "}
         assertEquals("  ABC\n   \n  123", "ABC\n   \n123".prependIndent("  "))
         assertEquals("  ", "".prependIndent("  "))
     }
+
+    @Test fun withEachCharSequence() {
+        "Kotlin".withEach {
+          assertEquals(true, isLetter())
+        }
+    }
 }

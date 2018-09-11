@@ -490,13 +490,9 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
 
     @Test
     fun withEach() {
-        val substringList = mutableListOf<String>()
         data.withEach {
-          substringList.add(substring(0, 1))
+          assertEquals(first().toString(), substring(0, 1))
         }
-        assertEquals(2, substringList.size)
-        assertEquals("f", substringList[0])
-        assertEquals("b", substringList[1])
     }
 
 }
