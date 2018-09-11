@@ -46,7 +46,7 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
  * object immutability.
  * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
  */
-@Target(AnnotationTarget.FIELD, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 public annotation class ThreadLocal
 
@@ -54,7 +54,7 @@ public annotation class ThreadLocal
  * Top level variable is immutable and so could be shared.
  * PLEASE NOTE THAT THIS ANNOTATION MAY GO AWAY IN UPCOMING RELEASES.
  */
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 public annotation class SharedImmutable
 

@@ -171,10 +171,8 @@ class KonanDescriptorSerializer private constructor(
         val compileTimeConstant = descriptor.compileTimeInitializer
         val hasConstant = compileTimeConstant != null && compileTimeConstant !is NullValue
 
-        val hasAnnotations = descriptor.annotations.getAllAnnotations().isNotEmpty()
-
         val propertyFlags = Flags.getAccessorFlags(
-            hasAnnotations,
+            hasAnnotations(descriptor),
             ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
             false, false, false
@@ -206,7 +204,7 @@ class KonanDescriptorSerializer private constructor(
         }
 
         val flags = Flags.getPropertyFlags(
-            hasAnnotations,
+            hasAnnotations(descriptor),
             ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),

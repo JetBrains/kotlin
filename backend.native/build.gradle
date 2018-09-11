@@ -150,9 +150,6 @@ def commonSrc = file('build/stdlib')
 
 task unzipStdlibSources(type: Copy) {
     from (zipTree(configurations.kotlin_common_stdlib_src.singleFile)) {
-        exclude 'generated/_Sequences.kt'
-        exclude 'kotlin/collections/Sequences.kt'
-        exclude 'kotlin/collections/SlidingWindow.kt'
         include 'generated/**/*.kt'
         include 'kotlin/**/*.kt'
     }
@@ -185,6 +182,7 @@ targetList.each { target ->
                 '-produce', 'library', '-module-name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
                 '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
                 '-Xuse-experimental=kotlin.contracts.ExperimentalContracts',
+                '-Xuse-experimental=kotlin.ExperimentalMultiplatform',
                 commonSrc.absolutePath,
                 project(':Interop:Runtime').file('src/main/kotlin'),
                 project(':Interop:Runtime').file('src/native/kotlin'),

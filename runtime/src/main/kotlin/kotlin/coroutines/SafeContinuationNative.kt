@@ -24,7 +24,7 @@ internal actual constructor(
 
     private var result: Any? = initialResult
 
-    public actual override fun resumeWith(result: SuccessOrFailure<T>) {
+    public actual override fun resumeWith(result: Result<T>) {
         val cur = this.result
         when {
             cur === UNDECIDED -> this.result = result.value
@@ -45,7 +45,7 @@ internal actual constructor(
         }
         return when {
             result === RESUMED -> COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
-            result is SuccessOrFailure.Failure -> throw result.exception
+            result is Result.Failure -> throw result.exception
             else -> result // either COROUTINE_SUSPENDED or data
         }
     }

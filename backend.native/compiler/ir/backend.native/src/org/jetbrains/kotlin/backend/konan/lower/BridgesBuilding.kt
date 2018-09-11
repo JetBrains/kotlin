@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -66,22 +67,35 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                 val jobDescriptor = job.descriptor
                 val arg = jobDescriptor.valueParameters[0]
                 if (!::runtimeJobFunction.isInitialized) {
-                    val runtimeJobDescriptor = jobDescriptor.newCopyBuilder()
-                            .setReturnType(nullableAnyType)
-                            .setValueParameters(listOf(ValueParameterDescriptorImpl(
-                                    containingDeclaration = jobDescriptor,
-                                    original              = null,
-                                    index                 = 0,
-                                    annotations           = Annotations.EMPTY,
-                                    name                  = arg.name,
-                                    outType               = nullableAnyType,
-                                    declaresDefaultValue  = arg.declaresDefaultValue(),
-                                    isCrossinline         = arg.isCrossinline,
-                                    isNoinline            = arg.isNoinline,
-                                    varargElementType     = arg.varargElementType,
-                                    source                = arg.source
-                            )))
-                            .build()!!
+                    val runtimeJobDescriptor = SimpleFunctionDescriptorImpl.create(
+                            jobDescriptor.containingDeclaration,
+                            jobDescriptor.annotations,
+                            jobDescriptor.name,
+                            jobDescriptor.kind,
+                            jobDescriptor.source
+                    ).apply {
+                        initialize(
+                                null,
+                                null,
+                                emptyList(),
+                                listOf(ValueParameterDescriptorImpl(
+                                        containingDeclaration = this,
+                                        original              = null,
+                                        index                 = 0,
+                                        annotations           = Annotations.EMPTY,
+                                        name                  = arg.name,
+                                        outType               = nullableAnyType,
+                                        declaresDefaultValue  = arg.declaresDefaultValue(),
+                                        isCrossinline         = arg.isCrossinline,
+                                        isNoinline            = arg.isNoinline,
+                                        varargElementType     = arg.varargElementType,
+                                        source                = arg.source
+                                )),
+                                nullableAnyType,
+                                jobDescriptor.modality,
+                                jobDescriptor.visibility
+                        )
+                    }
 
                     runtimeJobFunction = IrFunctionImpl(
                             jobFunction.startOffset,

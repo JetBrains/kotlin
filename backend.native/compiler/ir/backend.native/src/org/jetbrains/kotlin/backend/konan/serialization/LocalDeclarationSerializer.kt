@@ -107,7 +107,7 @@ internal class LocalDeclarationSerializer(val context: Context, val rootFunction
                 false, false, false, false, false, 
                 isDelegated)
 
-        property.setType(variable.type, listOf(), null, null as KotlinType?)
+        property.setType(variable.type, listOf(), null, null)
 
         // TODO: transform the getter and the setter too.
         property.initialize(null, null)

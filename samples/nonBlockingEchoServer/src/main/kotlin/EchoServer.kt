@@ -116,7 +116,7 @@ class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
-    override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
+    override fun resumeWith(result: Result<Any?>) { result.getOrThrow() }
 }
 
 fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {

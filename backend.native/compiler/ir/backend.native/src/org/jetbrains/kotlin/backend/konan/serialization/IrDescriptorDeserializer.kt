@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanIrDeserializationException
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
+import org.jetbrains.kotlin.backend.konan.descriptors.createExtensionReceiver
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.descriptors.*
@@ -182,7 +183,8 @@ internal class IrDescriptorDeserializer(val context: Context,
             setOriginal(originalDescriptor)
             setReturnType(deserializeKotlinType(proto.type))
             if (proto.hasExtensionReceiverType()) {
-                setExtensionReceiverType(deserializeKotlinType(proto.extensionReceiverType))
+                val extensionReceiverType = deserializeKotlinType(proto.extensionReceiverType)
+                setExtensionReceiverParameter(extensionReceiverType.createExtensionReceiver(originalDescriptor))
             }
         }.build()!!
 
@@ -197,9 +199,7 @@ internal class IrDescriptorDeserializer(val context: Context,
         val newDescriptor = originalDescriptor.newCopyBuilder().apply() {
             setOriginal(originalDescriptor)
             setReturnType(deserializeKotlinType(proto.type))
-            if (proto.hasExtensionReceiverType()) {
-                setExtensionReceiverType(deserializeKotlinType(proto.extensionReceiverType))
-            }
+            assert(!proto.hasExtensionReceiverType())
         }.build()!!
 
         descriptorIndex.put(proto.index, newDescriptor)

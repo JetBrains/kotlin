@@ -1200,26 +1200,22 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                 }
     }
 
-    private fun IrBuilderWithScope.irGetOrThrow(successOrFailure: IrExpression): IrExpression {
-        // TODO: consider inlining getOrThrow function body here.
-        val successOrFailureClass = symbols.successOrFailure.owner
-        val getOrThrow = successOrFailureClass.simpleFunctions().single { it.name.asString() == "getOrThrow" }
-        return irCall(getOrThrow).apply {
-            dispatchReceiver = successOrFailure
-        }
-    }
+    private fun IrBuilderWithScope.irGetOrThrow(result: IrExpression): IrExpression =
+            irCall(symbols.kotlinResultGetOrThrow.owner).apply {
+                extensionReceiver = result
+            } // TODO: consider inlining getOrThrow function body here.
 
-    private fun IrBuilderWithScope.irExceptionOrNull(successOrFailure: IrExpression): IrExpression {
-        val successOrFailureClass = symbols.successOrFailure.owner
-        val exceptionOrNull = successOrFailureClass.simpleFunctions().single { it.name.asString() == "exceptionOrNull" }
+    private fun IrBuilderWithScope.irExceptionOrNull(result: IrExpression): IrExpression {
+        val resultClass = symbols.kotlinResult.owner
+        val exceptionOrNull = resultClass.simpleFunctions().single { it.name.asString() == "exceptionOrNull" }
         return irCall(exceptionOrNull).apply {
-            dispatchReceiver = successOrFailure
+            dispatchReceiver = result
         }
     }
 
     fun IrBlockBodyBuilder.irSuccess(value: IrExpression): IrCall {
-        val createSuccessOrFailure = symbols.successOrFailure.owner.constructors.single { it.isPrimary }
-        return irCall(createSuccessOrFailure).apply {
+        val createResult = symbols.kotlinResult.owner.constructors.single { it.isPrimary }
+        return irCall(createResult).apply {
             putValueArgument(0, value)
         }
     }

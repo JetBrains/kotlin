@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
-val DeserializedPropertyDescriptor.backingField: PropertyDescriptor?
+val DeserializedPropertyDescriptor.konanBackingField: PropertyDescriptor?
     get() = 
         if (this.proto.getExtension(KonanProtoBuf.hasBackingField))
             this 

@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -27,25 +26,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.types.TypeUtils
 
 internal class LateinitLowering(
-        val context: CommonBackendContext,
+        val context: Context,
         private val generateParameterNameInAssertion: Boolean = false
 ) : FileLoweringPass {
 
-    private val KOTLIN_FQ_NAME                  = FqName("kotlin")
-    private val kotlinPackageScope              = context.ir.irModule.descriptor.getPackage(KOTLIN_FQ_NAME).memberScope
-    private val isInitializedPropertyDescriptor = kotlinPackageScope
-            .getContributedVariables(Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND).single {
-                it.extensionReceiverParameter.let {
-                    it != null && TypeUtils.getClassDescriptor(it.type) == context.reflectionTypes.kProperty0
-                } && !it.isExpect
-            }
-    private val isInitializedGetterDescriptor   = isInitializedPropertyDescriptor.getter!!
+    private val isInitializedGetterDescriptor = context.ir.symbols.isInitializedGetterDescriptor
 
     override fun lower(irFile: IrFile) {
         val lateinitPropertyToField = mutableMapOf<PropertyDescriptor, IrField>()

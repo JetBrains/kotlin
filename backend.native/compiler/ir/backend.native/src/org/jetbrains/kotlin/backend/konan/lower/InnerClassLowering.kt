@@ -57,7 +57,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
-            if (irConstructor.callsSuper()) {
+            if (irConstructor.callsSuper(context.irBuiltIns)) {
                 // Initializing constructor: initialize 'this.this$0' with '$outer'.
                 val blockBody = irConstructor.body as? IrBlockBody
                         ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")

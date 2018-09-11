@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.createExtensionReceiver
+import org.jetbrains.kotlin.backend.konan.descriptors.initialize
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -366,7 +368,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                         /* outType                   = */ substituteType(oldDescriptor.type)!!,
                         /* typeParameters            = */ oldDescriptor.typeParameters,
                         /* dispatchReceiverParameter = */ (containingDeclaration as ClassDescriptor).thisAsReceiverParameter,
-                        /* receiverType              = */ substituteType(oldDescriptor.extensionReceiverParameter?.type))
+                        /* extensionReceiverParamter = */ substituteType(oldDescriptor.extensionReceiverParameter?.type).createExtensionReceiver(this))
 
                 initialize(
                         /* getter = */ oldDescriptor.getter?.let { copyPropertyGetterDescriptor(it, this) },

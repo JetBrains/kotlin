@@ -58,10 +58,10 @@ fun test(s: S, x1: Long, x2: B2, x3: UShort, x4: UInt, x5: Int, x6: Long) {
 
     // Also check with some insignificant bits modified:
 
-    assign(s, x1 + 2, x2, (x3 + 8).toUShort(), x4 - 16, x5 + 32, x6 + Long.MIN_VALUE)
+    assign(s, x1 + 2, x2, (x3 + 8u).toUShort(), x4 - 16u, x5 + 32, x6 + Long.MIN_VALUE)
     check(s, x1, x2, x3, x4, x5, x6)
 
-    assignReversed(s, x1 + 2, x2, (x3 + 8).toUShort(), x4 - 16, x5 + 32, x6 + Long.MIN_VALUE)
+    assignReversed(s, x1 + 2, x2, (x3 + 8u).toUShort(), x4 - 16u, x5 + 32, x6 + Long.MIN_VALUE)
     check(s, x1, x2, x3, x4, x5, x6)
 }
 
@@ -71,7 +71,7 @@ fun main(args: Array<String>) {
         for (x1 in -1L..0L)
             for (x2 in B2.values())
                 for (x3 in 0..7)
-                    for (x4 in uintArrayOf(0, 6, 15))
+                    for (x4 in uintArrayOf(0u, 6u, 15u))
                         for (x5 in intArrayOf(-16, -2, -1, 0, 5, 15))
                             for (x6 in longArrayOf(Long.MIN_VALUE/2, -1L shl 36, -325L, 0, 1L shl 48, Long.MAX_VALUE/2))
                                 test(s, x1, x2, x3.toUShort(), x4, x5, x6)

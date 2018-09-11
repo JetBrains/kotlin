@@ -107,13 +107,16 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
 
     private fun createEnumValuesField(enumClassDescriptor: ClassDescriptor, implObjectDescriptor: ClassDescriptor): PropertyDescriptor {
         val valuesArrayType = context.builtIns.getArrayType(Variance.INVARIANT, enumClassDescriptor.defaultType)
-        val receiver = ReceiverParameterDescriptorImpl(implObjectDescriptor, ImplicitClassReceiver(implObjectDescriptor))
+        val receiver = ReceiverParameterDescriptorImpl(
+                implObjectDescriptor,
+                ImplicitClassReceiver(implObjectDescriptor, null),
+                Annotations.EMPTY
+        )
         return PropertyDescriptorImpl.create(implObjectDescriptor, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC,
                 false, "VALUES".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE,
                 false, false, false, false, false, false).apply {
 
-            val receiverType: KotlinType? = null
-            this.setType(valuesArrayType, emptyList(), receiver, receiverType)
+            this.setType(valuesArrayType, emptyList(), receiver, null)
             this.initialize(null, null)
         }
     }

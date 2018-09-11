@@ -148,7 +148,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
         object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
             private var label = 0
 
-            override fun invokeSuspend(result: SuccessOrFailure<Any?>): Any? =
+            override fun invokeSuspend(result: Result<Any?>): Any? =
                     when (label) {
                         0 -> {
                             label = 1
@@ -166,7 +166,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
         object : ContinuationImpl(completion as Continuation<Any?>, context) {
             private var label = 0
 
-            override fun invokeSuspend(result: SuccessOrFailure<Any?>): Any? =
+            override fun invokeSuspend(result: Result<Any?>): Any? =
                     when (label) {
                         0 -> {
                             label = 1
@@ -181,3 +181,11 @@ private inline fun <T> createCoroutineFromSuspendFunction(
                     }
         }
 }
+
+/**
+ * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
+ * the execution was suspended and will not return any result immediately.
+ */
+@SinceKotlin("1.3")
+public actual val COROUTINE_SUSPENDED: Any
+    get() = CoroutineSingletons.COROUTINE_SUSPENDED

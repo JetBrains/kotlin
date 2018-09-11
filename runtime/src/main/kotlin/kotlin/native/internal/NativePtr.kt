@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
+
 package kotlin.native.internal
 
 @Intrinsic external fun getNativeNullPtr(): NativePtr

@@ -288,8 +288,8 @@ private class IrUnboundSymbolReplacer(
         expression.replaceTypeArguments()
 
         val field = expression.field?.replaceOrSame(ReferenceSymbolTable::referenceField)
-        val getter = expression.getter?.replace(ReferenceSymbolTable::referenceFunction) ?: expression.getter
-        val setter = expression.setter?.replace(ReferenceSymbolTable::referenceFunction) ?: expression.setter
+        val getter = expression.getter?.replace(ReferenceSymbolTable::referenceSimpleFunction) ?: expression.getter
+        val setter = expression.setter?.replace(ReferenceSymbolTable::referenceSimpleFunction) ?: expression.setter
 
         if (field == expression.field && getter == expression.getter && setter == expression.setter) {
             return super.visitPropertyReference(expression)
@@ -311,8 +311,8 @@ private class IrUnboundSymbolReplacer(
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
         val delegate = expression.delegate.replaceOrSame(ReferenceSymbolTable::referenceVariable)
-        val getter = expression.getter.replace(ReferenceSymbolTable::referenceFunction) ?: expression.getter
-        val setter = expression.setter?.replace(ReferenceSymbolTable::referenceFunction) ?: expression.setter
+        val getter = expression.getter.replace(ReferenceSymbolTable::referenceSimpleFunction) ?: expression.getter
+        val setter = expression.setter?.replace(ReferenceSymbolTable::referenceSimpleFunction) ?: expression.setter
 
         if (delegate == expression.delegate && getter == expression.getter && setter == expression.setter) {
             return super.visitLocalDelegatedPropertyReference(expression)

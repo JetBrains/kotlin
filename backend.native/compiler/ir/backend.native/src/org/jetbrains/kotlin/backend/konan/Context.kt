@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.ReflectionTypes
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.common.descriptors.DescriptorsFactory
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
@@ -71,14 +70,17 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             val outerClass = innerClass.parent as? IrClass
                     ?: throw AssertionError("No containing class for inner class ${innerClass.descriptor}")
 
-            val receiver = ReceiverParameterDescriptorImpl(innerClass.descriptor, ImplicitClassReceiver(innerClass.descriptor))
+            val receiver = ReceiverParameterDescriptorImpl(
+                    innerClass.descriptor,
+                    ImplicitClassReceiver(innerClass.descriptor, null),
+                    Annotations.EMPTY
+            )
             val descriptor = PropertyDescriptorImpl.create(
                     innerClass.descriptor, Annotations.EMPTY, Modality.FINAL,
                     Visibilities.PRIVATE, false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED,
                     SourceElement.NO_SOURCE, false, false, false, false, false, false
             ).apply {
-                val receiverType: KotlinType? = null
-                this.setType(outerClass.descriptor.defaultType, emptyList(), receiver, receiverType)
+                this.setType(outerClass.descriptor.defaultType, emptyList(), receiver, null)
                 initialize(null, null)
             }
 
@@ -261,7 +263,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
-    override val descriptorsFactory: DescriptorsFactory
+    override val declarationFactory
         get() = TODO("not implemented")
 
     override fun getClass(fqName: FqName): ClassDescriptor {

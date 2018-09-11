@@ -748,11 +748,14 @@ class StubGenerator(
 
             narrowedValue.toString()
         } else {
-            val narrowedValue: Any = when (size) {
-                1 -> value.toUByte()
-                2 -> value.toUShort()
-                4 -> value.toUInt()
-                8 -> value.toULong()
+            // Note: stub generator is built and run with different ABI versions,
+            // so Kotlin unsigned types can't be used here currently.
+
+            val narrowedValue: String = when (size) {
+                1 -> (value and 0xFF).toString()
+                2 -> (value and 0xFFFF).toString()
+                4 -> (value and 0xFFFFFFFF).toString()
+                8 -> java.lang.Long.toUnsignedString(value)
                 else -> return null
             }
 

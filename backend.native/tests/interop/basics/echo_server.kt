@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
         with(serverAddr) {
             memset(this.ptr, 0, sockaddr_in.size.convert())
             sin_family = AF_INET.convert()
-            sin_addr.s_addr = htons(0).convert()
+            sin_addr.s_addr = htons(0u).convert()
             sin_port = htons(port)
         }
 

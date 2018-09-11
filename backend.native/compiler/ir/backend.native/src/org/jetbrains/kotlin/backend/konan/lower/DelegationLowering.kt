@@ -12,12 +12,11 @@ import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.backend.konan.getInlinedClass
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -314,13 +313,12 @@ internal class PropertyDelegationLowering(val context: KonanBackendContext) : Fi
 
     private fun createKPropertiesFieldDescriptor(containingDeclaration: DeclarationDescriptor, fieldType: KotlinType): PropertyDescriptorImpl {
         return PropertyDescriptorImpl.create(containingDeclaration,
-                AnnotationsImpl(listOf(AnnotationDescriptorImpl(context.ir.symbols.sharedImmutable.defaultType,
+                Annotations.create(listOf(AnnotationDescriptorImpl(context.ir.symbols.sharedImmutable.defaultType,
                         emptyMap(), SourceElement.NO_SOURCE))), Modality.FINAL, Visibilities.PRIVATE,
                 false, "KPROPERTIES".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE,
                 false, false, false, false, false, false).apply {
 
-            val receiverType: KotlinType? = null
-            this.setType(fieldType, emptyList(), null, receiverType)
+            this.setType(fieldType, emptyList(), null, null)
             this.initialize(null, null)
         }
     }

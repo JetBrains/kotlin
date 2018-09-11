@@ -154,15 +154,15 @@ abstract class KonanTest extends JavaExec {
 
         def emptyContinuationBody =
             """
-                |override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
+                |override fun resumeWith(result: Result<Any?>) { result.getOrThrow() }
             """.stripMargin()
 
         def handleResultContinuationBody = """
-                |override fun resumeWith(result: SuccessOrFailure<T>) { x(result.getOrThrow()) }
+                |override fun resumeWith(result: Result<T>) { x(result.getOrThrow()) }
             """.stripMargin()
 
         def handleExceptionContinuationBody = """
-                |override fun resumeWith(result: SuccessOrFailure<Any?>) {
+                |override fun resumeWith(result: Result<Any?>) {
                 |    val exception = result.exceptionOrNull() ?: return
                 |    x(exception)
                 |}
@@ -190,7 +190,7 @@ abstract class KonanTest extends JavaExec {
             |
             |abstract class ContinuationAdapter<in T> : Continuation<T> {
             |    override val context: CoroutineContext = EmptyCoroutineContext
-            |    override fun resumeWith(result: SuccessOrFailure<T>) {
+            |    override fun resumeWith(result: Result<T>) {
             |       if (result.isSuccess) {
             |           resume(result.getOrThrow())
             |       } else {

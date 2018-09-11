@@ -65,7 +65,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoidW
 
         val irCall = super.visitCall(expression) as IrCall
         val functionDescriptor = irCall.descriptor
-        if (!functionDescriptor.needsInlining) return irCall                                // This call does not need inlining.
+        if (!functionDescriptor.needsInlining || functionDescriptor == context.ir.symbols.isInitializedGetterDescriptor) {
+            return irCall // This call does not need inlining.
+        }
 
         val functionDeclaration = getFunctionDeclaration(functionDescriptor)     // Get declaration of the function to be inlined.
         if (functionDeclaration == null) {                                                  // We failed to get the declaration.

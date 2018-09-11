@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
@@ -425,7 +424,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                 SourceElement.NO_SOURCE
         )
 
-        return AnnotationsImpl(listOf(annotation))
+        return Annotations.create(listOf(annotation))
     }
 
     private fun checkKotlinObjCClass(irClass: IrClass) {

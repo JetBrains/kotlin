@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.irasdescriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.konan.descriptors.backingField
+import org.jetbrains.kotlin.backend.konan.descriptors.konanBackingField
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -85,7 +85,7 @@ val IrProperty.konanBackingField: IrField?
         assert(this.isReal)
         this.backingField?.let { return it }
 
-        (this.descriptor as? DeserializedPropertyDescriptor)?.backingField?.let { backingFieldDescriptor ->
+        (this.descriptor as? DeserializedPropertyDescriptor)?.konanBackingField?.let { backingFieldDescriptor ->
             val result = IrFieldImpl(
                     this.startOffset,
                     this.endOffset,
