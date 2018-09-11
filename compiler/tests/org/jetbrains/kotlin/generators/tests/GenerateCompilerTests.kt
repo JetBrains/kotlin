@@ -201,7 +201,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCheckLocalVariablesTableTest> {
-            model("checkLocalVariablesTable")
+            model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractWriteFlagsTest> {

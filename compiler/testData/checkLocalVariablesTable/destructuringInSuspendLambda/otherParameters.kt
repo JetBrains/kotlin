@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
+// WITH_RUNTIME
 data class A(val x: String, val y: String)
 
 suspend fun foo(a: A, block: suspend (Int, A, String) -> String): String = block(1, a, "#")
