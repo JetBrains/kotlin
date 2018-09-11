@@ -12,6 +12,6 @@ interface MetadataReader {
     fun loadSerializedPackageFragment(
         libraryLayout: KonanLibraryLayout,
         packageFqName: String,
-        partIndex: Int
+        partName: String
     ): KonanProtoBuf.LinkDataPackageFragment
 }

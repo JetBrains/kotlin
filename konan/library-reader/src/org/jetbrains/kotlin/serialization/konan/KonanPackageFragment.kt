@@ -25,7 +25,7 @@ class KonanPackageFragment(
     private val packageAccessedHandler: PackageAccessedHandler?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
-    partIndex: Int
+    partName: String
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
 
     lateinit var components: DeserializationComponents
@@ -36,7 +36,7 @@ class KonanPackageFragment(
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
-    private val protoForNames: KonanProtoBuf.LinkDataPackageFragment by lazy { library.packageMetadata(fqName.asString(), partIndex) }
+    private val protoForNames: KonanProtoBuf.LinkDataPackageFragment by lazy { library.packageMetadata(fqName.asString(), partName) }
 
     val proto: KonanProtoBuf.LinkDataPackageFragment
         get() = protoForNames.also { packageAccessedHandler?.markPackageAccessed(fqName) }

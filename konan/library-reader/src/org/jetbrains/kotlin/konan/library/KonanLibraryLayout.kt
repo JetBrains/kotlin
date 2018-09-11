@@ -38,8 +38,8 @@ interface KonanLibraryLayout {
     fun packageFragmentsDir(packageFqName: String) =
         File(linkdataDir, if (packageFqName == "") "root_package" else "package_$packageFqName")
 
-    fun packageFragmentFile(packageFqName: String, partIndex: Int) =
-        File(packageFragmentsDir(packageFqName), "$partIndex$KLIB_METADATA_FILE_EXTENSION_WITH_DOT")
+    fun packageFragmentFile(packageFqName: String, partName: String) =
+        File(packageFragmentsDir(packageFqName), "$partName$KLIB_METADATA_FILE_EXTENSION_WITH_DOT")
 }
 
 sealed class KonanLibrarySource {
