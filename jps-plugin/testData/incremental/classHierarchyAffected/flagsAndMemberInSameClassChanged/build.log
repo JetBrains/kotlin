@@ -17,6 +17,7 @@ Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module/B.class
+  out/production/module/BKt.class
   out/production/module/GetAKt.class
   out/production/module/GetBKt.class
   out/production/module/META-INF/module.kotlin_module
