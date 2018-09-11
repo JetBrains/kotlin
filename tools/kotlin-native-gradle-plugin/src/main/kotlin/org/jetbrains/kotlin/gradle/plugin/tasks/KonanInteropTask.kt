@@ -18,9 +18,13 @@ package org.jetbrains.kotlin.gradle.plugin.tasks
 
 import groovy.lang.Closure
 import org.gradle.api.Action
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.*
 import org.gradle.util.ConfigureUtil
+import org.gradle.workers.IsolationMode
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
@@ -30,11 +34,14 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
 /**
  * A task executing cinterop tool with the given args and compiling the stubs produced by this tool.
  */
-open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
+
+open class KonanInteropTask @Inject constructor(val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
 
     @Internal override val toolRunner: KonanToolRunner = KonanInteropRunner(project, project.konanExtension.jvmArgs)
 
@@ -52,6 +59,8 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
         @Internal get() = ""
 
     // Interop stub generator parameters -------------------------------------
+
+    @Internal var enableParallel: Boolean = false
 
     @InputFile lateinit var defFile: File
 
@@ -179,5 +188,33 @@ open class KonanInteropTask: KonanBuildingTask(), KonanInteropSpec {
         )
     }
     // endregion
+
+    internal class RunTool @Inject constructor(
+            val taskName: String,
+            val args: List<String>
+    ) : Runnable {
+
+
+        override fun run() {
+            val toolRunner = interchangeBox.remove(taskName) ?: error(":(")
+            toolRunner.run(args)
+        }
+    }
+
+    override fun run() {
+        destinationDir.mkdirs()
+        if (dumpParameters) { dumpProperties(this) }
+        val args = buildArgs()
+        if (enableParallel) {
+            interchangeBox[this.path] = toolRunner
+            workerExecutor.submit(RunTool::class.java) {
+                it.isolationMode = IsolationMode.NONE
+                it.params(this.path, args)
+            }
+        } else {
+            toolRunner.run(args)
+        }
+    }
 }
 
+internal val interchangeBox = ConcurrentHashMap<String, KonanToolRunner>()

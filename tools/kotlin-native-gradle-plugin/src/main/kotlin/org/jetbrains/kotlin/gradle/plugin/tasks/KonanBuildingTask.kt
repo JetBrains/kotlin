@@ -47,7 +47,7 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
     protected abstract fun buildArgs(): List<String>
 
     @TaskAction
-    fun run() {
+    open fun run() {
         destinationDir.mkdirs()
         if (dumpParameters) { dumpProperties(this) }
         toolRunner.run(buildArgs())

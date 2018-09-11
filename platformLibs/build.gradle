@@ -71,6 +71,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
         def libTask = konanArtifacts."$libName"."$targetName"
         libTask.dependsOn df.config.depends.collect{ defFileToLibName(targetName, it) }
         libTask.dependsOn ":${targetName}CrossDist"
+        libTask.enableParallel = true
 
         task "$libName"(type: KlibInstall) {
             klib = libTask.artifact
