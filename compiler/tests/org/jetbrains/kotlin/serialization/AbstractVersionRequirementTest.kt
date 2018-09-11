@@ -171,4 +171,21 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
             )
         )
     }
+
+    fun testInlineClassesAndRelevantDeclarations() {
+        doTest(
+            VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_2,
+            fqNames = listOf(
+                "test.IC",
+                "test.Ctor.<init>",
+                "test.simpleFun",
+                "test.aliasedFun",
+                "test.simpleProp",
+                "test.result",
+                "test.Foo",
+                "test.Bar"
+            )
+        )
+    }
 }
