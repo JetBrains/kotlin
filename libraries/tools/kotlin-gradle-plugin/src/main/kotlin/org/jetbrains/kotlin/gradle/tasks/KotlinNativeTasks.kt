@@ -106,7 +106,7 @@ open class KotlinNativeCompile : AbstractCompile() {
         get() = compilation.allSources
 
     val libraries: FileCollection
-        @InputFiles get() = compilation.compileDependencyFiles + compilation.interopFiles
+        @InputFiles get() = compilation.compileDependencyFiles
 
     private val friendModule: FileCollection?
         // It's already taken into account in libraries
@@ -289,7 +289,7 @@ open class CInteropProcess: DefaultTask() {
         @Input get() = settings.includeDirs.headerFilterDirs.files
 
     val libraries: FileCollection
-        @InputFiles get() = settings.compilation.compileDependencyFiles
+        @InputFiles get() = settings.dependencyFiles
 
     val extraOpts: List<String>
         @Input get() = settings.extraOpts
