@@ -20,5 +20,5 @@ class KotlinSerializationGradleImportHandler : GradleProjectImportHandler {
         KotlinSerializationImportHandler.modifyCompilerArguments(facet, PLUGIN_GRADLE_JAR)
     }
 
-    private val PLUGIN_GRADLE_JAR = "kotlinx-serialization"
+    private val PLUGIN_GRADLE_JAR = "kotlin-serialization"
 }
