@@ -11,6 +11,7 @@ dependencies {
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend.java"))
     compile(project(":js:js.frontend"))
+    compile(project(":kotlin-native:kotlin-native-library-reader"))
     compileOnly(intellijDep())
     compileOnly(intellijDep("jps-standalone")) { includeJars("jps-model") }
 }

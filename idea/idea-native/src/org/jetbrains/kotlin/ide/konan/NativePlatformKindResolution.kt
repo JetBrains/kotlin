@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
 import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
