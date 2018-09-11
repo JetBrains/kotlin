@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionCo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.stubindex.KotlinOverridableInternalMembersShortNameIndex
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -75,8 +76,11 @@ import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.utils.sure
 
 
-class IDELightClassConstructionContext(bindingContext: BindingContext, module: ModuleDescriptor, val mode: Mode) :
-    LightClassConstructionContext(bindingContext, module) {
+class IDELightClassConstructionContext(
+    bindingContext: BindingContext, module: ModuleDescriptor,
+    langaugeVersionSettings: LanguageVersionSettings,
+    val mode: Mode
+) : LightClassConstructionContext(bindingContext, module, langaugeVersionSettings) {
     enum class Mode {
         LIGHT,
         EXACT
@@ -103,7 +107,7 @@ internal object IDELightClassContexts {
             "Class descriptor was not found for ${classOrObject.getElementTextWithContext()}"
         }
         ForceResolveUtil.forceResolveAllContents(classDescriptor)
-        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
+        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, classOrObject.languageVersionSettings, EXACT)
     }
 
     fun contextForLocalClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
@@ -114,12 +118,12 @@ internal object IDELightClassContexts {
 
         if (descriptor == null) {
             LOG.warn("No class descriptor in context for class: " + classOrObject.getElementTextWithContext())
-            return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
+            return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, classOrObject.languageVersionSettings, EXACT)
         }
 
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
+        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, classOrObject.languageVersionSettings, EXACT)
     }
 
 
@@ -127,7 +131,7 @@ internal object IDELightClassContexts {
         val resolveSession = files.first().getResolutionFacade().getFrontendService(ResolveSession::class.java)
 
         forceResolvePackageDeclarations(files, resolveSession)
-        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, EXACT)
+        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, files.first().languageVersionSettings, EXACT)
     }
 
     fun contextForScript(script: KtScript): LightClassConstructionContext {
@@ -137,12 +141,12 @@ internal object IDELightClassContexts {
         val descriptor = bindingContext[BindingContext.SCRIPT, script]
         if (descriptor == null) {
             LOG.warn("No script descriptor in context for script: " + script.getElementTextWithContext())
-            return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
+            return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, script.languageVersionSettings, EXACT)
         }
 
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
+        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, script.languageVersionSettings, EXACT)
     }
 
     fun lightContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext? {
@@ -156,7 +160,7 @@ internal object IDELightClassContexts {
 
         ForceResolveUtil.forceResolveAllContents(resolveSession.resolveToDescriptor(classOrObject))
 
-        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
+        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, classOrObject.languageVersionSettings, LIGHT)
     }
 
     fun lightContextForFacade(files: List<KtFile>): LightClassConstructionContext {
@@ -165,7 +169,7 @@ internal object IDELightClassContexts {
 
         forceResolvePackageDeclarations(files, resolveSession)
 
-        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
+        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, files.first().languageVersionSettings, LIGHT)
     }
 
     private fun isDummyResolveApplicable(classOrObject: KtClassOrObject): Boolean {
