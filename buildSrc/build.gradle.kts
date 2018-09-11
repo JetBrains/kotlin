@@ -73,7 +73,6 @@ repositories {
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
     }
-    maven(url = "https://repo.gradle.org/gradle/ext-releases-local") // for native-platform
     jcenter()
 }
 
