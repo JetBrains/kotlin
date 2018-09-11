@@ -140,6 +140,15 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("main.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
+    fun testSuspensionPointInMonitor() {
+        compileKotlin(
+            "source.kt",
+            tmpdir,
+            listOf(compileLibrary("library", additionalOptions = listOf("-Xskip-metadata-version-check"))),
+            additionalOptions = listOf("-Xskip-metadata-version-check")
+        )
+    }
+
     fun testDuplicateObjectInBinaryAndSources() {
         val allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"))
         assertEquals(allDescriptors.toString(), 2, allDescriptors.size)
