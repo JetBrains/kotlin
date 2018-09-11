@@ -14,17 +14,6 @@ pill {
 }
 
 sourceSets {
-    annotations {
-        if(!System.properties.'idea.active') {
-            java {
-                srcDir "${rootDir}/core/runtime.jvm/src"
-                include 'org/jetbrains/annotations/**'
-            }
-            kotlin {
-                exclude '**/*'
-            }
-        }
-    }
     main {
         java {
             srcDir "${rootDir}/core/builtins/src"
@@ -93,20 +82,6 @@ jar {
     // from sourceSets.java9.output
 }
 
-task distJar(type: Jar) {
-    baseName = 'dist-kotlin-stdlib'
-    version = null
-    manifestAttributes(manifest, project, 'Main', true)
-    from("${rootDir}/dist/builtins")
-    from sourceSets.annotations.output
-    from sourceSets.main.output
-    from sourceSets.experimental.output
-    from sourceSets.coroutines.output
-    from sourceSets.unsigned.output
-    // TODO: enable as soon as this doesn't cause D8/DX to crash
-    // from sourceSets.java9.output
-}
-
 task coroutinesJar(type: Jar) {
     version = null
     classifier = 'coroutines'
@@ -147,7 +122,7 @@ artifacts {
 }
 
 dist {
-    [distJar, distSourcesJar].forEach {
+    [jar, distSourcesJar].forEach {
         from(it) {
             rename('dist-', '')
         }
