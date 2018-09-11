@@ -7558,6 +7558,14 @@ public fun <T> Array<out T>.toHashSet(): HashSet<T> {
 }
 
 /**
+ * Returns a [java.util.EnumSet] of all elements of [T].
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified T : Enum<T>> Array<T>.toEnumSet(): java.util.EnumSet<T> {
+    return toCollection(java.util.EnumSet.noneOf(T::class.java))
+}
+
+/**
  * Returns a [HashSet] of all elements.
  */
 public fun ByteArray.toHashSet(): HashSet<Byte> {

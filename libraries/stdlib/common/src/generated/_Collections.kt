@@ -1131,6 +1131,14 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 }
 
 /**
+ * Returns a [java.util.EnumSet] of all elements of [T].
+ */
+@kotlin.internal.InlineOnly
+public inline fun <reified T : Enum<T>> Iterable<T>.toEnumSet(): java.util.EnumSet<T> {
+    return toCollection(java.util.EnumSet.noneOf(T::class.java))
+}
+
+/**
  * Returns a [List] containing all elements.
  */
 public fun <T> Iterable<T>.toList(): List<T> {
