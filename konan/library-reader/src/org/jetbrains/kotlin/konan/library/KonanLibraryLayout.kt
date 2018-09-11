@@ -35,11 +35,11 @@ interface KonanLibraryLayout {
     val moduleHeaderFile get() = File(linkdataDir, KLIB_MODULE_METADATA_FILE_NAME)
     val dataFlowGraphFile get() = File(linkdataDir, "module_data_flow_graph")
 
-    fun packageFragmentFile(packageFqName: String) =
-        File(
-            linkdataDir,
-            if (packageFqName == "") "root_package.$KLIB_METADATA_FILE_EXTENSION" else "package_$packageFqName.$KLIB_METADATA_FILE_EXTENSION"
-        )
+    fun packageFragmentsDir(packageFqName: String) =
+        File(linkdataDir, if (packageFqName == "") "root_package" else "package_$packageFqName")
+
+    fun packageFragmentFile(packageFqName: String, partIndex: Int) =
+        File(packageFragmentsDir(packageFqName), "$partIndex$KLIB_METADATA_FILE_EXTENSION_WITH_DOT")
 }
 
 sealed class KonanLibrarySource {
