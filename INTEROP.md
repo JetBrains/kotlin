@@ -26,14 +26,28 @@ Build the dependencies and the compiler (see `README.md`).
 
 Prepare stubs for the system sockets library:
 
-    cd samples/socket
-    ../../dist/bin/cinterop -def src/main/c_interop/sockets.def \
-     -o sockets
+<div class="sample" markdown="1" theme="idea" mode="shell">
+   
+```bash
+
+cd samples/socket
+../../dist/bin/cinterop -def src/main/c_interop/sockets.def \
+ -o sockets
+```
+
+</div>
 
 Compile the echo server:
 
-    ../../dist/bin/kotlinc src/main/kotlin/EchoServer.kt \
-     -library sockets -o EchoServer
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+../../dist/bin/kotlinc src/main/kotlin/EchoServer.kt \
+ -library sockets -o EchoServer
+```
+
+</div>
+
 
 This whole process is automated in `build.sh` script, which also support cross-compilation
 to supported cross-targets with `TARGET=raspberrypi ./build.sh` (`cross_dist` target must
@@ -41,11 +55,23 @@ be executed first).
 
 Run the server:
 
-    ./EchoServer.kexe 3000 &
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+./EchoServer.kexe 3000 &
+```
+
+</div>
 
 Test the server by connecting to it, for example with telnet:
 
-    telnet localhost 3000
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+telnet localhost 3000
+```
+
+</div>
 
 Write something to console and watch server echoing it back.
 
@@ -54,14 +80,27 @@ Write something to console and watch server echoing it back.
  To create bindings for a new library, start by creating `.def` file.
 Structurally it's a simple property file, looking like this:
 
+<div class="sample" markdown="1" theme="idea" mode="c">
 
-    headers = zlib.h
-    compilerOpts = -std=c99
+```c
+headers = zlib.h
+compilerOpts = -std=c99
+```
+
+</div>
+
 
 Then run `cinterop` tool with something like (note that for host libraries not included
 in sysroot search paths for headers may be needed):
 
-    cinterop -def zlib.def -copt -I/opt/local/include -o zlib
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+cinterop -def zlib.def -copt -I/opt/local/include -o zlib
+```
+
+</div>
+
 
 This command will produce `zlib.klib` compiled library and
 `zlib-build/kotlin` directory containing Kotlin source code for the library.
@@ -104,9 +143,14 @@ The globs are applied to the header paths relative to the appropriate include
 path elements, e.g. `time.h` or `curl/curl.h`. So if the library is usually
 included with `#include <SomeLbrary/Header.h>`, then it would probably be
 correct to filter headers with
-```
+
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+```c
 headerFilter = SomeLibrary/**
 ```
+
+</div>
 
 If `headerFilter` is not specified, then all headers are included.
 
@@ -119,11 +163,17 @@ describes the correspondence between header files and modules. When the module
 maps are available, the headers from the modules that are not included directly
 can be filtered out using experimental `excludeDependentModules` option of the
 `.def` file:
-```
+
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+```c
 headers = OpenGL/gl.h OpenGL/glu.h GLUT/glut.h
 compilerOpts = -framework OpenGL -framework GLUT
 excludeDependentModules = true
 ```
+
+</div>
+
 
 When both `excludeDependentModules` and `headerFilter` are used, they are
 applied as intersection.
@@ -136,7 +186,9 @@ additional header file with these declarations, you can include them directly
 to the end of the `.def` file, after separating line, containing only the
 separator sequence `---`:
 
-```
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+```c
 headers = errno.h
 
 ---
@@ -145,6 +197,8 @@ static inline int getErrno() {
     return errno;
 }
 ```
+
+</div>
 
 Note that this part of the `.def` file is treated as part of the header file, so
 functions with body should be declared as `static`.
@@ -157,10 +211,14 @@ rather that assuming it is available within the user environment.
 To include a static library into `.klib` use `staticLibrary` and `libraryPaths`
 clauses. For example:
 
-```
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+```c
 staticLibraries = libfoo.a 
 libraryPaths = /opt/local/lib /usr/local/opt/curl/lib
 ```
+
+</div>
 
 When given the above snippet the `cinterop` tool will search `libfoo.a` in 
 `/opt/local/lib` and `/usr/local/opt/curl/lib`, and if found include the 
@@ -205,20 +263,29 @@ C null pointer is represented as Kotlin's `null`, and the pointer type
 `CPointer<T>` is not nullable, but the `CPointer<T>?` is. The values of this
 type support all Kotlin operations related to handling `null`, e.g. `?:`, `?.`,
 `!!` etc:
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val path = getenv("PATH")?.toKString() ?: ""
 ```
+
+</div>
 
 Since the arrays are also mapped to `CPointer<T>`, it supports `[]` operator
 for accessing values by index:
 
-```
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 fun shift(ptr: CPointer<BytePtr>, length: Int) {
     for (index in 0 .. length - 2) {
         ptr[index] = ptr[index + 1]
     }
 }
 ```
+
+</div>
 
 The `.pointed` property for `CPointer<T>` returns the lvalue of type `T`,
 pointed by this pointer. The reverse operation is `.ptr`: it takes the lvalue
@@ -230,23 +297,39 @@ the Kotlin binding accepts any `CPointer`.
 
 Casting any pointer (including `COpaquePointer`) can be done with
 `.reinterpret<T>`, e.g.:
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val intPtr = bytePtr.reinterpret<IntVar>()
 ```
+
+</div>
+
 or
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val intPtr: CPointer<IntVar> = bytePtr.reinterpret()
 ```
+
+</div>
 
 As in C, those reinterpret casts are unsafe and could potentially lead to
 subtle memory problems in an application.
 
 Also there are unsafe casts between `CPointer<T>?` and `Long` available,
 provided by `.toLong()` and `.toCPointer<T>()` extension methods:
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val longValue = ptr.toLong()
 val originalPtr = longValue.toCPointer<T>()
 ```
+
+</div>
 
 Note that if the type of the result is known from the context, the type argument
 can be omitted as usual due to type inference.
@@ -254,23 +337,38 @@ can be omitted as usual due to type inference.
 ### Memory allocation ###
 
 The native memory can be allocated using `NativePlacement` interface, e.g.
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val byteVar = placement.alloc<ByteVar>()
 ```
+
+</div>
+
 or
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val bytePtr = placement.allocArray<ByteVar>(5):
 ```
+
+</div>
 
 The most "natural" placement is object `nativeHeap`.
 It corresponds to allocating native memory with `malloc` and provides additional
 `.free()` operation to free allocated memory:
 
-```
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val buffer = nativeHeap.allocArray<ByteVar>(size)
 <use buffer>
 nativeHeap.free(buffer)
 ```
+
+</div>
 
 However the lifetime of allocated memory is often bound to lexical scope.
 It is possible to define such scope with `memScoped { ... }`.
@@ -280,13 +378,18 @@ and the allocated memory will be automatically freed after leaving the scope.
 
 For example, the C function returning values through pointer parameters can be
 used like
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val fileSize = memScoped {
     val statBuf = alloc<statStruct>()
     val error = stat("/", statBuf.ptr)
     statBuf.st_size
 }
 ```
+
+</div>
 
 ### Passing pointers to bindings ###
 
@@ -309,17 +412,27 @@ methods are provided:
 For example:
 
 C:
-```
+
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+```c
 void foo(int* elements, int count);
 ...
 int elements[] = {1, 2, 3};
 foo(elements, 3);
 ```
 
+</div>
+
 Kotlin:
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 foo(cValuesOf(1, 2, 3), 3)
 ```
+
+</div>
 
 ### Working with the strings ###
 
@@ -334,19 +447,33 @@ manually:
 *   `val String.cstr: CValuesRef<ByteRef>`.
 
     To get the pointer, `.cstr` should be allocated in native memory, e.g.
+    
+    <div class="sample" markdown="1" theme="idea" data-highlight-only>
+    
     ```
     val cString = kotlinString.cstr.getPointer(nativeHeap)
     ```
+    
+    </div>
 
 In all cases the C string is supposed to be encoded as UTF-8.
 
 To skip automatic conversion and ensure raw pointers are used in the bindings `noStringConversion`
 statement in `.def` file could be used, i.e.
+
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+```c
+noStringConversion = LoadCursorA LoadCursorW
 ```
-    noStringConversion = LoadCursorA LoadCursorW
-```
+
+</div>
+
 This way any value of type `CPointer<ByteVar>` could be passed as an argument of `const char*` type.
 If Kotlin string shall me passed code like that could be used:
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
 ```kotlin
 memScoped {
     LoadCursorA(null, "cursor.bmp".cstr.ptr)   // for ASCII version
@@ -354,12 +481,17 @@ memScoped {
 }
 ```
 
+</div>
+
 ### Scope-local pointers ###
 
 It is possible to create scope-stable pointer of C representation of `CValues<T>`
 instance using `CValues<T>.ptr` extension property available under `memScoped { ... }`.
 It allows to use APIs which requires C pointers with lifetime bound to certain `MemScope`. For example:
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 memScoped {
     items = arrayOfNulls<CPointer<ITEM>?>(6)
     arrayOf("one", "two").forEachIndexed { index, value -> items[index] = value.cstr.ptr }
@@ -367,6 +499,9 @@ memScoped {
     ...
 }
 ```
+
+</div>
+
 In this example all values passed to the C API `new_menu()` have lifetime of innermost `memScope`
 it belongs to. Once control flow will leave `memScoped` scope C pointers become invalid.
 
@@ -388,9 +523,15 @@ methods available:
     `CValue<T>` to the memory, and then runs the passed lambda with this placed
     value `T` as receiver. So to read a single field, the following code can be
     used:
-    ```
+    
+    <div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+    ```kotlin
     val fieldValue = structValue.useContents { field }
     ```
+
+    </div>
+
 
 ### Callbacks ###
 
@@ -417,27 +558,42 @@ the callback itself, to safely swim from Kotlin to Kotlin through the C world.
 Such wrapping is possible with `StableRef` class.
 
 To wrap the reference:
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val stablePtr = StableRef.create(kotlinReference)
 val voidPtr = stablePtr.value
 ```
+
+</div>
+
 where the `voidPtr` is `COpaquePointer` and can be passed to the C function.
 
 To unwrap the reference:
 
-```
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val stablePtr = StableRef.fromValue(voidPtr)
 val kotlinReference = stablePtr.get()
 ```
+
+</div>
+
 where `kotlinReference` is the original wrapped reference (however it's type is
 `Any` so it may require casting).
 
 The created `StableRef` should eventually be manually disposed using
 `.dispose()` method to prevent memory leaks:
 
-```
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 stablePtr.dispose()
 ```
+
+</div>
 
 After that it becomes invalid, so `voidPtr` can't be unwrapped anymore.
 
@@ -451,7 +607,9 @@ wrapping with supported declarations. E.g. function-like macro `FOO` can be
 exposed as function `foo` by
 [adding the custom declaration](#adding-custom-declarations) to the library:
 
-```
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+```c
 headers = library/base.h
 
 ---
@@ -460,6 +618,8 @@ static inline int foo(int arg) {
     return FOO(arg);
 }
 ```
+
+</div>
 
 ### Definition file hints ###
 
@@ -484,9 +644,12 @@ neither implicit integer casts nor C-style integer casts (e.g.
 `(size_t) intValue`), so to make writing portable code in such cases easier,
 `convert` method is provided:
 
-```
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 fun ${type1}.convert<${type2}>(): ${type2}
 ```
+</div>
 
 where each of `type1` and `type2` must be an integral type, either signed or unsigned.
 
@@ -497,11 +660,15 @@ methods, depending on `type`.
 
 The example of using `convert`:
 
-```
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 fun zeroMemory(buffer: COpaquePointer, size: Int) {
     memset(buffer, 0, size.convert<size_t>())
 }
 ```
+
+</div>
 
 Also the type parameter can be inferred automatically and thus may be omitted
 in some cases.
