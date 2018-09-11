@@ -9994,6 +9994,24 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/inference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inference extends AbstractIrJsCodegenBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("kt10822.kt")
+        public void testKt10822() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt10822.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -2513,6 +2513,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt11266.kt");
         }
 
+        @TestMetadata("kt12008.kt")
+        public void testKt12008() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt12008.kt");
+        }
+
         @TestMetadata("kt1558.kt")
         public void testKt1558() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt1558.kt");
@@ -2866,6 +2871,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("arrayOfNullsReified.kt")
         public void testArrayOfNullsReified() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/reified/arrayOfNullsReified.kt");
+        }
+
+        @TestMetadata("kt11881.kt")
+        public void testKt11881() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/reified/kt11881.kt");
         }
 
         @TestMetadata("nonCallableReiefied.kt")
