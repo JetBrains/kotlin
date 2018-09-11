@@ -9,5 +9,9 @@ import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 
 interface MetadataReader {
     fun loadSerializedModule(libraryLayout: KonanLibraryLayout): KonanProtoBuf.LinkDataLibrary
-    fun loadSerializedPackageFragment(libraryLayout: KonanLibraryLayout, packageFqName: String): KonanProtoBuf.LinkDataPackageFragment
+    fun loadSerializedPackageFragment(
+        libraryLayout: KonanLibraryLayout,
+        packageFqName: String,
+        partIndex: Int
+    ): KonanProtoBuf.LinkDataPackageFragment
 }

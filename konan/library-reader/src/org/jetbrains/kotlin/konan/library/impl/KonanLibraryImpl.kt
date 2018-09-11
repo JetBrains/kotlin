@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KLIB_PROPERTY_ABI_VERSION
-import org.jetbrains.kotlin.konan.library.KLIB_PROPERTY_LINKED_OPTS
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.MetadataReader
+import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.propertyList
@@ -65,7 +62,10 @@ internal class KonanLibraryImpl(
 
     override val moduleHeaderData: KonanProtoBuf.LinkDataLibrary by lazy { layout.inPlace { metadataReader.loadSerializedModule(it) } }
 
-    override fun packageMetadata(packageFqName: String) = layout.inPlace { metadataReader.loadSerializedPackageFragment(it, packageFqName) }
+    override fun packageMetadata(packageFqName: String, partIndex: Int) = layout.inPlace { metadataReader.loadSerializedPackageFragment(it, packageFqName, partIndex) }
+
+    override fun packageMetadataPartCount(fqName: String): Int =
+        layout.inPlace { it.packageFragmentsDir(fqName).listFiles.count { file -> file.extension == KLIB_METADATA_FILE_EXTENSION } }
 
     override fun toString() = "$libraryName[default=$isDefault]"
 }
