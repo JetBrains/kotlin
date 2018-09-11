@@ -13,7 +13,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.0-dev-322", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.0-dev-485", onlySuccessBootstrap = false))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
