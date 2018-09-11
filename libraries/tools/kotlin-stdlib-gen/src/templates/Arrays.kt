@@ -105,7 +105,15 @@ object ArrayOps : TemplateGroupBase() {
         returns("Boolean")
         on(Platform.JVM) {
             inlineOnly()
-            body { "return java.util.Arrays.deepEquals(this, other)" }
+            annotation("""@JvmName("contentDeepEqualsInline")""")
+            body {
+                """
+                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+                    return contentDeepEqualsImpl(other)
+                else
+                    return java.util.Arrays.deepEquals(this, other)
+                """
+            }
         }
         on(Platform.JS) {
             annotation("""@library("arrayDeepEquals")""")
@@ -155,7 +163,15 @@ object ArrayOps : TemplateGroupBase() {
         returns("String")
         on(Platform.JVM) {
             inlineOnly()
-            body { "return java.util.Arrays.deepToString(this)" }
+            annotation("""@JvmName("contentDeepToStringInline")""")
+            body {
+                """
+                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+                    return contentDeepToStringImpl()
+                else
+                    return java.util.Arrays.deepToString(this)
+                """
+            }
         }
         on(Platform.JS) {
             annotation("""@library("arrayDeepToString")""")
@@ -200,7 +216,15 @@ object ArrayOps : TemplateGroupBase() {
         returns("Int")
         on(Platform.JVM) {
             inlineOnly()
-            body { "return java.util.Arrays.deepHashCode(this)" }
+            annotation("""@JvmName("contentDeepHashCodeInline")""")
+            body {
+                """
+                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+                    return contentDeepHashCodeImpl()
+                else
+                    return java.util.Arrays.deepHashCode(this)
+                """
+            }
         }
         on(Platform.JS) {
             annotation("""@library("arrayDeepHashCode")""")

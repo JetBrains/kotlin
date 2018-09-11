@@ -993,6 +993,9 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun contains ([Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun contains ([SS)Z
 	public static final fun contains ([ZZ)Z
+	public static final fun contentDeepEquals ([Ljava/lang/Object;[Ljava/lang/Object;)Z
+	public static final fun contentDeepHashCode ([Ljava/lang/Object;)I
+	public static final fun contentDeepToString ([Ljava/lang/Object;)Ljava/lang/String;
 	public static final fun copyInto ([B[BIII)[B
 	public static final fun copyInto ([C[CIII)[C
 	public static final fun copyInto ([D[DIII)[D
