@@ -131,7 +131,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
             compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
         if (serializerClass == null) {
             if (genericIndex == null) return null
-            return TODO("Saved serializer for generic argument")
+            TODO("Saved serializer for generic argument")
         }
         if (serializerClass.kind == ClassKind.OBJECT) {
             return irGetObject(serializerClass)
@@ -144,8 +144,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                 // todo: smth better than constructors[0] ??
                 if (it.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr
             }
-            if (serializerClass.classId == referenceArraySerializerId)
-                args = TODO("reference array serializer")
+            if (serializerClass.classId == referenceArraySerializerId) TODO("reference array serializer")
             val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
             val ctor = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
                 KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializerClass, serializableDescriptor)

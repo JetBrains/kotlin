@@ -26,9 +26,11 @@ class SerializableCompanionIrGenerator(
         get() = _table
 
     companion object {
-        fun generate(irClass: IrClass,
-                     context: BackendContext,
-                     bindingContext: BindingContext) {
+        fun generate(
+            irClass: IrClass,
+            context: BackendContext,
+            bindingContext: BindingContext
+        ) {
             val companionDescriptor = irClass.descriptor
             val serializableClass = getSerializableClassDescriptorByCompanion(companionDescriptor) ?: return
             if (serializableClass.isInternalSerializable)
@@ -37,15 +39,15 @@ class SerializableCompanionIrGenerator(
     }
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) =
-        irClass.contributeFunction(methodDescriptor, fromStubs = true) { getter ->
-        val serializer = serializableDescriptor.classSerializer?.toClassDescriptor!!
-        val expr = if (serializer.kind == ClassKind.OBJECT) {
-            irGetObject(serializer)
-        } else {
-            val ctor = compilerContext.externalSymbols.referenceConstructor(serializer.unsubstitutedPrimaryConstructor!!)
-            val args: List<IrExpression> = emptyList() // todo
-            irInvoke(null, ctor, *args.toTypedArray())
+        irClass.contributeFunction(methodDescriptor, fromStubs = true) { _ ->
+            val serializer = serializableDescriptor.classSerializer?.toClassDescriptor!!
+            val expr = if (serializer.kind == ClassKind.OBJECT) {
+                irGetObject(serializer)
+            } else {
+                val ctor = compilerContext.externalSymbols.referenceConstructor(serializer.unsubstitutedPrimaryConstructor!!)
+                val args: List<IrExpression> = emptyList() // todo
+                irInvoke(null, ctor, *args.toTypedArray())
+            }
+            +irReturn(expr)
         }
-        +irReturn(expr)
-    }
 }

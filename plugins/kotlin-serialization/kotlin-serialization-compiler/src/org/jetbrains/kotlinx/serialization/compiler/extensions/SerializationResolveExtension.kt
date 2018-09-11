@@ -77,7 +77,7 @@ class SerializationResolveExtension : SyntheticResolveExtension {
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
         KSerializerDescriptorResolver.generateSerializerMethods(thisDescriptor, fromSupertypes, name, result)
-        KSerializerDescriptorResolver.generateCompanionObjectMethods(thisDescriptor, fromSupertypes, name, result)
+        KSerializerDescriptorResolver.generateCompanionObjectMethods(thisDescriptor, name, result)
     }
 
     override fun generateSyntheticProperties(
@@ -87,7 +87,7 @@ class SerializationResolveExtension : SyntheticResolveExtension {
         fromSupertypes: ArrayList<PropertyDescriptor>,
         result: MutableSet<PropertyDescriptor>
     ) {
-        KSerializerDescriptorResolver.generateDescriptorsForAnnotationImpl(thisDescriptor, name, fromSupertypes, result)
+        KSerializerDescriptorResolver.generateDescriptorsForAnnotationImpl(thisDescriptor, fromSupertypes, result)
         KSerializerDescriptorResolver.generateSerializerProperties(thisDescriptor, fromSupertypes, name, result)
     }
 }
