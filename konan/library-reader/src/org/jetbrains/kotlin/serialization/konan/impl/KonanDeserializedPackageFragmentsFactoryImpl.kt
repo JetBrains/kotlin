@@ -138,7 +138,7 @@ class ExportedForwardDeclarationsPackageFragmentDescriptor(
             val declFqName = nameToFqName[name] ?: return null
 
             val packageView = module.getPackage(declFqName.parent())
-            return packageView.memberScope.getContributedClassifier(name, location)
+            return packageView.memberScope.getContributedClassifier(name, location) // ?: FIXME(ddol): delegate to forward declarations synthetic module!
         }
 
         override fun printScopeStructure(p: Printer) {
