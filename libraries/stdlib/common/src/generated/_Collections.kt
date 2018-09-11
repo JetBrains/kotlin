@@ -1352,7 +1352,8 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destinat
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
-public fun <T> Iterable<T>.withEach(operation: T.() -> Unit): Unit {
+@kotlin.internal.HidesMembers
+public inline fun <T> Iterable<T>.withEach(operation: T.() -> Unit): Unit {
     forEach { it.operation() }
 }
 
