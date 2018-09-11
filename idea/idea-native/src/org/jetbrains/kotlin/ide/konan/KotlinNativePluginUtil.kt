@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.SingleRootFileViewProvider
@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.konan.library.KonanLibrarySource.KonanLibraryDir
+import org.jetbrains.kotlin.konan.library.KonanLibrarySource.KonanLibraryFile
 import org.jetbrains.kotlin.konan.library.MetadataReader
 import org.jetbrains.kotlin.konan.library.createKonanLibrary
 import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultPackageFragmentsFactory
@@ -98,16 +100,31 @@ private fun KonanLibrary.createPackageFragmentProvider(
 internal object CachingIdeMetadataReaderImpl : MetadataReader {
 
     override fun loadSerializedModule(libraryLayout: KonanLibraryLayout): KonanProtoBuf.LinkDataLibrary =
-        cache.getCachedModuleHeader(libraryLayout.moduleHeaderFile.virtualFile)
+        cache.getCachedModuleHeader(libraryLayout.getVirtualFile(libraryLayout.moduleHeaderFile))
 
     override fun loadSerializedPackageFragment(
         libraryLayout: KonanLibraryLayout,
         packageFqName: String
     ): KonanProtoBuf.LinkDataPackageFragment =
-        cache.getCachedPackageFragment(libraryLayout.packageFragmentFile(packageFqName).virtualFile)
+        cache.getCachedPackageFragment(libraryLayout.getVirtualFile(libraryLayout.packageFragmentFile(packageFqName)))
 
-    private val File.virtualFile: VirtualFile
-        get() = LocalFileSystem.getInstance().refreshAndFindFileByPath(path) ?: error("File not found: $path")
+    private fun KonanLibraryLayout.getVirtualFile(file: File): VirtualFile {
+        val source = this.source
+        return when (source) {
+            is KonanLibraryFile -> asJarFileSystemFile(source.klibFile, file)
+            is KonanLibraryDir -> asLocalFile(file)
+        }
+    }
+
+    private fun asJarFileSystemFile(jarFile: File, localFile: File): VirtualFile {
+        val fullPath = jarFile.absolutePath + "!" + localFile.absolutePath
+        return StandardFileSystems.jar().findFileByPath(fullPath) ?: error("File not found: $fullPath")
+    }
+
+    private fun asLocalFile(localFile: File): VirtualFile {
+        val fullPath = localFile.absolutePath
+        return StandardFileSystems.local().findFileByPath(fullPath) ?: error("File not found: $fullPath")
+    }
 
     private val cache
         get() = KotlinNativeLoadingMetadataCache.getInstance()
