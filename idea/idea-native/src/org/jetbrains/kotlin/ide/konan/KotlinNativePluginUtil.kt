@@ -105,9 +105,9 @@ internal object CachingIdeMetadataReaderImpl : MetadataReader {
     override fun loadSerializedPackageFragment(
         libraryLayout: KonanLibraryLayout,
         packageFqName: String,
-        partIndex: Int
+        partName: String
     ): KonanProtoBuf.LinkDataPackageFragment =
-        cache.getCachedPackageFragment(libraryLayout.getVirtualFile(libraryLayout.packageFragmentFile(packageFqName, partIndex)))
+        cache.getCachedPackageFragment(libraryLayout.getVirtualFile(libraryLayout.packageFragmentFile(packageFqName, partName)))
 
     private fun KonanLibraryLayout.getVirtualFile(file: File): VirtualFile {
         val source = this.source
