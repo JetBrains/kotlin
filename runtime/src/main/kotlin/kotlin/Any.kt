@@ -51,5 +51,3 @@ public open class Any {
 @PublishedApi
 @SymbolName("Kotlin_Any_hashCode")
 external internal fun Any.identityHashCode(): Int
-
-public fun Any?.hashCode() = if (this != null) this.hashCode() else 0
