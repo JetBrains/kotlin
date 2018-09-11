@@ -133,6 +133,11 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Getter.kt");
             }
 
+            @TestMetadata("HiddenConstructorWithInlineClassParameters.kt")
+            public void testHiddenConstructorWithInlineClassParameters() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/HiddenConstructorWithInlineClassParameters.kt");
+            }
+
             @TestMetadata("PropertyField.kt")
             public void testPropertyField() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PropertyField.kt");

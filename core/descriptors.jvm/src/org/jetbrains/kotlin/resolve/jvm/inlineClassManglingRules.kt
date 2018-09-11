@@ -17,13 +17,14 @@ import java.security.MessageDigest
 import java.util.*
 
 fun shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor: CallableMemberDescriptor): Boolean {
-    if (descriptor !is ClassConstructorDescriptor) return false
-    if (Visibilities.isPrivate(descriptor.visibility)) return false
-    if (descriptor.constructedClass.isInline) return false
+    val constructorDescriptor = descriptor as? ClassConstructorDescriptor ?: return false
+    if (Visibilities.isPrivate(constructorDescriptor.visibility)) return false
+    if (constructorDescriptor.constructedClass.isInline) return false
+    if (DescriptorUtils.isSealedClass(constructorDescriptor.constructedClass)) return false
 
     // TODO inner class in inline class
 
-    return descriptor.valueParameters.any { it.type.requiresFunctionNameMangling() }
+    return constructorDescriptor.valueParameters.any { it.type.requiresFunctionNameMangling() }
 }
 
 fun requiresFunctionNameMangling(valueParameterTypes: List<KotlinType>): Boolean {
