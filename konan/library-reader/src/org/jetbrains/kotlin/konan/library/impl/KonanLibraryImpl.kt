@@ -62,10 +62,25 @@ internal class KonanLibraryImpl(
 
     override val moduleHeaderData: KonanProtoBuf.LinkDataLibrary by lazy { layout.inPlace { metadataReader.loadSerializedModule(it) } }
 
-    override fun packageMetadata(packageFqName: String, partIndex: Int) = layout.inPlace { metadataReader.loadSerializedPackageFragment(it, packageFqName, partIndex) }
+    override fun packageMetadata(packageFqName: String, partName: String) =
+        layout.inPlace { metadataReader.loadSerializedPackageFragment(it, packageFqName, partName) }
 
-    override fun packageMetadataPartCount(fqName: String): Int =
-        layout.inPlace { it.packageFragmentsDir(fqName).listFiles.count { file -> file.extension == KLIB_METADATA_FILE_EXTENSION } }
+    override fun packageMetadataParts(fqName: String): Set<String> =
+        layout.inPlace { inPlaceLayout ->
+            val fileList =
+                inPlaceLayout.packageFragmentsDir(fqName)
+                    .listFiles
+                    .mapNotNull {
+                        it.name
+                            .substringBeforeLast(KLIB_METADATA_FILE_EXTENSION_WITH_DOT, missingDelimiterValue = "")
+                            .takeIf { it.isNotEmpty() }
+                    }
+
+            fileList.toSortedSet().also {
+                require(it.size == fileList.size) { "Duplicated names: ${fileList.groupingBy { it }.eachCount().filter { (_, count) -> count > 1 }}" }
+            }
+        }
+
 
     override fun toString() = "$libraryName[default=$isDefault]"
 }
