@@ -340,6 +340,20 @@ manually:
 
 In all cases the C string is supposed to be encoded as UTF-8.
 
+To skip automatic conversion and ensure raw pointers are used in the bindings `noStringConversion`
+statement in `.def` file could be used, i.e.
+```
+    noStringConversion = LoadCursorA LoadCursorW
+```
+This way any value of type `CPointer<ByteVar>` could be passed as an argument of `const char*` type.
+If Kotlin string shall me passed code like that could be used:
+```kotlin
+memScoped {
+    LoadCursorA(null, "cursor.bmp".cstr.ptr)   // for ASCII version
+    LoadCursorW(null, "cursor.bmp".wcstr.ptr)  // for Unicode version
+}
+```
+
 ### Scope-local pointers ###
 
 It is possible to create scope-stable pointer of C representation of `CValues<T>`

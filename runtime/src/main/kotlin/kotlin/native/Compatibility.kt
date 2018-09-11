@@ -11,10 +11,12 @@ package kotlin
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
+@Deprecated("Do not use Volatile annotation in pure Kotlin/Native code", level = DeprecationLevel.ERROR)
 public annotation class Volatile
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)
+@Deprecated("Do not use Synchronized annotation in pure Kotlin/Native code", level = DeprecationLevel.ERROR)
 public annotation class Synchronized
 
 /**
@@ -22,5 +24,6 @@ public annotation class Synchronized
  * @throws UnsupportedOperationException always
  */
 @kotlin.internal.InlineOnly
+@Deprecated("Do not use 'synchronized' function in Kotlin/Native code", level = DeprecationLevel.ERROR)
 public actual inline fun <R> synchronized(@Suppress("UNUSED_PARAMETER") lock: Any, block: () -> R): R =
         throw UnsupportedOperationException("synchronized() is unsupported")
