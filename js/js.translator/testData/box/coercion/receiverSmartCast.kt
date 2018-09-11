@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1111
+// EXPECTED_REACHABLE_NODES: 1283
 fun foo(x: Any): String {
     return when (x) {
         is Char -> "char: ${x.toInt()}"

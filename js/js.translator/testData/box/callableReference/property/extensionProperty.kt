@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1130
+// EXPECTED_REACHABLE_NODES: 1300
 package foo
 
 import kotlin.reflect.KMutableProperty1

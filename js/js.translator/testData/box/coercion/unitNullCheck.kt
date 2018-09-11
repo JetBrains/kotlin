@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1132
+// EXPECTED_REACHABLE_NODES: 1282
 var log = ""
 
 fun log(msg: String) {

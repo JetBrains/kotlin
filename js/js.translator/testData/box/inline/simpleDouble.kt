@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1122
+// EXPECTED_REACHABLE_NODES: 1294
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/simpleDouble.1.kt

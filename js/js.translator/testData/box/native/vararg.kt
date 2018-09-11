@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1144
+// EXPECTED_REACHABLE_NODES: 1314
 package foo
 
 external fun paramCount(vararg a: Int): Int = definedExternally

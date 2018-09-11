@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1124
+// EXPECTED_REACHABLE_NODES: 1296
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/lambdaTransformation/lambdaInLambdaNoInline.1.kt

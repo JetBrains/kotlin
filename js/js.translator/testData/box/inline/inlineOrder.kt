@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1114
+// EXPECTED_REACHABLE_NODES: 1284
 package foo
 
 // CHECK_FUNCTIONS_HAVE_SAME_LINES: declaredBefore declaredAfter match=(h|g)1 replace=$1

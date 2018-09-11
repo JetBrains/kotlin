@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1113
+// EXPECTED_REACHABLE_NODES: 1283
 package foo
 
 fun countKeys(a: Array<Int>): Int = js("""

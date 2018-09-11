@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1116
+// EXPECTED_REACHABLE_NODES: 1285
 package foo
 
 var global: String = ""

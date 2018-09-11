@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1121
+// EXPECTED_REACHABLE_NODES: 1293
 // Changed when traits were introduced. May not make sense any more
 
 interface Left {

@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1132
+// EXPECTED_REACHABLE_NODES: 1283
 // CHECK_VARS_COUNT: function=test1 count=0
 // CHECK_VARS_COUNT: function=test2 count=0
 // CHECK_VARS_COUNT: function=test3 count=1

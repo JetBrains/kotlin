@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1112
+// EXPECTED_REACHABLE_NODES: 1284
 package foo
 
 external fun run(i:Int, s:String, funRef: (Int, String) -> String): String = definedExternally
