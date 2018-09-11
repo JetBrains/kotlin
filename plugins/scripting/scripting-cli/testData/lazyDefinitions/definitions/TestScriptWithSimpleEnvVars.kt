@@ -8,6 +8,6 @@ object TestScriptWithSimpleEnvVarsDefinition : ScriptCompilationConfiguration(
         providedProperties("stringVar1" to String::class)
     })
 
-@KotlinScript(extension = "2.kts", compilationConfiguration = TestScriptWithSimpleEnvVarsDefinition::class)
+@KotlinScript(fileExtension = "2.kts", compilationConfiguration = TestScriptWithSimpleEnvVarsDefinition::class)
 abstract class TestScriptWithSimpleEnvVars
 

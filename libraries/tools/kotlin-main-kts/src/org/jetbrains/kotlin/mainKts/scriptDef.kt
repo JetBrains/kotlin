@@ -20,7 +20,7 @@ import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 
 @Suppress("unused")
-@KotlinScript(extension = "main.kts", compilationConfiguration = MainKtsScriptDefinition::class)
+@KotlinScript(fileExtension = "main.kts", compilationConfiguration = MainKtsScriptDefinition::class)
 abstract class MainKtsScript(val args: Array<String>)
 
 object MainKtsScriptDefinition : ScriptCompilationConfiguration(

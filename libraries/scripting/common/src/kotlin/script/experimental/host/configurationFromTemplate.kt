@@ -61,10 +61,10 @@ fun createCompilationConfigurationFromTemplate(
             baseClass(loadedBaseClassType)
         }
         if (fileExtension() == null) {
-            fileExtension(mainAnnotation.extension)
+            fileExtension(mainAnnotation.fileExtension)
         }
         if (displayName() == null) {
-            displayName(mainAnnotation.name)
+            displayName(mainAnnotation.displayName)
         }
 
         body()

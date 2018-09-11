@@ -28,7 +28,7 @@ class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<Scrip
 
 val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any>>()
 
-val ScriptEvaluationConfigurationKeys.contextVariables by PropertiesCollection.key<Map<String, Any?>>() // external variables
+val ScriptEvaluationConfigurationKeys.providedProperties by PropertiesCollection.key<Map<String, Any?>>() // external variables
 
 val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.key<List<Any?>>()
 
