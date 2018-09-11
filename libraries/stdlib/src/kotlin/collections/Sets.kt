@@ -73,6 +73,19 @@ public inline fun <T> hashSetOf(): HashSet<T> = HashSet()
 /** Returns a new [HashSet] with the given elements. */
 public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))
 
+/** Returns an empty new [java.util.EnumSet] of [T]. */
+@kotlin.internal.InlineOnly
+public inline fun <reified T : Enum<T>> enumSetOf(): java.util.EnumSet<T> = java.util.EnumSet.noneOf(T::class.java)
+
+/** Returns a new [java.util.EnumSet] with the given [elements] of [T]. */
+@kotlin.internal.InlineOnly
+public inline fun <reified T : Enum<T>> enumSetOf(vararg elements: T): java.util.EnumSet<T> =
+    elements.toCollection(java.util.EnumSet.noneOf(T::class.java))
+
+/** Returns a filled new [java.util.EnumSet] of [T]. */
+@kotlin.internal.InlineOnly
+public inline fun <reified T : Enum<T>> enumSetAllOf(): java.util.EnumSet<T> = java.util.EnumSet.allOf(T::class.java)
+
 /** Returns an empty new [LinkedHashSet]. */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
