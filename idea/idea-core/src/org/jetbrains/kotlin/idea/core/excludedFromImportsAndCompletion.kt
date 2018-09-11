@@ -27,7 +27,9 @@ private val exclusions =
         listOf(
                 "kotlin.jvm.internal",
                 "kotlin.coroutines.experimental.intrinsics",
+                "kotlin.coroutines.intrinsics",
                 "kotlin.coroutines.experimental.jvm.internal",
+                "kotlin.coroutines.jvm.internal",
                 "kotlin.reflect.jvm.internal"
         )
 
