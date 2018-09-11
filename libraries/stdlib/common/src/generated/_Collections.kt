@@ -1348,7 +1348,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destinat
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */

@@ -92,7 +92,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.mapTo(des
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */

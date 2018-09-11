@@ -928,7 +928,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapTo(destinat
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  *
  * The operation is _intermediate_ and _stateless_.
  * 

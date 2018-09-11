@@ -9032,7 +9032,7 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: 
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
@@ -9041,7 +9041,7 @@ public inline fun <T> Array<out T>.withEach(operation: T.() -> Unit): Unit {
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
@@ -9050,7 +9050,7 @@ public inline fun ByteArray.withEach(operation: Byte.() -> Unit): Unit {
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
@@ -9059,7 +9059,7 @@ public inline fun ShortArray.withEach(operation: Short.() -> Unit): Unit {
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
@@ -9068,7 +9068,7 @@ public inline fun IntArray.withEach(operation: Int.() -> Unit): Unit {
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
@@ -9077,7 +9077,7 @@ public inline fun LongArray.withEach(operation: Long.() -> Unit): Unit {
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
@@ -9086,7 +9086,7 @@ public inline fun FloatArray.withEach(operation: Float.() -> Unit): Unit {
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
@@ -9095,7 +9095,7 @@ public inline fun DoubleArray.withEach(operation: Double.() -> Unit): Unit {
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */
@@ -9104,7 +9104,7 @@ public inline fun BooleanArray.withEach(operation: Boolean.() -> Unit): Unit {
 }
 
 /**
- * For each element of this [Iterable], calls the specified function [operation] with the element as its receiver.
+ * For each element, calls the specified function [operation] with the element as its receiver.
  * 
  * @sample samples.collections.Collections.Transformations.withEach
  */

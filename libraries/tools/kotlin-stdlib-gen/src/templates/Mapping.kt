@@ -446,7 +446,7 @@ object Mapping : TemplateGroupBase() {
       include(Maps, CharSequences)
     } builder {
       inline()
-      doc { "For each element of this [Iterable], calls the specified function [operation] with the element as its receiver." }
+      doc { "For each element, calls the specified function [operation] with the element as its receiver." }
       specialFor(Iterables, Maps) { annotation("@kotlin.internal.HidesMembers") }
       sample("samples.collections.Collections.Transformations.withEach")
       returns("Unit")
