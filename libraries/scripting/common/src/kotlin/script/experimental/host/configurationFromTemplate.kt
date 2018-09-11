@@ -19,6 +19,13 @@ private const val SCRIPT_RUNTIME_TEMPLATES_PACKAGE = "kotlin.script.templates.st
 @KotlinScript
 private abstract class DummyScriptTemplate
 
+/**
+ * Creates the compilation configuration from annotated script base class
+ * @param baseClassType the annotated script base class to construct the configuration from
+ * @param hostConfiguration scripting host configuration properties
+ * @param contextClass optional context class to extract classloading strategy from
+ * @param body optional configuration function to add more properties to the compilation configuration
+ */
 fun createCompilationConfigurationFromTemplate(
     baseClassType: KotlinType,
     hostConfiguration: ScriptingHostConfiguration,

@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 /**
- * A Kotlin type representation for using in the scripting API
+ * The Kotlin type representation for using in the scripting API
  */
 class KotlinType private constructor(
     val typeName: String,
