@@ -310,7 +310,7 @@ abstract class ObjCExportHeaderGenerator(
         if (!generatedClasses.add(descriptor)) return
 
         val name = translateClassName(descriptor)
-        val members: List<Stub<*>> = buildMembers { translateClassOrInterfaceMembers(descriptor) }
+        val members: List<Stub<*>> = buildMembers { translateInterfaceMembers(descriptor) }
         val superProtocols: List<String> = descriptor.superProtocols
 
         val protocolStub = objCProtocol(name, descriptor, superProtocols, members)
@@ -334,7 +334,7 @@ abstract class ObjCExportHeaderGenerator(
 
         val name = translateClassName(classDescriptor).objCName
         val members = buildMembers {
-            translateMembers(declarations)
+            translatePlainMembers(declarations)
         }
         stubs.add(ObjCInterface(name, categoryName = "Extensions", members = members))
     }
@@ -344,7 +344,7 @@ abstract class ObjCExportHeaderGenerator(
 
         // TODO: stop inheriting KotlinBase.
         val members = buildMembers {
-            translateMembers(declarations)
+            translatePlainMembers(declarations)
         }
         stubs.add(objCInterface(
                 name,
@@ -432,7 +432,7 @@ abstract class ObjCExportHeaderGenerator(
                         }
                     }
 
-            translateClassOrInterfaceMembers(descriptor)
+            translateClassMembers(descriptor)
         }
 
         val attributes = if (descriptor.isFinalOrEnum) listOf("objc_subclassing_restricted") else emptyList()
@@ -448,14 +448,21 @@ abstract class ObjCExportHeaderGenerator(
         stubs.add(interfaceStub)
     }
 
-    private fun StubBuilder.translateClassOrInterfaceMembers(descriptor: ClassDescriptor) {
-        val members = descriptor.unsubstitutedMemberScope.getContributedDescriptors()
-                .asSequence()
-                .filterIsInstance<CallableMemberDescriptor>()
-                .filter { mapper.shouldBeExposed(it) }
-                .toList()
+    private fun ClassDescriptor.getExposedMembers(): List<CallableMemberDescriptor> =
+            this.unsubstitutedMemberScope.getContributedDescriptors()
+                    .asSequence()
+                    .filterIsInstance<CallableMemberDescriptor>()
+                    .filter { mapper.shouldBeExposed(it) }
+                    .toList()
 
-        translateMembers(members)
+    private fun StubBuilder.translateClassMembers(descriptor: ClassDescriptor) {
+        require(!descriptor.isInterface)
+        translateClassMembers(descriptor.getExposedMembers())
+    }
+
+    private fun StubBuilder.translateInterfaceMembers(descriptor: ClassDescriptor) {
+        require(descriptor.isInterface)
+        translateBaseMembers(descriptor.getExposedMembers())
     }
 
     private class RenderedStub<T: Stub<*>>(val stub: T) {
@@ -477,27 +484,68 @@ abstract class ObjCExportHeaderGenerator(
         }
     }
 
-    private fun StubBuilder.translateMembers(members: List<CallableMemberDescriptor>) {
+    private fun List<CallableMemberDescriptor>.toObjCMembers(
+            methodsBuffer: MutableList<FunctionDescriptor>,
+            propertiesBuffer: MutableList<PropertyDescriptor>
+    ) = this.forEach {
+        when (it) {
+            is FunctionDescriptor -> methodsBuffer += it
+            is PropertyDescriptor -> if (mapper.isObjCProperty(it)) {
+                propertiesBuffer += it
+            } else {
+                methodsBuffer.addIfNotNull(it.getter)
+                methodsBuffer.addIfNotNull(it.setter)
+            }
+            else -> error(it)
+        }
+    }
+
+    private fun StubBuilder.translateClassMembers(members: List<CallableMemberDescriptor>) {
         // TODO: add some marks about modality.
 
         val methods = mutableListOf<FunctionDescriptor>()
         val properties = mutableListOf<PropertyDescriptor>()
 
-        members.forEach {
-            when (it) {
-                is FunctionDescriptor -> methods += it
-                is PropertyDescriptor -> if (mapper.isObjCProperty(it)) {
-                    properties += it
-                } else {
-                    methods.addIfNotNull(it.getter)
-                    methods.addIfNotNull(it.setter)
-                }
-                else -> error(it)
+        members.toObjCMembers(methods, properties)
+
+        collectMethodsOrProperties(methods) { it -> buildAsDeclaredOrInheritedMethods(it.original) }
+        collectMethodsOrProperties(properties) { it -> buildAsDeclaredOrInheritedProperties(it.original) }
+    }
+
+    private fun StubBuilder.translateBaseMembers(members: List<CallableMemberDescriptor>) {
+        // TODO: add some marks about modality.
+
+        val methods = mutableListOf<FunctionDescriptor>()
+        val properties = mutableListOf<PropertyDescriptor>()
+
+        members.toObjCMembers(methods, properties)
+
+        methods.retainAll { mapper.isBaseMethod(it) }
+
+        properties.retainAll {
+            if (mapper.isBaseProperty(it)) {
+                true
+            } else {
+                methods.addIfNotNull(it.setter?.takeIf(mapper::isBaseMethod))
+                false
             }
         }
 
-        collectMethodsOrProperties(methods) { it -> buildMethods(it.original) }
-        collectMethodsOrProperties(properties) { it -> buildProperties(it.original) }
+        translatePlainMembers(methods, properties)
+    }
+
+    private fun StubBuilder.translatePlainMembers(members: List<CallableMemberDescriptor>) {
+        val methods = mutableListOf<FunctionDescriptor>()
+        val properties = mutableListOf<PropertyDescriptor>()
+
+        members.toObjCMembers(methods, properties)
+
+        translatePlainMembers(methods, properties)
+    }
+
+    private fun StubBuilder.translatePlainMembers(methods: List<FunctionDescriptor>, properties: List<PropertyDescriptor>) {
+        methods.forEach { +buildMethod(it, it) }
+        properties.forEach { +buildProperty(it, it) }
     }
 
     private fun <D : CallableMemberDescriptor, S : Stub<*>> StubBuilder.collectMethodsOrProperties(
@@ -521,20 +569,28 @@ abstract class ObjCExportHeaderGenerator(
     private val methodToSignatures = mutableMapOf<FunctionDescriptor, Set<RenderedStub<ObjCMethod>>>()
     private val propertyToSignatures = mutableMapOf<PropertyDescriptor, Set<RenderedStub<ObjCProperty>>>()
 
-    private fun buildMethods(method: FunctionDescriptor): Set<RenderedStub<ObjCMethod>> = methodToSignatures.getOrPut(method) {
+    private fun buildAsDeclaredOrInheritedMethods(
+            method: FunctionDescriptor
+    ): Set<RenderedStub<ObjCMethod>> = methodToSignatures.getOrPut(method) {
+        val isInterface = (method.containingDeclaration as ClassDescriptor).isInterface
+
         mapper.getBaseMethods(method)
                 .asSequence()
                 .distinctBy { namer.getSelector(it) }
-                .map { base -> buildMethod(method, base) }
+                .map { base -> buildMethod((if (isInterface) base else method), base) }
                 .map { method -> RenderedStub(method) }
                 .toSet()
     }
 
-    private fun buildProperties(property: PropertyDescriptor): Set<RenderedStub<ObjCProperty>> = propertyToSignatures.getOrPut(property) {
+    private fun buildAsDeclaredOrInheritedProperties(
+            property: PropertyDescriptor
+    ): Set<RenderedStub<ObjCProperty>> = propertyToSignatures.getOrPut(property) {
+        val isInterface = (property.containingDeclaration as ClassDescriptor).isInterface
+
         mapper.getBaseProperties(property)
                 .asSequence()
                 .distinctBy { namer.getPropertyName(it) }
-                .map { base -> buildProperty(property, base) }
+                .map { base -> buildProperty((if (isInterface) base else property), base) }
                 .map { property -> RenderedStub(property) }
                 .toSet()
     }
