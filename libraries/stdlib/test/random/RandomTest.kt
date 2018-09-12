@@ -112,11 +112,11 @@ abstract class RandomSmokeTest {
             assertEquals(n, subject.nextInt(n, n + 1))
         }
 
-        for ((origin, bound) in listOf((0 to 2), (-1 to 5), (0 to 32), (0 to Int.MAX_VALUE), (-1 to Int.MAX_VALUE), (Int.MIN_VALUE to Int.MAX_VALUE))) {
+        for ((from, until) in listOf((0 to 2), (-1 to 5), (0 to 32), (0 to Int.MAX_VALUE), (-1 to Int.MAX_VALUE), (Int.MIN_VALUE to Int.MAX_VALUE))) {
             repeat(1000) {
-                val x = subject.nextInt(origin, bound)
-                if (x !in origin until bound)
-                    fail("Value $x must be in range [$origin, $bound)")
+                val x = subject.nextInt(from, until)
+                if (x !in from until until)
+                    fail("Value $x must be in range [$from, $until)")
             }
         }
     }
@@ -134,11 +134,11 @@ abstract class RandomSmokeTest {
             assertEquals(n, subject.nextUInt(n, n + 1u))
         }
 
-        for ((origin, bound) in listOf((0u to 2u), (1u to 6u), (0u to 32u), (0u to UInt.MAX_VALUE), (1u to (Int.MAX_VALUE.toUInt() + 1u)), (UInt.MIN_VALUE to UInt.MAX_VALUE))) {
+        for ((from, until) in listOf((0u to 2u), (1u to 6u), (0u to 32u), (0u to UInt.MAX_VALUE), (1u to (Int.MAX_VALUE.toUInt() + 1u)), (UInt.MIN_VALUE to UInt.MAX_VALUE))) {
             repeat(1000) {
-                val x = subject.nextUInt(origin, bound)
-                if (x !in origin until bound)
-                    fail("Value $x must be in range [$origin, $bound)")
+                val x = subject.nextUInt(from, until)
+                if (x !in from until until)
+                    fail("Value $x must be in range [$from, $until)")
             }
         }
     }
@@ -266,12 +266,12 @@ abstract class RandomSmokeTest {
             assertEquals(n, subject.nextLong(n, n + 1))
         }
 
-        for ((origin, bound) in listOf((0L to 32L), (-1L to 5L), (0L to 0x1_0000_0000),
+        for ((from, until) in listOf((0L to 32L), (-1L to 5L), (0L to 0x1_0000_0000),
                                        (0L to Long.MAX_VALUE), (-1L to Long.MAX_VALUE), (Long.MIN_VALUE to Long.MAX_VALUE))) {
             repeat(1000) {
-                val x = subject.nextLong(origin, bound)
-                if (x !in origin until bound)
-                    fail("Value $x must be in range [$origin, $bound)")
+                val x = subject.nextLong(from, until)
+                if (x !in from until until)
+                    fail("Value $x must be in range [$from, $until)")
             }
         }
     }
@@ -286,16 +286,16 @@ abstract class RandomSmokeTest {
             assertEquals(n, subject.nextULong(n, n + 1uL))
         }
 
-        for ((origin, bound) in listOf(
+        for ((from, until) in listOf(
             (0uL to 32uL),
             (1uL to 6uL),
             (0uL to 0x1_0000_0000.toULong()),
             (0uL to ULong.MAX_VALUE)
         )) {
             repeat(1000) {
-                val x = subject.nextULong(origin, bound)
-                if (x !in origin until bound) {
-                    fail("Value $x must be in range [$origin, $bound)")
+                val x = subject.nextULong(from, until)
+                if (x !in from until until) {
+                    fail("Value $x must be in range [$from, $until)")
                 }
             }
         }
@@ -409,11 +409,11 @@ abstract class RandomSmokeTest {
             assertTrue(fullRangeValues.size >= (size * 0.995), "All values should be distinct, but only ${fullRangeValues.size} of them are")
         }
 
-        for ((origin, bound) in listOf(0.0 to 1.0, -1.0 to 1.0, 0.0 to 100.0, -PI to PI, 0.0 to Double.MAX_VALUE)) {
+        for ((from, until) in listOf(0.0 to 1.0, -1.0 to 1.0, 0.0 to 100.0, -PI to PI, 0.0 to Double.MAX_VALUE)) {
             repeat(1000) {
-                val d = subject.nextDouble(origin, bound)
-                if (!(d >= origin && d < bound)) {
-                    fail("Random double $d is out of range [$origin, $bound)")
+                val d = subject.nextDouble(from, until)
+                if (!(d >= from && d < until)) {
+                    fail("Random double $d is out of range [$from, $until)")
                 }
             }
         }
