@@ -64,7 +64,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextIntBound() {
+    fun nextIntUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextInt(0) }
         assertFailsWith<IllegalArgumentException> { subject.nextInt(-1) }
         assertFailsWith<IllegalArgumentException> { subject.nextInt(Int.MIN_VALUE) }
@@ -83,7 +83,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextUIntBound() {
+    fun nextUIntUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextUInt(UInt.MIN_VALUE) }
 
         repeat(1000) {
@@ -100,7 +100,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextIntOriginBound() {
+    fun nextIntFromUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextInt(0, 0) }
         assertFailsWith<IllegalArgumentException> { subject.nextInt(-1, -2) }
         assertFailsWith<IllegalArgumentException> { subject.nextInt(Int.MIN_VALUE, Int.MIN_VALUE) }
@@ -122,7 +122,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextUIntOriginBound() {
+    fun nextUIntFromUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextUInt(0u, 0u) }
         assertFailsWith<IllegalArgumentException> { subject.nextUInt((-1).toUInt(), (-2).toUInt()) }
         assertFailsWith<IllegalArgumentException> { subject.nextUInt(UInt.MIN_VALUE, UInt.MIN_VALUE) }
@@ -219,7 +219,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextLongBound() {
+    fun nextLongUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextLong(0) }
         assertFailsWith<IllegalArgumentException> { subject.nextLong(-1) }
         assertFailsWith<IllegalArgumentException> { subject.nextLong(Long.MIN_VALUE) }
@@ -238,7 +238,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextULongBound() {
+    fun nextULongUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextULong(ULong.MIN_VALUE) }
 
         repeat(1000) {
@@ -256,7 +256,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextLongOriginBound() {
+    fun nextLongFromUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextLong(0, 0) }
         assertFailsWith<IllegalArgumentException> { subject.nextLong(-1, -2) }
         assertFailsWith<IllegalArgumentException> { subject.nextLong(Long.MIN_VALUE, Long.MIN_VALUE) }
@@ -277,7 +277,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextULongOriginBound() {
+    fun nextULongFromUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextULong(0uL, 0uL) }
         assertFailsWith<IllegalArgumentException> { subject.nextULong((-1).toULong(), (-2).toULong()) }
 
@@ -364,7 +364,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextDoubleBound() {
+    fun nextDoubleUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextDouble(-1.0) }
         assertFailsWith<IllegalArgumentException> { subject.nextDouble(-0.0) }
         assertFailsWith<IllegalArgumentException> { subject.nextDouble(0.0) }
@@ -387,7 +387,7 @@ abstract class RandomSmokeTest {
     }
 
     @Test
-    fun nextDoubleOriginBound() {
+    fun nextDoubleFromUntil() {
         assertFailsWith<IllegalArgumentException> { subject.nextDouble(0.0, -1.0) }
         assertFailsWith<IllegalArgumentException> { subject.nextDouble(0.0, Double.NaN) }
         assertFailsWith<IllegalArgumentException> { subject.nextDouble(Double.NaN, 0.0) }
