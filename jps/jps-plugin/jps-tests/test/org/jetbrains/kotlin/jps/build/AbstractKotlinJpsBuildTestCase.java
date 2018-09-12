@@ -88,7 +88,9 @@ public abstract class AbstractKotlinJpsBuildTestCase extends BaseKotlinJpsBuildT
     }
 
     protected static JpsLibrary addKotlinStdlibDependency(@NotNull Collection<JpsModule> modules, boolean exported) {
-        return addDependency(JpsJavaDependencyScope.COMPILE, modules, exported, "kotlin-stdlib", PathUtil.getKotlinPathsForDistDirectory().getStdlibPath());
+        return addDependency(JpsJavaDependencyScope.COMPILE, modules, exported, "kotlin-stdlib",
+                             PathUtil.getKotlinPathsForDistDirectory().getStdlibPath(),
+                             new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "annotations-13.0.jar"));
     }
 
     protected JpsLibrary addDependency(@NotNull String libraryName, @NotNull File libraryFile) {
