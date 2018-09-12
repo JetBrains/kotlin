@@ -64,7 +64,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
                 libraries {
                     klibs df.config.depends
                 }
-                extraOpts '--purge_user_libs'
+                extraOpts '-Xpurge-user-libs'
             }
         }
 

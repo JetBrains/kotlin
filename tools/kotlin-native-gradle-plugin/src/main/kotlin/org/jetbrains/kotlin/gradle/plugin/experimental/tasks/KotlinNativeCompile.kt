@@ -120,7 +120,7 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
                 addArg("-l", library.nameWithoutExtension)
             }
 
-            addListArg("-linkerOpts", linkerOpts)
+            addListArg("-linker-options", linkerOpts)
 
             addAll(sources.files.map { it.absolutePath })
         }

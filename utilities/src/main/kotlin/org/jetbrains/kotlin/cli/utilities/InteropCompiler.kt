@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 private const val NODEFAULTLIBS = "-nodefaultlibs"
-private const val PURGE_USER_LIBS = "--purge_user_libs"
+private const val PURGE_USER_LIBS = "-Xpurge-user-libs"
 
 // TODO: this function should eventually be eliminated from 'utilities'. 
 // The interaction of interop and the compler should be streamlined. 
@@ -45,7 +45,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
             noDefaultLibs = true
         if (arg == PURGE_USER_LIBS)
             purgeUserLibs = true
-        if (arg == "--temporary_files_dir")
+        if (arg == "-Xtemporary-files-dir")
             temporaryFilesDir = nextArg ?: ""
     }
 
@@ -86,9 +86,9 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
 
     val nativeStubs = 
         if (flavor == "wasm") 
-            arrayOf("-includeBinary", File(nativesDir, "js_stubs.js").path)
+            arrayOf("-include-binary", File(nativesDir, "js_stubs.js").path)
         else 
-            arrayOf("-nativelibrary",File(nativesDir, "$cstubsName.bc").path)
+            arrayOf("-native-library",File(nativesDir, "$cstubsName.bc").path)
 
     val konancArgs = arrayOf(
         generatedDir.path, 
@@ -96,7 +96,7 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
         "-o", outputFileName,
         "-target", target.visibleName,
         "-manifest", manifest.path,
-        "--temporary_files_dir", temporaryFilesDir) +
+        "-Xtemporary-files-dir=$temporaryFilesDir") +
         nativeStubs +
         cinteropArgsToCompiler + 
         libraries.flatMap { listOf("-library", it) } + 

@@ -117,7 +117,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         // The library's directory is added in libraries.repos.
         addArgs("-library", libraries.artifacts.map { it.artifact.nameWithoutExtension })
 
-        addFileArgs("-nativelibrary", nativeLibraries)
+        addFileArgs("-native-library", nativeLibraries)
         addArg("-produce", produce.name.toLowerCase())
 
         addListArg("-linkerOpts", linkerOpts)
@@ -132,7 +132,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         addKey("-nomain", noMain)
         addKey("-opt", enableOptimizations)
         addKey("-ea", enableAssertions)
-        addKey("--time", measureTime)
+        addKey("-Xtime", measureTime)
         addKey("-nodefaultlibs", noDefaultLibs)
         addKey("-Xmulti-platform", enableMultiplatform)
 
