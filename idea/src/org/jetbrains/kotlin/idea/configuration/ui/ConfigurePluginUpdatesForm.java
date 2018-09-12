@@ -10,6 +10,7 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 
 import javax.swing.*;
+import java.util.List;
 
 public class ConfigurePluginUpdatesForm {
     public JComboBox<String> channelCombo;
@@ -23,6 +24,16 @@ public class ConfigurePluginUpdatesForm {
     private JTextPane currentVersion;
 
     public ConfigurePluginUpdatesForm() {
+        showVerifierDisabledStatus();
+        currentVersion.setText(KotlinPluginUtil.getPluginVersion());
+    }
+
+    public void initChannels(List<String> channels) {
+        channelCombo.removeAllItems();
+        for (String channel : channels) {
+            channelCombo.addItem(channel);
+        }
+
         int size = channelCombo.getModel().getSize();
         String maxLengthItem = "";
         for (int i = 0; i < size; i++) {
@@ -32,8 +43,6 @@ public class ConfigurePluginUpdatesForm {
             }
         }
         channelCombo.setPrototypeDisplayValue(maxLengthItem + " ");
-        showVerifierDisabledStatus();
-        currentVersion.setText(KotlinPluginUtil.getPluginVersion());
     }
 
     private void createUIComponents() {

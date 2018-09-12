@@ -19,23 +19,32 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
     companion object {
         const val ID = "preferences.language.Kotlin"
 
-        private fun saveSelectedChannel(channel: Int) {
+        private fun saveSelectedChannel(channelOrdinal: Int) {
             val hosts = UpdateSettings.getInstance().storedPluginHosts
             hosts.removeIf {
                 it.startsWith("https://plugins.jetbrains.com/plugins/") &&
                         (it.endsWith("/6954") || it.endsWith(KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString))
             }
 
-            EAPChannels.values().find { it.uiIndex == channel }?.let { eapChannel ->
-                hosts.add(eapChannel.url)
+            UpdateChannel.values().find { it.ordinal == channelOrdinal }?.let { eapChannel ->
+                if (eapChannel != UpdateChannel.STABLE) {
+                    hosts.add(eapChannel.url ?: error("Shouldn't add null urls to custom repositories"))
+                }
             }
         }
 
-        enum class EAPChannels(val url: String, val uiIndex: Int) {
-            EAP("https://plugins.jetbrains.com/plugins/eap/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", 1),
-            EAP_NEXT("https://plugins.jetbrains.com/plugins/eap-next/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", 2);
+        enum class UpdateChannel(val url: String?, val title: String) {
+            STABLE(null, "Stable"),
+            EAP("https://plugins.jetbrains.com/plugins/eap/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}", "Early Access Preview 1.3.x"),
+            EAP_NEXT(
+                "https://plugins.jetbrains.com/plugins/eap-next/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}",
+                "Early Access Preview 1.4.x"
+            );
 
-            fun isInHosts() = url in UpdateSettings.getInstance().pluginHosts
+            fun isInHosts(): Boolean {
+                if (this == STABLE) return false
+                return url in UpdateSettings.getInstance().pluginHosts
+            }
         }
     }
 
@@ -108,7 +117,9 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
             }
         }
 
-        savedChannel = EAPChannels.values().find { it.isInHosts() }?.uiIndex ?: 0
+        form.initChannels(UpdateChannel.values().map { it.title })
+
+        savedChannel = UpdateChannel.values().find { it.isInHosts() }?.ordinal ?: 0
         form.channelCombo.selectedIndex = savedChannel
 
         form.channelCombo.addActionListener {

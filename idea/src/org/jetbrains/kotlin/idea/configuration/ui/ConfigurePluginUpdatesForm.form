@@ -80,13 +80,7 @@
         <children>
           <component id="ca1a9" class="javax.swing.JComboBox" binding="channelCombo">
             <constraints/>
-            <properties>
-              <model>
-                <item value="Stable"/>
-                <item value="Early Access Preview 1.3.x"/>
-                <item value="Early Access Preview 1.4.x"/>
-              </model>
-            </properties>
+            <properties/>
           </component>
           <component id="c7546" class="javax.swing.JButton" binding="reCheckButton">
             <constraints/>
