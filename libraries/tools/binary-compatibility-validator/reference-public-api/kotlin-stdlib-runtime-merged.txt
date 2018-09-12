@@ -2852,6 +2852,17 @@ public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun intercepted (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 }
 
+public final class kotlin/coroutines/jvm/internal/Boxing {
+	public static final fun boxBoolean (Z)Ljava/lang/Boolean;
+	public static final fun boxByte (B)Ljava/lang/Byte;
+	public static final fun boxChar (C)Ljava/lang/Character;
+	public static final fun boxDouble (D)Ljava/lang/Double;
+	public static final fun boxFloat (F)Ljava/lang/Float;
+	public static final fun boxInt (I)Ljava/lang/Integer;
+	public static final fun boxLong (J)Ljava/lang/Long;
+	public static final fun boxShort (S)Ljava/lang/Short;
+}
+
 public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFrame {
 	public abstract fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
