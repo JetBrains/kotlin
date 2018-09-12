@@ -407,7 +407,8 @@ private fun ObjCExportMapper.canBeInheritedBySameClass(
         second: CallableMemberDescriptor
 ): Boolean {
     if (this.isTopLevel(first) || this.isTopLevel(second)) {
-        return (first.containingDeclaration.fqNameSafe == second.containingDeclaration.fqNameSafe)
+        return this.isTopLevel(first) && this.isTopLevel(second) &&
+                first.source.containingFile == second.source.containingFile
     }
 
     val firstClass = this.getClassIfCategory(first) ?: first.containingDeclaration as ClassDescriptor
