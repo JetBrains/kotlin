@@ -112,7 +112,6 @@ abstract class ObjCExportHeaderGenerator(
             descriptor: ClassDescriptor? = null,
             superClass: String? = null,
             superProtocols: List<String> = emptyList(),
-            categoryName: String? = null,
             members: List<Stub<*>> = emptyList(),
             attributes: List<String> = emptyList()
     ): ObjCInterface = ObjCInterface(
@@ -121,7 +120,7 @@ abstract class ObjCExportHeaderGenerator(
             descriptor,
             superClass,
             superProtocols,
-            categoryName,
+            null,
             members,
             attributes + name.toNameAttributes()
     )
@@ -156,8 +155,8 @@ abstract class ObjCExportHeaderGenerator(
         }))
 
         // TODO: add comment to the header.
-        stubs.add(objCInterface(
-                kotlinAnyName,
+        stubs.add(ObjCInterface(
+                kotlinAnyName.objCName,
                 superProtocols = listOf("NSCopying"),
                 categoryName = "${kotlinAnyName.objCName}Copying"
         ))
@@ -333,11 +332,11 @@ abstract class ObjCExportHeaderGenerator(
     private fun translateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>) {
         translateClass(classDescriptor)
 
-        val name = translateClassName(classDescriptor)
+        val name = translateClassName(classDescriptor).objCName
         val members = buildMembers {
             translateMembers(declarations)
         }
-        stubs.add(objCInterface(name, categoryName = "Extensions", members = members))
+        stubs.add(ObjCInterface(name, categoryName = "Extensions", members = members))
     }
 
     private fun translateTopLevel(sourceFile: SourceFile, declarations: List<CallableMemberDescriptor>) {
