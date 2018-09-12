@@ -20,9 +20,8 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
-import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask
-import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask.Companion.KONAN_DOWNLOAD_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -245,26 +244,27 @@ class KotlinNativeTargetPreset(
 
     override fun getName(): String = name
 
-    private fun createCompilerDownloadingTask() = with(project) {
-        if (!hasProperty(KotlinNativeProjectProperty.KONAN_HOME)) {
-            setProperty(KotlinNativeProjectProperty.KONAN_HOME, KonanCompilerDownloadTask.compilerDirectory)
-            setProperty(KotlinNativeProjectProperty.DOWNLOAD_COMPILER, true)
+    private fun setupNativeCompiler() = with(project) {
+        if (!hasProperty(KotlinNativeProjectProperty.KONAN_HOME_OVERRIDE)) {
+            NativeCompilerDownloader(this).downloadIfNeeded()
+            logger.info("Kotlin/Native distribution: $konanHome")
+        } else {
+            logger.info("User-provided Kotlin/Native distribution: $konanHome")
         }
-        tasks.maybeCreate(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
     }
 
     private fun stdlib(target: KonanTarget): FileCollection = with(project) {
-        files("${konanHome}/klib/common/stdlib").builtBy(createCompilerDownloadingTask())
+        files("${konanHome}/klib/common/stdlib")
     }
 
     private fun platformLibs(target: KonanTarget): FileCollection = with(project) {
         files(provider {
-            file("${project.konanHome}/klib/platform/${target.name}").listFiles { file -> file.isDirectory } ?: emptyArray()
-        }).builtBy(createCompilerDownloadingTask())
+            file("${konanHome}/klib/platform/${target.name}").listFiles { file -> file.isDirectory } ?: emptyArray()
+        })
     }
 
     override fun createTarget(name: String): KotlinNativeTarget {
-        createCompilerDownloadingTask()
+        setupNativeCompiler()
 
         val result = KotlinNativeTarget(project, konanTarget).apply {
             targetName = name

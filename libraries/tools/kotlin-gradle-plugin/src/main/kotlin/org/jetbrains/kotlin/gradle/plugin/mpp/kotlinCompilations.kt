@@ -290,7 +290,7 @@ class KotlinNativeCompilation(
     internal val binaryTasks = mutableMapOf<Pair<NativeOutputKind, NativeBuildType>, KotlinNativeCompile>()
 
     // Native-specific DSL.
-    val extraOpts = mutableListOf<String>()
+    var extraOpts = mutableListOf<String>()
 
     fun extraOpts(vararg values: Any) = extraOpts(values.toList())
     fun extraOpts(values: List<Any>) {
