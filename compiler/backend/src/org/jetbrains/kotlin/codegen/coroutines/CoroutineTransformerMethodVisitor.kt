@@ -83,6 +83,9 @@ class CoroutineTransformerMethodVisitor(
 
         FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
         RedundantLocalsEliminationMethodTransformer(languageVersionSettings).transform(containingClassInternalName, methodNode)
+        if (languageVersionSettings.isReleaseCoroutines()) {
+            ChangeBoxingMethodTransformer.transform(containingClassInternalName, methodNode)
+        }
         updateMaxStack(methodNode)
 
         val suspensionPoints = collectSuspensionPoints(methodNode)
