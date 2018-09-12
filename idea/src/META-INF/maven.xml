@@ -88,7 +88,7 @@
                      level="WARNING" />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.MavenCoroutinesDeprecationInspection"
-                     displayName="Maven dependency is incompatible with Kotlin 1.3+ and should be updated"
+                     displayName="Incompatible kotlinx.coroutines dependency is used with Kotlin 1.3+ in Maven"
                      groupPath="Kotlin,Migration"
                      groupName="Maven"
                      enabledByDefault="true"
