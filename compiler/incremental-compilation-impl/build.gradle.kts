@@ -24,7 +24,7 @@ dependencies {
     testCompile(project(":kotlin-stdlib"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("annotations", "log4j", "jdom") }
 }
 

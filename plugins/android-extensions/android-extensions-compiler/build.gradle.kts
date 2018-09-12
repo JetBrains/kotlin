@@ -9,7 +9,7 @@ plugins {
 val robolectricClasspath by configurations.creating
 
 dependencies {
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     compile(project(":compiler:util"))
     compile(project(":compiler:plugin-api"))

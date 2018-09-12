@@ -24,7 +24,7 @@ dependencies {
     testCompile(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("idea", "idea_rt", "openapi", "log4j", "jdom", "jps-model") }
     testRuntime(project(":kotlin-reflect"))
 }
