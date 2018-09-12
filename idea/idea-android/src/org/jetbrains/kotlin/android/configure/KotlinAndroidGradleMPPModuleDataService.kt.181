@@ -24,6 +24,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService
+import org.jetbrains.kotlin.idea.configuration.kotlinAndroidSourceSets
 import java.io.File
 
 class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<ModuleData, Void>() {
