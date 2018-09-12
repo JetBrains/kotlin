@@ -444,11 +444,14 @@ private fun ObjCExportMapper.canHaveSameSelector(first: FunctionDescriptor, seco
     if (first.extensionReceiverParameter?.type != second.extensionReceiverParameter?.type) {
         return false
     }
-    if (first.valueParameters.map { it.type } != second.valueParameters.map { it.type }) {
+
+    if (first is PropertySetterDescriptor && second is PropertySetterDescriptor) {
+        // Methods should merge in any common subclass as it can't have two properties with same name.
+    } else if (first.valueParameters.map { it.type } == second.valueParameters.map { it.type }) {
+        // Methods should merge in any common subclasses since they have the same signature.
+    } else {
         return false
     }
-
-    // Otherwise both are Kotlin member methods should merge in any common subclass.
 
     // Check if methods have the same bridge (and thus the same ABI):
     return bridgeMethod(first) == bridgeMethod(second)
