@@ -36,7 +36,6 @@ class TestClass
 
 class App(testQualified: Boolean) {
 
-    @Volatile // This could be noop in Kotlin Native, or the equivalent of volatile in C.
     var type = dsl {
         kClass {
             //kClass {  } // This should error if uncommented because of `@DslMarker`.
