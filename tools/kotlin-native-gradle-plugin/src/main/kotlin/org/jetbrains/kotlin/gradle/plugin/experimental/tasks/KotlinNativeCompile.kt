@@ -23,6 +23,7 @@ import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
@@ -58,6 +59,9 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
 
     val linkerOpts: List<String>
         @Input get() = binary.linkerOpts
+
+    val entryPoint: String?
+        @Optional @Input get() = binary.component.entryPoint
 
     val outputFile: File
         get() = outputLocationProvider.get().asFile
@@ -112,6 +116,8 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
             addArg("-p", kind.name.toLowerCase())
 
             add("-Xmulti-platform")
+
+            addArgIfNotNull("-entry", entryPoint)
 
             addAll(additionalCompilerOptions)
 

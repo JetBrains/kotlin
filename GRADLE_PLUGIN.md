@@ -914,6 +914,9 @@ components.main {
 
     // Set up output kinds
     outputKinds = [EXECUTABLE, KLIBRARY, FRAMEWORK, DYNAMIC, STATIC]
+    
+    // Specify custom entry point for executables
+    entryPoint = "org.test.myMain"
 
     // Target-specific options
     target('linux_x64') {

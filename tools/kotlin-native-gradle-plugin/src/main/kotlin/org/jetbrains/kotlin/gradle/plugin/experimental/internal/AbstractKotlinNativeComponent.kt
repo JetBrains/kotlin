@@ -155,5 +155,8 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
         action.execute(dependencies)
     }
 
+    override var entryPoint: String? = null
+    override fun entryPoint(value: String) { entryPoint = value }
+
     // endregion
 }

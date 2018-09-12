@@ -731,6 +731,39 @@ class ExperimentalPluginTests {
     }
 
     @Test
+    fun `Plugin should support custom entry points`() {
+        val hostSuffix = CompilerOutputKind.PROGRAM.suffix(HostManager.host)
+        val exePath = "build/exe/main/release/entry-point$hostSuffix"
+        val project = KonanProject.createEmpty(projectDirectory).apply {
+            buildFile.writeText("""
+                plugins { id 'kotlin-native' }
+
+                components.main {
+                    outputKinds = [EXECUTABLE]
+                    entryPoint = 'org.test.myMain'
+                }
+
+                task run(type: Exec) {
+                    commandLine file('$exePath').absolutePath
+                }
+            """.trimIndent())
+            settingsFile.appendText("rootProject.name = 'entry-point'")
+
+            generateSrcFile("main.kt", """
+                package org.test
+
+                fun myMain(args: Array<String>) {
+                    println("myMain called!")
+                }
+            """.trimIndent())
+        }
+        project.createRunner().withArguments(":assemble").build()
+        assertFileExists(exePath)
+        val result = project.createRunner().withArguments(":run").build()
+        assertTrue(result.output.contains("myMain called!"))
+    }
+
+    @Test
     fun `Plugin should support the konan tooling model`() {
         withProject {
             val hostName = HostManager.hostName
@@ -793,7 +826,7 @@ class ExperimentalPluginTests {
                         val outputRoot = if (kind == OutputKind.EXECUTABLE) "exe" else "lib"
                         val outputFile = file(
                             "build/$outputRoot/main/$buildType/${kind.name.toLowerCase()}/${target.name}/" +
-                            "testProject${kind.compilerOutputKind.suffix(target)}"
+                                    "testProject${kind.compilerOutputKind.suffix(target)}"
                         )
                         assertEquals(outputFile, artifact.file)
                     }

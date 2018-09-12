@@ -106,6 +106,10 @@ interface KotlinNativeComponent: ComponentWithBinaries, ComponentWithDependencie
 
     val publishJavadoc: Boolean
     val publishSources: Boolean
+
+    /** Allows setting custom entry point for executables */
+    var entryPoint: String?
+    fun entryPoint(value: String)
     // endregion
 }
 
