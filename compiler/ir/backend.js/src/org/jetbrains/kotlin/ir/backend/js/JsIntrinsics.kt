@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.types.KotlinType
 
+import java.util.*
+
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
 
     private val externalPackageFragmentSymbol = IrExternalPackageFragmentSymbolImpl(context.internalPackageFragmentDescriptor)
@@ -165,6 +167,52 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val returnIfSuspended = getInternalFunction("returnIfSuspended")
     val getContinuation = getInternalFunction("getContinuation")
+
+    // Arrays:
+    val array = context.symbolTable.referenceClass(irBuiltIns.builtIns.array)
+
+    val primitiveArrays = PrimitiveType.values().associate { context.symbolTable.referenceClass(irBuiltIns.builtIns.getPrimitiveArrayClassDescriptor(it)) to it }
+
+    val jsArray = getInternalFunction("arrayWithFun")
+    val jsFillArray = getInternalFunction("fillArrayFun")
+
+    val jsArrayLength = unOp("jsArrayLength")
+    val jsArrayGet = binOp("jsArrayGet")
+    val jsArraySet = tripleOp("jsArraySet")
+
+    val jsArrayIteratorFunction = getInternalFunction("arrayIterator")
+
+    val jsPrimitiveArrayIteratorFunctions =
+        PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCase()}ArrayIterator") }
+
+    val arrayLiteral = unOp("arrayLiteral").symbol
+
+    val primitiveToTypedArrayMap = EnumMap(mapOf(
+        PrimitiveType.BYTE to "Int8",
+        PrimitiveType.SHORT to "Int16",
+        PrimitiveType.INT to "Int32",
+        PrimitiveType.FLOAT to "Float32",
+        PrimitiveType.DOUBLE to "Float64"))
+
+    val primitiveToSizeConstructor =
+        PrimitiveType.values().associate { type ->
+            type to (primitiveToTypedArrayMap[type]?.let {
+                unOp("${it.toLowerCase()}Array").symbol
+            } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}Array"))
+        }
+
+    val primitiveToLiteralConstructor =
+        PrimitiveType.values().associate { type ->
+            type to (primitiveToTypedArrayMap[type]?.let {
+                unOp("${it.toLowerCase()}ArrayOf").symbol
+            } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}ArrayOf"))
+        }
+
+    val arrayConcat = getInternalWithoutPackage("arrayConcat")
+
+    val primitiveArrayConcat = getInternalWithoutPackage("primitiveArrayConcat")
+
+    val jsArraySlice = unOp("slice")
 
     // Helpers:
 

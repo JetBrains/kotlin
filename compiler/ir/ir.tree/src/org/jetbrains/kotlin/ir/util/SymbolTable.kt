@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
@@ -25,6 +26,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
@@ -54,7 +58,7 @@ open class SymbolTable : ReferenceSymbolTable {
         val unboundSymbols = linkedSetOf<S>()
 
         abstract fun get(d: D): S?
-        protected abstract fun set(d: D, s: S)
+        abstract fun set(d: D, s: S)
 
         inline fun declare(d: D, createSymbol: () -> S, createOwner: (S) -> B): B {
             val existing = get(d)
@@ -91,6 +95,13 @@ open class SymbolTable : ReferenceSymbolTable {
 
         override fun set(d: D, s: S) {
             descriptorToSymbol[d] = s
+        }
+
+        fun copyTo(other: FlatSymbolTable<D, B, S>) {
+            for ((d, s) in descriptorToSymbol) {
+                other.descriptorToSymbol[d] = s
+            }
+            other.unboundSymbols.addAll(unboundSymbols)
         }
     }
 
@@ -411,6 +422,51 @@ open class SymbolTable : ReferenceSymbolTable {
             else ->
                 throw IllegalArgumentException("Unexpected value descriptor: $value")
         }
+
+    fun loadModule(module: IrModuleFragment) {
+        module.acceptVoid(object: IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                // TODO should we check there are no conflicts?
+                classSymbolTable.descriptorToSymbol[declaration.descriptor] = declaration.symbol
+                super.visitClass(declaration)
+            }
+
+            override fun visitConstructor(declaration: IrConstructor) {
+                constructorSymbolTable.descriptorToSymbol[declaration.descriptor] = declaration.symbol
+                super.visitConstructor(declaration)
+            }
+
+            override fun visitEnumEntry(declaration: IrEnumEntry) {
+                enumEntrySymbolTable.descriptorToSymbol[declaration.descriptor] = declaration.symbol
+                super.visitEnumEntry(declaration)
+            }
+
+            override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment) {
+                externalPackageFragmentTable.descriptorToSymbol[declaration.symbol.descriptor] = declaration.symbol
+                super.visitExternalPackageFragment(declaration)
+            }
+
+            override fun visitField(declaration: IrField) {
+                fieldSymbolTable.descriptorToSymbol[declaration.descriptor] = declaration.symbol
+                super.visitField(declaration)
+            }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                simpleFunctionSymbolTable.descriptorToSymbol[declaration.descriptor] = declaration.symbol
+                super.visitSimpleFunction(declaration)
+            }
+
+            override fun visitTypeParameter(declaration: IrTypeParameter) {
+                // What about scoped type parameters?
+                globalTypeParameterSymbolTable.descriptorToSymbol[declaration.descriptor] = declaration.symbol
+                super.visitTypeParameter(declaration)
+            }
+        })
+    }
 }
 
 inline fun <T, D: DeclarationDescriptor> SymbolTable.withScope(owner: D, block: SymbolTable.(D) -> T): T {

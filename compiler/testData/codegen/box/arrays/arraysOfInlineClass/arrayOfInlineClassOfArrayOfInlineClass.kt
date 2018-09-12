@@ -1,6 +1,6 @@
 // !LANGUAGE: +InlineClasses
 // WITH_UNSIGNED
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 inline class Data(val data: Array<UInt>)
 

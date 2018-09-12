@@ -68,7 +68,13 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
 
     // Full version is defined in stdlib
     // This file is useful for smaller subset of runtime sources
-    "libraries/stdlib/js/irRuntime/rangeExtensions.kt"
+    "libraries/stdlib/js/irRuntime/rangeExtensions.kt",
+
+    // Mostly array-specific stuff
+    "libraries/stdlib/js/src/kotlin/builtins.kt",
+
+    // Inlining of js fun doesn't update the variables inside
+    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt"
 )
 
 
@@ -152,7 +158,7 @@ abstract class BasicIrBoxTest(
             filesToCompile,
             config.configuration,
             FqName((testPackage?.let { "$it." } ?: "") + testFunction),
-            listOf(runtimeResult!!.moduleDescriptor))
+            listOf(runtimeResult!!))
 
         outputFile.write(result.generatedCode)
     }

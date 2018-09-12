@@ -2,6 +2,10 @@
 // DECLARES_VARIABLE: function=doResume name=k
 // PROPERTY_READ_COUNT: name=local$o count=1
 // PROPERTY_WRITE_COUNT: name=local$o count=2
+
+// Unmute when JS_IR supports release coroutines
+// IGNORE_BACKEND: JS_IR
+
 import kotlin.coroutines.*
 
 var next: () -> Unit = {}
