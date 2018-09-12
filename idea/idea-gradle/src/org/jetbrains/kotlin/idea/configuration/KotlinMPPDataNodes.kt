@@ -13,7 +13,6 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.gradle.KotlinModule
 import org.jetbrains.kotlin.gradle.KotlinPlatform
-import org.jetbrains.kotlin.gradle.KotlinSourceSet
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -25,6 +24,9 @@ var DataNode<out ModuleData>.kotlinSourceSet: KotlinSourceSetInfo?
 var DataNode<out ModuleData>.kotlinTargetDataNode: DataNode<KotlinTargetData>?
         by CopyableDataNodeUserDataProperty(Key.create("KOTLIN_TARGET_DATA_NODE"))
 
+var DataNode<ModuleData>.kotlinAndroidSourceSets: List<KotlinSourceSetInfo>?
+        by CopyableDataNodeUserDataProperty(Key.create("ANDROID_COMPILATIONS"))
+
 class KotlinSourceSetInfo(val kotlinModule: KotlinModule) {
     var moduleId: String? = null
     var platform: KotlinPlatform = KotlinPlatform.COMMON
@@ -32,7 +34,7 @@ class KotlinSourceSetInfo(val kotlinModule: KotlinModule) {
     var compilerArguments: CommonCompilerArguments? = null
     var dependencyClasspath: List<String> = emptyList()
     var isTestModule: Boolean = false
-    var sourceSetIdsByName: Map<String, String> = emptyMap()
+    var sourceSetIdsByName: MutableMap<String, String> = LinkedHashMap()
 }
 
 class KotlinTargetData(name: String) : AbstractNamedData(GradleConstants.SYSTEM_ID, name) {
