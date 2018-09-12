@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.tasks.KonanCompilerDownloadTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -412,7 +411,6 @@ open class KotlinNativeTargetConfigurator(
             onlyIf { testExecutableProperty.get().exists() }
             inputs.file(testExecutableProperty)
             dependsOn(testExecutableLinkTask)
-            dependsOnCompilerDownloading()
         }
         tasks.maybeCreate(LifecycleBasePlugin.CHECK_TASK_NAME).apply {
             dependsOn(testTask)
@@ -507,7 +505,6 @@ open class KotlinNativeTargetConfigurator(
                     addCompilerPlugins()
 
                     dependsOn(compilation.compileKotlinTaskName)
-                    dependsOnCompilerDownloading()
                     linkAll.dependsOn(this)
                 }
 
@@ -577,7 +574,6 @@ open class KotlinNativeTargetConfigurator(
 
             registerOutputFiles(klibOutputDirectory(compilation))
             addCompilerPlugins()
-            dependsOnCompilerDownloading()
             compilation.output.tryAddClassesDir {
                 project.files(this.outputFile).builtBy(this)
             }
@@ -609,7 +605,6 @@ open class KotlinNativeTargetConfigurator(
                         "of target '${konanTarget.name}'."
                 enabled = compilation.target.konanTarget.enabledOnCurrentHost
 
-                dependsOnCompilerDownloading()
                 val interopOutput = project.files(outputFileProvider).builtBy(this)
                 with(compilation) {
                     project.dependencies.add(compileDependencyConfigurationName, interopOutput)
@@ -654,9 +649,6 @@ open class KotlinNativeTargetConfigurator(
         super.configureTarget(target)
         configureCInterops(target)
     }
-
-    private fun Task.dependsOnCompilerDownloading() =
-        dependsOn(KonanCompilerDownloadTask.KONAN_DOWNLOAD_TASK_NAME)
 
     object NativeArtifactFormat {
         const val KLIB = "org.jetbrains.kotlin.klib"
