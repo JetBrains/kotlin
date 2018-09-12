@@ -377,7 +377,7 @@ func testDataClass() throws {
 }
 
 func testCompanionObj() throws {
-    try assertEquals(actual: WithCompanionAndObjectCompanion().str, expected: "String")
+    try assertEquals(actual: WithCompanionAndObject.Companion().str, expected: "String")
     try assertEquals(actual: ValuesKt.getCompanionObject().str, expected: "String")
 
     let namedFromCompanion = ValuesKt.getCompanionObject().named
