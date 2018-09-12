@@ -397,6 +397,34 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/boxing")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Boxing extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInBoxing() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("crossinlineSuspend.kt")
+        public void testCrossinlineSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxing/crossinlineSuspend.kt");
+        }
+
+        @TestMetadata("inlineSuspend.kt")
+        public void testInlineSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxing/inlineSuspend.kt");
+        }
+
+        @TestMetadata("suspend.kt")
+        public void testSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxing/suspend.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
