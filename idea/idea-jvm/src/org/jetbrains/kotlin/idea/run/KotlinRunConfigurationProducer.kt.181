@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.platform.impl.isCommon
@@ -83,7 +84,8 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
             val psiFile = locationElement.containingFile
             if (!(psiFile is KtFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null
 
-            val mainFunctionDetector = MainFunctionDetector { it.resolveToDescriptorIfAny(BodyResolveMode.FULL) }
+            val mainFunctionDetector =
+                MainFunctionDetector(psiFile.languageVersionSettings) { it.resolveToDescriptorIfAny(BodyResolveMode.FULL) }
 
             var currentElement = locationElement.declarationContainer(false)
             while (currentElement != null) {
