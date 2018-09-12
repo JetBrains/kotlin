@@ -23,6 +23,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinPlatform
+import org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService
 import java.io.File
 
 class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<ModuleData, Void>() {
@@ -58,6 +59,7 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                     rootModel.addModuleOrderEntry(sourceSetModule)
                 }
             }
+            KotlinSourceSetDataService.configureFacet(moduleData, sourceSetInfo, nodeToImport, module, modelsProvider)
         }
     }
 
