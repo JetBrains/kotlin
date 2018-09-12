@@ -4401,19 +4401,9 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantSuspend/coroutineContext.kt");
         }
 
-        @TestMetadata("getterDelegate.kt")
-        public void testGetterDelegate() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantSuspend/getterDelegate.kt");
-        }
-
         @TestMetadata("override.kt")
         public void testOverride() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSuspend/override.kt");
-        }
-
-        @TestMetadata("setterDelegate.kt")
-        public void testSetterDelegate() throws Exception {
-            runTest("idea/testData/inspectionsLocal/redundantSuspend/setterDelegate.kt");
         }
     }
 
