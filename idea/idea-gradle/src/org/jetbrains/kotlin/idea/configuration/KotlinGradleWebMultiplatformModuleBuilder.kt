@@ -20,10 +20,10 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.web"
 
-    override fun getPresentableName() = "Kotlin (Multiplatform - Web)"
+    override fun getPresentableName() = "Kotlin (JS Client/JVM Server)"
 
     override fun getDescription() =
-        "Multiplatform web projects allow reusing the same code between JVM & JS platforms supported by Kotlin. Such projects are built with Gradle."
+        "Multiplatform Gradle projects allow reusing the same Kotlin code between JS Client and JVM Server."
 
     override fun buildMultiPlatformPart(): String {
         return """
