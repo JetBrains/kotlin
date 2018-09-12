@@ -80,6 +80,8 @@ internal abstract class KonanCliRunner(
             this
         }
 
+    open protected fun transformArgs(args: List<String>): List<String> = args
+
     override fun run(args: List<String>) {
         project.logger.info("Run tool: $toolName with args: ${args.joinToString(separator = " ")}")
         if (classpath.isEmpty) {
@@ -99,7 +101,7 @@ internal abstract class KonanCliRunner(
                     .toMap()
             )
             spec.systemProperties(additionalSystemProperties)
-            spec.args(listOf(toolName) + args)
+            spec.args(listOf(toolName) + transformArgs(args))
             blacklistEnvironment.forEach { spec.environment.remove(it) }
             spec.environment(environment)
         }
@@ -119,8 +121,29 @@ internal class KonanInteropRunner(project: Project, additionalJvmArgs: List<Stri
     }
 }
 
-internal class KonanCompilerRunner(project: Project, additionalJvmArgs: List<String> = emptyList())
-    : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs)
+internal class KonanCompilerRunner(
+    project: Project,
+    additionalJvmArgs: List<String> = emptyList(),
+    val useArgFile: Boolean = true
+) : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs)
+{
+    override fun transformArgs(args: List<String>): List<String> {
+        if (!useArgFile) {
+            return args
+        }
+
+        val argFile = createTempFile(prefix = "konancArgs", suffix = ".lst").apply {
+            deleteOnExit()
+        }
+        argFile.printWriter().use { writer ->
+            args.forEach {
+                writer.println(it)
+            }
+        }
+
+        return listOf("@${argFile.absolutePath}")
+    }
+}
 
 internal class KonanKlibRunner(project: Project, additionalJvmArgs: List<String> = emptyList())
     : KonanCliRunner("klib", "Klib management tool", project, additionalJvmArgs)

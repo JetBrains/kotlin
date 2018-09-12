@@ -45,6 +45,11 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
     val sources: FileCollection
         @InputFiles get() = binary.sources
 
+    private val commonSources: FileCollection
+        get() = with(binary.sourceSet) {
+            getCommonMultiplatformSources() + getCommonNativeSources()
+        }
+
     val libraries: Configuration
         @InputFiles get() = binary.klibraries
 
@@ -129,6 +134,7 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
             addListArg("-linker-options", linkerOpts)
 
             addAll(sources.files.map { it.absolutePath })
+            commonSources.files.mapTo(this) { "-Xcommon-sources=${it.absolutePath}" }
         }
 
         KonanCompilerRunner(project).run(args)

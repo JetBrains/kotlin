@@ -2301,6 +2301,15 @@ task mpp_default_args(type: RunStandaloneKonanTest) {
     flags = ['-tr', '-Xmulti-platform']
 }
 
+task mpp_optional_expectation(type: RunStandaloneKonanTest) {
+    source = "codegen/mpp/mpp_optional_expectation.kt"
+    def outputRoot = project.ext."$outputSourceSetName"
+    flags = [
+            '-Xmulti-platform',
+            "-Xcommon-sources=${file("$outputRoot/$name/mpp_optional_expectation.kt")}"
+    ]
+}
+
 task unit1(type: RunKonanTest) {
     goldValue = "First\nkotlin.Unit\n"
     source = "codegen/basics/unit1.kt"

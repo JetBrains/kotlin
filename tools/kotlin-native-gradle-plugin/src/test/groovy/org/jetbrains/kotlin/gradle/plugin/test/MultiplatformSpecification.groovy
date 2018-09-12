@@ -84,7 +84,17 @@ class MultiplatformSpecification extends BaseKonanSpecification {
             createCommonSource(commonDirectory,
                     ["src", "main", "kotlin"],
                     "common.kt",
-                    "expect fun foo(): Int")
+                    """\
+                        @file:Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+                        @OptionalExpectation
+                        expect annotation class Optional()
+
+                        @Optional
+                        fun opt() = 42
+                        
+                        expect fun foo(): Int
+                    """.stripIndent()
+            )
 
             it.generateSrcFile("platform.kt", "actual fun foo() = 42")
             it.buildFile.append("""

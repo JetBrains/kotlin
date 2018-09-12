@@ -141,7 +141,10 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         addAll(extraOpts)
 
-        allSourceFiles.mapTo(this) { it.canonicalPath }
+        allSourceFiles.mapTo(this) { it.absolutePath }
+        commonSrcFiles
+            .flatMap { it.files }
+            .mapTo(this) { "-Xcommon-sources=${it.absolutePath}" }
     }
 
     // region DSL.
