@@ -115,12 +115,12 @@ internal fun <T> Array<out T>.contentDeepEqualsImpl(other: Array<out T>): Boolea
 internal fun <T> Array<out T>.contentDeepToStringImpl(): String {
     val length = size.coerceAtMost((Int.MAX_VALUE - 2) / 5) * 5 + 2 // in order not to overflow Int.MAX_VALUE
     return buildString(length) {
-        contentDeepToStringInternal(this, mutableSetOf())
+        contentDeepToStringInternal(this, mutableListOf())
     }
 }
 
 @UseExperimental(ExperimentalUnsignedTypes::class)
-private fun <T> Array<out T>.contentDeepToStringInternal(result: StringBuilder, processed: MutableSet<Array<*>>) {
+private fun <T> Array<out T>.contentDeepToStringInternal(result: StringBuilder, processed: MutableList<Array<*>>) {
     if (this in processed) {
         result.append("[...]")
         return
@@ -155,5 +155,5 @@ private fun <T> Array<out T>.contentDeepToStringInternal(result: StringBuilder, 
     }
 
     result.append(']')
-    processed.remove(this)
+    processed.removeAt(processed.lastIndex)
 }
