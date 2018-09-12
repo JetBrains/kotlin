@@ -322,6 +322,11 @@ class DeprecationResolver(
             return emptyList()
         }
 
+        // This is a temporary workaround before @DeprecatedSinceKotlin is introduced, see KT-23575
+        if (shouldSkipDeprecationOnKotlinIoReadBytes(this, languageVersionSettings)) {
+            return emptyList()
+        }
+
         val result = SmartList<Deprecation>()
 
         fun addDeprecationIfPresent(target: DeclarationDescriptor) {
@@ -364,6 +369,15 @@ class DeprecationResolver(
 
         return result.distinct()
     }
+
+    private fun shouldSkipDeprecationOnKotlinIoReadBytes(
+        descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings
+    ): Boolean =
+        descriptor.name.asString() == "readBytes" &&
+                (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName?.asString() == "kotlin.io" &&
+                descriptor is FunctionDescriptor &&
+                descriptor.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isInt) == true &&
+                languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3
 
     private fun getDeprecationByCoroutinesVersion(target: DeclarationDescriptor): DeprecatedExperimentalCoroutine? {
         if (target !is DeserializedMemberDescriptor) return null
