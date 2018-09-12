@@ -83,3 +83,5 @@ abstract class AbstractIrCallableReferenceInlineTests : BorrowedIrInlineTest("ca
 abstract class AbstractIrEnumValuesInlineTests : BorrowedIrInlineTest("enum/")
 
 abstract class AbstractIrInlineDefaultValuesTests : BorrowedIrInlineTest("defaultValues/")
+
+abstract class AbstractIrInlineSuspendTests : BorrowedIrInlineTest("suspend/")
