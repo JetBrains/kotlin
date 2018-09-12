@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.deprecation
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MavenComparableVersion
@@ -134,6 +135,11 @@ class DeprecationResolver(
             return emptyList()
         }
 
+        // This is a temporary workaround before @DeprecatedSinceKotlin is introduced, see KT-23575
+        if (shouldSkipDeprecationOnKotlinIoReadBytes(this, languageVersionSettings)) {
+            return emptyList()
+        }
+
         val result = SmartList<Deprecation>()
 
         addDeprecationIfPresent(result)
@@ -182,6 +188,15 @@ class DeprecationResolver(
 
     private val DeclarationDescriptor.isBuiltInOperatorMod: Boolean
         get() = this is FunctionDescriptor && this.isOperatorMod() && KotlinBuiltIns.isUnderKotlinPackage(this)
+
+    private fun shouldSkipDeprecationOnKotlinIoReadBytes(
+        descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings
+    ): Boolean =
+        descriptor.name.asString() == "readBytes" &&
+                (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName?.asString() == "kotlin.io" &&
+                descriptor is FunctionDescriptor &&
+                descriptor.valueParameters.singleOrNull()?.type?.let(KotlinBuiltIns::isInt) == true &&
+                languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3
 
     private fun getDeprecationByCoroutinesVersion(target: DeclarationDescriptor): DeprecatedExperimentalCoroutine? {
         if (target !is DeserializedMemberDescriptor) return null

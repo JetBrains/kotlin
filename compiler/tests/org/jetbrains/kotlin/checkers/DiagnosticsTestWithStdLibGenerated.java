@@ -2226,6 +2226,29 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/deprecated")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Deprecated extends AbstractDiagnosticsTestWithStdLib {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDeprecated() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/deprecated"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("deprecationOnReadBytes.kt")
+        public void testDeprecationOnReadBytes() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/deprecated/deprecationOnReadBytes.kt");
+        }
+
+        @TestMetadata("noDeprecationOnReadBytes.kt")
+        public void testNoDeprecationOnReadBytes() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/deprecated/noDeprecationOnReadBytes.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
