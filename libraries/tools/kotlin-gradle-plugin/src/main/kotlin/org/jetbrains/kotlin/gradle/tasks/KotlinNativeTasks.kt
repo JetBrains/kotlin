@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMainCompilation
+import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.KonanVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
@@ -77,8 +78,6 @@ private fun File.providedByCompiler(project: Project): Boolean =
 open class KotlinNativeCompile : AbstractCompile() {
 
     init {
-        dependsOn(KonanCompilerDownloadTask.KONAN_DOWNLOAD_TASK_NAME)
-
         @Suppress("LeakingThis")
         setDestinationDir(project.provider {
             val output = outputFile.get()
@@ -155,7 +154,7 @@ open class KotlinNativeCompile : AbstractCompile() {
     // endregion.
 
     val kotlinNativeVersion: String
-        @Input get() = KonanCompilerDownloadTask.compilerVersion.toString()
+        @Input get() = NativeCompilerDownloader(project).compilerVersion.toString()
 
     // We manually register this property as output file or directory depending on output kind.
     @Internal
@@ -331,102 +330,5 @@ open class CInteropProcess: DefaultTask() {
 
         outputFile.parentFile.mkdirs()
         KonanInteropRunner(project).run(args)
-    }
-}
-
-open class KonanCompilerDownloadTask : DefaultTask() {
-
-    internal companion object {
-
-        val simpleOsName: String = HostManager.simpleOsName()
-
-        val compilerDirectory: File
-            get() = DependencyDirectories.localKonanDir.resolve("kotlin-native-$simpleOsName-$compilerVersion")
-
-        // TODO: Support project property for Kotlin/Native compiler version
-        val compilerVersion: KonanVersion = KonanVersionImpl(MetaVersion.RELEASE, 0, 9, 0)
-
-        internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
-        const val KONAN_DOWNLOAD_TASK_NAME = "checkNativeCompiler"
-    }
-
-    private val useZip = HostManager.hostIsMingw
-
-    private val archiveExtension
-        get() = if (useZip) {
-            "zip"
-        } else {
-            "tar.gz"
-        }
-
-    private fun archiveFileTree(archive: File): FileTree =
-        if (useZip) {
-            project.zipTree(archive)
-        } else {
-            project.tarTree(archive)
-        }
-
-    private fun setupRepo(url: String): ArtifactRepository {
-        return project.repositories.ivy { repo ->
-            repo.setUrl(url)
-            repo.layout("pattern") {
-                val layout = it as IvyPatternRepositoryLayout
-                layout.artifact("[artifact]-[revision].[ext]")
-            }
-            repo.metadataSources {
-                it.artifact()
-            }
-        }
-    }
-
-    private fun removeRepo(repo: ArtifactRepository) {
-        project.repositories.remove(repo)
-    }
-
-    private fun downloadAndExtract() {
-        val versionString = compilerVersion.toString()
-
-        val url = buildString {
-            append("$BASE_DOWNLOAD_URL/")
-            append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
-            append("$versionString/")
-            append(simpleOsName)
-        }
-
-        val repo = setupRepo(url)
-
-        val compilerDependency = project.dependencies.create(
-            mapOf(
-                "name" to "kotlin-native-$simpleOsName",
-                "version" to versionString,
-                "ext" to archiveExtension
-            )
-        )
-
-        val configuration = project.configurations.detachedConfiguration(compilerDependency)
-        val archive = configuration.files.single()
-
-        logger.info("Use Kotlin/Native compiler archive: ${archive.absolutePath}")
-        logger.lifecycle("Unpacking Kotlin/Native compiler (version $versionString)...")
-        project.copy {
-            it.from(archiveFileTree(archive))
-            it.into(DependencyDirectories.localKonanDir)
-        }
-
-        removeRepo(repo)
-    }
-
-    @TaskAction
-    fun checkCompiler() {
-        if (!project.hasProperty(KotlinNativeProjectProperty.DOWNLOAD_COMPILER)) {
-            val konanHome = project.getProperty(KotlinNativeProjectProperty.KONAN_HOME)
-            logger.info("Use a user-defined compiler path: $konanHome")
-        } else {
-            // TODO: Move Kotlin/Native Distribution class in the Big Kotlin repo and use it here.
-            if (KonanCompilerRunner(project).classpath.isEmpty) {
-                downloadAndExtract()
-            }
-            logger.info("Use Kotlin/Native distribution: $compilerDirectory")
-        }
     }
 }
