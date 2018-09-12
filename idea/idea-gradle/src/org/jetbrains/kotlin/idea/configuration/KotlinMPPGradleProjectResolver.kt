@@ -408,30 +408,40 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 .mapValues { it.value.firstOrNull { it.scope == "COMPILE" } ?: it.value.lastOrNull() }
                 .values
                 .filterNotNull()
-                .map { adjustDependency(it, ideProject) }
+                .adjustDependencies(ideProject)
         }
 
-        private fun adjustDependency(
-            dependency: ExternalDependency,
-            ideProject: DataNode<ProjectData>
-        ): ExternalDependency {
-            if (dependency !is ExternalProjectDependency) return dependency
-            val projectPath = dependency.projectPath
-            val classifier = dependency.classifier ?: return dependency
-            val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
-                (it.data as? ModuleData)?.id == projectPath
-            } ?: return dependency
-            val targetCompilation = ExternalSystemApiUtil
-                .getChildren(targetModuleNode, GradleSourceSetData.KEY)
-                .mapNotNull { sourceSetNode ->
-                    sourceSetNode.kotlinSourceSet?.kotlinModule as? KotlinCompilation
+        private fun List<ExternalDependency>.adjustDependencies(ideProject: DataNode<ProjectData>): List<ExternalDependency> {
+            val result = LinkedHashSet(this)
+            for (dependency in this) {
+                if (dependency !is ExternalProjectDependency) continue
+                val projectPath = dependency.projectPath
+                val classifier = dependency.classifier ?: continue
+                val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
+                    (it.data as? ModuleData)?.id == projectPath
+                } ?: continue
+                val candidateDataNodes = ExternalSystemApiUtil.getChildren(targetModuleNode, GradleSourceSetData.KEY)
+                if (classifier != KotlinTarget.METADATA_TARGET_NAME) {
+                    val compilationName = candidateDataNodes
+                        .mapNotNull { sourceSetNode ->
+                            sourceSetNode.kotlinSourceSet?.kotlinModule as? KotlinCompilation
+                        }
+                        .firstOrNull {
+                            it.name == KotlinCompilation.MAIN_COMPILATION_NAME && it.target.disambiguationClassifier == classifier
+                        }
+                        ?.fullName() ?: continue
+                    result += DefaultExternalProjectDependency(dependency).also {
+                        it.configurationName = compilationName
+                    }
                 }
-                .firstOrNull {
-                    it.name == KotlinCompilation.MAIN_COMPILATION_NAME && it.target.disambiguationClassifier == classifier
-                } ?: return dependency
-            return DefaultExternalProjectDependency(dependency).also {
-                it.configurationName = targetCompilation.fullName()
+
+                result += DefaultExternalProjectDependency(dependency).also {
+                    it.configurationName = KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME
+                }
+
+                result -= dependency
             }
+            return result.toList()
         }
 
         private fun addDependency(fromModule: DataNode<*>, toModule: DataNode<*>) {
