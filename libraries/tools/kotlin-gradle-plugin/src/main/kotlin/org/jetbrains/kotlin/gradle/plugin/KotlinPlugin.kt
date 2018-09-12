@@ -718,17 +718,9 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
         kotlinTask.description = "Compiles the $variantDataName kotlin."
 
-        // Register the source only after the task is created, because tne task is required for that:
-        compilation.source(defaultSourceSet)
         configureSources(kotlinTask, variantData, compilation)
-
-        // In MPPs, add the common main Kotlin sources to non-test variants, the common test sources to test variants
-        val commonSourceSetName = if (getTestedVariantData(variantData) == null)
-            KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME else
-            KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME
-        project.kotlinExtension.sourceSets.findByName(commonSourceSetName)?.let {
-            compilation.source(it)
-        }
+        // Register the source only after the task is created and source set relations are built:
+        compilation.source(defaultSourceSet)
 
         wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
     }
@@ -752,10 +744,32 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     private fun configureSources(compileTask: AbstractCompile, variantData: V, compilation: KotlinCompilation?) {
         val logger = compileTask.project.logger
 
+        val commonSourceSet = compilation?.run {
+            target.project.kotlinExtension.sourceSets.run {
+                // In MPPs, add the common main Kotlin sources to dependsOn of non-test variants, the common test sources to test variants
+                val commonSourceSetName = if (getTestedVariantData(variantData) == null)
+                    KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME else
+                    KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME
+
+                findByName(commonSourceSetName)?.also { common ->
+                    getByName(compilation.defaultSourceSetName).dependsOn(common)
+                }
+            }
+        }
+
+        val defaultSourceSet = compilation?.run {
+            target.project.kotlinExtension.sourceSets.getByName(defaultSourceSetName)
+        }
+
         for (provider in getSourceProviders(variantData)) {
             val kotlinSourceSet = provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: continue
             if (compilation != null) {
-                compilation.source(kotlinSourceSet)
+                if (commonSourceSet != null) {
+                    kotlinSourceSet.dependsOn(commonSourceSet)
+                }
+                if (kotlinSourceSet != defaultSourceSet) {
+                    defaultSourceSet!!.dependsOn(kotlinSourceSet)
+                }
             } else {
                 compileTask.source(kotlinSourceSet.kotlin)
             }

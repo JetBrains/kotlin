@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertEquals
 
 
 class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion = "2.3.0") {
@@ -22,6 +23,36 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
 
     @Test
     fun testAndroidWithNewMppApp() = with(Project("new-mpp-android")) {
+        build("printSourceSetDependsOnRelations") {
+            val dependsOnReportRegex = "(\\w+?) dependsOn \\[(.*?)]".toRegex()
+            val dependsOnRelations = dependsOnReportRegex
+                .findAll(output)
+                .associate { it.groupValues[1] to it.groupValues[2].split(", ").toSet() }
+
+            val expectedDependsOnRelations = listOf(
+                "androidLibMain" to setOf("commonMain"),
+                "androidLibDebug" to setOf("commonMain", "androidLibMain"), // compilation
+                "androidLibRelease" to setOf("commonMain", "androidLibMain"), // compilation
+
+                "androidLibTest" to setOf("commonTest"),
+                "androidLibTestDebug" to setOf("commonTest"),
+                "androidLibTestRelease" to setOf("commonTest"),
+                "androidLibAndroidTestDebug" to setOf("commonTest"),
+                "androidLibAndroidTest" to setOf("commonTest"),
+                "androidLibDebugAndroidTest" to setOf("commonTest", "androidLibAndroidTest", "androidLibAndroidTestDebug"), // compilation
+                "androidLibDebugUnitTest" to setOf("commonTest", "androidLibTest", "androidLibTestDebug"), // compilation
+                "androidLibReleaseUnitTest" to setOf("commonTest", "androidLibTest", "androidLibTestRelease") // compilation
+            )
+
+            for ((sourceSetName, expectedDependsOn) in expectedDependsOnRelations) {
+                assertEquals(
+                    expectedDependsOn,
+                    dependsOnRelations[sourceSetName],
+                    "source set $sourceSetName should depend on $expectedDependsOn"
+                )
+            }
+        }
+
         build("assemble", "compileDebugUnitTestJavaWithJavac") {
             assertSuccessful()
 

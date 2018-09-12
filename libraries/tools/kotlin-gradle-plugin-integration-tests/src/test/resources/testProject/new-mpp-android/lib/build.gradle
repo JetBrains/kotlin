@@ -52,3 +52,11 @@ kotlin {
         fromPreset(presets.js, 'jsLib')
     }
 }
+
+task printSourceSetDependsOnRelations {
+    doFirst {
+        kotlin.sourceSets.each { sourceSet ->
+            println sourceSet.name + " dependsOn " + sourceSet.dependsOn.collect { it.name }
+        }
+    }
+}
