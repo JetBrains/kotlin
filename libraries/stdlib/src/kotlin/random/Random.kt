@@ -37,15 +37,15 @@ public abstract class Random {
     public open fun nextInt(): Int = nextBits(32)
 
     /**
-     * Gets the next random non-negative `Int` from the random number generator not greater than the specified [bound].
+     * Gets the next random non-negative `Int` from the random number generator not greater than the specified [until].
      *
-     * Generates an `Int` random value uniformly distributed between `0` (inclusive) and the specified [bound] (exclusive).
+     * Generates an `Int` random value uniformly distributed between `0` (inclusive) and the specified [until] (exclusive).
      *
-     * @param bound must be positive.
+     * @param until must be positive.
      *
-     * @throws IllegalArgumentException if [bound] is negative or zero.
+     * @throws IllegalArgumentException if [until] is negative or zero.
      */
-    public open fun nextInt(bound: Int): Int = nextInt(0, bound)
+    public open fun nextInt(until: Int): Int = nextInt(0, until)
 
     /**
      * Gets the next random `Int` from the random number generator in the specified range.
@@ -101,15 +101,15 @@ public abstract class Random {
     public open fun nextLong(): Long = nextInt().toLong().shl(32) + nextInt()
 
     /**
-     * Gets the next random non-negative `Long` from the random number generator not greater than the specified [bound].
+     * Gets the next random non-negative `Long` from the random number generator not greater than the specified [until].
      *
-     * Generates a `Long` random value uniformly distributed between `0` (inclusive) and the specified [bound] (exclusive).
+     * Generates a `Long` random value uniformly distributed between `0` (inclusive) and the specified [until] (exclusive).
      *
-     * @param bound must be positive.
+     * @param until must be positive.
      *
-     * @throws IllegalArgumentException if [bound] is negative or zero.
+     * @throws IllegalArgumentException if [until] is negative or zero.
      */
-    public open fun nextLong(bound: Long): Long = nextLong(0, bound)
+    public open fun nextLong(until: Long): Long = nextLong(0, until)
 
     /**
      * Gets the next random `Long` from the random number generator in the specified range.
@@ -183,13 +183,13 @@ public abstract class Random {
     public open fun nextDouble(): Double = doubleFromParts(nextBits(26), nextBits(27))
 
     /**
-     * Gets the next random non-negative `Double` from the random number generator not greater than the specified [bound].
+     * Gets the next random non-negative `Double` from the random number generator not greater than the specified [until].
      *
-     * Generates a `Double` random value uniformly distributed between 0 (inclusive) and [bound] (exclusive).
+     * Generates a `Double` random value uniformly distributed between 0 (inclusive) and [until] (exclusive).
      *
-     * @throws IllegalArgumentException if [bound] is negative or zero.
+     * @throws IllegalArgumentException if [until] is negative or zero.
      */
-    public open fun nextDouble(bound: Double): Double = nextDouble(0.0, bound)
+    public open fun nextDouble(until: Double): Double = nextDouble(0.0, until)
 
     /**
      * Gets the next random `Double` from the random number generator in the specified range.
@@ -274,19 +274,19 @@ public abstract class Random {
 
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()
-        override fun nextInt(bound: Int): Int = defaultRandom.nextInt(bound)
+        override fun nextInt(until: Int): Int = defaultRandom.nextInt(until)
         override fun nextInt(from: Int, until: Int): Int = defaultRandom.nextInt(from, until)
         override fun nextInt(range: IntRange): Int = defaultRandom.nextInt(range)
 
         override fun nextLong(): Long = defaultRandom.nextLong()
-        override fun nextLong(bound: Long): Long = defaultRandom.nextLong(bound)
+        override fun nextLong(until: Long): Long = defaultRandom.nextLong(until)
         override fun nextLong(from: Long, until: Long): Long = defaultRandom.nextLong(from, until)
         override fun nextLong(range: LongRange): Long = defaultRandom.nextLong(range)
 
         override fun nextBoolean(): Boolean = defaultRandom.nextBoolean()
 
         override fun nextDouble(): Double = defaultRandom.nextDouble()
-        override fun nextDouble(bound: Double): Double = defaultRandom.nextDouble(bound)
+        override fun nextDouble(until: Double): Double = defaultRandom.nextDouble(until)
         override fun nextDouble(from: Double, until: Double): Double = defaultRandom.nextDouble(from, until)
 
         override fun nextFloat(): Float = defaultRandom.nextFloat()
@@ -331,30 +331,30 @@ public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).
 public fun Random.nextUInt(): UInt = nextInt().toUInt()
 
 /**
- * Gets the next random [UInt] from the random number generator not greater than the specified [bound].
+ * Gets the next random [UInt] from the random number generator not greater than the specified [until].
  *
- * Generates a [UInt] random value uniformly distributed between `0` (inclusive) and the specified [bound] (exclusive).
+ * Generates a [UInt] random value uniformly distributed between `0` (inclusive) and the specified [until] (exclusive).
  *
- * @throws IllegalArgumentException if [bound] is zero.
+ * @throws IllegalArgumentException if [until] is zero.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Random.nextUInt(bound: UInt): UInt = nextUInt(0u, bound)
+public fun Random.nextUInt(until: UInt): UInt = nextUInt(0u, until)
 
 /**
  * Gets the next random [UInt] from the random number generator in the specified range.
  *
- * Generates a [UInt] random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+ * Generates a [UInt] random value uniformly distributed between the specified [from] (inclusive) and the specified [until] (exclusive).
  *
- * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
+ * @throws IllegalArgumentException if [from] is greater than or equal to [until].
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Random.nextUInt(origin: UInt, bound: UInt): UInt {
-    checkUIntRangeBounds(origin, bound)
+public fun Random.nextUInt(from: UInt, until: UInt): UInt {
+    checkUIntRangeBounds(from, until)
 
-    val originTransformedToInt = origin.toInt() xor Int.MIN_VALUE
-    val boundTransformedToInt = bound.toInt() xor Int.MIN_VALUE
+    val originTransformedToInt = from.toInt() xor Int.MIN_VALUE
+    val boundTransformedToInt = until.toInt() xor Int.MIN_VALUE
 
     val randomValueTransformedBack = nextInt(originTransformedToInt, boundTransformedToInt) xor Int.MIN_VALUE
 
@@ -388,30 +388,30 @@ public fun Random.nextUInt(range: UIntRange): UInt = when {
 public fun Random.nextULong(): ULong = nextLong().toULong()
 
 /**
- * Gets the next random [ULong] from the random number generator not greater than the specified [bound].
+ * Gets the next random [ULong] from the random number generator not greater than the specified [until].
  *
- * Generates a [ULong] random value uniformly distributed between `0` (inclusive) and the specified [bound] (exclusive).
+ * Generates a [ULong] random value uniformly distributed between `0` (inclusive) and the specified [until] (exclusive).
  *
- * @throws IllegalArgumentException if [bound] is zero.
+ * @throws IllegalArgumentException if [until] is zero.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Random.nextULong(bound: ULong): ULong = nextULong(0uL, bound)
+public fun Random.nextULong(until: ULong): ULong = nextULong(0uL, until)
 
 /**
  * Gets the next random [ULong] from the random number generator in the specified range.
  *
- * Generates a [ULong] random value uniformly distributed between the specified [origin] (inclusive) and the specified [bound] (exclusive).
+ * Generates a [ULong] random value uniformly distributed between the specified [from] (inclusive) and the specified [until] (exclusive).
  *
- * @throws IllegalArgumentException if [origin] is greater than or equal to [bound].
+ * @throws IllegalArgumentException if [from] is greater than or equal to [until].
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun Random.nextULong(origin: ULong, bound: ULong): ULong {
-    checkULongRangeBounds(origin, bound)
+public fun Random.nextULong(from: ULong, until: ULong): ULong {
+    checkULongRangeBounds(from, until)
 
-    val originTransformedToLong = origin.toLong() xor Long.MIN_VALUE
-    val boundTransformedToLong = bound.toLong() xor Long.MIN_VALUE
+    val originTransformedToLong = from.toLong() xor Long.MIN_VALUE
+    val boundTransformedToLong = until.toLong() xor Long.MIN_VALUE
 
     val randomValueTransformedBack = nextLong(originTransformedToLong, boundTransformedToLong) xor Long.MIN_VALUE
     return randomValueTransformedBack.toULong()
