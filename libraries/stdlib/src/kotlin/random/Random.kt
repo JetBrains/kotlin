@@ -79,21 +79,6 @@ public abstract class Random {
     }
 
     /**
-     * Gets the next random `Int` from the random number generator in the specified [range].
-     *
-     * Generates an `Int` random value uniformly distributed in the specified [range]:
-     * from `range.start` inclusive to `range.endInclusive` inclusive.
-     *
-     * @throws IllegalArgumentException if [range] is empty.
-     */
-    public open fun nextInt(range: IntRange): Int = when {
-        range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-        range.last < Int.MAX_VALUE -> nextInt(range.first, range.last + 1)
-        range.first > Int.MIN_VALUE -> nextInt(range.first - 1, range.last) + 1
-        else -> nextInt()
-    }
-
-    /**
      * Gets the next random `Long` from the random number generator.
      *
      * Generates a `Long` random value uniformly distributed between `Long.MIN_VALUE` and `Long.MAX_VALUE` (inclusive).
@@ -155,21 +140,6 @@ public abstract class Random {
                 if (rnd in from until until) return rnd
             }
         }
-    }
-
-    /**
-     * Gets the next random `Long` from the random number generator in the specified [range].
-     *
-     * Generates a `Long` random value uniformly distributed in the specified [range]:
-     * from `range.start` inclusive to `range.endInclusive` inclusive.
-     *
-     * @throws IllegalArgumentException if [range] is empty.
-     */
-    public open fun nextLong(range: LongRange): Long = when {
-        range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-        range.last < Long.MAX_VALUE -> nextLong(range.start, range.endInclusive + 1)
-        range.start > Long.MIN_VALUE -> nextLong(range.start - 1, range.endInclusive) + 1
-        else -> nextLong()
     }
 
     /**
@@ -276,12 +246,10 @@ public abstract class Random {
         override fun nextInt(): Int = defaultRandom.nextInt()
         override fun nextInt(until: Int): Int = defaultRandom.nextInt(until)
         override fun nextInt(from: Int, until: Int): Int = defaultRandom.nextInt(from, until)
-        override fun nextInt(range: IntRange): Int = defaultRandom.nextInt(range)
 
         override fun nextLong(): Long = defaultRandom.nextLong()
         override fun nextLong(until: Long): Long = defaultRandom.nextLong(until)
         override fun nextLong(from: Long, until: Long): Long = defaultRandom.nextLong(from, until)
-        override fun nextLong(range: LongRange): Long = defaultRandom.nextLong(range)
 
         override fun nextBoolean(): Boolean = defaultRandom.nextBoolean()
 
@@ -294,7 +262,6 @@ public abstract class Random {
         override fun nextBytes(array: ByteArray): ByteArray = defaultRandom.nextBytes(array)
         override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
         override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray = defaultRandom.nextBytes(array, fromIndex, toIndex)
-
 
     }
 }
@@ -320,6 +287,38 @@ public fun Random(seed: Int): Random = XorWowRandom(seed, seed.shr(31))
 public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).toInt())
 
 
+
+/**
+ * Gets the next random `Int` from the random number generator in the specified [range].
+ *
+ * Generates an `Int` random value uniformly distributed in the specified [range]:
+ * from `range.start` inclusive to `range.endInclusive` inclusive.
+ *
+ * @throws IllegalArgumentException if [range] is empty.
+ */
+@SinceKotlin("1.3")
+public fun Random.nextInt(range: IntRange): Int = when {
+    range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
+    range.last < Int.MAX_VALUE -> nextInt(range.first, range.last + 1)
+    range.first > Int.MIN_VALUE -> nextInt(range.first - 1, range.last) + 1
+    else -> nextInt()
+}
+
+/**
+ * Gets the next random `Long` from the random number generator in the specified [range].
+ *
+ * Generates a `Long` random value uniformly distributed in the specified [range]:
+ * from `range.start` inclusive to `range.endInclusive` inclusive.
+ *
+ * @throws IllegalArgumentException if [range] is empty.
+ */
+@SinceKotlin("1.3")
+public fun Random.nextLong(range: LongRange): Long = when {
+    range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
+    range.last < Long.MAX_VALUE -> nextLong(range.start, range.endInclusive + 1)
+    range.start > Long.MIN_VALUE -> nextLong(range.start - 1, range.endInclusive) + 1
+    else -> nextLong()
+}
 
 /**
  * Gets the next random [UInt] from the random number generator.
