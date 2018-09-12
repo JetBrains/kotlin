@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.konan.library.*
+import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-abstract class FileBasedLibraryWriter (val file: File, val currentAbiVersion: Int): KonanLibraryWriter
+abstract class FileBasedLibraryWriter (val file: File): KonanLibraryWriter
 
 /**
  * Requires non-null [target].
@@ -22,13 +23,13 @@ abstract class FileBasedLibraryWriter (val file: File, val currentAbiVersion: In
 class LibraryWriterImpl(
         override val libDir: File,
         moduleName: String,
-        currentAbiVersion: Int,
+        override val versions: KonanLibraryVersioning,
         override val target: KonanTarget,
         val nopack: Boolean = false
-): FileBasedLibraryWriter(libDir, currentAbiVersion), KonanLibraryLayout {
+): FileBasedLibraryWriter(libDir), KonanLibraryLayout {
 
-    constructor(path: String, moduleName: String, currentAbiVersion: Int, target: KonanTarget, nopack: Boolean):
-        this(File(path), moduleName, currentAbiVersion, target, nopack)
+    constructor(path: String, moduleName: String, versions: KonanLibraryVersioning, target: KonanTarget, nopack: Boolean):
+        this(File(path), moduleName, versions, target, nopack)
 
     override val libraryName = libDir.path
     val klibFile 
@@ -53,7 +54,7 @@ class LibraryWriterImpl(
         resourcesDir.mkdirs()
         // TODO: <name>:<hash> will go somewhere around here.
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
-        manifestProperties.setProperty(KLIB_PROPERTY_ABI_VERSION, currentAbiVersion.toString())
+        manifestProperties.writeKonanLibraryVersioning(versions)
     }
 
     var llvmModule: LLVMModuleRef? = null
@@ -85,6 +86,11 @@ class LibraryWriterImpl(
         } else {
             val newValue = libraries.joinToString(" ") { it.uniqueName }
             manifestProperties.setProperty(KLIB_PROPERTY_DEPENDS, newValue)
+            libraries.forEach { it ->
+                if (it.versions.libraryVersion != null) {
+                    manifestProperties.setProperty("${KLIB_PROPERTY_DEPENDENCY_VERSION}_${it.uniqueName}", it.versions.libraryVersion)
+                }
+            }
         }
     }
 
@@ -110,7 +116,7 @@ internal fun buildLibrary(
         included: List<String>,
         linkDependencies: List<KonanLibrary>,
         linkData: LinkData,
-        abiVersion: Int,
+        versions: KonanLibraryVersioning,
         target: KonanTarget,
         output: String,
         moduleName: String,
@@ -119,7 +125,7 @@ internal fun buildLibrary(
         manifestProperties: Properties?,
         dataFlowGraph: ByteArray?): KonanLibraryWriter {
 
-    val library = LibraryWriterImpl(output, moduleName, abiVersion, target, nopack)
+    val library = LibraryWriterImpl(File(output), moduleName, versions, target, nopack)
 
     library.addKotlinBitcode(llvmModule)
     library.addLinkData(linkData)

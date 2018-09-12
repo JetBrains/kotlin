@@ -3,9 +3,11 @@ package org.jetbrains.kotlin.konan.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
-import org.jetbrains.kotlin.name.FqName
 
 const val KLIB_PROPERTY_ABI_VERSION = "abi_version"
+const val KLIB_PROPERTY_COMPILER_VERSION = "compiler_version"
+const val KLIB_PROPERTY_DEPENDENCY_VERSION = "dependency_version"
+const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
 const val KLIB_PROPERTY_LINKED_OPTS = "linkerOpts"
 const val KLIB_PROPERTY_DEPENDS = "depends"
@@ -27,7 +29,6 @@ interface KonanLibrary {
 
     // Properties:
     val manifestProperties: Properties
-    val abiVersion: String
     val linkerOpts: List<String>
 
     // Paths:
@@ -35,6 +36,7 @@ interface KonanLibrary {
     val includedPaths: List<String>
 
     val targetList: List<String>
+    val versions: KonanLibraryVersioning
 
     val dataFlowGraph: ByteArray?
     val moduleHeaderData: ByteArray
@@ -44,21 +46,24 @@ interface KonanLibrary {
 val KonanLibrary.uniqueName
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)!!
 
-val KonanLibrary.unresolvedDependencies: List<String>
+val KonanLibrary.unresolvedDependencies: List<UnresolvedLibrary>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS)
+            .map {
+                UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it"))
+            }
 
 val KonanLibrary.isInterop
     get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
 
 val KonanLibrary.packageFqName
-    get() = manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)?.let { FqName(it) }
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)
 
 val KonanLibrary.exportForwardDeclarations
     get() = manifestProperties.getProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS)
             .split(' ').asSequence()
             .map { it.trim() }
             .filter { it.isNotEmpty() }
-            .map { FqName(it) }
+            .map { it }
             .toList()
 
 val KonanLibrary.includedHeaders

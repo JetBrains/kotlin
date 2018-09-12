@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.konan.library.resolver.impl
 
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolver.KonanResolvedLibrary
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.konan.parseModuleHeader
 
 internal class KonanResolvedLibraryImpl(
@@ -23,9 +22,9 @@ internal class KonanResolvedLibraryImpl(
     override val isDefault: Boolean
         get() = library.isDefault
 
-    override fun markPackageAccessed(fqName: FqName) {
+    override fun markPackageAccessed(fqName: String) {
         if (!isNeededForLink // fast path
-                && !_emptyPackages.contains(fqName.asString())) {
+                && !_emptyPackages.contains(fqName)) {
             isNeededForLink = true
         }
     }

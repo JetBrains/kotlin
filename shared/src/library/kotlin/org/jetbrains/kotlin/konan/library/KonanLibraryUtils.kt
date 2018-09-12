@@ -3,13 +3,13 @@ package org.jetbrains.kotlin.konan.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.file
 import org.jetbrains.kotlin.konan.file.withMutableZipFileSystem
-import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.konan.library.impl.DefaultMetadataReaderImpl
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.library.impl.zippedKonanLibraryChecks
-import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolver
-import org.jetbrains.kotlin.konan.library.resolver.impl.KonanLibraryResolverImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
+
+val KLIB_FILE_EXTENSION = "klib"
+val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
 
 fun File.unpackZippedKonanLibraryTo(newDir: File) {
 
@@ -29,13 +29,18 @@ fun File.unpackZippedKonanLibraryTo(newDir: File) {
     check(newDir.exists) { "Could not unpack $this as $newDir." }
 }
 
+val List<String>.toUnresolvedLibraries
+    get() = this.map {
+
+        val version = it.substringAfterLast('@', "")
+                    .let { if (it.isEmpty()) null else it}
+        val name = it.substringBeforeLast('@')
+        UnresolvedLibrary(name, version)
+    }
+
 fun createKonanLibrary(
         libraryFile: File,
-        currentAbiVersion: Int,
         target: KonanTarget? = null,
         isDefault: Boolean = false,
         metadataReader: MetadataReader = DefaultMetadataReaderImpl
-): KonanLibrary = KonanLibraryImpl(libraryFile, currentAbiVersion, target, isDefault, metadataReader)
-
-fun SearchPathResolverWithTarget.libraryResolver(abiVersion: Int): KonanLibraryResolver =
-        KonanLibraryResolverImpl(this, abiVersion)
+): KonanLibrary = KonanLibraryImpl(libraryFile, target, isDefault, metadataReader)

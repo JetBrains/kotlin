@@ -2892,6 +2892,37 @@ task produce_dynamic(type: DynamicKonanTest) {
                 "topLevel = 777 3\n"
 }
 
+task library_mismatch(type: RunStandaloneKonanTest) {
+    def dir = buildDir.absolutePath
+    def lib = "$projectDir/link/versioning/empty.kt"
+
+    def currentTarget = project.target.name
+    def someOtherTarget = (project.testTarget == 'wasm32' ? project.hostName : 'wasm32')
+
+    if (!useCustomDist) {
+        dependsOn ':wasm32CrossDistRuntime' // we actually need any target other than the current one.
+    }
+
+    doFirst {
+        def konancScript = isWindows() ? "konanc.bat" : "konanc"
+        def konanc = "$dist/bin/$konancScript"
+
+        "$konanc $lib -p library -o $dir/1.2/empty -target $currentTarget -lv 1.2".execute().waitFor()
+        "$konanc $lib -p library -o $dir/3.4/empty -target $someOtherTarget".execute().waitFor()
+        "$konanc $lib -p library -o $dir/5.6/empty -target $currentTarget -lv 5.6".execute().waitFor()
+        "$konanc $lib -p library -o $dir/7.8/empty -target $currentTarget -lv 7.8".execute().waitFor()
+
+    }
+    source = "link/versioning/hello.kt"
+    flags = ['-l', 'empty@5.6', '-r', "$dir/1.2", '-r', "$dir/3.4", '-r', "$dir/5.6"]
+    compilerMessages = true
+    def messages =
+        "warning: skipping $dir/1.2/empty.klib. The library versions don't match. Expected '5.6', found '1.2'\n" +
+        "warning: skipping $dir/3.4/empty.klib. The target doesn't match. Expected '$currentTarget', found [$someOtherTarget]\n" +
+        "Hello, versioned world!\n"
+    goldValue = isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+}
+
 if (isMac() && project.testTarget != 'wasm32') {
     def target = ext.platformManager.targetByName(project.testTarget ?: 'host').name
 

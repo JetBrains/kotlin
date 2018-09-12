@@ -1,24 +1,20 @@
 package org.jetbrains.kotlin.konan.library.resolver.impl
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.SearchPathResolverWithTarget
-import org.jetbrains.kotlin.konan.library.createKonanLibrary
+import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.library.resolver.*
-import org.jetbrains.kotlin.konan.library.unresolvedDependencies
+import org.jetbrains.kotlin.konan.util.WithLogger
 
 internal class KonanLibraryResolverImpl(
-        override val searchPathResolver: SearchPathResolverWithTarget,
-        override val abiVersion: Int
-): KonanLibraryResolver {
+        override val searchPathResolver: SearchPathResolverWithTarget
+): KonanLibraryResolver, WithLogger by searchPathResolver {
 
     override fun resolveWithDependencies(
-            libraryNames: List<String>,
+            unresolvedLibraries: List<UnresolvedLibrary>,
             noStdLib: Boolean,
-            noDefaultLibs: Boolean,
-            logger: DuplicatedLibraryLogger?
-    ) = findLibraries(libraryNames, noStdLib, noDefaultLibs)
-            .leaveDistinct(logger)
+            noDefaultLibs: Boolean
+    ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs)
+            .leaveDistinct()
             .resolveDependencies()
 
     /**
@@ -28,19 +24,16 @@ internal class KonanLibraryResolverImpl(
      * from the original library set (root set).
      */
     private fun findLibraries(
-            libraryNames: List<String>,
+            unresolvedLibraries: List<UnresolvedLibrary>,
             noStdLib: Boolean,
             noDefaultLibs: Boolean
     ): List<KonanLibrary> {
 
-        val userProvidedLibraries = libraryNames.asSequence()
+        val userProvidedLibraries = unresolvedLibraries.asSequence()
                 .map { searchPathResolver.resolve(it) }
-                .map { createKonanLibrary(it, abiVersion, searchPathResolver.target) }
                 .toList()
 
-        val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs).map {
-            createKonanLibrary(it, abiVersion, searchPathResolver.target, isDefault = true)
-        }
+        val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs)
 
         // Make sure the user provided ones appear first, so that
         // they have precedence over defaults when duplicates are eliminated.
@@ -50,14 +43,13 @@ internal class KonanLibraryResolverImpl(
     /**
      * Leaves only distinct libraries (by absolute path), warns on duplicated paths.
      */
-    private fun List<KonanLibrary>.leaveDistinct(logger: DuplicatedLibraryLogger?) =
+    private fun List<KonanLibrary>.leaveDistinct() =
             this.groupBy { it.libraryFile.absolutePath }.let { groupedByAbsolutePath ->
-                warnOnLibraryDuplicates(groupedByAbsolutePath.filter { it.value.size > 1 }.keys, logger)
+                warnOnLibraryDuplicates(groupedByAbsolutePath.filter { it.value.size > 1 }.keys)
                 groupedByAbsolutePath.map { it.value.first() }
             }
 
-    private fun warnOnLibraryDuplicates(duplicatedPaths: Iterable<String>, logger: DuplicatedLibraryLogger? ) {
-        if (logger == null) return
+    private fun warnOnLibraryDuplicates(duplicatedPaths: Iterable<String>) {
         duplicatedPaths.forEach { logger("library included more than once: $it") }
     }
 
@@ -84,18 +76,20 @@ internal class KonanLibraryResolverImpl(
         do {
             newDependencies = newDependencies.map { library: KonanResolvedLibraryImpl ->
                 library.library.unresolvedDependencies.asSequence()
-                        .map { searchPathResolver.resolve(it).absoluteFile }
-                        .mapNotNull {
-                            if (it in cache) {
-                                library.addDependency(cache[it]!!)
+
+                        .map { KonanResolvedLibraryImpl(searchPathResolver.resolve(it)) }
+                        .map { resolved ->
+                            val absoluteFile = resolved.library.libraryFile.absoluteFile
+                            if (absoluteFile in cache) {
+                                library.addDependency(cache[absoluteFile]!!)
                                 null
                             } else {
-                                val newLibrary = KonanResolvedLibraryImpl(createKonanLibrary(it, abiVersion, searchPathResolver.target))
-                                cache[it] = newLibrary
-                                library.addDependency(newLibrary)
-                                newLibrary
+                                cache.put(absoluteFile, resolved)
+                                library.addDependency(resolved)
+                                resolved
                             }
-                        }
+
+                        }.filterNotNull()
                         .toList()
             }.flatten()
         } while (newDependencies.isNotEmpty())

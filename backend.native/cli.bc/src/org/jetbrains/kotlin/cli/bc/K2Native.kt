@@ -24,10 +24,11 @@ import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.konan.KonanAbiVersion
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.util.profile
+import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -142,7 +143,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 val outputKind = CompilerOutputKind.valueOf(
                     (arguments.produce ?: "program").toUpperCase())
                 put(PRODUCE, outputKind)
-                put(ABI_VERSION, 1)
+                arguments.libraryVersion ?. let { put(LIBRARY_VERSION, it) }
 
                 arguments.mainPackage ?.let{ put(ENTRY, it) }
                 arguments.manifestFile ?.let{ put(MANIFEST_FILE, it) }

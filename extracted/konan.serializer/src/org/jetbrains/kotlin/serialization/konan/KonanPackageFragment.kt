@@ -35,7 +35,7 @@ class KonanPackageFragment(
     }
 
     val proto: KonanProtoBuf.LinkDataPackageFragment
-        get() = protoForNames.also { packageAccessedHandler?.markPackageAccessed(fqName) }
+        get() = protoForNames.also { packageAccessedHandler?.markPackageAccessed(fqName.toString()) }
 
     private val nameResolver by lazy {
         NameResolverImpl(protoForNames.stringTable, protoForNames.nameTable)

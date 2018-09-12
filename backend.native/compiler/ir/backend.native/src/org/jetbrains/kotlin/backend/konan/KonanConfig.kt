@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.KonanAbiVersion
+import org.jetbrains.kotlin.konan.library.toUnresolvedLibraries
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
-
-    val currentAbiVersion: Int = configuration.get(KonanConfigKeys.ABI_VERSION)!!
 
     internal val distribution = Distribution(
         false,
@@ -71,15 +71,18 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val libraryNames: List<String>
         get() = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
+    private val unresolvedLibraries = libraryNames.toUnresolvedLibraries
+
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-    private val resolver = defaultResolver(repositories, target, distribution).libraryResolver(currentAbiVersion)
+    private fun resolverLogger(msg: String) = configuration.report(STRONG_WARNING, msg)
+
+    private val resolver = defaultResolver(repositories, target, distribution, ::resolverLogger).libraryResolver()
 
     internal val resolvedLibraries by lazy {
         resolver.resolveWithDependencies(
-                libraryNames,
+                unresolvedLibraries,
                 noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
-                noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS) ) { msg ->
-            configuration.report(STRONG_WARNING, msg) }
+                noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS) )
     }
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
@@ -114,3 +117,4 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) 
     = this.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
+

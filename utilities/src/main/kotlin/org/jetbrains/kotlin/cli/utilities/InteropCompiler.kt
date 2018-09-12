@@ -4,13 +4,10 @@
  */
 package org.jetbrains.kotlin.cli.utilities
 
-import org.jetbrains.kotlin.backend.konan.library.KLIB_CURRENT_ABI_VERSION
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.defaultResolver
-import org.jetbrains.kotlin.konan.library.includedHeaders
-import org.jetbrains.kotlin.konan.library.libraryResolver
-import org.jetbrains.kotlin.konan.library.packageFqName
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.KonanAbiVersion
+import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -57,14 +54,14 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
     val manifest = File(buildDir, "manifest.properties")
 
     val target = PlatformManager().targetManager(targetRequest).target
-    val resolver = defaultResolver(repos, target).libraryResolver(KLIB_CURRENT_ABI_VERSION)
+    val resolver = defaultResolver(repos, target).libraryResolver()
     val allLibraries = resolver.resolveWithDependencies(
-            libraries, noStdLib = true, noDefaultLibs = noDefaultLibs
+            libraries.toUnresolvedLibraries, noStdLib = true, noDefaultLibs = noDefaultLibs
     ).getFullList()
 
     val importArgs = allLibraries.flatMap { library ->
         // TODO: handle missing properties?
-        library.packageFqName?.asString()?.let { packageFqName ->
+        library.packageFqName?.let { packageFqName ->
             val headerIds = library.includedHeaders
             val arg = "$packageFqName:${headerIds.joinToString(";")}"
             listOf("-import", arg)

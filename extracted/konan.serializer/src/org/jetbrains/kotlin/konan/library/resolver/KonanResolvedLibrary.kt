@@ -1,11 +1,10 @@
 package org.jetbrains.kotlin.konan.library.resolver
 
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.name.FqName
 
 interface PackageAccessedHandler {
 
-    fun markPackageAccessed(fqName: FqName)
+    fun markPackageAccessed(fqName: String)
 }
 
 /**

@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.backend.konan.library
 
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import java.util.*
-
-const val KLIB_CURRENT_ABI_VERSION = 1
+import org.jetbrains.kotlin.konan.library.KonanLibraryVersioning
+import org.jetbrains.kotlin.konan.properties.Properties
 
 interface KonanLibraryWriter {
+    val versions: KonanLibraryVersioning
     fun addLinkData(linkData: LinkData)
     fun addNativeBitcode(library: String)
     fun addIncludedBinary(library: String)

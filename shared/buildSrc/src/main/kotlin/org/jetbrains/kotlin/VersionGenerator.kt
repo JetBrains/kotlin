@@ -93,6 +93,17 @@ open class VersionGenerator: DefaultTask() {
                    |
                    |    override fun toString() = versionString
                    |}
+                   |fun String.parseKonanVersion(): KonanVersion {
+                   |    val (major, minor, maintenance, meta, build) =
+                   |       Regex(""${'"'}([0-9]+)\.([0-9]+)(?:\.([0-9]+))?(?:-(\p{Alpha}\p{Alnum}*))?(?:-([0-9]+))?""${'"'})
+                   |         .matchEntire(this)!!.destructured
+                   |    return KonanVersionImpl(
+                   |      MetaVersion.valueOf(meta.toUpperCase()),
+                   |      major.toInt(),
+                   |      minor.toInt(),
+                   |      maintenance.toIntOrNull() ?: 0,
+                   |      build.toIntOrNull() ?: -1)
+                   |}
                 """.trimMargin()
             }
             versionFile.printWriter().use {

@@ -154,6 +154,6 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
         files.flatMapTo(this) { it.files }
         addAll(artifactFiles)
         addAll(task.platformConfiguration.files)
-        namedKlibs.mapTo(this) { project.file(resolver.resolve(it).absolutePath) }
+        namedKlibs.mapTo(this) { project.file(resolver.resolve(it).libraryFile.absolutePath) }
     }
 }

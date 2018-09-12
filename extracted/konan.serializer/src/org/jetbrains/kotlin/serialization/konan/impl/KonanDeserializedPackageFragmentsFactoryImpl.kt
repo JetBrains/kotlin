@@ -41,9 +41,9 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl: KonanDeserializedP
 
         if (!library.isInterop) return emptyList()
 
-        val mainPackageFqName = library.packageFqName
+        val mainPackageFqName = library.packageFqName ?.let { FqName(it) }
                 ?: error("Inconsistent manifest: interop library ${library.libraryName} should have `package` specified")
-        val exportForwardDeclarations = library.exportForwardDeclarations
+        val exportForwardDeclarations = library.exportForwardDeclarations.map { FqName(it) }
 
         val aliasedPackageFragments = deserializedPackageFragments.filter { it.fqName == mainPackageFqName }
 

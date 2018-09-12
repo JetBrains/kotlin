@@ -2,23 +2,20 @@ package org.jetbrains.kotlin.konan.library.resolver
 
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.SearchPathResolverWithTarget
-
-typealias DuplicatedLibraryLogger = (String) -> Unit
+import org.jetbrains.kotlin.konan.library.UnresolvedLibrary
 
 interface KonanLibraryResolver {
 
     val searchPathResolver: SearchPathResolverWithTarget
-    val abiVersion: Int
 
     /**
      * Given the list of Kotlin/Native library names, ABI version and other parameters
      * resolves libraries and evaluates dependencies between them.
      */
     fun resolveWithDependencies(
-            libraryNames: List<String>,
+            unresolvedLibraries: List<UnresolvedLibrary>,
             noStdLib: Boolean = false,
-            noDefaultLibs: Boolean = false,
-            logger: DuplicatedLibraryLogger? = null
+            noDefaultLibs: Boolean = false
     ): KonanLibraryResolveResult
 }
 
@@ -30,7 +27,6 @@ interface KonanLibraryResolveResult {
 
     fun forEach(action: (KonanLibrary, PackageAccessedHandler) -> Unit)
 }
-
 
 typealias LibraryOrder = (Iterable<KonanResolvedLibrary>) -> List<KonanResolvedLibrary>
 

@@ -47,6 +47,7 @@ abstract class KonanTest extends JavaExec {
     boolean enabled = true
     boolean expectedFail = false
     boolean run = true
+    boolean compilerMessages = false
 
     void setDisabled(boolean value) {
         this.enabled = !value
@@ -268,6 +269,8 @@ abstract class KonanTest extends JavaExec {
         }
         println "execution: $exe"
 
+        def compilerMessagesText = compilerMessages ? project.file("${program}.compilation.log").getText('UTF-8') : ""
+
         def out = new ByteArrayOutputStream()
         //TODO Add test timeout
         ExecResult execResult = project.execute {
@@ -284,7 +287,7 @@ abstract class KonanTest extends JavaExec {
 
             ignoreExitValue = true
         }
-        def result = out.toString("UTF-8")
+        def result = compilerMessagesText + out.toString("UTF-8")
 
         println(result)
 

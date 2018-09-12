@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 class KonanConfigKeys {
     companion object {
         // Keep the list lexically sorted.
-        val ABI_VERSION: CompilerConfigurationKey<Int> 
-                = CompilerConfigurationKey.create("current abi version")
         val CHECK_DEPENDENCIES: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("check dependencies and download the missing ones")
         val DEBUG: CompilerConfigurationKey<Boolean>
@@ -26,12 +24,16 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("enable backend phases")
         val ENTRY: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("fully qualified main() name")
+        val FRIEND_MODULES: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create<List<String>>("friend module paths")
         val GENERATE_TEST_RUNNER: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("generate test runner") 
         val INCLUDED_BINARY_FILES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("included binary file paths")
         val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("library file paths")
+        val LIBRARY_VERSION: CompilerConfigurationKey<String?>
+                = CompilerConfigurationKey.create("library version")
         val LINKER_ARGS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("additional linker arguments")
         val LIST_PHASES: CompilerConfigurationKey<Boolean> 
@@ -94,8 +96,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("verify ir")
         val VERBOSE_PHASES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("verbose backend phases")
-        val FRIEND_MODULES: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create<List<String>>("friend module paths")
     }
 }
 

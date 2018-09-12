@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.konan.util.substitute
 
-internal class KonanLibraryImpl(
+
+class KonanLibraryImpl(
         override val libraryFile: File,
-        private val currentAbiVersion: Int,
         internal val target: KonanTarget?,
         override val isDefault: Boolean,
         private val metadataReader: MetadataReader
@@ -32,14 +32,8 @@ internal class KonanLibraryImpl(
         properties
     }
 
-    override val abiVersion: String
-        get() {
-            val manifestAbiVersion = manifestProperties.getProperty(KLIB_PROPERTY_ABI_VERSION)
-            check(currentAbiVersion.toString() == manifestAbiVersion) {
-                "ABI version mismatch. Compiler expects: $currentAbiVersion, the library is $manifestAbiVersion"
-            }
-            return manifestAbiVersion
-        }
+    override val versions: KonanLibraryVersioning
+        get() = manifestProperties.readKonanLibraryVersioning()
 
     override val linkerOpts: List<String>
         get() = manifestProperties.propertyList(KLIB_PROPERTY_LINKED_OPTS, target!!.visibleName)
