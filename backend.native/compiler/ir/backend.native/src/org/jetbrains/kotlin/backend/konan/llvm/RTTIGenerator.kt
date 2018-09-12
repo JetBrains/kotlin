@@ -109,7 +109,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             "kotlin.DoubleArray"        to LLVMDoubleType()!!,
             "kotlin.BooleanArray"       to LLVMInt8Type()!!,
             "kotlin.String"             to LLVMInt16Type()!!,
-            "kotlin.native.ImmutableBlob" to LLVMInt8Type()!!
+            "kotlin.native.ImmutableBlob" to LLVMInt8Type()!!,
+            "kotlin.native.internal.NativePtrArray" to kInt8Ptr
     )
 
     // Keep in sync with Konan_RuntimeType.

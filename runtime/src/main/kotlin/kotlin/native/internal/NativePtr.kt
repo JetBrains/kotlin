@@ -36,3 +36,16 @@ internal inline class NonNullNativePtr(val value: NotNullPointerValue) { // TODO
 
     override fun equals(other: Any?) = false
 }
+
+@ExportTypeInfo("theNativePtrArrayTypeInfo")
+internal class NativePtrArray {
+
+    @SymbolName("Kotlin_NativePtrArray_get")
+    external public operator fun get(index: Int): NativePtr
+
+    @SymbolName("Kotlin_NativePtrArray_set")
+    external public operator fun set(index: Int, value: NativePtr): Unit
+
+    @SymbolName("Kotlin_NativePtrArray_getArrayLength")
+    external private fun getArrayLength(): Int
+}

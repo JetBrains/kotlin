@@ -48,6 +48,26 @@ inline void copyImpl(KConstRef thiz, KInt fromIndex,
           count * sizeof(T));
 }
 
+
+template <class T>
+inline void PrimitiveArraySet(KRef thiz, KInt index, T value) {
+  ArrayHeader* array = thiz->array();
+  if (static_cast<uint32_t>(index) >= array->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+  mutabilityCheck(thiz);
+  *PrimitiveArrayAddressOfElementAt<T>(array, index) = value;
+}
+
+template <class T>
+inline T PrimitiveArrayGet(KConstRef thiz, KInt index) {
+  const ArrayHeader* array = thiz->array();
+  if (static_cast<uint32_t>(index) >= array->count_) {
+    ThrowArrayIndexOutOfBoundsException();
+  }
+  return *PrimitiveArrayAddressOfElementAt<T>(array, index);
+}
+
 }  // namespace
 
 extern "C" {
@@ -278,20 +298,11 @@ void Kotlin_ByteArray_setDoubleAt(KRef thiz, KInt index, KDouble value) {
 }
 
 KChar Kotlin_CharArray_get(KConstRef thiz, KInt index) {
-  const ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  return *PrimitiveArrayAddressOfElementAt<KChar>(array, index);
+  return PrimitiveArrayGet<KChar>(thiz, index);
 }
 
 void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value) {
-  ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  mutabilityCheck(thiz);
-  *PrimitiveArrayAddressOfElementAt<KChar>(array, index) = value;
+  PrimitiveArraySet(thiz, index, value);
 }
 
 OBJ_GETTER(Kotlin_CharArray_copyOf, KConstRef thiz, KInt newSize) {
@@ -315,20 +326,11 @@ KInt Kotlin_CharArray_getArrayLength(KConstRef thiz) {
 }
 
 KShort Kotlin_ShortArray_get(KConstRef thiz, KInt index) {
-  const ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  return *PrimitiveArrayAddressOfElementAt<KShort>(array, index);
+  return PrimitiveArrayGet<KShort>(thiz, index);
 }
 
 void Kotlin_ShortArray_set(KRef thiz, KInt index, KShort value) {
-  ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  mutabilityCheck(thiz);
-  *PrimitiveArrayAddressOfElementAt<KShort>(array, index) = value;
+  PrimitiveArraySet(thiz, index, value);
 }
 
 KInt Kotlin_ShortArray_getArrayLength(KConstRef thiz) {
@@ -337,20 +339,11 @@ KInt Kotlin_ShortArray_getArrayLength(KConstRef thiz) {
 }
 
 KInt Kotlin_IntArray_get(KConstRef thiz, KInt index) {
-  const ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  return *PrimitiveArrayAddressOfElementAt<KInt>(array, index);
+  return PrimitiveArrayGet<KInt>(thiz, index);
 }
 
 void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value) {
-  ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  mutabilityCheck(thiz);
-  *PrimitiveArrayAddressOfElementAt<KInt>(array, index) = value;
+  PrimitiveArraySet(thiz, index, value);
 }
 
 KInt Kotlin_IntArray_getArrayLength(KConstRef thiz) {
@@ -410,21 +403,11 @@ void Kotlin_BooleanArray_copyImpl(KConstRef thiz, KInt fromIndex,
 }
 
 KLong Kotlin_LongArray_get(KConstRef thiz, KInt index) {
-  const ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-
-        ThrowArrayIndexOutOfBoundsException();
-  }
-  return *PrimitiveArrayAddressOfElementAt<KLong>(array, index);
+  return PrimitiveArrayGet<KLong>(thiz, index);
 }
 
 void Kotlin_LongArray_set(KRef thiz, KInt index, KLong value) {
-  ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  mutabilityCheck(thiz);
-  *PrimitiveArrayAddressOfElementAt<KLong>(array, index) = value;
+  PrimitiveArraySet(thiz, index, value);
 }
 
 KInt Kotlin_LongArray_getArrayLength(KConstRef thiz) {
@@ -433,20 +416,11 @@ KInt Kotlin_LongArray_getArrayLength(KConstRef thiz) {
 }
 
 KFloat Kotlin_FloatArray_get(KConstRef thiz, KInt index) {
-  const ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  return *PrimitiveArrayAddressOfElementAt<KFloat>(array, index);
+  return PrimitiveArrayGet<KFloat>(thiz, index);
 }
 
 void Kotlin_FloatArray_set(KRef thiz, KInt index, KFloat value) {
-  ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  mutabilityCheck(thiz);
-  *PrimitiveArrayAddressOfElementAt<KFloat>(array, index) = value;
+  PrimitiveArraySet(thiz, index, value);
 }
 
 KInt Kotlin_FloatArray_getArrayLength(KConstRef thiz) {
@@ -455,20 +429,11 @@ KInt Kotlin_FloatArray_getArrayLength(KConstRef thiz) {
 }
 
 KDouble Kotlin_DoubleArray_get(KConstRef thiz, KInt index) {
-  const ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  return *PrimitiveArrayAddressOfElementAt<KDouble>(array, index);
+  return PrimitiveArrayGet<KDouble>(thiz, index);
 }
 
 void Kotlin_DoubleArray_set(KRef thiz, KInt index, KDouble value) {
-  ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  mutabilityCheck(thiz);
-  *PrimitiveArrayAddressOfElementAt<KDouble>(array, index) = value;
+  PrimitiveArraySet(thiz, index, value);
 }
 
 KInt Kotlin_DoubleArray_getArrayLength(KConstRef thiz) {
@@ -477,23 +442,27 @@ KInt Kotlin_DoubleArray_getArrayLength(KConstRef thiz) {
 }
 
 KBoolean Kotlin_BooleanArray_get(KConstRef thiz, KInt index) {
-  const ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  return *PrimitiveArrayAddressOfElementAt<KBoolean>(array, index);
+  return PrimitiveArrayGet<KBoolean>(thiz, index);
 }
 
 void Kotlin_BooleanArray_set(KRef thiz, KInt index, KBoolean value) {
-  ArrayHeader* array = thiz->array();
-  if (static_cast<uint32_t>(index) >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  mutabilityCheck(thiz);
-  *PrimitiveArrayAddressOfElementAt<KBoolean>(array, index) = value;
+  PrimitiveArraySet(thiz, index, value);
 }
 
 KInt Kotlin_BooleanArray_getArrayLength(KConstRef thiz) {
+  const ArrayHeader* array = thiz->array();
+  return array->count_;
+}
+
+KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index) {
+  return PrimitiveArrayGet<KNativePtr>(thiz, index);
+}
+
+void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value) {
+  PrimitiveArraySet(thiz, index, value);
+}
+
+KInt Kotlin_NativePtrArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
 }

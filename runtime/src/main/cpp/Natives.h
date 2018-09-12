@@ -18,6 +18,7 @@
 #define RUNTIME_NATIVES_H
 
 #include "Types.h"
+#include "Exceptions.h"
 
 inline void* AddressOfElementAt(ArrayHeader* obj, int32_t index) {
   // Instance size is negative.
@@ -109,6 +110,13 @@ KInt Kotlin_IntArray_get(KConstRef thiz, KInt index);
 void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value);
 KInt Kotlin_IntArray_getArrayLength(KConstRef thiz);
 
+KLong Kotlin_LongArray_get(KConstRef thiz, KInt index);
+void Kotlin_LongArray_set(KRef thiz, KInt index, KLong value);
+
+KNativePtr Kotlin_NativePtrArray_get(KConstRef thiz, KInt index);
+void Kotlin_NativePtrArray_set(KRef thiz, KInt index, KNativePtr value);
+KInt Kotlin_NativePtrArray_getArrayLength(KConstRef thiz);
+
 // io/Console.kt
 void Kotlin_io_Console_print(KString message);
 void Kotlin_io_Console_println(KString message);
@@ -131,6 +139,8 @@ KInt Kotlin_String_getStringLength(KString thiz);
 OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endIndex);
 
 OBJ_GETTER0(Kotlin_getCurrentStackTrace);
+
+OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace);
 
 OBJ_GETTER0(Kotlin_native_internal_undefined);
 

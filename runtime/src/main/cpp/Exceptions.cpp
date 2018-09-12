@@ -60,17 +60,17 @@ class AutoFree {
 #if USE_GCC_UNWIND
 struct Backtrace {
   Backtrace(int count, int skip) : index(0), skipCount(skip) {
-    auto result = AllocArrayInstance(
-        theArrayTypeInfo, count - skipCount, arrayHolder.slot());
+    uint32_t size = count - skipCount;
+    if (size < 0) {
+      size = 0;
+    }
+    auto result = AllocArrayInstance(theNativePtrArrayTypeInfo, size, arrayHolder.slot());
     // TODO: throw cached OOME?
     RuntimeCheck(result != nullptr, "Cannot create backtrace array");
   }
 
-  void setNextElement(const char* element) {
-    auto result = CreateStringFromCString(
-      element, ArrayAddressOfElementAt(obj()->array(), index++));
-    // TODO: throw cached OOME?
-    RuntimeCheck(result != nullptr, "Cannot create backtrace array element");
+  void setNextElement(_Unwind_Ptr element) {
+    Kotlin_NativePtrArray_set(obj(), index++, (KNativePtr) element);
   }
 
   ObjHeader* obj() { return arrayHolder.obj(); }
@@ -100,17 +100,8 @@ _Unwind_Reason_Code unwindCallback(
 #else
   _Unwind_Ptr address = _Unwind_GetIP(context);
 #endif
+  backtrace->setNextElement(address);
 
-  char symbol[512];
-  if (!AddressToSymbol((const void*)address, symbol, sizeof(symbol))) {
-    // Make empty string:
-    symbol[0] = '\0';
-  }
-
-  char line[512];
-  konan::snprintf(line, sizeof(line) - 1, "%s (%p)",
-    symbol, (void*)(intptr_t)address);
-  backtrace->setNextElement(line);
   return _URC_NO_REASON;
 }
 #endif
@@ -123,41 +114,68 @@ extern "C" {
 // however it is better to have an inexact stacktrace than not to have any.
 OBJ_GETTER0(GetCurrentStackTrace) {
 #if OMIT_BACKTRACE
-  ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, 1, OBJ_RESULT);
-  ArrayHeader* array = result->array();
-  CreateStringFromCString("<UNIMPLEMENTED>", ArrayAddressOfElementAt(array, 0));
-  return result;
+  return AllocArrayInstance(theNativePtrArrayTypeInfo, 0, OBJ_RESULT);
 #else
   // Skips first 3 elements as irrelevant.
   constexpr int kSkipFrames = 3;
 #if USE_GCC_UNWIND
   int depth = 0;
   _Unwind_Backtrace(depthCountCallback, &depth);
-  if (depth < kSkipFrames)
-      return AllocArrayInstance(theArrayTypeInfo, 0, OBJ_RESULT);
   Backtrace result(depth, kSkipFrames);
-  _Unwind_Backtrace(unwindCallback, &result);
+  if (result.obj()->array()->count_ > 0) {
+    _Unwind_Backtrace(unwindCallback, &result);
+  }
   RETURN_OBJ(result.obj());
 #else
   const int maxSize = 32;
   void* buffer[maxSize];
 
   int size = backtrace(buffer, maxSize);
-  char** symbols = backtrace_symbols(buffer, size);
-  RuntimeCheck(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
   if (size < kSkipFrames)
-      return AllocArrayInstance(theArrayTypeInfo, 0, OBJ_RESULT);
-  AutoFree autoFree(symbols);
+      return AllocArrayInstance(theNativePtrArrayTypeInfo, 0, OBJ_RESULT);
+
   ObjHolder resultHolder;
-  ObjHeader* result = AllocArrayInstance(
-      theArrayTypeInfo, size - kSkipFrames, resultHolder.slot());
-  ArrayHeader* array = result->array();
+  ObjHeader* result = AllocArrayInstance(theNativePtrArrayTypeInfo, size - kSkipFrames, resultHolder.slot());
   for (int index = kSkipFrames; index < size; ++index) {
-    CreateStringFromCString(
-      symbols[index], ArrayAddressOfElementAt(array, index - kSkipFrames));
+    Kotlin_NativePtrArray_set(result, index - kSkipFrames, buffer[index]);
   }
   RETURN_OBJ(result);
 #endif
+#endif  // !OMIT_BACKTRACE
+}
+
+OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
+#if OMIT_BACKTRACE
+  ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, 1, OBJ_RESULT);
+  CreateStringFromCString("<UNIMPLEMENTED>", ArrayAddressOfElementAt(result->array(), 0));
+  return result;
+#else
+  uint32_t size = stackTrace->array()->count_;
+  ObjHolder resultHolder;
+  ObjHeader* strings = AllocArrayInstance(theArrayTypeInfo, size, resultHolder.slot());
+#if USE_GCC_UNWIND
+  for (int index = 0; index < size; ++index) {
+    KNativePtr address = Kotlin_NativePtrArray_get(stackTrace, index);
+    char symbol[512];
+    if (!AddressToSymbol((const void*) address, symbol, sizeof(symbol))) {
+      // Make empty string:
+      symbol[0] = '\0';
+    }
+    char line[512];
+    konan::snprintf(line, sizeof(line) - 1, "%s (%p)", symbol, (void*)(intptr_t)address);
+    CreateStringFromCString(line, ArrayAddressOfElementAt(strings->array(), index));
+  }
+#else
+  if (size > 0) {
+    char **symbols = backtrace_symbols(PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), 0), size);
+    RuntimeCheck(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
+    AutoFree autoFree(symbols);
+    for (int index = 0; index < size; ++index) {
+      CreateStringFromCString(symbols[index], ArrayAddressOfElementAt(strings->array(), index));
+    }
+  }
+#endif
+  RETURN_OBJ(strings);
 #endif  // !OMIT_BACKTRACE
 }
 

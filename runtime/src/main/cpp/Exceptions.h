@@ -26,6 +26,8 @@ extern "C" {
 // Returns current stacktrace as Array<String>.
 OBJ_GETTER0(GetCurrentStackTrace);
 
+OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace);
+
 // Throws arbitrary exception.
 void ThrowException(KRef exception);
 

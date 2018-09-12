@@ -97,7 +97,8 @@ internal val arrayTypes = setOf(
         "kotlin.FloatArray",
         "kotlin.DoubleArray",
         "kotlin.BooleanArray",
-        "kotlin.native.ImmutableBlob"
+        "kotlin.native.ImmutableBlob",
+        "kotlin.native.internal.NativePtrArray"
 )
 
 

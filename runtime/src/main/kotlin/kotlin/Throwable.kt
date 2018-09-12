@@ -6,6 +6,7 @@
 package kotlin
 
 import kotlin.native.internal.ExportTypeInfo
+import kotlin.native.internal.NativePtrArray
 
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
@@ -22,11 +23,18 @@ public open class Throwable(open val message: String?, open val cause: Throwable
 
     constructor() : this(null, null)
 
-    private val stacktrace: Array<String> = getCurrentStackTrace()
+    private val stackTrace = getCurrentStackTrace()
+
+    private val stackTraceStrings: Array<String> by lazy {
+        getStackTraceStrings(stackTrace)
+    }
+
+    fun getStackTrace(): Array<String> = stackTraceStrings
 
     fun printStackTrace() {
         println(this.toString())
-        for (element in stacktrace) {
+
+        for (element in stackTraceStrings) {
             println("        at " + element)
         }
 
@@ -48,4 +56,7 @@ public open class Throwable(open val message: String?, open val cause: Throwable
 }
 
 @SymbolName("Kotlin_getCurrentStackTrace")
-private external fun getCurrentStackTrace(): Array<String>
+private external fun getCurrentStackTrace(): NativePtrArray
+
+@SymbolName("Kotlin_getStackTraceStrings")
+private external fun getStackTraceStrings(stackTrace: NativePtrArray): Array<String>

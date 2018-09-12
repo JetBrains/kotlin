@@ -43,6 +43,10 @@ OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
   RETURN_RESULT_OF0(GetCurrentStackTrace);
 }
 
+OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace) {
+  RETURN_RESULT_OF(GetStackTraceStrings, stackTrace);
+}
+
 // TODO: consider handling it with compiler magic instead.
 OBJ_GETTER0(Kotlin_native_internal_undefined) {
   RETURN_OBJ(nullptr);
