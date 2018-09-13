@@ -1,9 +1,9 @@
 package primitivesCoertion
 
-import kotlin.coroutines.*
+import kotlin.sequences.*
 
 fun main(args: Array<String>) {
-    val a = buildSequence {
+    val a = sequence {
         yield(1)
         val a = awaitSeq()
         //Breakpoint!
@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
     println(a.toList())
 }
 
-suspend fun SequenceBuilder<Int>.awaitSeq(): Int = 42
+suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
 // EXPRESSION: a
 // RESULT: 42: I

@@ -5,7 +5,6 @@
 // COMMON_COROUTINES_TEST
 import helpers.*
 import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
 
 enum class Foo(vararg expected: String) {
     A("start", "A", "end"),
@@ -30,7 +29,7 @@ fun box(): String {
 }
 
 fun getSequence(a: Foo) =
-    buildSequence {
+    sequence {
         yield("start")
         when (a) {
             Foo.A -> {

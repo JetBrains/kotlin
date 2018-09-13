@@ -5,10 +5,9 @@
 // COMMON_COROUTINES_TEST
 import helpers.*
 import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
 
 val f = run {
-    buildSequence {
+    sequence {
         if (true) {
             yield("OK")
         }
