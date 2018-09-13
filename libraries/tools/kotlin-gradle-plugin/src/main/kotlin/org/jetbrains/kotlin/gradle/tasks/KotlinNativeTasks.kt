@@ -154,7 +154,7 @@ open class KotlinNativeCompile : AbstractCompile() {
     // endregion.
 
     val kotlinNativeVersion: String
-        @Input get() = NativeCompilerDownloader(project).compilerVersion.toString()
+        @Input get() = project.konanVersion.toString()
 
     // We manually register this property as output file or directory depending on output kind.
     @Internal
