@@ -90,7 +90,8 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
                 modules,
                 exported,
                 "kotlin-stdlib",
-                PathUtil.kotlinPathsForDistDirectory.stdlibPath
+                PathUtil.kotlinPathsForDistDirectory.stdlibPath,
+                File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar")
             )
         }
 

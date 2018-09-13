@@ -16,7 +16,11 @@ import java.io.File
 enum class KotlinJpsLibrary(val id: String, private vararg val roots: File) {
     MockRuntime("kotlin-mock-runtime", ForTestCompileRuntime.minimalRuntimeJarForTests()),
 
-    JvmStdLib("kotlin-stdlib", PathUtil.kotlinPathsForDistDirectory.stdlibPath),
+    JvmStdLib(
+        "kotlin-stdlib",
+        PathUtil.kotlinPathsForDistDirectory.stdlibPath,
+        File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar")
+    ),
     JvmTest("kotlin-test", PathUtil.kotlinPathsForDistDirectory.kotlinTestPath),
 
     JsStdLib("KotlinJavaScript", PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath),
