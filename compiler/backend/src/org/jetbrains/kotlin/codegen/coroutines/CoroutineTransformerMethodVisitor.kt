@@ -93,7 +93,6 @@ class CoroutineTransformerMethodVisitor(
         // First instruction in the method node may change in case of named function
         val actualCoroutineStart = methodNode.instructions.first
 
-        var startLabelNode: LabelNode? = null
         if (isForNamedFunction) {
             ReturnUnitMethodTransformer.transform(containingClassInternalName, methodNode)
 
@@ -108,7 +107,7 @@ class CoroutineTransformerMethodVisitor(
             }
             continuationIndex = methodNode.maxLocals++
 
-            startLabelNode = prepareMethodNodePreludeForNamedFunction(methodNode)
+            prepareMethodNodePreludeForNamedFunction(methodNode)
         } else {
             ReturnUnitMethodTransformer.cleanUpReturnsUnitMarkers(methodNode, ReturnUnitMethodTransformer.findReturnsUnitMarks(methodNode))
         }
@@ -134,10 +133,10 @@ class CoroutineTransformerMethodVisitor(
             transformCallAndReturnContinuationLabel(it.index + 1, it.value, methodNode, suspendMarkerVarIndex)
         }
 
-        val defaultLabel = LabelNode()
         val tableSwitchLabel = LabelNode()
         methodNode.instructions.apply {
-            val startLabel = LabelNode()
+            val firstStateLabel = LabelNode()
+            val defaultLabel = LabelNode()
 
             // tableswitch(this.label)
             insertBefore(
@@ -154,13 +153,13 @@ class CoroutineTransformerMethodVisitor(
                         0,
                         suspensionPoints.size,
                         defaultLabel,
-                        startLabel, *suspensionPointLabels.toTypedArray()
+                        firstStateLabel, *suspensionPointLabels.toTypedArray()
                     ),
-                    startLabel
+                    firstStateLabel
                 )
             )
 
-            insert(startLabel, withInstructionAdapter {
+            insert(firstStateLabel, withInstructionAdapter {
                 generateResumeWithExceptionCheck(languageVersionSettings.isReleaseCoroutines(), dataIndex, exceptionIndex)
             })
             insert(last, defaultLabel)
@@ -174,13 +173,13 @@ class CoroutineTransformerMethodVisitor(
         dropSuspensionMarkers(methodNode, suspensionPoints)
         methodNode.removeEmptyCatchBlocks()
 
-        if (isForNamedFunction) {
-            addContinuationToLvt(
-                methodNode,
-                startLabelNode.sure { "start label has not been initialized during prelude generation" },
-                defaultLabel
-            )
-        }
+        // The parameters (and 'this') shall live throughout the method, otherwise, d8 emits warning about invalid debug info
+        val startLabel = LabelNode()
+        val endLabel = LabelNode()
+        methodNode.instructions.insertBefore(methodNode.instructions.first, startLabel)
+        methodNode.instructions.insert(methodNode.instructions.last, endLabel)
+
+        fixLvtForParameters(methodNode, startLabel, endLabel)
 
         if (languageVersionSettings.isReleaseCoroutines() && !isCrossinlineLambda) {
             val suspensionPointLabelNodes = listOf(tableSwitchLabel) + suspensionPointLabels.map {
@@ -188,6 +187,31 @@ class CoroutineTransformerMethodVisitor(
                     .sure { "suspensionPointLabel shall have valid info. Check state-machine generation." }
             }
             writeDebugMetadata(methodNode, suspensionPointLabelNodes, spilledToVariableMapping)
+        }
+    }
+
+    private fun fixLvtForParameters(methodNode: MethodNode, startLabel: LabelNode, endLabel: LabelNode) {
+        // We need to skip continuation, since the inliner likes to remap variables there.
+        // But this is not a problem, since we have separate $continuation LVT entry
+
+        val paramsNum =
+                /* this */ (if (internalNameForDispatchReceiver != null) 1 else 0) +
+                /* real params */ Type.getArgumentTypes(methodNode.desc).size -
+                /* no continuation */ if (isForNamedFunction) 1 else 0
+
+        for (i in 0..paramsNum) {
+            fixRangeOfLvtRecord(methodNode, i, startLabel, endLabel)
+        }
+    }
+
+    private fun fixRangeOfLvtRecord(methodNode: MethodNode, index: Int, startLabel: LabelNode, endLabel: LabelNode) {
+        val vars = methodNode.localVariables.filter { it.index == index }
+        assert(vars.size <= 1) {
+            "Someone else occupies parameter's slot at $index"
+        }
+        vars.firstOrNull()?.let {
+            it.start = startLabel
+            it.end = endLabel
         }
     }
 
@@ -223,7 +247,11 @@ class CoroutineTransformerMethodVisitor(
         metadata.visitEnd()
     }
 
-    private fun addContinuationToLvt(methodNode: MethodNode, startLabel: LabelNode, endLabel: LabelNode) {
+    // Warning! This is _continuation_, not _completion_, it can be allocated inside the method, thus, it is incorrect to treat it
+    // as a parameter
+    private fun addContinuationToLvt(methodNode: MethodNode, startLabel: LabelNode) {
+        val endLabel = LabelNode()
+        methodNode.instructions.insert(methodNode.instructions.last, endLabel)
         methodNode.localVariables.add(
             LocalVariableNode(
                 "\$continuation",
@@ -291,7 +319,7 @@ class CoroutineTransformerMethodVisitor(
         )
     }
 
-    private fun prepareMethodNodePreludeForNamedFunction(methodNode: MethodNode): LabelNode {
+    private fun prepareMethodNodePreludeForNamedFunction(methodNode: MethodNode) {
         val objectTypeForState = Type.getObjectType(classBuilderForCoroutineState.thisName)
         val continuationArgumentIndex = getLastParameterIndex(methodNode.desc, methodNode.access)
         methodNode.instructions.asSequence().filterIsInstance<VarInsnNode>().forEach {
@@ -299,8 +327,6 @@ class CoroutineTransformerMethodVisitor(
             assert(it.opcode == Opcodes.ALOAD) { "Only ALOADs are allowed for continuation arguments" }
             it.`var` = continuationIndex
         }
-
-        val startLabel = LabelNode()
 
         methodNode.instructions.insert(withInstructionAdapter {
             val createStateInstance = Label()
@@ -321,7 +347,6 @@ class CoroutineTransformerMethodVisitor(
             // `doResume` just before calling the suspend function (see kotlin.coroutines.experimental.jvm.internal.CoroutineImplForNamedFunction).
             // So, if it's set we're in continuation.
 
-            visitLabel(startLabel.label)
             visitVarInsn(Opcodes.ALOAD, continuationArgumentIndex)
             instanceOf(objectTypeForState)
             ifeq(createStateInstance)
@@ -363,6 +388,8 @@ class CoroutineTransformerMethodVisitor(
 
             visitLabel(afterCoroutineStateCreated)
 
+            addContinuationToLvt(methodNode, LabelNode(afterCoroutineStateCreated))
+
             visitVarInsn(Opcodes.ALOAD, continuationIndex)
             getfield(classBuilderForCoroutineState.thisName, languageVersionSettings.dataFieldName(), AsmTypes.OBJECT_TYPE.descriptor)
             visitVarInsn(Opcodes.ASTORE, dataIndex)
@@ -373,7 +400,6 @@ class CoroutineTransformerMethodVisitor(
                 visitVarInsn(Opcodes.ASTORE, exceptionIndex)
             }
         })
-        return startLabel
     }
 
     private fun removeUnreachableSuspensionPointsAndExitPoints(methodNode: MethodNode, suspensionPoints: MutableList<SuspensionPoint>) {
