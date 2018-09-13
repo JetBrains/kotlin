@@ -2752,6 +2752,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/multipleAssignments.kt");
             }
 
+            @TestMetadata("nullableMutableList.kt")
+            public void testNullableMutableList() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/nullableMutableList.kt");
+            }
+
             @TestMetadata("simpleIf.kt")
             public void testSimpleIf() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/simpleIf.kt");
@@ -2790,6 +2795,31 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("simpleIfWithoutTerminatingAssignment.kt")
             public void testSimpleIfWithoutTerminatingAssignment() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/simpleIfWithoutTerminatingAssignment.kt");
+            }
+
+            @TestMetadata("typeMismatch.kt")
+            public void testTypeMismatch() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch.kt");
+            }
+
+            @TestMetadata("typeMismatch2.kt")
+            public void testTypeMismatch2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2.kt");
+            }
+
+            @TestMetadata("typeMismatch3.kt")
+            public void testTypeMismatch3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch3.kt");
+            }
+
+            @TestMetadata("typeMismatchMutableList.kt")
+            public void testTypeMismatchMutableList() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatchMutableList.kt");
+            }
+
+            @TestMetadata("typeMismatchMutableList2.kt")
+            public void testTypeMismatchMutableList2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatchMutableList2.kt");
             }
         }
 
