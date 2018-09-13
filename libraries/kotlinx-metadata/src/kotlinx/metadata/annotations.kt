@@ -37,6 +37,11 @@ sealed class KmAnnotationArgument<out T : Any> {
     data class DoubleValue(override val value: Double) : KmAnnotationArgument<Double>()
     data class BooleanValue(override val value: Boolean) : KmAnnotationArgument<Boolean>()
 
+    data class UByteValue(override val value: Byte) : KmAnnotationArgument<Byte>()
+    data class UShortValue(override val value: Short) : KmAnnotationArgument<Short>()
+    data class UIntValue(override val value: Int) : KmAnnotationArgument<Int>()
+    data class ULongValue(override val value: Long) : KmAnnotationArgument<Long>()
+
     data class StringValue(override val value: String) : KmAnnotationArgument<String>()
     data class KClassValue(override val value: ClassName) : KmAnnotationArgument<ClassName>()
     data class EnumValue(val enumClassName: ClassName, val enumEntryName: String) : KmAnnotationArgument<String>() {

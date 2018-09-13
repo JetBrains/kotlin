@@ -427,6 +427,7 @@ private fun renderAnnotation(annotation: KmAnnotation): String =
             "$name = ${renderAnnotationArgument(argument)}"
         }
 
+@UseExperimental(ExperimentalUnsignedTypes::class)
 private fun renderAnnotationArgument(arg: KmAnnotationArgument<*>): String =
     when (arg) {
         is KmAnnotationArgument.ByteValue -> arg.value.toString() + ".toByte()"
@@ -436,6 +437,10 @@ private fun renderAnnotationArgument(arg: KmAnnotationArgument<*>): String =
         is KmAnnotationArgument.LongValue -> arg.value.toString() + "L"
         is KmAnnotationArgument.FloatValue -> arg.value.toString() + "f"
         is KmAnnotationArgument.DoubleValue -> arg.value.toString()
+        is KmAnnotationArgument.UByteValue -> arg.value.toUByte().toString() + ".toUByte()"
+        is KmAnnotationArgument.UShortValue -> arg.value.toUShort().toString() + ".toUShort()"
+        is KmAnnotationArgument.UIntValue -> arg.value.toUInt().toString() + "u"
+        is KmAnnotationArgument.ULongValue -> arg.value.toULong().toString() + "uL"
         is KmAnnotationArgument.BooleanValue -> arg.value.toString()
         is KmAnnotationArgument.StringValue -> "\"${arg.value.sanitize(quote = '"')}\""
         is KmAnnotationArgument.KClassValue -> "${arg.value}::class"

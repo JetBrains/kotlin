@@ -10,6 +10,7 @@ import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 
 fun ProtoBuf.Annotation.readAnnotation(strings: NameResolver): KmAnnotation =
@@ -22,8 +23,18 @@ fun ProtoBuf.Annotation.readAnnotation(strings: NameResolver): KmAnnotation =
         }.toMap()
     )
 
-private fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument<*>? =
-    when (type) {
+private fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument<*>? {
+    if (Flags.IS_UNSIGNED[flags]) {
+        return when (type) {
+            BYTE -> KmAnnotationArgument.UByteValue(intValue.toByte())
+            SHORT -> KmAnnotationArgument.UShortValue(intValue.toShort())
+            INT -> KmAnnotationArgument.UIntValue(intValue.toInt())
+            LONG -> KmAnnotationArgument.ULongValue(intValue)
+            else -> error("Cannot read value of unsigned type: $type")
+        }
+    }
+
+    return when (type) {
         BYTE -> KmAnnotationArgument.ByteValue(intValue.toByte())
         CHAR -> KmAnnotationArgument.CharValue(intValue.toChar())
         SHORT -> KmAnnotationArgument.ShortValue(intValue.toShort())
@@ -39,6 +50,7 @@ private fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: N
         ARRAY -> KmAnnotationArgument.ArrayValue(arrayElementList.mapNotNull { it.readAnnotationArgument(strings) })
         null -> null
     }
+}
 
 internal fun NameResolver.getClassName(index: Int): ClassName {
     val name = getQualifiedClassName(index)

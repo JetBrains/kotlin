@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "kotlinp"
 
@@ -53,5 +54,11 @@ tasks {
         // These dependencies are needed because ForTestCompileRuntime loads jars from dist
         dependsOn(":kotlin-reflect:dist")
         dependsOn(":kotlin-script-runtime:dist")
+    }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += listOf("-Xuse-experimental=kotlin.Experimental")
     }
 }
