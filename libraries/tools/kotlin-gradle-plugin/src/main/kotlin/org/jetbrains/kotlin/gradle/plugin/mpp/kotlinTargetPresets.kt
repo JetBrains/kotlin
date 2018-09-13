@@ -11,10 +11,7 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeProjectProperty
-import org.jetbrains.kotlin.compilerRunner.hasProperty
-import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.setProperty
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
