@@ -21,7 +21,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -135,8 +135,8 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
         // if there are functions among candidates but none of them have last function parameter then not show the intention
         if (candidates.isNotEmpty() && candidates.none { candidate ->
                 val params = candidate.valueParameters
-                params.lastOrNull()?.type?.isFunctionType == true &&
-                        params.count { it.type.isFunctionType } == lambdaArgumentCount + referenceArgumentCount
+                params.lastOrNull()?.type?.isFunctionOrSuspendFunctionType == true &&
+                        params.count { it.type.isFunctionOrSuspendFunctionType } == lambdaArgumentCount + referenceArgumentCount
             }
         ) return false
     }
