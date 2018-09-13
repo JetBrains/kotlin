@@ -20,6 +20,7 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.konan.util.DependencyDirectories
 internal enum class KotlinNativeProjectProperty(val propertyName: String) {
     KONAN_HOME_OVERRIDE            ("org.jetbrains.kotlin.native.home"),
     KONAN_JVM_ARGS                 ("org.jetbrains.kotlin.native.jvmArgs"),
+    KONAN_VERSION                  ("org.jetbrains.kotlin.native.version"),
     KONAN_USE_ENVIRONMENT_VARIABLES("org.jetbrains.kotlin.native.useEnvironmentVariables")
 }
 
@@ -48,6 +50,11 @@ internal val Project.konanHome: String
     get() = findProperty(KotlinNativeProjectProperty.KONAN_HOME_OVERRIDE)?.let {
         file(it).absolutePath
     } ?: NativeCompilerDownloader(project).compilerDirectory.absolutePath
+
+internal val Project.konanVersion: KonanVersion
+    get() = project.findProperty(KotlinNativeProjectProperty.KONAN_VERSION)?.let {
+        KonanVersion.fromString(it.toString())
+    } ?: NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
 internal interface KonanToolRunner: Named {
     val mainClass: String
