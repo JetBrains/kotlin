@@ -152,13 +152,13 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         get() = _sources.value
 
     @Volatile
-    private var _sources: Lazy<Map<File, Source>> = lazy { updateSourcesList(jpsGlobalContext) }
+    private var _sources: Lazy<Map<File, Source>> = lazy { computeSourcesList(jpsGlobalContext) }
 
     fun nextRound(localContext: CompileContext) {
-        _sources = lazy { updateSourcesList(localContext) }
+        _sources = lazy { computeSourcesList(localContext) }
     }
 
-    private fun updateSourcesList(localContext: CompileContext): Map<File, Source> {
+    private fun computeSourcesList(localContext: CompileContext): Map<File, Source> {
         val result = mutableMapOf<File, Source>()
         val moduleExcludes = module.excludeRootsList.urls.mapTo(java.util.HashSet(), JpsPathUtil::urlToFile)
 
