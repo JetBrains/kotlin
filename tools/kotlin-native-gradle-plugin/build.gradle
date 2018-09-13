@@ -73,8 +73,8 @@ configurations {
 }
 
 dependencies {
-    shadow "org.jetbrains.kotlin:kotlin-stdlib:0.9.0-native"
-    shadow "org.jetbrains.kotlin:kotlin-gradle-plugin:0.9.0-native"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib:0.9.1-native"
+    shadow "org.jetbrains.kotlin:kotlin-gradle-plugin:0.9.1-native"
 
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
