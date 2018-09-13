@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.ide.konan.createPackageFragmentProviderForLibraryModule
-import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo
+import org.jetbrains.kotlin.ide.konan.createPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -60,13 +60,16 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
 
         val moduleInfo = moduleContent.moduleInfo
 
-        if (moduleInfo is LibraryInfo) {
-            val libPackageFragmentProviders = moduleInfo.createPackageFragmentProviderForLibraryModule(
-                moduleContext.storageManager,
-                languageVersionSettings,
-                moduleDescriptor
-            )
-            fragmentProviders.addAll(libPackageFragmentProviders)
+        val konanLibrary = moduleInfo.getCapability(NativeLibraryInfo.NATIVE_LIBRARY_CAPABILITY)
+        if (konanLibrary != null) {
+            val libPackageFragmentProvider =
+                konanLibrary.createPackageFragmentProvider(
+                    moduleContext.storageManager,
+                    languageVersionSettings,
+                    moduleDescriptor
+                )
+
+            fragmentProviders.add(libPackageFragmentProvider)
             //TODO: Forward declarations?
         }
 
