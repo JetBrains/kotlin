@@ -28,6 +28,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     fun generate(): JsStatement {
 
+        if (irClass.descriptor.isExpect) return JsEmpty // TODO: fix it in Psi2Ir
+
         maybeGeneratePrimaryConstructor()
         val transformer = IrDeclarationToJsTransformer()
 

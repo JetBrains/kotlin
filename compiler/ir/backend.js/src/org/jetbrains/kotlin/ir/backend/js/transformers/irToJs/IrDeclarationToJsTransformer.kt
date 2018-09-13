@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsVars
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
+        if (declaration.descriptor.isExpect) return JsEmpty // TODO: fix it in Psi2Ir
         return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
     }
 
