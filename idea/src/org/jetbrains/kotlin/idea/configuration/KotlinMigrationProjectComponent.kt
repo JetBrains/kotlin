@@ -223,15 +223,10 @@ private fun maxKotlinLibVersion(project: Project): LibInfo? {
                 continue
             }
 
-            val libName = library.name ?: continue
+            val libraryInfo = parseExternalLibraryName(library) ?: continue
 
-            val version = libName.substringAfterLastNullable(":") ?: continue
-            val artifactId = libName.substringBeforeLastNullable(":")?.substringAfterLastNullable(":") ?: continue
-
-            if (version.isBlank() || artifactId.isBlank()) continue
-
-            if (maxStdlibInfo == null || VersionComparatorUtil.COMPARATOR.compare(version, maxStdlibInfo.version) > 0) {
-                maxStdlibInfo = LibInfo(KOTLIN_GROUP_ID, artifactId, version)
+            if (maxStdlibInfo == null || VersionComparatorUtil.COMPARATOR.compare(libraryInfo.version, maxStdlibInfo.version) > 0) {
+                maxStdlibInfo = LibInfo(KOTLIN_GROUP_ID, libraryInfo.artifactId, libraryInfo.version)
             }
         }
 
@@ -258,14 +253,4 @@ private fun collectMaxCompilerSettings(project: Project): LanguageVersionSetting
 
         LanguageVersionSettingsImpl(maxLanguageVersion ?: LanguageVersion.LATEST_STABLE, maxApiVersion ?: ApiVersion.LATEST_STABLE)
     }
-}
-
-fun String.substringBeforeLastNullable(delimiter: String, missingDelimiterValue: String? = null): String? {
-    val index = lastIndexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else substring(0, index)
-}
-
-fun String.substringAfterLastNullable(delimiter: String, missingDelimiterValue: String? = null): String? {
-    val index = lastIndexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else substring(index + 1, length)
 }
