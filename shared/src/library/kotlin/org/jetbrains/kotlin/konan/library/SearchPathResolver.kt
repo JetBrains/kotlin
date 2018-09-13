@@ -172,27 +172,33 @@ internal fun SearchPathResolverWithTarget.libraryMatch(candidate: KonanLibraryIm
     val resolverTarget = this.target
     val candidatePath = candidate.libraryFile.absolutePath
 
+    val candidateCompilerVersion = candidate.versions.compilerVersion
+    val candidateAbiVersion = candidate.versions.abiVersion
+    val candidateLibraryVersion = candidate.versions.libraryVersion
+
     if (resolverTarget != null && !candidate.targetList.contains(resolverTarget.visibleName)) {
         logger("skipping $candidatePath. The target doesn't match. Expected '$resolverTarget', found ${candidate.targetList}")
         return false
     }
 
-    if (knownCompilerVersions != null &&
-            !knownCompilerVersions!!.contains(candidate.versions.compilerVersion)) {
-        logger("skipping $candidatePath. The compiler versions don't match. Expected '${knownCompilerVersions}', found '${candidate.versions.compilerVersion}'")
+     if (candidateCompilerVersion == null ||
+        knownCompilerVersions != null &&
+            !knownCompilerVersions!!.contains(candidateCompilerVersion)) {
+        logger("skipping $candidatePath. The compiler versions don't match. Expected '${knownCompilerVersions}', found '${candidateCompilerVersion}'")
         return false
     }
 
-    if (knownAbiVersions != null &&
-            !knownAbiVersions!!.contains(candidate.versions.abiVersion)) {
-        logger("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidate.versions.abiVersion}'")
+    if (candidateAbiVersion == null ||
+        knownAbiVersions != null &&
+            !knownAbiVersions!!.contains(candidateAbiVersion)) {
+        logger("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'")
         return false
     }
 
-    if (candidate.versions.libraryVersion != unresolved.libraryVersion &&
-            candidate.versions.libraryVersion != null &&
+    if (candidateLibraryVersion != unresolved.libraryVersion &&
+            candidateLibraryVersion != null &&
             unresolved.libraryVersion != null) {
-        logger("skipping $candidatePath. The library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidate.versions.libraryVersion}'")
+        logger("skipping $candidatePath. The library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidateLibraryVersion}'")
         return false
     }
 

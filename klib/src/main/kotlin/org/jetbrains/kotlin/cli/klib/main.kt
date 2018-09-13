@@ -97,12 +97,16 @@ class Library(val name: String, val requestedRepository: String?, val target: St
     fun info() {
         val library = libraryInRepoOrCurrentDir(repository, name)
         val headerAbiVersion = library.versions.abiVersion
+        val headerCompilerVersion = library.versions.compilerVersion
+        val headerLibraryVersion = library.versions.libraryVersion
         val moduleName = ModuleDeserializer(library.moduleHeaderData).moduleName
 
         println("")
         println("Resolved to: ${library.libraryName.File().absolutePath}")
         println("Module name: $moduleName")
         println("ABI version: $headerAbiVersion")
+        println("Compiler version: $headerCompilerVersion")
+        println("Library version: $headerLibraryVersion")
         val targets = library.targetList.joinToString(", ")
         print("Available targets: $targets\n")
     }

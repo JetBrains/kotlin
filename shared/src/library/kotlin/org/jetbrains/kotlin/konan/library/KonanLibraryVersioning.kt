@@ -9,20 +9,20 @@ import org.jetbrains.kotlin.konan.parseKonanAbiVersion
 
 data class KonanLibraryVersioning(
     val libraryVersion: String?,
-    val compilerVersion: KonanVersion,
-    val abiVersion: KonanAbiVersion
+    val compilerVersion: KonanVersion?,
+    val abiVersion: KonanAbiVersion?
 )
 
 fun Properties.writeKonanLibraryVersioning(versions: KonanLibraryVersioning) {
-    this.setProperty(KLIB_PROPERTY_ABI_VERSION, versions.abiVersion.toString())
+    versions.abiVersion ?. let { this.setProperty(KLIB_PROPERTY_ABI_VERSION, it.toString()) }
     versions.libraryVersion ?. let { this.setProperty(KLIB_PROPERTY_LIBRARY_VERSION, it) }
-    this.setProperty(KLIB_PROPERTY_COMPILER_VERSION, "${versions.compilerVersion}")
+    versions.compilerVersion ?. let { this.setProperty(KLIB_PROPERTY_COMPILER_VERSION, "${versions.compilerVersion}") }
 }
 
 fun Properties.readKonanLibraryVersioning(): KonanLibraryVersioning {
-    val abiVersion = this.getProperty(KLIB_PROPERTY_ABI_VERSION)!!.parseKonanAbiVersion()
+    val abiVersion = this.getProperty(KLIB_PROPERTY_ABI_VERSION)?.parseKonanAbiVersion()
     val libraryVersion = this.getProperty(KLIB_PROPERTY_LIBRARY_VERSION)
-    val compilerVersion = this.getProperty(KLIB_PROPERTY_COMPILER_VERSION)!!.parseKonanVersion()
+    val compilerVersion = this.getProperty(KLIB_PROPERTY_COMPILER_VERSION)?.parseKonanVersion()
 
     return KonanLibraryVersioning(abiVersion = abiVersion, libraryVersion = libraryVersion, compilerVersion = compilerVersion)
 }
