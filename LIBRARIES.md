@@ -2,32 +2,32 @@
 
 ## Kotlin compiler specifics
 
-To produce a library with Kotlin/Native compiler use `-produce library` or `-p library` flag. For example:
+To produce a library with the Kotlin/Native compiler use the `-produce library` or `-p library` flag. For example:
 
     $ kotlinc foo.kt -p library -o bar
 
-the above command will produce a `bar.klib` with compiled contents of `foo.kt`.
+the above command will produce a `bar.klib` with the compiled contents of `foo.kt`.
 
-To link a library use `-library <name>` or `-l <name>` flag. For example:
+To link to a library use the `-library <name>` or `-l <name>` flag. For example:
 
     $ kotlinc qux.kt -l bar
 
-the above command will produce `program.kexe` out of `qux.kt` and `bar.klib`
+the above command will produce a `program.kexe` out of `qux.kt` and `bar.klib`
 
 
 ## cinterop tool specifics
 
 The **cinterop** tool produces `.klib` wrappers for native libraries as its main output. 
-For example using the simple `stdio.def` native library definition file provided in your Kotlin/Native distribution
+For example, using the simple `stdio.def` native library definition file provided in your Kotlin/Native distribution
 
     $ cinterop -def  ./samples/csvparser/src/main/c_interop/stdio.def  -o stdio
 
-we obtain `stdio.klib`. 
+we will obtain `stdio.klib`. 
 
 
 ## klib utility
 
-The **klib** library management utility allows one to inspect and install the libraries.
+The **klib** library management utility allows you to inspect and install the libraries.
 
 The following commands are available.
 
@@ -47,14 +47,14 @@ To remove the library from the default repository use
 
         $ klib remove <name>
 
-All of the above commands accept an additional `-repository <directory>` argument to specify a repository other than the default one. 
+All of the above commands accept an additional `-repository <directory>` argument for specifying a repository different to the default one. 
 
         $ klib <command> <name> -repository <directory>
 
 
 ## Several examples
 
-First lets create a library:
+First let's create a library:
 
     $ cinterop -h /usr/include/math.h -pkg libc.math -o math
 
@@ -86,7 +86,7 @@ Now compile the program linking with the library we have just created:
 
     $ kotlinc sin.kt -l math -o mysin
 
-And run your program:
+And run the program:
 
     $ ./mysin.kexe
     0.9092974268256817
@@ -97,7 +97,7 @@ Have fun!
 
 ## Library search sequence
 
-When given `-library foo` flag, the compiler searches the `foo`  library in the following order:
+When given a `-library foo` flag, the compiler searches the `foo` library in the following order:
 
     * Current compilation directory or an absolute path.
 
@@ -110,9 +110,9 @@ When given `-library foo` flag, the compiler searches the `foo`  library in the 
 
 ## The library format
 
-**WARNING**: the library format is *very* preliminary. It is subject to change right under your fingers. And it can incompatibly change from release to release until Kotlin/Native is stabilized.
+**WARNING**: the library format is *very* preliminary. It is subject to change right under your fingertips. And it can include changes which will make it incompatible between releases at least until Kotlin/Native is stabilized.
 
-Kotlin/Native libraries are zip files containing predefined 
+Kotlin/Native libraries are zip files containing a predefined 
 directory structure, with the following layout:
 
 **foo.klib** when unpacked as **foo/** gives us:
@@ -134,5 +134,5 @@ directory structure, with the following layout:
     - manifest - A file in *java property* format describing the library.
 ```
 
-An exemplar layout can be found in `klib/stdlib` directory of your installation.
+An example layout can be found in `klib/stdlib` directory of your installation.
 
