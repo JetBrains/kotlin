@@ -145,6 +145,6 @@ fun KotlinType.toIrType(symbolTable: SymbolTable? = null): IrType? {
 // TODO: this function creates unbound symbol which is the great source of problems
 private fun ClassifierDescriptor.getSymbol(symbolTable: SymbolTable?): IrClassifierSymbol = when (this) {
     is ClassDescriptor -> symbolTable?.referenceClass(this) ?: IrClassSymbolImpl(this)
-    is TypeParameterDescriptor -> /*symbolTable?.referenceTypeParameter(this) ?: */IrTypeParameterSymbolImpl(this)
+    is TypeParameterDescriptor -> symbolTable?.referenceTypeParameter(this) ?: IrTypeParameterSymbolImpl(this)
     else -> TODO()
 }

@@ -413,9 +413,9 @@ open class SymbolTable : ReferenceSymbolTable {
         }
 }
 
-inline fun <T> SymbolTable.withScope(owner: DeclarationDescriptor, block: SymbolTable.() -> T): T {
+inline fun <T, D: DeclarationDescriptor> SymbolTable.withScope(owner: D, block: SymbolTable.(D) -> T): T {
     enterScope(owner)
-    val result = block(this)
+    val result = block(owner)
     leaveScope(owner)
     return result
 }
