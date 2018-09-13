@@ -1,40 +1,40 @@
 # Kotlin/Native in multiplatform projects
 
-While Kotlin/Native could be used as the only Kotlin compiler in the project, it is pretty common to combine
+While Kotlin/Native can be used as the only Kotlin compiler in a project, it is pretty common to combine
 Kotlin/Native with other Kotlin backends, such as Kotlin/JVM (for JVM or Android targets) or Kotlin/JS
-(for web and Node.js applications). This document describes recommended approaches and the best practices for such scenarios.
+(for web and Node.js applications). This document describes the recommended approaches and best practices for such scenarios.
 
-Kotlin as a language provides a notion of expect/actual declarations, and Gradle in its turn
-augments it with the notion of multiplatform projects (aka MPP). Those two, combined together, provide a flexible
-standartized [mechanism of multiplatform development](https://kotlinlang.org/docs/reference/multiplatform.html)
-across various Kotlin flavours.
+Kotlin as a language provides a notion of expect/actual declarations, and Gradle in turn
+augments it with the notion of multiplatform projects (aka MPP). These two, combined together, provide a flexible
+standardized [mechanism of multiplatform development](https://kotlinlang.org/docs/reference/multiplatform.html)
+across various Kotlin flavors.
 
-Code, common amongst multiple platforms can be placed in common modules, while platform-specific code could be placed
-into platform-specific modules, and expect/actual declarations can bind them together in developer-friendly way.
+Code, common amongst multiple platforms can be placed in common modules, while platform-specific code can be placed
+into platform-specific modules, and expect/actual declarations can bind them together in a developer-friendly way.
 
-Below one can find a step-by-step tutorial of creating a Kotlin multiplatform application for Android and iOS.
+Below you will find a step-by-step tutorial for creating a Kotlin multiplatform application for Android and iOS.
 
 ## Creating multiplatform Android/iOS application with Kotlin
 
-To create an MPP application one has to start with clear understanding which parts of an application is common for a different
-targets, and which ones are specific, and organize module structure accordingly. For shared Kotlin code the common
-ground consist of the Kotlin's standard library, which does include basic data structures and computational primitives,
-along with expect classes with platform-specific implementation. Most frequently, such code consists of GUI,
-input-output, cryptography and other APIs, available on the particular platform.
+To create an MPP application you have to start with clear understanding of which parts of an application are common for different
+targets, and which are specific, and then organize the module structure accordingly. For shared Kotlin code the common
+ground consists of Kotlin's standard library, which does include basic data structures and computational primitives,
+along with some expected classes with platform-specific implementation. Most frequently, such code consists of a GUI,
+input-output, cryptography, and other APIs, available on the particular platform.
 
 In this tutorial, the multiplatform application will include three parts:
 
  * An **Android application** represented by a separate Android Studio project written in Kotlin.
  * An **iOS application** represented by a separate Xcode project, written in Swift.
- * A **multiplatform library** containing a business logic of the application and used by both Android and iOS applications.
+ * A **multiplatform library** containing the business logic of the application and used by both Android and iOS applications.
    This library can contain both platform-dependent and platform-independent code and is compiled into a `jar`-library
    for Android and in a `Framework` for iOS by Gradle.
 
 So, the multiplatform library will include three subprojects:
 
- * `common` - contains a common logic for both applications;
- * `ios` - contains an iOS-specific code;
- * `android` - contains an Android-specific code.
+ * `common` - contains common logic for both applications
+ * `ios` - contains iOS-specific code
+ * `android` - contains Android-specific code
 
 ### 1. Preparing a workspace
 
@@ -49,12 +49,12 @@ generate different greetings on different platforms. Create the following direct
         ├── android/
         └── ios/
 
-As said above, [Gradle](https://gradle.org/) is the main build system for Kotlin thus our project will use it.
+As said above, [Gradle](https://gradle.org/) is the main build system for Kotlin so our project will use it.
 
-To install Gradle refer to [this instruction](https://gradle.org/install/). Despite the fact that you can use the local
-Gradle installation for building the project, it's recommended to use the
+To install Gradle refer to [these instructions](https://gradle.org/install/). Despite being able to use the local
+Gradle installation for building a project, it's recommended to use the
 [Gradle wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) instead. To create the wrapper, install
-Gradle as described above and execute `gradle wrapper` in the root directory of the project. After that you can
+Gradle as described above, and execute `gradle wrapper` in the root directory of the project. After that you can
 use `./gradlew` to run the build instead of using your local Gradle installation.
 
 Once the wrapper is created we need to describe the project structure in Gradle terms. To do this, create
@@ -69,20 +69,20 @@ Here we declare all subprojects for our `greeting` multiplatform library. All ot
 in the project also must be declared here.
 
 Note that both iOS and Android applications are not included in the root Gradle build. They are represented by
-independent builds which are managed by specific IDEs (Android Studio and Xcode). Such an approach makes work with
-these builds easier from these IDEs.
+independent builds which are managed by specific IDEs (Android Studio and Xcode). Such an approach makes working with
+these builds easier from the IDEs.
 
-As for IDE for other parts of the project, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is recommended to be used.
+As for an IDE for other parts of the project, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is recommended.
 
-> Note: Kotlin/Native is not supported by IntelliJ IDEA so the only IDE to develop Kotlin/Native subprojects is
+> Note: Kotlin/Native is not supported by IntelliJ IDEA so the only IDE to develop Kotlin/Native sub-projects is
 [CLion](https://www.jetbrains.com/clion/). But at the moment CLion has no Gradle integration. As a workaround you can
 create a CLion Cmake project from a Kotlin/Native Gradle one. Just run `./gradlew generateCMake` for this project. It
 will generate all the necessary files which are required. See
 [this](https://blog.jetbrains.com/kotlin/2017/11/kotlinnative-ide-support-preview/) blog post to learn more about
 Kotlin/Native support in CLion.
 
-As the final step create empty `build.gradle` files in the root directory of the project and in all subprojects which are
-included in `settings.gradle`. After all these actions the project structure will be the following (files
+For the final step create the empty `build.gradle` files in the root directory of the project and in all subprojects which are
+included in `settings.gradle`. After performing all these actions the project structure will be the following (files
 generated by the Gradle wrapper are not shown):
 
     application/
@@ -99,12 +99,12 @@ generated by the Gradle wrapper are not shown):
     ├── build.gradle
     └── settings.gradle
 
-Now we have a basic structure of the project and can proceed to implementing of the multiplatform library.
+Now we have the basic structure of the project and can proceed to implement the multiplatform library.
 
 ### 2. Multiplatform library
 
-We need to add buildscript dependencies to be able to use Kotlin plugins for Gradle in our build. Open
-`build.gradle` in the `greeting` directory and put into it the following snippet:
+We need to add buildscript dependencies to be able to use the Kotlin plugins for Gradle in our build. Open
+the `build.gradle` in the `greeting` directory and put the following snippet into it:
 
     // Set up a buildscript dependency on the Kotlin plugin.
     buildscript {
@@ -135,7 +135,7 @@ Now all subprojects of the library can use Kotlin plugins.
 
 #### 2.1 Common subproject
 
-The `common` subproject contains a platform-independent code. To build it, add the following snippet in `common/build.gradle`:
+The `common` subproject contains platform-independent code. To build it, add the following snippet in `common/build.gradle`:
 
     apply plugin: 'kotlin-platform-common'
 
@@ -146,7 +146,7 @@ The `common` subproject contains a platform-independent code. To build it, add t
     version = 1.0
 
     dependencies {
-        // Set up compilation dependency on common Kotlin stdlib
+        // Set up a compilation dependency on common Kotlin stdlib
         implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
     }
 
@@ -164,14 +164,14 @@ functionality into it:
         fun greeting(): String = "Hello, ${Platform().platform}"
     }
 
-Here we create a simple class using `expect`/`actual` paradigm. See details about platform-specific declarations
+Here we create a simple class using the `expect`/`actual` paradigm. Find details about platform-specific declarations
 [here](https://kotlinlang.org/docs/reference/multiplatform.html#platform-specific-declarations).
 
 #### 2.2 Android subproject
 
-The `android` subproject contains platform-dependent implementations of `expect`-declarations we've created in the
+The `android` subproject contains platform-dependent implementations of the `expect`-declarations we've created in the
 `common` project. We compile it into a Java library which an Android Studio project can depend on. The content
-of `android/build.gradle` will be the following:
+of the `android/build.gradle` will be the following:
 
     apply plugin: 'kotlin-platform-jvm'
 
@@ -190,7 +190,7 @@ of `android/build.gradle` will be the following:
     }
 
 
-As said above this subproject should include actual implementations of the common project's `expect`-declarations.
+As mentioned above this subproject should include actual implementations of the common project's `expect`-declarations.
 Let's write an Android-specific method:
 
     // greeting/android/src/main/kotlin/android.kt
@@ -202,8 +202,8 @@ Let's write an Android-specific method:
 
 #### 2.3 iOS subproject
 
-This project is compiled into an Objective-C framework using Kotlin/Native compiler. To do this, declare a framework in
-`ios/build.gradle` and add an `expectedBy` dependency in the same manner as in the Android project:
+This project is compiled into an Objective-C framework using the Kotlin/Native compiler. To do this, declare a framework in
+`ios/build.gradle` and add an `expectedBy` dependency in the same manner as was done in the Android project:
 
     apply plugin: 'konan'
 
@@ -234,8 +234,8 @@ As well as `android`, this project contains platform-dependent implementations o
 
 ### 3. Android application
 
-Now we can create an Android application which will use the library we implemented on the previous step. Open Android
-Studio and create a new project in the `androidApp` directory. Android Studio will generate all necessary files and
+Now we can create an Android application which will use the library we implemented in the previous step. Open Android
+Studio and create a new project in the `androidApp` directory. Android Studio will generate all the necessary files and
 directories.
 
 Kotlin/Native requires Gradle 4.7 or higher so you need to make sure that the AS project uses the correct
@@ -243,7 +243,7 @@ Gradle version. To do this, open `androidApp/gradle/gradle-wrapper.properties` a
 property. Upgrade the wrapper if necessary
 (see [Gradle documentation](https://docs.gradle.org/current/userguide/gradle_wrapper.html#sec:upgrading_wrapper)).
  
-Now we only need to add a dependency on our library. There are 2 actions we need to do:
+Now we only need to add a dependency on our library. There are 2 actions we need to take:
 
 1. Add dependency on the library. To do this just open `androidApp/app/build.gradle` and add the following snippet in
 the `dependencies` script block:
@@ -285,7 +285,7 @@ following line in `androidApp/settings.gradle`:
 >implementation project(':greeting:android')
 >```
 
-After these steps we can access our library as any other Kotlin code:
+After these steps we can access our library as we would with any other Kotlin code:
 
     import org.greeting.*
 
@@ -297,25 +297,25 @@ After these steps we can access our library as any other Kotlin code:
 
 ### 4. iOS application
 
-As said above the multiplatform library can also be used in iOS applications. The general approach here is the same as
-in case of an Android application: we create a separate Xcode project and add the library as a framework. But we need
+As already mentioned above the multiplatform library can also be used in iOS applications. The general approach here is the same as
+in the case of the Android application: we create a separate Xcode project and add the library as a framework. But we need
 to make some additional steps here.
 
 Unlike Android Studio Xcode doesn't use Gradle, so we cannot just add the library as a dependency. Instead we need to
 create a new framework in the Xcode project and then replace its default build phases with a custom one which delegates
 building the framework to Gradle.
 
-To do this, make the following steps:
+To do this, perform the following steps:
 
-1. Create a new Xcode project in the root directory of our project (the `application` directory in the
+1. Create a new Xcode project in the root directory of your project (the `application` directory in the
 [section 1](#1-preparing-a-workspace)). Name it `iosApp` so Xcode will create the project in the directory we created
 in the section 1.
-2. Add a new framework in the project. Go `File` -> `New` -> `Target` -> `Cocoa Touch Framework`. Specify the same
-framework name as in `greeting/ios/build.gradle`: `Greeting`.
+2. Add a new framework in the project. Go to `File` -> `New` -> `Target` -> `Cocoa Touch Framework`. Specify the same
+framework name as is in `greeting/ios/build.gradle`: `Greeting`.
 3. Choose the new framework in the `Project Navigator` and open the `Build Settings` tab. Here we need to add a new build
 setting specifying what Gradle task will be executed to build the framework for one or another platform. Fortunately,
 Xcode allows us to set different values for the same build setting depending on the platform. Create a new build
-setting in the `User-defined` section and name it `KONAN_TASK`. Then specify the following values of it for different
+setting in the `User-defined` section and name it `KONAN_TASK`. Then specify the following values for it for different
 platforms (for both `Debug` and `Release` modes):
 
     |Platform               |Value                                  |
@@ -329,7 +329,7 @@ platforms (for both `Debug` and `Release` modes):
 4. Add one more build setting for the framework to manage optimizations performed by the Kotlin/Native compiler. Name
 it `KONAN_ENABLE_OPTIMIZATIONS ` and set its value to `YES` for the `Release` mode and to `NO` for the `Debug` mode.
 5. Ensure that the framework is still selected in the `Project Navigator` and open the `Build phases` tab. Remove all
-default phases except `Target Dependencies`.
+the default phases except `Target Dependencies`.
 6. Add a new `Run Script` build phase and put the following code into the script field:
 
     ```
@@ -354,7 +354,7 @@ default phases except `Target Dependencies`.
 Kotlin sources (`greeting/ios/src` in this sample). Choose the framework created as a target to add these sources to.
 Do this for the common code of the library too.
 
-Now the framework is added and all Kotlin API are available from Swift code (note that you need to build the
+Now the framework is added and all the Kotlin API are available from Swift code (note that you need to build the
 framework in order to get code completion). Let's print our greeting:
 
     import Greeting
@@ -367,6 +367,6 @@ framework in order to get code completion). Let's print our greeting:
 
 ### Sample
 
-A sample implementation which follows these documenation can be found [here](https://github.com/JetBrains/kotlin-mpp-example).
+A sample implementation which follows this documentation can be found [here](https://github.com/JetBrains/kotlin-mpp-example).
 You may also look at the [calculator sample](https://github.com/JetBrains/kotlin-native/tree/master/samples/calculator). It has a simpler structure (particularly both Android app
 and Kotlin/Native library are combined in a single Gradle build) but also uses the multiplatform support provided by Kotlin. 
