@@ -36,16 +36,21 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
 
     val packageScope = context.builtIns.builtInsModule.getPackage(packageName).memberScope
 
-    val main = packageScope.getContributedFunctions(entryName,
-        NoLookupLocation.FROM_BACKEND).singleOrNull {
+    val candidates = packageScope.getContributedFunctions(entryName,
+        NoLookupLocation.FROM_BACKEND).filter {
             it.returnType?.isUnit() == true &&
-            it.hasSingleArrayOfStringParameter &&
             it.typeParameters.isEmpty() &&
             it.visibility.isPublicAPI
         }
-    if (main == null) {
-        context.reportCompilationError("Could not find '$entryName' in '$packageName' package.")
-    }
+
+    val main =
+        candidates.singleOrNull { it.hasSingleArrayOfStringParameter } ?:
+        candidates.singleOrNull { it.hasNoParameters } ?:
+        run {
+            context.reportCompilationError("Could not find '$entryName' in '$packageName' package.")
+            null
+        }
+
     return main
 }
 
@@ -73,3 +78,5 @@ private val KotlinType.isArrayOfString: Boolean
 private val FunctionDescriptor.hasSingleArrayOfStringParameter: Boolean
     get() = valueParameters.singleOrNull()?.type?.isArrayOfString ?: false
 
+private val FunctionDescriptor.hasNoParameters: Boolean
+    get() = valueParameters.isEmpty()

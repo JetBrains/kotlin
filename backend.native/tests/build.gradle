@@ -546,6 +546,17 @@ task entry2(type: LinkKonanTest) {
     flags = ["-entry", "foo"] 
 }
 
+task entry3(type: RunStandaloneKonanTest) {
+    goldValue = "Hello, without args.\n"
+    source = "runtime/basic/entry1.kt"
+    flags = ["-entry", "bar"]
+}
+
+task entry4(type: RunStandaloneKonanTest) {
+    goldValue = "This is main without args\n"
+    source = "runtime/basic/entry4.kt"
+}
+
 task readline0(type: RunStandaloneKonanTest) {
     goldValue = "41"
     testData = "41\r\n"

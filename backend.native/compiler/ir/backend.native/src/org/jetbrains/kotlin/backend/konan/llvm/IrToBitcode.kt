@@ -2618,9 +2618,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun entryPointSelector(entryPoint: LLVMValueRef,
-        entryPointType: LLVMTypeRef, selectorName: String): LLVMValueRef {
+        entryPointType: LLVMTypeRef, selectorName: String, argCount: Int): LLVMValueRef {
 
-        assert(LLVMCountParams(entryPoint) == 1)
+        assert(LLVMCountParams(entryPoint) <= 1)
 
         val selector = LLVMAddFunction(context.llvmModule, selectorName, entryPointType)!!
         generateFunction(codegen, selector) {
@@ -2629,8 +2629,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             // scheme for arguments guarantees, that reference is being held in C++
             // launcher, so we could optimize out creating slot for 'parameter' in
             // this function.
-            val parameter = LLVMGetParam(selector, 0)!!
-            call(entryPoint, listOf(parameter), Lifetime.IRRELEVANT, ExceptionHandler.Caller)
+            val parameters = if (argCount == 1)
+                listOf(LLVMGetParam(selector, 0)!!)
+            else
+                emptyList()
+            call(entryPoint, parameters, Lifetime.IRRELEVANT, ExceptionHandler.Caller)
             ret(null)
         }
         return selector
@@ -2644,8 +2647,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val entryPoint = codegen.llvmFunction(descriptor)
         val selectorName = "EntryPointSelector"
         val entryPointType = getFunctionType(entryPoint)
+        val argCount = descriptor.valueParameters.size
+        assert(argCount <= 1)
 
-        val selector = entryPointSelector(entryPoint, entryPointType, selectorName)
+        val selector = entryPointSelector(entryPoint, entryPointType, selectorName, argCount)
 
         LLVMSetLinkage(selector, LLVMLinkage.LLVMExternalLinkage)
     }

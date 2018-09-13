@@ -11,6 +11,10 @@ fun foo(args: Array<String>) {
     println("Hello.")
 }
 
+fun bar() {
+    println("Hello, without args.")
+}
+
 
 fun main(args: Array<String>) {
     fail()
