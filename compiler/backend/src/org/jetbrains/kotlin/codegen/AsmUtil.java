@@ -407,6 +407,9 @@ public class AsmUtil {
         if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(descriptor)) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
+        if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            return NO_FLAG_PACKAGE_PRIVATE;
+        }
         if (descriptor.getVisibility() == Visibilities.PUBLIC ||
             descriptor.getVisibility() == Visibilities.PROTECTED ||
             // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes

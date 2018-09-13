@@ -248,6 +248,24 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/writeFlags/class/visibility/packageprivate")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Packageprivate extends AbstractWriteFlagsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInPackageprivate() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/packageprivate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("enumEntry.kt")
+                public void testEnumEntry() throws Exception {
+                    runTest("compiler/testData/writeFlags/class/visibility/packageprivate/enumEntry.kt");
+                }
+            }
+
             @TestMetadata("compiler/testData/writeFlags/class/visibility/private")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
