@@ -11,7 +11,7 @@ perform the following operations:
 - breakpoints
 - stepping
 - inspection of type information
-- (var) variable inspection
+- variable inspection
 
 ### Producing binaries with debug info with Kotlin/Native compiler
 
@@ -21,10 +21,10 @@ _Example:_
 ```
 0:b-debugger-fixes:minamoto@unit-703(0)# cat - > hello.kt
 fun main(args: Array<String>) {
-  println("Hello world");
-  println("I need your clothes, your boots, and your motocycle");
+  println("Hello world")
+  println("I need your clothes, your boots and your motocycle")
 }
-0:b-debugger-fixes:minamoto@unit-703(0)# dist/bin/konanc -g hello.kt -o terminator.kexe
+0:b-debugger-fixes:minamoto@unit-703(0)# dist/bin/konanc -g hello.kt -o terminator
 KtFile: hello.kt
 0:b-debugger-fixes:minamoto@unit-703(0)# lldb terminator.kexe
 (lldb) target create "terminator.kexe"
@@ -37,8 +37,8 @@ Process 28473 stopped
 * thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
     frame #0: 0x00000001000012e4 terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) at hello.kt:2
    1    fun main(args: Array<String>) {
--> 2      println("Hello world");
-   3      println("I need your clothes, your boots, and your motocycle");
+-> 2      println("Hello world")
+   3      println("I need your clothes, your boots and your motocycle")
    4    }
 (lldb) n
 Hello world
@@ -46,8 +46,8 @@ Process 28473 stopped
 * thread #1, queue = 'com.apple.main-thread', stop reason = step over
     frame #0: 0x00000001000012f0 terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) at hello.kt:3
    1    fun main(args: Array<String>) {
-   2      println("Hello world");
--> 3      println("I need your clothes, your boots, and your motocycle");
+   2      println("Hello world")
+-> 3      println("I need your clothes, your boots and your motocycle")
    4    }
 (lldb)
 ```
@@ -107,39 +107,7 @@ Breakpoint 3 at 0x100001704: file /Users/minamoto/ws/.git-trees/hello.kt, line 2
 ### Stepping
 Stepping functions works mostly the same way as for C/C++ programs
 
-### Type info
-Some details about the type information functionality in modern debuggers:
-
-#### lldb
-````
-0:b-debugger-fixes:minamoto@unit-703(1)# lldb build/bin/Tetris.kexe
-(lldb) target create "build/bin/Tetris.kexe"
-Current executable set to 'build/bin/Tetris.kexe' (x86_64).
-(lldb) b kfun:main(kotlin.Array<kotlin.String>)
-Breakpoint 1: where = Tetris.kexe`kfun:main(kotlin.Array<kotlin.String>) + 21 at Tetris.kt:955, address = 0x00000001000109c5
-(lldb) r
-Process 41740 launched: '/Users/minamoto/ws/.git-trees/debugger-fixes/samples/tetris/build/bin/Tetris.kexe' (x86_64)
-Process 41740 stopped
-* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
-    frame #0: 0x00000001000109c5 Tetris.kexe`kfun:main(kotlin.Array<kotlin.String>) at Tetris.kt:955
-   952      }
-   953  }
-   954
--> 955  fun main(args: Array<String>) {
-   956      var startLevel = 0
-   957      var width = 10
-   958      var height = 20
-(lldb) type lookup ktype:Point
-struct ktype:Point {
-    int kprop:Point.x;
-    int kprop:Point.y;
-}
-````
-
-#### gdb
-Unfortunately ``ptype`` is affected with ``:`` and is unusable.
-
-### (var) Variable inspection
+### Variable inspection
 
 Variable inspections for var variables works out of the box for primitive types.
 For non-primitive types there are custom pretty printers for lldb in
@@ -232,9 +200,7 @@ Process 80496 launched: './program.kexe' (x86_64)
 
 
 ### Known issues
-- stepping in imported inline functions does not work
-- single stepping sometimes works incorrectly in some other scenarios
-- variable inspections may not work properly
+- performance of Python bindings.
 
 _Note:_ Supporting the DWARF 2 specification means that the debugger tool recognizes Kotlin as C89, because before the DWARF 5 specification, there is no identifier for the Kotlin language type in specification.
 
