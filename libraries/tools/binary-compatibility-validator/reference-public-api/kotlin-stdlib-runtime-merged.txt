@@ -149,7 +149,6 @@ public final class kotlin/Result : java/io/Serializable {
 	public static fun equals-impl (Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun equals-impl0 (Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun exceptionOrNull-impl (Ljava/lang/Object;)Ljava/lang/Throwable;
-	public static final fun getOrNull-impl (Ljava/lang/Object;)Ljava/lang/Object;
 	public fun hashCode ()I
 	public static fun hashCode-impl (Ljava/lang/Object;)I
 	public static final fun isFailure-impl (Ljava/lang/Object;)Z
@@ -169,36 +168,6 @@ public final class kotlin/ResultKt {
 
 public abstract interface annotation class kotlin/SinceKotlin : java/lang/annotation/Annotation {
 	public abstract fun version ()Ljava/lang/String;
-}
-
-public final class kotlin/SuccessOrFailure : java/io/Serializable {
-	public static final field Companion Lkotlin/SuccessOrFailure$Companion;
-	public static final synthetic fun box-impl (Ljava/lang/Object;)Lkotlin/SuccessOrFailure;
-	public static fun constructor-impl (Ljava/lang/Object;)Ljava/lang/Object;
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (Ljava/lang/Object;Ljava/lang/Object;)Z
-	public static final fun equals-impl0 (Ljava/lang/Object;Ljava/lang/Object;)Z
-	public static final fun exceptionOrNull-impl (Ljava/lang/Object;)Ljava/lang/Throwable;
-	public static final fun getOrNull-impl (Ljava/lang/Object;)Ljava/lang/Object;
-	public static final fun getOrThrow-impl (Ljava/lang/Object;)Ljava/lang/Object;
-	public fun hashCode ()I
-	public static fun hashCode-impl (Ljava/lang/Object;)I
-	public static final fun isFailure-impl (Ljava/lang/Object;)Z
-	public static final fun isSuccess-impl (Ljava/lang/Object;)Z
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (Ljava/lang/Object;)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()Ljava/lang/Object;
-}
-
-public final class kotlin/SuccessOrFailure$Companion {
-}
-
-public final class kotlin/SuccessOrFailure$Failure : java/io/Serializable {
-	public final field exception Ljava/lang/Throwable;
-	public fun <init> (Ljava/lang/Throwable;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface annotation class kotlin/Suppress : java/lang/annotation/Annotation {
@@ -245,7 +214,6 @@ public final class kotlin/UByte : java/lang/Comparable {
 	public static final fun compareTo-VKZWuLQ (BJ)I
 	public static final fun compareTo-WZ4Q5Ns (BI)I
 	public static final fun compareTo-xj2QHRw (BS)I
-	public static fun constructor-impl (B)B
 	public static final fun dec-impl (B)B
 	public static final fun div-7apg3OU (BB)I
 	public static final fun div-VKZWuLQ (BJ)J
@@ -352,7 +320,6 @@ public final class kotlin/UInt : java/lang/Comparable {
 	public fun compareTo-WZ4Q5Ns (I)I
 	public static fun compareTo-WZ4Q5Ns (II)I
 	public static final fun compareTo-xj2QHRw (IS)I
-	public static fun constructor-impl (I)I
 	public static final fun dec-impl (I)I
 	public static final fun div-7apg3OU (IB)I
 	public static final fun div-VKZWuLQ (IJ)J
@@ -461,7 +428,6 @@ public final class kotlin/ULong : java/lang/Comparable {
 	public static fun compareTo-VKZWuLQ (JJ)I
 	public static final fun compareTo-WZ4Q5Ns (JI)I
 	public static final fun compareTo-xj2QHRw (JS)I
-	public static fun constructor-impl (J)J
 	public static final fun dec-impl (J)J
 	public static final fun div-7apg3OU (JB)J
 	public static final fun div-VKZWuLQ (JJ)J
@@ -570,7 +536,6 @@ public final class kotlin/UShort : java/lang/Comparable {
 	public static final fun compareTo-WZ4Q5Ns (SI)I
 	public fun compareTo-xj2QHRw (S)I
 	public static fun compareTo-xj2QHRw (SS)I
-	public static fun constructor-impl (S)S
 	public static final fun dec-impl (S)S
 	public static final fun div-7apg3OU (SB)I
 	public static final fun div-VKZWuLQ (SJ)J

@@ -43,9 +43,10 @@ public inline class Result<out T> @PublishedApi internal constructor(
      * This function is shorthand for `getOrElse { null }` (see [getOrElse]) or
      * `fold(onSuccess = { it }, onFailure = { null })` (see [fold]).
      */
-    public fun getOrNull(): T? =
-        when (value) {
-            is Failure -> null
+    @InlineOnly
+    public inline fun getOrNull(): T? =
+        when {
+            isFailure -> null
             else -> value as T
         }
 
