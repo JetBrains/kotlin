@@ -1128,6 +1128,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             public void testProbeCoroutineSuspended() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/probeCoroutineSuspended.kt");
             }
+
+            @TestMetadata("thisAndResultInLvt.kt")
+            public void testThisAndResultInLvt() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/thisAndResultInLvt.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda")
