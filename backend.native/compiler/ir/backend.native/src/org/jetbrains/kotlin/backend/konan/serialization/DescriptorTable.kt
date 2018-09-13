@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeUtils
@@ -35,6 +36,9 @@ internal fun DeclarationDescriptor.symbolName(): String = when (this) {
 
 internal val DeclarationDescriptor.uniqId 
     get() = this.symbolName().localHash.value
+
+internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
+    get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
 
 
 // TODO: We don't manage id clashes anyhow now.
@@ -95,7 +99,7 @@ val IrBuiltIns.irBuiltInDescriptors
  * and so should be computable from the descriptor itself without checking a backend state.
  */
 internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
-    assert(!this.isExpectMember) { this }
+    assert(!this.isExpectMember || this.isSerializableExpectClass) { this }
 
     if (this.annotations.findAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN) != null) {
         // TODO: Seems like this should be deleted in PsiToIR.

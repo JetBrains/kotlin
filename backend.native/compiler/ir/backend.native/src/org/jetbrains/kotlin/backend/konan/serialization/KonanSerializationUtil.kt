@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
@@ -83,7 +84,7 @@ internal class KonanSerializationUtil(val context: Context, metadataVersion: Bin
         val classifierDescriptors = KonanDescriptorSerializer.sort(
                 fragments.flatMap {
                     it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
-                }.filter { !it.isExpectMember }
+                }.filter { !it.isExpectMember || it.isSerializableExpectClass }
         )
 
         val members = fragments.flatMap { fragment ->

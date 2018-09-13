@@ -12,14 +12,6 @@ There are several gradle flags one can use for Konan build.
 
         ./gradlew -Pshims=true dist
 
-* **-Pfilter** allows one to choose test files to run.
-
-        ./gradlew -Pfilter=overflowLong.kt run_external
-
-* **-Pprefix** allows one to choose external test directories to run. Only tests from directories with given prefix will be executed.
-
-        ./gradlew -Pprefix=external_codegen_box_cast run_external
-
  ## Compiler environment variables
 
 * **KONAN_DATA_DIR** changes `.konan` local data directory location (`$HOME/.konan` by default). Works both with cli compiler and gradle plugin
@@ -36,6 +28,14 @@ To update the blackbox compiler tests set TeamCity build number in `gradle.prope
 
 and run `./gradlew update_external_tests`
 
+* **-Pfilter** allows one to choose test files to run.
+
+        ./gradlew -Pfilter=overflowLong.kt run_external
+
+* **-Pprefix** allows one to choose external test directories to run. Only tests from directories with given prefix will be executed.
+
+        ./gradlew -Pprefix=external_codegen_box_cast run_external
+
 * **-Ptest_flags** passes flags to the compiler used to compile tests
 
         ./gradlew -Ptest_flags="--time" backend.native:tests:array0
@@ -46,5 +46,9 @@ and run `./gradlew update_external_tests`
 
 * **-Premote=user@host** sets remote test execution login/hostname. Good for cross compiled tests.
 
-        ./gradles -Premote=kotlin@111.22.33.444 backend.native:tests:run
+        ./gradlew -Premote=kotlin@111.22.33.444 backend.native:tests:run
+
+* **-Ptest_verbose** enables printing compiler args and other helpful information during a test execution.
+
+        ./gradlew -Ptest_verbose :backend.native:tests:mpp_optional_expectation
 

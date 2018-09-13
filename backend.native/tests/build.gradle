@@ -2317,7 +2317,7 @@ task mpp_optional_expectation(type: RunStandaloneKonanTest) {
     def outputRoot = project.ext."$outputSourceSetName"
     flags = [
             '-Xmulti-platform',
-            "-Xcommon-sources=${file("$outputRoot/$name/mpp_optional_expectation.kt")}"
+            "-Xcommon-sources=$outputRoot/$name/mpp_optional_expectation.kt"
     ]
 }
 
