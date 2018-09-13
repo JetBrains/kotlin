@@ -417,3 +417,12 @@ fun returnExpressionVisitor(block: (KtReturnExpression) -> Unit) =
             block(returnExpression)
         }
     }
+
+
+fun delegatedSuperTypeEntry(block: (KtDelegatedSuperTypeEntry) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitDelegatedSuperTypeEntry(delegatedSuperTypeEntry: KtDelegatedSuperTypeEntry) {
+            super.visitDelegatedSuperTypeEntry(delegatedSuperTypeEntry)
+            block(delegatedSuperTypeEntry)
+        }
+    }

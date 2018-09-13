@@ -2115,6 +2115,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/delegationToVarProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DelegationToVarProperty extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDelegationToVarProperty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/delegationToVarProperty"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("parameter.kt")
+        public void testParameter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/delegationToVarProperty/parameter.kt");
+        }
+
+        @TestMetadata("valParameter.kt")
+        public void testValParameter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/delegationToVarProperty/valParameter.kt");
+        }
+
+        @TestMetadata("varParameter.kt")
+        public void testVarParameter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/delegationToVarProperty/varParameter.kt");
+        }
+
+        @TestMetadata("varParameter2.kt")
+        public void testVarParameter2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/delegationToVarProperty/varParameter2.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
