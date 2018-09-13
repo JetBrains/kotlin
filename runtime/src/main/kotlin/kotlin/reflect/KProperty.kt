@@ -15,48 +15,40 @@ import kotlin.native.internal.FixmeReflection
  *
  * @param R the type of the property.
  */
-@FixmeReflection
-public interface KProperty<out R> : KCallable<R>
+public actual interface KProperty<out R> : KCallable<R>
 
-@FixmeReflection
-public interface KProperty0<out R> : kotlin.reflect.KProperty<R>, () -> R {
+public actual interface KProperty0<out R> : kotlin.reflect.KProperty<R>, () -> R {
 
-    public abstract fun get(): R
+    public actual fun get(): R
 
     public override abstract operator fun invoke(): R
 }
 
-@FixmeReflection
-public interface KProperty1<T, out R> : kotlin.reflect.KProperty<R>, (T) -> R {
-    public abstract fun get(p1: T): R
+public actual interface KProperty1<T, out R> : kotlin.reflect.KProperty<R>, (T) -> R {
+    public actual fun get(receiver: T): R
 
-    public override abstract operator fun invoke(p1: T): R
+    public override operator fun invoke(p1: T): R
 }
 
-@FixmeReflection
-public interface KProperty2<T1, T2, out R> : kotlin.reflect.KProperty<R>, (T1, T2) -> R {
-    public abstract fun get(p1: T1, p2: T2): R
+public actual interface KProperty2<T1, T2, out R> : kotlin.reflect.KProperty<R>, (T1, T2) -> R {
+    public actual fun get(receiver1: T1, receiver2: T2): R
 
-    public override abstract operator fun invoke(p1: T1, p2: T2): R
+    public override operator fun invoke(p1: T1, p2: T2): R
 }
 
 /**
  * Represents a property declared as a `var`.
  */
-@FixmeReflection
-public interface KMutableProperty<R> : KProperty<R>
+public actual interface KMutableProperty<R> : KProperty<R>
 
-@FixmeReflection
-public interface KMutableProperty0<R> : KProperty0<R>, KMutableProperty<R> {
-    public abstract fun set(value: R)
+public actual interface KMutableProperty0<R> : KProperty0<R>, KMutableProperty<R> {
+    public actual fun set(value: R)
 }
 
-@FixmeReflection
-public interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProperty<R> {
-    public abstract fun set(receiver: T, value: R)
+public actual interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProperty<R> {
+    public actual fun set(receiver: T, value: R)
 }
 
-@FixmeReflection
-public interface KMutableProperty2<T1, T2, R> : KProperty2<T1, T2, R>, KMutableProperty<R> {
-    public abstract fun set(receiver1: T1, receiver2: T2, value: R)
+public actual interface KMutableProperty2<T1, T2, R> : KProperty2<T1, T2, R>, KMutableProperty<R> {
+    public actual fun set(receiver1: T1, receiver2: T2, value: R)
 }

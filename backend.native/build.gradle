@@ -183,6 +183,7 @@ targetList.each { target ->
                 '-Xmulti-platform', '-Xuse-experimental=kotlin.Experimental',
                 '-Xuse-experimental=kotlin.contracts.ExperimentalContracts',
                 '-Xuse-experimental=kotlin.ExperimentalMultiplatform',
+                '-Xallow-result-return-type',
                 commonSrc.absolutePath,
                 project(':Interop:Runtime').file('src/main/kotlin'),
                 project(':Interop:Runtime').file('src/native/kotlin'),

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.irasdescriptors
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
-import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -37,8 +36,6 @@ internal fun IrClass.isObjCMetaClass() = this.descriptor.isObjCMetaClass()
 internal fun IrFunction.isExternalObjCClassMethod() = this.descriptor.isExternalObjCClassMethod()
 
 internal val IrDeclaration.llvmSymbolOrigin get() = this.descriptor.llvmSymbolOrigin
-
-internal fun IrFunction.isMain() = MainFunctionDetector.isMain(this.descriptor)
 
 internal fun IrType.isObjCObjectType() = this.toKotlinType().isObjCObjectType()
 

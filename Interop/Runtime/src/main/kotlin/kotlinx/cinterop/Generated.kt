@@ -134,16 +134,13 @@ inline operator fun <T : UByteVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<
 inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
-@JvmName("set\$UByte")
 inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
 
-@JvmName("get\$UByte")
 inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
-@JvmName("set\$UByte")
 inline operator fun <T : UByte> CPointer<UByteVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
@@ -160,7 +157,6 @@ inline operator fun <T : UShortVarOf<*>> CPointer<T>?.plus(index: Int): CPointer
 inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
-@JvmName("set\$UShort")
 inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
@@ -169,7 +165,6 @@ inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.set(index: Int, value:
 inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
-@JvmName("set\$UShort")
 inline operator fun <T : UShort> CPointer<UShortVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
@@ -186,7 +181,6 @@ inline operator fun <T : UIntVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<T
 inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
-@JvmName("set\$UInt")
 inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
@@ -195,7 +189,6 @@ inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.set(index: Int, value: T) 
 inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
-@JvmName("set\$UInt")
 inline operator fun <T : UInt> CPointer<UIntVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }
@@ -212,7 +205,6 @@ inline operator fun <T : ULongVarOf<*>> CPointer<T>?.plus(index: Int): CPointer<
 inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.get(index: Int): T =
         (this + index)!!.pointed.value
 
-@JvmName("set\$ULong")
 inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.set(index: Int, value: T) {
     (this + index)!!.pointed.value = value
 }
@@ -221,7 +213,6 @@ inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.set(index: Int, value: T
 inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.get(index: Long): T =
         (this + index)!!.pointed.value
 
-@JvmName("set\$ULong")
 inline operator fun <T : ULong> CPointer<ULongVarOf<T>>.set(index: Long, value: T) {
     (this + index)!!.pointed.value = value
 }

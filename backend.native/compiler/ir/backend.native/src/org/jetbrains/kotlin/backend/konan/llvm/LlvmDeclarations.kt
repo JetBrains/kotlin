@@ -407,7 +407,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         } else {
             val symbolName = if (descriptor.isExported()) {
                 descriptor.symbolName.also {
-                    if (!descriptor.isMain()) {
+                    if (descriptor.name.asString() != "main") {
                         assert(LLVMGetNamedFunction(context.llvm.llvmModule, it) == null) { it }
                     } else {
                         // As a workaround, allow `main` functions to clash because frontend accepts this.

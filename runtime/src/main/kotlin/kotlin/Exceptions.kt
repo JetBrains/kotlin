@@ -172,3 +172,13 @@ public open class IllegalCharacterConversionException : IllegalArgumentException
 
     constructor(message: String?) : super(message)
 }
+
+public actual open class ConcurrentModificationException actual constructor(message: String?, cause: Throwable?) :
+        RuntimeException(message, cause) {
+
+    actual constructor() : this(null, null)
+
+    actual constructor(message: String?) : this(message, null)
+
+    actual constructor(cause: Throwable?) : this(null, cause)
+}

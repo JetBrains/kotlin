@@ -1,12 +1,12 @@
 allprojects {
     buildscript {
         repositories {
-            maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
+            maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
         }
     }
 
     repositories {
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap" }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-dev" }
     }
 }
 
