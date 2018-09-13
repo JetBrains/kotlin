@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.CoroutineIntrinsicLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.SuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
@@ -55,7 +56,8 @@ fun compile(
         analysisResult.moduleDescriptor,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
-        moduleFragment
+        moduleFragment,
+        configuration
     )
 
     ExternalDependenciesGenerator(psi2IrContext.moduleDescriptor, psi2IrContext.symbolTable, psi2IrContext.irBuiltIns)
@@ -67,6 +69,8 @@ fun compile(
     }
 
     MoveExternalDeclarationsToSeparatePlace().lower(moduleFragment.files)
+
+    moduleFragment.files.forEach(CoroutineIntrinsicLowering(context)::lower)
 
     context.performInlining(moduleFragment)
 

@@ -64,7 +64,7 @@ class InitializersLowering(
             val irFieldInitializer = declaration.initializer?.expression ?: return
 
             val receiver =
-                if (declaration.descriptor.dispatchReceiverParameter != null) // TODO isStaticField
+                if (!declaration.isStatic) // TODO isStaticField
                     IrGetValueImpl(
                         irFieldInitializer.startOffset, irFieldInitializer.endOffset,
                         irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol
@@ -79,7 +79,7 @@ class InitializersLowering(
                 null, null
             )
 
-            if (DescriptorUtils.isStaticDeclaration(declaration.descriptor)) {
+            if (declaration.isStatic) {
                 staticInitializerStatements.add(irSetField)
             } else {
                 instanceInitializerStatements.add(irSetField)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.utils.isSubtypeOfClass
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.irCall
 import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
@@ -649,67 +650,9 @@ fun translateEqualsForNullableString(rhs: IrType): EqualityLoweringType = when {
     else -> RuntimeFunctionCall
 }
 
-
-
 private fun IrType.isNullableJsNumber(): Boolean = isNullablePrimitiveType() && !isNullableLong() && !isNullableChar()
 
 private fun IrType.isJsNumber(): Boolean = isPrimitiveType() && !isLong() && !isChar()
-
-
-// TODO extract to common place?
-fun irCall(
-    call: IrCall,
-    newSymbol: IrFunctionSymbol,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
-): IrCall =
-    call.run {
-        IrCallImpl(
-            startOffset,
-            endOffset,
-            type,
-            newSymbol,
-            newSymbol.descriptor,
-            typeArgumentsCount,
-            origin
-        ).apply {
-            copyTypeAndValueArgumentsFrom(
-                call,
-                dispatchReceiverAsFirstArgument,
-                firstArgumentAsDispatchReceiver
-            )
-        }
-    }
-
-// TODO extract to common place?
-private fun IrCall.copyTypeAndValueArgumentsFrom(
-    call: IrCall,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
-) {
-    copyTypeArgumentsFrom(call)
-
-    var toValueArgumentIndex = 0
-    var fromValueArgumentIndex = 0
-
-    when {
-        dispatchReceiverAsFirstArgument -> {
-            putValueArgument(toValueArgumentIndex++, call.dispatchReceiver)
-        }
-        firstArgumentAsDispatchReceiver -> {
-            dispatchReceiver = call.getValueArgument(fromValueArgumentIndex++)
-        }
-        else -> {
-            dispatchReceiver = call.dispatchReceiver
-        }
-    }
-
-    extensionReceiver = call.extensionReceiver
-
-    while (fromValueArgumentIndex < call.valueArgumentsCount) {
-        putValueArgument(toValueArgumentIndex++, call.getValueArgument(fromValueArgumentIndex++))
-    }
-}
 
 private fun MemberToTransformer.op(type: IrType, name: Name, v: IrSimpleFunctionSymbol) {
     op(type, name, v = { irCall(it, v, dispatchReceiverAsFirstArgument = true) })

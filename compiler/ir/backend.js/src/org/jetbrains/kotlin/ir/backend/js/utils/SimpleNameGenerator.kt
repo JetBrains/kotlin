@@ -148,7 +148,20 @@ class SimpleNameGenerator : NameGenerator {
 
                     if (declaration.kind == ClassKind.OBJECT || declaration.name.isSpecial || declaration.visibility == Visibilities.LOCAL) {
                         nameDeclarator = context.staticContext.rootScope::declareFreshName
+                        val parent = declaration.parent
+                        when (parent) {
+                            is IrDeclaration -> nameBuilder.append(getNameForDeclaration(parent, context))
+                            is IrPackageFragment -> nameBuilder.append(parent.fqName.asString())
+                        }
                     }
+
+                    // TODO: remove asap `NameGenerator` is implemented
+                    (declaration.parent as? IrPackageFragment)?.let {
+                        if (declaration.isInline && it.fqName.asString() != "kotlin") {
+                            nameBuilder.append("_FIX")
+                        }
+                    }
+
                 }
                 is IrConstructor -> {
                     nameBuilder.append(getNameForDeclaration(declaration.parent as IrClass, context))
@@ -158,6 +171,7 @@ class SimpleNameGenerator : NameGenerator {
                     nameDeclarator = context.currentScope::declareFreshName
                 }
                 is IrSimpleFunction -> {
+
                     nameBuilder.append(declaration.name.asString())
                     declaration.extensionReceiverParameter?.let { nameBuilder.append("_\$${it.type.render()}") }
                     declaration.typeParameters.forEach { nameBuilder.append("_${it.name.asString()}") }
