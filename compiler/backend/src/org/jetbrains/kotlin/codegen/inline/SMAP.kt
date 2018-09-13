@@ -19,6 +19,10 @@ package org.jetbrains.kotlin.codegen.inline
 import gnu.trove.TIntIntHashMap
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.END
+import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.FILE_SECTION
+import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.LINE_SECTION
+import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.STRATA_SECTION
 import java.util.*
 
 const val KOTLIN_STRATA_NAME = "Kotlin"
@@ -49,9 +53,9 @@ class SMAPBuilder(
     }
 
     private fun generateDefaultStrata(realMappings: List<FileMapping>): String {
-        val fileIds = "*F" + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
-        val lineMappings = "*L" + realMappings.joinToString("") { it.toSMAPMapping() }
-        return "*S $KOTLIN_STRATA_NAME\n$fileIds\n$lineMappings\n*E\n"
+        val fileIds = FILE_SECTION + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
+        val lineMappings = LINE_SECTION + realMappings.joinToString("") { it.toSMAPMapping() }
+        return "$STRATA_SECTION $KOTLIN_STRATA_NAME\n$fileIds\n$lineMappings\n$END\n"
     }
 
     private fun generateDebugStrata(realMappings: List<FileMapping>): String {
@@ -69,9 +73,9 @@ class SMAPBuilder(
         if (combinedMapping.lineMappings.isEmpty()) return ""
 
         val newMappings = listOf(combinedMapping)
-        val fileIds = "*F" + newMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
-        val lineMappings = "*L" + newMappings.joinToString("") { it.toSMAPMapping() }
-        return "*S $KOTLIN_DEBUG_STRATA_NAME\n$fileIds\n$lineMappings\n*E\n"
+        val fileIds = FILE_SECTION + newMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
+        val lineMappings = LINE_SECTION + newMappings.joinToString("") { it.toSMAPMapping() }
+        return "$STRATA_SECTION $KOTLIN_DEBUG_STRATA_NAME\n$fileIds\n$lineMappings\n$END\n"
     }
 
     private fun RangeMapping.toSMAP(fileId: Int): String {
@@ -271,6 +275,7 @@ class SMAP(val fileMappings: List<FileMapping>) {
     companion object {
         const val FILE_SECTION = "*F"
         const val LINE_SECTION = "*L"
+        const val STRATA_SECTION = "*S"
         const val END = "*E"
     }
 }
