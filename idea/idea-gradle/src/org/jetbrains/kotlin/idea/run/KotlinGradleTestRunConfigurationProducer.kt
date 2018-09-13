@@ -29,6 +29,8 @@ import com.intellij.openapi.util.component2
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -73,6 +75,7 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
 
         val contextLocation = context.location ?: return false
         val module = context.module ?: return false
+        if (!module.platform.isJvm) return false
 
         if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
@@ -101,7 +104,8 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
         if (!IS_TEST_FRAMEWORK_PLUGIN_ENABLED) return false
 
         val leaf = context.location?.psiElement ?: return false
-        if (context.module == null) return false
+        val module = context.module ?: return false
+        if (!module.platform.isJvm) return false
 
         if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
@@ -113,11 +117,11 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
         if (testClass == null || testClass.qualifiedName == null) return false
 
 
-        val projectPath = resolveProjectPath(context.module) ?: return false
+        val projectPath = resolveProjectPath(module) ?: return false
         if (projectPath != configuration.settings.externalProjectPath) {
             return false
         }
-        if (!configuration.settings.taskNames.containsAll(getTasksToRun(context.module))) return false
+        if (!configuration.settings.taskNames.containsAll(getTasksToRun(module))) return false
 
         val scriptParameters = configuration.settings.scriptParameters + ' '
         val i = scriptParameters.indexOf("--tests ")
@@ -137,7 +141,8 @@ class KotlinTestMethodGradleConfigurationProducer : TestMethodGradleConfiguratio
         if (!IS_TEST_FRAMEWORK_PLUGIN_ENABLED) return false
 
         val contextLocation = context.location ?: return false
-        if (context.module == null) return false
+        val module = context.module ?: return false
+        if (!module.platform.isJvm) return false
 
         if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
@@ -164,6 +169,7 @@ class KotlinTestMethodGradleConfigurationProducer : TestMethodGradleConfiguratio
 
         val contextLocation = context.location ?: return false
         val module = context.module ?: return false
+        if (!module.platform.isJvm) return false
 
         val psiMethod = getTestMethod(contextLocation.psiElement) ?: return false
 
