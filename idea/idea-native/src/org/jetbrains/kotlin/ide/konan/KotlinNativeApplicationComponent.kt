@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.ide.highlighter.ArchiveFileType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.fileTypes.FileTypeManager
 import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION
@@ -15,7 +16,9 @@ class KotlinNativeApplicationComponent : ApplicationComponent {
     override fun getComponentName(): String = "KotlinNativeApplicationComponent"
 
     override fun initComponent() {
-        FileTypeManager.getInstance().associateExtension(ArchiveFileType.INSTANCE, KLIB_FILE_EXTENSION)
+        ApplicationManager.getApplication().runWriteAction {
+            FileTypeManager.getInstance().associateExtension(ArchiveFileType.INSTANCE, KLIB_FILE_EXTENSION)
+        }
 
         // TODO: Move this to Kotlin/Native plugin for CLion and AppCode (see KT-26717):
 //        val extensionPoint = Extensions.getRootArea().getExtensionPoint(TipAndTrickBean.EP_NAME)
