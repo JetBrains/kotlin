@@ -217,7 +217,7 @@ private inline fun <T> collectInfosByVirtualFile(
     }
 
     projectFileIndex.getOrderEntriesForFile(virtualFile).forEach {
-        it.toIdeaModuleInfo(project, virtualFile, treatAsLibrarySource)?.let(onOccurrence)
+        it.toIdeaModuleInfo(project, virtualFile, treatAsLibrarySource).map(onOccurrence)
     }
 
     val isBinary = virtualFile.fileType.isKotlinBinary()
@@ -262,23 +262,23 @@ private fun OrderEntry.toIdeaModuleInfo(
     project: Project,
     virtualFile: VirtualFile,
     treatAsLibrarySource: Boolean = false
-): IdeaModuleInfo? {
-    if (this is ModuleOrderEntry) return null
-    if (!isValid) return null
+): List<IdeaModuleInfo> {
+    if (this is ModuleOrderEntry) return emptyList()
+    if (!isValid) return emptyList()
 
     when (this) {
         is LibraryOrderEntry -> {
-            val library = library ?: return null
+            val library = library ?: return emptyList()
             if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !treatAsLibrarySource) {
-                return LibraryInfo(project, library)
+                return createLibraryInfo(project, library)
             } else if (ProjectRootsUtil.isLibraryFile(project, virtualFile) || treatAsLibrarySource) {
-                return LibrarySourceInfo(project, library)
+                return createLibraryInfo(project, library).map { it.sourcesModuleInfo }
             }
         }
         is JdkOrderEntry -> {
-            return SdkInfo(project, jdk ?: return null)
+            return listOf(SdkInfo(project, jdk ?: return emptyList()))
         }
-        else -> return null
+        else -> return emptyList()
     }
-    return null
+    return emptyList()
 }
