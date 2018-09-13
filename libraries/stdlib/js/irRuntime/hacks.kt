@@ -32,3 +32,9 @@ internal inline fun <T> buildSequence(noinline builderAction: suspend SequenceBu
 
 internal inline fun <T> buildIterator(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> =
     kotlin.coroutines.experimental.buildIterator(builderAction)
+
+internal inline fun <T> sequence(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> =
+    kotlin.coroutines.experimental.buildSequence(builderAction)
+
+internal inline fun <T> iterator(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> =
+    kotlin.coroutines.experimental.buildIterator(builderAction)
