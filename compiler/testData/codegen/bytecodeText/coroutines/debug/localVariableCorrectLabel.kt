@@ -13,5 +13,5 @@ fun main(args: Array<String>) {
 
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
-// 1 LOCALVARIABLE a I L18 L22 3
-// 1 LINENUMBER 9 L18
+// 1 LOCALVARIABLE a I L19 L23 3
+// 1 LINENUMBER 9 L19
