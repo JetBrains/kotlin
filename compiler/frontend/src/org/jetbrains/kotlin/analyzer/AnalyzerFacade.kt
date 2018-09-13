@@ -503,3 +503,6 @@ private object DiagnoseUnknownModuleInfoReporter {
 
     private fun otherError(message: String): Nothing = throw AssertionError(message)
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <T> ModuleInfo.getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
