@@ -3387,6 +3387,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testNoTwoConsequentLambdas() throws Exception {
             runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/noTwoConsequentLambdas.kt");
         }
+
+        @TestMetadata("suspendLambda.kt")
+        public void testSuspendLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/suspendLambda.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses")

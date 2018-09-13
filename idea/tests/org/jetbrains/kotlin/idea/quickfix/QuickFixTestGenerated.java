@@ -5323,6 +5323,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/stringTemplate.kt");
         }
 
+        @TestMetadata("suspendLambda.kt")
+        public void testSuspendLambda() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedSymbolUsage/suspendLambda.kt");
+        }
+
         @TestMetadata("toOuterClassMethod.kt")
         public void testToOuterClassMethod() throws Exception {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/toOuterClassMethod.kt");
