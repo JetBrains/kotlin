@@ -18,16 +18,20 @@ import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeAnalyzerFacade
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
-import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
+import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.konan.util.KonanFactories
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
 
@@ -89,13 +93,45 @@ private fun createKotlinNativeBuiltIns(projectContext: ProjectContext): KotlinBu
             metadataReader = CachingIdeMetadataReaderImpl
         )
 
-        val builtInsModule = DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
-            library,
-            LanguageVersionSettingsImpl.DEFAULT,
-            projectContext.storageManager,
-            // This is to preserve "capabilities" from the original IntelliJ LibraryInfo:
-            customCapabilities = libraryInfo.capabilities
+        val libraryProto = library.moduleHeaderData
+
+        val moduleName = Name.special(libraryProto.moduleName)
+        val moduleOrigin = DeserializedKonanModuleOrigin(library)
+
+        val storageManager = projectContext.storageManager
+        val descriptorFactory = KonanFactories.DefaultDescriptorFactory
+
+        val builtInsModule = descriptorFactory.createDescriptorAndNewBuiltIns(
+            moduleName,
+            storageManager,
+            moduleOrigin,
+            libraryInfo.capabilities
         )
+
+        val deserializationConfiguration = CompilerDeserializationConfiguration(LanguageVersionSettingsImpl.DEFAULT)
+
+        val provider = KonanFactories.DefaultPackageFragmentsFactory.createPackageFragmentProvider(
+            library,
+            null,
+            libraryProto.packageFragmentNameList,
+            storageManager,
+            builtInsModule,
+            deserializationConfiguration
+        )
+
+
+        builtInsModule.initialize(
+            CompositePackageFragmentProvider(
+                listOf(
+                    provider,
+                    KonanFactories.DefaultPackageFragmentsFactory.createForwardDeclarationHackPackagePartProvider(
+                        storageManager,
+                        builtInsModule
+                    )
+                )
+            )
+        )
+
         builtInsModule.setDependencies(listOf(builtInsModule))
 
         return builtInsModule.builtIns
