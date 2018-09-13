@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.idea.configuration.allModules
 import org.jetbrains.kotlin.idea.configuration.getWholeModuleGroup
+import org.jetbrains.kotlin.idea.configuration.parseExternalLibraryName
 import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.versions.DEPRECATED_LIBRARIES_INFORMATION
@@ -104,7 +105,7 @@ class DeprecatedGradleDependencyInspection : GradleBaseInspection() {
                 var libVersion: String? = null
                 ModuleRootManager.getInstance(moduleInGroup).orderEntries().forEachLibrary { library ->
                     if (library.name?.contains(libMarker) == true) {
-                        libVersion = library.name?.substringAfterLast(":")
+                        libVersion = parseExternalLibraryName(library)?.version
                     }
 
                     // Continue if nothing is found
