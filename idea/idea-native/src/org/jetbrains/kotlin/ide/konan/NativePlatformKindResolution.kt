@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.ide.konan
 
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
@@ -20,14 +22,19 @@ import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
-import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.konan.library.createKonanLibrary
-import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.konan.library.*
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
+
+    override fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> {
+        return library.getFiles(OrderRootType.CLASSES)
+            .mapNotNull { file -> PathUtil.getLocalPath(file) }
+            .map { path -> File(path) }
+            .filter { file -> file.exists }
+            .map { file -> NativeLibraryInfo(project, library, file) }
+    }
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
         return if (virtualFile.isDirectory) {
@@ -92,4 +99,28 @@ private fun createKotlinNativeBuiltIns(projectContext: ProjectContext): KotlinBu
     }
 
     return DefaultBuiltIns.Instance
+}
+
+class NativeLibraryInfo(project: Project, library: Library, private val root: File) : LibraryInfo(project, library) {
+
+    private val nativeLibrary = createKonanLibrary(
+        root,
+        KOTLIN_NATIVE_CURRENT_ABI_VERSION,
+        metadataReader = CachingIdeMetadataReaderImpl
+    )
+
+    override fun getLibraryRoots(): Collection<String> {
+        return listOf(root.absolutePath)
+    }
+
+    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+        get() = super.capabilities +
+                mapOf(
+                    ImplicitIntegerCoercion.MODULE_CAPABILITY to nativeLibrary.isInterop,
+                    NATIVE_LIBRARY_CAPABILITY to nativeLibrary
+                )
+
+    companion object {
+        val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KonanLibrary>("KonanLibrary")
+    }
 }
