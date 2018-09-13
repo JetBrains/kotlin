@@ -70,7 +70,6 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
                 )
 
             fragmentProviders.add(libPackageFragmentProvider)
-            //TODO: Forward declarations?
         }
 
         return ResolverForModule(CompositePackageFragmentProvider(fragmentProviders), container)
