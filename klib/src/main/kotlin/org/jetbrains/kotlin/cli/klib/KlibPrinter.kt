@@ -23,7 +23,8 @@ class KlibPrinter(out: Appendable) {
         get() = kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 
     val DeclarationDescriptor.shouldBePrinted: Boolean
-        get() = this is ClassDescriptor && isPublicOrProtected || this is CallableMemberDescriptor && isPublicOrProtected && !isFakeOverride
+        get() = this is ClassifierDescriptorWithTypeParameters && isPublicOrProtected
+                || this is CallableMemberDescriptor && isPublicOrProtected && !isFakeOverride
 
     private fun Printer.printBody(header: CharSequence, block: () -> Unit) {
         println()
@@ -35,7 +36,7 @@ class KlibPrinter(out: Appendable) {
         println()
     }
 
-    private fun ClassDescriptor.render(): String {
+    private fun ClassifierDescriptorWithTypeParameters.render(): String {
         val renderer = when (modality) {
             // Don't render 'final' modality
             Modality.FINAL -> Renderers.WITHOUT_MODALITY
@@ -129,6 +130,10 @@ class KlibPrinter(out: Appendable) {
         }
 
         override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit) {
+            printer.println(descriptor.render())
+        }
+
+        override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, data: Unit) {
             printer.println(descriptor.render())
         }
     }

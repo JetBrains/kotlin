@@ -114,6 +114,11 @@ tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescrip
     else this.containingDeclaration!!.findPackage()
 }
 
+internal fun DeclarationDescriptor.findPackageView(): PackageViewDescriptor {
+    val packageFragment = this.findPackage()
+    return packageFragment.module.getPackage(packageFragment.fqName)
+}
+
 internal fun DeclarationDescriptor.allContainingDeclarations(): List<DeclarationDescriptor> {
     var list = mutableListOf<DeclarationDescriptor>()
     var current = this.containingDeclaration

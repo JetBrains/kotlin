@@ -18,8 +18,9 @@ class KonanClassDataFinder(
         val nameList = proto.classNameList
 
         val index = nameList.indexOfFirst { nameResolver.getClassId(it) == classId }
-        if (index == -1)
-            error("Could not find serialized class $classId")
+        if (index == -1) {
+            return null
+        }
 
         val foundClass = proto.getClasses(index) ?: error("Could not find data for serialized class $classId")
 

@@ -29,8 +29,12 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl: KonanDeserializedP
             moduleDescriptor: ModuleDescriptor,
             packageAccessedHandler: PackageAccessedHandler?,
             storageManager: StorageManager
-    ) = packageFragmentNames.map {
-        KonanPackageFragment(FqName(it), library, packageAccessedHandler, storageManager, moduleDescriptor)
+    ) = packageFragmentNames.flatMap {
+        val fqName = FqName(it)
+        val parts = library.packageMetadataParts(fqName.asString())
+        parts.map { partName ->
+            KonanPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
+        }
     }
 
     override fun createSyntheticPackageFragments(

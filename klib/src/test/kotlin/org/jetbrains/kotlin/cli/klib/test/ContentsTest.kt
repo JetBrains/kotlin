@@ -40,6 +40,12 @@ class ContentsTest {
     fun topLevelFunctions() = klibContents(testLibrary("TopLevelFunctions")) {
         """
         package <root> {
+            annotation class A constructor() : Annotation
+            annotation class B constructor() : Annotation
+            class Foo constructor()
+        }
+
+        package <root> {
             @A @B fun a()
             fun f1(x: Foo)
             fun f2(x: Foo, y: Foo): Int
@@ -56,9 +62,6 @@ class ContentsTest {
             inline fun <reified T> t4(x: T)
             fun <T : Number> t5(x: T)
             fun Foo.e()
-            annotation class A constructor() : Annotation
-            annotation class B constructor() : Annotation
-            class Foo constructor()
         }
         """.trimIndent()
     }
@@ -281,6 +284,74 @@ class ContentsTest {
                 val simple: Int = 0
             }
 
+        }
+        """.trimIndent()
+    }
+
+    @Test
+    fun topLevelPropertiesCustomPackage() = klibContents(testLibrary("TopLevelPropertiesCustomPackage")) {
+        """
+        package custom.pkg {
+            typealias MyTransformer = (String) -> Int
+        }
+
+        package custom.pkg {
+            val v1: Int = 1
+            val v2: String = "hello"
+            val v3: (String) -> Int
+            val v4: MyTransformer /* = (String) -> Int */
+        }
+        """.trimIndent()
+    }
+
+    @Test
+    fun topLevelPropertiesRootPackage() = klibContents(testLibrary("TopLevelPropertiesRootPackage")) {
+        """
+        package <root> {
+            typealias MyTransformer = (String) -> Int
+        }
+
+        package <root> {
+            val v1: Int = 1
+            val v2: String = "hello"
+            val v3: (String) -> Int
+            val v4: MyTransformer /* = (String) -> Int */
+        }
+        """.trimIndent()
+    }
+
+    @Test
+    fun topLevelPropertiesWithClassesCustomPackage() = klibContents(testLibrary("TopLevelPropertiesWithClassesCustomPackage")) {
+        """
+        package custom.pkg {
+            object Bar
+            class Foo constructor()
+            typealias MyTransformer = (String) -> Int
+        }
+
+        package custom.pkg {
+            val v1: Int = 1
+            val v2: String = "hello"
+            val v3: (String) -> Int
+            val v4: MyTransformer /* = (String) -> Int */
+        }
+        """.trimIndent()
+    }
+
+    @Test
+    fun topLevelPropertiesWithClassesRootPackage() = klibContents(testLibrary("TopLevelPropertiesWithClassesRootPackage")) {
+        """
+        package <root> {
+            object Bar
+            class Foo constructor()
+            typealias MyTransformer = (String) -> Int
+        }
+
+        package <root> {
+            val v1: Int = 1
+            val v2: String = "hello"
+            val v3: (String) -> Int
+            val v4: MyTransformer /* = (String) -> Int */
         }
         """.trimIndent()
     }

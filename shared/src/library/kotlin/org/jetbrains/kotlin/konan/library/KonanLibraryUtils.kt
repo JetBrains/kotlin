@@ -8,8 +8,11 @@ import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.library.impl.zippedKonanLibraryChecks
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-val KLIB_FILE_EXTENSION = "klib"
-val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
+const val KLIB_FILE_EXTENSION = "klib"
+const val KLIB_FILE_EXTENSION_WITH_DOT = ".$KLIB_FILE_EXTENSION"
+
+const val KLIB_METADATA_FILE_EXTENSION = "knm"
+const val KLIB_METADATA_FILE_EXTENSION_WITH_DOT = ".$KLIB_METADATA_FILE_EXTENSION"
 
 fun File.unpackZippedKonanLibraryTo(newDir: File) {
 

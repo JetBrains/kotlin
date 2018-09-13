@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.library.LinkData
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -18,6 +17,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter.Companion.CALLABLES
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter.Companion.CLASSIFIERS
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 
 /*
@@ -31,39 +33,57 @@ import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
  * with MemberDeserializer class.
  */
 
-internal class KonanSerializationUtil(val context: Context, metadataVersion: BinaryVersion) {
+internal class KonanSerializationUtil(val context: Context, private val metadataVersion: BinaryVersion) {
 
-    val serializerExtension = KonanSerializerExtension(context, metadataVersion)
-    val topSerializer = KonanDescriptorSerializer.createTopLevel(context, serializerExtension)
-    var classSerializer: KonanDescriptorSerializer = topSerializer
+    lateinit var serializerContext: SerializerContext
 
-    fun serializeClass(packageName: FqName,
-        builder: KonanProtoBuf.LinkDataClasses.Builder,
-        classDescriptor: ClassDescriptor) {
+    data class SerializerContext(
+            val serializerExtension: KonanSerializerExtension,
+            val topSerializer: KonanDescriptorSerializer,
+            var classSerializer: KonanDescriptorSerializer = topSerializer
+    )
 
-        val previousSerializer = classSerializer
-
-        // TODO: this is to filter out object{}. Change me.
-        if (classDescriptor.isExported()) 
-            classSerializer = KonanDescriptorSerializer.create(context, classDescriptor, serializerExtension)
-
-        val classProto = classSerializer.classProto(classDescriptor).build()
-            ?: error("Class not serialized: $classDescriptor")
-
-        builder.addClasses(classProto)
-        val index = classSerializer.stringTable.getFqNameIndex(classDescriptor)
-        builder.addClassName(index)
-
-        serializeClasses(packageName, builder, 
-            classDescriptor.unsubstitutedInnerClassesScope
-                .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
-
-        classSerializer = previousSerializer
+    private fun createNewContext(): SerializerContext {
+        val extension = KonanSerializerExtension(context, metadataVersion)
+        return SerializerContext(
+                extension,
+                KonanDescriptorSerializer.createTopLevel(context, extension)
+        )
     }
 
-    fun serializeClasses(packageName: FqName, 
-        builder: KonanProtoBuf.LinkDataClasses.Builder,
-        descriptors: Collection<DeclarationDescriptor>) {
+    private inline fun <T> withNewContext(crossinline block: SerializerContext.() -> T): T {
+        serializerContext = createNewContext()
+        return with(serializerContext, block)
+    }
+
+    private fun serializeClass(packageName: FqName,
+                       builder: KonanProtoBuf.LinkDataClasses.Builder,
+                       classDescriptor: ClassDescriptor) {
+        with(serializerContext) {
+            val previousSerializer = classSerializer
+
+            // TODO: this is to filter out object{}. Change me.
+            if (classDescriptor.isExported())
+                classSerializer = KonanDescriptorSerializer.create(context, classDescriptor, serializerExtension)
+
+            val classProto = classSerializer.classProto(classDescriptor).build()
+                    ?: error("Class not serialized: $classDescriptor")
+
+            builder.addClasses(classProto)
+            val index = classSerializer.stringTable.getFqNameIndex(classDescriptor)
+            builder.addClassName(index)
+
+            serializeClasses(packageName, builder,
+                    classDescriptor.unsubstitutedInnerClassesScope
+                            .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
+
+            classSerializer = previousSerializer
+        }
+    }
+
+    private fun serializeClasses(packageName: FqName,
+                         builder: KonanProtoBuf.LinkDataClasses.Builder,
+                         descriptors: Collection<DeclarationDescriptor>) {
 
         for (descriptor in descriptors) {
             if (descriptor is ClassDescriptor) {
@@ -72,50 +92,88 @@ internal class KonanSerializationUtil(val context: Context, metadataVersion: Bin
         }
     }
 
-    fun serializePackage(fqName: FqName, module: ModuleDescriptor) :
-            KonanProtoBuf.LinkDataPackageFragment? {
+    private fun serializePackage(fqName: FqName, module: ModuleDescriptor):
+            List<KonanProtoBuf.LinkDataPackageFragment> {
 
         // TODO: ModuleDescriptor should be able to return
         // the package only with the contents of that module, without dependencies
 
         val fragments = module.getPackage(fqName).fragments.filter { it.module == module }
-        if (fragments.isEmpty()) return null
+        if (fragments.isEmpty()) return emptyList()
 
         val classifierDescriptors = KonanDescriptorSerializer.sort(
                 fragments.flatMap {
-                    it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
+                    it.getMemberScope().getDescriptorsFiltered(CLASSIFIERS)
                 }.filter { !it.isExpectMember || it.isSerializableExpectClass }
         )
 
-        val members = fragments.flatMap { fragment ->
-            DescriptorUtils.getAllDescriptors(fragment.getMemberScope())
-        }.filter { !it.isExpectMember }
+        val topLevelDescriptors = KonanDescriptorSerializer.sort(
+                fragments.flatMap { fragment ->
+                    fragment.getMemberScope().getDescriptorsFiltered(CALLABLES)
+                }.filter { !it.isExpectMember }
+        )
 
-        val classesBuilder = KonanProtoBuf.LinkDataClasses.newBuilder()
+        val result = mutableListOf<KonanProtoBuf.LinkDataPackageFragment>()
 
-        serializeClasses(fqName, classesBuilder, classifierDescriptors)
-        val classesProto = classesBuilder.build()
+        result += classifierDescriptors.chunked(TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE) { descriptors ->
 
-        val packageProto = topSerializer.packagePartProto(fqName, members).build()
-            ?: error("Package fragments not serialized: $fragments")
+            withNewContext {
 
-        val strings = serializerExtension.stringTable
-        val (stringTableProto, nameTableProto) = strings.buildProto()
+                val classesProto = buildClassesProto { classesBuilder ->
+                    serializeClasses(fqName, classesBuilder, descriptors)
+                }
 
-        val isEmpty = members.isEmpty() && classifierDescriptors.isEmpty()
-        val fragmentBuilder = KonanProtoBuf.LinkDataPackageFragment.newBuilder()
+                val typeAliases = descriptors.filterIsInstance<TypeAliasDescriptor>()
+                val packageProto =
+                        if (typeAliases.isNotEmpty()) buildPackageProto(fqName, typeAliases, fragments)
+                        else emptyPackageProto()
 
-        val fragmentProto = fragmentBuilder
-            .setPackage(packageProto)
-            .setFqName(fqName.asString())
-            .setClasses(classesProto)
-            .setStringTable(stringTableProto)
-            .setNameTable(nameTableProto)
-            .setIsEmpty(isEmpty)
-            .build()
+                buildFragment(
+                        packageProto,
+                        classesProto,
+                        fqName,
+                        descriptors.isEmpty()
+                )
+            }
+        }
 
-        return fragmentProto
+        result += topLevelDescriptors.chunked(TOP_LEVEL_DECLARATION_COUNT_PER_FILE) { descriptors ->
+            withNewContext {
+                buildFragment(
+                        buildPackageProto(fqName, descriptors, fragments),
+                        buildClassesProto {},
+                        fqName,
+                        descriptors.isEmpty())
+            }
+        }
+
+        if (result.isEmpty()) {
+            result += withNewContext {
+                buildFragment(
+                        emptyPackageProto(),
+                        buildClassesProto {},
+                        fqName,
+                        true)
+            }
+        }
+
+        return result
     }
+
+
+    private fun buildClassesProto(action: (KonanProtoBuf.LinkDataClasses.Builder) -> Unit): KonanProtoBuf.LinkDataClasses {
+        val classesBuilder = KonanProtoBuf.LinkDataClasses.newBuilder()
+        action(classesBuilder)
+        return classesBuilder.build()
+    }
+
+    private fun emptyPackageProto(): ProtoBuf.Package = ProtoBuf.Package.newBuilder().build()
+
+    private fun SerializerContext.buildPackageProto(
+            fqName: FqName,
+            descriptors: List<DeclarationDescriptor>,
+            fragments: List<PackageFragmentDescriptor>) = topSerializer.packagePartProto(fqName, descriptors).build()
+            ?: error("Package fragments not serialized: $fragments")
 
     private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
         val result = mutableSetOf<FqName>()
@@ -129,25 +187,47 @@ internal class KonanSerializationUtil(val context: Context, metadataVersion: Bin
         return result
     }
 
+    private fun SerializerContext.buildFragment(
+            packageProto: ProtoBuf.Package,
+            classesProto: KonanProtoBuf.LinkDataClasses,
+            fqName: FqName,
+            isEmpty: Boolean
+    ): KonanProtoBuf.LinkDataPackageFragment {
+
+        val (stringTableProto, nameTableProto) = serializerExtension.stringTable.buildProto()
+
+        return KonanProtoBuf.LinkDataPackageFragment.newBuilder()
+                .setPackage(packageProto)
+                .setClasses(classesProto)
+                .setIsEmpty(isEmpty)
+                .setFqName(fqName.asString())
+                .setStringTable(stringTableProto)
+                .setNameTable(nameTableProto)
+                .build()
+    }
+
     internal fun serializeModule(moduleDescriptor: ModuleDescriptor): LinkData {
         val libraryProto = KonanProtoBuf.LinkDataLibrary.newBuilder()
         libraryProto.moduleName = moduleDescriptor.name.asString()
-        val fragments = mutableListOf<ByteArray>()
+        val fragments = mutableListOf<List<ByteArray>>()
         val fragmentNames = mutableListOf<String>()
 
-        getPackagesFqNames(moduleDescriptor).forEach iteration@ {
-            val packageProto = serializePackage(it, moduleDescriptor)
-            if (packageProto == null) return@iteration
+        getPackagesFqNames(moduleDescriptor).forEach iteration@{ packageFqName ->
+            val packageProtos = serializePackage(packageFqName, moduleDescriptor)
+            if (packageProtos.isEmpty()) return@iteration
 
-            libraryProto.addPackageFragmentName(it.asString())
-            if (packageProto.isEmpty) {
-                libraryProto.addEmptyPackage(it.asString())
+            val packageFqNameStr = packageFqName.asString()
+            libraryProto.addPackageFragmentName(packageFqNameStr)
+            if (packageProtos.all { it.isEmpty }) {
+                libraryProto.addEmptyPackage(packageFqNameStr)
             }
-            fragments.add(packageProto.toByteArray())
-            fragmentNames.add(it.asString())
+            fragments.add(packageProtos.map { it.toByteArray() })
+            fragmentNames.add(packageFqNameStr)
         }
         val libraryAsByteArray = libraryProto.build().toByteArray()
         return LinkData(libraryAsByteArray, fragments, fragmentNames)
     }
 }
 
+private const val TOP_LEVEL_DECLARATION_COUNT_PER_FILE = 128
+private const val TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE = 64

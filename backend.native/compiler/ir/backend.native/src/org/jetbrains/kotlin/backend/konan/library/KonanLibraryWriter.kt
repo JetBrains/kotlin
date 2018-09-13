@@ -25,7 +25,7 @@ interface KonanLibraryWriter {
 
 class LinkData(
     val module: ByteArray,
-    val fragments: List<ByteArray>,
+    val fragments: List<List<ByteArray>>,
     val fragmentNames: List<String> 
 )
 

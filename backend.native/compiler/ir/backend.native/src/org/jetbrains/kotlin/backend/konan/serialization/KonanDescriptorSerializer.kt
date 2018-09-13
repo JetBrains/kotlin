@@ -615,7 +615,7 @@ class KonanDescriptorSerializer private constructor(
     fun packagePartProto(packageFqName: FqName, members: Collection<DeclarationDescriptor>): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
-        for (declaration in sort(members)) {
+        for (declaration in members) {
             when (declaration) {
                 is PropertyDescriptor -> builder.addProperty(propertyProto(declaration))
                 is FunctionDescriptor -> builder.addFunction(functionProto(declaration))

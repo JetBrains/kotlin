@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
+import org.jetbrains.kotlin.backend.konan.descriptors.findPackageView
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.getExternalObjCMethodInfo
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -75,15 +77,15 @@ private fun FunctionDescriptor.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
     assert (this.kind.isReal)
 
     val methodAnnotation = this.annotations.findAnnotation(objCMethodFqName) ?: return null
-    val packageFragment = this.findPackage()
+    val packageView = this.findPackageView()
 
     val bridgeName = methodAnnotation.getStringValue("bridge")
 
-    return objCMethodInfoByBridge(packageFragment, bridgeName)
+    return objCMethodInfoByBridge(packageView, bridgeName)
 }
 
-private fun objCMethodInfoByBridge(packageFragment: PackageFragmentDescriptor, bridgeName: String): ObjCMethodInfo {
-    val bridge = packageFragment.getMemberScope()
+private fun objCMethodInfoByBridge(packageView: PackageViewDescriptor, bridgeName: String): ObjCMethodInfo {
+    val bridge = packageView.memberScope
             .getContributedFunctions(Name.identifier(bridgeName), NoLookupLocation.FROM_BACKEND)
             .single()
 
@@ -213,7 +215,7 @@ fun FunctionDescriptor.getObjCFactoryInitMethodInfo(): ObjCMethodInfo? {
     val factoryAnnotation = this.annotations.findAnnotation(objCFactoryFqName) ?: return null
     val bridgeName = factoryAnnotation.getStringValue("bridge")
 
-    return objCMethodInfoByBridge(this.findPackage(), bridgeName)
+    return objCMethodInfoByBridge(this.findPackageView(), bridgeName)
 }
 
 fun inferObjCSelector(descriptor: FunctionDescriptor): String = if (descriptor.valueParameters.isEmpty()) {
