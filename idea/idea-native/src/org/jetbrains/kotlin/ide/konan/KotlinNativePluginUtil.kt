@@ -50,28 +50,7 @@ fun createFileStub(project: Project, text: String): PsiFileStub<*> {
 
 fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
 
-fun LibraryInfo.createPackageFragmentProviderForLibraryModule(
-    storageManager: StorageManager,
-    languageVersionSettings: LanguageVersionSettings,
-    moduleDescriptor: ModuleDescriptor
-): List<PackageFragmentProvider> {
-
-    if (this.platform != KonanPlatform) return emptyList()
-
-    val libraryRoots = this.getLibraryRoots()
-
-    return libraryRoots.mapNotNull { libraryRoot -> File(libraryRoot).takeIf { it.exists } }.map { libraryRoot ->
-        val konanLibrary =
-            createKonanLibrary(
-                libraryRoot,
-                KOTLIN_NATIVE_CURRENT_ABI_VERSION,
-                metadataReader = CachingIdeMetadataReaderImpl
-            )
-        konanLibrary.createPackageFragmentProvider(storageManager, languageVersionSettings, moduleDescriptor)
-    }
-}
-
-private fun KonanLibrary.createPackageFragmentProvider(
+fun KonanLibrary.createPackageFragmentProvider(
     storageManager: StorageManager,
     languageVersionSettings: LanguageVersionSettings,
     moduleDescriptor: ModuleDescriptor
