@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.rootManager
+import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
@@ -39,7 +41,9 @@ val Module.implementingModules: List<Module>
         val moduleManager = ModuleManager.getInstance(project)
         CachedValueProvider.Result(
             if (isNewMPPModule) {
-                moduleManager.getModuleDependentModules(this).filter { it.isNewMPPModule }
+                moduleManager.getModuleDependentModules(this).filter {
+                    it.isNewMPPModule && it.platform !is CommonIdePlatformKind.Platform
+                }
             } else {
                 moduleManager.modules.filter { name in it.findOldFashionedImplementedModuleNames() }
             },
