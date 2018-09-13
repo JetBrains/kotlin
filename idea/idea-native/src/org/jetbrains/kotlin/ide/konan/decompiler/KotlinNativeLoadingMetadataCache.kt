@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ide.konan.decompiler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.vfs.*
+import com.intellij.openapi.vfs.VfsUtilCore.isEqualOrAncestor
 import com.intellij.util.containers.ContainerUtil.createConcurrentSoftValueMap
 import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.konan.library.KLIB_MODULE_METADATA_FILE_NAME
@@ -23,17 +24,17 @@ class KotlinNativeLoadingMetadataCache : ApplicationComponent {
             ApplicationManager.getApplication().getComponent(KotlinNativeLoadingMetadataCache::class.java)
     }
 
-    private val packageFragmentCache = createConcurrentSoftValueMap<VirtualFile, KonanProtoBuf.LinkDataPackageFragment>()
-    private val moduleHeaderCache = createConcurrentSoftValueMap<VirtualFile, KonanProtoBuf.LinkDataLibrary>()
+    private val packageFragmentCache = createConcurrentSoftValueMap<String, KonanProtoBuf.LinkDataPackageFragment>()
+    private val moduleHeaderCache = createConcurrentSoftValueMap<String, KonanProtoBuf.LinkDataLibrary>()
 
     fun getCachedPackageFragment(virtualFile: VirtualFile): KonanProtoBuf.LinkDataPackageFragment =
-        packageFragmentCache.computeIfAbsent(virtualFile.surePackageMetadataFile) {
-            parsePackageFragment(virtualFile.contentsToByteArray(false))
+        packageFragmentCache.computeIfAbsent(virtualFile.ensurePackageMetadataFile.url) {
+            virtualFile.createPackageFragmentCacheEntry
         }
 
     fun getCachedModuleHeader(virtualFile: VirtualFile): KonanProtoBuf.LinkDataLibrary =
-        moduleHeaderCache.computeIfAbsent(virtualFile.sureModuleHeaderFile) {
-            parseModuleHeader(virtualFile.contentsToByteArray(false))
+        moduleHeaderCache.computeIfAbsent(virtualFile.ensureModuleHeaderFile.url) {
+            virtualFile.createModuleHeaderCacheEntry
         }
 
     override fun initComponent() {
@@ -46,20 +47,38 @@ class KotlinNativeLoadingMetadataCache : ApplicationComponent {
         })
     }
 
-    private fun invalidateCaches(virtualFile: VirtualFile) {
+    private fun invalidateCaches(modifiedFile: VirtualFile) {
         when {
-            virtualFile.isPackageMetadataFile -> packageFragmentCache.remove(virtualFile)
-            virtualFile.isModuleHeaderFile -> moduleHeaderCache.remove(virtualFile)
+            modifiedFile.isPackageMetadataFile -> packageFragmentCache.remove(modifiedFile.url)
+            modifiedFile.isModuleHeaderFile -> moduleHeaderCache.remove(modifiedFile.url)
+            modifiedFile.isDirectory -> {
+                val ancestorUrl = modifiedFile.url
+                packageFragmentCache.removeDescendants(ancestorUrl)
+                moduleHeaderCache.removeDescendants(ancestorUrl)
+            }
         }
     }
 
-    private val VirtualFile.surePackageMetadataFile
+    private fun <V> MutableMap<String, V>.removeDescendants(ancestorUrl: String) {
+
+        // Warning: Do not try to apply ".removeIf {}" to "entries". This will have no effect to
+        // the Map produced by ContainerUtil.createConcurrentSoftValueMap().
+        keys.removeIf { descendantCandidateUrl -> isEqualOrAncestor(ancestorUrl, descendantCandidateUrl) }
+    }
+
+    private val VirtualFile.createPackageFragmentCacheEntry
+        get() = parsePackageFragment(contentsToByteArray(false))
+
+    private val VirtualFile.createModuleHeaderCacheEntry
+        get() = parseModuleHeader(contentsToByteArray(false))
+
+    private val VirtualFile.ensurePackageMetadataFile
         get() = if (isPackageMetadataFile) this else error("Not a package metadata file: $this")
 
     private val VirtualFile.isPackageMetadataFile
         get() = extension == KLIB_METADATA_FILE_EXTENSION
 
-    private val VirtualFile.sureModuleHeaderFile
+    private val VirtualFile.ensureModuleHeaderFile
         get() = if (isModuleHeaderFile) this else error("Not a module header file: $this")
 
     private val VirtualFile.isModuleHeaderFile
