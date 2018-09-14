@@ -51,6 +51,11 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
             null
         }
 
+    if (main != null && main.isSuspend) {
+        context.reportCompilationError("Entry point can not be a suspend function.")
+        return null
+    }
+
     return main
 }
 
