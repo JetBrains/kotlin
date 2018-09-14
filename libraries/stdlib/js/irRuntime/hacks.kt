@@ -5,8 +5,6 @@
 
 package kotlin
 
-import kotlin.coroutines.experimental.SequenceBuilder
-
 // TODO: Ignore FunctionN interfaces
 
 public interface Function0<out R> : Function<R> {
@@ -26,15 +24,3 @@ public interface Function3<in P1, in P2, in P3, out R> : Function<R> {
 }
 
 public inline fun <reified T> arrayOfNulls(size: Int): Array<T?> = js("[]")  // FIXME: Implement
-
-internal inline fun <T> buildSequence(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> =
-    kotlin.coroutines.experimental.buildSequence(builderAction)
-
-internal inline fun <T> buildIterator(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> =
-    kotlin.coroutines.experimental.buildIterator(builderAction)
-
-internal inline fun <T> sequence(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> =
-    kotlin.coroutines.experimental.buildSequence(builderAction)
-
-internal inline fun <T> iterator(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> =
-    kotlin.coroutines.experimental.buildIterator(builderAction)

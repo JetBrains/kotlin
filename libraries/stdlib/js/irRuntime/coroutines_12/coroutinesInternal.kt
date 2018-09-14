@@ -3,36 +3,11 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.js
-
-import kotlin.coroutines.experimental.*
-
-internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implemented as intrinsic") }
-// Do we really need this intrinsic in JS?
-internal suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T {
-    throw Exception("Implemented as intrinsic")
-}
-
-fun <T> normalizeContinuation(continuation: Continuation<T>): Continuation<T> =
-    (continuation as? CoroutineImpl)?.facade ?: continuation
-
-internal fun <T> interceptContinuationIfNeeded(
-    context: CoroutineContext,
-    continuation: Continuation<T>
-) = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
-
-
-@SinceKotlin("1.2")
-@Suppress("WRONG_MODIFIER_TARGET")
-public suspend val coroutineContext: CoroutineContext
-    get() {
-        throw Exception("Implemented as intrinsic")
-    }
-
+package kotlin.coroutines.experimental
 
 internal abstract class CoroutineImpl(private val completion: Continuation<Any?>) : Continuation<Any?> {
     protected var exceptionState = 0
-    protected var label: Int = 0
+    protected var state: Int = 0
 
     protected var exception: dynamic = null
     protected var result: dynamic = null
@@ -51,7 +26,7 @@ internal abstract class CoroutineImpl(private val completion: Continuation<Any?>
 
     override fun resumeWithException(exception: Throwable) {
         // TODO: once we have arrays working refact it with exception table
-        this.label = exceptionState
+        this.state = exceptionState
         this.exception = exception
         doResumeWrapper()
     }

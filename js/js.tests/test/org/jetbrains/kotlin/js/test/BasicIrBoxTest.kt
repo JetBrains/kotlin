@@ -15,16 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private val runtimeSources = listOfKtFilesFrom(
-    // TODO: share more coroutine code between JS BEs
-    // TODO: don't generate code for external declarations, until that:
-    //  it's important now than *H.kt files at the start since we generate code for them
-    //  and actual versions just will override them later.
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesExperimentalH.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesIntrinsicsExperimentalH.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/SequenceBuilder.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/Coroutines.kt",
-
+private val runtimeSourcesCommon = listOfKtFilesFrom(
     "core/builtins/src/kotlin",
     "libraries/stdlib/common/src",
     "libraries/stdlib/src/kotlin/",
@@ -80,8 +71,26 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/irRuntime/rangeExtensions.kt"
 )
 
+
+private val coroutine12Files = listOfKtFilesFrom(
+    "libraries/stdlib/js/irRuntime/coroutines_12"
+)
+
+private val coroutine13Files = listOfKtFilesFrom(
+    "libraries/stdlib/coroutines/common",
+    "libraries/stdlib/coroutines/js/src/kotlin/coroutines/SafeContinuationJs.kt",
+    "libraries/stdlib/coroutines/src",
+    // TODO: merge coroutines_13 with JS BE coroutines
+    "libraries/stdlib/js/irRuntime/coroutines_13"
+)
+
 private var runtimeResult: Result? = null
 private val runtimeFile = File("js/js.translator/testData/out/irBox/testRuntime.js")
+
+private val runtimeSources_12 = (runtimeSourcesCommon - coroutine13Files + coroutine12Files).distinct()
+private val runtimeSources_13 = (runtimeSourcesCommon - coroutine12Files + coroutine13Files).distinct()
+
+private val runtimeSources = runtimeSources_13
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -128,10 +137,10 @@ abstract class BasicIrBoxTest(
                 LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
             ),
             analysisFlags = mapOf(
-                AnalysisFlag.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental")
+                AnalysisFlag.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
+                AnalysisFlag.allowResultReturnType to true
             )
         )
-
 
         if (runtimeResult == null) {
             runtimeResult = compile(config.project, runtimeSources.map(::createPsiFile), runtimeConfiguration)

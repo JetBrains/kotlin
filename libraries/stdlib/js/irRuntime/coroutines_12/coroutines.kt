@@ -291,6 +291,14 @@ private val RESUMED: Any? = Any()
 
 private class Fail(val exception: Throwable)
 
+@SinceKotlin("1.2")
+@Suppress("WRONG_MODIFIER_TARGET")
+@kotlin.internal.InlineOnly
+public suspend inline val coroutineContext: CoroutineContext
+    get() {
+        throw NotImplementedError("Implemented as intrinsic")
+    }
+
 @kotlin.internal.InlineOnly
 internal inline fun processBareContinuationResume(completion: Continuation<*>, block: () -> Any?) {
     try {

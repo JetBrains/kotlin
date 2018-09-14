@@ -7,11 +7,9 @@ package kotlin.coroutines.experimental.intrinsics
 
 import kotlin.coroutines.experimental.*
 
-@SinceKotlin("1.1")
-@kotlin.internal.InlineOnly
-@Suppress("UNUSED_PARAMETER")
-public suspend inline fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
-    suspendCoroutineUninterceptedOrReturn { cont -> block(cont.intercepted()) }
+@PublishedApi
+internal fun <T> normalizeContinuation(continuation: Continuation<T>): Continuation<T> =
+    (continuation as? CoroutineImpl)?.facade ?: continuation
 
 /**
  * Obtains the current continuation instance inside suspend functions and either suspends
@@ -19,9 +17,16 @@ public suspend inline fun <T> suspendCoroutineOrReturn(crossinline block: (Conti
  *
  * Unlike [suspendCoroutineOrReturn] it does not intercept continuation.
  */
+
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER")
+public suspend inline fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+    suspendCoroutineUninterceptedOrReturn { cont -> block(cont.intercepted()) }
+
 @SinceKotlin("1.2")
 public suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
-    returnIfSuspended<T>(block(getContinuation<T>()))
+    throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
 
 /**
  * Intercept continuation with [ContinuationInterceptor].
@@ -30,13 +35,8 @@ public suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuatio
 @kotlin.internal.InlineOnly
 public inline fun <T> Continuation<T>.intercepted() = normalizeContinuation<T>(this)
 
-/**
- * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
- * the execution was suspended and will not return any result immediately.
- */
 @SinceKotlin("1.1")
 public val COROUTINE_SUSPENDED: Any = Any()
-
 
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
