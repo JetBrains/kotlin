@@ -68,16 +68,26 @@ Kotlin constructors are imported as initializers to Swift/Objective-C.
 
 Top-level Kotlin functions and properties are accessible as members of a special class.
 Each Kotlin package is translated into such a class. E.g.
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 package my.library
 
 fun foo() {}
 ```
 
+</div>
+
 can be called from Swift like
-```
+
+<div class="sample" markdown="1" theme="idea" mode="swift">
+
+```swift
 Framework.foo()
 ```
+
+</div>
 
 ### Method names translation
 
@@ -85,17 +95,26 @@ Generally Swift argument labels and Objective-C selector pieces are mapped to Ko
 parameter names. Anyway these two concepts have different semantics, so sometimes
 Swift/Objective-C methods can be imported with clashing Kotlin signature. In this case
 clashing methods can be called from Kotlin using named arguments, e.g.:
-```
+
+<div class="sample" markdown="1" theme="idea" mode="swift">
+
+```swift
 [player moveTo:LEFT byMeters:17]
 [player moveTo:UP byInches:42]
 ```
 
+</div>
+
 in Kotlin would be:
 
-```
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 player.moveTo(LEFT, byMeters = 17)
 player.moveTo(UP, byInches = 42)
 ```
+
+</div>
 
 ### Errors and exceptions
 
@@ -160,34 +179,53 @@ as corresponding `Unit` singleton in Swift/Objective-C. The value of this single
 can be retrieved in the same way as for any other Kotlin `object`
 (see singletons in the table above).
 To sum the things up:
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 fun foo(block: (Int) -> Unit) { ... }
 ```
 
+</div>
+
 would be represented in Swift as
 
-```
+<div class="sample" markdown="1" theme="idea" mode="swift">
+
+```swift
 func foo(block: (NSNumber) -> KotlinUnit)
 ```
 
+</div>
+
 and can be called like
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 foo {
     bar($0 as! Int32)
     return KotlinUnit()
 }
 ```
 
+</div>
+
 ## Casting between mapped types
 
 When writing Kotlin code, an object may require to be converted from Kotlin type
 to equivalent Swift/Objective-C type (or vice versa). In this case plain old
 Kotlin cast can be used, e.g.
-```
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
 val nsArray = listOf(1, 2, 3) as NSArray
 val string = nsString as String
 val nsNumber = 42 as NSNumber
 ```
+
+</div>
 
 ## Subclassing
 
@@ -211,13 +249,19 @@ overriding method must have the same parameter names as the overridden one.
 Sometimes it is required to override initializers, e.g. when subclassing `UIViewController`. 
 Initializers imported as Kotlin constructors can be overridden by Kotlin constructors
 marked with `@OverrideInit` annotation:
-```
+
+<div class="sample" markdown="1" theme="idea" mode="swift">
+
+```swift
 class ViewController : UIViewController {
     @OverrideInit constructor(coder: NSCoder) : super(coder)
 
     ...
 }
 ```
+
+</div>
+
 The overriding constructor must have the same parameter names and types as the overridden one.
 
 To override different methods with clashing Kotlin signatures, one can add
