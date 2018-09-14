@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.android.configure
 
 import com.android.builder.model.AndroidProject
 import com.android.builder.model.NativeAndroidProject
+import com.android.tools.idea.IdeInfo
 import com.android.tools.idea.gradle.project.sync.idea.data.model.ImportedModule
 import com.android.tools.idea.gradle.project.sync.idea.data.service.AndroidProjectKeys.IMPORTED_MODULE
 import com.intellij.openapi.externalSystem.model.DataNode
@@ -48,7 +49,7 @@ class KotlinAndroidMPPGradleProjectResolver : AbstractProjectResolverExtension()
 
     override fun populateModuleContentRoots(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         super.populateModuleContentRoots(gradleModule, ideModule)
-        if (isAndroidProject) {
+        if (IdeInfo.getInstance().isAndroidStudio || isAndroidProject) {
             KotlinMPPGradleProjectResolver.populateContentRoots(gradleModule, ideModule, resolverCtx)
             // Work around module disposal service which discards modules without accompanying ImportedModule instance
             for (childNode in ExternalSystemApiUtil.getChildren(ideModule, GradleSourceSetData.KEY)) {
