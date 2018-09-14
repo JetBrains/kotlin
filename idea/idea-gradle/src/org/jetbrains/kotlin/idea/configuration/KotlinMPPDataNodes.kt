@@ -29,6 +29,7 @@ var DataNode<ModuleData>.kotlinAndroidSourceSets: List<KotlinSourceSetInfo>?
 
 class KotlinSourceSetInfo(val kotlinModule: KotlinModule) {
     var moduleId: String? = null
+    var gradleModuleId: String = ""
     var platform: KotlinPlatform = KotlinPlatform.COMMON
     var defaultCompilerArguments: CommonCompilerArguments? = null
     var compilerArguments: CommonCompilerArguments? = null
