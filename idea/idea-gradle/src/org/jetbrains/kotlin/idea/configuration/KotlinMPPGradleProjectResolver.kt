@@ -619,6 +619,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             return KotlinSourceSetInfo(sourceSet).also { info ->
                 val languageSettings = sourceSet.languageSettings
                 info.moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
+                info.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 info.platform = sourceSet.platform
                 info.isTestModule = sourceSet.isTestModule
                 info.compilerArguments = createCompilerArguments(emptyList(), sourceSet.platform).also {
@@ -642,6 +643,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         ): KotlinSourceSetInfo {
             return KotlinSourceSetInfo(compilation).also { sourceSetInfo ->
                 sourceSetInfo.moduleId = getKotlinModuleId(gradleModule, compilation, resolverCtx)
+                sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 sourceSetInfo.platform = compilation.platform
                 sourceSetInfo.isTestModule = compilation.isTestModule
                 sourceSetInfo.compilerArguments = createCompilerArguments(compilation.arguments.currentArguments, compilation.platform).also {

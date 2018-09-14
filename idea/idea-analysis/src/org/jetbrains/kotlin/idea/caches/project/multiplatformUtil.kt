@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 val Module.isNewMPPModule: Boolean
     get() = KotlinFacet.get(this)?.configuration?.settings?.kind?.isNewMPP ?: false
 
+val Module.externalProjectId: String
+    get() = KotlinFacet.get(this)?.configuration?.settings?.externalProjectId ?: ""
+
 val Module.isMPPModule: Boolean
     get() {
         val settings = KotlinFacet.get(this)?.configuration?.settings ?: return false
@@ -42,7 +45,7 @@ val Module.implementingModules: List<Module>
         CachedValueProvider.Result(
             if (isNewMPPModule) {
                 moduleManager.getModuleDependentModules(this).filter {
-                    it.isNewMPPModule && it.platform !is CommonIdePlatformKind.Platform
+                    it.isNewMPPModule && it.externalProjectId == externalProjectId
                 }
             } else {
                 moduleManager.modules.filter { name in it.findOldFashionedImplementedModuleNames() }
@@ -56,7 +59,9 @@ val Module.implementedModules: List<Module>
         CachedValueProvider {
             CachedValueProvider.Result(
                 if (isNewMPPModule) {
-                    rootManager.dependencies.filter { it.isNewMPPModule && it.platform is CommonIdePlatformKind.Platform }
+                    rootManager.dependencies.filter {
+                        it.isNewMPPModule && it.platform is CommonIdePlatformKind.Platform && it.externalProjectId == externalProjectId
+                    }
                 } else {
                     val modelsProvider = IdeModelsProviderImpl(project)
                     findOldFashionedImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) }
