@@ -143,6 +143,11 @@ public class LoadJavaClsStubTestGenerated extends AbstractLoadJavaClsStubTest {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PropertyField.kt");
             }
 
+            @TestMetadata("PublishedApiAnnotationOnInlineClassCosntructor.kt")
+            public void testPublishedApiAnnotationOnInlineClassCosntructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PublishedApiAnnotationOnInlineClassCosntructor.kt");
+            }
+
             @TestMetadata("Setter.kt")
             public void testSetter() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Setter.kt");

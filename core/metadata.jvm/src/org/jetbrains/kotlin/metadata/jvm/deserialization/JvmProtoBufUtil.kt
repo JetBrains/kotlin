@@ -86,6 +86,11 @@ object JvmProtoBufUtil {
         typeTable: TypeTable
     ): JvmMemberSignature.Method? {
         val signature = proto.getExtensionOrNull(JvmProtoBuf.constructorSignature)
+        val name = if (signature != null && signature.hasName()) {
+            nameResolver.getString(signature.name)
+        } else {
+            "<init>"
+        }
         val desc = if (signature != null && signature.hasDesc()) {
             nameResolver.getString(signature.desc)
         } else {
@@ -93,7 +98,7 @@ object JvmProtoBufUtil {
                 mapTypeDefault(it.type(typeTable), nameResolver) ?: return null
             }.joinToString(separator = "", prefix = "(", postfix = ")V")
         }
-        return JvmMemberSignature.Method("<init>", desc)
+        return JvmMemberSignature.Method(name, desc)
     }
 
     fun getJvmFieldSignature(
