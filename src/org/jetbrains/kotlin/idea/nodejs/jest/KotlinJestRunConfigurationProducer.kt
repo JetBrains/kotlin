@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.nodejs.TestElementInfo
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
 import org.jetbrains.kotlin.idea.run.addBuildTask
+import org.jetbrains.kotlin.idea.util.sourceRoots
 
 typealias JestTestElementInfo = TestElementInfo<JestRunSettings>
 
@@ -78,9 +79,7 @@ class KotlinJestRunConfigurationProducer :
         val element = context.psiLocation ?: return null
         val module = context.module?.asJsModule() ?: return null
 
-        val file = module.moduleFile
-
-        if (!isTestRunnerPackageAvailableFor(module.project, file)) return null
+        if (module.sourceRoots.none { isTestRunnerPackageAvailableFor(module.project, it) }) return null
 
         val testFilePath = module.jsTestOutputFilePath ?: return null
         val testElementPath = TestElementPath.forElement(element, module) ?: return null

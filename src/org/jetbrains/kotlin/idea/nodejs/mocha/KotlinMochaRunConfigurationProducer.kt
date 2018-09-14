@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.nodejs.TestElementInfo
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
 import org.jetbrains.kotlin.idea.run.addBuildTask
+import org.jetbrains.kotlin.idea.util.sourceRoots
 
 private typealias MochaTestElementInfo = TestElementInfo<MochaRunSettings>
 
@@ -115,7 +116,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), Kot
 
         if (context.getOriginalConfiguration(MochaConfigurationType.getInstance()) is MochaRunConfiguration) return configData
 
-        if (isTestRunnerPackageAvailableFor(project, file)) return configData
+        if (module.sourceRoots.any { isTestRunnerPackageAvailableFor(project, it) }) return configData
 
         val roots = collectMochaTestRoots(project)
         if (roots.isEmpty()) return null
