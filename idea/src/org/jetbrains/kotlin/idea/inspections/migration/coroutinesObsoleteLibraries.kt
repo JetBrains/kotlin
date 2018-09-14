@@ -17,6 +17,7 @@ object KotlinxVersionUpdater : VersionUpdater {
     override fun updateVersion(currentVersion: String): String {
         return when {
             currentVersion.contains("eap13") -> return currentVersion
+            currentVersion.contains("rc13") -> return currentVersion
             (VersionComparatorUtil.compare(currentVersion, "0.30.0") >= 0) -> return currentVersion
             (VersionComparatorUtil.compare(currentVersion, "0.24.0") < 0) -> return "0.24.0-eap13"
             else -> "$currentVersion-eap13"
