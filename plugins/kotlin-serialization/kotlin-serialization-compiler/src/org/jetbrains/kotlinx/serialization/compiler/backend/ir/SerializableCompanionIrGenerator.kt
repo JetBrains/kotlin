@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.resolve.classSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
@@ -20,7 +21,7 @@ class SerializableCompanionIrGenerator(
     override val compilerContext: BackendContext,
     bindingContext: BindingContext
 ) : SerializableCompanionCodegen(irClass.descriptor), IrBuilderExtension {
-    override val translator: TypeTranslator = TypeTranslator(compilerContext.externalSymbols, compilerContext.irBuiltIns.languageVersionSettings)
+    override val translator: TypeTranslator = compilerContext.createTypeTranslator(serializableDescriptor.module)
     private val _table = SymbolTable()
     override val BackendContext.localSymbolTable: SymbolTable
         get() = _table
