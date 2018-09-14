@@ -35,7 +35,8 @@ enum class MetaVersion(val metaString: String) {
     companion object {
 
         fun findAppropriate(metaString: String): MetaVersion {
-            return MetaVersion.values().find { it.metaString.equals(metaString, ignoreCase = true) } ?: RELEASE
+            return MetaVersion.values().find { it.metaString.equals(metaString, ignoreCase = true) }
+                    ?: if (metaString.isBlank()) RELEASE else error("Unknown meta version: $metaString")
         }
     }
 }
