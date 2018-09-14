@@ -16,6 +16,7 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
+import kotlin.script.experimental.jvm.dependenciesFromClassContext
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 
@@ -27,9 +28,8 @@ object MainKtsScriptDefinition : ScriptCompilationConfiguration(
     {
         defaultImports(DependsOn::class, Repository::class)
         jvm {
-            dependenciesFromCurrentContext("kotlin-main-kts")
+            dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts")
         }
-        // variant: dependencies(collectDependenciesFromCurrentContext(...
         refineConfiguration {
             onAnnotations(DependsOn::class, Repository::class, handler = MainKtsConfigurator())
         }

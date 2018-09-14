@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvm
 
 import java.io.File
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
@@ -20,6 +21,12 @@ interface JvmScriptCompilationConfigurationKeys
 
 open class JvmScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptCompilationConfigurationKeys {
     companion object : JvmScriptCompilationConfigurationKeys
+}
+
+fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassContext(
+    contextClass: KClass<*>, vararg libraries: String, wholeClasspath: Boolean = false
+) {
+    dependenciesFromClassloader(*libraries, classLoader = contextClass.java.classLoader, wholeClasspath = wholeClasspath)
 }
 
 fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {
