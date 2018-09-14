@@ -1,3 +1,7 @@
+## v0.9.1 (Sep 2018)
+  * Improve naming in produced Objective-C frameworks. Use ‘Kotlin’ prefix instead of ‘Stdlib’ prefix.
+  * Improvements in KLIB: Library versioning, IDEA-friendly internal format.
+
 # v0.9 (Sep 2018)
   * Support Kotlin 1.3M2
     * Note: Common modules of multiplatform projects also should use Kotlin 1.3
