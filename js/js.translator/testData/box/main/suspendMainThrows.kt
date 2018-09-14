@@ -1,5 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1299
-// IGNORE_BACKEND: JS_IR
 // CALL_MAIN
 
 import kotlin.coroutines.*
