@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.util.ExtensionProvider
 
 interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
+    fun isSuppressed(diagnostic: Diagnostic, bindingContext: BindingContext?): Boolean = isSuppressed(diagnostic)
 
     companion object {
         val EP_NAME: ExtensionPointName<DiagnosticSuppressor> =
@@ -68,7 +69,7 @@ abstract class KotlinSuppressCache {
 
         if (request is DiagnosticSuppressRequest) {
             for (suppressor in diagnosticSuppressors.get()) {
-                if (suppressor.isSuppressed(request.diagnostic)) return true
+                if (isSuppressedByExtension(suppressor, request.diagnostic)) return true
             }
         }
 
@@ -77,6 +78,9 @@ abstract class KotlinSuppressCache {
         return isSuppressedByAnnotated(request.suppressKey, request.severity, annotated, 0)
     }
 
+    open fun isSuppressedByExtension(suppressor: DiagnosticSuppressor, diagnostic: Diagnostic): Boolean {
+        return suppressor.isSuppressed(diagnostic)
+    }
 
     /*
        The cache is optimized for the case where no warnings are suppressed (most frequent one)
@@ -245,5 +249,9 @@ class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressC
         } else {
             annotated.annotationEntries.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
         }
+    }
+
+    override fun isSuppressedByExtension(suppressor: DiagnosticSuppressor, diagnostic: Diagnostic): Boolean {
+        return suppressor.isSuppressed(diagnostic, context)
     }
 }
