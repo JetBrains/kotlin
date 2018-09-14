@@ -319,6 +319,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/primaryValsWithDifferentVisibilities.kt");
         }
 
+        @TestMetadata("publishedApiAnnotationOnInlineClassConstructor.kt")
+        public void testPublishedApiAnnotationOnInlineClassConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/publishedApiAnnotationOnInlineClassConstructor.kt");
+        }
+
         @TestMetadata("shapeOfInlineClassWithPrimitive.kt")
         public void testShapeOfInlineClassWithPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
