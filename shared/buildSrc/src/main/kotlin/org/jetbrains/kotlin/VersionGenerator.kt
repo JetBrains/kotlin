@@ -98,7 +98,7 @@ open class VersionGenerator: DefaultTask() {
                    |       Regex(""${'"'}([0-9]+)\.([0-9]+)(?:\.([0-9]+))?(?:-(\p{Alpha}\p{Alnum}*))?(?:-([0-9]+))?""${'"'})
                    |         .matchEntire(this)!!.destructured
                    |    return KonanVersionImpl(
-                   |      MetaVersion.valueOf(meta.toUpperCase()),
+                   |      MetaVersion.findAppropriate(meta),
                    |      major.toInt(),
                    |      minor.toInt(),
                    |      maintenance.toIntOrNull() ?: 0,
