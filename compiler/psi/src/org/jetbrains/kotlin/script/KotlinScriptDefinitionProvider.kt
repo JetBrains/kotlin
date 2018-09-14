@@ -22,7 +22,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
@@ -55,16 +54,11 @@ fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefin
     if (psiFile != null) {
         if (psiFile !is KtFile) return null
         if (!DumbService.isDumb(project)) {
-            return psiFile.script?.kotlinScriptDefinition?.value
+            return psiFile.script?.kotlinScriptDefinition
         }
     }
 
     return ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file.name)
-}
-
-fun findScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? {
-    if (psiFile.isDirectory) return null
-    return (psiFile as? KtFile)?.script?.kotlinScriptDefinition?.value
 }
 
 abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {

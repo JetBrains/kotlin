@@ -78,7 +78,7 @@ class ScriptDependenciesUpdater(
 
                 if (ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true) return
 
-                val scriptDef = findScriptDefinition(ktFile) ?: return
+                val scriptDef = ktFile.script?.kotlinScriptDefinition ?: return
 
                 if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
                 ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = true)
@@ -104,7 +104,7 @@ class ScriptDependenciesUpdater(
                 }
 
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
-                val scriptDef = findScriptDefinition(ktFile) ?: return
+                val scriptDef = ktFile.script?.kotlinScriptDefinition ?: return
 
                 if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
 
