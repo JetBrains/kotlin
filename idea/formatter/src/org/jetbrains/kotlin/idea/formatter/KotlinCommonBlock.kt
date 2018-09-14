@@ -94,6 +94,16 @@ abstract class KotlinCommonBlock(
 
     fun isLeaf(): Boolean = node.firstChildNode == null
 
+    fun isIncomplete(): Boolean {
+        if (isIncompleteInSuper()) {
+            return true
+        }
+
+        // An incomplete declaration is the reason when modifier list can become a class body child, otherwise
+        // it's going to be a declaration child.
+        return node.elementType == MODIFIER_LIST && node.treeParent?.elementType == CLASS_BODY
+    }
+
     fun buildChildren(): List<Block> {
         if (mySubBlocks != null) {
             return mySubBlocks!!
@@ -449,6 +459,11 @@ abstract class KotlinCommonBlock(
                     sequenceOf(buildSubBlock(node, childrenAlignmentStrategy, wrappingStrategy, remainingChildren))
             val blockList = blocks.toList()
             return blockList.asSequence()
+        }
+
+        if (this.node.elementType == CLASS_BODY && node.elementType == MODIFIER_LIST) {
+            // Some unfinished declaration
+            println()
         }
 
         return sequenceOf(buildSubBlock(node, childrenAlignmentStrategy, wrappingStrategy))
