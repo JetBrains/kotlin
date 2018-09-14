@@ -51,15 +51,19 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
     }
 
     protected fun addKotlinMockRuntimeDependency(): JpsLibrary {
-        return addDependency("kotlin-mock-runtime", ForTestCompileRuntime.minimalRuntimeJarForTests())
+        return addDependency(KotlinJpsLibrary.MockRuntime)
     }
 
     protected fun addKotlinStdlibDependency(): JpsLibrary {
-        return addKotlinStdlibDependency(myProject)
+        return addDependency(KotlinJpsLibrary.JvmStdLib)
     }
 
     protected fun addKotlinJavaScriptStdlibDependency(): JpsLibrary {
-        return addDependency("KotlinJavaScript", PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath)
+        return addDependency(KotlinJpsLibrary.JsStdLib)
+    }
+
+    private fun addDependency(library: KotlinJpsLibrary): JpsLibrary {
+        return addDependency(myProject, library)
     }
 
     protected fun addDependency(libraryName: String, libraryFile: File): JpsLibrary {
@@ -79,20 +83,18 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
         }
 
         @JvmStatic
-        internal fun addKotlinStdlibDependency(project: JpsProject): JpsLibrary {
-            return addKotlinStdlibDependency(project.modules, false)
+        protected fun addKotlinStdlibDependency(modules: Collection<JpsModule>, exported: Boolean = false): JpsLibrary {
+            return addDependency(modules, KotlinJpsLibrary.JvmStdLib, exported)
         }
 
         @JvmStatic
-        protected fun addKotlinStdlibDependency(modules: Collection<JpsModule>, exported: Boolean): JpsLibrary {
-            return addDependency(
-                JpsJavaDependencyScope.COMPILE,
-                modules,
-                exported,
-                "kotlin-stdlib",
-                PathUtil.kotlinPathsForDistDirectory.stdlibPath,
-                File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar")
-            )
+        private fun addDependency(project: JpsProject, library: KotlinJpsLibrary, exported: Boolean = false): JpsLibrary {
+            return addDependency(JpsJavaDependencyScope.COMPILE, project.modules, exported, library.id, *library.roots)
+        }
+
+        @JvmStatic
+        private fun addDependency(modules: Collection<JpsModule>, library: KotlinJpsLibrary, exported: Boolean = false): JpsLibrary {
+            return addDependency(JpsJavaDependencyScope.COMPILE, modules, exported, library.id, *library.roots)
         }
 
         @JvmStatic

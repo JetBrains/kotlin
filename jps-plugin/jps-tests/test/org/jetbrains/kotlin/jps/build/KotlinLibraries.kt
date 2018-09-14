@@ -13,18 +13,30 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
-enum class KotlinJpsLibrary(val id: String, private vararg val roots: File) {
-    MockRuntime("kotlin-mock-runtime", ForTestCompileRuntime.minimalRuntimeJarForTests()),
+enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
+    MockRuntime(
+        "kotlin-mock-runtime",
+        ForTestCompileRuntime.minimalRuntimeJarForTests()
+    ),
 
     JvmStdLib(
         "kotlin-stdlib",
         PathUtil.kotlinPathsForDistDirectory.stdlibPath,
         File(PathUtil.kotlinPathsForDistDirectory.libPath, "annotations-13.0.jar")
     ),
-    JvmTest("kotlin-test", PathUtil.kotlinPathsForDistDirectory.kotlinTestPath),
+    JvmTest(
+        "kotlin-test",
+        PathUtil.kotlinPathsForDistDirectory.kotlinTestPath
+    ),
 
-    JsStdLib("KotlinJavaScript", PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath),
-    JsTest("KotlinJavaScriptTest", PathUtil.kotlinPathsForDistDirectory.jsKotlinTestJarPath);
+    JsStdLib(
+        "KotlinJavaScript",
+        PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath
+    ),
+    JsTest(
+        "KotlinJavaScriptTest",
+        PathUtil.kotlinPathsForDistDirectory.jsKotlinTestJarPath
+    );
 
     fun create(project: JpsProject): JpsLibrary {
         val library = project.addLibrary(id, JpsJavaLibraryType.INSTANCE)
