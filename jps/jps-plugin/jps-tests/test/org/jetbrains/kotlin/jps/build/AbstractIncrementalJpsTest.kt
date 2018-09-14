@@ -43,8 +43,6 @@ import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.LookupSymbol
@@ -59,6 +57,9 @@ import org.jetbrains.kotlin.jps.incremental.withLookupStorage
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.jps.model.kotlinFacet
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
+import org.jetbrains.kotlin.platform.impl.isJavaScript
+import org.jetbrains.kotlin.platform.impl.isJvm
+import org.jetbrains.kotlin.platform.orDefault
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import java.io.ByteArrayInputStream
@@ -531,12 +532,14 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun configureRequiredLibraries() {
         myProject.modules.forEach { module ->
-            when (module.kotlinFacet?.settings?.compilerArguments) {
-                null, is K2JVMCompilerArguments -> {
+            val platformKind = module.kotlinFacet?.settings?.platform?.kind.orDefault()
+
+            when {
+                platformKind.isJvm -> {
                     JpsModuleRootModificationUtil.addDependency(module, requireLibrary(KotlinJpsLibrary.JvmStdLib))
                     JpsModuleRootModificationUtil.addDependency(module, requireLibrary(KotlinJpsLibrary.JvmTest))
                 }
-                is K2JSCompilerArguments -> {
+                platformKind.isJavaScript -> {
                     JpsModuleRootModificationUtil.addDependency(module, requireLibrary(KotlinJpsLibrary.JsStdLib))
                     JpsModuleRootModificationUtil.addDependency(module, requireLibrary(KotlinJpsLibrary.JsTest))
                 }

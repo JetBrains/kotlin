@@ -15,8 +15,6 @@ fun actualizeMppJpsIncTestCaseDirs(rootDir: String, dir: String) {
     check(rootDirFile.isDirectory) { "`$rootDirFile` is not a directory" }
 
     rootDirFile.listFiles { it: File -> it.isDirectory }.forEach { dirFile ->
-        check(dirFile.isDirectory) { "`$dirFile` is not a directory" }
-
         val dependenciesTxtFile = File(dirFile, "dependencies.txt")
         if (dependenciesTxtFile.exists()) {
             val fileTitle = "$dir/${dirFile.name}/dependencies.txt"
