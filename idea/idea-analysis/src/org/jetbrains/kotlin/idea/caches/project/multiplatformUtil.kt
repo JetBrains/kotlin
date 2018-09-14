@@ -56,7 +56,7 @@ val Module.implementedModules: List<Module>
         CachedValueProvider {
             CachedValueProvider.Result(
                 if (isNewMPPModule) {
-                    rootManager.dependencies.filter { it.isNewMPPModule }
+                    rootManager.dependencies.filter { it.isNewMPPModule && it.platform is CommonIdePlatformKind.Platform }
                 } else {
                     val modelsProvider = IdeModelsProviderImpl(project)
                     findOldFashionedImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) }
