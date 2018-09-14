@@ -60,7 +60,7 @@ fun createCompilationConfigurationFromTemplate(
     fun scriptConfigInstance(kclass: KClass<out ScriptCompilationConfiguration>): ScriptCompilationConfiguration = try {
         kclass.objectInstance ?: kclass.createInstance()
     } catch (e: Throwable) {
-        throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
+        throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: ${e.message}", e)
     }
 
     return ScriptCompilationConfiguration(scriptConfigInstance(mainAnnotation.compilationConfiguration)) {
