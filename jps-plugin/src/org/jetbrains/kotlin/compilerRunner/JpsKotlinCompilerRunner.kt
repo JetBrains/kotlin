@@ -76,7 +76,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     ): Set<String> = withDaemonOrFallback(
         withDaemon = {
             doWithDaemon(environment) { sessionId, daemon ->
-                daemon.classesFqNamesByFiles(sessionId, files)
+                daemon.classesFqNamesByFiles(
+                    sessionId,
+                    files.toSet() // convert to standard HashSet to avoid serialization issues
+                )
             }
         },
         fallback = {
