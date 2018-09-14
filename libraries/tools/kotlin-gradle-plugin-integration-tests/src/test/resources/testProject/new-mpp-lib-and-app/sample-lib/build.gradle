@@ -27,7 +27,16 @@ kotlin {
         fromPreset(presets.linuxX64, 'linux64')
         fromPreset(presets.mingwX64, 'mingw64')
         fromPreset(presets.macosX64, 'macos64')
+
+        all {
+            publication {
+                pom.withXml {
+                    asNode().appendNode('name', 'Sample MPP library')
+                }
+            }
+        }
     }
+
     sourceSets {
         jvm6Main {
             dependencies {

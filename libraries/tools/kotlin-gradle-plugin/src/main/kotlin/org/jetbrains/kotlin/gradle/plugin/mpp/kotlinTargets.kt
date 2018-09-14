@@ -4,6 +4,9 @@
  */
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import groovy.lang.Closure
+import org.gradle.api.Action
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
@@ -11,6 +14,9 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.util.ConfigureUtil
+import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -61,6 +67,17 @@ abstract class AbstractKotlinTarget (
                     runtimeElementsConfigurationName
                 )
             ) else emptyList()
+
+    @Suppress("UNCHECKED_CAST")
+    internal val publicationConfigureActions =
+        WrapUtil.toDomainObjectSet(Action::class.java) as DomainObjectSet<Action<MavenPublication>>
+
+    override fun publication(action: Action<MavenPublication>) {
+        publicationConfigureActions.add(action)
+    }
+
+    override fun publication(action: Closure<Unit>) =
+        publication(ConfigureUtil.configureUsing(action))
 }
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
