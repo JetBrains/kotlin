@@ -25,10 +25,8 @@ typealias Object = Int
 typealias Pointer = Int
 
 /**
- * Used annotation is required to preserve functions
- * from internalization and DCE
+ * @Retain annotation is required to preserve functions from internalization and DCE.
  */
-
 @Retain
 @SymbolName("Konan_js_allocateArena")
 external public fun allocateArena(): Arena

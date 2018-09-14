@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.*
 import org.jetbrains.kotlin.name.FqName
 
-private val annotationName = FqName("kotlin.native.Used")
+private val annotationName = FqName("kotlin.native.Retain")
 
-internal val FunctionDescriptor.usedAnnotation: Boolean 
+internal val FunctionDescriptor.retainAnnotation: Boolean
     get() {
         return (this.annotations.findAnnotation(annotationName) != null)
     }
