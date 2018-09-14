@@ -9,6 +9,7 @@ plugins {
 dependencies {
     compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-script-runtime"))
+    compile(project(":kotlin-scripting-jvm"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:daemon-common"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))

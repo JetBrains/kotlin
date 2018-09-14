@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isInContent
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.*
-import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContextOrStlib
 import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -58,6 +57,7 @@ import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStlib
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
