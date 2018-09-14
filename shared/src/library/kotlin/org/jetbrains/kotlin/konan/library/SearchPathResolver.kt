@@ -210,7 +210,7 @@ internal fun SearchPathResolverWithTarget.libraryMatch(candidate: KonanLibraryIm
      if (candidateCompilerVersion == null ||
         knownCompilerVersions != null &&
             !knownCompilerVersions!!.contains(candidateCompilerVersion)) {
-        logger("skipping $candidatePath. The compiler versions don't match. Expected '${knownCompilerVersions}', found '${candidateCompilerVersion}'")
+        logger("skipping $candidatePath. The compiler versions don't match. Expected '${knownCompilerVersions?.map { it.toString(true, true) }}', found '${candidateCompilerVersion?.toString(true, true)}'")
         return false
     }
 
