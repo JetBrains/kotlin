@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.vfs.*
 import com.intellij.util.containers.ContainerUtil.createConcurrentSoftValueMap
+import com.intellij.util.containers.ContainerUtil.createConcurrentWeakValueMap
 import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.konan.library.KLIB_MODULE_METADATA_FILE_NAME
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
@@ -23,7 +24,7 @@ class KotlinNativeLoadingMetadataCache : ApplicationComponent {
             ApplicationManager.getApplication().getComponent(KotlinNativeLoadingMetadataCache::class.java)
     }
 
-    private val packageFragmentCache = createConcurrentSoftValueMap<VirtualFile, KonanProtoBuf.LinkDataPackageFragment>()
+    private val packageFragmentCache = createConcurrentWeakValueMap<VirtualFile, KonanProtoBuf.LinkDataPackageFragment>()
     private val moduleHeaderCache = createConcurrentSoftValueMap<VirtualFile, KonanProtoBuf.LinkDataLibrary>()
 
     fun getCachedPackageFragment(virtualFile: VirtualFile): KonanProtoBuf.LinkDataPackageFragment =

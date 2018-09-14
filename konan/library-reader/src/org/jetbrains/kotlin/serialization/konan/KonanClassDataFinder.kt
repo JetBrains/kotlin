@@ -33,3 +33,21 @@ class KonanClassDataFinder(
         return ClassData(nameResolver, foundClass, KonanMetadataVersion.INSTANCE, SourceElement.NO_SOURCE)
     }
 }
+
+class KotlinNativeProtoBasedClassDataFinder(
+    proto: KonanProtoBuf.LinkDataPackageFragment,
+    private val nameResolver: NameResolver,
+    private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
+) : ClassDataFinder {
+    private val classIdToProto =
+        proto.classes.classesList.associateBy { klass ->
+            nameResolver.getClassId(klass.fqName)
+        }
+
+    internal val allClassIds: Collection<ClassId> get() = classIdToProto.keys
+
+    override fun findClassData(classId: ClassId): ClassData? {
+        val classProto = classIdToProto[classId] ?: return null
+        return ClassData(nameResolver, classProto, KonanMetadataVersion.INSTANCE, classSource(classId))
+    }
+}
