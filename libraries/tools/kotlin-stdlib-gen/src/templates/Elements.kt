@@ -328,6 +328,7 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Usage.elementAtOrNull")
         returns("T?")
         body {
             """
