@@ -38,6 +38,8 @@ public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -
 
 /**
  * Returns a character at the given [index] or `null` if the [index] is out of bounds of this char sequence.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.elementAtOrNull(index: Int): Char? {

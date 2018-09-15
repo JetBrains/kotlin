@@ -498,5 +498,16 @@ class Collections {
             val emptyList = emptyList<Int>()
             assertFails { emptyList.elementAt(0) }
         }
+
+        @Sample
+        fun elementAtOrNull() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.elementAtOrNull(0), "1")
+            assertPrints(list.elementAtOrNull(2), "3")
+            assertPrints(list.elementAtOrNull(3), "null")
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.elementAtOrNull(0), "null")
+        }
     }
 }
