@@ -60,6 +60,8 @@ public fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 public fun <T> Sequence<T>.elementAtOrNull(index: Int): T? {
     if (index < 0)
