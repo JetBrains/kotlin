@@ -22,7 +22,10 @@ import kotlin.internal.InlineOnly
 public annotation class ExperimentalContracts
 
 /**
- * The builder is used to specify contract effects for some function.
+ * Provides a scope, where the functions of the contract DSL, such as [returns], [callsInPlace], etc.,
+ * can be used to describe the contract of a function.
+ *
+ * This type is used as a receiver type of the lambda function passed to the [contract] function.
  *
  * @see contract
  */
@@ -31,15 +34,20 @@ public annotation class ExperimentalContracts
 @SinceKotlin("1.3")
 public interface ContractBuilder {
     /**
-     * Expresses that a function returned successfully.
+     * Describes a situation when a function returns normally, without any exceptions thrown.
+     *
+     * Use [SimpleEffect.implies] function to describe a conditional effect that happens in such case.
      *
      * @sample samples.contracts.returnsContract
      */
     @ContractsDsl public fun returns(): Returns
 
     /**
-     * Expresses that a function returned with some value.
-     * Value can only be `true`, `false` or `null`.
+     * Describes a situation when a function returns normally with the specified return [value].
+     *
+     * The possible values of [value] are limited to `true`, `false` or `null`.
+     *
+     * Use [SimpleEffect.implies] function to describe a conditional effect that happens in such case.
      *
      * @sample samples.contracts.returnsTrueContract
      * @sample samples.contracts.returnsFalseContract
@@ -48,20 +56,24 @@ public interface ContractBuilder {
     @ContractsDsl public fun returns(value: Any?): Returns
 
     /**
-     * Expresses that a function returned with any not null value.
+     * Describes a situation when a function returns normally with any value that is not `null`.
+     *
+     * Use [SimpleEffect.implies] function to describe a conditional effect that happens in such case.
      *
      * @sample samples.contracts.returnsNotNullContract
      */
     @ContractsDsl public fun returnsNotNull(): ReturnsNotNull
 
     /**
-     * Expresses that:
-     *  1) [lambda] will not be called after the call to owner-function is finished;
-     *  2) [lambda] will not be passed to another function without the similar contract.
+     * Specifies that the function parameter [lambda] is invoked in place.
      *
-     * @param kind amount of times, that a [lambda] guaranteed will be invoked.
+     * This contract specifies that:
+     * 1. the function [lambda] can only be invoked during the call of the owner function,
+     *  and it won't be invoked after that owner function call is completed;
+     * 2. _(optionally)_ the function [lambda] is invoked the amount of times specified by the [kind] parameter,
+     *  see the [InvocationKind] enum for possible values.
      *
-     * Note that a function with the `callsInPlace` effect must be inline.
+     * A function declaring the `callsInPlace` effect must be _inline_.
      *
      * @sample samples.contracts.callsInPlaceAtMostOnceContract
      * @sample samples.contracts.callsInPlaceAtLeastOnceContract
@@ -72,35 +84,37 @@ public interface ContractBuilder {
 }
 
 /**
- * This enum class is used to specify the amount of times, that `callable` which is used in the [ContractBuilder.callsInPlace] effect guaranteed will be invoked.
+ * Specifies how many times a function invokes its function parameter in place.
+ *
+ * See [ContractBuilder.callsInPlace] for the details of the call-in-place function contract.
  */
 @ContractsDsl
 @ExperimentalContracts
 @SinceKotlin("1.3")
 public enum class InvocationKind {
     /**
-     * Expresses that the `callable` will be invoked zero or one time.
+     * A function parameter will be invoked one time or not invoked at all.
      *
      * @sample samples.contracts.callsInPlaceAtMostOnceContract
      */
     @ContractsDsl AT_MOST_ONCE,
 
     /**
-     * Expresses that the `callable` will be invoked one or more times.
+     * A function parameter will be invoked one or more times.
      *
      * @sample samples.contracts.callsInPlaceAtLeastOnceContract
      */
     @ContractsDsl AT_LEAST_ONCE,
 
     /**
-     * Expresses that the `callable` will be invoked exactly one time.
+     * A function parameter will be invoked exactly one time.
      *
      * @sample samples.contracts.callsInPlaceExactlyOnceContract
      */
     @ContractsDsl EXACTLY_ONCE,
 
     /**
-     * Expresses that the `callable` will be invoked unknown amount of times.
+     * A function parameter is called in place, but it's unknown how many times it can be called.
      *
      * @sample samples.contracts.callsInPlaceUnknownContract
      */
@@ -108,11 +122,13 @@ public enum class InvocationKind {
 }
 
 /**
- * The function to describe a contract.
- * The contract description must be at the beginning of a function and has at least one effect.
- * Also the contract description can be used only in the top-level functions.
+ * Specifies the contact of a function.
  *
- * @param builder the lambda in the body of which the effects from the [ContractBuilder] are specified.
+ * The contract description must be at the beginning of a function and have at least one effect.
+ *
+ * Only the top-level functions can have a contract for now.
+ *
+ * @param builder the lambda where the contract of a function is described with the help of the [ContractBuilder] members.
  *
  * @sample samples.contracts.returnsContract
  * @sample samples.contracts.returnsTrueContract
