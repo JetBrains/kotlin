@@ -29,7 +29,7 @@ kotlin {
         fromPreset(presets.macosX64, 'macos64')
 
         all {
-            publication {
+            mavenPublication {
                 pom.withXml {
                     asNode().appendNode('name', 'Sample MPP library')
                 }

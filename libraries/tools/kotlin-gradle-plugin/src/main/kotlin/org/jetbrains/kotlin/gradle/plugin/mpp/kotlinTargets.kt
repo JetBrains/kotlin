@@ -72,12 +72,12 @@ abstract class AbstractKotlinTarget (
     internal val publicationConfigureActions =
         WrapUtil.toDomainObjectSet(Action::class.java) as DomainObjectSet<Action<MavenPublication>>
 
-    override fun publication(action: Action<MavenPublication>) {
+    override fun mavenPublication(action: Action<MavenPublication>) {
         publicationConfigureActions.add(action)
     }
 
-    override fun publication(action: Closure<Unit>) =
-        publication(ConfigureUtil.configureUsing(action))
+    override fun mavenPublication(action: Closure<Unit>) =
+        mavenPublication(ConfigureUtil.configureUsing(action))
 }
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =

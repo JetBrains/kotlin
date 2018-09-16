@@ -42,8 +42,8 @@ interface KotlinTarget: Named, HasAttributes {
 
     fun createUsageContexts(): Set<UsageContext>
 
-    fun publication(action: Closure<Unit>)
-    fun publication(action: Action<MavenPublication>)
+    fun mavenPublication(action: Closure<Unit>)
+    fun mavenPublication(action: Action<MavenPublication>)
 
     override fun getName(): String = targetName
 }
