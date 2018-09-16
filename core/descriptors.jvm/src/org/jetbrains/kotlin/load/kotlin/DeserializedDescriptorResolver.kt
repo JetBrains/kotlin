@@ -127,5 +127,7 @@ class DeserializedDescriptorResolver {
         private val KOTLIN_1_1_EAP_METADATA_VERSION = JvmMetadataVersion(1, 1, 2)
 
         private val KOTLIN_1_3_M1_METADATA_VERSION = JvmMetadataVersion(1, 1, 11)
+
+        internal val KOTLIN_1_3_RC_METADATA_VERSION = JvmMetadataVersion(1, 1, 13)
     }
 }
