@@ -9,6 +9,13 @@ import kotlin.annotation.AnnotationTarget.*
 import kotlin.internal.RequireKotlin
 import kotlin.internal.RequireKotlinVersionKind
 
+/**
+ * The experimental multiplatform support API marker.
+ *
+ * Any usage of a declaration annotated with `@ExperimentalMultiplatform` must be accepted either by
+ * annotating that usage with the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalMultiplatform::class)`,
+ * or by using the compiler argument `-Xuse-experimental=kotlin.ExperimentalMultiplatform`.
+ */
 @Experimental
 @Target(
     CLASS,
@@ -28,10 +35,14 @@ import kotlin.internal.RequireKotlinVersionKind
 public annotation class ExperimentalMultiplatform
 
 /**
+ * Marks an expected annotation class that it isn't required to have actual counterparts in all platforms.
+ *
  * This annotation is only applicable to `expect` annotation classes in multi-platform projects and marks that class as "optional".
  * Optional expected class is allowed to have no corresponding actual class on the platform. Optional annotations can only be used
  * to annotate something, not as types in signatures. If an optional annotation has no corresponding actual class on a platform,
  * the annotation entries where it's used are simply erased when compiling code on that platform.
+ *
+ * Note: this annotation is experimental, see [ExperimentalMultiplatform] on how to opt-in for it.
  */
 @Target(ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)

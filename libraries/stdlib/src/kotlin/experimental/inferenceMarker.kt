@@ -6,7 +6,11 @@
 package kotlin.experimental
 
 /**
- * Marker of the use experimental type inference features
+ * The experimental type inference augmenting annotations marker.
+ *
+ * Any usage of a declaration annotated with `@ExperimentalTypeInference` must be accepted either by
+ * annotating that usage with the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalTypeInference::class)`,
+ * or by using the compiler argument `-Xuse-experimental=kotlin.experimental.ExperimentalTypeInference`.
  */
 @Experimental(level = Experimental.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
