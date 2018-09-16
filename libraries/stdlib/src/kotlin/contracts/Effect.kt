@@ -8,7 +8,15 @@ package kotlin.contracts
 import kotlin.internal.ContractsDsl
 
 /**
- * Abstract effect, the inheritors of which are used in [ContractBuilder] to describe the contract function.
+ * Represents an effect of a function invocation,
+ * either directly observable, such as the function returning normally,
+ * or a side-effect, such as the function's lambda parameter being called in place.
+ *
+ * The inheritors are used in [ContractBuilder] to describe the contract of a function.
+ *
+ * @see ConditionalEffect
+ * @see SimpleEffect
+ * @see CallsInPlace
  */
 @ContractsDsl
 @ExperimentalContracts
@@ -16,10 +24,10 @@ import kotlin.internal.ContractsDsl
 public interface Effect
 
 /**
- * This interface corresponds to an additional condition applied to the [SimpleEffect].
- * Can only be used in conjunction with [SimpleEffect].
+ * An effect of some condition being true after observing another effect of a function.
  *
- * @see SimpleEffect.implies
+ * This effect is specified in the `contract { }` block by attaching a boolean expression
+ * to another [SimpleEffect] effect with the function [SimpleEffect.implies].
  */
 @ContractsDsl
 @ExperimentalContracts
@@ -27,18 +35,24 @@ public interface Effect
 public interface ConditionalEffect : Effect
 
 /**
- * Describes of function's behavior regardless of any conditions.
+ * An effect that can be observed after a function invocation.
+ *
+ * @see ContractBuilder.returns
+ * @see ContractBuilder.returnsNotNull
  */
 @ContractsDsl
 @ExperimentalContracts
 @SinceKotlin("1.3")
 public interface SimpleEffect : Effect {
     /**
-     * The function to specify an additional condition for some `SimpleEffect`.
+     * Specifies that this effect, when observed, guarantees [booleanExpression] to be true.
      *
-     * @param booleanExpression the additional condition which is a subset of the Kotlin boolean expressions.
-     *
-     * Note: the subset of the Kotlin boolean expressions is true/false/null checks (using the equality expression) for a function parameter or receiver, also allowed the conjunction and disjunction.
+     * Note: [booleanExpression] can accept only a subset of boolean expressions,
+     * where a function parameter or receiver (`this`) undergoes
+     * - true of false checks, in case if the parameter or receiver is `Boolean`;
+     * - null-checks (`== null`, `!= null`);
+     * - instance-checks (`is`, `!is`);
+     * - a combination of the above with the help of logic operators (`&&`, `||`, `!`).
      */
     @ContractsDsl
     @ExperimentalContracts
@@ -46,8 +60,7 @@ public interface SimpleEffect : Effect {
 }
 
 /**
- * Describes the return value of a function.
- * The return value can only be `true`, `false` or `null`.
+ * Describes a situation when a function returns normally with a given return value.
  *
  * @see ContractBuilder.returns
  */
@@ -57,7 +70,7 @@ public interface SimpleEffect : Effect {
 public interface Returns : SimpleEffect
 
 /**
- * Describes that the return value of a function is not null.
+ * Describes a situation when a function returns normally with any non-null return value.
  *
  * @see ContractBuilder.returnsNotNull
  */
@@ -67,7 +80,11 @@ public interface Returns : SimpleEffect
 public interface ReturnsNotNull : SimpleEffect
 
 /**
- * Describes of function's behavior in relation to the invocation of the received lambda.
+ * An effect of calling a functional parameter in place.
+ *
+ * A function is said to call its functional parameter in place, if the functional parameter is only invoked
+ * while the execution has not been returned from the function, and the functional parameter cannot be
+ * invoked after the function is completed.
  *
  * @see ContractBuilder.callsInPlace
  */
