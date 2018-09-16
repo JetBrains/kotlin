@@ -98,9 +98,6 @@ done
         }
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
-        if (scriptClass == null) {
-            System.err.println(classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.joinToString())
-        }
         Assert.assertNotNull(scriptClass)
         captureOut {
             scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
@@ -112,9 +109,6 @@ done
     @Test
     fun testIvyResolveStdJUnitHelloWorld() {
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithIvyResolving::class)
-        if (scriptClass == null) {
-            System.err.println(classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.joinToString())
-        }
         Assert.assertNotNull(scriptClass)
         captureOut {
             scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
@@ -144,7 +138,7 @@ done
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = CompilerConfiguration().apply {
-                classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.let {
+                scriptCompilationClasspathFromContextOrNull(KOTLIN_JAVA_RUNTIME_JAR)?.let {
                     addJvmClasspathRoots(it)
                 }
 
