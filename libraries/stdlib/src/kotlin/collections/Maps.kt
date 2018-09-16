@@ -158,6 +158,8 @@ public inline fun <K, V> Map<out K, V>?.isNullOrEmpty(): Boolean {
 
 /**
  * Returns the [Map] if its not `null`, or the empty [Map] otherwise.
+ *
+ * @sample samples.collections.Maps.Usage.mapOrEmpty
  */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<K, V>?.orEmpty(): Map<K, V> = this ?: emptyMap()
