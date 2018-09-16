@@ -120,6 +120,15 @@ class Maps {
         }
 
         @Sample
+        fun mapOrEmpty() {
+            val nullMap: Map<String, Any>? = null
+            assertPrints(nullMap.orEmpty(), "{}")
+
+            val map: Map<Char, Int>? = mapOf('a' to 1, 'b' to 2, 'c' to 3)
+            assertPrints(map.orEmpty(), "{a=1, b=2, c=3}")
+        }
+
+        @Sample
         fun mapIfEmpty() {
             val emptyMap: Map<String, Int> = emptyMap()
 
