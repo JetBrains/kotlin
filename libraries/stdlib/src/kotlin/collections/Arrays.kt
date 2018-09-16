@@ -67,6 +67,7 @@ public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Array<*>,
     if (isEmpty()) defaultValue() else this
 
 
+@UseExperimental(ExperimentalUnsignedTypes::class)
 @SinceKotlin("1.3")
 @PublishedApi
 @kotlin.jvm.JvmName("contentDeepEquals")
