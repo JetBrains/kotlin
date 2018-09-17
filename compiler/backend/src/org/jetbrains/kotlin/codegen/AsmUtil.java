@@ -910,19 +910,20 @@ public class AsmUtil {
         if (state.isCallAssertionsDisabled()) return stackValue;
         if (runtimeAssertionInfo == null || !runtimeAssertionInfo.getNeedNotNullAssertion()) return stackValue;
 
-        return new StackValue(stackValue.type) {
+        return new StackValue(stackValue.type, stackValue.kotlinType) {
 
             @Override
             public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
                 Type innerType = stackValue.type;
-                stackValue.put(innerType, v);
+                KotlinType innerKotlinType = stackValue.kotlinType;
+                stackValue.put(innerType, innerKotlinType, v);
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
                     v.dup();
                     v.visitLdcInsn(runtimeAssertionInfo.getMessage());
                     v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkExpressionValueIsNotNull",
                                    "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
-                StackValue.coerce(innerType, type, v);
+                StackValue.coerce(innerType, innerKotlinType, type, kotlinType, v);
             }
         };
     }
