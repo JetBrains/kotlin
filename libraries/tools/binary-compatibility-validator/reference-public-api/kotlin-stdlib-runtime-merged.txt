@@ -4160,7 +4160,6 @@ public final class kotlin/ranges/RangesKt {
 
 public class kotlin/ranges/UIntProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/UIntProgression$Companion;
-	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst ()I
 	public final fun getLast ()I
@@ -4197,7 +4196,6 @@ public final class kotlin/ranges/UIntRange$Companion {
 
 public class kotlin/ranges/ULongProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/ULongProgression$Companion;
-	public synthetic fun <init> (JJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst ()J
 	public final fun getLast ()J
