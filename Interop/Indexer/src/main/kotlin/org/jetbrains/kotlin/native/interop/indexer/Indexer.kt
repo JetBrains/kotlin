@@ -122,10 +122,6 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         return library.headerToIdMapper.getHeaderId(filePath)
     }
 
-    private fun getContainingFile(cursor: CValue<CXCursor>): CXFile? {
-        return clang_getCursorLocation(cursor).getContainingFile()
-    }
-
     private fun getLocation(cursor: CValue<CXCursor>): Location {
         val headerId = getHeaderId(getContainingFile(cursor))
         return Location(headerId)
@@ -737,12 +733,8 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                 }
             }
 
-            CXIdxEntity_ObjCClass -> {
-                if (isAvailable(cursor) &&
-                        cursor.kind != CXCursorKind.CXCursor_ObjCClassRef /* not a forward declaration */) {
-
-                    getObjCClassAt(cursor)
-                }
+            CXIdxEntity_ObjCClass -> if (cursor.kind != CXCursorKind.CXCursor_ObjCClassRef /* not a forward declaration */) {
+                indexObjCClass(cursor)
             }
 
             CXIdxEntity_ObjCCategory -> {
@@ -751,12 +743,8 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                 }
             }
 
-            CXIdxEntity_ObjCProtocol -> {
-                if (isAvailable(cursor) &&
-                        cursor.kind != CXCursorKind.CXCursor_ObjCProtocolRef /* not a forward declaration */) {
-
-                    getObjCProtocolAt(cursor)
-                }
+            CXIdxEntity_ObjCProtocol -> if (cursor.kind != CXCursorKind.CXCursor_ObjCProtocolRef /* not a forward declaration */) {
+                indexObjCProtocol(cursor)
             }
 
             CXIdxEntity_ObjCProperty -> {
@@ -788,6 +776,18 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             else -> {
                 // Ignore declaration.
             }
+        }
+    }
+
+    fun indexObjCClass(cursor: CValue<CXCursor>) {
+        if (isAvailable(cursor)) {
+            getObjCClassAt(cursor)
+        }
+    }
+
+    fun indexObjCProtocol(cursor: CValue<CXCursor>) {
+        if (isAvailable(cursor)) {
+            getObjCProtocolAt(cursor)
         }
     }
 
@@ -920,6 +920,18 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl) {
                     }
                 }
             })
+
+            visitChildren(clang_getTranslationUnitCursor(translationUnit)) { cursor, _ ->
+                val file = getContainingFile(cursor)
+                if (file in headers && nativeIndex.library.includesDeclaration(cursor)) {
+                    when (cursor.kind) {
+                        CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
+                        CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
+                        else -> {}
+                    }
+                }
+                CXChildVisitResult.CXChildVisit_Continue
+            }
         } finally {
             clang_disposeTranslationUnit(translationUnit)
         }

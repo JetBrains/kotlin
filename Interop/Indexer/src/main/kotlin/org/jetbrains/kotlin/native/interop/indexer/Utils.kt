@@ -545,6 +545,11 @@ internal fun CValue<CXSourceLocation>.getContainingFile(): CXFile? = memScoped {
     fileVar.value
 }
 
+@JvmName("getFileContainingCursor")
+internal fun getContainingFile(cursor: CValue<CXCursor>): CXFile? {
+    return clang_getCursorLocation(cursor).getContainingFile()
+}
+
 private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): ByteArray {
     val overlay = clang_VirtualFileOverlay_create(0)
 
