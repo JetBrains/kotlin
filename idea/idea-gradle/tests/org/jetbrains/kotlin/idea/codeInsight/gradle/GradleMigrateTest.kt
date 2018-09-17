@@ -66,12 +66,12 @@ class GradleMigrateTest : GradleImportingTestCase() {
             """
         )
 
+        Assert.assertEquals(false, migrateComponentState?.hasApplicableTools)
+
         Assert.assertEquals(
-            MigrationInfo.create("1.1.0", ApiVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_2, newStdlibVersion = "1.2.0"),
+            MigrationInfo.create("1.1.0", ApiVersion.KOTLIN_1_1, LanguageVersion.KOTLIN_1_1, newStdlibVersion = "1.2.0"),
             migrateComponentState?.migrationInfo
         )
-
-        Assert.assertEquals(false, migrateComponentState?.hasApplicableTools)
     }
 
     private fun doMigrationTest(beforeText: String, afterText: String): MigrationTestState? {
