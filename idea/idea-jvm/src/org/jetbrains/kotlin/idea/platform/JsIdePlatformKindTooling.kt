@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.ifEmpty
 import javax.swing.Icon
 
 class JsIdePlatformKindTooling : IdePlatformKindTooling() {
