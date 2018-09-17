@@ -31,8 +31,7 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.*
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.jps.incremental.withLookupStorage
 import org.jetbrains.kotlin.jps.model.kotlinKind
 import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
+import org.jetbrains.kotlin.jps.targets.KotlinUnsupportedModuleBuildTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -328,6 +328,16 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val kotlinContext = context.kotlin
+        val kotlinChunk = chunk.toKotlinChunk(context)!!
+
+        if (representativeTarget is KotlinUnsupportedModuleBuildTarget) {
+            val msg = "${representativeTarget.kind} is not yet supported in IDEA internal build system. " +
+                    "Please use Gradle to build ${kotlinChunk.presentableShortName}."
+
+            messageCollector.report(STRONG_WARNING, msg)
+            return NOTHING_DONE
+        }
+
         val projectDescriptor = context.projectDescriptor
         val dataManager = projectDescriptor.dataManager
         val targets = chunk.targets
@@ -361,7 +371,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return ABORT
         }
 
-        val kotlinChunk = chunk.toKotlinChunk(context)!!
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project, representativeTarget)
         val exceptActualTracer = ExpectActualTrackerImpl()
