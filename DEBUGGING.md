@@ -18,7 +18,9 @@ perform the following operations:
 To produce binaries with the Kotlin/Native compiler it's sufficient to use the ``-g`` option on the command line.<br/>
 _Example:_
 
-```
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 0:b-debugger-fixes:minamoto@unit-703(0)# cat - > hello.kt
 fun main(args: Array<String>) {
   println("Hello world")
@@ -52,57 +54,106 @@ Process 28473 stopped
 (lldb)
 ```
 
+</div>
+
 ### Breakpoints
 Modern debuggers provide several ways to set a breakpoint, see below for a tool-by-tool breakdown:
 
 #### lldb
 - by name
-````
+
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 (lldb) b -n kfun:main(kotlin.Array<kotlin.String>)
 Breakpoint 4: where = terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) + 4 at hello.kt:2, address = 0x00000001000012e4
-````
+```
+
+</div>
+
  _``-n`` is optional, this flag is applied by default_
 - by location (filename, line number)
-````
+
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 (lldb) b -f hello.kt -l 1
 Breakpoint 1: where = terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) + 4 at hello.kt:2, address = 0x00000001000012e4
-````
+```
+
+</div>
+
 - by address
-````
+
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 (lldb) b -a 0x00000001000012e4
 Breakpoint 2: address = 0x00000001000012e4
-````
+```
+
+</div>
+
 - by regex, you might find it useful for debugging generated artifacts, like lambda etc. (where used ``#`` symbol in name).
-````
+
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 3: regex = 'main\(', locations = 1
   3.1: where = terminator.kexe`kfun:main(kotlin.Array<kotlin.String>) + 4 at hello.kt:2, address = terminator.kexe[0x00000001000012e4], unresolved, hit count = 0
-````
+```
+
+</div>
+
 #### gdb
 - by regex
-````
+
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 (gdb) rbreak main(
 Breakpoint 1 at 0x1000109b4
 struct ktype:kotlin.Unit &kfun:main(kotlin.Array<kotlin.String>);
-````
+```
+
+</div>
+
 - by name __unusable__, because ``:`` is a separator for the breakpoint by location
 
-``
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 (gdb) b kfun:main(kotlin.Array<kotlin.String>)
 No source file named kfun.
 Make breakpoint pending on future shared library load? (y or [n]) y
 Breakpoint 1 (kfun:main(kotlin.Array<kotlin.String>)) pending
-``
+```
+
+</div>
+
 - by location
-````
- (gdb) b hello.kt:1
- Breakpoint 2 at 0x100001704: file /Users/minamoto/ws/.git-trees/hello.kt, line 1.
-````
+
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+(gdb) b hello.kt:1
+Breakpoint 2 at 0x100001704: file /Users/minamoto/ws/.git-trees/hello.kt, line 1.
+```
+
+</div>
+
 - by address
-````
+
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 (gdb) b *0x100001704
 Note: breakpoint 2 also set at pc 0x100001704.
 Breakpoint 3 at 0x100001704: file /Users/minamoto/ws/.git-trees/hello.kt, line 2.
-````
+```
+
+</div>
+
 
 ### Stepping
 Stepping functions works mostly the same way as for C/C++ programs
@@ -113,7 +164,9 @@ Variable inspections for var variables works out of the box for primitive types.
 For non-primitive types there are custom pretty printers for lldb in
 `konan_lldb.py`:
 
-```
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 λ cat main.kt | nl
      1  fun main(args: Array<String>) {
      2      var x = 1
@@ -156,11 +209,16 @@ Process 4985 launched: './program.kexe' (x86_64)
 (lldb) 
 ```
 
+</div>
+
+
 Getting representation of the object variable (var) could also be done using the
 built-in runtime function `Konan_DebugPrint` (this approach also works for gdb,
 using a module of command syntax):
 
-````
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 0:b-debugger-fixes:minamoto@unit-703(0)# cat ../debugger-plugin/1.kt | nl -p
      1  fun foo(a:String, b:Int) = a + b
      2  fun one() = 1
@@ -196,7 +254,10 @@ Process 80496 launched: './program.kexe' (x86_64)
 (lldb) expression -- Konan_DebugPrint(a_variable)
 (a_variable) one is 1(KInt) $0 = 0
 (lldb)
-````
+
+```
+
+</div>
 
 
 ### Known issues
