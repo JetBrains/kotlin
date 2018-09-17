@@ -461,11 +461,6 @@ abstract class KotlinCommonBlock(
             return blockList.asSequence()
         }
 
-        if (this.node.elementType == CLASS_BODY && node.elementType == MODIFIER_LIST) {
-            // Some unfinished declaration
-            println()
-        }
-
         return sequenceOf(buildSubBlock(node, childrenAlignmentStrategy, wrappingStrategy))
     }
 
