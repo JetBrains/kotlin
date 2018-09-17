@@ -16,7 +16,7 @@ data class KonanLibraryVersioning(
 fun Properties.writeKonanLibraryVersioning(versions: KonanLibraryVersioning) {
     versions.abiVersion ?. let { this.setProperty(KLIB_PROPERTY_ABI_VERSION, it.toString()) }
     versions.libraryVersion ?. let { this.setProperty(KLIB_PROPERTY_LIBRARY_VERSION, it) }
-    versions.compilerVersion ?. let { this.setProperty(KLIB_PROPERTY_COMPILER_VERSION, "${versions.compilerVersion}") }
+    versions.compilerVersion ?. let { this.setProperty(KLIB_PROPERTY_COMPILER_VERSION, "${versions.compilerVersion.toString(true, true)}") }
 }
 
 fun Properties.readKonanLibraryVersioning(): KonanLibraryVersioning {
