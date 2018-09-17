@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.jvm.JvmName("UStringsKt")  // string representation of unsigned numbers
+
 package kotlin.text
 
 /**

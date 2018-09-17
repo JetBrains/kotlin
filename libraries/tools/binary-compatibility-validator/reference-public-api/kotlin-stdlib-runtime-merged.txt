@@ -3909,6 +3909,9 @@ public final class kotlin/random/RandomKt {
 	public static final fun Random (J)Lkotlin/random/Random;
 	public static final fun nextInt (Lkotlin/random/Random;Lkotlin/ranges/IntRange;)I
 	public static final fun nextLong (Lkotlin/random/Random;Lkotlin/ranges/LongRange;)J
+}
+
+public final class kotlin/random/URandomKt {
 	public static final fun nextUBytes (Lkotlin/random/Random;I)[B
 	public static final fun nextUBytes-EVgfTAA (Lkotlin/random/Random;[B)[B
 	public static final fun nextUBytes-Wvrt4B4 (Lkotlin/random/Random;[BII)[B
@@ -5136,7 +5139,7 @@ public final class kotlin/text/Typography {
 	public static final field tm C
 }
 
-public final class kotlin/text/UStringNumberConversionsKt {
+public final class kotlin/text/UStringsKt {
 	public static final fun toString-JSWoG40 (JI)Ljava/lang/String;
 	public static final fun toString-LxnNnR4 (BI)Ljava/lang/String;
 	public static final fun toString-V7xB4Y4 (II)Ljava/lang/String;
