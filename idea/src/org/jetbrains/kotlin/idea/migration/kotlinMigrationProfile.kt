@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.migration
 
+import com.intellij.codeInspection.InspectionEP
+import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.InspectionProfileImpl
 import com.intellij.codeInspection.ex.InspectionToolWrapper
@@ -14,18 +16,18 @@ import com.intellij.openapi.util.WriteExternalException
 import com.intellij.profile.codeInspection.InspectionProfileManager
 import com.intellij.psi.PsiElement
 import org.jdom.Element
+import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
-import java.util.LinkedHashSet
+import java.util.*
 
-fun createMigrationProfile(managerEx: InspectionManagerEx, psiElement: PsiElement?): InspectionProfileImpl {
+fun createMigrationProfile(
+    managerEx: InspectionManagerEx,
+    psiElement: PsiElement?,
+    migrationInfo: MigrationInfo? = null
+): InspectionProfileImpl {
     val rootProfile = InspectionProfileManager.getInstance().currentProfile
 
-    val migrationFixWrappers = rootProfile.allTools.asSequence()
-        .map { it.tool }
-        .filter { toolWrapper: InspectionToolWrapper<*, *> ->
-            toolWrapper.tool is MigrationFix
-        }
-        .toList()
+    val migrationFixWrappers = applicableMigrationToolsImpl(migrationInfo)
 
     val allWrappers = LinkedHashSet<InspectionToolWrapper<*, *>>()
     for (toolWrapper in migrationFixWrappers) {
@@ -50,4 +52,18 @@ fun createMigrationProfile(managerEx: InspectionManagerEx, psiElement: PsiElemen
     }
 
     return model
+}
+
+fun applicableMigrationTools(migrationInfo: MigrationInfo) = applicableMigrationToolsImpl(migrationInfo)
+
+private fun applicableMigrationToolsImpl(migrationInfo: MigrationInfo?): List<InspectionToolWrapper<InspectionProfileEntry, InspectionEP>> {
+    val rootProfile = InspectionProfileManager.getInstance().currentProfile
+
+    return rootProfile.allTools.asSequence()
+        .map { it.tool }
+        .filter { toolWrapper: InspectionToolWrapper<*, *> ->
+            val tool = toolWrapper.tool
+            tool is MigrationFix && (migrationInfo == null || tool.isApplicable(migrationInfo))
+        }
+        .toList()
 }
