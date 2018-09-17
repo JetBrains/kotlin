@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
 import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
 import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
+import org.jetbrains.kotlin.idea.migration.applicableMigrationTools
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
@@ -48,7 +49,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
         })
     }
 
-    class MigrationTestState(val migrationInfo: MigrationInfo?)
+    class MigrationTestState(val migrationInfo: MigrationInfo?, val hasApplicableTools: Boolean)
 
     @TestOnly
     fun setImportFinishListener(newListener: ((MigrationTestState?) -> Unit)?) {
@@ -61,8 +62,8 @@ class KotlinMigrationProjectComponent(val project: Project) {
         }
     }
 
-    private fun notifyFinish(migrationInfo: MigrationInfo?) {
-        importFinishListener?.invoke(MigrationTestState(migrationInfo))
+    private fun notifyFinish(migrationInfo: MigrationInfo?, hasApplicableTools: Boolean) {
+        importFinishListener?.invoke(MigrationTestState(migrationInfo, hasApplicableTools))
     }
 
     fun onImportAboutToStart() {
@@ -76,12 +77,13 @@ class KotlinMigrationProjectComponent(val project: Project) {
 
     fun onImportFinished() {
         if (!CodeMigrationToggleAction.isEnabled(project) || old == null) {
-            notifyFinish(null)
+            notifyFinish(null, false)
             return
         }
 
         ApplicationManager.getApplication().executeOnPooledThread {
             var migrationInfo: MigrationInfo? = null
+            var hasApplicableTools = false
 
             try {
                 val new = project.runReadActionInSmartMode {
@@ -93,6 +95,13 @@ class KotlinMigrationProjectComponent(val project: Project) {
                 } ?: return@executeOnPooledThread
 
                 migrationInfo = prepareMigrationInfo(localOld, new) ?: return@executeOnPooledThread
+
+                if (applicableMigrationTools(migrationInfo).isEmpty()) {
+                    hasApplicableTools = false
+                    return@executeOnPooledThread
+                } else {
+                    hasApplicableTools = true
+                }
 
                 if (ApplicationManager.getApplication().isUnitTestMode) {
                     return@executeOnPooledThread
@@ -114,7 +123,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
                     }
                 }
             } finally {
-                notifyFinish(migrationInfo)
+                notifyFinish(migrationInfo, hasApplicableTools)
             }
         }
     }
