@@ -269,11 +269,6 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/localDelegatedProperties.kt");
         }
 
-        @TestMetadata("localDelegatedPropertyWithSuspendOperators.kt")
-        public void testLocalDelegatedPropertyWithSuspendOperators() throws Exception {
-            runTest("compiler/testData/ir/irText/declarations/localDelegatedPropertyWithSuspendOperators.kt");
-        }
-
         @TestMetadata("localVarInDoWhile.kt")
         public void testLocalVarInDoWhile() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/localVarInDoWhile.kt");
