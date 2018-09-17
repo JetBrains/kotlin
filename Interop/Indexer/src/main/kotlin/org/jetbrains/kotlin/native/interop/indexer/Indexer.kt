@@ -60,7 +60,8 @@ private class ObjCProtocolImpl(
 private class ObjCClassImpl(
         name: String,
         override val location: Location,
-        override val isForwardDeclaration: Boolean
+        override val isForwardDeclaration: Boolean,
+        override val binaryName: String?
 ) : ObjCClass(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
@@ -302,12 +303,13 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
         if (isObjCInterfaceDeclForward(cursor)) {
             return objCClassRegistry.getOrPut(cursor) {
-                ObjCClassImpl(name, getLocation(cursor), isForwardDeclaration = true)
+                ObjCClassImpl(name, getLocation(cursor), isForwardDeclaration = true, binaryName = null)
             }
         }
 
         return objCClassRegistry.getOrPut(cursor, {
-            ObjCClassImpl(name, getLocation(cursor), isForwardDeclaration = false)
+            ObjCClassImpl(name, getLocation(cursor), isForwardDeclaration = false,
+                    binaryName = getObjCBinaryName(cursor).takeIf { it != name })
         }) {
             addChildrenToObjCContainer(cursor, it)
         }
@@ -334,6 +336,14 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         }) {
             addChildrenToObjCContainer(cursor, it)
         }
+    }
+
+    private fun getObjCBinaryName(cursor: CValue<CXCursor>): String {
+        val prefix = "_OBJC_CLASS_\$_"
+        val symbolName = clang_Cursor_getObjCManglings(cursor)!!.convertAndDispose()
+                .single { it.startsWith(prefix) }
+
+        return symbolName.substring(prefix.length)
     }
 
     private fun getObjCCategoryAt(cursor: CValue<CXCursor>): ObjCCategoryImpl? {

@@ -94,7 +94,7 @@ typealias ObjCBlockVar<T> = ObjCNotImplementedVar<T>
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class ExternalObjCClass(val protocolGetter: String = "")
+annotation class ExternalObjCClass(val protocolGetter: String = "", val binaryName: String = "")
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)

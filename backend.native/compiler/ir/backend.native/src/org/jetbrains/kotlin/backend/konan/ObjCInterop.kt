@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackageView
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
+import org.jetbrains.kotlin.backend.konan.descriptors.getStringValueOrNull
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.getExternalObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.isReal
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -230,3 +229,14 @@ fun inferObjCSelector(descriptor: FunctionDescriptor): String = if (descriptor.v
         }
     }
 }
+
+fun ClassDescriptor.getExternalObjCClassBinaryName(): String =
+        this.getExplicitExternalObjCClassBinaryName()
+                ?: this.name.asString()
+
+fun ClassDescriptor.getExternalObjCMetaClassBinaryName(): String =
+        this.getExplicitExternalObjCClassBinaryName()
+                ?: this.name.asString().removeSuffix("Meta")
+
+private fun ClassDescriptor.getExplicitExternalObjCClassBinaryName() =
+        this.annotations.findAnnotation(externalObjCClassFqName)!!.getStringValueOrNull("binaryName")

@@ -505,21 +505,28 @@ abstract class ObjCContainerStub(stubGenerator: StubGenerator,
         val name = stubGenerator.kotlinFile.declare(classifier)
 
         val externalObjCClassAnnotationName = "@ExternalObjCClass"
-        val externalObjCClassAnnotation: String
 
-        if (container is ObjCProtocol) {
-            protocolGetter = if (metaContainerStub != null) {
-                metaContainerStub.protocolGetter!!
-            } else {
-                val nativeBacked = object : NativeBacked {}
-                // TODO: handle the case when protocol getter stub can't be compiled.
-                genProtocolGetter(stubGenerator, nativeBacked, container)
+        val externalObjCClassAnnotation: String = when (container) {
+            is ObjCProtocol -> {
+                protocolGetter = if (metaContainerStub != null) {
+                    metaContainerStub.protocolGetter!!
+                } else {
+                    val nativeBacked = object : NativeBacked {}
+                    // TODO: handle the case when protocol getter stub can't be compiled.
+                    genProtocolGetter(stubGenerator, nativeBacked, container)
+                }
+
+                externalObjCClassAnnotationName.applyToStrings(protocolGetter)
             }
-
-            externalObjCClassAnnotation = externalObjCClassAnnotationName.applyToStrings(protocolGetter)
-        } else {
-            protocolGetter = null
-            externalObjCClassAnnotation = externalObjCClassAnnotationName
+            is ObjCClass -> {
+                protocolGetter = null
+                val binaryName = container.binaryName
+                if (binaryName != null) {
+                    externalObjCClassAnnotationName.applyToStrings("", binaryName)
+                } else {
+                    externalObjCClassAnnotationName
+                }
+            }
         }
 
         this.classHeader = "$externalObjCClassAnnotation $keywords $name : $supersString"

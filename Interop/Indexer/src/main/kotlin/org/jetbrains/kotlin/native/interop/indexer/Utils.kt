@@ -38,6 +38,14 @@ internal fun CValue<CXString>.convertAndDispose(): String {
     }
 }
 
+internal fun CPointer<CXStringSet>.convertAndDispose(): Set<String> = try {
+    (0 until this.pointed.Count).mapTo(mutableSetOf()) {
+        clang_getCString(this.pointed.Strings!![it].readValue())!!.toKString()
+    }
+} finally {
+    clang_disposeStringSet(this)
+}
+
 internal fun getCursorSpelling(cursor: CValue<CXCursor>) =
         clang_getCursorSpelling(cursor).convertAndDispose()
 

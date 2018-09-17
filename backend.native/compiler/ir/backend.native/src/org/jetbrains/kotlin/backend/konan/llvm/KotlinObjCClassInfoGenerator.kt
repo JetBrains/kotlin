@@ -31,7 +31,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
 
         val superclassName = irClass.getSuperClassNotAny()!!.let {
             context.llvm.imports.add(it.llvmSymbolOrigin)
-            it.name.asString()
+            it.descriptor.getExternalObjCClassBinaryName()
         }
         val protocolNames = irClass.getSuperInterfaces().map {
             context.llvm.imports.add(it.llvmSymbolOrigin)
