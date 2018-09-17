@@ -453,6 +453,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/testData/debugger/tinyApp/src/stepping/stepOver/inlineInObjectDex.kt");
         }
 
+        @TestMetadata("kt24343.kt")
+        public void testKt24343() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/stepOver/kt24343.kt");
+        }
+
         @TestMetadata("noParameterLambdaArgumentCallInInline.kt")
         public void testNoParameterLambdaArgumentCallInInline() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/stepOver/noParameterLambdaArgumentCallInInline.kt");
