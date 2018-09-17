@@ -1,7 +1,10 @@
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.annotations.KOTLINX_SERIALIZABLE_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.KOTLINX_SERIALIZER_FQ_NAME
 
 object SerializationPackages {
     internal val packageFqName = FqName("kotlinx.serialization")
@@ -10,8 +13,8 @@ object SerializationPackages {
 }
 
 object SerializationAnnotations {
-    internal val serializableAnnotationFqName = FqName("kotlinx.serialization.Serializable")
-    internal val serializerAnnotationFqName = FqName("kotlinx.serialization.Serializer")
+    internal val serializableAnnotationFqName = KOTLINX_SERIALIZABLE_FQ_NAME
+    internal val serializerAnnotationFqName = KOTLINX_SERIALIZER_FQ_NAME
     internal val serialNameAnnotationFqName = FqName("kotlinx.serialization.SerialName")
     internal val serialOptionalFqName = FqName("kotlinx.serialization.Optional")
     internal val serialTransientFqName = FqName("kotlinx.serialization.Transient")
