@@ -5573,9 +5573,14 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/ifStatement.kt", "kotlin.coroutines.experimental");
             }
 
-            @TestMetadata("kt22694.kt")
+            @TestMetadata("kt22694_1_2.kt")
             public void testKt22694_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/kt22694.kt", "kotlin.coroutines.experimental");
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/kt22694_1_2.kt");
+            }
+
+            @TestMetadata("kt22694_1_3.kt")
+            public void testKt22694_1_3() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/kt22694_1_3.kt");
             }
 
             @TestMetadata("labeledWhile.kt")
@@ -6349,9 +6354,14 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/handleException.kt", "kotlin.coroutines.experimental");
             }
 
-            @TestMetadata("ifExpressionInsideCoroutine.kt")
+            @TestMetadata("ifExpressionInsideCoroutine_1_2.kt")
             public void testIfExpressionInsideCoroutine_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/ifExpressionInsideCoroutine.kt", "kotlin.coroutines.experimental");
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/ifExpressionInsideCoroutine_1_2.kt");
+            }
+
+            @TestMetadata("ifExpressionInsideCoroutine_1_3.kt")
+            public void testIfExpressionInsideCoroutine_1_3() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/ifExpressionInsideCoroutine_1_3.kt");
             }
 
             @TestMetadata("inlineTwoReceivers.kt")
