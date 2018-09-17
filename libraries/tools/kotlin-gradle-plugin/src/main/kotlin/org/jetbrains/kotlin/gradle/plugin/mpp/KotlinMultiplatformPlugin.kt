@@ -126,6 +126,9 @@ class KotlinMultiplatformPlugin(
                 }
 
                 variant.publicationDelegate = variantPublication
+                (target as AbstractKotlinTarget).publicationConfigureActions.all {
+                    it.execute(variantPublication)
+                }
             }
         }
 
