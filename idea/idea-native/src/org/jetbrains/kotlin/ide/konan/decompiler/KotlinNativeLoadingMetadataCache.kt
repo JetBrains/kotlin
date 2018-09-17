@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.ide.konan.decompiler
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
-import com.intellij.openapi.vfs.*
-import com.intellij.openapi.vfs.VfsUtilCore.isEqualOrAncestor
-import com.intellij.util.containers.ContainerUtil.createConcurrentSoftValueMap
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.containers.ContainerUtil.createConcurrentWeakValueMap
 import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.konan.library.KLIB_MODULE_METADATA_FILE_NAME
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
@@ -24,47 +23,27 @@ class KotlinNativeLoadingMetadataCache : ApplicationComponent {
             ApplicationManager.getApplication().getComponent(KotlinNativeLoadingMetadataCache::class.java)
     }
 
-    private val packageFragmentCache = createConcurrentSoftValueMap<String, KonanProtoBuf.LinkDataPackageFragment>()
-    private val moduleHeaderCache = createConcurrentSoftValueMap<String, KonanProtoBuf.LinkDataLibrary>()
+    // Use special CacheKey class instead of VirtualFile for cache keys. Certain types of VirtualFiles (for example, obtained from JarFileSystem)
+    // do not compare path (url) and modification stamp in equals() method.
+    private data class CacheKey(
+        val url: String,
+        val modificationStamp: Long
+    ) {
+        constructor(virtualFile: VirtualFile) : this(virtualFile.url, virtualFile.modificationStamp)
+    }
+
+    private val packageFragmentCache = createConcurrentWeakValueMap<CacheKey, KonanProtoBuf.LinkDataPackageFragment>()
+    private val moduleHeaderCache = createConcurrentWeakValueMap<CacheKey, KonanProtoBuf.LinkDataLibrary>()
 
     fun getCachedPackageFragment(virtualFile: VirtualFile): KonanProtoBuf.LinkDataPackageFragment =
-        packageFragmentCache.computeIfAbsent(virtualFile.ensurePackageMetadataFile.url) {
+        packageFragmentCache.computeIfAbsent(CacheKey(virtualFile.ensurePackageMetadataFile)) {
             virtualFile.createPackageFragmentCacheEntry
         }
 
     fun getCachedModuleHeader(virtualFile: VirtualFile): KonanProtoBuf.LinkDataLibrary =
-        moduleHeaderCache.computeIfAbsent(virtualFile.ensureModuleHeaderFile.url) {
+        moduleHeaderCache.computeIfAbsent(CacheKey(virtualFile.ensureModuleHeaderFile)) {
             virtualFile.createModuleHeaderCacheEntry
         }
-
-    override fun initComponent() {
-        VirtualFileManager.getInstance().addVirtualFileListener(object : VirtualFileListener {
-            override fun fileCreated(event: VirtualFileEvent) = invalidateCaches(event.file)
-            override fun fileDeleted(event: VirtualFileEvent) = invalidateCaches(event.file)
-            override fun fileMoved(event: VirtualFileMoveEvent) = invalidateCaches(event.file)
-            override fun contentsChanged(event: VirtualFileEvent) = invalidateCaches(event.file)
-            override fun propertyChanged(event: VirtualFilePropertyEvent) = invalidateCaches(event.file)
-        })
-    }
-
-    private fun invalidateCaches(modifiedFile: VirtualFile) {
-        when {
-            modifiedFile.isPackageMetadataFile -> packageFragmentCache.remove(modifiedFile.url)
-            modifiedFile.isModuleHeaderFile -> moduleHeaderCache.remove(modifiedFile.url)
-            modifiedFile.isDirectory -> {
-                val ancestorUrl = modifiedFile.url
-                packageFragmentCache.removeDescendants(ancestorUrl)
-                moduleHeaderCache.removeDescendants(ancestorUrl)
-            }
-        }
-    }
-
-    private fun <V> MutableMap<String, V>.removeDescendants(ancestorUrl: String) {
-
-        // Warning: Do not try to apply ".removeIf {}" to "entries". This will have no effect to
-        // the Map produced by ContainerUtil.createConcurrentSoftValueMap().
-        keys.removeIf { descendantCandidateUrl -> isEqualOrAncestor(ancestorUrl, descendantCandidateUrl) }
-    }
 
     private val VirtualFile.createPackageFragmentCacheEntry
         get() = parsePackageFragment(contentsToByteArray(false))
