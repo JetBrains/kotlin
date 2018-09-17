@@ -608,7 +608,6 @@ open class KotlinNativeTargetConfigurator(
                 val interopOutput = project.files(outputFileProvider).builtBy(this)
                 with(compilation) {
                     project.dependencies.add(compileDependencyConfigurationName, interopOutput)
-                    output.tryAddClassesDir { interopOutput }
                 }
             }
             createCInteropKlibArtifact(interop, interopTask)
