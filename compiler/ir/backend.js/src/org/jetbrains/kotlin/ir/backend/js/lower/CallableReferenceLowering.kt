@@ -410,17 +410,44 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
     ): List<IrValueParameter> {
         val result = mutableListOf<IrValueParameter>()
 
-        if (callable.dispatchReceiverParameter != null && reference.dispatchReceiver == null) {
-            val dispatch = callable.dispatchReceiverParameter!!
-            result.add(JsIrBuilder.buildValueParameter(dispatch.name, result.size, dispatch.type).also { it.parent = closure })
+        /*
+         * class D {
+         *   fun foo(a, b, c) {} <= callable signature
+         * }
+         *
+         * val d = D()
+         * val reference = d::foo <= captures dispatch receiver
+         *
+         * is translated into
+         *
+         * function foo_get(d) { <= getter signature(d)
+         *   return function (a, b, c) { <= result signature (a, b, c)
+         *     return d.foo(a, b, c)
+         *   }
+         * }
+         */
+        var caprutedParams = getter.valueParameters.size
+
+        callable.dispatchReceiverParameter?.let { dispatch ->
+            if (reference.dispatchReceiver == null) {
+                result.add(JsIrBuilder.buildValueParameter(dispatch.name, result.size, dispatch.type).also { it.parent = closure })
+            } else {
+                // do not consider implicit receiver in result signature if it was captured
+                caprutedParams--
+            }
         }
 
-        if (callable.extensionReceiverParameter != null && reference.extensionReceiver == null) {
-            val ext = callable.extensionReceiverParameter!!
-            result.add(JsIrBuilder.buildValueParameter(ext.name, result.size, ext.type).also { it.parent = closure })
+        callable.extensionReceiverParameter?.let { ext ->
+            if (reference.extensionReceiver == null) {
+                result.add(JsIrBuilder.buildValueParameter(ext.name, result.size, ext.type).also { it.parent = closure })
+            } else {
+                // the same as for dispatch
+                caprutedParams--
+            }
         }
 
-        for (i in getter.valueParameters.size until callable.valueParameters.size) {
+        // pass through value parameters
+        for (i in caprutedParams until callable.valueParameters.size) {
             val param = callable.valueParameters[i]
             val paramName = param.name.run { if (!isSpecial) identifier else "p$i" }
             result += JsIrBuilder.buildValueParameter(paramName, result.size, param.type).also { it.parent = closure }
