@@ -2,9 +2,9 @@
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
+// LANGUAGE_VERSION: 1.2
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.experimental.*
 
 enum class Foo(vararg expected: String) {
     A("start", "A", "end"),
@@ -29,7 +29,7 @@ fun box(): String {
 }
 
 fun getSequence(a: Foo) =
-    sequence {
+    buildSequence {
         yield("start")
         when (a) {
             Foo.A -> {
