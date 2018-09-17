@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ConfigurationContainer
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -22,6 +19,7 @@ import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
@@ -33,14 +31,11 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.util.*
@@ -525,21 +520,38 @@ open class KotlinNativeTargetConfigurator(
         compilation: KotlinNativeCompilation,
         artifactFile: File,
         classifier: String?,
-        producingTask: Task
+        producingTask: Task,
+        copy: Boolean = false
     ) {
         if (!compilation.target.konanTarget.enabledOnCurrentHost) {
             return
         }
 
         val apiElements = configurations.getByName(compilation.target.apiElementsConfigurationName)
+
+        val realProducingTask: Task
+        // TODO: Someone remove this HACK PLEASE!
+        val realArtifactFile = if (copy) {
+            realProducingTask = project.tasks.create("copy${producingTask.name.capitalize()}", Copy::class.java) {
+                val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
+                it.destinationDir = project.buildDir.resolve("libs/$targetSubDirectory${compilation.name}")
+                it.from(artifactFile)
+                it.dependsOn(producingTask)
+            }
+            realProducingTask.destinationDir.resolve(artifactFile.name)
+        } else {
+            realProducingTask = producingTask
+            artifactFile
+        }
+
         val klibArtifact = DefaultPublishArtifact(
             compilation.name,
             "klib",
             "klib",
             classifier,
             Date(),
-            artifactFile,
-            producingTask
+            realArtifactFile,
+            realProducingTask
         )
         project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
 
@@ -557,7 +569,7 @@ open class KotlinNativeTargetConfigurator(
     private fun Project.createCInteropKlibArtifact(
         interop: DefaultCInteropSettings,
         interopTask: CInteropProcess
-    ) = createKlibArtifact(interop.compilation, interopTask.outputFile, "cinterop-${interop.name}", interopTask)
+    ) = createKlibArtifact(interop.compilation, interopTask.outputFile, "cinterop-${interop.name}", interopTask, copy = true)
 
 
     private fun Project.createKlibCompilationTask(compilation: KotlinNativeCompilation) {
@@ -608,6 +620,7 @@ open class KotlinNativeTargetConfigurator(
                 val interopOutput = project.files(outputFileProvider).builtBy(this)
                 with(compilation) {
                     project.dependencies.add(compileDependencyConfigurationName, interopOutput)
+                    project.dependencies.add(target.apiElementsConfigurationName, interopOutput)
                 }
             }
             createCInteropKlibArtifact(interop, interopTask)
