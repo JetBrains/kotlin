@@ -96,13 +96,13 @@ open class KotlinNativeCompile : AbstractCompile() {
     lateinit var outputKind: CompilerOutputKind
 
     // Inputs and outputs
+    @InputFiles
+    @SkipWhenEmpty
+    override fun getSource(): FileTree = project.files(compilation.allSources).asFileTree
 
-    override fun getSource(): FileTree = sources.asFileTree
-
-    val sources: FileCollection
-        @InputFiles
-        @SkipWhenEmpty
-        get() = compilation.allSources
+    private val commonSources: FileCollection
+        // Already taken into account in getSources method.
+        get() = project.files(compilation.commonSources).asFileTree
 
     val libraries: FileCollection
         @InputFiles get() = compilation.compileDependencyFiles
@@ -190,7 +190,7 @@ open class KotlinNativeCompile : AbstractCompile() {
             // Language features.
             addArgIfNotNull("-language-version", languageVersion)
             addArgIfNotNull("-api-version", apiVersion)
-            addKey("-Xprogressive", progressiveMode)
+            addKey("-progressive", progressiveMode)
             enabledLanguageFeatures.forEach { featureName ->
                 add("-XXLanguage:+$featureName")
             }
@@ -221,11 +221,11 @@ open class KotlinNativeCompile : AbstractCompile() {
                 addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
             }
 
-            addListArg("-linkerOpts", linkerOpts)
+            addListArg("-linker-options", linkerOpts)
 
             // Sources.
-            // TODO: Filter only kt files?
-            addAll(sources.files.map { it.absolutePath })
+            addAll(getSource().map { it.absolutePath })
+            add("-Xcommon-sources=${commonSources.map { it.absolutePath }.joinToString(separator = ",")}")
         }
 
         KonanCompilerRunner(project).run(args)

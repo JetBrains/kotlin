@@ -477,21 +477,31 @@ class NewMultiplatformIT : BaseGradleIT() {
             """.trimIndent()
         )
 
-        build("compileKotlinJvmWithoutJava") {
+        build("compileKotlinJvmWithoutJava", "compileKotlin${nativeHostTargetName.capitalize()}") {
             assertSuccessful()
             assertFileExists(targetClassesDir("jvmWithoutJava") + "OptionalCommonUsage.class")
         }
 
-        projectDir.resolve("src/jvmWithoutJavaMain/kotlin/OptionalImpl.kt").writeText(
-            "\n" + """
+        val optionalImplText = "\n" + """
             @Optional("should fail, see KT-25196")
             class OptionalPlatformUsage
-            """.trimIndent()
-        )
+        """.trimIndent()
+
+        projectDir.resolve("src/jvmWithoutJavaMain/kotlin/OptionalImpl.kt").writeText(optionalImplText)
 
         build("compileKotlinJvmWithoutJava") {
             assertFailed()
-            assertContains("Declaration annotated with '@OptionalExpectation' can only be used in common module sources")
+            assertContains("Declaration annotated with '@OptionalExpectation' can only be used in common module sources", ignoreCase = true)
+        }
+
+        projectDir.resolve("src/${nativeHostTargetName}Main/kotlin/").also {
+            it.mkdirs()
+            it.resolve("OptionalImpl.kt").writeText(optionalImplText)
+        }
+
+        build("compileKotlin${nativeHostTargetName.capitalize()}") {
+            assertFailed()
+            assertContains("Declaration annotated with '@OptionalExpectation' can only be used in common module sources", ignoreCase = true)
         }
     }
 
@@ -620,7 +630,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testNativeCompilerDownloading() {
         // The plugin shouldn't download the K/N compiler if there is no corresponding targets in the project.
-        with(Project("new-mpp-lib-with-tests", gradleVersion)) {
+        with(Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")) {
             build("tasks") {
                 assertSuccessful()
                 assertFalse(output.contains("Kotlin/Native distribution: "))
