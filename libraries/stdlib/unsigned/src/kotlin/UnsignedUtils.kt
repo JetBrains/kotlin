@@ -2,19 +2,22 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
-
+@file:kotlin.jvm.JvmName("UnsignedKt")
 @file:UseExperimental(ExperimentalUnsignedTypes::class)
 package kotlin
 
 internal fun uintCompare(v1: Int, v2: Int): Int = (v1 xor Int.MIN_VALUE).compareTo(v2 xor Int.MIN_VALUE)
 internal fun ulongCompare(v1: Long, v2: Long): Int = (v1 xor Long.MIN_VALUE).compareTo(v2 xor Long.MIN_VALUE)
 
+@PublishedApi
 internal fun uintDivide(v1: UInt, v2: UInt): UInt = (v1.toLong() / v2.toLong()).toUInt()
+@PublishedApi
 internal fun uintRemainder(v1: UInt, v2: UInt): UInt = (v1.toLong() % v2.toLong()).toUInt()
 
 // Division and remainder are based on Guava's UnsignedLongs implementation
 // Copyright 2011 The Guava Authors
 
+@PublishedApi
 internal fun ulongDivide(v1: ULong, v2: ULong): ULong {
     val dividend = v1.toLong()
     val divisor = v2.toLong()
@@ -34,6 +37,7 @@ internal fun ulongDivide(v1: ULong, v2: ULong): ULong {
 
 }
 
+@PublishedApi
 internal fun ulongRemainder(v1: ULong, v2: ULong): ULong {
     val dividend = v1.toLong()
     val divisor = v2.toLong()
