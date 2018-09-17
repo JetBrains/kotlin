@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.ir.util.defaultType
 
 internal object EscapeAnalysis {
 
@@ -283,7 +282,7 @@ internal object EscapeAnalysis {
             }
 
             for (functionSymbol in callGraph.directEdges.keys) {
-                val numberOfParameters = functionSymbol.parameterTypes.size
+                val numberOfParameters = functionSymbol.parameters.size
                 escapeAnalysisResults[functionSymbol] = FunctionEscapeAnalysisResult(
                         // Assume no edges at the beginning.
                         // Then iteratively add needed.
@@ -396,7 +395,7 @@ internal object EscapeAnalysis {
         }
 
         private fun getConservativeFunctionEAResult(symbol: DataFlowIR.FunctionSymbol): FunctionEscapeAnalysisResult {
-            val numberOfParameters = symbol.parameterTypes.size
+            val numberOfParameters = symbol.parameters.size
             return FunctionEscapeAnalysisResult((0..numberOfParameters).map {
                 ParameterEscapeAnalysisResult(
                         escapes  = true,
@@ -425,7 +424,7 @@ internal object EscapeAnalysis {
 
                 FunctionEscapeAnalysisResult.fromBits(
                         callee.escapes ?: 0,
-                        (0..callee.parameterTypes.size).map { callee.pointsTo?.elementAtOrNull(it) ?: 0 }
+                        (0..callee.parameters.size).map { callee.pointsTo?.elementAtOrNull(it) ?: 0 }
                 )
             }
 

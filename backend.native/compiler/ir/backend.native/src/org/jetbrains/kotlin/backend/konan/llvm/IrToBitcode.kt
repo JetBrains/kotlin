@@ -845,6 +845,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrSuspendableExpression ->
                                         return evaluateSuspendableExpression  (value)
             is IrSuspensionPoint     -> return evaluateSuspensionPoint        (value)
+            is IrPrivateFunctionCall -> return evaluatePrivateFunctionCall    (value)
             is IrPrivateClassReference ->
                                         return evaluatePrivateClassReference  (value)
             else                     -> {
@@ -2092,9 +2093,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return evaluateIntrinsicCall(callee, argsWithContinuationIfNeeded)
         }
 
-        if (callee is IrPrivateFunctionCall)
-            return evaluatePrivateFunctionCall(callee, argsWithContinuationIfNeeded, callee.virtualCallee?.let { resultLifetime(it) } ?: resultLifetime)
-
         when {
             descriptor.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
                 return evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
@@ -2108,7 +2106,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluatePrivateFunctionCall(callee: IrPrivateFunctionCall, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef {
+    private fun evaluatePrivateFunctionCall(callee: IrPrivateFunctionCall): LLVMValueRef {
+        val args = (0 until callee.valueArgumentsCount).map { index ->
+            callee.getValueArgument(index)?.let { evaluateExpression(it) }
+                    ?: run {
+                        assert(index == callee.valueArgumentsCount - 1) { "Only last argument may be null - for suspend functions" }
+                        getContinuation()
+                    }
+        }
         val dfgSymbol = callee.dfgSymbol
         val functionIndex = callee.functionIndex
         val function = if (callee.moduleDescriptor == context.irModule!!.descriptor) {
@@ -2121,7 +2126,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             )
         }
-        return call(callee.symbol.owner, function, args, resultLifetime)
+        return call(dfgSymbol, function, args, resultLifetime = Lifetime.GLOBAL)
     }
 
     //-------------------------------------------------------------------------//
@@ -2557,6 +2562,25 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                      resultLifetime: Lifetime): LLVMValueRef {
         val result = call(function, args, resultLifetime)
         if (descriptor.returnType.isNothing()) {
+            functionGenerationContext.unreachable()
+        }
+
+        if (LLVMGetReturnType(getFunctionType(function)) == voidType) {
+            return codegen.theUnitInstanceRef.llvm
+        }
+
+        return result
+    }
+
+
+    // TODO: it seems to be much more reliable to get args as a mapping from parameter descriptor to LLVM value,
+    // instead of a plain list.
+    // In such case it would be possible to check that all args are available and in the correct order.
+    // However, it currently requires some refactoring to be performed.
+    private fun call(symbol: DataFlowIR.FunctionSymbol, function: LLVMValueRef, args: List<LLVMValueRef>,
+                     resultLifetime: Lifetime): LLVMValueRef {
+        val result = call(function, args, resultLifetime)
+        if (symbol.returnsNothing) {
             functionGenerationContext.unreachable()
         }
 

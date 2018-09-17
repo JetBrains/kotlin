@@ -127,7 +127,12 @@ class IrFileImpl(entry: SourceManager.FileEntry) : IrFile {
 
 //-----------------------------------------------------------------------------//
 
-internal interface IrPrivateFunctionCall : IrCall {
+internal interface IrPrivateFunctionCall : IrExpression {
+    val valueArgumentsCount: Int
+    fun getValueArgument(index: Int): IrExpression?
+    fun putValueArgument(index: Int, valueArgument: IrExpression?)
+    fun removeValueArgument(index: Int)
+
     val virtualCallee: IrCall?
     val dfgSymbol: DataFlowIR.FunctionSymbol.Declared
     val moduleDescriptor: ModuleDescriptor
@@ -138,31 +143,47 @@ internal interface IrPrivateFunctionCall : IrCall {
 internal class IrPrivateFunctionCallImpl(startOffset: Int,
                                          endOffset: Int,
                                          type: IrType,
-                                         override val symbol: IrFunctionSymbol,
-                                         override val descriptor: FunctionDescriptor,
+                                         override val valueArgumentsCount: Int,
                                          override val virtualCallee: IrCall?,
-                                         typeArgumentsCount: Int,
                                          override val dfgSymbol: DataFlowIR.FunctionSymbol.Declared,
                                          override val moduleDescriptor: ModuleDescriptor,
                                          override val totalFunctions: Int,
                                          override val functionIndex: Int
-) : IrPrivateFunctionCall, IrCallWithIndexedArgumentsBase(
-        startOffset,
-        endOffset,
-        type,
-        typeArgumentsCount = typeArgumentsCount,
-        valueArgumentsCount = symbol.descriptor.valueParameters.size
-) {
+) : IrPrivateFunctionCall, IrExpressionBase(startOffset, endOffset, type) {
 
-    override val superQualifierSymbol: IrClassSymbol?
-        get() = null
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        return visitor.visitExpression(this, data)
+    }
 
-    override val superQualifier: ClassDescriptor?
-        get() = null
+    private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitCall(this, data)
+    override fun getValueArgument(index: Int): IrExpression? {
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
+        }
+        return argumentsByParameterIndex[index]
+    }
 
+    override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
+        }
+        argumentsByParameterIndex[index] = valueArgument
+    }
+
+    override fun removeValueArgument(index: Int) {
+        argumentsByParameterIndex[index] = null
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        argumentsByParameterIndex.forEachIndexed { i, irExpression ->
+            argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
+        }
+    }
 }
 
 internal interface IrPrivateClassReference : IrClassReference {

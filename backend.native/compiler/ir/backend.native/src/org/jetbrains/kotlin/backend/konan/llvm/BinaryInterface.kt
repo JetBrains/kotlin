@@ -258,8 +258,8 @@ internal fun RuntimeAware.getLlvmFunctionType(function: FunctionDescriptor): LLV
 }
 
 internal fun RuntimeAware.getLlvmFunctionType(symbol: DataFlowIR.FunctionSymbol): LLVMTypeRef {
-    val returnType = if (symbol.returnsUnit) voidType else getLLVMType(symbol.returnType)
-    val paramTypes = ArrayList(symbol.parameterTypes.map { getLLVMType(it) })
+    val returnType = if (symbol.returnsUnit) voidType else getLLVMType(symbol.returnParameter.type)
+    val paramTypes = ArrayList(symbol.parameters.map { getLLVMType(it.type) })
     if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
 
     return functionType(returnType, isVarArg = false, paramTypes = *paramTypes.toTypedArray())

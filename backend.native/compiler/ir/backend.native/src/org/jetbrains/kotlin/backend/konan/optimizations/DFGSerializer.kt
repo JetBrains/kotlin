@@ -300,13 +300,26 @@ internal object DFGSerializer {
         }
     }
 
-    class FunctionSymbolBase(val parameterTypes: IntArray, val returnType: Int, val attributes: Int, val escapes: Int?, val pointsTo: IntArray?) {
+    class FunctionParameter(val type: Int, val boxFunction: Int?, val unboxFunction: Int?) {
 
-        constructor(data: ArraySlice) : this(data.readIntArray(), data.readInt(), data.readInt(), data.readNullableInt(), data.readNullable { readIntArray() })
+        constructor(data: ArraySlice) : this(data.readInt(), data.readNullableInt(), data.readNullableInt())
 
         fun write(result: ArraySlice) {
-            result.writeIntArray(parameterTypes)
-            result.writeInt(returnType)
+            result.writeInt(type)
+            result.writeNullableInt(boxFunction)
+            result.writeNullableInt(unboxFunction)
+        }
+    }
+
+    class FunctionSymbolBase(val parameters: Array<FunctionParameter>, val returnParameter: FunctionParameter,
+                             val attributes: Int, val escapes: Int?, val pointsTo: IntArray?) {
+
+        constructor(data: ArraySlice) : this(data.readArray { FunctionParameter(data) }, FunctionParameter(data), data.readInt(),
+                data.readNullableInt(), data.readNullable { readIntArray() })
+
+        fun write(result: ArraySlice) {
+            result.writeArray(parameters) { it.write(this) }
+            returnParameter.write(result)
             result.writeInt(attributes)
             result.writeNullableInt(escapes)
             result.writeNullable(pointsTo) { writeIntArray(it) }
@@ -814,10 +827,14 @@ internal object DFGSerializer {
                 .sortedBy { it.value }
                 .map {
 
+                    fun buildFunctionParameter(parameter: DataFlowIR.FunctionParameter) =
+                            FunctionParameter(typeMap[parameter.type]!!, parameter.boxFunction?.let { functionSymbolMap[it]!! },
+                                    parameter.unboxFunction?.let { functionSymbolMap[it]!! })
+
                     fun buildFunctionSymbolBase(symbol: DataFlowIR.FunctionSymbol) =
                             FunctionSymbolBase(
-                                    symbol.parameterTypes.map { typeMap[it]!! }.toIntArray(),
-                                    typeMap[symbol.returnType]!!,
+                                    symbol.parameters.map { buildFunctionParameter(it) }.toTypedArray(),
+                                    buildFunctionParameter(symbol.returnParameter),
                                     symbol.attributes,
                                     symbol.escapes,
                                     symbol.pointsTo
@@ -1016,8 +1033,6 @@ internal object DFGSerializer {
                                     module, symbolTableIndex, attributes, null, private.name)
                         }
                     }.apply {
-                        parameterTypes = it.base.parameterTypes.map { types[it] }.toTypedArray()
-                        returnType = types[it.base.returnType]
                         escapes = it.base.escapes
                         pointsTo = it.base.pointsTo
                     }
@@ -1043,9 +1058,15 @@ internal object DFGSerializer {
                     }
                 }
 
+                fun buildFunctionParameter(parameter: FunctionParameter) =
+                        DataFlowIR.FunctionParameter(types[parameter.type], parameter.boxFunction?.let { functionSymbols[it] },
+                                parameter.unboxFunction?.let { functionSymbols[it] })
+
                 symbolTable.functionSymbols.forEachIndexed { index, symbol ->
-                    val deserializedSymbol = functionSymbols[index] as? DataFlowIR.FunctionSymbol.Declared
-                            ?: return@forEachIndexed
+                    val deserializedSymbol = functionSymbols[index]
+                    deserializedSymbol.parameters = symbol.base.parameters.map { buildFunctionParameter(it) }.toTypedArray()
+                    deserializedSymbol.returnParameter = buildFunctionParameter(symbol.base.returnParameter)
+                    deserializedSymbol as? DataFlowIR.FunctionSymbol.Declared ?: return@forEachIndexed
                     val bridgeTarget = if (deserializedSymbol is DataFlowIR.FunctionSymbol.Public)
                                            symbol.public!!.bridgeTarget
                                        else
