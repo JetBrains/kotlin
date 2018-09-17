@@ -49,10 +49,11 @@ fun compile(
     files: List<KtFile>,
     configuration: CompilerConfiguration,
     export: FqName? = null,
-    dependencies: List<Result> = listOf()
+    dependencies: List<ModuleDescriptor> = listOf(),
+    irDependencyModules: List<IrModuleFragment> = listOf()
 ): Result {
     val analysisResult =
-        TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, dependencies.mapNotNull { it.moduleDescriptor as? ModuleDescriptorImpl }, emptyList())
+        TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, dependencies.mapNotNull { it as? ModuleDescriptorImpl }, emptyList())
 
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -60,8 +61,6 @@ fun compile(
 
     val psi2IrTranslator = Psi2IrTranslator(configuration.languageVersionSettings)
     val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext)
-
-    val irDependencyModules = dependencies.map { it.moduleFragment.deepCopyWithSymbols() }
 
     irDependencyModules.forEach { psi2IrContext.symbolTable.loadModule(it)}
 

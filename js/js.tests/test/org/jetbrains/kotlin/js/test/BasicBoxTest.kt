@@ -94,7 +94,7 @@ abstract class BasicBoxTest(
         doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
     }
 
-    fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
+    open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
         var fileContent = KotlinTestUtils.doLoadFile(file)

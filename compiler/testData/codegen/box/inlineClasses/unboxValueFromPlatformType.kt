@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR, JS_IR, NATIVE
+// IGNORE_BACKEND: JVM_IR, NATIVE
 
 inline class SnekDirection(val direction: Int) {
     companion object {

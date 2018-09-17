@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.Result
 import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -116,6 +117,13 @@ abstract class BasicIrBoxTest(
 
     override var skipMinification = true
 
+    private val compilationCache = mutableMapOf<String, Result>()
+
+    override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
+        compilationCache.clear()
+        super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
+    }
+
     override fun translateFiles(
         units: List<TranslationUnit>,
         outputFile: File,
@@ -153,12 +161,19 @@ abstract class BasicIrBoxTest(
             runtimeFile.write(runtimeResult!!.generatedCode)
         }
 
+        val dependencyPaths = config.configuration[JSConfigurationKeys.LIBRARIES]!!
+        val dependencies = listOf(runtimeResult!!.moduleDescriptor) + dependencyPaths.mapNotNull { compilationCache[it]?.moduleDescriptor }
+        val irDependencies = listOf(runtimeResult!!.moduleFragment) + compilationCache.values.map { it.moduleFragment }
+
         val result = compile(
             config.project,
             filesToCompile,
             config.configuration,
             FqName((testPackage?.let { "$it." } ?: "") + testFunction),
-            listOf(runtimeResult!!))
+            dependencies,
+            irDependencies)
+
+        compilationCache[outputFile.absolutePath.let { it.substring(0, it.length - 2)} + "meta.js"] = result
 
         outputFile.write(result.generatedCode)
     }

@@ -4,7 +4,6 @@
 // PROPERTY_WRITE_COUNT: name=local$o count=2
 
 // Unmute when JS_IR supports release coroutines
-// IGNORE_BACKEND: JS_IR
 
 import kotlin.coroutines.*
 

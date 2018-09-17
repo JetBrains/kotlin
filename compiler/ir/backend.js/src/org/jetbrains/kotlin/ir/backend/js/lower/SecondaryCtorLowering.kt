@@ -37,21 +37,30 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
 
     fun getConstructorProcessorLowering() = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-            irDeclarationContainer.declarations.transformFlat {
-                if (it is IrClass) {
-                    listOf(it) + lowerClass(it)
-                } else null
-            }
+            irDeclarationContainer.declarations.filterIsInstance<IrClass>().forEach { lowerClass(it) }
         }
     }::runOnFilePostfix
 
     fun getConstructorRedirectorLowering() = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
+            if (irDeclarationContainer is IrClass) {
+                updateConstructorDeclarations(irDeclarationContainer)
+            }
             for (it in irDeclarationContainer.declarations) {
                 it.accept(CallsiteRedirectionTransformer(), null)
             }
         }
     }::runOnFilePostfix
+
+    private fun updateConstructorDeclarations(irClass: IrClass) {
+        irClass.declarations.transformFlat {
+            if (it is IrConstructor) {
+                oldCtorToNewMap[it.symbol]?.let { (newInit, newCreate) ->
+                    listOf(newInit.owner, newCreate.owner)
+                }
+            } else null
+        }
+    }
 
     private fun lowerClass(irClass: IrClass): List<IrSimpleFunction> {
         val className = irClass.name.asString()
@@ -90,8 +99,6 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
                 newConstructors += newCreateConstructor
             }
         }
-
-        irClass.declarations.removeAll(oldConstructors)
 
         return newConstructors
     }
