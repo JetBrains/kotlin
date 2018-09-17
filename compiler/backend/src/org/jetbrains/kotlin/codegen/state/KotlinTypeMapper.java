@@ -509,31 +509,35 @@ public class KotlinTypeMapper {
         );
     }
 
+    // Make sure this method is called only from back-end
+    // It uses staticTypeMappingConfiguration that throws exception on error types
     @NotNull
     public static Type mapInlineClassTypeAsDeclaration(@NotNull KotlinType kotlinType) {
-        return mapInlineClassType(kotlinType, TypeMappingMode.CLASS_DECLARATION);
+        return mapInlineClassType(kotlinType, TypeMappingMode.CLASS_DECLARATION, staticTypeMappingConfiguration);
     }
 
+    // Make sure this method is called only from back-end
+    // It uses staticTypeMappingConfiguration that throws exception on error types
     @NotNull
     public static Type mapUnderlyingTypeOfInlineClassType(@NotNull KotlinType kotlinType) {
         KotlinType underlyingType = InlineClassesUtilsKt.unsubstitutedUnderlyingType(kotlinType);
         if (underlyingType == null) {
             throw new IllegalStateException("There should be underlying type for inline class type: " + kotlinType);
         }
-        return mapInlineClassType(underlyingType, TypeMappingMode.DEFAULT);
+        return mapInlineClassType(underlyingType, TypeMappingMode.DEFAULT, staticTypeMappingConfiguration);
     }
 
-    @NotNull
-    public static Type mapInlineClassType(@NotNull KotlinType kotlinType) {
-        return mapInlineClassType(kotlinType, TypeMappingMode.DEFAULT);
+    private Type mapInlineClassType(@NotNull KotlinType kotlinType) {
+        return mapInlineClassType(kotlinType, TypeMappingMode.DEFAULT, typeMappingConfiguration);
     }
 
     private static Type mapInlineClassType(
             @NotNull KotlinType kotlinType,
-            @NotNull TypeMappingMode mode
+            @NotNull TypeMappingMode mode,
+            @NotNull TypeMappingConfiguration<Type> configuration
     ) {
         return TypeSignatureMappingKt.mapType(
-                kotlinType, AsmTypeFactory.INSTANCE, mode, staticTypeMappingConfiguration, null,
+                kotlinType, AsmTypeFactory.INSTANCE, mode, configuration, null,
                 (ktType, asmType, typeMappingMode) -> Unit.INSTANCE,
                 false
         );
@@ -1400,7 +1404,7 @@ public class KotlinTypeMapper {
      * In that case the generated method's return type should be boxed: otherwise it's not possible to use
      * this class from Java since javac issues errors when loading the class (incompatible return types)
      */
-    private static boolean forceBoxedReturnType(@NotNull FunctionDescriptor descriptor) {
+    private boolean forceBoxedReturnType(@NotNull FunctionDescriptor descriptor) {
         if (isBoxMethodForInlineClass(descriptor)) return true;
 
         //noinspection ConstantConditions
@@ -1414,7 +1418,7 @@ public class KotlinTypeMapper {
         return false;
     }
 
-    private static boolean isJvmPrimitive(@NotNull KotlinType kotlinType) {
+    private boolean isJvmPrimitive(@NotNull KotlinType kotlinType) {
         if (KotlinBuiltIns.isPrimitiveType(kotlinType)) return true;
 
         if (InlineClassesUtilsKt.isInlineClassType(kotlinType) && !KotlinTypeKt.isError(kotlinType)) {
