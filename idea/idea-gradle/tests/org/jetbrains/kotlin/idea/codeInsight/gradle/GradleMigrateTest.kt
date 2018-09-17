@@ -9,21 +9,26 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
+import com.intellij.util.concurrency.FutureResult
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent
+import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent.MigrationTestState
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
+import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test
+import java.lang.IllegalStateException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class GradleMigrateTest : GradleImportingTestCase() {
     @Test
+    @TargetVersions("4.4+")
     fun testMigrateStdlib() {
-        createProjectSubFile("settings.gradle", "include ':app'")
-        val gradleFile = createProjectSubFile(
-            "app/build.gradle",
-            """
+        val migrateComponentState = doMigrationTest(
+            beforeText = """
             buildscript {
                 repositories {
                     jcenter()
@@ -39,8 +44,37 @@ class GradleMigrateTest : GradleImportingTestCase() {
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
             }
-            """.trimIndent()
+            """,
+
+            afterText =
+            """
+            buildscript {
+                repositories {
+                    jcenter()
+                    mavenCentral()
+                }
+                dependencies {
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0"
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.0"
+            }
+            """
         )
+
+        Assert.assertEquals(
+            MigrationInfo.create("1.1.0", ApiVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_2, newStdlibVersion = "1.2.0"),
+            migrateComponentState?.migrationInfo
+        )
+    }
+
+    private fun doMigrationTest(beforeText: String, afterText: String): MigrationTestState? {
+        createProjectSubFile("settings.gradle", "include ':app'")
+        val gradleFile = createProjectSubFile("app/build.gradle", beforeText.trimIndent())
 
         importProject()
 
@@ -51,34 +85,25 @@ class GradleMigrateTest : GradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                document.setText(
-                    """
-                    buildscript {
-                        repositories {
-                            jcenter()
-                            mavenCentral()
-                        }
-                        dependencies {
-                            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0"
-                        }
-                    }
-
-                    apply plugin: 'kotlin'
-
-                    dependencies {
-                        compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.0"
-                    }
-                    """.trimIndent()
-                )
+                document.setText(afterText.trimIndent())
             }
+        }
+
+        val importResult = FutureResult<MigrationTestState?>()
+        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstance(myProject)
+
+        migrationProjectComponent.setImportFinishListener { migrationState ->
+            importResult.set(migrationState)
         }
 
         importProject()
 
-        val actualMigrationInfo = KotlinMigrationProjectComponent.getInstance(myProject).requestLastMigrationInfo()
-
-        Assert.assertEquals(
-            MigrationInfo.create("1.1.0", ApiVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_2, newStdlibVersion = "1.2.0"),
-            actualMigrationInfo)
+        return try {
+            importResult.get(5, TimeUnit.SECONDS)
+        } catch (te: TimeoutException) {
+            throw IllegalStateException("No reply with result from migration component")
+        } finally {
+            migrationProjectComponent.setImportFinishListener(null)
+        }
     }
 }

@@ -31,13 +31,15 @@ import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
 import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.idea.versions.LibInfo
 
 class KotlinMigrationProjectComponent(val project: Project) {
+    @Volatile
     private var old: MigrationState? = null
-    private var new: MigrationState? = null
 
-    private var lastMigrationInfo: MigrationInfo? = null
+    @Volatile
+    private var importFinishListener: ((MigrationTestState?) -> Unit)? = null
 
     init {
         val connection = project.messageBus.connect()
@@ -46,59 +48,73 @@ class KotlinMigrationProjectComponent(val project: Project) {
         })
     }
 
-    @Synchronized
+    class MigrationTestState(val migrationInfo: MigrationInfo?)
+
     @TestOnly
-    fun requestLastMigrationInfo(): MigrationInfo? {
-        val temp = lastMigrationInfo
-        lastMigrationInfo = null
-        return temp
+    fun setImportFinishListener(newListener: ((MigrationTestState?) -> Unit)?) {
+        synchronized(this) {
+            if (newListener != null && importFinishListener != null) {
+                importFinishListener!!.invoke(null)
+            }
+
+            importFinishListener = newListener
+        }
     }
 
-    @Synchronized
+    private fun notifyFinish(migrationInfo: MigrationInfo?) {
+        importFinishListener?.invoke(MigrationTestState(migrationInfo))
+    }
+
     fun onImportAboutToStart() {
         if (!CodeMigrationToggleAction.isEnabled(project) || !hasChangesInProjectFiles(project)) {
             old = null
             return
         }
 
-        lastMigrationInfo = null
-
         old = MigrationState.build(project)
     }
 
-    @Synchronized
     fun onImportFinished() {
-        if (!CodeMigrationToggleAction.isEnabled(project)) {
+        if (!CodeMigrationToggleAction.isEnabled(project) || old == null) {
+            notifyFinish(null)
             return
         }
 
-        if (old == null) return;
+        ApplicationManager.getApplication().executeOnPooledThread {
+            var migrationInfo: MigrationInfo? = null
 
-        new = MigrationState.build(project)
-
-        val migrationInfo = prepareMigrationInfo(old, new) ?: return
-
-        old = null
-        new = null
-
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            lastMigrationInfo = migrationInfo
-            return
-        }
-
-        ApplicationManager.getApplication().invokeLater {
-            val migrationNotificationDialog = MigrationNotificationDialog(project, migrationInfo)
-            migrationNotificationDialog.show()
-
-            if (migrationNotificationDialog.isOK) {
-                val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
-
-                val dataContext = getDataContextFromDialog(migrationNotificationDialog)
-                if (dataContext != null) {
-                    val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
-
-                    action.actionPerformed(actionEvent)
+            try {
+                val new = project.runReadActionInSmartMode {
+                    MigrationState.build(project)
                 }
+
+                val localOld = old.also {
+                    old = null
+                } ?: return@executeOnPooledThread
+
+                migrationInfo = prepareMigrationInfo(localOld, new) ?: return@executeOnPooledThread
+
+                if (ApplicationManager.getApplication().isUnitTestMode) {
+                    return@executeOnPooledThread
+                }
+
+                ApplicationManager.getApplication().invokeLater {
+                    val migrationNotificationDialog = MigrationNotificationDialog(project, migrationInfo)
+                    migrationNotificationDialog.show()
+
+                    if (migrationNotificationDialog.isOK) {
+                        val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
+
+                        val dataContext = getDataContextFromDialog(migrationNotificationDialog)
+                        if (dataContext != null) {
+                            val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
+
+                            action.actionPerformed(actionEvent)
+                        }
+                    }
+                }
+            } finally {
+                notifyFinish(migrationInfo)
             }
         }
     }
