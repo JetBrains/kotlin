@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.codegen.coroutines
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.diagnostics.Errors.SUSPENSION_POINT_INSIDE_MONITOR
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
 
 class GlobalCoroutinesContext(private val diagnostics: DiagnosticSink) {
     private var monitorsDepth = 0
