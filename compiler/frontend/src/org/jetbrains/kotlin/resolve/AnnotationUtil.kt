@@ -42,3 +42,6 @@ fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>?
     DeprecationLevel.ERROR
 )
 val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
+
+val KOTLINX_SERIALIZABLE_FQ_NAME = FqName("kotlinx.serialization.Serializable")
+val KOTLINX_SERIALIZER_FQ_NAME = FqName("kotlinx.serialization.Serializer")

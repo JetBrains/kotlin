@@ -52,6 +52,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.annotations.KOTLINX_SERIALIZABLE_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.KOTLINX_SERIALIZER_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
@@ -158,7 +160,10 @@ internal object IDELightClassContexts {
             listOf(classOrObject.containingKtFile)
         )
 
-        ForceResolveUtil.forceResolveAllContents(resolveSession.resolveToDescriptor(classOrObject))
+        val descriptor = resolveSession.resolveToDescriptor(classOrObject) as? ClassDescriptor ?: return null
+        if (!isDummyResolveApplicableByDescriptor(descriptor)) return null
+
+        ForceResolveUtil.forceResolveAllContents(descriptor)
 
         return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, classOrObject.languageVersionSettings, LIGHT)
     }
@@ -183,8 +188,29 @@ internal object IDELightClassContexts {
 
         if (hasMembersOverridingInternalMembers(classOrObject)) return false
 
+        if (hasSerializationLikeAnnotations(classOrObject)) return false
+
         return classOrObject.declarations.filterIsInstance<KtClassOrObject>().all { isDummyResolveApplicable(it) }
     }
+
+    private fun hasSerializationLikeAnnotations(classOrObject: KtClassOrObject) =
+        classOrObject.annotationEntries.any { isSerializableOrSerializerShortName(it.shortName) }
+
+    private fun isDummyResolveApplicableByDescriptor(classDescriptor: ClassDescriptor): Boolean {
+        if (classDescriptor.annotations.any { isSerializableOrSerializerFqName(it.fqName) }) return false
+
+        return classDescriptor
+            .unsubstitutedInnerClassesScope
+            .getContributedDescriptors()
+            .filterIsInstance<ClassDescriptor>()
+            .all(::isDummyResolveApplicableByDescriptor)
+    }
+
+    private fun isSerializableOrSerializerShortName(shortName: Name?) =
+        shortName == KOTLINX_SERIALIZABLE_FQ_NAME.shortName() || shortName == KOTLINX_SERIALIZER_FQ_NAME.shortName()
+
+    private fun isSerializableOrSerializerFqName(fqName: FqName?) =
+        fqName == KOTLINX_SERIALIZABLE_FQ_NAME || fqName == KOTLINX_SERIALIZER_FQ_NAME
 
     private fun hasDelegatedSupertypes(classOrObject: KtClassOrObject) =
         classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
@@ -332,7 +358,9 @@ internal object IDELightClassContexts {
                 FqName("kotlin.PublishedApi") +
                 FqName("kotlin.Deprecated") +
                 FqName("kotlin.internal.InlineOnly") +
-                FqName("kotlinx.android.parcel.Parcelize")
+                FqName("kotlinx.android.parcel.Parcelize") +
+                KOTLINX_SERIALIZABLE_FQ_NAME +
+                KOTLINX_SERIALIZER_FQ_NAME
     }
 
     class AdHocAnnotationResolver(
