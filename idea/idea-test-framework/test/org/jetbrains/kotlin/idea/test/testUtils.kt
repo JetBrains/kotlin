@@ -21,20 +21,13 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.PsiManagerEx
-import com.intellij.psi.impl.file.impl.FileManagerImpl
-import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
-import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -84,43 +77,6 @@ fun KtFile.dumpTextWithErrors(): String {
 }
 
 fun closeAndDeleteProject() = LightPlatformTestCase.closeAndDeleteProject()
-
-fun doKotlinTearDown(project: Project, runnable: RunnableWithException) {
-    doKotlinTearDown(project) { runnable.run() }
-}
-
-fun doKotlinTearDown(project: Project, runnable: () -> Unit) {
-    unInvalidateBuiltinsAndStdLib(project) {
-        runnable()
-    }
-}
-
-fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
-    val stdLibViewProviders = HashSet<KotlinDecompiledFileViewProvider>()
-    val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
-    for ((file, viewProvider) in vFileToViewProviderMap) {
-        if (file.isStdLibFile && viewProvider is KotlinDecompiledFileViewProvider) {
-            stdLibViewProviders.add(viewProvider)
-        }
-    }
-
-    runnable()
-
-    // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
-    fun unInvalidateFile(file: PsiFileImpl) {
-        val field = PsiFileImpl::class.java.getDeclaredField("myInvalidated")!!
-        field.isAccessible = true
-        field.set(file, false)
-    }
-
-    stdLibViewProviders.forEach {
-        it.allFiles.forEach { unInvalidateFile(it as KtDecompiledFile) }
-        vFileToViewProviderMap[it.virtualFile] = it
-    }
-}
-
-// looks like the entire uninvalidation is a dead code now
-private val VirtualFile.isStdLibFile: Boolean get() = false // presentableUrl.contains("kotlin-runtime.jar")
 
 fun invalidateLibraryCache(project: Project) {
     LibraryModificationTracker.getInstance(project).incModificationCount()
