@@ -11,6 +11,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
@@ -272,11 +274,14 @@ class KotlinNativeCompilation(
     private val project: Project
         get() = target.project
 
-    // A FileCollection containing source files from all source sets used by this compilation
+    // A collection containing all source sets used by this compilation
     // (taking into account dependencies between source sets). Used by both compilation
-    // and linking tasks.
+    // and linking tasks. Unlike kotlinSourceSets, includes dependency source sets.
     // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
-    internal var allSources: FileCollection = target.project.files()
+    internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
+
+    // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
+    internal val commonSources: MutableSet<SourceDirectorySet> = mutableSetOf()
 
     var isTestCompilation = false
 
@@ -399,8 +404,10 @@ class KotlinNativeCompilation(
         )
 
     override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Boolean) {
-        // TODO: support optional expectations
-        allSources += sourceSet.kotlin
+        allSources.add(sourceSet.kotlin)
+        if (addAsCommonSources) {
+            commonSources.add(sourceSet.kotlin)
+        }
     }
 }
 
