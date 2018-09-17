@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
@@ -36,8 +37,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.name.Name
 import java.io.StringWriter
 
 
@@ -145,7 +153,16 @@ val IrCall.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == t
 val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
 
 
-fun IrValueParameter.copyTo(irFunction: IrFunction, shift: Int = 0): IrValueParameter {
+fun IrValueParameter.copyTo(
+    irFunction: IrFunction,
+    shift: Int = 0,
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset,
+    origin: IrDeclarationOrigin = this.origin,
+    name: Name = this.name,
+    type: IrType = this.type.maybeReplace(this.parent as IrTypeParametersContainer, irFunction),
+    varargElementType: IrType? = this.varargElementType
+): IrValueParameter {
     val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrValueParameterSymbolImpl(descriptor)
     return IrValueParameterImpl(
@@ -183,3 +200,105 @@ fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
     assert(typeParameters.isEmpty())
     from.typeParameters.mapTo(typeParameters) { it.copyTo(this) }
 }
+
+fun IrTypeParametersContainer.copyTypeParametersFrom(
+    source: IrTypeParametersContainer,
+    origin: IrDeclarationOrigin
+) {
+    val target = this
+    assert(target.typeParameters.isEmpty())
+    source.typeParameters.forEachIndexed { i, sourceParameter ->
+        assert(sourceParameter.index == i)
+        val tpDescriptor = WrappedTypeParameterDescriptor()
+        target.typeParameters.add(
+            IrTypeParameterImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                origin,
+                IrTypeParameterSymbolImpl(tpDescriptor),
+                sourceParameter.name,
+                sourceParameter.index,
+                sourceParameter.isReified,
+                sourceParameter.variance
+            ).apply {
+                tpDescriptor.bind(this)
+                parent = target
+                sourceParameter.superTypes.forEach {
+                    // Using the already copied portion of target.typeParameters.
+                    superTypes.add(it.maybeReplace(source, target))
+                }
+            }
+        )
+    }
+}
+
+fun IrFunction.copyValueParametersToStatic(
+    source: IrFunction,
+    origin: IrDeclarationOrigin
+) {
+    val target = this
+    assert(target.valueParameters.isEmpty())
+
+    var shift = 0
+    source.dispatchReceiverParameter?.apply {
+        target.valueParameters.add(
+            copyTo(
+                target,
+                origin = origin,
+                shift = shift++,
+                name = Name.identifier("\$this")
+            )
+        )
+    }
+    source.extensionReceiverParameter?.apply {
+        target.valueParameters.add(
+            copyTo(
+                target,
+                origin = origin,
+                shift = shift++,
+                name = Name.identifier("\$receiver")
+            )
+        )
+    }
+    source.valueParameters.forEachIndexed { i, oldValueParameter ->
+        target.valueParameters.add(
+            oldValueParameter.copyTo(
+                target,
+                origin = origin,
+                shift = shift
+            )
+        )
+    }
+}
+
+/*
+    Type parameters should correspond to the function where they are defined.
+    `source` is where the type is originally taken from.
+ */
+fun IrType.maybeReplace(source: IrTypeParametersContainer, target: IrTypeParametersContainer): IrType =
+    when (this) {
+        is IrSimpleType -> {
+            val classifier = classifier.owner
+            when {
+                classifier is IrTypeParameter && classifier.parent == source ->
+                    target.typeParameters[classifier.index].defaultType
+                classifier is IrClass ->
+                    IrSimpleTypeImpl(
+                        classifier.symbol,
+                        hasQuestionMark,
+                        arguments.map {
+                            when (it) {
+                                is IrTypeProjection -> makeTypeProjection(
+                                    it.type.maybeReplace(source, target),
+                                    it.variance
+                                )
+                                else -> it
+                            }
+                        },
+                        annotations
+                    )
+                else -> this
+            }
+        }
+        else -> this
+    }

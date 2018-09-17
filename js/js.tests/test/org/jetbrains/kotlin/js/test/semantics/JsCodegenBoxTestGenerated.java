@@ -21184,6 +21184,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
 
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/inline.kt");
+        }
+
         @TestMetadata("jvmNameForAccessors.kt")
         public void testJvmNameForAccessors() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/jvmNameForAccessors.kt");

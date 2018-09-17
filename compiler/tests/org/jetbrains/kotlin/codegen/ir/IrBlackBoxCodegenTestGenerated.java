@@ -22324,6 +22324,16 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/inline.kt");
+        }
+
+        @TestMetadata("jvmField.kt")
+        public void testJvmField() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/jvmField.kt");
+        }
+
         @TestMetadata("jvmNameForAccessors.kt")
         public void testJvmNameForAccessors() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/jvmNameForAccessors.kt");

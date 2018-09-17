@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -322,6 +326,16 @@ fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
     return realOverrides.singleOrNull { it.modality != Modality.ABSTRACT }
 }
 
+fun IrField.resolveFakeOverride(): IrField? {
+    var toVisit = setOf(this)
+    val nonOverridden = mutableSetOf<IrField>()
+    while (toVisit.isNotEmpty()) {
+        nonOverridden += toVisit.filter { it.overriddenSymbols.isEmpty() }
+        toVisit = toVisit.flatMap { it.overriddenSymbols }.map { it.owner }.toSet()
+    }
+    return nonOverridden.singleOrNull()
+}
+
 val IrClass.isAnnotationClass get() = kind == ClassKind.ANNOTATION_CLASS
 val IrClass.isEnumClass get() = kind == ClassKind.ENUM_CLASS
 val IrClass.isEnumEntry get() = kind == ClassKind.ENUM_ENTRY
@@ -440,6 +454,12 @@ fun IrFunction.createDispatchReceiverParameter() {
         this.parentAsClass.defaultType,
         null
     ).also { it.parent = this }
+}
+
+// In presence of `IrBlock`s, return the expression that actually serves as the value (the last one).
+tailrec fun IrExpression.removeBlocks(): IrExpression? = when (this) {
+    is IrBlock -> (statements.last() as? IrExpression)?.removeBlocks()
+    else -> this
 }
 
 fun ReferenceSymbolTable.referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol =
