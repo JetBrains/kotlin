@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -201,7 +200,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             override fun visitConstructor(declaration: IrConstructor) {
                 val body = declaration.body
-                assert (body != null || declaration.constructedClass.kind == ClassKind.ANNOTATION_CLASS) {
+                assert (body != null || declaration.constructedClass.isNonGeneratedAnnotation()) {
                     "Non-annotation class constructor has empty body"
                 }
                 DEBUG_OUTPUT(0) {

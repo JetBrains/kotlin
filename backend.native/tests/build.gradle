@@ -1659,6 +1659,11 @@ task statements0(type: RunKonanTest) {
     source = "runtime/basic/statements0.kt"
 }
 
+task annotations0(type: RunStandaloneKonanTest) {
+    source = "codegen/annotations/annotations0.kt"
+    flags = ['-tr']
+}
+
 task boxing0(type: RunKonanTest) {
     goldValue = "17\n"
     source = "codegen/boxing/boxing0.kt"

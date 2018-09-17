@@ -7,17 +7,21 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.isNonGeneratedAnnotation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameter
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -134,8 +138,16 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
         }
 
         private fun lowerConstructors(initializerMethodSymbol: IrSimpleFunctionSymbol?) {
-            if (irClass.kind == ClassKind.ANNOTATION_CLASS)
-                return
+            if (irClass.kind == ClassKind.ANNOTATION_CLASS) {
+                if (irClass.isNonGeneratedAnnotation()) return
+
+                val irConstructor = irClass.declarations.filterIsInstance<IrConstructor>().single()
+                assert(irConstructor.body == null)
+                irConstructor.body = context.createIrBuilder(irConstructor.symbol).irBlockBody(irConstructor) {
+                    +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                    +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, context.irBuiltIns.unitType)
+                }
+            }
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
 
                 override fun visitClass(declaration: IrClass): IrStatement {

@@ -598,7 +598,7 @@ internal object DataFlowIR {
                     }
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
                     val placeToFunctionsTable = !isAbstract && it !is ConstructorDescriptor && classDescriptor != null
-                            && classDescriptor.kind != ClassKind.ANNOTATION_CLASS
+                            && !classDescriptor.isNonGeneratedAnnotation()
                             && (it.isOverridableOrOverrides || bridgeTarget != null || descriptor.name.asString().contains("<bridge-") || !classDescriptor.isFinal())
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                     if (it.isExported())
