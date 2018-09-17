@@ -242,6 +242,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/testData/debugger/tinyApp/src/stepping/stepInto/functionReference.kt");
         }
 
+        @TestMetadata("inlineClass.kt")
+        public void testInlineClass() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/stepInto/inlineClass.kt");
+        }
+
         @TestMetadata("inlineDex.kt")
         public void testInlineDex() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/stepInto/inlineDex.kt");
