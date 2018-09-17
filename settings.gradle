@@ -177,6 +177,7 @@ include ":kotlin-build-common",
         ":examples:scripting-jvm-maven-deps-host",
         ":pill:generate-all-tests",
         ":libraries:kotlin-prepush-hook",
+        ":libraries:tools:mutability-annotations-compat",
         ":include:kotlin-compiler",
 
         // plugin markers:
