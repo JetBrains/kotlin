@@ -14,7 +14,13 @@ to platform's implementation of `POSIX` standard.
 
 To use the library just 
 
-    import platform.posix.*
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
+import platform.posix.*
+```
+
+</div> 
 
 The only target for which it is not available is [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly).
 
@@ -28,15 +34,21 @@ We've gone a little further and provided access to more specific
 native OS services. One needs to import the proper packages
 on each of the platform. Choose what matches your target platform:
 
-    import platform.osx.*
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
 
-    import platform.linux.*
+```kotlin
+import platform.osx.*
 
-    import platform.windows.*
+import platform.linux.*
 
-    import platform.android.*
+import platform.windows.*
 
-    import platform.ios.*
+import platform.android.*
+
+import platform.ios.*
+```
+
+</div> 
 
 ### Popular native libraries
 
