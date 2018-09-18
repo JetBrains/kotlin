@@ -440,6 +440,66 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testPublishWithoutGradleMetadata() {
+        val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+
+        with (libProject) {
+            setupWorkingDir()
+            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview", "// enableFeaturePreview") }
+
+            build("publish") {
+                assertSuccessful()
+                val groupRepoDir = "repo/com/example"
+
+                // No root publication:
+                assertNoSuchFile("$groupRepoDir/sample-lib")
+
+                // Check that the platform publications have the metadata dependency
+                listOf("jvm6", "nodejs", "wasm32", nativeHostTargetName.toLowerCase()).forEach { targetAppendix ->
+                    val targetPomPath = "$groupRepoDir/sample-lib-$targetAppendix/1.0/sample-lib-$targetAppendix-1.0.pom"
+                    assertFileContains(
+                        targetPomPath,
+                        "<groupId>com.example</groupId>",
+                        "<artifactId>sample-lib-metadata</artifactId>",
+                        "<version>1.0</version>"
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testDependenciesOnMppLibraryPartsWithNoMetadata() {
+        val repoDir = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+            setupWorkingDir()
+            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview", "// enableFeaturePreview") }
+            build("publish") { assertSuccessful() }
+            projectDir.resolve("repo")
+        }
+
+        with(Project("sample-app", gradleVersion, "new-mpp-lib-and-app")) {
+            setupWorkingDir()
+            gradleBuildScript().modify {
+                it.replace("implementation 'com.example:sample-lib:1.0'", "implementation 'com.example:sample-lib-metadata:1.0'") + "\n" + """
+                    repositories { maven { url '${repoDir.toURI()}' } }
+
+                    dependencies {
+                        allJvmImplementation 'com.example:sample-lib-jvm6:1.0'
+                        nodeJsMainImplementation 'com.example:sample-lib-nodejs:1.0'
+                        wasm32MainImplementation 'com.example:sample-lib-wasm32:1.0'
+                        ${nativeHostTargetName}MainImplementation 'com.example:sample-lib-${nativeHostTargetName.toLowerCase()}:1.0'
+                    }
+                """.trimIndent()
+            }
+
+            build("assemble") {
+                assertSuccessful()
+                assertTasksExecuted(listOf("Jvm6", "NodeJs", "Wasm32", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" })
+            }
+        }
+    }
+
+    @Test
     fun testPublishingOnlySupportedNativeTargets() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         val (publishedVariant, nonPublishedVariant) = when {
             HostManager.hostIsMac -> "macos64" to "linux64"
@@ -459,6 +519,58 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTrue(""""name": "linux64-api"""" in gradleModuleMetadata)
             assertTrue(""""name": "mingw64-api"""" in gradleModuleMetadata)
             assertTrue(""""name": "macos64-api"""" in gradleModuleMetadata)
+        }
+    }
+
+    @Test
+    fun testNonMppConsumersOfLibraryPublishedWithNoMetadataOptIn() {
+        val repoDir = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+            setupWorkingDir()
+            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview", "// enableFeaturePreview") }
+            build("publish") { assertSuccessful() }
+            projectDir.resolve("repo")
+        }
+
+        with(Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")) {
+            setupWorkingDir()
+            gradleBuildScript().appendText("\nallprojects { repositories { maven { url '${repoDir.toURI()}' } } }")
+            gradleBuildScript("app-common").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-metadata:") }
+            gradleBuildScript("app-jvm").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-jvm6:") }
+            gradleBuildScript("app-js").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-nodejs:") }
+
+            build("assemble", "run") {
+                assertSuccessful()
+                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run", ":app-js:compileKotlin2Js")
+            }
+
+            // Then run again without even reading the metadata from the repo:
+            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview('GRADLE_METADATA')", "") }
+
+            build("assemble", "run", "--rerun-tasks") {
+                assertSuccessful()
+                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run", ":app-js:compileKotlin2Js")
+            }
+        }
+
+        with(Project("sample-app-without-kotlin", gradleVersion, "new-mpp-lib-and-app")) {
+            setupWorkingDir()
+            gradleBuildScript().modify {
+                it.replace("com.example:sample-lib:1.0", "com.example:sample-lib-jvm6:1.0") + "\n" + """
+                    repositories { maven { url '${repoDir.toURI()}' } }
+                """.trimIndent()
+            }
+
+            build("run") {
+                assertSuccessful()
+                assertTasksExecuted(":compileJava", ":run")
+            }
+
+            // Then run again without even reading the metadata from the repo:
+            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview('GRADLE_METADATA')", "") }
+            build("run", "--rerun-tasks") {
+                assertSuccessful()
+                assertTasksExecuted(":compileJava", ":run")
+            }
         }
     }
 

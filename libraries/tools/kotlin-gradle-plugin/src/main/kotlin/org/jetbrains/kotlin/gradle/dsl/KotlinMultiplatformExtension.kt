@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
@@ -15,4 +16,6 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
 
     lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
         internal set
+
+    internal var isGradleMetadataAvailable: Boolean = false
 }

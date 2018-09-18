@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -132,12 +133,13 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     private val instantiator: Instantiator,
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
+    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
+    private val featurePreviews: FeaturePreviews
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinMultiplatformPlugin(
             buildOutputCleanupRegistry, fileResolver,
-            instantiator, kotlinPluginVersion
+            instantiator, kotlinPluginVersion, featurePreviews
         )
 
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
