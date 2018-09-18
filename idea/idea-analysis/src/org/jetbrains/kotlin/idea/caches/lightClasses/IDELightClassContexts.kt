@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.EXACT
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.LIGHT
+import org.jetbrains.kotlin.idea.caches.lightClasses.annotations.KOTLINX_SERIALIZABLE_FQ_NAME
+import org.jetbrains.kotlin.idea.caches.lightClasses.annotations.KOTLINX_SERIALIZER_FQ_NAME
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
@@ -52,8 +54,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.annotations.KOTLINX_SERIALIZABLE_FQ_NAME
-import org.jetbrains.kotlin.resolve.annotations.KOTLINX_SERIALIZER_FQ_NAME
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode

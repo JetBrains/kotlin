@@ -511,7 +511,8 @@ tasks {
                   ":kotlin-noarg-compiler-plugin:test",
                   ":kotlin-sam-with-receiver-compiler-plugin:test",
                   ":plugins:uast-kotlin:test",
-                  ":kotlin-annotation-processing-gradle:test")
+                  ":kotlin-annotation-processing-gradle:test",
+                  ":kotlinx-serialization-ide-plugin:test")
     }
 
 
