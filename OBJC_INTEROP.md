@@ -53,7 +53,7 @@ i.e. `@protocol Foo` -> `interface FooProtocol`.
 These classes and interfaces are placed into a package [specified in build configuration](#usage)
 (`platform.*` packages for preconfigured system frameworks).
 
-The names of Kotlin classes and interfaces are prefixed when imported to Swift/Objective-C.
+The names of Kotlin classes and interfaces are prefixed when imported to Objective-C.
 The prefix is derived from the framework name.
 
 ### Initializers
@@ -66,12 +66,13 @@ Kotlin constructors are imported as initializers to Swift/Objective-C.
 
 ### Top-level functions and properties
 
-Top-level Kotlin functions and properties are accessible as members of a special class.
-Each Kotlin package is translated into such a class. E.g.
+Top-level Kotlin functions and properties are accessible as members of special classes.
+Each Kotlin file is translated into such a class. E.g.
 
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
+// MyLibraryUtils.kt
 package my.library
 
 fun foo() {}
@@ -84,7 +85,7 @@ can be called from Swift like
 <div class="sample" markdown="1" theme="idea" mode="swift">
 
 ```swift
-Framework.foo()
+MyLibraryUtilsKt.foo()
 ```
 
 </div>
@@ -144,12 +145,17 @@ The instance is available through the factory method, i.e. as
 
 ### NSNumber
 
-While Kotlin primitive types in some cases are mapped to `NSNumber`
-(e.g. when they are boxed), `NSNumber` type is not automatically translated 
-to Kotlin primitive types when used as a Swift/Objective-C parameter type or return value.
+Kotlin primitive type boxes are mapped to special Swift/Objective-C classes.
+For example, `kotlin.Int` box is represented as `KotlinInt` class instance in Swift
+(or `${prefix}Int` instance in Objective-C, where `prefix` is the framework names prefix).
+These classes are derived from `NSNumber`, so the instances are proper `NSNumber`s
+supporting all corresponding operations.
+
+`NSNumber` type is not automatically translated to Kotlin primitive types
+when used as a Swift/Objective-C parameter type or return value.
 The reason is that `NSNumber` type doesn't provide enough information
 about a wrapped primitive value type, i.e. `NSNumber` is statically not known
-to be a e.g. `Byte`, `Boolean`, or `Double`. So Kotlin primitive values 
+to be a e.g. `Byte`, `Boolean`, or `Double`. So Kotlin primitive values
 should be cast to/from `NSNumber` manually (see [below](#casting-between-mapped-types)).
 
 ### NSMutableString
@@ -164,8 +170,8 @@ in the table above. Swift/Objective-C collections are mapped to Kotlin in the sa
 except for `NSMutableSet` and `NSMutableDictionary`. `NSMutableSet` isn't converted to
 a Kotlin `MutableSet`. To pass an object for Kotlin `MutableSet`,
 you can create this kind of Kotlin collection explicitly by either creating it 
-in Kotlin with e.g. `mutableSetOf()`, or using the `${prefix}MutableSet` class in
-Swift/Objective-C, where `prefix` is the framework names prefix.
+in Kotlin with e.g. `mutableSetOf()`, or using the `KotlinMutableSet` class in Swift 
+(or `${prefix}MutableSet` in Objective-C, where `prefix` is the framework names prefix).
 The same holds for `MutableMap`.
 
 ### Function types
@@ -174,7 +180,7 @@ Kotlin function-typed objects (e.g. lambdas) are converted to
 Swift functions / Objective-C blocks. However there is a difference in how
 types of parameters and return values are mapped when translating a function
 and a function type. In the latter case primitive types are mapped to their
-boxed representation, `NSNumber`. Kotlin `Unit` return value is represented
+boxed representation. Kotlin `Unit` return value is represented
 as a corresponding `Unit` singleton in Swift/Objective-C. The value of this singleton
 can be retrieved in the same way as it is for any other Kotlin `object`
 (see singletons in the table above).
@@ -193,7 +199,7 @@ would be represented in Swift as
 <div class="sample" markdown="1" theme="idea" mode="swift">
 
 ```swift
-func foo(block: (NSNumber) -> KotlinUnit)
+func foo(block: (KotlinInt) -> KotlinUnit)
 ```
 
 </div>
