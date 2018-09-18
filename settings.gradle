@@ -191,6 +191,19 @@ include ":kotlin-build-common",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded"
 
+
+def isIncludeNative = hasProperty("kotlinNativeEnabled") && kotlinNativeEnabled != 'false'
+if (isIncludeNative) {
+    include ":idea:idea-native",
+            ":idea:idea-gradle:native",
+            ":kotlin-ultimate:cidr-native",
+            ":kotlin-ultimate:appcode-native",
+            ":kotlin-ultimate:clion-native",
+            ":prepare:cidr-plugin",
+            ":prepare:appcode-plugin",
+            ":prepare:clion-plugin"
+}
+
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 def includeUltimate = hasProperty("intellijUltimateEnabled") && intellijUltimateEnabled != 'false'
 if (isTeamcityBuild || includeUltimate) {
