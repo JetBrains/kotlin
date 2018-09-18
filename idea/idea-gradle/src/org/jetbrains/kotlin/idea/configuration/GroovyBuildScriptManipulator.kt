@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.module
@@ -148,6 +149,14 @@ class GroovyBuildScriptManipulator(
         }
 
         return kotlinBlock.parent
+    }
+
+    override fun changeLanguageFeatureConfiguration(
+        feature: LanguageFeature,
+        state: LanguageFeature.State
+    ): PsiElement? {
+        // TODO: here we should use compileKotlin (TestKotlin).kotlinOptions.freeCompilerArgs = ["-XXLanguage:-InlineClasses"]
+        return null
     }
 
     override fun changeLanguageVersion(version: String, forTests: Boolean): PsiElement? =

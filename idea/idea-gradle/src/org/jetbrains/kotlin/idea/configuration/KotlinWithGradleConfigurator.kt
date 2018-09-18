@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -234,7 +235,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
     override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
         val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
-                (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+                getRuntimeLibraryVersion(module).toApiVersion() == ApiVersion.KOTLIN_1_0
 
         if (runtimeUpdateRequired) {
             Messages.showErrorDialog(
@@ -247,6 +248,31 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
 
         val element = changeCoroutineConfiguration(module, CoroutineSupport.getCompilerArgument(state))
+        if (element != null) {
+            OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
+        }
+    }
+
+    override fun changeGeneralFeatureConfiguration(
+        module: Module,
+        feature: LanguageFeature,
+        state: LanguageFeature.State
+    ) {
+        val sinceVersion = feature.sinceApiVersion
+
+        if (state != LanguageFeature.State.DISABLED && getRuntimeLibraryVersion(module).toApiVersion() < sinceVersion) {
+            Messages.showErrorDialog(
+                module.project,
+                "${feature.presentableName} support requires version $sinceVersion or later of the Kotlin runtime library. " +
+                        "Please update the version in your build script.",
+                ChangeCoroutineSupportFix.getFixText(state)
+            )
+            return
+        }
+
+        val element = changeBuildGradle(module) {
+            getManipulator(it).changeLanguageFeatureConfiguration(feature, state)
+        }
         if (element != null) {
             OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
         }

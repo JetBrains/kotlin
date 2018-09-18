@@ -19,9 +19,8 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
 import org.jetbrains.kotlin.idea.quickfix.askUpdateRuntime
@@ -332,7 +331,7 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
 
     override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
         val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
-                                    (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+                getRuntimeLibraryVersion(module).toApiVersion() == ApiVersion.KOTLIN_1_0
 
         if (runtimeUpdateRequired && !askUpdateRuntime(module, LanguageFeature.Coroutines.sinceApiVersion)) {
             return
@@ -343,6 +342,30 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
             facetSettings.coroutineSupport = state
             facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1
             facetSettings.languageLevel = LanguageVersion.KOTLIN_1_1
+        }
+    }
+
+    override fun changeGeneralFeatureConfiguration(
+        module: Module,
+        feature: LanguageFeature,
+        state: LanguageFeature.State
+    ) {
+        val sinceVersion = feature.sinceApiVersion
+
+        if (state != LanguageFeature.State.DISABLED &&
+            getRuntimeLibraryVersion(module).toApiVersion() < sinceVersion &&
+            !askUpdateRuntime(module, sinceVersion)
+        ) {
+            return
+        }
+
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
+        ModuleRootModificationUtil.updateModel(module) {
+            facetSettings.apiLevel = LanguageVersion.KOTLIN_1_3
+            facetSettings.languageLevel = LanguageVersion.KOTLIN_1_3
+            facetSettings.compilerSettings?.apply {
+                // TODO: JPS, module
+            }
         }
     }
 
