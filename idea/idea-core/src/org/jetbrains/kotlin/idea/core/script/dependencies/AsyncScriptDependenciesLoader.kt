@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.core.script.dependencies
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
