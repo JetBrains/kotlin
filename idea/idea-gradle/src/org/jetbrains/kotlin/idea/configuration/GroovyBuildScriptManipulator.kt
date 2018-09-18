@@ -22,7 +22,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.buildArgumentString
-import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.languagePrefix
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -166,19 +166,8 @@ class GroovyBuildScriptManipulator(
             "[\"$featureArgumentString\"]",
             forTests
         ) { insideKotlinOptions ->
-            val existingFeatureIndex = text.indexOf(feature.name)
-            val languagePrefixIndex = text.lastIndexOf(languagePrefix, existingFeatureIndex)
-            val newText = if (languagePrefixIndex != -1) {
-                text.substring(0, languagePrefixIndex) + featureArgumentString + text.substring(existingFeatureIndex + feature.name.length)
-            } else {
-                val splitText = text.split("]")
-                if (splitText.size != 2) {
-                    val prefix = if (insideKotlinOptions) "kotlinOptions." else ""
-                    "$prefix$parameterName = [\"$featureArgumentString\"]"
-                } else {
-                    splitText[0] + ", \"$featureArgumentString\"]" + splitText[1]
-                }
-            }
+            val prefix = if (insideKotlinOptions) "kotlinOptions." else ""
+            val newText = text.replaceLanguageFeature(feature, state, prefix = "$prefix$parameterName = [", postfix = "]")
             replaceWithStatementFromText(newText)
         }
     }

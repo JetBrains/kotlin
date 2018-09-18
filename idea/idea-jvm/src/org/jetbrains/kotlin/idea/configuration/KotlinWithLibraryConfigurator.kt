@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Contract
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.toApiVersion
@@ -362,10 +363,10 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
 
         val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
         ModuleRootModificationUtil.updateModel(module) {
-            facetSettings.apiLevel = LanguageVersion.KOTLIN_1_3
-            facetSettings.languageLevel = LanguageVersion.KOTLIN_1_3
+            facetSettings.apiLevel = feature.sinceVersion
+            facetSettings.languageLevel = feature.sinceVersion
             facetSettings.compilerSettings?.apply {
-                // TODO: JPS, module
+                additionalArguments = additionalArguments.replaceLanguageFeature(feature, state, separator = " ", quoted = false)
             }
         }
     }

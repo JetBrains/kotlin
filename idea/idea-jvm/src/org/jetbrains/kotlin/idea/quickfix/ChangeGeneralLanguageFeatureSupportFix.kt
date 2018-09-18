@@ -11,6 +11,7 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
@@ -55,7 +56,7 @@ sealed class ChangeGeneralLanguageFeatureSupportFix(
                 if (!checkUpdateRuntime(project, feature.sinceApiVersion)) return
             }
             KotlinCompilerSettings.getInstance(project).update {
-                // TODO: JPS, project
+                additionalArguments = additionalArguments.replaceLanguageFeature(feature, featureSupport, separator = " ", quoted = false)
             }
             project.invalidateProjectRoots()
         }
