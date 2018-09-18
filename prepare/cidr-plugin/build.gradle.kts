@@ -22,7 +22,7 @@ dependencies {
 val pluginXml by tasks.creating {
     val kotlinVersion: String by rootProject.extra
     val pluginFullVersionNumber = findProperty("pluginVersion") as? String
-            ?: "$kotlinVersion-CIDR"
+        ?: "$kotlinVersion-CIDR"
 
     inputs.property("pluginFullVersionNumber", pluginFullVersionNumber)
     inputs.files(kotlinPlugin)
@@ -30,8 +30,8 @@ val pluginXml by tasks.creating {
 
     doFirst {
         val placeholderRegex = Regex(
-                """<!-- CIDR-PLUGIN-PLACEHOLDER-START -->(.*)<!-- CIDR-PLUGIN-PLACEHOLDER-END -->""",
-                RegexOption.DOT_MATCHES_ALL)
+            """<!-- CIDR-PLUGIN-PLACEHOLDER-START -->(.*)<!-- CIDR-PLUGIN-PLACEHOLDER-END -->""",
+            RegexOption.DOT_MATCHES_ALL)
 
         val excludeRegex = Regex(
             """<!-- CIDR-PLUGIN-EXCLUDE-START -->(.*?)<!-- CIDR-PLUGIN-EXCLUDE-END -->""",
@@ -65,6 +65,5 @@ val jar = runtimeJar {
 
 task<Copy>("cidrPlugin") {
     into(cidrPluginDir)
-    from(ideaPluginDir) { exclude("lib/kotlin-plugin.jar") }
     from(jar) { into("lib") }
 }

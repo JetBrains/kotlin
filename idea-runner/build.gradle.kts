@@ -17,6 +17,10 @@ dependencies {
 
 val ideaPluginDir: File by rootProject.extra
 val ideaSandboxDir: File by rootProject.extra
+val clionPluginDir: File by rootProject.extra
+val clionSandboxDir: File by rootProject.extra
+val appcodePluginDir: File by rootProject.extra
+val appcodeSandboxDir: File by rootProject.extra
 
 runIdeTask("runIde", ideaPluginDir, ideaSandboxDir) {
     dependsOn(":dist", ":ideaPlugin")
