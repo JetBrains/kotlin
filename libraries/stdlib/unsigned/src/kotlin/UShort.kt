@@ -42,7 +42,7 @@ public inline class UShort @PublishedApi internal constructor(@PublishedApi inte
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.InlineOnly
-    public inline operator fun compareTo(other: UByte): Int = this.toUInt().compareTo(other.toUInt())
+    public inline operator fun compareTo(other: UByte): Int = this.toInt().compareTo(other.toInt())
 
     /**
      * Compares this value with the specified value for order.
@@ -51,7 +51,7 @@ public inline class UShort @PublishedApi internal constructor(@PublishedApi inte
      */
     @kotlin.internal.InlineOnly
     @Suppress("OVERRIDE_BY_INLINE")
-    public override inline operator fun compareTo(other: UShort): Int = this.toUInt().compareTo(other.toUInt())
+    public override inline operator fun compareTo(other: UShort): Int = this.toInt().compareTo(other.toInt())
 
     /**
      * Compares this value with the specified value for order.
