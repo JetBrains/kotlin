@@ -10,7 +10,7 @@ import kotlin.test.*
 import kotlin.coroutines.*
 
 @Test fun runTest() {
-    val sq = buildSequence {
+    val sq = sequence {
         for (i in 0..6 step 2) {
             print("before: $i ")
             yield(i)
