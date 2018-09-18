@@ -39,6 +39,7 @@ val libsDir = property("libsDir")
 
 
 val proguardDeps by configurations.creating
+val proguardAdditionalInJars by configurations.creating
 val shadows by configurations.creating {
     isTransitive = false
 }
@@ -49,7 +50,7 @@ dependencies {
     compile(project(":kotlin-stdlib"))
 
     proguardDeps(project(":kotlin-stdlib"))
-    proguardDeps(project(":kotlin-annotations-jvm"))
+    proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
     proguardDeps(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = File(property("JDK_16") as String))))
 
     shadows(project(":kotlin-reflect-api"))
@@ -146,6 +147,7 @@ val proguard by task<ProGuardTask> {
     outputs.file(proguardOutput)
 
     injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.outputs.files)
+    injars(mapOf("filter" to "!META-INF/**"), proguardAdditionalInJars)
     outjars(proguardOutput)
 
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
