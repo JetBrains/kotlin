@@ -3820,6 +3820,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/inline/continueInLoopWithInlinableCondition.kt");
         }
 
+        @TestMetadata("crossModuleUnsignedLiterals.kt")
+        public void testCrossModuleUnsignedLiterals() throws Exception {
+            runTest("js/js.translator/testData/box/inline/crossModuleUnsignedLiterals.kt");
+        }
+
         @TestMetadata("dontInlineFunctionCall.kt")
         public void testDontInlineFunctionCall() throws Exception {
             runTest("js/js.translator/testData/box/inline/dontInlineFunctionCall.kt");
