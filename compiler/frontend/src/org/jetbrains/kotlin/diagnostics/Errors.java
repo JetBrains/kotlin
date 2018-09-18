@@ -244,7 +244,7 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, FqName, DeclarationDescriptor> EXPERIMENTAL_OVERRIDE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, FqName, DeclarationDescriptor> EXPERIMENTAL_OVERRIDE_ERROR = DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> EXPERIMENTAL_IS_NOT_ENABLED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> EXPERIMENTAL_IS_NOT_ENABLED = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
             EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL = DiagnosticFactory0.create(ERROR);
