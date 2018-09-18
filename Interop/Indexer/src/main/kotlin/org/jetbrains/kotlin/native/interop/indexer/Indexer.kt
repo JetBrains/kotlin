@@ -114,14 +114,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
     }
 
-    internal fun getHeaderId(file: CXFile?): HeaderId {
-        if (file == null) {
-            return HeaderId("builtins")
-        }
-
-        val filePath = clang_getFileName(file).convertAndDispose()
-        return library.headerToIdMapper.getHeaderId(filePath)
-    }
+    internal fun getHeaderId(file: CXFile?): HeaderId = getHeaderId(this.library, file)
 
     private fun getLocation(cursor: CValue<CXCursor>): Location {
         val headerId = getHeaderId(getContainingFile(cursor))

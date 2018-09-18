@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.native.interop.gen.jvm
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.util.DefFile
-import org.jetbrains.kotlin.native.interop.gen.HeadersInclusionPolicyImpl
-import org.jetbrains.kotlin.native.interop.gen.ImportsImpl
-import org.jetbrains.kotlin.native.interop.gen.argsToCompiler
+import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
@@ -190,44 +188,15 @@ private fun processCLib(args: Array<String>): Array<String>? {
         return null
     }
 
-    val tool = ToolConfig(
-        arguments.target,
-        flavor
-    )
-    tool.downloadDependencies()
+    val tool = prepareTool(arguments.target, flavor)
 
     val def = DefFile(defFile, tool.substitutions)
 
-    val additionalHeaders = arguments.header
-    val additionalCompilerOpts = arguments.compilerOpts
     val additionalLinkerOpts = arguments.linkerOpts
     val generateShims = arguments.shims
     val verbose = arguments.verbose
 
-    System.load(tool.libclang)
-
-    val headerFiles = def.config.headers + additionalHeaders
     val language = selectNativeLanguage(def.config)
-    val compilerOpts: List<String> = mutableListOf<String>().apply {
-        addAll(def.config.compilerOpts)
-        addAll(tool.defaultCompilerOpts)
-        addAll(additionalCompilerOpts)
-        addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix, def))
-        addAll(when (language) {
-            Language.C -> emptyList()
-            Language.OBJECTIVE_C -> {
-                // "Objective-C" within interop means "Objective-C with ARC":
-                listOf("-fobjc-arc")
-                // Using this flag here has two effects:
-                // 1. The headers are parsed with ARC enabled, thus the API is visible correctly.
-                // 2. The generated Objective-C stubs are compiled with ARC enabled, so reference counting
-                // calls are inserted automatically.
-            }
-        })
-    }
-
-    val excludeSystemLibs = def.config.excludeSystemLibs
-    val excludeDependentModules = def.config.excludeDependentModules
 
     val entryPoint = def.config.entryPoints.atMostOne()
     val linkerOpts =
@@ -254,20 +223,9 @@ private fun processCLib(args: Array<String>): Array<String>? {
 
     val tempFiles = TempFiles(libName, arguments.temporaryFilesDir)
 
-    val headerFilterGlobs = def.config.headerFilter
     val imports = parseImports(arguments.import)
-    val headerInclusionPolicy = HeadersInclusionPolicyImpl(headerFilterGlobs, imports)
 
-    val library = NativeLibrary(
-            includes = headerFiles,
-            additionalPreambleLines = def.defHeaderLines,
-            compilerArgs = compilerOpts + tool.platformCompilerOpts,
-            headerToIdMapper = HeaderToIdMapper(sysRoot = tool.sysRoot),
-            language = language,
-            excludeSystemLibs = excludeSystemLibs,
-            excludeDepdendentModules = excludeDependentModules,
-            headerInclusionPolicy = headerInclusionPolicy
-    )
+    val library = buildNativeLibrary(tool, def, arguments, imports)
 
     val configuration = InteropConfiguration(
             library = library,
@@ -336,4 +294,60 @@ private fun processCLib(args: Array<String>): Array<String>? {
         runCmd(compilerCmd, verbose)
     }
     return argsToCompiler(staticLibraries, libraryPaths)
+}
+
+internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {
+    val tool = ToolConfig(target, flavor)
+    tool.downloadDependencies()
+
+    System.load(tool.libclang)
+
+    return tool
+}
+
+internal fun buildNativeLibrary(
+        tool: ToolConfig,
+        def: DefFile,
+        arguments: CInteropArguments,
+        imports: ImportsImpl
+): NativeLibrary {
+    val additionalHeaders = arguments.header
+    val additionalCompilerOpts = arguments.compilerOpts
+
+    val headerFiles = def.config.headers + additionalHeaders
+    val language = selectNativeLanguage(def.config)
+    val compilerOpts: List<String> = mutableListOf<String>().apply {
+        addAll(def.config.compilerOpts)
+        addAll(tool.defaultCompilerOpts)
+        addAll(additionalCompilerOpts)
+        addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix, def))
+        addAll(when (language) {
+            Language.C -> emptyList()
+            Language.OBJECTIVE_C -> {
+                // "Objective-C" within interop means "Objective-C with ARC":
+                listOf("-fobjc-arc")
+                // Using this flag here has two effects:
+                // 1. The headers are parsed with ARC enabled, thus the API is visible correctly.
+                // 2. The generated Objective-C stubs are compiled with ARC enabled, so reference counting
+                // calls are inserted automatically.
+            }
+        })
+    }
+
+    val excludeSystemLibs = def.config.excludeSystemLibs
+    val excludeDependentModules = def.config.excludeDependentModules
+
+    val headerFilterGlobs = def.config.headerFilter
+    val headerInclusionPolicy = HeadersInclusionPolicyImpl(headerFilterGlobs, imports)
+
+    return NativeLibrary(
+            includes = headerFiles,
+            additionalPreambleLines = def.defHeaderLines,
+            compilerArgs = compilerOpts + tool.platformCompilerOpts,
+            headerToIdMapper = HeaderToIdMapper(sysRoot = tool.sysRoot),
+            language = language,
+            excludeSystemLibs = excludeSystemLibs,
+            excludeDepdendentModules = excludeDependentModules,
+            headerInclusionPolicy = headerInclusionPolicy
+    )
 }

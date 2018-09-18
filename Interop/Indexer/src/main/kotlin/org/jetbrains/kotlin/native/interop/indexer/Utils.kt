@@ -451,13 +451,30 @@ internal class ModulesMap(
 fun HeaderInclusionPolicy.includeAll(headerName: String?, headerId: HeaderId): Boolean =
         !this.excludeUnused(headerName) && !this.excludeAll(headerId)
 
+internal fun getHeaderId(library: NativeLibrary, header: CXFile?): HeaderId {
+    if (header == null) {
+        return HeaderId("builtins")
+    }
+
+    val filePath = clang_getFileName(header).convertAndDispose()
+    return library.headerToIdMapper.getHeaderId(filePath)
+}
+
 internal fun getFilteredHeaders(
         nativeIndex: NativeIndexImpl,
         index: CXIndex,
         translationUnit: CXTranslationUnit
-): Set<CXFile?> {
-    val library = nativeIndex.library
-    val result = mutableSetOf<CXFile?>()
+): Set<CXFile?> = getHeaders(nativeIndex.library, index, translationUnit).ownHeaders
+
+class NativeLibraryHeaders<Header>(val ownHeaders: Set<Header>, val importedHeaders: Set<Header>)
+
+internal fun getHeaders(
+        library: NativeLibrary,
+        index: CXIndex,
+        translationUnit: CXTranslationUnit
+): NativeLibraryHeaders<CXFile?> {
+    val ownHeaders = mutableSetOf<CXFile?>()
+    val allHeaders = mutableSetOf<CXFile?>(null)
     val topLevelFiles = mutableListOf<CXFile>()
     var mainFile: CXFile? = null
 
@@ -467,11 +484,14 @@ internal fun getFilteredHeaders(
 
         override fun enteredMainFile(file: CXFile) {
             mainFile = file
+            allHeaders += file
         }
 
         override fun ppIncludedFile(info: CXIdxIncludedFileInfo) {
             val includeLocation = clang_indexLoc_getCXSourceLocation(info.hashLoc.readValue())
             val file = info.file!!
+
+            allHeaders += file
 
             if (clang_Location_isFromMainFile(includeLocation) != 0) {
                 topLevelFiles.add(file)
@@ -498,8 +518,8 @@ internal fun getFilteredHeaders(
             }
 
             headerToName[file] = headerName
-            if (library.headerInclusionPolicy.includeAll(headerName, nativeIndex.getHeaderId(file))) {
-                result.add(file)
+            if (library.headerInclusionPolicy.includeAll(headerName, getHeaderId(library, file))) {
+                ownHeaders.add(file)
             }
         }
     })
@@ -507,7 +527,7 @@ internal fun getFilteredHeaders(
     if (library.excludeDepdendentModules) {
         ModulesMap(library, translationUnit).use { modulesMap ->
             val topLevelModules = topLevelFiles.map { modulesMap.getModule(it) }.toSet()
-            result.removeAll {
+            ownHeaders.removeAll {
                 val module = modulesMap.getModule(it!!)
                 module !in topLevelModules
             }
@@ -515,15 +535,37 @@ internal fun getFilteredHeaders(
             // then all non-modular headers are included.
         }
     } else {
-        if (library.headerInclusionPolicy.includeAll(headerName = null, headerId = nativeIndex.getHeaderId(null))) {
+        if (library.headerInclusionPolicy.includeAll(headerName = null, headerId = getHeaderId(library, null))) {
             // Builtins.
-            result.add(null)
+            ownHeaders.add(null)
         }
     }
 
-    result.add(mainFile!!)
+    ownHeaders.add(mainFile!!)
 
-    return result
+    return NativeLibraryHeaders(ownHeaders, allHeaders - ownHeaders)
+}
+
+fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
+    val index = clang_createIndex(0, 0)!!
+    try {
+        val translationUnit =
+                this.parse(index, options = CXTranslationUnit_DetailedPreprocessingRecord).ensureNoCompileErrors()
+        try {
+
+            fun getPath(file: CXFile?) = if (file == null) "<builtins>" else clang_getFileName(file).convertAndDispose()
+
+            val headers = getHeaders(this, index, translationUnit)
+            return NativeLibraryHeaders(
+                    headers.ownHeaders.map(::getPath).toSet(),
+                    headers.importedHeaders.map(::getPath).toSet()
+            )
+        } finally {
+            clang_disposeTranslationUnit(translationUnit)
+        }
+    } finally {
+        clang_disposeIndex(index)
+    }
 }
 
 fun ObjCMethod.replaces(other: ObjCMethod): Boolean =

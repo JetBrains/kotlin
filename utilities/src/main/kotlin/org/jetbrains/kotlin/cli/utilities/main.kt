@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.cli.utilities
 
+import org.jetbrains.kotlin.native.interop.gen.defFileDependencies
 import org.jetbrains.kotlin.cli.bc.main as konancMain
 import org.jetbrains.kotlin.cli.klib.main as klibMain
 
@@ -23,6 +24,8 @@ fun main(args: Array<String>) {
         }
         "klib" ->
             klibMain(utilityArgs)
+        "defFileDependencies" ->
+            defFileDependencies(utilityArgs)
         else ->
             error("Unexpected utility name")
     }
