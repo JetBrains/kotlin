@@ -100,11 +100,12 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */""")
-            if (otherType != type)
-                out.println("    @kotlin.internal.InlineOnly")
+            out.println("    @kotlin.internal.InlineOnly")
+            if (otherType == type)
+                out.println("""    @Suppress("OVERRIDE_BY_INLINE")""")
             out.print("    public ")
-            if (otherType == type) out.print("override ") else out.print("inline ")
-            out.print("operator fun compareTo(other: ${otherType.capitalized}): Int = ")
+            if (otherType == type) out.print("override ")
+            out.print("inline operator fun compareTo(other: ${otherType.capitalized}): Int = ")
             if (otherType == type && maxByDomainCapacity(type, UnsignedType.UINT) == type) {
                 out.println("${className.toLowerCase()}Compare(this.data, other.data)")
             } else {

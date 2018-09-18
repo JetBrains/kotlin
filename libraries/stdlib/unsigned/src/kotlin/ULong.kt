@@ -65,7 +65,9 @@ public inline class ULong @PublishedApi internal constructor(@PublishedApi inter
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: ULong): Int = ulongCompare(this.data, other.data)
+    @kotlin.internal.InlineOnly
+    @Suppress("OVERRIDE_BY_INLINE")
+    public override inline operator fun compareTo(other: ULong): Int = ulongCompare(this.data, other.data)
 
     /** Adds the other value to this value. */
     @kotlin.internal.InlineOnly

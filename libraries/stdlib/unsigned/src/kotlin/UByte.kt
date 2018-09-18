@@ -41,7 +41,9 @@ public inline class UByte @PublishedApi internal constructor(@PublishedApi inter
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: UByte): Int = this.toUInt().compareTo(other.toUInt())
+    @kotlin.internal.InlineOnly
+    @Suppress("OVERRIDE_BY_INLINE")
+    public override inline operator fun compareTo(other: UByte): Int = this.toUInt().compareTo(other.toUInt())
 
     /**
      * Compares this value with the specified value for order.

@@ -208,8 +208,6 @@ public final class kotlin/UByte : java/lang/Comparable {
 	public static final field SIZE_BYTES I
 	public static final synthetic fun box-impl (B)Lkotlin/UByte;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public fun compareTo-7apg3OU (B)I
-	public static fun compareTo-7apg3OU (BB)I
 	public static fun constructor-impl (B)B
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (BLjava/lang/Object;)Z
@@ -270,8 +268,6 @@ public final class kotlin/UInt : java/lang/Comparable {
 	public static final field SIZE_BYTES I
 	public static final synthetic fun box-impl (I)Lkotlin/UInt;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public fun compareTo-WZ4Q5Ns (I)I
-	public static fun compareTo-WZ4Q5Ns (II)I
 	public static fun constructor-impl (I)I
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (ILjava/lang/Object;)Z
@@ -332,8 +328,6 @@ public final class kotlin/ULong : java/lang/Comparable {
 	public static final field SIZE_BYTES I
 	public static final synthetic fun box-impl (J)Lkotlin/ULong;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public fun compareTo-VKZWuLQ (J)I
-	public static fun compareTo-VKZWuLQ (JJ)I
 	public static fun constructor-impl (J)J
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (JLjava/lang/Object;)Z
@@ -394,8 +388,6 @@ public final class kotlin/UShort : java/lang/Comparable {
 	public static final field SIZE_BYTES I
 	public static final synthetic fun box-impl (S)Lkotlin/UShort;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public fun compareTo-xj2QHRw (S)I
-	public static fun compareTo-xj2QHRw (SS)I
 	public static fun constructor-impl (S)S
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (SLjava/lang/Object;)Z
@@ -464,8 +456,10 @@ public abstract interface annotation class kotlin/UnsafeVariance : java/lang/ann
 }
 
 public final class kotlin/UnsignedKt {
+	public static final fun uintCompare (II)I
 	public static final fun uintDivide-J1ME1BU (II)I
 	public static final fun uintRemainder-J1ME1BU (II)I
+	public static final fun ulongCompare (JJ)I
 	public static final fun ulongDivide-eb3DHEI (JJ)J
 	public static final fun ulongRemainder-eb3DHEI (JJ)J
 }

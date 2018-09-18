@@ -6,7 +6,9 @@
 @file:UseExperimental(ExperimentalUnsignedTypes::class)
 package kotlin
 
+@PublishedApi
 internal fun uintCompare(v1: Int, v2: Int): Int = (v1 xor Int.MIN_VALUE).compareTo(v2 xor Int.MIN_VALUE)
+@PublishedApi
 internal fun ulongCompare(v1: Long, v2: Long): Int = (v1 xor Long.MIN_VALUE).compareTo(v2 xor Long.MIN_VALUE)
 
 @PublishedApi
