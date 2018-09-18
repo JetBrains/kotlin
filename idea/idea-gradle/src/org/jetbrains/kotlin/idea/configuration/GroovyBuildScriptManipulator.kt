@@ -21,6 +21,8 @@ import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.buildArgumentString
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.languagePrefix
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -156,14 +158,7 @@ class GroovyBuildScriptManipulator(
         state: LanguageFeature.State,
         forTests: Boolean
     ): PsiElement? {
-        val sign = when (state) {
-            LanguageFeature.State.ENABLED -> "+"
-            LanguageFeature.State.DISABLED -> "-"
-            LanguageFeature.State.ENABLED_WITH_WARNING -> "+" // not supported normally
-            LanguageFeature.State.ENABLED_WITH_ERROR -> "-" // not supported normally
-        }
-        val languagePrefix = "-XXLanguage:"
-        val featureArgumentString = "$languagePrefix$sign${feature.name}"
+        val featureArgumentString = feature.buildArgumentString(state)
         val parameterName = "freeCompilerArgs"
         return addOrReplaceKotlinTaskParameter(
             scriptFile,
