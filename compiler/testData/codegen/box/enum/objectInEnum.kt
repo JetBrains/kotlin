@@ -1,4 +1,5 @@
-// LANGUAGE_VERSION: 1.2
+// !LANGUAGE: -NestedClassesInEnumEntryShouldBeInner
+// IGNORE_BACKEND: NATIVE
 
 enum class E {
     ENTRY,
