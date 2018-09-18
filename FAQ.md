@@ -38,12 +38,16 @@ or set it via the `JAVA_OPTS` environment variable.
 ### Q: How do I specify a custom Objective-C prefix/name for my Kotlin framework?
 
 A: Use the `-module_name` compiler option or matching Gradle DSL statement, i.e.
-```
+
+<div class="sample" markdown="1" theme="idea" mode="groovy">
+
+```groovy
 framework("MyCustomFramework") {
     extraOpts '-module_name', 'TheName'
 }
 ```
 
+</div>
 
 ### Q: Why do I see `InvalidMutabilityException`?
 
@@ -67,10 +71,15 @@ A: We release dev builds frequently, usually at least once a week. You can check
     
 <summary>For the CLI, you can compile using gradle as stated in the README (and if you get errors, you can try to do a <code>./gradlew clean</code>):</summary>
 
-```
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
 ./gradlew dependencies:update
 ./gradlew dist distPlatformLibs
 ```
+
+</div>
+
 
 You can then set the `KONAN_HOME` env variable to the generated `dist` folder in the git repository.
 
