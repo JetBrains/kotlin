@@ -34,7 +34,7 @@ public class Char(value: Int) : Comparable<Char> {
     public operator fun dec(): Char = Char(value - 1)
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Char): CharRange = null!! // TODO
+    public operator fun rangeTo(other: Char): CharRange = CharRange(this, other)
 
     /** Returns the value of this character as a `Byte`. */
     public fun toByte(): Byte = value.toByte()
