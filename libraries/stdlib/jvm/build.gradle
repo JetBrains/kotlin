@@ -192,6 +192,7 @@ compileCoroutinesKotlin {
                 "-Xallow-result-return-type",
                 "-Xmultifile-parts-inherit",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xuse-experimental=kotlin.Experimental",
                 "-XXLanguage:-ReleaseCoroutines",
                 "-module-name", "kotlin-stdlib-coroutines"
         ]

@@ -5,12 +5,14 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequencesKt")
+@file:UseExperimental(ExperimentalTypeInference::class)
 
 package kotlin.sequences
 
 import kotlin.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
+import kotlin.experimental.ExperimentalTypeInference
 
 /**
  * Builds a [Sequence] lazily yielding values one by one.
@@ -21,12 +23,12 @@ import kotlin.coroutines.intrinsics.*
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @SinceKotlin("1.3")
-public fun <T> sequence(block: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(block) }
+public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(block) }
 
 @SinceKotlin("1.3")
 @Deprecated("Use 'sequence { }' function instead.", ReplaceWith("sequence(builderAction)"), level = DeprecationLevel.ERROR)
 @kotlin.internal.InlineOnly
-public inline fun <T> buildSequence(noinline builderAction: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(builderAction) }
+public inline fun <T> buildSequence(@BuilderInference noinline builderAction: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(builderAction) }
 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
@@ -35,7 +37,7 @@ public inline fun <T> buildSequence(noinline builderAction: suspend SequenceScop
  * @sample samples.collections.Iterables.Building.iterable
  */
 @SinceKotlin("1.3")
-public fun <T> iterator(block: suspend SequenceScope<T>.() -> Unit): Iterator<T> {
+public fun <T> iterator(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Iterator<T> {
     val iterator = SequenceBuilderIterator<T>()
     iterator.nextStep = block.createCoroutineUnintercepted(receiver = iterator, completion = iterator)
     return iterator
@@ -44,7 +46,7 @@ public fun <T> iterator(block: suspend SequenceScope<T>.() -> Unit): Iterator<T>
 @SinceKotlin("1.3")
 @Deprecated("Use 'iterator { }' function instead.", ReplaceWith("iterator(builderAction)"), level = DeprecationLevel.ERROR)
 @kotlin.internal.InlineOnly
-public inline fun <T> buildIterator(noinline builderAction: suspend SequenceScope<T>.() -> Unit): Iterator<T> = iterator(builderAction)
+public inline fun <T> buildIterator(@BuilderInference noinline builderAction: suspend SequenceScope<T>.() -> Unit): Iterator<T> = iterator(builderAction)
 
 /**
  * The scope for yielding values of a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
