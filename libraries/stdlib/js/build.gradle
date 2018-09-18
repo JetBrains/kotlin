@@ -184,6 +184,7 @@ compileCoroutinesKotlin2Js {
         sourceMapPrefix = "./"
         freeCompilerArgs += [
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-Xuse-experimental=kotlin.Experimental",
             "-XXLanguage:-ReleaseCoroutines"
         ]
     }

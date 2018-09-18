@@ -71,6 +71,7 @@ compileCoroutinesKotlinCommon {
         freeCompilerArgs = [
                 "-module-name", project.name+"-coroutines",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xuse-experimental=kotlin.Experimental",
                 "-XXLanguage:-ReleaseCoroutines",
                 "-Xallow-kotlin-package",
                 "-Xallow-result-return-type"
