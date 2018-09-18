@@ -121,6 +121,10 @@ public class GenerateRangesCodegenTestData {
 
     private static final List<String> IGNORED_FOR_JS_BACKEND = Collections.emptyList();
 
+    private static final List<String> IGNORED_FOR_JS_IR_BACKEND = Arrays.asList("inexactDownToMinValue.kt",
+                                                                                "inexactToMaxValue.kt",
+                                                                                "simpleRangeWithNonConstantEnds.kt");
+
     private static final List<String> IGNORED_FOR_NATIVE_BACKEND = Collections.emptyList();
 
     private static void writeIgnoreBackendDirective(PrintWriter out, String backendName) {
@@ -138,12 +142,14 @@ public class GenerateRangesCodegenTestData {
             throw new AssertionError(e);
         }
 
-        // Ranges are not supported in JS_IR, JVM_IR yet
-        writeIgnoreBackendDirective(out, "JS_IR");
+        // Ranges are not supported in JVM_IR yet
         writeIgnoreBackendDirective(out, "JVM_IR");
 
         if (IGNORED_FOR_JS_BACKEND.contains(file.getName())) {
             writeIgnoreBackendDirective(out, "JS");
+        }
+        if (IGNORED_FOR_JS_IR_BACKEND.contains(file.getName())) {
+            writeIgnoreBackendDirective(out, "JS_IR");
         }
         if (IGNORED_FOR_NATIVE_BACKEND.contains(file.getName())) {
             writeIgnoreBackendDirective(out, "NATIVE");

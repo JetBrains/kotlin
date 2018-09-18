@@ -1,5 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS_IR or not
-
 // TODO: muted automatically, investigate should it be ran for JVM_IR or not
 // IGNORE_BACKEND: JVM_IR
 

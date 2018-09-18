@@ -148,8 +148,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsNumberRangeToNumber = getInternalFunction("numberRangeToNumber")
     val jsNumberRangeToLong = getInternalFunction("numberRangeToLong")
 
-    val longConstructor =
-        context.symbolTable.referenceConstructor(context.getClass(FqName("kotlin.Long")).constructors.single())
+    val longClassSymbol = getInternalClassWithoutPackage("kotlin.Long")
+
     val longToDouble = context.symbolTable.referenceSimpleFunction(
         context.getClass(FqName("kotlin.Long")).unsubstitutedMemberScope.findSingleFunction(
             Name.identifier("toDouble")
@@ -161,7 +161,12 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         )
     )
 
-    val charConstructor = context.symbolTable.referenceConstructor(context.getClass(KotlinBuiltIns.FQ_NAMES._char.toSafe()).constructors.single())
+    val charClassSymbol = getInternalClassWithoutPackage("kotlin.Char")
+
+    val uByteClassSymbol = getInternalClassWithoutPackage("kotlin.UByte")
+    val uShortClassSymbol = getInternalClassWithoutPackage("kotlin.UShort")
+    val uIntClassSymbol = getInternalClassWithoutPackage("kotlin.UInt")
+    val uLongClassSymbol = getInternalClassWithoutPackage("kotlin.ULong")
 
     val unreachable = defineUnreachableIntrinsic()
 
@@ -221,6 +226,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     private fun getInternalWithoutPackage(name: String) =
         context.symbolTable.referenceSimpleFunction(context.getFunctions(FqName(name)).single())
+
+    private fun getInternalClassWithoutPackage(fqName: String) =
+        context.symbolTable.referenceClass(context.getClass(FqName(fqName)))
 
     // TODO: unify how we create intrinsic symbols
     private fun defineObjectCreateIntrinsic() =

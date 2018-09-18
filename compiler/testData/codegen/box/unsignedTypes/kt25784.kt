@@ -1,5 +1,5 @@
 // WITH_UNSIGNED
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0

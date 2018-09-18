@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -189,18 +190,13 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
 
             for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.intType)) {
                 op(type, ConversionNames.TO_CHAR) {
-                    irCall(it, intrinsics.charConstructor, dispatchReceiverAsFirstArgument = true)
+                    irCall(it, intrinsics.charClassSymbol.constructors.single(), dispatchReceiverAsFirstArgument = true)
                 }
             }
 
             for (type in arrayOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
                 op(type, ConversionNames.TO_CHAR) {
-                    IrCallImpl(
-                        it.startOffset,
-                        it.endOffset,
-                        irBuiltIns.charType,
-                        intrinsics.charConstructor
-                    ).apply {
+                    JsIrBuilder.buildCall(intrinsics.charClassSymbol.constructors.single()).apply {
                         putValueArgument(0, irCall(it, intrinsics.jsNumberToInt, dispatchReceiverAsFirstArgument = true))
                     }
                 }
@@ -306,42 +302,47 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
         }
     }
 
-    private fun lowerLongConst(value: Long, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrExpression {
-        val high = (value shr 32).toInt()
-        val low = value.toInt()
-        return IrCallImpl(
-            startOffset,
-            endOffset,
-            irBuiltIns.longType,
-            context.intrinsics.longConstructor
-        ).apply {
-            putValueArgument(0, JsIrBuilder.buildInt(context.irBuiltIns.intType, low))
-            putValueArgument(1, JsIrBuilder.buildInt(context.irBuiltIns.intType, high))
-        }
-    }
-
-    private fun lowerCharConst(value: Char, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrExpression {
-        return IrCallImpl(
-            startOffset,
-            endOffset,
-            irBuiltIns.charType,
-            context.intrinsics.charConstructor
-        ).apply {
-            putValueArgument(0, JsIrBuilder.buildInt(context.irBuiltIns.intType, value.toInt()))
-        }
-    }
-
     override fun lower(irFile: IrFile) {
         irFile.transform(object : IrElementTransformerVoid() {
+            private fun <C> lowerConst(
+                irClass: IrClassSymbol,
+                carrierFactory: (Int, Int, IrType, C) -> IrExpression,
+                vararg args: C
+            ): IrExpression {
+                val constructor = irClass.constructors.single()
+                val argType = constructor.owner.valueParameters.first().type
+                return JsIrBuilder.buildCall(constructor).apply {
+                    for (i in args.indices) {
+                        putValueArgument(i, carrierFactory(UNDEFINED_OFFSET, UNDEFINED_OFFSET, argType, args[i]))
+                    }
+                }
+            }
+
+            private fun createLong(v: Long): IrExpression = lowerConst(context.intrinsics.longClassSymbol, IrConstImpl<*>::int, v.toInt(), (v shr 32).toInt())
 
             // TODO should this be a separate lowering?
             override fun <T> visitConst(expression: IrConst<T>): IrExpression {
-                if (expression.kind is IrConstKind.Long) {
-                    return lowerLongConst(IrConstKind.Long.valueOf(expression), expression.startOffset, expression.endOffset)
-                } else if (expression.kind is IrConstKind.Char) {
-                    return lowerCharConst(IrConstKind.Char.valueOf(expression), expression.startOffset, expression.endOffset)
+                with(context.intrinsics) {
+                    return when (expression.type.classifierOrNull) {
+                        uByteClassSymbol -> lowerConst(uByteClassSymbol, IrConstImpl<*>::byte, IrConstKind.Byte.valueOf(expression))
+
+                        uShortClassSymbol -> lowerConst(uShortClassSymbol, IrConstImpl<*>::short, IrConstKind.Short.valueOf(expression))
+
+                        uIntClassSymbol -> lowerConst(uIntClassSymbol, IrConstImpl<*>::int, IrConstKind.Int.valueOf(expression))
+
+                        uLongClassSymbol -> lowerConst(uLongClassSymbol, { _, _, _, v -> createLong(v) }, IrConstKind.Long.valueOf(expression))
+
+                        else -> when {
+                            expression.kind is IrConstKind.Char ->
+                                lowerConst(charClassSymbol, IrConstImpl<*>::int, IrConstKind.Char.valueOf(expression).toInt())
+
+                            expression.kind is IrConstKind.Long ->
+                                createLong(IrConstKind.Long.valueOf(expression))
+
+                            else -> super.visitConst(expression)
+                        }
+                    }
                 }
-                return super.visitConst(expression)
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
