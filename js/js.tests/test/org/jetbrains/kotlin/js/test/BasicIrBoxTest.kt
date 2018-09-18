@@ -163,8 +163,8 @@ abstract class BasicIrBoxTest(
             runtimeFile.write(runtimeResult!!.generatedCode)
         }
 
-        val dependencyPaths = config.configuration[JSConfigurationKeys.LIBRARIES]!!
-        val dependencies = listOf(runtimeResult!!.moduleDescriptor) + dependencyPaths.mapNotNull { compilationCache[it]?.moduleDescriptor }
+        val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
+        val dependencies = listOf(runtimeResult!!.moduleDescriptor) + dependencyNames.mapNotNull { compilationCache[it]?.moduleDescriptor }
         val irDependencies = listOf(runtimeResult!!.moduleFragment) + compilationCache.values.map { it.moduleFragment }
 
         val result = compile(
@@ -175,7 +175,7 @@ abstract class BasicIrBoxTest(
             dependencies,
             irDependencies)
 
-        compilationCache[outputFile.absolutePath.let { it.substring(0, it.length - 2)} + "meta.js"] = result
+        compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
 
         outputFile.write(result.generatedCode)
     }
