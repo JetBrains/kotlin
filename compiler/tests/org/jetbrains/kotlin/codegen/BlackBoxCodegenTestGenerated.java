@@ -6461,6 +6461,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/coroutines/debug/debuggerMetadata.kt");
             }
 
+            @TestMetadata("firstSuspensionPoint.kt")
+            public void testFirstSuspensionPoint() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/debug/firstSuspensionPoint.kt");
+            }
+
             @TestMetadata("runtimeDebugMetadata.kt")
             public void testRuntimeDebugMetadata() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/debug/runtimeDebugMetadata.kt");

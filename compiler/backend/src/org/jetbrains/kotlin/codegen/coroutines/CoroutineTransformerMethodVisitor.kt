@@ -129,12 +129,17 @@ class CoroutineTransformerMethodVisitor(
 
         val suspendMarkerVarIndex = methodNode.maxLocals++
 
-        val suspensionPointLabels = suspensionPoints.withIndex().map {
+        val suspensionPointLineNumbers =
+            suspensionPoints.map { suspensionPoint ->
+                suspensionPoint.suspensionCallBegin.findPreviousOrNull { it is LineNumberNode } as LineNumberNode?
+            }
+
+        val continuationLabels = suspensionPoints.withIndex().map {
             transformCallAndReturnContinuationLabel(it.index + 1, it.value, methodNode, suspendMarkerVarIndex)
         }
 
-        val tableSwitchLabel = LabelNode()
         methodNode.instructions.apply {
+            val tableSwitchLabel = LabelNode()
             val firstStateLabel = LabelNode()
             val defaultLabel = LabelNode()
 
@@ -153,7 +158,7 @@ class CoroutineTransformerMethodVisitor(
                         0,
                         suspensionPoints.size,
                         defaultLabel,
-                        firstStateLabel, *suspensionPointLabels.toTypedArray()
+                        firstStateLabel, *continuationLabels.toTypedArray()
                     ),
                     firstStateLabel
                 )
@@ -182,11 +187,7 @@ class CoroutineTransformerMethodVisitor(
         fixLvtForParameters(methodNode, startLabel, endLabel)
 
         if (languageVersionSettings.isReleaseCoroutines() && !isCrossinlineLambda) {
-            val suspensionPointLabelNodes = listOf(tableSwitchLabel) + suspensionPointLabels.map {
-                it.label.info.safeAs<LabelNode>()
-                    .sure { "suspensionPointLabel shall have valid info. Check state-machine generation." }
-            }
-            writeDebugMetadata(methodNode, suspensionPointLabelNodes, spilledToVariableMapping)
+            writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
         }
     }
 
@@ -217,12 +218,10 @@ class CoroutineTransformerMethodVisitor(
 
     private fun writeDebugMetadata(
         methodNode: MethodNode,
-        suspensionPointLabels: List<LabelNode>,
+        suspensionPointLineNumbers: List<LineNumberNode?>,
         spilledToLocalMapping: List<List<SpilledVariableDescriptor>>
     ) {
-        val lines = suspensionPointLabels.map { label ->
-            label.safeAs<AbstractInsnNode>()?.findNextOrNull { it is LineNumberNode }.safeAs<LineNumberNode>()?.line ?: -1
-        }
+        val lines = suspensionPointLineNumbers.map { it?.line ?: -1 }
         val metadata = classBuilderForCoroutineState.newAnnotation(DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor, true)
         metadata.visit(COROUTINES_METADATA_SOURCE_FILE_JVM_NAME, sourceFile)
         metadata.visit(COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME, lines.toIntArray())
