@@ -509,17 +509,16 @@ public class FunctionCodegen {
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull GenerationState state
     ) {
+        if (isAccessor(functionDescriptor)) return;
         KotlinTypeMapper typeMapper = state.getTypeMapper();
         Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
-        boolean isAccessor = isAccessor(functionDescriptor);
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterSignature parameterSignature = kotlinParameterTypes.get(i);
             JvmMethodParameterKind kind = parameterSignature.getKind();
             if (kind.isSkippedInGenericSignature()) {
-                if (!isAccessor)
-                    markEnumOrInnerConstructorParameterAsSynthetic(mv, i, state.getClassBuilderMode());
+                markEnumOrInnerConstructorParameterAsSynthetic(mv, i, state.getClassBuilderMode());
                 continue;
             }
 

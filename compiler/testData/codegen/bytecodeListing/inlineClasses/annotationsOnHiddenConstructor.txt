@@ -25,7 +25,7 @@ public abstract class Sealed {
     inner class Sealed$Derived
     inner class Sealed$Inner
     private @Ann method <init>(@Ann p0: int): void
-    public synthetic method <init>(@Ann p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method getZ(): int
 }
 

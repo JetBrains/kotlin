@@ -210,6 +210,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/noAdditionalAnnotationsInAccessors.kt");
         }
 
+        @TestMetadata("noAnnotationsInSyntheticAccessors.kt")
+        public void testNoAnnotationsInSyntheticAccessors() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/noAnnotationsInSyntheticAccessors.kt");
+        }
+
         @TestMetadata("onProperties.kt")
         public void testOnProperties() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/onProperties.kt");
