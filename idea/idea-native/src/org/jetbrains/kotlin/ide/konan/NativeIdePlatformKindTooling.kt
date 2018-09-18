@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeAnalyzerFacade
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -35,7 +36,7 @@ class NativeIdePlatformKindTooling : IdePlatformKindTooling() {
     override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.NATIVE)
 
     override val libraryKind: PersistentLibraryKind<*> = NativeLibraryKind
-    override fun getLibraryDescription(project: Project) = NativeStandardLibraryDescription(project)
+    override fun getLibraryDescription(project: Project): CustomLibraryDescription? = null
     override fun getLibraryVersionProvider(project: Project): (Library) -> String? = { null }
 
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? = null
@@ -48,25 +49,4 @@ object NativeLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin
         get() = NativeIdePlatformKind.compilerPlatform
 
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
-}
-
-class NativeStandardLibraryDescription(project: Project?) :
-    CustomLibraryDescriptorWithDeferredConfig(
-        project,
-        KotlinNativeModuleConfigurator.NAME,
-        LIBRARY_NAME,
-        DIALOG_TITLE,
-        LIBRARY_CAPTION,
-        NativeLibraryKind,
-        SUITABLE_LIBRARY_KINDS
-    ) {
-
-    companion object {
-        val LIBRARY_NAME = "KotlinNative"
-
-        val NATIVE_LIBRARY_CREATION = "Native Library Creation"
-        val DIALOG_TITLE = "Create Kotlin Native Library"
-        val LIBRARY_CAPTION = "Kotlin Native Library"
-        val SUITABLE_LIBRARY_KINDS = setOf(NativeLibraryKind)
-    }
 }

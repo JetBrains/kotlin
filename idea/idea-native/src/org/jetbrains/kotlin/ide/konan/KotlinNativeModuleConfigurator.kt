@@ -7,55 +7,14 @@ package org.jetbrains.kotlin.ide.konan
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.libraries.DummyLibraryProperties
-import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.roots.libraries.LibraryType
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ide.konan.index.KotlinNativeMetaFileIndex
-import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator
 import org.jetbrains.kotlin.idea.configuration.LibraryKindSearchScope
 import org.jetbrains.kotlin.idea.configuration.hasKotlinFilesOnlyInTests
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
-import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.hasSomethingInPackage
-import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
-
-open class KotlinNativeModuleConfigurator : KotlinWithLibraryConfigurator() {
-
-    override val name: String get() = NAME
-
-    override val targetPlatform get() = KonanPlatform
-
-    override val presentableText get() = PRESENTABLE_TEXT
-
-    override fun isConfigured(module: Module) = hasKotlinNativeRuntimeInScope(module)
-
-    override val libraryName get() = NativeStandardLibraryDescription.LIBRARY_NAME
-
-    override val dialogTitle get() = NativeStandardLibraryDescription.DIALOG_TITLE
-
-    override val libraryCaption get() = NativeStandardLibraryDescription.LIBRARY_CAPTION
-
-    override val messageForOverrideDialog get() = NativeStandardLibraryDescription.NATIVE_LIBRARY_CREATION
-
-    override fun getLibraryJarDescriptors(sdk: Sdk?) = emptyList<LibraryJarDescriptor>()
-
-    override val libraryMatcher: (Library, Project) -> Boolean = { library, _ ->
-        library.getFiles(OrderRootType.CLASSES).any { it.nameWithoutExtension == KONAN_STDLIB_NAME }
-    }
-
-    override val libraryType: LibraryType<DummyLibraryProperties>? get() = null
-
-    companion object {
-        const val NAME = "KotlinNative"
-        const val PRESENTABLE_TEXT = "Native"
-    }
-}
 
 fun hasKotlinNativeRuntimeInScope(module: Module): Boolean {
     return runReadAction {
