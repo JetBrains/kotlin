@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.DFS
 
 object CodegenUtil {
     @JvmStatic
@@ -200,16 +201,25 @@ object CodegenUtil {
         trace: DiagnosticSink?
     ): List<ValueParameterDescriptor> {
         if (descriptor.isActual) {
+            val actualParameters = descriptor.valueParameters
+            if (actualParameters.any { it.declaresOrInheritsDefaultValue() }) {
+                // This is incorrect code: actual function cannot have default values, they should be declared in the expected function.
+                // But until KT-22818 is fixed, we need to provide a workaround for the exception that happens on complex default values
+                // in the expected function. One may suppress the error then, and declare default values _both_ in expect and actual.
+                // With this code, we'll generate actual default values if they're present, and expected default values otherwise.
+                return actualParameters
+            }
+
             val expected = CodegenUtil.findExpectedFunctionForActual(descriptor)
             if (expected != null && expected.valueParameters.any(ValueParameterDescriptor::declaresDefaultValue)) {
                 val element = DescriptorToSourceUtils.descriptorToDeclaration(expected)
                 if (element == null) {
                     if (trace != null) {
                         val actualDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
-                                ?: error("Not a source declaration: $descriptor")
+                            ?: error("Not a source declaration: $descriptor")
                         trace.report(Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND.on(actualDeclaration))
                     }
-                    return descriptor.valueParameters
+                    return actualParameters
                 }
 
                 return expected.valueParameters
@@ -217,6 +227,16 @@ object CodegenUtil {
         }
 
         return descriptor.valueParameters
+    }
+
+    // This function is private here because no one is supposed to use it except for the hack above.
+    // Please use ValueParameterDescriptor.hasDefaultValue instead.
+    private fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
+        return DFS.ifAny(
+            listOf(this),
+            { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
+            { it.declaresDefaultValue() }
+        )
     }
 }
 
