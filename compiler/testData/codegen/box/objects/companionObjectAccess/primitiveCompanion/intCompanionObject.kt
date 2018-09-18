@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 
 fun <T> assertEquals(a: T, b: T) { if (a != b) throw AssertionError("$a != $b") }
 
