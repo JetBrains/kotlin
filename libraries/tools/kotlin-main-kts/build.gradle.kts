@@ -81,7 +81,6 @@ val proguard by task<ProGuardTask> {
     outputs.file(outputJar)
 
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
-    printconfiguration("$buildDir/compiler.pro.dump")
 }
 
 val pack = if (shrink) proguard else packJar
