@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
@@ -36,6 +39,12 @@ class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrEle
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
+        val irProperty = (expression.symbol.owner as? IrSimpleFunction)?.correspondingProperty ?: return super.visitCall(expression)
+
+        if (irProperty.isConst) {
+            (irProperty.backingField?.initializer?.expression as? IrConst<*>)?.let { return it }
+        }
+
         val descriptor = expression.descriptor as? PropertyAccessorDescriptor ?: return super.visitCall(expression)
 
         val property = descriptor.correspondingProperty
@@ -65,7 +74,7 @@ class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrEle
         )
     }
 
-    private fun substituteGetter(descriptor: PropertyGetterDescriptor, expression: IrCall): IrGetFieldImpl {
+    private fun substituteGetter(descriptor: PropertyGetterDescriptor, expression: IrCall): IrExpression {
         return IrGetFieldImpl(
             expression.startOffset,
             expression.endOffset,

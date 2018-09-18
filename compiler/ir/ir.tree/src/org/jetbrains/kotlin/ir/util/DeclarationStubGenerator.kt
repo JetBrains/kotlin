@@ -79,14 +79,21 @@ class DeclarationStubGenerator(
                 throw AssertionError("Unexpected member descriptor: $descriptor")
         }
 
-    internal fun generatePropertyStub(descriptor: PropertyDescriptor, bindingContext: BindingContext? = null): IrProperty =
+    internal fun generatePropertyStub(
+        descriptor: PropertyDescriptor,
+        bindingContext: BindingContext? = null
+    ): IrProperty =
         IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
             if (descriptor.hasBackingField(bindingContext)) {
                 irProperty.backingField = generateFieldStub(descriptor)
             }
 
-            irProperty.getter = descriptor.getter?.let { generateFunctionStub(it) }
-            irProperty.setter = descriptor.setter?.let { generateFunctionStub(it) }
+            irProperty.getter = descriptor.getter?.let { generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
+                correspondingProperty = irProperty
+            }
+            irProperty.setter = descriptor.setter?.let { generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
+                correspondingProperty = irProperty
+            }
         }
 
     private fun generateFieldStub(descriptor: PropertyDescriptor): IrField {
@@ -117,10 +124,17 @@ class DeclarationStubGenerator(
         }
     }
 
-    fun generateFunctionStub(descriptor: FunctionDescriptor): IrSimpleFunction {
+    fun generateFunctionStub(descriptor: FunctionDescriptor, createPropertyIfNeeded: Boolean = true): IrSimpleFunction {
         val referenced = symbolTable.referenceSimpleFunction(descriptor)
         if (referenced.isBound) {
             return referenced.owner
+        }
+
+        if (createPropertyIfNeeded && descriptor is PropertyGetterDescriptor) {
+            return generatePropertyStub(descriptor.correspondingProperty).getter!!
+        }
+        if (createPropertyIfNeeded && descriptor is PropertySetterDescriptor) {
+            return generatePropertyStub(descriptor.correspondingProperty).setter!!
         }
 
         val origin =
