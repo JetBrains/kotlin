@@ -186,7 +186,7 @@ class CoroutineInferenceSupport(
         callCompleter.completeCall(context, overloadResults, tracingStrategy)
         if (!resultingCall.isReallySuccess()) return
 
-        if (isBadCall(resultingCall.resultingDescriptor)) {
+        if (!isGoodCall(resultingCall.resultingDescriptor)) {
             inferenceData.badCallHappened()
         }
 
@@ -208,18 +208,17 @@ class CoroutineInferenceSupport(
         }
     }
 
-    private fun isBadCall(resultingDescriptor: CallableDescriptor): Boolean {
+    private fun isGoodCall(resultingDescriptor: CallableDescriptor): Boolean {
         fun KotlinType.containsTypeTemplate() = contains { it is TypeTemplate }
 
-        val returnType = resultingDescriptor.returnType ?: return true
-        if (returnType.containsTypeTemplate()) return true
+        val returnType = resultingDescriptor.returnType ?: return false
+        if (returnType.containsTypeTemplate()) return false
 
-        if (resultingDescriptor !is FunctionDescriptor || resultingDescriptor.isSuspend) return false
+        if (resultingDescriptor !is FunctionDescriptor || resultingDescriptor.isSuspend) return true
 
-        for (valueParameter in resultingDescriptor.valueParameters) {
-            if (valueParameter.type.containsTypeTemplate()) return true
-        }
-        return false
+        if (resultingDescriptor.valueParameters.any { it.type.containsTypeTemplate() }) return false
+
+        return true
     }
 
     private class CoroutineTypeCheckerContext : TypeCheckerContext(errorTypeEqualsToAnything = true) {
