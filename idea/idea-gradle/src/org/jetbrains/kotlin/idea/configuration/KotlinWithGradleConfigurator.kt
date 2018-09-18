@@ -256,7 +256,8 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
     override fun changeGeneralFeatureConfiguration(
         module: Module,
         feature: LanguageFeature,
-        state: LanguageFeature.State
+        state: LanguageFeature.State,
+        forTests: Boolean
     ) {
         val sinceVersion = feature.sinceApiVersion
 
@@ -270,9 +271,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return
         }
 
-        val element = changeBuildGradle(module) {
-            getManipulator(it).changeLanguageFeatureConfiguration(feature, state)
-        }
+        val element = changeFeatureConfiguration(module, feature, state, forTests)
         if (element != null) {
             OpenFileDescriptor(module.project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
         }
@@ -325,6 +324,15 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
         fun changeCoroutineConfiguration(module: Module, coroutineOption: String): PsiElement? = changeBuildGradle(module) {
             getManipulator(it).changeCoroutineConfiguration(coroutineOption)
+        }
+
+        fun changeFeatureConfiguration(
+            module: Module,
+            feature: LanguageFeature,
+            state: LanguageFeature.State,
+            forTests: Boolean
+        ) = changeBuildGradle(module) {
+            getManipulator(it).changeLanguageFeatureConfiguration(feature, state, forTests)
         }
 
         fun changeLanguageVersion(module: Module, languageVersion: String?, apiVersion: String?, forTests: Boolean) =

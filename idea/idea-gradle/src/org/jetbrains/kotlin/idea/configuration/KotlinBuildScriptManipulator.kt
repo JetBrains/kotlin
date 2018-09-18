@@ -111,7 +111,8 @@ class KotlinBuildScriptManipulator(
 
     override fun changeLanguageFeatureConfiguration(
         feature: LanguageFeature,
-        state: LanguageFeature.State
+        state: LanguageFeature.State,
+        forTests: Boolean
     ): PsiElement? =
         scriptFile.changeLanguageFeatureConfiguration(feature, state)
 

@@ -348,7 +348,8 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
     override fun changeGeneralFeatureConfiguration(
         module: Module,
         feature: LanguageFeature,
-        state: LanguageFeature.State
+        state: LanguageFeature.State,
+        forTests: Boolean
     ) {
         val sinceVersion = feature.sinceApiVersion
 
