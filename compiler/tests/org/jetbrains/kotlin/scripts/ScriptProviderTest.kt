@@ -71,7 +71,7 @@ private class TestScriptDefinitionSource(val counter: AtomicInteger, val defGens
 {
     constructor(counter: AtomicInteger, vararg suffixes: String) : this(counter, suffixes.map { { FakeScriptDefinition(it) } })
 
-    override val definitions: Sequence<KotlinScriptDefinition> = buildSequence {
+    override val definitions: Sequence<KotlinScriptDefinition> = buildSequence<FakeScriptDefinition> {
         for (gen in defGens) {
             counter.incrementAndGet()
             yield(gen())
