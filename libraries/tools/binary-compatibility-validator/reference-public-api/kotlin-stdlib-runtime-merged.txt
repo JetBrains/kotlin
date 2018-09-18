@@ -1,3 +1,6 @@
+public abstract interface annotation class kotlin/BuilderInference : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/Deprecated : java/lang/annotation/Annotation {
 	public abstract fun level ()Lkotlin/DeprecationLevel;
 	public abstract fun message ()Ljava/lang/String;
@@ -2655,6 +2658,9 @@ public final class kotlin/coroutines/jvm/internal/Boxing {
 public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFrame {
 	public abstract fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
+}
+
+public abstract interface annotation class kotlin/experimental/ExperimentalTypeInference : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/internal/PlatformImplementationsKt {
