@@ -114,7 +114,7 @@ class KotlinBuildScriptManipulator(
         state: LanguageFeature.State,
         forTests: Boolean
     ): PsiElement? =
-        scriptFile.changeLanguageFeatureConfiguration(feature, state)
+        scriptFile.changeLanguageFeatureConfiguration(feature, state, forTests)
 
     override fun changeLanguageVersion(version: String, forTests: Boolean): PsiElement? =
         scriptFile.changeKotlinTaskParameter("languageVersion", version, forTests)
@@ -308,29 +308,63 @@ class KotlinBuildScriptManipulator(
 
     private fun KtFile.changeLanguageFeatureConfiguration(
         feature: LanguageFeature,
-        state: LanguageFeature.State
+        state: LanguageFeature.State,
+        forTests: Boolean
     ): PsiElement? {
-        // TODO: Kotlin DSL
-        return null
+        val sign = when (state) {
+            LanguageFeature.State.ENABLED -> "+"
+            LanguageFeature.State.DISABLED -> "-"
+            LanguageFeature.State.ENABLED_WITH_WARNING -> "+" // not supported normally
+            LanguageFeature.State.ENABLED_WITH_ERROR -> "-" // not supported normally
+        }
+        val languagePrefix = "-XXLanguage:"
+        val featureArgumentString = "$languagePrefix$sign${feature.name}"
+        val parameterName = "freeCompilerArgs"
+        return addOrReplaceKotlinTaskParameter(
+            parameterName,
+            "listOf(\"$featureArgumentString\")",
+            forTests
+        ) {
+            val existingFeatureIndex = text.indexOf(feature.name)
+            val languagePrefixIndex = text.lastIndexOf(languagePrefix, existingFeatureIndex)
+            val newText = if (languagePrefixIndex != -1) {
+                text.substring(0, languagePrefixIndex) + featureArgumentString + text.substring(existingFeatureIndex + feature.name.length)
+            } else {
+                val splitText = text.split(")")
+                if (splitText.size != 2) {
+                    "$parameterName = listOf(\"$featureArgumentString\")"
+                } else {
+                    splitText[0] + ", \"$featureArgumentString\")" + splitText[1]
+                }
+            }
+            replace(psiFactory.createExpression(newText))
+        }
     }
 
-    private fun KtFile.changeKotlinTaskParameter(parameterName: String, parameterValue: String, forTests: Boolean): PsiElement? {
-        val snippet = "$parameterName = \"$parameterValue\""
+    private fun KtFile.addOrReplaceKotlinTaskParameter(
+        parameterName: String,
+        defaultValue: String,
+        forTests: Boolean,
+        replaceIt: KtExpression.() -> PsiElement
+    ): PsiElement? {
         val taskName = if (forTests) "compileTestKotlin" else "compileKotlin"
         val optionsBlock = findScriptInitializer("$taskName.kotlinOptions")?.getBlock()
         return if (optionsBlock != null) {
             val assignment = optionsBlock.statements.find {
                 (it as? KtBinaryExpression)?.left?.text == parameterName
             }
-            if (assignment != null) {
-                assignment.replace(psiFactory.createExpression(snippet))
-            } else {
-                optionsBlock.addExpressionIfMissing(snippet)
-            }
+            assignment?.replaceIt() ?: optionsBlock.addExpressionIfMissing("$parameterName = $defaultValue")
         } else {
             addImportIfMissing("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
             script?.blockExpression?.addDeclarationIfMissing("val $taskName: KotlinCompile by tasks")
-            addTopLevelBlock("$taskName.kotlinOptions")?.addExpressionIfMissing(snippet)
+            addTopLevelBlock("$taskName.kotlinOptions")?.addExpressionIfMissing("$parameterName = $defaultValue")
+        }
+
+    }
+
+    private fun KtFile.changeKotlinTaskParameter(parameterName: String, parameterValue: String, forTests: Boolean): PsiElement? {
+        return addOrReplaceKotlinTaskParameter(parameterName, "\"$parameterValue\"", forTests) {
+            replace(psiFactory.createExpression("$parameterName = \"$parameterValue\""))
         }
     }
 
