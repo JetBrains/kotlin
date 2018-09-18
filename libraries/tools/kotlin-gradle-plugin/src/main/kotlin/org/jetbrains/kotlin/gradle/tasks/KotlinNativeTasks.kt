@@ -2,29 +2,25 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.artifacts.repositories.ArtifactRepository
-import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.KonanCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.KonanInteropRunner
+import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMainCompilation
-import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.KonanVersionImpl
-import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
 
 // TODO: It's just temporary tasks used while KN isn't integrated with Big Kotlin compilation infrastructure.
@@ -152,6 +148,22 @@ open class KotlinNativeCompile : AbstractCompile() {
         @Input get() = languageSettings?.enabledLanguageFeatures ?: emptySet()
     // endregion.
 
+    // region DSL for compiler options
+    private inner class NativeCompilerOpts : KotlinCommonToolOptions {
+        override var allWarningsAsErrors: Boolean = false
+        override var suppressWarnings: Boolean = false
+        override var verbose: Boolean = false
+
+        // Delegate for compilations's exptra options.
+        override var freeCompilerArgs: List<String>
+            get() = compilation.extraOpts
+            set(value) { compilation.extraOpts = value.toMutableList() }
+    }
+
+    @Internal val kotlinOptions: KotlinCommonToolOptions = NativeCompilerOpts()
+
+    // endregion.
+
     val kotlinNativeVersion: String
         @Input get() = project.konanVersion.toString()
 
@@ -169,43 +181,56 @@ open class KotlinNativeCompile : AbstractCompile() {
     @Optional @InputFiles
     var compilerPluginClasspath: FileCollection? = null
 
-    @TaskAction
-    override fun compile() {
-        val output = outputFile.get()
-        output.parentFile.mkdirs()
+    val serializedCompilerArguments: List<String>
+        @Internal get() = buildCommonArgs()
 
-        val args = mutableListOf<String>().apply {
-            addArg("-o", outputFile.get().absolutePath)
-            addKey("-opt", optimized)
-            addKey("-g", debuggable)
-            addKey("-ea", debuggable)
-            addKey("-tr", processTests)
+    val defaultSerializedCompilerArguments: List<String>
+        @Internal get() = buildCommonArgs(true)
 
-            addArg("-target", target)
-            addArg("-p", outputKind.name.toLowerCase())
-            addArgIfNotNull("-entry", entryPoint)
+    private fun buildCommonArgs(defaultsOnly: Boolean = false) = mutableListOf<String>().apply {
 
-            add("-Xmulti-platform")
+        add("-Xmulti-platform")
 
-            // Language features.
-            addArgIfNotNull("-language-version", languageVersion)
-            addArgIfNotNull("-api-version", apiVersion)
-            addKey("-progressive", progressiveMode)
-            enabledLanguageFeatures.forEach { featureName ->
-                add("-XXLanguage:+$featureName")
+        // Language features.
+        addArgIfNotNull("-language-version", languageVersion)
+        addArgIfNotNull("-api-version", apiVersion)
+        addKey("-progressive", progressiveMode)
+        enabledLanguageFeatures.forEach { featureName ->
+            add("-XXLanguage:+$featureName")
+        }
+
+        // Compiler plugins.
+        compilerPluginClasspath?.let { pluginClasspath ->
+            pluginClasspath.map { it.canonicalPath }.sorted().forEach { path ->
+                add("-Xplugin=$path")
             }
-
-            // Compiler plugins.
-            compilerPluginClasspath?.let { pluginClasspath ->
-                pluginClasspath.map { it.canonicalPath }.sorted().forEach { path ->
-                    add("-Xplugin=$path")
-                }
-                compilerPluginOptions.arguments.forEach {
-                    add("-P$it")
-                }
+            compilerPluginOptions.arguments.forEach {
+                add("-P$it")
             }
+        }
 
+        // kotlin options
+        addKey("-Werror", kotlinOptions.allWarningsAsErrors)
+        addKey("-nowarn", kotlinOptions.suppressWarnings)
+        addKey("-verbose", kotlinOptions.verbose)
+
+        if (!defaultsOnly) {
             addAll(additionalCompilerOptions)
+        }
+    }
+
+    private fun buildArgs(defaultsOnly: Boolean = false) = mutableListOf<String>().apply {
+        addKey("-opt", optimized)
+        addKey("-g", debuggable)
+        addKey("-ea", debuggable)
+        addKey("-tr", processTests)
+
+        addArg("-target", target)
+        addArg("-p", outputKind.name.toLowerCase())
+        addArgIfNotNull("-entry", entryPoint)
+
+        if (!defaultsOnly) {
+            addArg("-o", outputFile.get().absolutePath)
 
             // Libraries.
             libraries.files.filter {
@@ -215,20 +240,27 @@ open class KotlinNativeCompile : AbstractCompile() {
                 library.parent?.let { addArg("-r", it) }
                 addArg("-l", library.nameWithoutExtension)
             }
-
-            val friends = friendModule?.files
-            if (friends != null && friends.isNotEmpty()) {
-                addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
-            }
-
-            addListArg("-linker-options", linkerOpts)
-
-            // Sources.
-            addAll(getSource().map { it.absolutePath })
-            add("-Xcommon-sources=${commonSources.map { it.absolutePath }.joinToString(separator = ",")}")
         }
 
-        KonanCompilerRunner(project).run(args)
+        val friends = friendModule?.files
+        if (friends != null && friends.isNotEmpty()) {
+            addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
+        }
+
+        addListArg("-linker-options", linkerOpts)
+
+        addAll(buildCommonArgs(defaultsOnly))
+
+        // Sources.
+        addAll(getSource().map { it.absolutePath })
+        add("-Xcommon-sources=${commonSources.map { it.absolutePath }.joinToString(separator = ",")}")
+    }
+
+    @TaskAction
+    override fun compile() {
+        val output = outputFile.get()
+        output.parentFile.mkdirs()
+        KonanCompilerRunner(project).run(buildArgs())
     }
 }
 
