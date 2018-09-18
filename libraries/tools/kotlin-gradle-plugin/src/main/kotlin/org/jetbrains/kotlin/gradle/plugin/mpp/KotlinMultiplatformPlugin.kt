@@ -11,12 +11,14 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.jvm.tasks.Jar
@@ -34,7 +36,8 @@ class KotlinMultiplatformPlugin(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val fileResolver: FileResolver,
     private val instantiator: Instantiator,
-    private val kotlinPluginVersion: String
+    private val kotlinPluginVersion: String,
+    private val featurePreviews: FeaturePreviews // TODO get rid of this internal API usage once we don't need it
 ) : Plugin<Project> {
 
     private class TargetFromPresetExtension(val targetsContainer: NamedDomainObjectCollection<KotlinTarget>) {
@@ -64,6 +67,11 @@ class KotlinMultiplatformPlugin(
 
             presets = project.container(KotlinTargetPreset::class.java)
             addExtension("presets", presets)
+
+            isGradleMetadataAvailable =
+                    featurePreviews.activeFeatures.find { it.name == "GRADLE_METADATA" }?.let { metadataFeature ->
+                        featurePreviews.isFeatureEnabled(metadataFeature)
+                    } ?: true // the feature entry will be gone once the feature is stable
         }
 
         setupDefaultPresets(project)
@@ -98,13 +106,19 @@ class KotlinMultiplatformPlugin(
         val kotlinSoftwareComponent = KotlinSoftwareComponent(project, "kotlin", targets)
 
         project.extensions.configure(PublishingExtension::class.java) { publishing ->
-            // The root publication.
-            publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
+
+            // The root publication that references the platform specific publications as its variants:
+            val rootPublication = publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
                 from(kotlinSoftwareComponent)
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
                 artifactId = project.name
                 groupId = project.group.toString()
                 version = project.version.toString()
+            }
+
+            // Publish the root publication only if Gradle metadata publishing is enabled:
+            project.tasks.withType(AbstractPublishToMaven::class.java).all { publishTask ->
+                publishTask.onlyIf { publishTask.publication != rootPublication || project.multiplatformExtension!!.isGradleMetadataAvailable }
             }
 
             // Create separate publications for all publishable targets

@@ -6,7 +6,7 @@
 import com.example.lib.CommonKt;
 
 public class A {
-    public void useKotlinClass() {
+    public static void main(String[] args) {
         CommonKt.id(123);
     }
 }
