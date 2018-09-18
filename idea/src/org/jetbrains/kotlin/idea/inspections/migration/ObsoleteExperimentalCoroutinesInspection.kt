@@ -12,6 +12,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.configuration.isLanguageVersionUpdate
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -52,10 +53,21 @@ class ObsoleteExperimentalCoroutinesInspection : AbstractKotlinInspection(), Cle
 
     companion object {
         private val PROBLEMS = listOf(
+            ObsoleteTopLevelFunctionUsage(
+                "buildSequence",
+                "kotlin.coroutines.experimental.buildSequence",
+                "kotlin.sequences.sequence"
+            ),
+            ObsoleteTopLevelFunctionUsage(
+                "buildIterator",
+                "kotlin.coroutines.experimental.buildIterator",
+                "kotlin.sequences.iterator"
+            ),
             ObsoleteExtensionFunctionUsage(
                 "resume",
                 "kotlin.coroutines.experimental.Continuation.resume",
-                "kotlin.coroutines.resume"),
+                "kotlin.coroutines.resume"
+            ),
             ObsoleteExtensionFunctionUsage(
                 "resumeWithException",
                 "kotlin.coroutines.experimental.Continuation.resumeWithException",
@@ -83,6 +95,56 @@ private class ObsoleteCoroutineUsageFix(val delegate: CoroutineFix) : LocalQuick
     companion object {
         interface CoroutineFix {
             fun applyFix(project: Project, descriptor: ProblemDescriptor)
+        }
+    }
+}
+
+private class ObsoleteTopLevelFunctionUsage(
+    val textMarker: String, val oldFqName: String, val newFqName: String
+) : CoroutineMigrationProblem {
+    override fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean {
+        if (simpleNameExpression.text != textMarker) return false
+
+        if (simpleNameExpression.parent !is KtCallExpression) return false
+
+        val descriptor = simpleNameExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return false
+        val callableDescriptor = descriptor as? CallableDescriptor ?: return false
+
+        val resolvedToFqName = callableDescriptor.fqNameOrNull()?.asString() ?: return false
+        if (resolvedToFqName != oldFqName) return false
+
+        val project = simpleNameExpression.project
+
+        KotlinTopLevelFunctionFqnNameIndex.getInstance()
+            .get(newFqName, project, GlobalSearchScope.allScope(project))
+            .asSequence()
+            .firstOrNull() ?: return false
+
+        val problemDescriptor = holder.manager.createProblemDescriptor(
+            simpleNameExpression,
+            simpleNameExpression,
+            "`$newFqName` is expected to be used since Kotlin 1.3",
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            isOnTheFly,
+            ObsoleteCoroutineUsageFix(fix)
+        )
+        holder.registerProblem(problemDescriptor)
+
+        return true
+    }
+
+    private val fix = RebindReferenceFix(newFqName)
+
+    companion object {
+        private class RebindReferenceFix(val fqName: String) : ObsoleteCoroutineUsageFix.Companion.CoroutineFix {
+            override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+                val element = descriptor.psiElement
+                if (element !is KtSimpleNameExpression) return
+
+                element.mainReference.bindToFqName(FqName(fqName), KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
+
+                performDelayedRefactoringRequests(project)
+            }
         }
     }
 }
