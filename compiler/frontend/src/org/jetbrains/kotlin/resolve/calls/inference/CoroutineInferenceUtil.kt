@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.*
-import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
+import org.jetbrains.kotlin.coroutines.hasFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtExpression
@@ -31,6 +30,8 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasBuilderInferenceAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
@@ -118,7 +119,7 @@ class CoroutineInferenceSupport(
         lambdaExpectedType: KotlinType
     ) {
         val argumentExpression = valueArgument.getArgumentExpression() ?: return
-        if (!lambdaExpectedType.isSuspendFunctionType) return
+        if (!lambdaExpectedType.isFunctionOrSuspendFunctionType) return
         val lambdaReceiverType = lambdaExpectedType.getReceiverTypeFromFunctionType() ?: return
 
         val inferenceData = CoroutineInferenceData()
@@ -209,16 +210,14 @@ class CoroutineInferenceSupport(
     }
 
     private fun isGoodCall(resultingDescriptor: CallableDescriptor): Boolean {
+        if (resultingDescriptor.isExtension && !resultingDescriptor.hasBuilderInferenceAnnotation()) {
+            return false
+        }
+
         fun KotlinType.containsTypeTemplate() = contains { it is TypeTemplate }
 
         val returnType = resultingDescriptor.returnType ?: return false
-        if (returnType.containsTypeTemplate()) return false
-
-        if (resultingDescriptor !is FunctionDescriptor || resultingDescriptor.isSuspend) return true
-
-        if (resultingDescriptor.valueParameters.any { it.type.containsTypeTemplate() }) return false
-
-        return true
+        return !returnType.containsTypeTemplate()
     }
 
     private class CoroutineTypeCheckerContext : TypeCheckerContext(errorTypeEqualsToAnything = true) {
@@ -260,10 +259,10 @@ class CoroutineInferenceSupport(
 }
 
 fun isCoroutineCallWithAdditionalInference(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument) =
-    parameterDescriptor.hasSuspendFunctionType &&
+    parameterDescriptor.hasBuilderInferenceAnnotation() &&
+            parameterDescriptor.hasFunctionOrSuspendFunctionType &&
             argument.getArgumentExpression() is KtLambdaExpression &&
             parameterDescriptor.type.let { it.isBuiltinFunctionalType && it.getReceiverTypeFromFunctionType() != null }
-
 
 fun OverloadResolutionResultsImpl<*>.isResultWithCoroutineInference() = getCoroutineInferenceData() != null
 

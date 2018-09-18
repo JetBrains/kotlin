@@ -1772,6 +1772,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/recursiveGenerators2.kt");
             }
 
+            @TestMetadata("resolveUsualCallWithBuilderInference.kt")
+            public void testResolveUsualCallWithBuilderInference() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/resolveUsualCallWithBuilderInference.kt");
+            }
+
             @TestMetadata("returnTypeInference.kt")
             public void testReturnTypeInference() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/returnTypeInference.kt");
@@ -1800,6 +1805,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("typeFromReceiver.kt")
             public void testTypeFromReceiver() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/typeFromReceiver.kt");
+            }
+
+            @TestMetadata("useInferenceInformationFromExtension.kt")
+            public void testUseInferenceInformationFromExtension() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/useInferenceInformationFromExtension.kt");
             }
 
             @TestMetadata("withParameter.kt")
