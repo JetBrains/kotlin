@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
 import javax.inject.Inject
-import kotlin.coroutines.experimental.buildSequence
 
 sealed class DoubleColonLHS(val type: KotlinType) {
     /**
@@ -715,13 +714,13 @@ class DoubleColonExpressionResolver(
                 ?.apply { commitTrace() }?.results
         }
 
-        val resultSequence = buildSequence<ResolutionResultsAndTraceCommitCallback> {
+        val resultSequence = sequence {
             when (lhs) {
                 is DoubleColonLHS.Type -> {
                     val classifier = lhsType.constructor.declarationDescriptor
                     if (classifier !is ClassDescriptor) {
                         c.trace.report(CALLABLE_REFERENCE_LHS_NOT_A_CLASS.on(expression))
-                        return@buildSequence
+                        return@sequence
                     }
 
                     val qualifier = c.trace.get(BindingContext.QUALIFIER, expression.receiverExpression!!)

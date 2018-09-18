@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.script.findScriptDefinition
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.kotlin.utils.yieldIfNotNull
-import kotlin.coroutines.experimental.buildSequence
 
 var PsiFile.forcedModuleInfo: ModuleInfo? by UserDataProperty(Key.create("FORCED_MODULE_INFO"))
 
@@ -121,7 +120,7 @@ private sealed class ModuleInfoCollector<out T>(
             emptySequence()
         },
         virtualFileProcessor = { project, virtualFile, isLibrarySource ->
-            buildSequence<IdeaModuleInfo> {
+            sequence {
                 collectInfosByVirtualFile(
                     project,
                     virtualFile,

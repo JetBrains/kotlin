@@ -122,8 +122,8 @@ extra["versions.junit"] = "4.12"
 extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.8.2"
 extra["versions.android"] = "2.3.1"
-extra["versions.kotlinx-coroutines-core"] = "0.20"
-extra["versions.kotlinx-coroutines-jdk8"] = "0.20"
+extra["versions.kotlinx-coroutines-core"] = "0.26.1-eap13"
+extra["versions.kotlinx-coroutines-jdk8"] = "0.26.1-eap13"
 extra["versions.json"] = "20160807"
 extra["versions.native-platform"] = "0.14"
 extra["versions.ant-launcher"] = "1.8.0"
@@ -273,8 +273,7 @@ allprojects {
     val commonCompilerArgs = listOfNotNull(
         "-Xallow-kotlin-package",
         "-Xread-deserialized-contracts",
-        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") }, // TODO: change to "-progressive" after bootstrap
-        "-XXLanguage:-ReleaseCoroutines"
+        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") } // TODO: change to "-progressive" after bootstrap
     )
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {

@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.jvm.impl
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
