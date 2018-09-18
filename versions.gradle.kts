@@ -1,6 +1,10 @@
 extra["versions.intellijSdk"] = "182.4129.33"
 extra["versions.androidBuildTools"] = "r23.0.1"
 extra["versions.idea.NodeJS"] = "181.3494.12"
+extra["versions.appcode"] = "191.184"
+extra["versions.appcode.repo"] = "ijplatform_master_CIDR_AppCode_Installers"
+extra["versions.clion"] = "191.377"
+extra["versions.clion.repo"] = "ijplatform_master_CIDR_CLion_Installers"
 //extra["versions.androidStudioRelease"] = "3.1.0.5"
 //extra["versions.androidStudioBuild"] = "173.4506631"
 
