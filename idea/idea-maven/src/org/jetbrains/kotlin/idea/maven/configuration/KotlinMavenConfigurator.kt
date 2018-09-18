@@ -34,9 +34,11 @@ import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.idea.maven.*
 import org.jetbrains.kotlin.idea.quickfix.ChangeCoroutineSupportFix
+import org.jetbrains.kotlin.idea.quickfix.ChangeGeneralLanguageFeatureSupportFix
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
 
@@ -249,7 +251,7 @@ protected constructor(
 
     override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
         val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
-                (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+                getRuntimeLibraryVersion(module).toApiVersion() == ApiVersion.KOTLIN_1_0
 
         val messageTitle = ChangeCoroutineSupportFix.getFixText(state)
         if (runtimeUpdateRequired) {
@@ -270,7 +272,31 @@ protected constructor(
 
     }
 
-    private fun changeMavenCoroutineConfiguration(module: Module, value: String, messageTitle: String): PsiElement? {
+    override fun changeGeneralFeatureConfiguration(
+        module: Module,
+        feature: LanguageFeature,
+        state: LanguageFeature.State
+    ) {
+        val sinceVersion = feature.sinceApiVersion
+
+        val messageTitle = ChangeGeneralLanguageFeatureSupportFix.getFixText(feature, state)
+        if (state != LanguageFeature.State.DISABLED && getRuntimeLibraryVersion(module).toApiVersion() < sinceVersion) {
+            Messages.showErrorDialog(
+                module.project,
+                "${feature.presentableName} support requires version $sinceVersion or later of the Kotlin runtime library. " +
+                        "Please update the version in your build script.",
+                messageTitle
+            )
+            return
+        }
+        // TODO: here we should make something like https://kotlinlang.org/docs/reference/using-maven.html#specifying-compiler-options
+    }
+
+    private fun changeMavenCoroutineConfiguration(
+        module: Module,
+        value: String,
+        messageTitle: String
+    ): PsiElement? {
         fun doChangeMavenCoroutineConfiguration(): PsiElement? {
             val psi = KotlinMavenConfigurator.findModulePomFile(module) as? XmlFile ?: return null
             val pom = PomFile.forFileOrNull(psi) ?: return null

@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -107,6 +108,12 @@ class KotlinBuildScriptManipulator(
 
     override fun changeCoroutineConfiguration(coroutineOption: String): PsiElement? =
         scriptFile.changeCoroutineConfiguration(coroutineOption)
+
+    override fun changeLanguageFeatureConfiguration(
+        feature: LanguageFeature,
+        state: LanguageFeature.State
+    ): PsiElement? =
+        scriptFile.changeLanguageFeatureConfiguration(feature, state)
 
     override fun changeLanguageVersion(version: String, forTests: Boolean): PsiElement? =
         scriptFile.changeKotlinTaskParameter("languageVersion", version, forTests)
@@ -296,6 +303,14 @@ class KotlinBuildScriptManipulator(
         } else {
             kotlinBlock.add(psiFactory.createExpression(snippet)).apply { addNewLinesIfNeeded() }
         }
+    }
+
+    private fun KtFile.changeLanguageFeatureConfiguration(
+        feature: LanguageFeature,
+        state: LanguageFeature.State
+    ): PsiElement? {
+        // TODO: Kotlin DSL
+        return null
     }
 
     private fun KtFile.changeKotlinTaskParameter(parameterName: String, parameterValue: String, forTests: Boolean): PsiElement? {
