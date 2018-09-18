@@ -17,7 +17,7 @@ fun templateGroupOf(vararg templates: MemberTemplate): TemplateGroup = { templat
 
 abstract class TemplateGroupBase : TemplateGroup {
 
-    override fun invoke(): Sequence<MemberTemplate> = buildSequence {
+    override fun invoke(): Sequence<MemberTemplate> = buildSequence<MemberTemplate> {
         with(this@TemplateGroupBase) {
             this::class.members.filter { it.name.startsWith("f_") }.forEach {
                 require(it.parameters.size == 1) { "Member $it violates naming convention" }
