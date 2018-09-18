@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface IdentityLookup ImageIO Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.IdentityLookupUI
+headers = IdentityLookupUI/IdentityLookupUI.h
+
+headerFilter = IdentityLookupUI/**
+
+compilerOpts = -framework IdentityLookupUI
+linkerOpts = -framework IdentityLookupUI

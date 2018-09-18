@@ -1,7 +1,7 @@
 depends = posix
 package = platform.zlib
 headers = zconf.h zlib.h
-headerFilter = zlib.h
+headerFilter = zconf.h zlib.h
 compilerOpts = -DByte=uByte -DBytef=uBytef
 linkerOpts = -lz
 

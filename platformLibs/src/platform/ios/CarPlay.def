@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MapKit Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.CarPlay
+headers = CarPlay/CarPlay.h
+
+headerFilter = CarPlay/**
+
+compilerOpts = -framework CarPlay
+linkerOpts = -framework CarPlay

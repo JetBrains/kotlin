@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.FileProviderUI
+headers = FileProviderUI/FileProviderUI.h
+
+headerFilter = FileProviderUI/**
+
+compilerOpts = -framework FileProviderUI
+linkerOpts = -framework FileProviderUI

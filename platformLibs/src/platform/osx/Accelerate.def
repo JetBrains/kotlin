@@ -1,4 +1,4 @@
-depends = CoreFoundation CoreGraphics CoreVideo IOSurface darwin posix
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText CoreVideo DiskArbitration IOKit IOSurface ImageIO Security darwin libkern osx posix
 language = Objective-C
 package = platform.Accelerate
 headers = Accelerate/Accelerate.h

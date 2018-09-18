@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation IOSurface Metal Security darwin posix
+language = Objective-C
+package = platform.MetalPerformanceShaders
+headers = MetalPerformanceShaders/MetalPerformanceShaders.h
+
+headerFilter = MetalPerformanceShaders/** MPSNeuralNetwork/** MPSImage/** MPSCore/** MPSMatrix/** MPSRayIntersector/**
+
+compilerOpts = -framework MetalPerformanceShaders
+linkerOpts = -framework MetalPerformanceShaders

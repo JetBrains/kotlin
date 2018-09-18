@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreML CoreVideo Foundation IOSurface Security darwin posix
+language = Objective-C
+package = platform.NaturalLanguage
+headers = NaturalLanguage/NaturalLanguage.h
+
+headerFilter = NaturalLanguage/**
+
+compilerOpts = -framework NaturalLanguage
+linkerOpts = -framework NaturalLanguage

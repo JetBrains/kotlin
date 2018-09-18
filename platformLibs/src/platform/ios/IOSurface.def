@@ -1,6 +1,7 @@
 depends = CFNetwork CoreFoundation Foundation Security darwin posix
 language = Objective-C
 package = platform.IOSurface
+headers.ios_arm32 = IOSurface/IOSurfaceRef.h IOSurface/IOSurfaceObjC.h
 headers.ios_arm64 = IOSurface/IOSurfaceRef.h IOSurface/IOSurfaceObjC.h
 
 headerFilter = IOSurface/**

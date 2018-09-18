@@ -1,0 +1,9 @@
+depends = AVFoundation AudioToolbox CFNetwork CoreAudio CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore SceneKit Security SpriteKit UIKit darwin posix
+language = Objective-C
+package = platform.ARKit
+headers = ARKit/ARKit.h
+
+headerFilter = ARKit/**
+
+compilerOpts = -framework ARKit
+linkerOpts = -framework ARKit

@@ -24,10 +24,12 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     bank/bank_types.h \
     bsm/audit.h \
     os/activity.h os/availability.h os/base.h os/lock.h \
-    os/object.h os/overflow.h os/trace.h
-#    simd/simd.h
+    os/log.h os/object.h os/overflow.h os/trace.h \
+    simd/simd.h
 
 headerFilter = **
+
+excludedFunctions = __tg_promote
 
 compilerOpts = -D_XOPEN_SOURCE
 linkerOpts = -ldl -lz

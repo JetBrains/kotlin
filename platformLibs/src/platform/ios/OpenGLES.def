@@ -1,4 +1,4 @@
-depends = OpenGLESCommon posix
+depends = EAGL OpenGLESCommon darwin posix
 language = Objective-C
 package = platform.gles
 headers = OpenGLES/ES1/gl.h OpenGLES/ES1/glext.h

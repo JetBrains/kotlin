@@ -1,4 +1,4 @@
-depends = CoreFoundation darwin posix
+depends = CoreFoundation CoreServices darwin posix
 language = Objective-C
 package = platform.MobileCoreServices
 headers = MobileCoreServices/MobileCoreServices.h

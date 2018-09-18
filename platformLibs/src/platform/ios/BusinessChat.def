@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit darwin posix
+language = Objective-C
+package = platform.BusinessChat
+headers = BusinessChat/BusinessChat.h
+
+headerFilter = BusinessChat/**
+
+compilerOpts = -framework BusinessChat
+linkerOpts = -framework BusinessChat

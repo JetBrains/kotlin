@@ -1,4 +1,4 @@
-depends = OpenGL OpenGLCommon posix
+depends = OpenGL OpenGLCommon darwin posix
 language = Objective-C
 package = platform.GLUT
 headers = GLUT/glut.h
