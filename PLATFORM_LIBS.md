@@ -28,26 +28,6 @@ Note that the content of `platform.posix` is NOT identical on
 different platforms, in the same way as different `POSIX` implementations
 are a little different.
 
-### OS specific libraries
-
-We've gone a little further and provided access to more specific
-native OS services. One needs to import the proper packages
-on each of the platform. Choose what matches your target platform:
-
-<div class="sample" markdown="1" theme="idea" data-highlight-only>
-
-```kotlin
-import platform.osx.*
-
-import platform.linux.*
-
-import platform.windows.*
-
-import platform.android.*
-
-import platform.ios.*
-```
-
 </div> 
 
 ### Popular native libraries
