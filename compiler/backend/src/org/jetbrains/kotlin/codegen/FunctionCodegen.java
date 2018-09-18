@@ -70,6 +70,7 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.generateBridgeForMainFunctionIfNecessary;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
+import static org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.isAccessor;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
@@ -353,7 +354,7 @@ public class FunctionCodegen {
         // base check
         boolean isInlineClass = InlineClassesUtilsKt.isInlineClass(containingDeclaration);
         boolean simpleFunctionOrProperty =
-                !(functionDescriptor instanceof ConstructorDescriptor) && !KotlinTypeMapper.isAccessor(functionDescriptor);
+                !(functionDescriptor instanceof ConstructorDescriptor) && !isAccessor(functionDescriptor);
 
         return isInlineClass && simpleFunctionOrProperty;
     }
@@ -511,12 +512,14 @@ public class FunctionCodegen {
         KotlinTypeMapper typeMapper = state.getTypeMapper();
         Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
+        boolean isAccessor = isAccessor(functionDescriptor);
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterSignature parameterSignature = kotlinParameterTypes.get(i);
             JvmMethodParameterKind kind = parameterSignature.getKind();
             if (kind.isSkippedInGenericSignature()) {
-                markEnumOrInnerConstructorParameterAsSynthetic(mv, i, state.getClassBuilderMode());
+                if (!isAccessor)
+                    markEnumOrInnerConstructorParameterAsSynthetic(mv, i, state.getClassBuilderMode());
                 continue;
             }
 

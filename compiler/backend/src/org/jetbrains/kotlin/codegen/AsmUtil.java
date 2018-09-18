@@ -549,16 +549,8 @@ public class AsmUtil {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
 
-        // the following code is only for PRIVATE visibility of member
-        if (memberDescriptor instanceof ConstructorDescriptor) {
-            if (isEnumEntry(containingDeclaration)) {
-                return NO_FLAG_PACKAGE_PRIVATE;
-            }
-            if (isEnumClass(containingDeclaration)) {
-                //TODO: should be ACC_PRIVATE
-                // see http://youtrack.jetbrains.com/issue/KT-2680
-                return ACC_PROTECTED;
-            }
+        if (memberDescriptor instanceof ConstructorDescriptor && isEnumEntry(containingDeclaration)) {
+            return NO_FLAG_PACKAGE_PRIVATE;
         }
 
         return null;

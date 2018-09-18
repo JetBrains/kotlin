@@ -26,7 +26,7 @@ public final enum class TestEnum {
     public final static field ANSWER: TestEnum
     private final field z: int
     static method <clinit>(): void
-    protected method <init>(p0: java.lang.String, p1: int, p2: int): void
+    private method <init>(p0: java.lang.String, p1: int, p2: int): void
     public final method getZ(): int
     public static method valueOf(p0: java.lang.String): TestEnum
     public static method values(): TestEnum[]
