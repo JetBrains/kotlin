@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.script.util.resolvers
 
 import org.apache.ivy.Ivy
+import org.apache.ivy.core.LogOptions
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor
 import org.apache.ivy.core.module.id.ModuleRevisionId
@@ -13,6 +14,8 @@ import org.apache.ivy.core.resolve.ResolveOptions
 import org.apache.ivy.core.settings.IvySettings
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter
 import org.apache.ivy.plugins.resolver.URLResolver
+import org.apache.ivy.util.DefaultMessageLogger
+import org.apache.ivy.util.Message
 import org.jetbrains.kotlin.script.util.DependsOn
 import org.jetbrains.kotlin.script.util.Repository
 import java.io.File
@@ -75,7 +78,11 @@ class IvyResolver : Resolver {
         //creates an ivy configuration file
         XmlModuleDescriptorWriter.write(moduleDescriptor, ivyfile)
 
-        val resolveOptions = ResolveOptions().setConfs(arrayOf("default"))
+        val resolveOptions = ResolveOptions().apply {
+            confs = arrayOf("default")
+            log = LogOptions.LOG_QUIET
+            isOutputReport = false
+        }
 
         //init resolve report
         val report = ivy.resolve(ivyfile.toURI().toURL(), resolveOptions)
@@ -98,5 +105,9 @@ class IvyResolver : Resolver {
 
     companion object {
         const val DEFAULT_ARTIFACT_PATTERN = "[organisation]/[module]/[revision]/[artifact](-[revision]).[ext]"
+
+        init {
+            Message.setDefaultLogger(DefaultMessageLogger(1))
+        }
     }
 }
