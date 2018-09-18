@@ -57,7 +57,9 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: UInt): Int = uintCompare(this.data, other.data)
+    @kotlin.internal.InlineOnly
+    @Suppress("OVERRIDE_BY_INLINE")
+    public override inline operator fun compareTo(other: UInt): Int = uintCompare(this.data, other.data)
 
     /**
      * Compares this value with the specified value for order.
