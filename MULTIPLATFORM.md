@@ -60,10 +60,16 @@ use `./gradlew` to run the build instead of using your local Gradle installation
 Once the wrapper is created we need to describe the project structure in Gradle terms. To do this, create
 a `settings.gradle` file in the root directory of the project and put the following snippet into it:
 
-    include ':greeting'
-    include ':greeting:common'
-    include ':greeting:android'
-    include ':greeting:ios'
+<div class="sample" markdown="1" theme="idea" mode="groovy">
+
+```groovy
+include ':greeting'
+include ':greeting:common'
+include ':greeting:android'
+include ':greeting:ios'
+```
+
+</div>
 
 Here we declare all subprojects for our `greeting` multiplatform library. All other multiplatform libraries included
 in the project also must be declared here.
@@ -106,30 +112,37 @@ Now we have the basic structure of the project and can proceed to implement the 
 We need to add buildscript dependencies to be able to use the Kotlin plugins for Gradle in our build. Open
 the `build.gradle` in the `greeting` directory and put the following snippet into it:
 
-    // Set up a buildscript dependency on the Kotlin plugin.
-    buildscript {
-        // Specify a Kotlin version you need.
-        ext.kotlin_version = '1.2.41'
+<div class="sample" markdown="1" theme="idea" mode="groovy">
 
-        repositories {
-            jcenter()
-            maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
-        }
+```groovy
+// Set up a buildscript dependency on the Kotlin plugin.
+buildscript {
+    // Specify a Kotlin version you need.
+    ext.kotlin_version = '1.2.41'
 
-        // Specify all the plugins used as dependencies
-        dependencies {
-            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-            classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.7"
-
-        }
+    repositories {
+        jcenter()
+        maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
     }
 
-    // Set up compilation dependency repositories for all projects.
-    subprojects {
-        repositories {
-            jcenter()
-        }
+    // Specify all the plugins used as dependencies
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.7"
+
     }
+}
+
+// Set up compilation dependency repositories for all projects.
+subprojects {
+    repositories {
+        jcenter()
+    }
+}
+```
+
+</div>
+
 
 Now all subprojects of the library can use Kotlin plugins.
 
@@ -137,32 +150,44 @@ Now all subprojects of the library can use Kotlin plugins.
 
 The `common` subproject contains platform-independent code. To build it, add the following snippet in `common/build.gradle`:
 
-    apply plugin: 'kotlin-platform-common'
+<div class="sample" markdown="1" theme="idea" mode="groovy">
 
-    // Specify a group and a version of the library to access it in Android Studio.
-    // By default the project directory name is used as an artifact name thus the full dependency
-    // description will be 'org.greeting:common:1.0'
-    group = 'org.greeting'
-    version = 1.0
+```groovy
+apply plugin: 'kotlin-platform-common'
 
-    dependencies {
-        // Set up a compilation dependency on common Kotlin stdlib
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
-    }
+// Specify a group and a version of the library to access it in Android Studio.
+// By default the project directory name is used as an artifact name thus the full dependency
+// description will be 'org.greeting:common:1.0'
+group = 'org.greeting'
+version = 1.0
+
+dependencies {
+    // Set up a compilation dependency on common Kotlin stdlib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
+}
+```
+
+</div>
 
 Now we can write some logic available for all platforms. Create `common/src/main/kotlin/common.kt` and add some
 functionality into it:
 
-    // greeting/common/src/main/kotlin/common.kt
-    package org.greeting
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
 
-    expect class Platform() {
-        val platform: String
-    }
+```kotlin
+// greeting/common/src/main/kotlin/common.kt
+package org.greeting
 
-    class Greeting {
-        fun greeting(): String = "Hello, ${Platform().platform}"
-    }
+expect class Platform() {
+    val platform: String
+}
+
+class Greeting {
+    fun greeting(): String = "Hello, ${Platform().platform}"
+}
+```
+
+</div>
 
 Here we create a simple class using the `expect`/`actual` paradigm. Find details about platform-specific declarations
 [here](https://kotlinlang.org/docs/reference/multiplatform.html#platform-specific-declarations).
@@ -173,64 +198,88 @@ The `android` subproject contains platform-dependent implementations of the `exp
 `common` project. We compile it into a Java library which an Android Studio project can depend on. The content
 of the `android/build.gradle` will be the following:
 
-    apply plugin: 'kotlin-platform-jvm'
+<div class="sample" markdown="1" theme="idea" mode="groovy">
 
-    // Specify a group and a version of the library to access it in Android Studio.
-    // By default the project directory name is used as an artifact name thus the full dependency
-    // description will be 'org.greeting:android:1.0'
-    group = 'org.greeting'
-    version = 1.0
+```groovy
+apply plugin: 'kotlin-platform-jvm'
 
-    dependencies {
-        // Specify Kotlin/JVM stdlib dependency.
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+// Specify a group and a version of the library to access it in Android Studio.
+// By default the project directory name is used as an artifact name thus the full dependency
+// description will be 'org.greeting:android:1.0'
+group = 'org.greeting'
+version = 1.0
 
-        // Specify dependency on a common project for Kotlin multiplatform build.
-        expectedBy project(':greeting:common')
-    }
+dependencies {
+    // Specify Kotlin/JVM stdlib dependency.
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
+    // Specify dependency on a common project for Kotlin multiplatform build.
+    expectedBy project(':greeting:common')
+}
+```
+
+</div>
 
 As mentioned above this subproject should include actual implementations of the common project's `expect`-declarations.
 Let's write an Android-specific method:
 
-    // greeting/android/src/main/kotlin/android.kt
-    package org.greeting
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
 
-    actual class Platform actual constructor() {
-        actual val platform: String = "Android"
-    }
+```kotlin
+// greeting/android/src/main/kotlin/android.kt
+package org.greeting
+
+actual class Platform actual constructor() {
+    actual val platform: String = "Android"
+}
+```
+
+</div>
 
 #### 2.3 iOS subproject
 
 This project is compiled into an Objective-C framework using the Kotlin/Native compiler. To do this, declare a framework in
 `ios/build.gradle` and add an `expectedBy` dependency in the same manner as was done in the Android project:
 
-    apply plugin: 'konan'
+<div class="sample" markdown="1" theme="idea" mode="groovy">
 
-    // Specify targets to build the framework: iOS and iOS simulator
-    konan.targets = ['ios_arm64', 'ios_x64']
+```groovy
+apply plugin: 'konan'
 
-    konanArtifacts {
-        // Declare building into a framework.
-        framework('Greeting') {
-            // The multiplatform support is disabled by default.
-            enableMultiplatform true
-        }
+// Specify targets to build the framework: iOS and iOS simulator
+konan.targets = ['ios_arm64', 'ios_x64']
+
+konanArtifacts {
+    // Declare building into a framework.
+    framework('Greeting') {
+        // The multiplatform support is disabled by default.
+        enableMultiplatform true
     }
+}
 
-    dependencies {
-        // Specify dependency on a common project for Kotlin multiplatform build
-        expectedBy project(':greeting:common')
-    }
+dependencies {
+    // Specify dependency on a common project for Kotlin multiplatform build
+    expectedBy project(':greeting:common')
+}
+```
+
+</div>
 
 As well as `android`, this project contains platform-dependent implementations of `expect`-declarations:
 
-    // greeting/ios/src/main/kotlin/ios.kt
-    package org.greeting
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
 
-    actual class Platform actual constructor() {
-        actual val platform: String = "iOS"
-    }
+```kotlin
+// greeting/ios/src/main/kotlin/ios.kt
+package org.greeting
+
+actual class Platform actual constructor() {
+    actual val platform: String = "iOS"
+}
+```
+
+</div>
+
 
 ### 3. Android application
 
@@ -269,7 +318,9 @@ following line in `androidApp/settings.gradle`:
 > creating a composite build. To do this you need to declare them along with their directories in
 > `androidApp/settings.gradle`:
 >
->```
+><div class="sample" markdown="1" theme="idea" mode="groovy">
+>
+>```groovy
 >include ':greeting'
 >include ':greeting:common'
 >include ':greeting:android'
@@ -279,21 +330,34 @@ following line in `androidApp/settings.gradle`:
 >project(':greeting:android').projectDir = file('../greeting/android')
 >```
 >
+></div>
+>
 > Now you can declare dependencies directly on projects instead of using maven-like coordinates:
 >
->```
+><div class="sample" markdown="1" theme="idea" mode="groovy">
+>
+>```groovy
 >implementation project(':greeting:android')
 >```
+>
+></div>
 
 After these steps we can access our library as we would with any other Kotlin code:
 
-    import org.greeting.*
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
 
-    /* ... */
+```kotlin
+import org.greeting.*
 
-    fun foo() {
-        println(Greeting().greeting())
-    }
+/* ... */
+
+fun foo() {
+    println(Greeting().greeting())
+}
+```
+
+</div>
+
 
 ### 4. iOS application
 
@@ -357,13 +421,19 @@ Do this for the common code of the library too.
 Now the framework is added and all the Kotlin API are available from Swift code (note that you need to build the
 framework in order to get code completion). Let's print our greeting:
 
-    import Greeting
+<div class="sample" markdown="1" theme="idea" mode="swift">
 
-    /* ... */
+```swift
+import Greeting
 
-    func foo() {
-        print(GreetingGreeting().greeting())
-    }
+/* ... */
+
+func foo() {
+    print(GreetingGreeting().greeting())
+}
+```
+
+</div>
 
 ### Sample
 
