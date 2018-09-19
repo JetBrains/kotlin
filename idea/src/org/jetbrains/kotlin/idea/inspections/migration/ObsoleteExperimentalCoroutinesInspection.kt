@@ -99,26 +99,33 @@ private class ObsoleteCoroutineUsageFix(val delegate: CoroutineFix) : LocalQuick
     }
 }
 
+private fun isTopLevelCallForReplace(simpleNameExpression: KtSimpleNameExpression, oldFqName: String, newFqName: String): Boolean {
+    if (simpleNameExpression.parent !is KtCallExpression) return false
+
+    val descriptor = simpleNameExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return false
+    val callableDescriptor = descriptor as? CallableDescriptor ?: return false
+
+    val resolvedToFqName = callableDescriptor.fqNameOrNull()?.asString() ?: return false
+    if (resolvedToFqName != oldFqName) return false
+
+    val project = simpleNameExpression.project
+
+    val isInIndex = KotlinTopLevelFunctionFqnNameIndex.getInstance()
+        .get(newFqName, project, GlobalSearchScope.allScope(project))
+        .isEmpty()
+
+    return !isInIndex
+}
+
 private class ObsoleteTopLevelFunctionUsage(
     val textMarker: String, val oldFqName: String, val newFqName: String
 ) : CoroutineMigrationProblem {
     override fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean {
         if (simpleNameExpression.text != textMarker) return false
 
-        if (simpleNameExpression.parent !is KtCallExpression) return false
-
-        val descriptor = simpleNameExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return false
-        val callableDescriptor = descriptor as? CallableDescriptor ?: return false
-
-        val resolvedToFqName = callableDescriptor.fqNameOrNull()?.asString() ?: return false
-        if (resolvedToFqName != oldFqName) return false
-
-        val project = simpleNameExpression.project
-
-        KotlinTopLevelFunctionFqnNameIndex.getInstance()
-            .get(newFqName, project, GlobalSearchScope.allScope(project))
-            .asSequence()
-            .firstOrNull() ?: return false
+        if (!isTopLevelCallForReplace(simpleNameExpression, oldFqName, newFqName)) {
+            return false
+        }
 
         val problemDescriptor = holder.manager.createProblemDescriptor(
             simpleNameExpression,
@@ -150,18 +157,14 @@ private class ObsoleteTopLevelFunctionUsage(
 }
 
 private class ObsoleteExtensionFunctionUsage(
-    val textMarker: String, val oldFqName: String, newFqName: String
+    val textMarker: String, val oldFqName: String, val newFqName: String
 ) : CoroutineMigrationProblem {
     override fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean {
         if (simpleNameExpression.text != textMarker) return false
 
-        if (simpleNameExpression.parent !is KtCallExpression) return false
-
-        val descriptor = simpleNameExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return false
-        val callableDescriptor = descriptor as? CallableDescriptor ?: return false
-
-        val resolvedToFqName = callableDescriptor.fqNameOrNull()?.asString() ?: return false
-        if (resolvedToFqName != oldFqName) return false
+        if (!isTopLevelCallForReplace(simpleNameExpression, oldFqName, newFqName)) {
+            return false
+        }
 
         val problemDescriptor = holder.manager.createProblemDescriptor(
             simpleNameExpression,
