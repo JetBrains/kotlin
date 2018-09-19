@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
@@ -39,10 +38,11 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.hasBackingField
 
 private val threadLocalAnnotationFqName = FqName("kotlin.native.ThreadLocal")
 private val sharedAnnotationFqName = FqName("kotlin.native.SharedImmutable")
-
+private val frozenAnnotationFqName = FqName("kotlin.native.internal.Frozen")
 
 val IrField.propertyDescriptor: PropertyDescriptor
     get() {
@@ -67,7 +67,11 @@ internal val IrField.storageClass: FieldStorage get() {
     val descriptor = propertyDescriptor
     return when {
         descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName) -> FieldStorage.THREAD_LOCAL
+        !isFinal -> FieldStorage.MAIN_THREAD
         descriptor.annotations.hasAnnotation(sharedAnnotationFqName) -> FieldStorage.SHARED
+        // TODO: simplify, once IR types are fully there.
+        type is IrSimpleType && (type as IrSimpleType).
+                classifier.descriptor.annotations.hasAnnotation(frozenAnnotationFqName) -> FieldStorage.SHARED
         else -> FieldStorage.MAIN_THREAD
     }
 }
