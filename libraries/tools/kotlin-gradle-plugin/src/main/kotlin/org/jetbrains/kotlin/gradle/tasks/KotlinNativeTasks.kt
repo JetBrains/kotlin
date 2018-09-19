@@ -68,6 +68,17 @@ internal fun MutableList<String>.addListArg(parameter: String, values: List<Stri
 
 private fun File.providedByCompiler(project: Project): Boolean =
     toPath().startsWith(project.file(project.konanHome).toPath())
+
+// We need to filter out interop duplicates because we create copy of them for IDE.
+// TODO: Remove this after interop rework.
+private fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection {
+    val libDirectories = project.rootProject.allprojects.map { it.buildDir.resolve("libs").absoluteFile.toPath() }
+    return filter { file ->
+        !(file.name.contains("-cinterop-") && libDirectories.any { file.toPath().startsWith(it) })
+    }
+}
+
+
 // endregion
 
 
@@ -101,7 +112,7 @@ open class KotlinNativeCompile : AbstractCompile() {
         get() = project.files(compilation.commonSources).asFileTree
 
     val libraries: FileCollection
-        @InputFiles get() = compilation.compileDependencyFiles
+        @InputFiles get() = compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
 
     private val friendModule: FileCollection?
         get() = compilation.friendCompilation?.output
@@ -237,8 +248,7 @@ open class KotlinNativeCompile : AbstractCompile() {
                 // Support only klib files for now.
                 it.extension == "klib" && !it.providedByCompiler(project)
             }.forEach { library ->
-                library.parent?.let { addArg("-r", it) }
-                addArg("-l", library.nameWithoutExtension)
+                addArg("-l", library.absolutePath)
             }
         }
 
@@ -319,7 +329,7 @@ open class CInteropProcess: DefaultTask() {
         @Input get() = settings.includeDirs.headerFilterDirs.files
 
     val libraries: FileCollection
-        @InputFiles get() = settings.dependencyFiles
+        @InputFiles get() = settings.dependencyFiles.filterOutPublishableInteropLibs(project)
 
     val extraOpts: List<String>
         @Input get() = settings.extraOpts
@@ -349,8 +359,7 @@ open class CInteropProcess: DefaultTask() {
                 // Support only klib files for now.
                 it.extension == "klib" && !it.providedByCompiler(project)
             }.forEach { library ->
-                library.parent?.let { addArg("-r", it) }
-                addArg("-l", library.nameWithoutExtension)
+                addArg("-l", library.absolutePath)
             }
 
             addArgs("-copt", allHeadersDirs.map { "-I${it.absolutePath}" })

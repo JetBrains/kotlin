@@ -620,6 +620,11 @@ open class KotlinNativeTargetConfigurator(
                 val interopOutput = project.files(outputFileProvider).builtBy(this)
                 with(compilation) {
                     project.dependencies.add(compileDependencyConfigurationName, interopOutput)
+                    if (isMainCompilation) {
+                        target.compilations.findByName(TEST_COMPILATION_NAME)?.let {
+                            project.dependencies.add(it.compileDependencyConfigurationName, interopOutput)
+                        }
+                    }
                     project.dependencies.add(target.apiElementsConfigurationName, interopOutput)
                 }
             }
