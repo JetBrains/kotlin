@@ -214,7 +214,7 @@ directory structure, with the following layout:
 
 **foo.klib** when unpacked as **foo/** gives us:
 
-```yml
+```yaml
   - foo/
     - targets/
       - $platform/
