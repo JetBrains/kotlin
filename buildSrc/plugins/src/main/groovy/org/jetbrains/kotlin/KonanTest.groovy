@@ -791,7 +791,8 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
             def vars = new HashSet<String>()  // variables that has the same name as a package
             text.eachLine { line ->
                 packages.each { pkg ->
-                    if (line =~ ~/va(l|r) *$pkg *\=/) {
+                    // line contains val or var declaration or function parameter declaration
+                    if ((line =~ ~/va(l|r) *$pkg *\=/) || (line =~ ~/fun .*\(\n?\s*$pkg:.*/)) {
                         vars.add(pkg)
                     }
                     if (line.contains("$pkg.") && ! (line =~ packagePattern || line =~ importRegex)
