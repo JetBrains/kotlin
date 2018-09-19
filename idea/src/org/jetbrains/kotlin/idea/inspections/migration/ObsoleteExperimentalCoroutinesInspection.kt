@@ -233,7 +233,8 @@ private class ExperimentalImportUsage : CoroutineMigrationProblem {
         )
 
         private val IMPORTS_TO_REMOVE = setOf(
-            "kotlin.coroutines.experimental.buildSequence"
+            "kotlin.coroutines.experimental.buildSequence",
+            "kotlin.coroutines.experimental.buildIterator"
         )
 
         private const val EXPERIMENTAL_COROUTINES_MARKER = "experimental"

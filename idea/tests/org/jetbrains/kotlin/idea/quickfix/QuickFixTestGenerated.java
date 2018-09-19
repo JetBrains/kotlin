@@ -8317,6 +8317,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/obsoleteCoroutines"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("buildIteratorImport.kt")
+        public void testBuildIteratorImport() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/buildIteratorImport.kt");
+        }
+
         @TestMetadata("buildSequence.kt")
         public void testBuildSequence() throws Exception {
             runTest("idea/testData/quickfix/obsoleteCoroutines/buildSequence.kt");
