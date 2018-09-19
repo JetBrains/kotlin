@@ -539,6 +539,7 @@ Any command line key supported by the according tool (compiler or cinterop) can 
 tables below.
 
 ##### Compiler additional options
+
 |Key                |Description                              |
 |-------------------|-----------------------------------------|
 |`--disable <Phase>`|Disable backend phase                    |
@@ -549,6 +550,7 @@ tables below.
 |`-verbose         `|Enable verbose logging output            |
 
 ##### Cinterop additional options
+
 |Key                 |Description                                         |
 |--------------------|----------------------------------------------------|
 |`-verbose <boolean>`|Increase verbosity                                  |
