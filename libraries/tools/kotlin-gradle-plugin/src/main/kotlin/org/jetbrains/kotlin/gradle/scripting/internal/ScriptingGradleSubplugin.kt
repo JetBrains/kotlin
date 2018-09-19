@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
 import kotlin.properties.Delegates
 
@@ -47,7 +48,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
 
                 project.tasks.all { task ->
-                    if (task is KotlinCompile) {
+                    if (task is KotlinCompile && task !is KaptGenerateStubsTask) {
                         val configuration = project.configurations.findByName(getConfigurationName(task.sourceSetName))
                         if (configuration?.isEmpty == false) {
                             javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
