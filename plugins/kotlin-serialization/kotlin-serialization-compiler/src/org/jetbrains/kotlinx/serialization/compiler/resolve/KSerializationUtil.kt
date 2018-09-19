@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.packageFqName
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages.internalPackageFqName
 
 
 fun isKSerializer(type: KotlinType?): Boolean =
@@ -176,14 +175,19 @@ fun ClassDescriptor.getKSerializerConstructorMarker(): ClassDescriptor =
         module.findClassAcrossModuleDependencies(ClassId(packageFqName, SerialEntityNames.SERIAL_CTOR_MARKER_NAME))!!
 
 fun ModuleDescriptor.getClassFromInternalSerializationPackage(classSimpleName: String) =
-    requireNotNull(
-        findClassAcrossModuleDependencies(
-            ClassId(
-                internalPackageFqName,
-                Name.identifier(classSimpleName)
-            )
+    getFromPackage(SerializationPackages.internalPackageFqName, classSimpleName)
+
+fun ModuleDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
+    getFromPackage(SerializationPackages.packageFqName, classSimpleName)
+
+private fun ModuleDescriptor.getFromPackage(packageFqName: FqName, classSimpleName: String) = requireNotNull(
+    findClassAcrossModuleDependencies(
+        ClassId(
+            packageFqName,
+            Name.identifier(classSimpleName)
         )
-    ) { "Can't locate class $classSimpleName" }
+    )
+) { "Can't locate class $classSimpleName" }
 
 fun ClassDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
         requireNotNull(module.findClassAcrossModuleDependencies(ClassId(packageFqName, Name.identifier(classSimpleName)))) {"Can't locate class $classSimpleName"}

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
@@ -186,7 +187,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
             var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
                 listOf(createGetKClassExpression(kType.toClassDescriptor!!))
             else kType.arguments.map {
-                val argSer = findTypeSerializerOrContext(module, it.type)
+                val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
                 val expr = serializerInstance(argSer, module, it.type, it.type.genericIndex) ?: return null
                 if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
             }

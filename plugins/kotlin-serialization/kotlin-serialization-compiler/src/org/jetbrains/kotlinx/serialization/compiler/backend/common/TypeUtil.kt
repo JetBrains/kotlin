@@ -16,13 +16,19 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
@@ -30,7 +36,6 @@ import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArgu
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
@@ -69,15 +74,31 @@ fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
         else -> {
-            val serializer = findTypeSerializerOrContext(property.module, property.type)
+            val serializer =
+                findTypeSerializerOrContext(property.module, property.type, property.descriptor.annotations, property.descriptor.findPsi())
             SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
         }
     }
 }
 
-fun findTypeSerializerOrContext(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
-    return findTypeSerializer(module, kType)
-            ?: module.findClassAcrossModuleDependencies(contextSerializerId)
+fun findTypeSerializerOrContext(
+    module: ModuleDescriptor,
+    kType: KotlinType,
+    annotations: Annotations = kType.annotations,
+    sourceElement: PsiElement? = null
+): ClassDescriptor? {
+    if (kType.isTypeParameter()) return null
+    fun getContextualSerializer() =
+        if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName))
+            module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
+        else
+            throw CompilationException(
+                "Serializer for element of type $kType has not been found.\n" +
+                        "To use context serializer as fallback, explicitly annotate element with @ContextualSerializer",
+                null,
+                sourceElement
+            )
+    return findTypeSerializer(module, kType) ?: getContextualSerializer()
 }
 
 fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
