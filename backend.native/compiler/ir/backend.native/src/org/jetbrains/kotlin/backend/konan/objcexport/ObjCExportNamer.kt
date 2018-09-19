@@ -167,7 +167,12 @@ internal class ObjCExportNamerImpl(
             val containingDeclaration = descriptor.containingDeclaration
             if (containingDeclaration is ClassDescriptor) {
                 append(getClassOrProtocolSwiftName(containingDeclaration))
-                        .append(".").append(descriptor.name.asString())
+
+                if (!descriptor.isInterface && !containingDeclaration.isInterface) {
+                    append(".").append(descriptor.name.asString())
+                } else {
+                    append(descriptor.name.asString().capitalize())
+                }
             } else {
                 appendTopLevelClassBaseName(descriptor)
             }
