@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -259,9 +260,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 }
             }
 
-            val experimentalities = targetDescriptor.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
-            reportNotAcceptedExperimentalities(experimentalities, element, context)
-
             val targetClass = when (targetDescriptor) {
                 is ClassDescriptor -> targetDescriptor
                 is TypeAliasDescriptor -> targetDescriptor.classDescriptor
@@ -275,6 +273,11 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                         Errors.EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL.on(element)
                     )
                 }
+            }
+
+            if (element.getParentOfType<KtImportDirective>(false) == null) {
+                val experimentalities = targetDescriptor.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
+                reportNotAcceptedExperimentalities(experimentalities, element, context)
             }
         }
 

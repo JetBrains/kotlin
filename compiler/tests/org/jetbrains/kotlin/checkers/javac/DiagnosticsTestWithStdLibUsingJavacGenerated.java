@@ -2407,6 +2407,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalUnsignedLiterals.kt");
         }
 
+        @TestMetadata("importStatement.kt")
+        public void testImportStatement() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/importStatement.kt");
+        }
+
         @TestMetadata("incorrectTargetsForExperimentalAnnotation.kt")
         public void testIncorrectTargetsForExperimentalAnnotation() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/incorrectTargetsForExperimentalAnnotation.kt");
