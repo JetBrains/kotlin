@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 fun PropertyDescriptor.hasBackingField(bindingContext: BindingContext?): Boolean = when {
     kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> overriddenDescriptors.any { it.hasBackingField(bindingContext) }
     source is KotlinSourceElement && bindingContext != null -> bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, this) ?: false
+    compileTimeInitializer != null -> true
     getter != null -> false
     else -> true
 }

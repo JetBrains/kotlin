@@ -81,14 +81,11 @@ class DeclarationStubGenerator(
 
     internal fun generatePropertyStub(descriptor: PropertyDescriptor, bindingContext: BindingContext? = null): IrProperty =
         IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
-            val getterDescriptor = descriptor.getter
             if (descriptor.hasBackingField(bindingContext)) {
                 irProperty.backingField = generateFieldStub(descriptor)
             }
-            if (getterDescriptor != null) {
-                irProperty.getter = generateFunctionStub(getterDescriptor)
-            }
 
+            irProperty.getter = descriptor.getter?.let { generateFunctionStub(it) }
             irProperty.setter = descriptor.setter?.let { generateFunctionStub(it) }
         }
 
@@ -109,7 +106,15 @@ class DeclarationStubGenerator(
             origin,
             descriptor.original,
             descriptor.type.toIrType()
-        )
+        ).apply {
+            initializer = descriptor.compileTimeInitializer?.let {
+                IrExpressionBodyImpl(
+                    constantValueGenerator.generateConstantValueAsExpression(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, it
+                    )
+                )
+            }
+        }
     }
 
     fun generateFunctionStub(descriptor: FunctionDescriptor): IrSimpleFunction {
