@@ -3,7 +3,7 @@ package primitivesCoertion
 import kotlin.sequences.*
 
 fun main(args: Array<String>) {
-    val a = sequence {
+    val a = sequence<Int> {
         yield(1)
         val a = awaitSeq()
         //Breakpoint!
