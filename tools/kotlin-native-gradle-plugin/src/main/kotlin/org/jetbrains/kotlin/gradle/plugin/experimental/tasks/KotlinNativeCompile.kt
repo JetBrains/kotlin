@@ -118,10 +118,9 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
         }
     }
 
-    // initializing AbstractCompile properties
+    // Initializing AbstractCompile properties.
     init {
-        @Suppress("LeakingThis")
-        setDestinationDir(project.provider {
+        this.setDestinationDir(project.provider {
             if (outputFile.isDirectory) outputFile else outputFile.parentFile
         })
         sourceCompatibility = "1.6"

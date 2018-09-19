@@ -125,7 +125,7 @@ class ExperimentalPluginTests {
                 version '1.0'
 
                 sourceSets.main.component {
-                    target 'host', 'wasm32'
+                    targets = ['host', 'wasm32']
                 }
 
                 publishing {
@@ -159,7 +159,7 @@ class ExperimentalPluginTests {
                 }
 
                 sourceSets.main.component {
-                    target 'host', 'wasm32'
+                    targets = ['host', 'wasm32']
                     outputKinds = [ EXECUTABLE ]
                 }
             """.trimIndent())
@@ -226,7 +226,7 @@ class ExperimentalPluginTests {
                 plugins { id 'kotlin-native' }
 
                 sourceSets.main.component {
-                    target 'host', 'wasm32'
+                    targets = ['host', 'wasm32']
                 }
 
                 dependencies {
@@ -241,7 +241,7 @@ class ExperimentalPluginTests {
                 plugins { id 'kotlin-native'}
 
                 sourceSets.main.component {
-                    target 'host', 'wasm32'
+                    targets = ['host', 'wasm32']
                 }
 
             """.trimIndent())
@@ -257,7 +257,7 @@ class ExperimentalPluginTests {
                 plugins { id 'kotlin-native' }
 
                 sourceSets.main.component {
-                    target 'host', 'wasm32'
+                    targets = ['host', 'wasm32']
                     outputKinds = [ EXECUTABLE ]
                 }
 
@@ -295,7 +295,7 @@ class ExperimentalPluginTests {
                 version '1.0'
 
                 sourceSets.main.component {
-                    target 'host', 'wasm32'
+                    targets = ['host', 'wasm32']
                 }
 
                 dependencies {
@@ -324,7 +324,7 @@ class ExperimentalPluginTests {
                 version '1.0'
 
                 sourceSets.main.component {
-                    target 'host', 'wasm32'
+                    targets = ['host', 'wasm32']
                 }
 
                 publishing {
@@ -359,7 +359,7 @@ class ExperimentalPluginTests {
                 }
 
                 sourceSets.main.component {
-                    target 'host', 'wasm32'
+                    targets = ['host', 'wasm32']
                     outputKinds = [ EXECUTABLE ]
                 }
             """.trimIndent())
@@ -444,7 +444,7 @@ class ExperimentalPluginTests {
                 sourceSets.main {
                     component {
                         outputKinds = [ EXECUTABLE, KLIBRARY, FRAMEWORK ]
-                        target 'host', 'wasm32'
+                        targets = ['host', 'wasm32']
                     }
                 }
 
@@ -498,7 +498,7 @@ class ExperimentalPluginTests {
                 sourceSets.main {
                     component {
                         outputKinds = [ DYNAMIC, STATIC ]
-                        target 'host'
+                        targets = ['host']
                     }
                 }
 
