@@ -494,7 +494,7 @@ konanArtifacts.foo.getByTarget('host').headerFile  // Points to the header file
 
 </div> 
     
-Using a dynamic library is shown in the [python extension sample](samples/python_extension).
+Using a dynamic library is shown in the [python extension sample](https://github.com/JetBrains/kotlin-native/tree/master/samples/python_extension).
     
 ### Framework
 
@@ -515,7 +515,7 @@ konanArtifacts.foo.getByTarget('host').artifact // Points to the framework direc
 
 </div>    
 
-Using a framework is shown in the [calculator sample](samples/calculator).
+Using a framework is shown in the [calculator sample](https://github.com/JetBrains/kotlin-native/tree/master/samples/calculator).
 
 ## Additional options
 
