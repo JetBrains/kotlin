@@ -40,7 +40,7 @@ class NativeIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? = null
 
-    override fun acceptsAsEntryPoint(function: KtFunction) = true
+    override fun acceptsAsEntryPoint(function: KtFunction) = false
 }
 
 object NativeLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.native"), KotlinLibraryKind {
