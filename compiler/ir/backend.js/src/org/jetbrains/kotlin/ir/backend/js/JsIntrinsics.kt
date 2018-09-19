@@ -9,9 +9,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
@@ -218,6 +221,20 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val primitiveArrayConcat = getInternalWithoutPackage("primitiveArrayConcat")
 
     val jsArraySlice = unOp("slice")
+
+    // TODO move to IntrinsifyCallsLowering
+    val doNotIntrinsifyAnnotationSymbol = context.symbolTable.referenceClass(context.getInternalClass("DoNotIntrinsify"))
+
+    // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
+    val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
+    val charSequenceLengthPropertyGetterSymbol = charSequenceClassSymbol.owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "length" }.getter!!.symbol
+    val charSequenceGetFunctionSymbol = charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "get"}.symbol
+    val charSequenceSubSequenceFunctionSymbol = charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "subSequence"}.symbol
+
+
+    val jsCharSequenceGet = getInternalFunction("charSequenceGet")
+    val jsCharSequenceLength = getInternalFunction("charSequenceLength")
+    val jsCharSequenceSubSequence = getInternalFunction("charSequenceSubSequence")
 
     // Helpers:
 

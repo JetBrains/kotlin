@@ -122,8 +122,7 @@ public class GenerateRangesCodegenTestData {
     private static final List<String> IGNORED_FOR_JS_BACKEND = Collections.emptyList();
 
     private static final List<String> IGNORED_FOR_JS_IR_BACKEND = Arrays.asList("inexactDownToMinValue.kt",
-                                                                                "inexactToMaxValue.kt",
-                                                                                "simpleRangeWithNonConstantEnds.kt");
+                                                                                "inexactToMaxValue.kt");
 
     private static final List<String> IGNORED_FOR_NATIVE_BACKEND = Collections.emptyList();
 

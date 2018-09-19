@@ -162,6 +162,13 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             }
 
             add(context.irBuiltIns.stringClass.lengthProperty, context.intrinsics.jsArrayLength, true)
+            add(context.irBuiltIns.stringClass.getFunction, intrinsics.jsCharSequenceGet.owner, true)
+            add(context.irBuiltIns.stringClass.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "subSequence"}.symbol,
+                intrinsics.jsCharSequenceSubSequence.owner, true)
+
+            add(intrinsics.charSequenceLengthPropertyGetterSymbol, intrinsics.jsCharSequenceLength.owner, true)
+            add(intrinsics.charSequenceGetFunctionSymbol, intrinsics.jsCharSequenceGet.owner, true)
+            add(intrinsics.charSequenceSubSequenceFunctionSymbol, intrinsics.jsCharSequenceSubSequence.owner, true)
         }
 
         memberToTransformer.run {
@@ -351,6 +358,10 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 if (call is IrCall) {
                     val symbol = call.symbol
                     val declaration = symbol.owner
+
+                    if (declaration.annotations.any { it.superQualifierSymbol == intrinsics.doNotIntrinsifyAnnotationSymbol }) {
+                        return call
+                    }
 
                     if (declaration.isDynamic() || declaration.isEffectivelyExternal()) {
                         when (call.origin) {
