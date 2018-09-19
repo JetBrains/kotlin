@@ -45,64 +45,64 @@ class KotlinFacetEditorGeneralTab(
 ) : FacetEditorTab() {
     class EditorComponent(
             private val project: Project,
-            configuration: KotlinFacetConfiguration?
+            private val configuration: KotlinFacetConfiguration?
     ) : JPanel(BorderLayout()) {
-        private val isMultiEditor = configuration == null
+        private val isMultiEditor: Boolean
+            get() = configuration == null
 
-        private var editableCommonArguments: CommonCompilerArguments
-        private var editableJvmArguments: K2JVMCompilerArguments
-        private var editableJsArguments: K2JSCompilerArguments
-        private var editableCompilerSettings: CompilerSettings
+        private lateinit var editableCommonArguments: CommonCompilerArguments
+        private lateinit var editableJvmArguments: K2JVMCompilerArguments
+        private lateinit var editableJsArguments: K2JSCompilerArguments
+        private lateinit var editableCompilerSettings: CompilerSettings
 
-        val compilerConfigurable: KotlinCompilerConfigurableTab
+        lateinit var compilerConfigurable: KotlinCompilerConfigurableTab
+            private set
 
-        init {
+        lateinit var useProjectSettingsCheckBox: ThreeStateCheckBox
+
+        lateinit var targetPlatformComboBox: ComboBox<IdePlatform<*, *>>
+
+        private lateinit var projectSettingsLink: HoverHyperlinkLabel
+
+        fun initialize() {
             if (isMultiEditor) {
                 editableCommonArguments = object : CommonCompilerArguments() {}
                 editableJvmArguments = K2JVMCompilerArguments()
                 editableJsArguments = K2JSCompilerArguments()
                 editableCompilerSettings = CompilerSettings()
-
-
-            }
-            else {
+            } else {
                 editableCommonArguments = configuration!!.settings.compilerArguments!!
                 editableJvmArguments = editableCommonArguments as? K2JVMCompilerArguments
-                                       ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments
+                        ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JVMCompilerArguments
                 editableJsArguments = editableCommonArguments as? K2JSCompilerArguments
-                                      ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments
+                        ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings.unfrozen() as K2JSCompilerArguments
                 editableCompilerSettings = configuration.settings.compilerSettings!!
             }
 
             compilerConfigurable = KotlinCompilerConfigurableTab(
-                    project,
-                    editableCommonArguments,
-                    editableJsArguments,
-                    editableJvmArguments,
-                    editableCompilerSettings,
-                    null,
-                    false,
-                    isMultiEditor
+                project,
+                editableCommonArguments,
+                editableJsArguments,
+                editableJvmArguments,
+                editableCompilerSettings,
+                null,
+                false,
+                isMultiEditor
             )
-        }
 
-        val useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
-
-        val targetPlatformComboBox =
-                ComboBox<IdePlatform<*, *>>(IdePlatformKind.All_PLATFORMS.toTypedArray()).apply {
-                    setRenderer(DescriptionListCellRenderer())
-                }
-
-        private val projectSettingsLink = HoverHyperlinkLabel("Edit project settings").apply {
-            addHyperlinkListener {
-                ShowSettingsUtilImpl.showSettingsDialog(project, compilerConfigurable.id, "")
-                if (useProjectSettingsCheckBox.isSelected) {
-                    updateCompilerConfigurable()
+            useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
+            targetPlatformComboBox = ComboBox<IdePlatform<*, *>>(IdePlatformKind.All_PLATFORMS.toTypedArray()).apply {
+                setRenderer(DescriptionListCellRenderer())
+            }
+            projectSettingsLink = HoverHyperlinkLabel("Edit project settings").apply {
+                addHyperlinkListener {
+                    ShowSettingsUtilImpl.showSettingsDialog(project, compilerConfigurable.id, "")
+                    if (useProjectSettingsCheckBox.isSelected) {
+                        updateCompilerConfigurable()
+                    }
                 }
             }
-        }
 
-        init {
             val contentPanel = FormBuilder
                     .createFormBuilder()
                     .addComponent(JPanel(BorderLayout()).apply {
@@ -205,37 +205,10 @@ class KotlinFacetEditorGeneralTab(
         }
     }
 
-    val editor = EditorComponent(editorContext.project, configuration)
+    private var isInitialized = false
+    val editor by lazy { EditorComponent(editorContext.project, configuration) }
 
     private var enableValidation = false
-
-    init {
-        for (creator in KotlinFacetValidatorCreator.EP_NAME.getExtensions()) {
-          validatorsManager.registerValidator(creator.create(editor, validatorsManager, editorContext))
-        }
-
-        validatorsManager.registerValidator(ArgumentConsistencyValidator())
-
-        with(editor.compilerConfigurable) {
-            reportWarningsCheckBox.validateOnChange()
-            additionalArgsOptionsField.textField.validateOnChange()
-            generateSourceMapsCheckBox.validateOnChange()
-            outputPrefixFile.textField.validateOnChange()
-            outputPostfixFile.textField.validateOnChange()
-            outputDirectory.textField.validateOnChange()
-            copyRuntimeFilesCheckBox.validateOnChange()
-            moduleKindComboBox.validateOnChange()
-            languageVersionComboBox.addActionListener {
-                onLanguageLevelChanged()
-                doValidate()
-            }
-            apiVersionComboBox.validateOnChange()
-            coroutineSupportComboBox.validateOnChange()
-        }
-        editor.targetPlatformComboBox.validateOnChange()
-
-        editor.updateCompilerConfigurable()
-    }
 
     private fun onLanguageLevelChanged() {
         with(editor.compilerConfigurable) {
@@ -268,13 +241,54 @@ class KotlinFacetEditorGeneralTab(
         }
     }
 
+    fun initialize() {
+        if (isInitialized) return
+
+        editor.initialize()
+
+        for (creator in KotlinFacetValidatorCreator.EP_NAME.getExtensions()) {
+            validatorsManager.registerValidator(creator.create(editor, validatorsManager, editorContext))
+        }
+
+        validatorsManager.registerValidator(ArgumentConsistencyValidator())
+
+        with(editor.compilerConfigurable) {
+            reportWarningsCheckBox.validateOnChange()
+            additionalArgsOptionsField.textField.validateOnChange()
+            generateSourceMapsCheckBox.validateOnChange()
+            outputPrefixFile.textField.validateOnChange()
+            outputPostfixFile.textField.validateOnChange()
+            outputDirectory.textField.validateOnChange()
+            copyRuntimeFilesCheckBox.validateOnChange()
+            moduleKindComboBox.validateOnChange()
+            languageVersionComboBox.addActionListener {
+                onLanguageLevelChanged()
+                doValidate()
+            }
+            apiVersionComboBox.validateOnChange()
+            coroutineSupportComboBox.validateOnChange()
+        }
+        editor.targetPlatformComboBox.validateOnChange()
+
+        editor.updateCompilerConfigurable()
+        isInitialized = true
+
+        reset()
+    }
+
+    override fun onTabEntering() {
+        initialize()
+    }
+
     override fun isModified(): Boolean {
+        if (!isInitialized) return false
         if (editor.useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
         if (editor.chosenPlatform != configuration.settings.platform) return true
         return !editor.useProjectSettingsCheckBox.isSelected && editor.compilerConfigurable.isModified
     }
 
     override fun reset() {
+        if (!isInitialized) return
         validateOnce {
             editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
             editor.targetPlatformComboBox.selectedItem = configuration.settings.platform
@@ -315,7 +329,9 @@ class KotlinFacetEditorGeneralTab(
     }
 
     override fun disposeUIResources() {
-        editor.compilerConfigurable.disposeUIResources()
+        if (isInitialized) {
+            editor.compilerConfigurable.disposeUIResources()
+        }
     }
 }
 
