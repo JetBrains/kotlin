@@ -1395,6 +1395,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/stubs/builtinMap.kt");
         }
 
+        @TestMetadata("constFromBuiltins.kt")
+        public void testConstFromBuiltins() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/constFromBuiltins.kt");
+        }
+
         @TestMetadata("genericClassInDifferentModule.kt")
         public void testGenericClassInDifferentModule() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/genericClassInDifferentModule.kt");
