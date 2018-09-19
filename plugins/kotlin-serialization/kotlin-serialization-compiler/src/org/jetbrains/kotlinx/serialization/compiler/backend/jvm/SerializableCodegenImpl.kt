@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryPropertiesDescriptorsMap
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -85,7 +82,7 @@ class SerializableCodegenImpl(
             load(serialDescI, descType)
             superTypeArguments.forEach {
                 val genericIdx = serializableDescriptor.defaultType.arguments.indexOf(it).let { if (it == -1) null else it }
-                val serial = findTypeSerializerOrContext(serializableDescriptor.module, it.type, classCodegen.typeMapper.mapType(it.type))
+                val serial = findTypeSerializerOrContext(serializableDescriptor.module, it.type)
                 stackValueSerializerInstance(classCodegen, serializableDescriptor.module, it.type, serial, this, genericIdx) {
                     load(offsetI + it, kSerializerType)
                 }

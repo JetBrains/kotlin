@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.mapValueParametersIndexed
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -140,7 +141,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
             var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
                 TODO("enum and context serializer")
             else kType.arguments.map {
-                val argSer = findTypeSerializerOrContext(module, it.type)
+                val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
                 val expr = serializerInstance(argSer, module, it.type, it.type.genericIndex) ?: return null
                 // todo: smth better than constructors[0] ??
                 if (it.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr
@@ -208,8 +209,6 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                     writeFunc,
                     irGet(localSerialDesc),
                     irInt(index),
-                    // todo: direct field access?
-//                    irInvoke(irGet(serialObjectSymbol), compilerContext.symbolTable.referenceFunction(property.descriptor.getter!!))
                     irGetField(irGet(serialObjectSymbol), property.irField)
                 )
             } else {
@@ -220,8 +219,6 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                     irGet(localSerialDesc),
                     irInt(index),
                     innerSerial,
-                    // todo: direct field access?
-//                    irInvoke(irGet(serialObjectSymbol), compilerContext.symbolTable.referenceFunction(property.descriptor.getter!!))
                     irGetField(irGet(serialObjectSymbol), property.irField)
                 )
             }
