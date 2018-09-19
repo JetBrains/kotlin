@@ -429,7 +429,7 @@ class ExperimentalPluginTests {
                 assertEquals(
                     expectedOutcome,
                     it.outcome,
-                    "Task '$taskName' has incorrect outcome. Expected: $expectedOutcome, actual: ${it.outcome}"
+                    "Task '$taskName' has an incorrect outcome."
                 )
             }
         }

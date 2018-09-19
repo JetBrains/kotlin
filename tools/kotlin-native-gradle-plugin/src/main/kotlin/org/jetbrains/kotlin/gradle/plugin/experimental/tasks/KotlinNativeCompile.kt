@@ -121,13 +121,13 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
     // Initializing AbstractCompile properties.
     init {
         this.setDestinationDir(project.provider {
-            if (outputFile.isDirectory) outputFile else outputFile.parentFile
+            if (kind == FRAMEWORK) outputFile else outputFile.parentFile
         })
         sourceCompatibility = "1.6"
         targetCompatibility = "1.6"
     }
 
-    // Task action
+    // Task action.
 
     @TaskAction
     override fun compile() {
