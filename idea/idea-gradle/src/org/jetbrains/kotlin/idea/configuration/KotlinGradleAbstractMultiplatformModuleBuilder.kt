@@ -22,7 +22,9 @@ import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import javax.swing.Icon
 
-abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuilder() {
+abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
+    val mppInApplication: Boolean = false
+) : GradleModuleBuilder() {
     override fun getNodeIcon(): Icon = KotlinIcons.MPP
 
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<ModuleWizardStep> {
@@ -33,6 +35,16 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuil
         )
     }
 
+    private fun setupMppModule(module: Module, parentDir: VirtualFile): VirtualFile? {
+        val moduleDir = parentDir.createChildDirectory(this, "app")
+        val buildGradle = moduleDir.createChildData(null, "build.gradle")
+        val builder = BuildScriptDataBuilder(buildGradle)
+        builder.setupAdditionalDependenciesForApplication()
+        GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
+        VfsUtil.saveText(buildGradle, builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart())
+        return moduleDir
+    }
+
     override fun setupModule(module: Module) {
         try {
             module.gradleModuleBuilder = this
@@ -40,9 +52,23 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuil
 
             val rootDir = module.rootManager.contentRoots.firstOrNull() ?: return
             val buildGradle = rootDir.findOrCreateChildData(null, "build.gradle")
+            if (mppInApplication) {
+                setupMppModule(module, rootDir)
+            }
             val builder = BuildScriptDataBuilder(buildGradle)
-            GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
-            VfsUtil.saveText(buildGradle, builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart())
+            builder.setupAdditionalDependencies()
+            val buildGradleText = if (!mppInApplication) {
+                GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
+                builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart()
+            } else {
+                builder.buildConfigurationPart() + builder.buildMainPart()
+            }
+            VfsUtil.saveText(buildGradle, buildGradleText)
+            if (mppInApplication) {
+                updateSettingsScript(module) {
+                    it.addIncludedModules(listOf(":app"))
+                }
+            }
             createProjectSkeleton(module, rootDir)
 
             if (notImportedCommonSourceSets) GradlePropertiesFileFacade.forProject(module.project).addNotImportedCommonSourceSetsProperty()
@@ -53,12 +79,21 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuil
 
     protected abstract fun buildMultiPlatformPart(): String
 
-    protected fun VirtualFile.createKotlinSampleFileWriter(sourceRootName: String, fileName: String = "Sample.kt") =
-        createChildDirectory(this, sourceRootName)
-            .createChildDirectory(this, "kotlin")
-            .createChildDirectory(this, "sample")
-            .createChildData(this, fileName)
-            .getOutputStream(this).bufferedWriter()
+    protected open fun BuildScriptDataBuilder.setupAdditionalDependencies() {}
+
+    protected open fun BuildScriptDataBuilder.setupAdditionalDependenciesForApplication() {}
+
+    protected fun VirtualFile.bufferedWriter() = getOutputStream(this).bufferedWriter()
+
+    protected fun VirtualFile.createKotlinSampleFileWriter(
+        sourceRootName: String,
+        languageName: String = "kotlin",
+        fileName: String = "Sample.kt"
+    ) = createChildDirectory(this, sourceRootName)
+        .createChildDirectory(this, languageName)
+        .createChildDirectory(this, "sample")
+        .createChildData(this, fileName)
+        .bufferedWriter()
 
     protected open fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {}
 
