@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
@@ -160,7 +159,7 @@ fun IrValueParameter.copyTo(
     endOffset: Int = this.endOffset,
     origin: IrDeclarationOrigin = this.origin,
     name: Name = this.name,
-    type: IrType = this.type.maybeReplace(this.parent as IrTypeParametersContainer, irFunction),
+    type: IrType = this.type.remapTypeParameters(this.parent as IrTypeParametersContainer, irFunction),
     varargElementType: IrType? = this.varargElementType
 ): IrValueParameter {
     val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
@@ -174,17 +173,23 @@ fun IrValueParameter.copyTo(
     }
 }
 
-fun IrTypeParameter.copyTo(irFunction: IrFunction, shift: Int = 0): IrTypeParameter {
-    // TODO: Copy IrTypeParameter with type remapping
+fun IrTypeParameter.copyToWithoutSuperTypes(
+    target: IrTypeParametersContainer,
+    shift: Int = 0,
+    origin: IrDeclarationOrigin = this.origin
+): IrTypeParameter {
+    val source = parent as IrTypeParametersContainer
     val descriptor = WrappedTypeParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrTypeParameterSymbolImpl(descriptor)
-    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance).also {
-        descriptor.bind(it)
-        it.parent = irFunction
+    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance).also { copied ->
+        descriptor.bind(copied)
+        copied.parent = target
     }
 }
 
 fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
+    assert(typeParameters.isEmpty())
+    copyTypeParametersFrom(from)
 
     // TODO: should dispatch receiver be copied?
     dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
@@ -196,39 +201,32 @@ fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
 
     val shift = valueParameters.size
     valueParameters += from.valueParameters.map { it.copyTo(this, shift) }
-
-    assert(typeParameters.isEmpty())
-    from.typeParameters.mapTo(typeParameters) { it.copyTo(this) }
 }
 
 fun IrTypeParametersContainer.copyTypeParametersFrom(
     source: IrTypeParametersContainer,
-    origin: IrDeclarationOrigin
+    origin: IrDeclarationOrigin? = null
 ) {
     val target = this
-    assert(target.typeParameters.isEmpty())
+    val shift = target.typeParameters.size
+    // Any type parameter can figure in a boundary type for any other parameter.
+    // Therefore, we first copy the parameters themselves, then set up their supertypes.
     source.typeParameters.forEachIndexed { i, sourceParameter ->
         assert(sourceParameter.index == i)
-        val tpDescriptor = WrappedTypeParameterDescriptor()
-        target.typeParameters.add(
-            IrTypeParameterImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                origin,
-                IrTypeParameterSymbolImpl(tpDescriptor),
-                sourceParameter.name,
-                sourceParameter.index,
-                sourceParameter.isReified,
-                sourceParameter.variance
-            ).apply {
-                tpDescriptor.bind(this)
-                parent = target
-                sourceParameter.superTypes.forEach {
-                    // Using the already copied portion of target.typeParameters.
-                    superTypes.add(it.maybeReplace(source, target))
-                }
-            }
-        )
+        target.typeParameters.add(sourceParameter.copyToWithoutSuperTypes(target, shift = shift, origin = origin ?: sourceParameter.origin))
+    }
+    source.typeParameters.zip(target.typeParameters.drop(shift)).forEach { (srcParameter, dstParameter) ->
+        dstParameter.copySuperTypesFrom(srcParameter)
+    }
+}
+
+private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter) {
+    val target = this
+    val sourceParent = source.parent as IrTypeParametersContainer
+    val targetParent = target.parent as IrTypeParametersContainer
+    val shift = target.index - source.index
+    source.superTypes.forEach {
+        target.superTypes.add(it.remapTypeParameters(sourceParent, targetParent, shift))
     }
 }
 
@@ -275,13 +273,14 @@ fun IrFunction.copyValueParametersToStatic(
     Type parameters should correspond to the function where they are defined.
     `source` is where the type is originally taken from.
  */
-fun IrType.maybeReplace(source: IrTypeParametersContainer, target: IrTypeParametersContainer): IrType =
+fun IrType.remapTypeParameters(source: IrTypeParametersContainer, target: IrTypeParametersContainer, shift: Int = 0): IrType =
     when (this) {
         is IrSimpleType -> {
             val classifier = classifier.owner
             when {
                 classifier is IrTypeParameter && classifier.parent == source ->
-                    target.typeParameters[classifier.index].defaultType
+                    target.typeParameters[classifier.index + shift].defaultType
+
                 classifier is IrClass ->
                     IrSimpleTypeImpl(
                         classifier.symbol,
@@ -289,7 +288,7 @@ fun IrType.maybeReplace(source: IrTypeParametersContainer, target: IrTypeParamet
                         arguments.map {
                             when (it) {
                                 is IrTypeProjection -> makeTypeProjection(
-                                    it.type.maybeReplace(source, target),
+                                    it.type.remapTypeParameters(source, target, shift),
                                     it.variance
                                 )
                                 else -> it
@@ -297,8 +296,10 @@ fun IrType.maybeReplace(source: IrTypeParametersContainer, target: IrTypeParamet
                         },
                         annotations
                     )
+
                 else -> this
             }
         }
         else -> this
     }
+

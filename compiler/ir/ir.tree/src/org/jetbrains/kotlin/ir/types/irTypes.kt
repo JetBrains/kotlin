@@ -110,7 +110,13 @@ fun ClassifierDescriptor.toIrType(hasQuestionMark: Boolean = false, symbolTable:
     return IrSimpleTypeImpl(defaultType, symbol, hasQuestionMark, listOf(), listOf())
 }
 
-val IrTypeParameter.defaultType: IrType get() = symbol.owner.defaultType
+val IrTypeParameter.defaultType: IrType
+    get() = IrSimpleTypeImpl(
+        symbol,
+        hasQuestionMark = false,
+        arguments = emptyList(),
+        annotations = emptyList()
+    )
 
 fun IrClassifierSymbol.typeWith(vararg arguments: IrType): IrSimpleType = typeWith(arguments.toList())
 

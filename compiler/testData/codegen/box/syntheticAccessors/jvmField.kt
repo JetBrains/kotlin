@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// WITH_RUNTIME
 
 // FILE: A.kt
 package a

@@ -36,18 +36,20 @@ abstract class IrLazyFunctionBase(
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
         typeTranslator.buildWithScope(this) {
-            descriptor.dispatchReceiverParameter?.generateReceiverParameterStub()
+            descriptor.dispatchReceiverParameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }
         }
     }
     override var extensionReceiverParameter: IrValueParameter? by lazyVar {
         typeTranslator.buildWithScope(this) {
-            descriptor.extensionReceiverParameter?.generateReceiverParameterStub()
+            descriptor.extensionReceiverParameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }
         }
     }
 
     override val valueParameters: MutableList<IrValueParameter> by lazy {
         typeTranslator.buildWithScope(this) {
-            descriptor.valueParameters.mapTo(arrayListOf()) { stubGenerator.generateValueParameterStub(it) }
+            descriptor.valueParameters.mapTo(arrayListOf()) {
+                stubGenerator.generateValueParameterStub(it).apply { parent = this@IrLazyFunctionBase }
+            }
         }
     }
 

@@ -110,7 +110,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.returnType = source.returnType.maybeReplace(source, accessor)
+            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             val markerParameterDescriptor = WrappedValueParameterDescriptor()
             val markerParameter = IrValueParameterImpl(
@@ -166,7 +166,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTrans
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
             accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            accessor.returnType = source.returnType.maybeReplace(source, accessor)
+            accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.body = IrExpressionBodyImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDesc
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -372,8 +373,8 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
         )
     }
 
+    newFunction.copyTypeParametersFrom(this)
     val newValueParameters = valueParameters.map { it.copyTo(newFunction) } + syntheticParameters
-    val newTypeParameters = typeParameters.map { it.copyTo(newFunction) }
 
     newFunction.returnType = returnType
     newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.run {
@@ -381,7 +382,6 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
     }
     newFunction.extensionReceiverParameter = extensionReceiverParameter?.copyTo(newFunction)
     newFunction.valueParameters += newValueParameters
-    newFunction.typeParameters += newTypeParameters
 
     annotations.mapTo(newFunction.annotations) { it.deepCopyWithSymbols() }
 

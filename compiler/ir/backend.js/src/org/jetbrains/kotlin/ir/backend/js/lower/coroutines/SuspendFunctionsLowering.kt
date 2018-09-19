@@ -447,13 +447,14 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 irFunction.isSuspend,
                 IrDeclarationOrigin.FAKE_OVERRIDE
             ).apply {
+                parent = this@setSuperSymbolsAndAddFakeOverrides
                 returnType = irFunction.returnType
                 overriddenSymbols += irFunction.symbol
                 copyParameterDeclarationsFrom(irFunction)
             }
 
             for (sm in unoverriddenSuperMembers) {
-                val fakeOverride = createFakeOverride(sm).also { it.parent = this }
+                val fakeOverride = createFakeOverride(sm)
                 declarations += fakeOverride
             }
 

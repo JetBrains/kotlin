@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -516,14 +517,12 @@ class LocalDeclarationsLowering(
 
             newDeclaration.parent = memberOwner
             newDeclaration.returnType = oldDeclaration.returnType
+            newDeclaration.copyTypeParametersFrom(oldDeclaration)
             newDeclaration.dispatchReceiverParameter = newDispatchReceiverParameter
             newDeclaration.extensionReceiverParameter = oldDeclaration.extensionReceiverParameter?.run {
                 copyTo(newDeclaration).also {
                     newParameterToOld.putAbsentOrSame(it, this)
                 }
-            }
-            oldDeclaration.typeParameters.mapTo(newDeclaration.typeParameters) {
-                it.copyTo(newDeclaration).also { p -> p.superTypes += it.superTypes }
             }
 
             newDeclaration.valueParameters += createTransformedValueParameters(capturedValues, oldDeclaration, newDeclaration)
@@ -596,6 +595,8 @@ class LocalDeclarationsLowering(
 
             newDeclaration.parent = localClassContext.declaration
             newDeclaration.returnType = oldDeclaration.returnType
+            newDeclaration.copyTypeParametersFrom(oldDeclaration)
+
             // TODO: should dispatch receiver be copied?
             newDeclaration.dispatchReceiverParameter = oldDeclaration.dispatchReceiverParameter?.run {
                 IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also {
@@ -605,10 +606,6 @@ class LocalDeclarationsLowering(
             }
             newDeclaration.extensionReceiverParameter = oldDeclaration.extensionReceiverParameter?.run {
                 throw AssertionError("constructors can't have extension receiver")
-            }
-
-            oldDeclaration.typeParameters.mapTo(newDeclaration.typeParameters) {
-                it.copyTo(newDeclaration).also { p -> p.superTypes += it.superTypes }
             }
 
             newDeclaration.valueParameters += createTransformedValueParameters(capturedValues, oldDeclaration, newDeclaration)

@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
 
@@ -168,14 +170,17 @@ open class WrappedTypeParameterDescriptor(
     private val _defaultType: SimpleType by lazy {
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             Annotations.EMPTY, typeConstructor, emptyList(), false,
-            TypeIntersectionScope.create(
-                "Scope for type parameter " + name.asString(),
-                upperBounds
-            )
+            LazyScopeAdapter(LockBasedStorageManager.NO_LOCKS.createLazyValue {
+                TypeIntersectionScope.create(
+                    "Scope for type parameter " + name.asString(),
+                    upperBounds
+                )
+            })
         )
     }
 
     override fun getDefaultType() = _defaultType
+
 
     override fun getContainingDeclaration() = (owner.parent as IrDeclaration).descriptor
 
