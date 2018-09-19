@@ -213,7 +213,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
                     }
                 }
 
-                klibraries.dependencies.add(project.dependencies.create(files(interopTask.outputFileProvider)))
+                klibs.dependencies.add(project.dependencies.create(files(interopTask.outputFileProvider)))
 
                 if (this is KotlinNativeLibrary) {
                     linkElements.get().outgoing.artifact(interopTask.outputFileProvider) {

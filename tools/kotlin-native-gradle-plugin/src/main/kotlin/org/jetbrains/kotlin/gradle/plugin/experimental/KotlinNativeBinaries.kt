@@ -59,7 +59,7 @@ interface KotlinNativeBinary : ComponentWithDependencies, BuildableComponent, Co
      * The link libraries (klibs only!) used to link this binary.
      * Includes the link libraries of the component's dependencies.
      */
-    val klibraries: FileCollection
+    val klibs: FileCollection
 
     /**
      * Binary kind in terms of the KN compiler (program, library, dynamic etc).

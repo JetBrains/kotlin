@@ -102,8 +102,8 @@ abstract class AbstractKotlinNativeBinary(
     override fun getDependencies(): ComponentDependencies = dependencies
     fun getImplementationDependencies(): Configuration = dependencies.implementationDependencies
 
-    // A configuration containing klibraries
-    override val klibraries = configurations.create(names.withPrefix("klibraries")).apply {
+    // A configuration containing klibs
+    override val klibs = configurations.create(names.withPrefix("klibs")).apply {
         isCanBeConsumed = false
         attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinNativeUsage.KLIB))
         attributes.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, debuggable)

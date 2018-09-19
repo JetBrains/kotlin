@@ -54,12 +54,12 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
         }
 
     val libraries: Configuration
-        @InputFiles get() = binary.klibraries
+        @InputFiles get() = binary.klibs
 
     override fun getClasspath(): FileCollection = libraries
 
     override fun setClasspath(configuration: FileCollection?) {
-        throw UnsupportedOperationException("Use klibraries to set compile classpath in Kotlin/Native")
+        throw UnsupportedOperationException("Use klibs to set compile classpath in Kotlin/Native")
     }
 
     val optimized:  Boolean @Input get() = binary.optimized

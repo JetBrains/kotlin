@@ -70,8 +70,8 @@ object KonanToolingModelBuilder : ToolingModelBuilder {
             compileTask.name,
             sourceRoots.toList(),
             sources.files.toList(),
-            klibraries.files.toList(),
-            klibraries.files.map { it.parentFile }
+            klibs.files.toList(),
+            klibs.files.map { it.parentFile }
         )
     }
 
