@@ -28,7 +28,6 @@ Note that the content of `platform.posix` is NOT identical on
 different platforms, in the same way as different `POSIX` implementations
 are a little different.
 
-</div> 
 
 ### Popular native libraries
 

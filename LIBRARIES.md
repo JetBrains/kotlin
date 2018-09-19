@@ -4,13 +4,26 @@
 
 To produce a library with the Kotlin/Native compiler use the `-produce library` or `-p library` flag. For example:
 
-    $ kotlinc foo.kt -p library -o bar
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ kotlinc foo.kt -p library -o bar
+```
+
+</div>
 
 the above command will produce a `bar.klib` with the compiled contents of `foo.kt`.
 
 To link to a library use the `-library <name>` or `-l <name>` flag. For example:
 
-    $ kotlinc qux.kt -l bar
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ kotlinc qux.kt -l bar
+```
+
+</div>
+
 
 the above command will produce a `program.kexe` out of `qux.kt` and `bar.klib`
 
@@ -20,7 +33,13 @@ the above command will produce a `program.kexe` out of `qux.kt` and `bar.klib`
 The **cinterop** tool produces `.klib` wrappers for native libraries as its main output. 
 For example, using the simple `stdio.def` native library definition file provided in your Kotlin/Native distribution
 
-    $ cinterop -def  ./samples/csvparser/src/main/c_interop/stdio.def  -o stdio
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ cinterop -def  ./samples/csvparser/src/main/c_interop/stdio.def  -o stdio
+```
+
+</div>
 
 we will obtain `stdio.klib`. 
 
@@ -33,63 +52,141 @@ The following commands are available.
 
 To list library contents:
 
-        $ klib contents <name>
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ klib contents <name>
+```
+
+</div>
 
 To inspect the bookkeeping details of the library 
 
-        $ klib info <name>
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ klib info <name>
+```
+
+</div>
 
 To install the library to the default location use
 
-        $ klib install <name>
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ klib install <name>
+```
+
+</div>
 
 To remove the library from the default repository use 
 
-        $ klib remove <name>
+<div class="sample" markdown="1" theme="idea" mode="shell">
 
-All of the above commands accept an additional `-repository <directory>` argument for specifying a repository different to the default one. 
+```bash
+$ klib remove <name>
+```
 
-        $ klib <command> <name> -repository <directory>
+</div>
+
+All of the above commands accept an additional `-repository <directory>` argument for specifying a repository different to the default one.
+
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ klib <command> <name> -repository <directory>
+```
+
+</div>
 
 
 ## Several examples
 
 First let's create a library:
 
-    $ cinterop -h /usr/include/math.h -pkg libc.math -o math
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ cinterop -h /usr/include/math.h -pkg libc.math -o math
+```
+
+</div>
 
 The library has been created in the current directory:
 
-    $ ls math.klib
-    math.klib
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ ls math.klib
+math.klib
+```
+
+</div>
 
 Now let's check out the contents of the library:
 
-    $ klib contents math
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ klib contents math
+```
+
+</div>
 
 We can install `math` to the default repository:
 
-    $ klib install math
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ klib install math
+```
+
+</div>
 
 Remove any traces of it and its build process from the current directory:
 
-    $ rm -rf ./math*
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ rm -rf ./math*
+```
+
+</div>
 
 Create a very short program and place it into a `sin.kt` :
 
-    import libc.math.*
-    fun main(args: Array<String>) {
-        println(sin(2.0))
-    }
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
+import libc.math.*
+fun main(args: Array<String>) {
+    println(sin(2.0))
+}
+```
+
+</div>
 
 Now compile the program linking with the library we have just created:
 
-    $ kotlinc sin.kt -l math -o mysin
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ kotlinc sin.kt -l math -o mysin
+```
+
+</div>
 
 And run the program:
 
-    $ ./mysin.kexe
-    0.9092974268256817
+<div class="sample" markdown="1" theme="idea" mode="shell">
+
+```bash
+$ ./mysin.kexe
+0.9092974268256817
+```
+
+</div>
 
 Have fun!
 
@@ -117,7 +214,7 @@ directory structure, with the following layout:
 
 **foo.klib** when unpacked as **foo/** gives us:
 
-```
+```yml
   - foo/
     - targets/
       - $platform/
