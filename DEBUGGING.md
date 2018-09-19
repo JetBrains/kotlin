@@ -1,9 +1,3 @@
----
-type: doc
-layout: reference
-title: "Debugging"
----
-
 ## Debugging
 
 Currently the Kotlin/Native compiler produces debug info compatible with the DWARF 2 specification, so modern debugger tools can
