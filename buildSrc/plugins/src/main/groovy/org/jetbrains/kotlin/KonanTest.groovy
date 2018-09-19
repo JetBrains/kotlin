@@ -697,6 +697,17 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
         return result.join(System.lineSeparator())
     }
 
+    String insertInTextAfter(String text, String insert, String after) {
+        def begin = text.indexOf(after)
+        if (begin != -1) {
+            def end = text.indexOf("\n", begin)
+            text = text.substring(0, end) + insert + text.substring(end)
+        } else {
+            text = insert + text
+        }
+        return text
+    }
+
     List<String> createTestFiles() {
         def identifier = /[a-zA-Z_][a-zA-Z0-9_]/
         def fullQualified = /[a-zA-Z_][a-zA-Z0-9_.]/
@@ -724,7 +735,7 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
                 text = text.replaceFirst(packagePattern, "package $pkg")
             } else {
                 pkg = sourceName
-                text = "package $pkg\n" + text
+                text = insertInTextAfter(text, "\npackage $pkg\n", "@file:Suppress")
             }
             if (text =~ boxPattern) {
                 imports.add("${pkg}.*")
@@ -773,7 +784,7 @@ class RunExternalTestGroup extends RunStandaloneKonanTest {
                     pkg = 'package ' + (text =~ packagePattern)[0][1]
                     text = text.replaceFirst(packagePattern, '')
                 }
-                text = (pkg ? "$pkg\n" : "") + "import $sourceName.*\n" + text
+                text = insertInTextAfter(text, (pkg ? "\n$pkg\n" : "") + "import $sourceName.*\n", "@file:Suppress")
             }
             // now replace all package usages in full qualified names
             def res = ""                      // result
