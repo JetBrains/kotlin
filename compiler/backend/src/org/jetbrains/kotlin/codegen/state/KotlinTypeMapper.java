@@ -890,7 +890,7 @@ public class KotlinTypeMapper {
                                                     : functionDescriptor.getOriginal();
 
                 signature = toInlinedErasedClass
-                            ? mapSignatureForInlineErasedClassSkipGeneric(functionToCall)
+                            ? mapSignatureForInlineErasedClassSkipGeneric(descriptor.getOriginal())
                             : mapSignatureSkipGeneric(functionToCall);
                 returnKotlinType = functionToCall.getReturnType();
 

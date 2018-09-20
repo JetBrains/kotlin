@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptorKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -274,15 +276,56 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                         InstructionAdapter iv = codegen.v;
                         Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                         Type[] originalArgTypes = traitMethod.getArgumentTypes();
-                        assert originalArgTypes.length == argTypes.length + 1 :
-                                "Invalid trait implementation signature: " + signature + " vs " + traitMethod + " for " + interfaceFun;
+                        boolean isErasedInlineClass =
+                                InlineClassesUtilsKt.isInlineClass(descriptor) && kind == OwnerKind.ERASED_INLINE_CLASS;
 
-                        iv.load(0, OBJECT_TYPE);
-                        for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i + 1], iv);
-                            //noinspection AssignmentToForLoopParameter
-                            reg += argTypes[i].getSize();
+                        int argI = 0;
+                        int reg = 0;
+
+                        Type receiverType = typeMapper.mapType(descriptor);
+                        KotlinType interfaceKotlinType = ((ClassDescriptor) inheritedFun.getContainingDeclaration()).getDefaultType();
+                        StackValue.local(reg, receiverType, descriptor.getDefaultType()).put(OBJECT_TYPE, interfaceKotlinType, iv);
+                        if (isErasedInlineClass) argI++;
+                        reg += receiverType.getSize();
+
+                        int originalArgI = 1;
+
+                        List<ParameterDescriptor> argsDescriptors = getParameters(inheritedFun);
+                        List<ParameterDescriptor> originalArgsDescriptors = getParameters(interfaceFun);
+                        assert argsDescriptors.size() == originalArgsDescriptors.size() :
+                                "Inconsistent value parameters between delegating fun " + inheritedFun +
+                                "and interface fun " + interfaceFun;
+
+                        Iterator<ParameterDescriptor> argsIterator = argsDescriptors.iterator();
+                        Iterator<ParameterDescriptor> originalArgsIterator = originalArgsDescriptors.iterator();
+                        for (; argI < argTypes.length; argI++, originalArgI++) {
+                            Type argType = argTypes[argI];
+                            KotlinType argKotlinType = argsIterator.next().getType();
+
+                            Type originalArgType = originalArgTypes[originalArgI];
+                            KotlinType originalArgKotlinType = originalArgsIterator.next().getType();
+
+                            StackValue.local(reg, argType, argKotlinType)
+                                    .put(originalArgType, originalArgKotlinType, iv);
+                            reg += argType.getSize();
                         }
+
+                        assert originalArgI == originalArgTypes.length :
+                                "Invalid trait implementation signature: " + signature + " vs " + traitMethod + " for " + interfaceFun;
+                    }
+
+                    private List<ParameterDescriptor> getParameters(FunctionDescriptor functionDescriptor) {
+                        List<ParameterDescriptor> valueParameterDescriptors =
+                                new ArrayList<>(functionDescriptor.getValueParameters().size() + 1);
+
+                        ReceiverParameterDescriptor extensionReceiverParameter = functionDescriptor.getExtensionReceiverParameter();
+                        if (extensionReceiverParameter != null) {
+                            valueParameterDescriptors.add(extensionReceiverParameter);
+                        }
+
+                        valueParameterDescriptors.addAll(functionDescriptor.getValueParameters());
+
+                        return valueParameterDescriptors;
                     }
                 }
         );

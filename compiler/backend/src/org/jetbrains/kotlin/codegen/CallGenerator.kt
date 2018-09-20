@@ -66,12 +66,15 @@ interface CallGenerator {
             }
 
             val value = codegen.gen(argumentExpression)
-            value.put(parameterType, valueParameterDescriptor.original.type, v)
+            value.put(parameterType, valueParameterDescriptor.unsubstitutedType, v)
 
             if (isVarargInvoke) {
                 v.astore(OBJECT_TYPE)
             }
         }
+
+        private val ValueParameterDescriptor.unsubstitutedType
+            get() = containingDeclaration.original.valueParameters[index].type
 
         override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) {
             stackValue.put(stackValue.type, stackValue.kotlinType, codegen.v)
