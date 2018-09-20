@@ -1,3 +1,10 @@
+## v0.9.2 (Sep 2018)
+  * Support Xcode 10.0
+  * iOS 9.0 is the minimal supported version for all targets
+  * Swift interop improvements
+  * Support shared top level values of some immutable types (i.e. String and atomic references)
+  * Support release Kotlin 1.3.0
+
 ## v0.9.1 (Sep 2018)
   * Improve naming in produced Objective-C frameworks. Use ‘Kotlin’ prefix instead of ‘Stdlib’ prefix.
   * Improvements in KLIB: Library versioning, IDEA-friendly internal format.
@@ -22,7 +29,7 @@
   * Multiple bugfixes in compiler (coroutines, inliner)
   * Support 32-bit iOS (target `ios_arm32`)
   * New experimental Gradle plugin
-  * Support XCode 9.4.1
+  * Support Xcode 9.4.1
   * Optimizations (switch by enum, memory management)
 
 ## v0.7.1 (Jun 2018)
@@ -30,7 +37,7 @@
   * Fix NSBlock problem, preventing upload of binaries to the AppStore
   * Create primitive type boxes and kotlin.String as frozen by default
   * Support Gradle 4.7, provide separate run task for each executable
-  * Support XCode 9.4 and CoreML and ClassKit frameworks on Apple platforms
+  * Support Xcode 9.4 and CoreML and ClassKit frameworks on Apple platforms
   * Improved runtime Kotlin variable examination
   * Minor performance optimizations in compiled code and runtime
   * Add `disableDesignatedInitializerChecks` definition file support
