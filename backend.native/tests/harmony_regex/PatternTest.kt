@@ -57,7 +57,7 @@ class PatternTest {
         assertEquals(s.size, 1)
         regex = Regex("")
         s = regex.split("", 0)
-        assertEquals(s.size, 1)
+        assertEquals(s.size, 2)
         s = regex.split("abccbadfe", 0)
         assertEquals(s.size, 11)
 
@@ -69,7 +69,7 @@ class PatternTest {
         assertEquals(s.size, 1)
         regex = Regex("")
         s = regex.split("", 11)
-        assertEquals(s.size, 1)
+        assertEquals(s.size, 2)
         s = regex.split("abccbadfe", 15)
         assertEquals(s.size, 11)
 

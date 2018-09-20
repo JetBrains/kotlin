@@ -122,8 +122,9 @@ class SplitTest {
         assertEquals("", s[2])
 
         s = p.split("", 0)
-        assertEquals(1, s.size)
+        assertEquals(2, s.size)
         assertEquals("", s[0])
+        assertEquals("", s[1])
 
         s = p.split("abcd", 0)
         assertEquals(6, s.size)

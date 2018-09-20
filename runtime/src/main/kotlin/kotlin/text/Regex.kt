@@ -261,21 +261,25 @@ actual public class Regex internal constructor(internal val nativePattern: Patte
      */
     actual fun split(input: CharSequence, limit: Int): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
-        if (input.isEmpty()) {
-            return listOf("")
-        } else {
-            var lastStart = 0
-            val result = mutableListOf<String>()
-            var match: MatchResult? = find(input)
 
-            while (match != null && (limit == 0 || result.size < limit - 1)) {
-                result.add(input.substring(lastStart, match.range.start))
-                lastStart = match.range.endInclusive + 1
-                match = match.next()
-            }
-            result.add(input.substring(lastStart, input.length))
-            return result
-        }
+        var match: MatchResult? = find(input)
+
+        if (match == null || limit == 1) return listOf(input.toString())
+
+        val result = ArrayList<String>(if (limit > 0) limit.coerceAtMost(10) else 10)
+        var lastStart = 0
+        val lastSplit = limit - 1 // negative if there's no limit
+
+        do {
+            result.add(input.substring(lastStart, match!!.range.start))
+            lastStart = match.range.endInclusive + 1
+            if (lastSplit >= 0 && result.size == lastSplit) break
+            match = match.next()
+        } while (match != null)
+
+        result.add(input.substring(lastStart, input.length))
+
+        return result
     }
 
     /** Returns the string representation of this regular expression, namely the [pattern] of this regular expression. */

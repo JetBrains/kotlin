@@ -407,8 +407,9 @@ class MatchResultTest {
         val regex = Regex("")
         val s = regex.split("", 0)
 
-        assertEquals(1, s.size)
+        assertEquals(2, s.size)
         assertEquals("", s[0])
+        assertEquals("", s[1])
     }
 
     @Test fun testFindDollar() {
