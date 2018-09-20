@@ -566,12 +566,10 @@ class DefaultRandomSmokeTest : RandomSmokeTest() {
     override val subject: Random get() = Random
 }
 
-class SeededRandomSmokeTest : RandomSmokeTest() {
-    override val subject: Random get() = staticSubject
+private val seededRandomSmokeTestSubject = Random(Random.nextInt().also { println("Seed: $it") })
 
-    companion object {
-        val staticSubject = Random(Random.nextInt().also { println("Seed: $it") })
-    }
+class SeededRandomSmokeTest : RandomSmokeTest() {
+    override val subject: Random get() = seededRandomSmokeTestSubject
 
     @Test
     fun sameIntSeed() {
