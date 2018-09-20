@@ -17,6 +17,7 @@
         <filetype.decompiler filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
         <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileTypeFactory"/>
         <fileBasedIndex implementation="org.jetbrains.kotlin.ide.konan.index.KotlinNativeMetaFileIndex"/>
+        <library.type implementation="org.jetbrains.kotlin.ide.konan.NativeLibraryType"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
