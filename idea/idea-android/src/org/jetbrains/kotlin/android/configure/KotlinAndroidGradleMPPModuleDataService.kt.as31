@@ -74,19 +74,25 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
             val moduleData = nodeToImport.data
             val module = modelsProvider.findIdeModule(moduleData) ?: continue
             val shouldCreateEmptySourceRoots = shouldCreateEmptySourceRoots(nodeToImport, module)
+            val rootModel = modelsProvider.getModifiableRootModel(module)
+            for (sourceSetInfo in nodeToImport.kotlinAndroidSourceSets ?: emptyList()) {
+                val compilation = sourceSetInfo.kotlinModule as? KotlinCompilation ?: continue
+                for (sourceSet in compilation.sourceSets) {
+                    if (sourceSet.platform == KotlinPlatform.ANDROID) {
+                        val sourceType = if (sourceSet.isTestModule) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE
+                        val resourceType = if (sourceSet.isTestModule) JavaResourceRootType.TEST_RESOURCE else JavaResourceRootType.RESOURCE
+                        sourceSet.sourceDirs.forEach { addSourceRoot(it, sourceType, rootModel, shouldCreateEmptySourceRoots) }
+                        sourceSet.resourceDirs.forEach { addSourceRoot(it, resourceType, rootModel, shouldCreateEmptySourceRoots) }
+                    }
+                }
+            }
             val androidModel = AndroidModuleModel.get(module) ?: continue
             val variantName = androidModel.selectedVariant.name
-            val sourceSetInfo = nodeToImport.kotlinAndroidSourceSets?.firstOrNull { it.kotlinModule.name == variantName } ?: continue
-            val compilation = sourceSetInfo.kotlinModule as? KotlinCompilation ?: continue
-            val rootModel = modelsProvider.getModifiableRootModel(module)
-            for (sourceSet in compilation.sourceSets) {
-                if (sourceSet.platform == KotlinPlatform.ANDROID) {
-                    val sourceType = if (sourceSet.isTestModule) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE
-                    val resourceType = if (sourceSet.isTestModule) JavaResourceRootType.TEST_RESOURCE else JavaResourceRootType.RESOURCE
-                    sourceSet.sourceDirs.forEach { addSourceRoot(it, sourceType, rootModel, shouldCreateEmptySourceRoots) }
-                    sourceSet.resourceDirs.forEach { addSourceRoot(it, resourceType, rootModel, shouldCreateEmptySourceRoots) }
-                } else {
-                    val sourceSetId = sourceSetInfo.sourceSetIdsByName[sourceSet.name] ?: continue
+            val mainSourceSetInfo = nodeToImport.kotlinAndroidSourceSets?.firstOrNull { it.kotlinModule.name == variantName } ?: continue
+            val mainCompilation = mainSourceSetInfo.kotlinModule as? KotlinCompilation ?: continue
+            for (sourceSet in mainCompilation.sourceSets) {
+                if (sourceSet.platform != KotlinPlatform.ANDROID) {
+                    val sourceSetId = mainSourceSetInfo.sourceSetIdsByName[sourceSet.name] ?: continue
                     val sourceSetData = ExternalSystemApiUtil.findFirstRecursively(projectNode) {
                         (it.data as? ModuleData)?.id == sourceSetId
                     }?.data as? ModuleData ?: continue
@@ -94,7 +100,7 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                     rootModel.addModuleOrderEntry(sourceSetModule)
                 }
             }
-            KotlinSourceSetDataService.configureFacet(moduleData, sourceSetInfo, nodeToImport, module, modelsProvider)
+            KotlinSourceSetDataService.configureFacet(moduleData, mainSourceSetInfo, nodeToImport, module, modelsProvider)
         }
 
         ContentRootDataService().importData(contentRootsToImport, projectData, project, modelsProvider)
