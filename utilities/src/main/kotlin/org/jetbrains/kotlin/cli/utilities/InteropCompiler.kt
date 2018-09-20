@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.KonanAbiVersion
 import org.jetbrains.kotlin.konan.library.*
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.native.interop.gen.jvm.interop
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -54,7 +55,12 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
     val manifest = File(buildDir, "manifest.properties")
 
     val target = PlatformManager().targetManager(targetRequest).target
-    val resolver = defaultResolver(repos, target).libraryResolver()
+    val resolver = defaultResolver(
+        repos,
+        libraries.filter { it.contains(File.separator) },
+        target,
+        Distribution()
+    ).libraryResolver()
     val allLibraries = resolver.resolveWithDependencies(
             libraries.toUnresolvedLibraries, noStdLib = true, noDefaultLibs = noDefaultLibs
     ).getFullList()

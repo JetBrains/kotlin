@@ -157,9 +157,8 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
 
             addAll(additionalCompilerOptions)
 
-            libraries.files.forEach {library ->
-                library.parent?.let { addArg("-r", it) }
-                addArg("-l", library.nameWithoutExtension)
+            libraries.files.forEach {
+                addArg("-l", it.absolutePath)
             }
 
             addListArg("-linker-options", linkerOpts)

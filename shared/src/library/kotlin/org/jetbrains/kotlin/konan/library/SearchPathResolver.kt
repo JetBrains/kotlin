@@ -29,17 +29,20 @@ interface SearchPathResolverWithTarget: SearchPathResolver {
 
 fun defaultResolver(
         repositories: List<String>,
-        target: KonanTarget
-): SearchPathResolverWithTarget = defaultResolver(repositories, target, Distribution())
+        target: KonanTarget,
+        distribution: Distribution = Distribution()
+): SearchPathResolverWithTarget = defaultResolver(repositories, emptyList(), target, distribution)
 
 fun defaultResolver(
         repositories: List<String>,
+        directLibs: List<String>,
         target: KonanTarget,
         distribution: Distribution,
         logger: Logger = ::dummyLogger,
         skipCurrentDir: Boolean = false
 ): SearchPathResolverWithTarget = KonanLibraryProperResolver(
         repositories,
+        directLibs,
         target,
         listOf(KonanAbiVersion.CURRENT),
         listOf(KonanVersion.CURRENT),
@@ -50,13 +53,15 @@ fun defaultResolver(
 
 fun resolverByName(
         repositories: List<String>,
+        directLibs: List<String> = emptyList(),
         distributionKlib: String? = null,
         localKonanDir: String? = null,
         skipCurrentDir: Boolean = false
-): SearchPathResolver = KonanLibrarySearchPathResolver(repositories, distributionKlib, localKonanDir, skipCurrentDir)
+): SearchPathResolver = KonanLibrarySearchPathResolver(repositories, directLibs, distributionKlib, localKonanDir, skipCurrentDir)
 
 internal open class KonanLibrarySearchPathResolver(
         repositories: List<String>,
+        directLibs: List<String>,
         val distributionKlib: String?,
         val localKonanDir: String?,
         val skipCurrentDir: Boolean,
@@ -75,6 +80,10 @@ internal open class KonanLibrarySearchPathResolver(
         get() = if (!skipCurrentDir) File.userDir else null
 
     private val repoRoots: List<File> by lazy { repositories.map { File(it) } }
+
+    private val directLibraries: List<KonanLibrary> by lazy {
+        directLibs.mapNotNull { found(File(it)) }.map { createKonanLibrary(it, null) }
+    }
 
     // This is the place where we specify the order of library search.
     override val searchRoots: List<File> by lazy {
@@ -99,9 +108,24 @@ internal open class KonanLibrarySearchPathResolver(
         val sequence = if (given.isAbsolute) {
             sequenceOf(found(given))
         } else {
-            searchRoots.asSequence().map {
+            // Search among user-provided libraries by unique name.
+            // It's a workaround for maven publication. When a library is published without Gradle metadata,
+            // it has a complex file name (e.g. foo-macos_x64-1.0.klib). But a dependency on this lib in manifests
+            // of other libs uses its unique name written in the manifest (i.e just 'foo'). So we cannot resolve this
+            // library by its filename. But we have this library's file (we've downloaded it using maven dependency
+            // resolution) so we can pass it to the compiler directly. This code takes this into account and looks for
+            // a library dependencies also in libs passed to the compiler as files (passed to the resolver as the
+            // 'directLibraries' property).
+            val directLibs = directLibraries.asSequence().filter {
+                it.uniqueName == givenPath
+            }.map {
+                it.libraryFile
+            }
+            // Search among libraries in repositoreis by library filename.
+            val repoLibs = searchRoots.asSequence().map {
                 found(File(it, givenPath))
             }
+            directLibs + repoLibs
         }
         return sequence.filterNotNull()
     }
@@ -144,16 +168,18 @@ internal open class KonanLibrarySearchPathResolver(
 }
 
 internal class KonanLibraryProperResolver(
-        repositories: List<String>,
-        override val target: KonanTarget,
-        override val knownAbiVersions: List<KonanAbiVersion>?,
-        override val knownCompilerVersions: List<KonanVersion>?,
-        distributionKlib: String?,
-        localKonanDir: String?,
-        skipCurrentDir: Boolean,
-        override val logger: Logger = ::dummyLogger
-): KonanLibrarySearchPathResolver(repositories, distributionKlib, localKonanDir, skipCurrentDir, logger), SearchPathResolverWithTarget {
-
+    repositories: List<String>,
+    directLibs: List<String>,
+    override val target: KonanTarget,
+    override val knownAbiVersions: List<KonanAbiVersion>?,
+    override val knownCompilerVersions: List<KonanVersion>?,
+    distributionKlib: String?,
+    localKonanDir: String?,
+    skipCurrentDir: Boolean,
+    override val logger: Logger = ::dummyLogger
+) : KonanLibrarySearchPathResolver(repositories, directLibs, distributionKlib, localKonanDir, skipCurrentDir, logger),
+    SearchPathResolverWithTarget
+{
     override val distPlatformHead: File?
         get() = distributionKlib?.File()?.child("platform")?.child(target.visibleName)
 

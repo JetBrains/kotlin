@@ -106,9 +106,8 @@ open class CInteropTask @Inject constructor(val settings: CInteropSettingsImpl):
             addArgs("-copt", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
-            libraries.files.forEach { library ->
-                library.parent?.let { addArg("-r", it) }
-                addArg("-l", library.nameWithoutExtension)
+            libraries.files.forEach {
+                addArg("-l", it.absolutePath)
             }
 
             addAll(extraOpts)

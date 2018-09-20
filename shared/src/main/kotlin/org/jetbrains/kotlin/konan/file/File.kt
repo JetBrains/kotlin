@@ -158,6 +158,7 @@ data class File constructor(internal val javaPath: Path) {
         val javaHome
             get() = File(System.getProperty("java.home"))
         val pathSeparator = java.io.File.pathSeparator
+        val separator = java.io.File.separator
     }
 
     fun readStrings() = mutableListOf<String>().also { list -> forEachLine{list.add(it)}}

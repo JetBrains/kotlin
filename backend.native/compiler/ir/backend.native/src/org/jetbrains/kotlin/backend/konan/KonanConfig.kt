@@ -76,7 +76,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
     private fun resolverLogger(msg: String) = configuration.report(STRONG_WARNING, msg)
 
-    private val resolver = defaultResolver(repositories, target, distribution, ::resolverLogger).libraryResolver()
+    private val resolver = defaultResolver(
+        repositories,
+        libraryNames.filter { it.contains(File.separator) },
+        target,
+        distribution,
+        ::resolverLogger
+    ).libraryResolver()
 
     internal val resolvedLibraries by lazy {
         resolver.resolveWithDependencies(
