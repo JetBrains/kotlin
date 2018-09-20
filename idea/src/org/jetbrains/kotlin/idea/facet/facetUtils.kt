@@ -227,8 +227,8 @@ private val CommonCompilerArguments.ignoredFields: List<String>
 private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
     val allSdks = ProjectJdkTable.getInstance().allJdks
     val sdk = if (compilerArguments is K2JVMCompilerArguments) {
-        val jdkHome = compilerArguments.jdkHome ?: return
-        allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 } ?: return
+        val jdkHome = compilerArguments.jdkHome
+        allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 }
     } else {
         allSdks.firstOrNull { it.sdkType is KotlinSdkType }
                 ?: modelsProvider
