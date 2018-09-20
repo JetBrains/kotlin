@@ -196,7 +196,7 @@ class SerializerCodegenImpl(
                     load(outputVar, kOutputType)
                     load(descVar, descType)
                     iconst(index)
-                    genKOutputMethodCall(property, codegen, expressionCodegen, objType, objVar)
+                    genKOutputMethodCall(property, codegen, expressionCodegen, objType, objVar, generator = this@SerializerCodegenImpl)
                 }
             }
             // output.writeEnd(classDesc)
@@ -303,7 +303,7 @@ class SerializerCodegenImpl(
                     iconst(labelNum)
 
                     val sti = getSerialTypeInfo(property, propertyType)
-                    val useSerializer = stackValueSerializerInstanceFromSerializer(codegen, sti)
+                    val useSerializer = stackValueSerializerInstanceFromSerializer(codegen, sti, this@SerializerCodegenImpl)
                     val unknownSer = (!useSerializer && sti.elementMethodPrefix.isEmpty())
                     if (unknownSer) {
                         aconst(codegen.typeMapper.mapType(property.type))

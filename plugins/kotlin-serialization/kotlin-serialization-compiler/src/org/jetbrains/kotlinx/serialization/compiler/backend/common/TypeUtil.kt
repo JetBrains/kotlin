@@ -49,7 +49,7 @@ open class SerialTypeInfo(
     val unit: Boolean = false
 )
 
-fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
+fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
     val T = property.type
     val serializableWith = property.serializableWith?.toClassDescriptor
     if (serializableWith != null) return SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializableWith)
@@ -81,7 +81,7 @@ fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
     }
 }
 
-fun findTypeSerializerOrContext(
+fun AbstractSerialGenerator.findTypeSerializerOrContext(
     module: ModuleDescriptor,
     kType: KotlinType,
     annotations: Annotations = kType.annotations,
@@ -89,7 +89,7 @@ fun findTypeSerializerOrContext(
 ): ClassDescriptor? {
     if (kType.isTypeParameter()) return null
     fun getContextualSerializer() =
-        if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName))
+        if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName) || kType in contextualKClassListInCurrentFile)
             module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
         else
             throw CompilationException(

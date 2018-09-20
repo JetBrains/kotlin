@@ -20,7 +20,7 @@ class SerializableCompanionIrGenerator(
     val irClass: IrClass,
     override val compilerContext: BackendContext,
     bindingContext: BindingContext
-) : SerializableCompanionCodegen(irClass.descriptor), IrBuilderExtension {
+) : SerializableCompanionCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
     override val translator: TypeTranslator = compilerContext.createTypeTranslator(serializableDescriptor.module)
     private val _table = SymbolTable()
     override val BackendContext.localSymbolTable: SymbolTable

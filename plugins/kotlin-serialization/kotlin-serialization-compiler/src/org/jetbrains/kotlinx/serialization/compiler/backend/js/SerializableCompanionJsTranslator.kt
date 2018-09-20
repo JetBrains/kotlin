@@ -32,7 +32,8 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 class SerializableCompanionJsTranslator(
     declaration: ClassDescriptor,
     val translator: DeclarationBodyVisitor,
-    val context: TranslationContext): SerializableCompanionCodegen(declaration) {
+    val context: TranslationContext
+): SerializableCompanionCodegen(declaration, context.bindingContext()) {
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
         val f = context.buildFunction(methodDescriptor) {jsFun, context ->
