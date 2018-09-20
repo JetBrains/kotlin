@@ -263,7 +263,9 @@ open class KotlinNativeCompile : AbstractCompile() {
 
         // Sources.
         addAll(getSource().map { it.absolutePath })
-        add("-Xcommon-sources=${commonSources.map { it.absolutePath }.joinToString(separator = ",")}")
+        if (!commonSources.isEmpty) {
+            add("-Xcommon-sources=${commonSources.map { it.absolutePath }.joinToString(separator = ",")}")
+        }
     }
 
     @TaskAction
