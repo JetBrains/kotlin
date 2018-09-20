@@ -446,9 +446,39 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("anyUpdateInvokeStatic.kt")
+            public void testAnyUpdateInvokeStatic() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/anyUpdateInvokeStatic.kt");
+            }
+
+            @TestMetadata("anyUpdateVariable.kt")
+            public void testAnyUpdateVariable() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/anyUpdateVariable.kt");
+            }
+
             @TestMetadata("primitivesCoertion.kt")
             public void testPrimitivesCoertion() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/primitivesCoertion.kt");
+            }
+
+            @TestMetadata("stringUpdateInvokeStatic.kt")
+            public void testStringUpdateInvokeStatic() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/stringUpdateInvokeStatic.kt");
+            }
+
+            @TestMetadata("stringUpdateInvokeVirtual.kt")
+            public void testStringUpdateInvokeVirtual() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/stringUpdateInvokeVirtual.kt");
+            }
+
+            @TestMetadata("stringUpdatePutField.kt")
+            public void testStringUpdatePutField() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/stringUpdatePutField.kt");
+            }
+
+            @TestMetadata("stringUpdateVariable.kt")
+            public void testStringUpdateVariable() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/coroutines/stringUpdateVariable.kt");
             }
         }
 
