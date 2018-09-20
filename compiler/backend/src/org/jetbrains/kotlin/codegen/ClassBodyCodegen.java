@@ -216,7 +216,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
         return InnerClassConsumer.Companion.classForInnerClassRecord(descriptor, false);
     }
 
-    protected void generateTraitMethods() {
+    protected void generateDelegatesToDefaultImpl() {
         if (isJvmInterface(descriptor)) return;
 
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
@@ -271,47 +271,48 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                     private void putArgumentsOnStack(
                             @NotNull ExpressionCodegen codegen,
                             @NotNull JvmMethodSignature signature,
-                            Method traitMethod
+                            @NotNull Method defaultImplsMethod
                     ) {
                         InstructionAdapter iv = codegen.v;
-                        Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
-                        Type[] originalArgTypes = traitMethod.getArgumentTypes();
+                        Type[] myArgTypes = signature.getAsmMethod().getArgumentTypes();
+                        Type[] toArgTypes = defaultImplsMethod.getArgumentTypes();
                         boolean isErasedInlineClass =
                                 InlineClassesUtilsKt.isInlineClass(descriptor) && kind == OwnerKind.ERASED_INLINE_CLASS;
 
-                        int argI = 0;
-                        int reg = 0;
+                        int myArgI = 0;
+                        int argVar = 0;
 
                         Type receiverType = typeMapper.mapType(descriptor);
                         KotlinType interfaceKotlinType = ((ClassDescriptor) inheritedFun.getContainingDeclaration()).getDefaultType();
-                        StackValue.local(reg, receiverType, descriptor.getDefaultType()).put(OBJECT_TYPE, interfaceKotlinType, iv);
-                        if (isErasedInlineClass) argI++;
-                        reg += receiverType.getSize();
+                        StackValue.local(argVar, receiverType, descriptor.getDefaultType())
+                                .put(OBJECT_TYPE, interfaceKotlinType, iv);
+                        if (isErasedInlineClass) myArgI++;
+                        argVar += receiverType.getSize();
 
-                        int originalArgI = 1;
+                        int toArgI = 1;
 
-                        List<ParameterDescriptor> argsDescriptors = getParameters(inheritedFun);
-                        List<ParameterDescriptor> originalArgsDescriptors = getParameters(interfaceFun);
-                        assert argsDescriptors.size() == originalArgsDescriptors.size() :
+                        List<ParameterDescriptor> myParameters = getParameters(inheritedFun);
+                        List<ParameterDescriptor> toParameters = getParameters(interfaceFun);
+                        assert myParameters.size() == toParameters.size() :
                                 "Inconsistent value parameters between delegating fun " + inheritedFun +
                                 "and interface fun " + interfaceFun;
 
-                        Iterator<ParameterDescriptor> argsIterator = argsDescriptors.iterator();
-                        Iterator<ParameterDescriptor> originalArgsIterator = originalArgsDescriptors.iterator();
-                        for (; argI < argTypes.length; argI++, originalArgI++) {
-                            Type argType = argTypes[argI];
-                            KotlinType argKotlinType = argsIterator.next().getType();
+                        Iterator<ParameterDescriptor> myParametersIterator = myParameters.iterator();
+                        Iterator<ParameterDescriptor> toParametersIterator = toParameters.iterator();
+                        for (; myArgI < myArgTypes.length; myArgI++, toArgI++) {
+                            Type argType = myArgTypes[myArgI];
+                            KotlinType argKotlinType = myParametersIterator.next().getType();
 
-                            Type originalArgType = originalArgTypes[originalArgI];
-                            KotlinType originalArgKotlinType = originalArgsIterator.next().getType();
+                            Type originalArgType = toArgTypes[toArgI];
+                            KotlinType originalArgKotlinType = toParametersIterator.next().getType();
 
-                            StackValue.local(reg, argType, argKotlinType)
+                            StackValue.local(argVar, argType, argKotlinType)
                                     .put(originalArgType, originalArgKotlinType, iv);
-                            reg += argType.getSize();
+                            argVar += argType.getSize();
                         }
 
-                        assert originalArgI == originalArgTypes.length :
-                                "Invalid trait implementation signature: " + signature + " vs " + traitMethod + " for " + interfaceFun;
+                        assert toArgI == toArgTypes.length :
+                                "Invalid trait implementation signature: " + signature + " vs " + defaultImplsMethod + " for " + interfaceFun;
                     }
 
                     private List<ParameterDescriptor> getParameters(FunctionDescriptor functionDescriptor) {

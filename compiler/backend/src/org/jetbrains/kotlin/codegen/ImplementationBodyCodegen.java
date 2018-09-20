@@ -13,7 +13,6 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap;
@@ -73,9 +72,7 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
-import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isLocalFunction;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -411,7 +408,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateCompanionObjectBackingFieldCopies();
 
-        generateTraitMethods();
+        generateDelegatesToDefaultImpl();
 
         generateDelegates(delegationFieldsInfo);
 
