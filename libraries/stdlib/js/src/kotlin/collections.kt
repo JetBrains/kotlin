@@ -130,8 +130,6 @@ internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
 @PublishedApi
 @JsName("arrayCopy")
 internal fun <T> arrayCopy(source: Array<out T>, destination: Array<in T>, destinationOffset: Int, startIndex: Int, endIndex: Int) {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) source.size else endIndex // TODO: Remove when default value from expect is fixed
     AbstractList.checkRangeIndexes(startIndex, endIndex, source.size)
     val rangeSize = endIndex - startIndex
     AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)

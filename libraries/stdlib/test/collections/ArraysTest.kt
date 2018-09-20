@@ -854,7 +854,7 @@ class ArraysTest {
             dest.copyInto(dest, 1, 0, 2)
             assertTEquals(result3, dest, "Overlapping forward copy: ${result2.toStringT()}, ${dest.toStringT()}")
 
-            for ((start, end) in listOf(-1 to 0, 0 to 4, 4 to 4, 1 to 0)) {
+            for ((start, end) in listOf(-1 to 0, 0 to 4, 4 to 4, 1 to 0, 0 to -1)) {
                 val bounds = "start: $start, end: $end"
                 val ex = assertFails(bounds) { newValues.copyInto(dest, 0, start, end) }
                 assertTrue(ex is IllegalArgumentException || ex is IndexOutOfBoundsException, "Unexpected exception type: $ex")

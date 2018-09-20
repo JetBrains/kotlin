@@ -489,8 +489,7 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    // TODO: Remove -1 from common signature
-    val f_copyInto = fn("copyInto(destination: SELF, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1)") {
+    val f_copyInto = fn("copyInto(destination: SELF, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)") {
         include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.3")
@@ -530,8 +529,6 @@ object ArrayOps : TemplateGroupBase() {
                 signature("copyInto(destination: SELF, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
                 body {
                     """
-                    @Suppress("NAME_SHADOWING")
-                    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
                     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
                     return destination
                     """
