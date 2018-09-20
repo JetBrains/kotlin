@@ -2733,6 +2733,10 @@ kotlinNativeInterop {
         defFile 'interop/basics/cmacros.def'
     }
 
+    cunsupported {
+        defFile 'interop/basics/cunsupported.def'
+    }
+
     if (isMac()) {
         objcSmoke {
             defFile 'interop/objc/objcSmoke.def'
@@ -2818,6 +2822,12 @@ task interop_macros(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/macros.kt"
     interop = 'cmacros'
+}
+
+task interop_unsupported(type: RunInteropKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/unsupported.kt"
+    interop = 'cunsupported'
 }
 
 task interop_echo_server(type: RunInteropKonanTest) {

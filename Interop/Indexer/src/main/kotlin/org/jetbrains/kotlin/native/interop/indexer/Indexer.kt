@@ -653,44 +653,55 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
     private val TARGET_ATTRIBUTE = "__target__"
 
-    internal fun tokenizeExtent(cursor: CValue<CXCursor>): List<String> {
-        val translationUnit = clang_Cursor_getTranslationUnit(cursor)!!
-        val cursorExtent = clang_getCursorExtent(cursor)
-        memScoped {
-            val tokensVar = alloc<CPointerVar<CXToken>>()
-            val numTokensVar = alloc<IntVar>()
-            clang_tokenize(translationUnit, cursorExtent, tokensVar.ptr, numTokensVar.ptr)
-            val numTokens = numTokensVar.value
-            val tokens = tokensVar.value
-            if (tokens == null) return emptyList<String>()
-            try {
-                return (0 until numTokens).map {
-                    clang_getTokenSpelling(translationUnit, tokens[it].readValue()).convertAndDispose()
-                }
-            } finally {
-                clang_disposeTokens(translationUnit, tokens, numTokens)
-            }
-        }
-    }
-
     private fun isSuitableFunction(cursor: CValue<CXCursor>): Boolean {
         if (!isAvailable(cursor)) return false
 
         // If function is specific for certain target, ignore that, as we may be
         // unable to generate machine code for bridge from the bitcode.
+        return !functionHasTargetAttribute(cursor)
+    }
+
+    private fun functionHasTargetAttribute(cursor: CValue<CXCursor>): Boolean {
         // TODO: this must be implemented with hasAttribute(), but hasAttribute()
         // works for Mac hosts only so far.
-        var suitable = true
+
+        var result = false
         visitChildren(cursor) { child, _ ->
-            if (clang_isAttribute(child.kind) != 0) {
-                suitable = !tokenizeExtent(child).any { it == TARGET_ATTRIBUTE }
-            }
-            if (suitable)
-                CXChildVisitResult.CXChildVisit_Continue
-            else
+            if (isTargetAttribute(child)) {
+                result = true
                 CXChildVisitResult.CXChildVisit_Break
+            } else {
+                CXChildVisitResult.CXChildVisit_Continue
+            }
         }
-        return suitable
+        return result
+    }
+
+    private fun isTargetAttribute(cursor: CValue<CXCursor>): Boolean = clang_isAttribute(cursor.kind) != 0 &&
+            getExtentFirstToken(cursor) == TARGET_ATTRIBUTE
+
+    private fun getExtentFirstToken(cursor: CValue<CXCursor>) =
+            getToken(clang_Cursor_getTranslationUnit(cursor)!!, clang_getRangeStart(clang_getCursorExtent(cursor)))
+
+    // TODO: implement with clang_getToken after updating libclang.
+    private fun getToken(translationUnit: CXTranslationUnit, location: CValue<CXSourceLocation>): String? = memScoped {
+        val range = clang_getRange(location, location) // Seems to work.
+
+        val tokensVar = alloc<CPointerVar<CXToken>>()
+        val numTokensVar = alloc<IntVar>()
+        clang_tokenize(translationUnit, range, tokensVar.ptr, numTokensVar.ptr)
+        val numTokens = numTokensVar.value
+        val tokens = tokensVar.value ?: return null
+
+        try {
+            when (numTokens) {
+                0 -> null
+                1 -> clang_getTokenSpelling(translationUnit, tokens[0].readValue()).convertAndDispose()
+                else -> error("Unexpected number of tokens: $numTokens")
+            }
+        } finally {
+            clang_disposeTokens(translationUnit, tokens, numTokens)
+        }
     }
 
     fun indexDeclaration(info: CXIdxDeclInfo): Unit {
