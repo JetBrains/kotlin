@@ -397,7 +397,7 @@ The Kotlin/Native plugin creates the following tasks:
 * __compileKonan\<ArtifactName>\<Target>__. The plugin creates a task for each target declared in the `konan.targets` list and
 for each an artifact is defined in a `konanArtifacts` block. Such a task may have different properties depending on the artifact type:
 
-    ##### Properties available for a compiler task (executable, library or bitcode building task):
+    **Properties available for a compiler task (executable, library or bitcode building task):**
 
     |Property             |Type                        |Description                                               |
     |---------------------|----------------------------|----------------------------------------------------------|
@@ -418,7 +418,7 @@ for each an artifact is defined in a `konanArtifacts` block. Such a task may hav
     |`enableMultiplatform`|`boolean`                   |Is multiplatform support enabled for this artifact        |
     |`commonSourceSets`   |`Collection<String>`        |Names of source sets used as a common module              |
 
-    ##### Properties available for a cinterop task (task building an interoperability library):
+    **Properties available for a cinterop task (task building an interoperability library):**
 
     |Property        |Type                        |Description                                              |
     |----------------|----------------------------|---------------------------------------------------------|
