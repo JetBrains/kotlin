@@ -28,12 +28,10 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfiguration>(KotlinRunConfigurationType.getInstance()) {
@@ -42,7 +40,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
                                                context: ConfigurationContext,
                                                sourceElement: Ref<PsiElement>): Boolean {
         val location = context.location ?: return false
-        val module = location.module ?: return false
+        val module = location.module?.asJvmModule() ?: return false
         val container = getEntryPointContainer(location) ?: return false
         val startClassFQName = getStartClassFqName(container) ?: return false
 
@@ -57,14 +55,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
         if (location == null) return null
         if (DumbService.getInstance(location.project).isDumb) return null
 
-        val module = location.module ?: return null
-
-        if (TargetPlatformDetector.getPlatform(module) !is JvmPlatform) {
-            return null
-        }
-        val locationElement = location.psiElement
-
-        return getEntryPointContainer(locationElement)
+        return getEntryPointContainer(location.psiElement)
     }
 
     override fun isConfigurationFromContext(configuration: KotlinRunConfiguration, context: ConfigurationContext): Boolean {
@@ -72,7 +63,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
         val startClassFQName = getStartClassFqName(entryPointContainer) ?: return false
 
         return configuration.runClass == startClassFQName &&
-               context.module ==  configuration.configurationModule.module
+                context.module?.asJvmModule() == configuration.configurationModule.module
     }
 
     companion object {
