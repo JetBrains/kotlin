@@ -11,6 +11,7 @@ import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.junit.*
+import com.intellij.execution.testframework.AbstractPatternBasedConfigurationProducer
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.ModuleRootManager
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isProducedBy(JUnitConfigurationProducer::class.java) || other.isProducedBy(PatternConfigurationProducer::class.java)
+        return other.isProducedBy(JUnitConfigurationProducer::class.java) || other.isProducedBy(AbstractPatternBasedConfigurationProducer::class.java)
     }
 
     override fun isConfigurationFromContext(
