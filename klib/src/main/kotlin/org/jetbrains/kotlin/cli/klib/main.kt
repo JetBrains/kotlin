@@ -105,7 +105,7 @@ class Library(val name: String, val requestedRepository: String?, val target: St
         println("Resolved to: ${library.libraryName.File().absolutePath}")
         println("Module name: $moduleName")
         println("ABI version: $headerAbiVersion")
-        println("Compiler version: $headerCompilerVersion")
+        println("Compiler version: ${headerCompilerVersion?.toString(true, true)}")
         println("Library version: $headerLibraryVersion")
         val targets = library.targetList.joinToString(", ")
         print("Available targets: $targets\n")
