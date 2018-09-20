@@ -10,10 +10,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
@@ -83,6 +80,7 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
     @get:Internal
     internal var kotlinCompile: KotlinCompile by Delegates.notNull()
 
+    @Input
     override fun getDependsOn(): MutableSet<Any> = kotlinCompile.dependsOn
 
     @TaskAction
