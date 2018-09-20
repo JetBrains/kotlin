@@ -1,4 +1,4 @@
-### Concurrency in Kotlin/Native
+## Concurrency in Kotlin/Native
 
   Kotlin/Native runtime doesn't encourage a classical thread-oriented concurrency
  model with mutually exclusive code blocks and conditional variables, as this model is
@@ -12,7 +12,7 @@
    * Raw shared memory using C globals
    * Coroutines for blocking operations (not covered in this document)
 
-## Workers
+### Workers
 
   Instead of threads Kotlin/Native runtime offers the concept of workers: concurrently executed
  control flow streams with an associated request queue. Workers are very similar to the actors
@@ -61,7 +61,7 @@
  in the Kotlin/Native repository.
 
 <a name="transfer"></a>
-## Object transfer and freezing
+### Object transfer and freezing
 
    An important invariant that Kotlin/Native runtime maintains is that the object is either owned by a single
   thread/worker, or it is immutable (_shared XOR mutable_). This ensures that the same data has a single mutator, and so there is no need for locking to exist. To achieve such an invariant, we use the concept of not externally referred object subgraphs.
@@ -82,7 +82,7 @@
  autofreezing of certain provably immutable objects could be implemented in the future.
 
 <a name="detach"></a>
-## Object subgraph detachment
+### Object subgraph detachment
 
    An object subgraph without external references can be disconnected using `DetachedObjectGraph<T>` to
   a `COpaquePointer` value, which could be stored in `void*` data, so the disconnected object subgraphs
@@ -92,7 +92,7 @@
 
 
 <a name="shared"></a>
-## Raw shared memory
+### Raw shared memory
 
   Considering the strong ties between Kotlin/Native and C via interoperability, in conjunction with the other mechanisms
  mentioned above it is possible to build popular data structures, like concurrent hashmap or shared cache with
@@ -133,7 +133,7 @@ So in combination with the top level variable declared above, it can allow looki
 threads and building traditional concurrent structures with platform-specific synchronization primitives.
 
 <a name="top_level"></a>
-## Global variables and singletons
+### Global variables and singletons
 
   Frequently, global variables are a source of unintended concurrency issues, so _Kotlin/Native_ implements
 the following mechanisms to prevent the unintended sharing of state via global objects:
