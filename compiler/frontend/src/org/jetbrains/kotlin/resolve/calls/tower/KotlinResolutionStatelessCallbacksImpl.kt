@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -37,7 +38,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionStatelessCallbacksImpl(
-    private val deprecationResolver: DeprecationResolver
+    private val deprecationResolver: DeprecationResolver,
+    private val languageVersionSettings: LanguageVersionSettings
 ) : KotlinResolutionStatelessCallbacks {
     override fun isDescriptorFromSource(descriptor: CallableDescriptor) =
         DescriptorToSourceUtils.descriptorToDeclaration(descriptor) != null
@@ -72,5 +74,5 @@ class KotlinResolutionStatelessCallbacksImpl(
         functionCall.safeAs<PSIKotlinCallForInvoke>()?.variableCall
 
     override fun isCoroutineCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean =
-        isCoroutineCallWithAdditionalInference(parameter, argument.psiCallArgument.valueArgument)
+        isCoroutineCallWithAdditionalInference(parameter, argument.psiCallArgument.valueArgument, languageVersionSettings)
 }
