@@ -112,6 +112,11 @@ class Library(val name: String, val requestedRepository: String?, val target: St
     }
 
     fun install() {
+        if (!repository.exists) {
+            warn("Repository does not exist: $repository. Creating.")
+            repository.mkdirs()
+        }
+
         Library(File(name).name.removeSuffix(KLIB_FILE_EXTENSION_WITH_DOT), requestedRepository, target).remove(true)
 
         val library = libraryInCurrentDir(name)
@@ -184,8 +189,6 @@ fun main(args: Array<String>) {
     val repository = command.options["-repository"]?.last()
 
     val library = Library(command.library, repository, target)
-
-    warn("IMPORTANT: the library format is unstable now. It can change with any new git commit without warning!")
 
     when (command.verb) {
         "contents"  -> library.contents()
