@@ -135,7 +135,7 @@ class KotlinMultiplatformPlugin(
                         }
                     }
                     (this as MavenPublicationInternal).publishWithOriginalFileName()
-                    artifactId = "${project.name}-${variant.target.name.toLowerCase()}"
+                    artifactId = variant.target.defaultArtifactId
                     groupId = project.group.toString()
                     version = project.version.toString()
                 }
@@ -235,3 +235,5 @@ class KotlinMultiplatformPlugin(
         const val METADATA_TARGET_NAME = "metadata"
     }
 }
+
+internal val KotlinTarget.defaultArtifactId get() = "${project.name}-${name.toLowerCase()}"

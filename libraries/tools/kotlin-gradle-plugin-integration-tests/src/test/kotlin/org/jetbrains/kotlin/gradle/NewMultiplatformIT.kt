@@ -774,4 +774,59 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testPublishMultimoduleProjectWithNoMetadata() {
+        val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+        val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
+
+        with(libProject) {
+            setupWorkingDir()
+            appProject.setupWorkingDir()
+            appProject.projectDir.copyRecursively(projectDir.resolve("sample-app"))
+
+            projectDir.resolve("settings.gradle").writeText("include 'sample-app'") // also disables feature preview 'GRADLE_METADATA'
+            gradleBuildScript("sample-app").modify {
+                it.replace("'com.example:sample-lib:1.0'", "project(':')") + "\n" + """
+                apply plugin: 'maven-publish'
+                group = "com.exampleapp"
+                version = "1.0"
+                publishing {
+                    repositories {
+                        maven { url "file://${'$'}{rootProject.projectDir.absolutePath.replace('\\', '/')}/repo" }
+                    }
+                }
+                """.trimIndent()
+            }
+
+            gradleBuildScript().appendText("\n" + """
+                publishing {
+                    publications {
+                        jvm6 {
+                            groupId = "foo"
+                            artifactId = "bar"
+                            version = "42"
+                        }
+                    }
+                }
+            """.trimIndent())
+
+            build("publish") {
+                assertSuccessful()
+                assertFileContains(
+                    "repo/com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom",
+                    "<groupId>com.example</groupId>",
+                    "<artifactId>sample-lib-nodejs</artifactId>",
+                    "<version>1.0</version>"
+                )
+                assertFileContains(
+                    "repo/com/exampleapp/sample-app-jvm8/1.0/sample-app-jvm8-1.0.pom",
+                    "<groupId>foo</groupId>",
+                    "<artifactId>bar</artifactId>",
+                    "<version>42</version>"
+                )
+                assertFileExists("repo/foo/bar/42/bar-42.jar")
+            }
+        }
+    }
 }
