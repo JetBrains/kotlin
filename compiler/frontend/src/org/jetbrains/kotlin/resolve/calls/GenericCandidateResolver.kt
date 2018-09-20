@@ -414,7 +414,7 @@ class GenericCandidateResolver(
 
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
 
-        if (isCoroutineCallWithAdditionalInference(valueParameterDescriptor, valueArgument)) {
+        if (isCoroutineCallWithAdditionalInference(valueParameterDescriptor, valueArgument, languageVersionSettings)) {
             coroutineInferenceSupport.analyzeCoroutine(functionLiteral, valueArgument, constraintSystem, context, effectiveExpectedType)
         }
 
