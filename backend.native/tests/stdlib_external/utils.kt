@@ -9,7 +9,8 @@ import kotlin.test.*
 
 public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
     if (expected != null && actual != null) {
-        assertEquals(expected::class, actual::class)
+        assertTrue(expected::class.isInstance(actual) || actual::class.isInstance(expected),
+                "Expected: $expected,  Actual: $actual")
     } else {
         assertTrue(expected == null && actual == null)
     }
