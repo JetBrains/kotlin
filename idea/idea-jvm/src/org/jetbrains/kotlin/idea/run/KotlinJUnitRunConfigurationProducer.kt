@@ -11,21 +11,21 @@ import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.junit.*
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
@@ -62,7 +62,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         val template = RunManager.getInstance(configuration.project).getConfigurationTemplate(configurationFactory)
         val predefinedModule = (template.configuration as ModuleBasedConfiguration<*>).configurationModule.module
         val configurationModule = configuration.configurationModule.module
-        return configurationModule == context.location?.module || configurationModule == predefinedModule
+        return configurationModule == context.location?.module?.asJvmModule() || configurationModule == predefinedModule
     }
 
     override fun setupConfigurationFromContext(
@@ -74,6 +74,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
 
         val location = context.location ?: return false
         val leaf = location.psiElement
+        val module = context.module?.asJvmModule() ?: return false
 
         if (!ProjectRootsUtil.isInProjectOrLibSource(leaf)) {
             return false
@@ -83,34 +84,36 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
             return false
         }
 
-        val module = location.module ?: return false
-
-        val targetPlatform = TargetPlatformDetector.getPlatform(module)
-        if (targetPlatform != JvmPlatform) {
-            return false
-        }
-
-        configuration.setModule(module)
-
         val methodLocation = getTestMethodLocation(leaf)
         if (methodLocation != null) {
-            val originalModule = configuration.configurationModule.module
             configuration.beMethodConfiguration(methodLocation)
-            configuration.restoreOriginalModule(originalModule)
             JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+            configuration.setSdkAndModule(module)
             return true
         }
 
         val testClass = getTestClass(leaf)
         if (testClass != null) {
-            val originalModule = configuration.configurationModule.module
             configuration.beClassConfiguration(testClass)
-            configuration.restoreOriginalModule(originalModule)
             JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+            configuration.setSdkAndModule(module)
             return true
         }
 
         return false
+    }
+
+    private fun JUnitConfiguration.setSdkAndModule(module: Module) {
+        if (configurationModule.module == module) {
+            return
+        }
+
+        setModule(module)
+        val sdk = ModuleRootManager.getInstance(module).sdk
+        if (sdk != null) {
+            isAlternativeJrePathEnabled = true
+            alternativeJrePath = sdk.homePath
+        }
     }
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
