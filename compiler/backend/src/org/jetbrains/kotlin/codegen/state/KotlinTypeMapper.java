@@ -862,6 +862,9 @@ public class KotlinTypeMapper {
             }
             else {
                 boolean toInlinedErasedClass = currentOwner.isInline() && !isAccessor(functionDescriptor);
+                if (toInlinedErasedClass) {
+                    functionDescriptor = descriptor;
+                }
 
                 boolean isStaticInvocation = (isStaticDeclaration(functionDescriptor) &&
                                               !(functionDescriptor instanceof ImportedFromObjectCallableDescriptor)) ||
@@ -890,7 +893,7 @@ public class KotlinTypeMapper {
                                                     : functionDescriptor.getOriginal();
 
                 signature = toInlinedErasedClass
-                            ? mapSignatureForInlineErasedClassSkipGeneric(descriptor.getOriginal())
+                            ? mapSignatureForInlineErasedClassSkipGeneric(functionToCall)
                             : mapSignatureSkipGeneric(functionToCall);
                 returnKotlinType = functionToCall.getReturnType();
 
