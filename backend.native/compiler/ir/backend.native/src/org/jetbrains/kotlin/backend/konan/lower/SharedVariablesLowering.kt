@@ -10,14 +10,13 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrSetVariable
-import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.*
 import java.util.*
+
+object CoroutineIntrinsicLambdaOrigin: IrStatementOriginImpl("Coroutine intrinsic lambda")
 
 // TODO: Fix .parent for variables and use from common backend.
 class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPass {
@@ -48,6 +47,16 @@ class SharedVariablesLowering(val context: BackendContext) : FunctionLoweringPas
                     functionsVariables.push(mutableSetOf())
                     declaration.acceptChildrenVoid(this)
                     functionsVariables.pop()
+                }
+
+                override fun visitContainerExpression(expression: IrContainerExpression) {
+                    if (expression !is IrReturnableBlock || expression.origin != CoroutineIntrinsicLambdaOrigin)
+                        super.visitContainerExpression(expression)
+                    else {
+                        functionsVariables.push(mutableSetOf())
+                        expression.acceptChildrenVoid(this)
+                        functionsVariables.pop()
+                    }
                 }
 
                 override fun visitVariable(declaration: IrVariable) {

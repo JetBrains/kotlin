@@ -143,7 +143,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
           }
      }
 
-     private fun inlineFunction(callee: IrCall,                                             // Call to be substituted.
+    private fun inlineFunction(callee: IrCall,                                             // Call to be substituted.
                                caller: IrFunction): IrReturnableBlockImpl {                 // Function to substitute.
 
         val copyFunctionDeclaration = copyIrElement.copy(                         // Create copy of original function.
@@ -194,12 +194,14 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         val returnType = substitutedDescriptor?.let { context.ir.translateErased((it.descriptor as ClassDescriptor).defaultType) }
                 ?: copyFunctionDeclaration.returnType
 
+        val isCoroutineIntrinsicCall = callee.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(context.config.configuration.languageVersionSettings)
+
         return IrReturnableBlockImpl(                                     // Create new IR element to replace "call".
             startOffset = startOffset,
             endOffset   = endOffset,
             type        = returnType,
             symbol      = irReturnableBlockSymbol,
-            origin      = null,
+            origin      = if (isCoroutineIntrinsicCall) CoroutineIntrinsicLambdaOrigin else null,
             statements  = statements,
             sourceFileName = sourceFileName
         )
