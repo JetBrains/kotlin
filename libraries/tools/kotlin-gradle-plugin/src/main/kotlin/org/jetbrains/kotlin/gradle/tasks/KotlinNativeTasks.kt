@@ -110,7 +110,7 @@ open class KotlinNativeCompile : AbstractCompile() {
 
     private val friendModule: FileCollection?
         // It's already taken into account in libraries
-        @Internal get() = compilation.friendCompilation?.output
+        get() = compilation.friendCompilation?.output
 
     override fun getClasspath(): FileCollection = libraries
     override fun setClasspath(configuration: FileCollection?) {

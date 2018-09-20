@@ -120,6 +120,7 @@ artifacts {
 }
 
 test.executable = "${JDK_18}/bin/java"
+test.dependsOn(validateTaskProperties)
 
 validateTaskProperties.failOnWarning = true
 
