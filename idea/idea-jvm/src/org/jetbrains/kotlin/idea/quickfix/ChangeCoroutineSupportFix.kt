@@ -64,15 +64,9 @@ sealed class ChangeCoroutineSupportFix(
         override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return emptyList()
 
-            fun shouldConfigureInProject(): Boolean {
-                val facetSettings = KotlinFacet.get(module)?.configuration?.settings
-                return (facetSettings == null || facetSettings.useProjectSettings) &&
-                        module.getBuildSystemType() == BuildSystemType.JPS
-            }
-
             return doCreateActions(
                 diagnostic, LanguageFeature.Coroutines, allowWarningAndErrorMode = true,
-                quickFixConstructor = if (shouldConfigureInProject()) { element, _, coroutineSupport ->
+                quickFixConstructor = if (shouldConfigureInProject(module)) { element, _, coroutineSupport ->
                     InProject(
                         element,
                         coroutineSupport

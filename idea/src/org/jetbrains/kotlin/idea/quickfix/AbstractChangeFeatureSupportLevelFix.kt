@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.configuration.BuildSystemType
+import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 
 abstract class AbstractChangeFeatureSupportLevelFix(
     element: PsiElement,
@@ -35,6 +39,12 @@ abstract class AbstractChangeFeatureSupportLevelFix(
     }
 
     abstract class FeatureSupportIntentionActionsFactory : KotlinIntentionActionsFactory() {
+        protected fun shouldConfigureInProject(module: Module): Boolean {
+            val facetSettings = KotlinFacet.get(module)?.configuration?.settings
+            return (facetSettings == null || facetSettings.useProjectSettings) &&
+                    module.getBuildSystemType() == BuildSystemType.JPS
+        }
+
         protected fun doCreateActions(
             diagnostic: Diagnostic,
             feature: LanguageFeature,

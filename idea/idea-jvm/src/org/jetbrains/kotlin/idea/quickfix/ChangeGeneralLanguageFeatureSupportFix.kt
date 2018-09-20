@@ -71,16 +71,10 @@ sealed class ChangeGeneralLanguageFeatureSupportFix(
         override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return emptyList()
 
-            fun shouldConfigureInProject(): Boolean {
-                val facetSettings = KotlinFacet.get(module)?.configuration?.settings
-                return (facetSettings == null || facetSettings.useProjectSettings) &&
-                        module.getBuildSystemType() == BuildSystemType.JPS
-            }
-
             return supportedFeatures.flatMap { feature ->
                 doCreateActions(
                     diagnostic, feature, allowWarningAndErrorMode = false,
-                    quickFixConstructor = if (shouldConfigureInProject()) ::InProject else ::InModule
+                    quickFixConstructor = if (shouldConfigureInProject(module)) ::InProject else ::InModule
                 )
             }
         }
