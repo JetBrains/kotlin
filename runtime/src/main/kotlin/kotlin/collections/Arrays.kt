@@ -819,49 +819,7 @@ public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: 
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @SinceKotlin("1.1")
-public actual infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
-    if (this === other) {
-        return true
-    }
-
-    if (this.size != other.size) {
-        return false
-    }
-
-    for (i in indices) {
-        val v1 = this[i]
-        val v2 = other[i]
-
-        if (v1 == null || v2 == null) {
-            if (v1 == v2) {
-                continue
-            } else {
-                return false
-            }
-        }
-
-        // TODO: Do a typecheck like if(v1.class == v2.class) return false
-        // Cases:
-        //   Array<T>
-        //   Primitive array
-        //   Some value (not an array)
-
-        when {
-            v1 is Array<*>     && v2 is Array<*>     -> if (!v1.contentDeepEquals(v2)) return false
-            v1 is ByteArray    && v2 is ByteArray    -> if (!v1.contentEquals(v2)) return false
-            v1 is ShortArray   && v2 is ShortArray   -> if (!v1.contentEquals(v2)) return false
-            v1 is IntArray     && v2 is IntArray     -> if (!v1.contentEquals(v2)) return false
-            v1 is LongArray    && v2 is LongArray    -> if (!v1.contentEquals(v2)) return false
-            v1 is FloatArray   && v2 is FloatArray   -> if (!v1.contentEquals(v2)) return false
-            v1 is DoubleArray  && v2 is DoubleArray  -> if (!v1.contentEquals(v2)) return false
-            v1 is CharArray    && v2 is CharArray    -> if (!v1.contentEquals(v2)) return false
-            v1 is BooleanArray && v2 is BooleanArray -> if (!v1.contentEquals(v2)) return false
-            else -> if (v1 != v2) return false
-        }
-
-    }
-    return true
-}
+public actual infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean = contentDeepEqualsImpl(other)
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
@@ -870,14 +828,31 @@ public actual infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>):
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @SinceKotlin("1.1")
+@UseExperimental(ExperimentalUnsignedTypes::class)
 public actual fun <T> Array<out T>.contentDeepHashCode(): Int {
     var result = 1
     for (element in this) {
-        var elementHash = 0
-        if (element is Array<*>)
-            elementHash = element.contentDeepHashCode()
-        else
-            element?.let { elementHash = element.hashCode() }
+        val elementHash = when (element) {
+            null            -> 0
+
+            is Array<*>     -> element.contentDeepHashCode()
+
+            is ByteArray    -> element.contentHashCode()
+            is ShortArray   -> element.contentHashCode()
+            is IntArray     -> element.contentHashCode()
+            is LongArray    -> element.contentHashCode()
+            is FloatArray   -> element.contentHashCode()
+            is DoubleArray  -> element.contentHashCode()
+            is CharArray    -> element.contentHashCode()
+            is BooleanArray -> element.contentHashCode()
+
+            is UByteArray   -> element.contentHashCode()
+            is UShortArray  -> element.contentHashCode()
+            is UIntArray    -> element.contentHashCode()
+            is ULongArray   -> element.contentHashCode()
+
+            else            -> element.hashCode()
+        }
 
         result = 31 * result + elementHash
     }
@@ -892,44 +867,7 @@ public actual fun <T> Array<out T>.contentDeepHashCode(): Int {
  * is rendered as `"[...]"` to prevent recursion.
  */
 @SinceKotlin("1.1")
-public actual fun <T> Array<out T>.contentDeepToString(): String {
-    val length = if (size * 5 + 2 > 0) size * 5 + 2 else Int.MAX_VALUE
-    val result = StringBuilder(length)
-    contentDeepToStringInternal(result, mutableSetOf())
-    return result.toString()
-}
-
-private fun <T> Array<out T>.contentDeepToStringInternal(result: StringBuilder, processed: MutableSet<Array<*>>) {
-    if (this in processed) {
-        result.append("[...]")
-        return
-    }
-    processed.add(this)
-    result.append('[')
-
-    for (i in indices) {
-        if (i != 0) {
-            result.append(", ")
-        }
-        val element = this[i]
-        when (element) {
-            null            -> result.append("null")
-            is Array<*>     -> element.contentDeepToStringInternal(result, processed)
-            is ByteArray    -> result.append(element.contentToString())
-            is ShortArray   -> result.append(element.contentToString())
-            is IntArray     -> result.append(element.contentToString())
-            is LongArray    -> result.append(element.contentToString())
-            is FloatArray   -> result.append(element.contentToString())
-            is DoubleArray  -> result.append(element.contentToString())
-            is CharArray    -> result.append(element.contentToString())
-            is BooleanArray -> result.append(element.contentToString())
-            else            -> result.append(element.toString())
-        }
-    }
-
-    result.append(']')
-    processed.remove(this)
-}
+public actual fun <T> Array<out T>.contentDeepToString(): String = contentDeepToStringImpl()
 
 /**
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
