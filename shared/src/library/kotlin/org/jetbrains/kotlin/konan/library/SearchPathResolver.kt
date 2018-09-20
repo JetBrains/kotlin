@@ -39,13 +39,14 @@ fun defaultResolver(
         target: KonanTarget,
         distribution: Distribution,
         logger: Logger = ::dummyLogger,
-        skipCurrentDir: Boolean = false
+        skipCurrentDir: Boolean = false,
+        compatibleCompilerVersions: List<KonanVersion> = emptyList()
 ): SearchPathResolverWithTarget = KonanLibraryProperResolver(
         repositories,
         directLibs,
         target,
         listOf(KonanAbiVersion.CURRENT),
-        listOf(KonanVersion.CURRENT),
+        listOf(KonanVersion.CURRENT) + compatibleCompilerVersions,
         distribution.klib,
         distribution.localKonanDir.absolutePath,
         skipCurrentDir,

@@ -81,11 +81,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var target: String? = null
 
     // The rest of the options are only interesting to the developers.
-    // Make sure to prepend them with a double dash.
+    // Make sure to prepend them with -X.
     // Keep the list lexically sorted.
 
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones")
     var checkDependencies: Boolean = false
+
+    @Argument(value="-Xcompatible-compiler-version", valueDescription = "<version>", description = "Assume the given compiler version to be binary compatible")
+    var compatibleCompilerVersions: Array<String>? = null
 
     @Argument(value = "-Xdisable", deprecatedName = "--disable", valueDescription = "<Phase>", description = "Disable backend phase")
     var disablePhases: Array<String>? = null

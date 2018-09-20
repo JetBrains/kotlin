@@ -14,6 +14,8 @@ class KonanConfigKeys {
         // Keep the list lexically sorted.
         val CHECK_DEPENDENCIES: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("check dependencies and download the missing ones")
+        val COMPATIBLE_COMPILER_VERSIONS: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create("compatible compiler versions")
         val DEBUG: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("add debug information")
         val DISABLED_PHASES: CompilerConfigurationKey<List<String>> 
