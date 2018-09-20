@@ -74,7 +74,9 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
 
     fun testEnableCoroutinesFacet() {
         configureRuntime("mockRuntime11")
-        val facet = configureKotlinFacet(myModule)
+        val facet = configureKotlinFacet(myModule) {
+            settings.languageLevel = LanguageVersion.KOTLIN_1_1
+        }
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
