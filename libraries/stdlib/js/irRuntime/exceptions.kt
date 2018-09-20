@@ -99,3 +99,7 @@ fun THROW_NPE() {
 }
 
 fun error(s: String): Nothing = throw IllegalStateException(s, null)
+
+@PublishedApi
+internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
+    throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")

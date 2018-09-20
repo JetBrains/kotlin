@@ -38,7 +38,17 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
     }
 
     fun lower(irFunction: IrFunction) {
+        (irFunction.body as? IrExpressionBody)?.apply {
+            irFunction.body = toBlockBody(irFunction)
+        }
         irFunction.accept(decomposerTransformer, null)
+    }
+
+    private fun IrExpressionBody.toBlockBody(containingFunction: IrFunction): IrBlockBody {
+        val returnStatement = JsIrBuilder.buildReturn(containingFunction.symbol, expression, nothingType)
+        return IrBlockBodyImpl(expression.startOffset, expression.endOffset).apply {
+            statements += returnStatement
+        }
     }
 
     fun lower(irField: IrField, container: IrDeclarationContainer): List<IrDeclaration> {
@@ -48,17 +58,14 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
                 it.returnType = expression.type
             }
 
-            val returnStatement = JsIrBuilder.buildReturn(initFunction.symbol, expression, nothingType)
-            val newBody = IrBlockBodyImpl(expression.startOffset, expression.endOffset).apply {
-                statements += returnStatement
-            }
+            val newBody = toBlockBody(initFunction)
 
             initFunction.body = newBody
 
             lower(initFunction)
 
             val lastStatement = newBody.statements.last()
-            if (lastStatement != returnStatement || (lastStatement as IrReturn).value != expression) {
+            if (newBody.statements.size > 1 || lastStatement !is IrReturn || lastStatement.value != expression) {
                 expression = JsIrBuilder.buildCall(initFunction.symbol, expression.type)
                 return listOf(initFunction, irField)
             }

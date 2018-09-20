@@ -193,13 +193,8 @@ class JsIrBackendContext(
             override val ThrowTypeCastException
                 get () = irBuiltIns.throwCceSymbol
 
-            override val ThrowUninitializedPropertyAccessException = symbolTable.referenceSimpleFunction(
-                irBuiltIns.defineOperator(
-                    "throwUninitializedPropertyAccessException",
-                    builtIns.nothingType,
-                    listOf(builtIns.stringType)
-                ).descriptor
-            )
+            override val ThrowUninitializedPropertyAccessException=
+                symbolTable.referenceSimpleFunction(getFunctions(FqName("kotlin.throwUninitializedPropertyAccessException")).single())
 
             override val stringBuilder
                 get() = TODO("not implemented")
