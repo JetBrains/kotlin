@@ -77,7 +77,7 @@ interface KotlinNativeBinary : ComponentWithDependencies, BuildableComponent, Co
     val linkerOpts: List<String>
 
     companion object {
-        val KONAN_TARGET_ATTRIBUTE = Attribute.of("org.gradle.native.kotlin.platform", String::class.java)
+        val KONAN_TARGET_ATTRIBUTE = Attribute.of("org.jetbrains.kotlin.native.target", String::class.java)
     }
 }
 

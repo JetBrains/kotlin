@@ -35,6 +35,7 @@ import org.gradle.language.nativeplatform.internal.ComponentWithNames
 import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.nativeplatform.toolchain.NativeToolChain
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.experimental.ComponentWithBaseName
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSet
@@ -105,9 +106,10 @@ abstract class AbstractKotlinNativeBinary(
     // A configuration containing klibs.
     override val klibs = configurations.create(names.withPrefix("klibs")).apply {
         isCanBeConsumed = false
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinNativeUsage.KLIB))
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_API))
         attributes.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, debuggable)
         attributes.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, optimized)
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         attributes.attribute(KotlinNativeBinary.KONAN_TARGET_ATTRIBUTE, konanTarget.name)
         attributes.attribute(OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE, konanTarget.getGradleOSFamily(objects))
         extendsFrom(getImplementationDependencies())

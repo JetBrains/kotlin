@@ -42,7 +42,9 @@ enum class OutputKind(
         KotlinNativeLibraryImpl::class.java,
         1,
         null,
-        KotlinNativeUsage.KLIB
+        // Use JAVA_API here because the MPP plugin uses this usage for all artifacts in 1.3-RC.
+        // TODO: Change to KOTLIN_API with such change is merged into big Kotlin's 1.3.
+        Usage.JAVA_API
     ),
     FRAMEWORK(
         CompilerOutputKind.FRAMEWORK,

@@ -32,6 +32,7 @@ import org.gradle.language.cpp.CppBinary.DEBUGGABLE_ATTRIBUTE
 import org.gradle.language.cpp.CppBinary.OPTIMIZED_ATTRIBUTE
 import org.gradle.language.cpp.internal.DefaultUsageContext
 import org.gradle.nativeplatform.test.plugins.NativeTestingBasePlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary.Companion.KONAN_TARGET_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.*
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.OutputKind.Companion.getDevelopmentKind
@@ -69,6 +70,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
             attribute(Usage.USAGE_ATTRIBUTE, usage)
             attribute(DEBUGGABLE_ATTRIBUTE, buildType.debuggable)
             attribute(OPTIMIZED_ATTRIBUTE, buildType.optimized)
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
             attribute(KONAN_TARGET_ATTRIBUTE, target.name)
         }
         return DefaultUsageContext(variantName + usageContextSuffix, usage, attributes)
@@ -101,7 +103,11 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
             val hostManager = HostManager()
 
             for (kind in outputKinds) {
-                for (buildType in KotlinNativeBuildType.DEFAULT_BUILD_TYPES) {
+                val buildTypes = if (kind == OutputKind.KLIBRARY)
+                    listOf(KotlinNativeBuildType.DEBUG)
+                else
+                    KotlinNativeBuildType.DEFAULT_BUILD_TYPES
+                for (buildType in buildTypes) {
                     for (target in targets.filter { kind.availableFor(it) }) {
 
                         val buildTypeSuffix = buildType.name

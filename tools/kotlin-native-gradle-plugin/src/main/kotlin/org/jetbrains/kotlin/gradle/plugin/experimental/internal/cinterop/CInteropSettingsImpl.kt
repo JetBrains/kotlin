@@ -27,6 +27,7 @@ import org.gradle.language.cpp.CppBinary
 import org.gradle.language.internal.DefaultComponentDependencies
 import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
@@ -81,9 +82,10 @@ open class CInteropSettingsImpl @Inject constructor(
             val objects = project.objects
             isCanBeConsumed = false
             isCanBeResolved = true
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinNativeUsage.KLIB))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_API))
             attributes.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, KotlinNativeBuildType.DEBUG.debuggable)
             attributes.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, KotlinNativeBuildType.DEBUG.optimized)
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
             attributes.attribute(KotlinNativeBinary.KONAN_TARGET_ATTRIBUTE, konanTarget.name)
             attributes.attribute(
                 OperatingSystemFamily.OPERATING_SYSTEM_ATTRIBUTE,
