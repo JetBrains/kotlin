@@ -1,6 +1,5 @@
 package test
 
-@Suppress("UNSUPPORTED_FEATURE")
 inline class IC(val x: String)
 
 typealias ICAlias = IC
