@@ -26,14 +26,14 @@ interface CallGenerator {
     class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator {
 
         override fun genCallInner(
-                callableMethod: Callable,
-                resolvedCall: ResolvedCall<*>?,
-                callDefault: Boolean,
-                codegen: ExpressionCodegen) {
+            callableMethod: Callable,
+            resolvedCall: ResolvedCall<*>?,
+            callDefault: Boolean,
+            codegen: ExpressionCodegen
+        ) {
             if (!callDefault) {
                 callableMethod.genInvokeInstruction(codegen.v)
-            }
-            else {
+            } else {
                 (callableMethod as CallableMethod).genInvokeDefaultInstruction(codegen.v)
             }
         }
@@ -73,8 +73,7 @@ interface CallGenerator {
             }
         }
 
-        override fun putCapturedValueOnStack(
-                stackValue: StackValue, valueType: Type, paramIndex: Int) {
+        override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) {
             stackValue.put(stackValue.type, stackValue.kotlinType, codegen.v)
         }
 
@@ -117,26 +116,28 @@ interface CallGenerator {
     fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
 
     fun genValueAndPut(
-            valueParameterDescriptor: ValueParameterDescriptor,
-            argumentExpression: KtExpression,
-            parameterType: Type,
-            parameterIndex: Int)
+        valueParameterDescriptor: ValueParameterDescriptor,
+        argumentExpression: KtExpression,
+        parameterType: Type,
+        parameterIndex: Int
+    )
 
-    fun putValueIfNeeded(
-            parameterType: JvmKotlinType,
-            value: StackValue) {
+    fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue) {
         putValueIfNeeded(parameterType, value, ValueKind.GENERAL)
     }
 
     fun putValueIfNeeded(
-            parameterType: JvmKotlinType,
-            value: StackValue,
-            kind: ValueKind = ValueKind.GENERAL,
-            parameterIndex: Int = -1)
+        parameterType: JvmKotlinType,
+        value: StackValue,
+        kind: ValueKind = ValueKind.GENERAL,
+        parameterIndex: Int = -1
+    )
 
     fun putCapturedValueOnStack(
-            stackValue: StackValue,
-            valueType: Type, paramIndex: Int)
+        stackValue: StackValue,
+        valueType: Type,
+        paramIndex: Int
+    )
 
     fun processAndPutHiddenParameters(justProcess: Boolean)
 
