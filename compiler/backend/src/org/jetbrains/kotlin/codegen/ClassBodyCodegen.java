@@ -300,19 +300,20 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                         Iterator<ParameterDescriptor> myParametersIterator = myParameters.iterator();
                         Iterator<ParameterDescriptor> toParametersIterator = toParameters.iterator();
                         for (; myArgI < myArgTypes.length; myArgI++, toArgI++) {
-                            Type argType = myArgTypes[myArgI];
-                            KotlinType argKotlinType = myParametersIterator.next().getType();
+                            Type myArgType = myArgTypes[myArgI];
+                            Type toArgType = toArgTypes[toArgI];
 
-                            Type originalArgType = toArgTypes[toArgI];
-                            KotlinType originalArgKotlinType = toParametersIterator.next().getType();
+                            KotlinType myArgKotlinType = myParametersIterator.hasNext() ? myParametersIterator.next().getType() : null;
+                            KotlinType toArgKotlinType = toParametersIterator.hasNext() ? toParametersIterator.next().getType() : null;
 
-                            StackValue.local(argVar, argType, argKotlinType)
-                                    .put(originalArgType, originalArgKotlinType, iv);
-                            argVar += argType.getSize();
+                            StackValue.local(argVar, myArgType, myArgKotlinType)
+                                    .put(toArgType, toArgKotlinType, iv);
+                            argVar += myArgType.getSize();
                         }
 
                         assert toArgI == toArgTypes.length :
-                                "Invalid trait implementation signature: " + signature + " vs " + defaultImplsMethod + " for " + interfaceFun;
+                                "Invalid trait implementation signature: " + signature +
+                                " vs " + defaultImplsMethod + " for " + interfaceFun;
                     }
 
                     private List<ParameterDescriptor> getParameters(FunctionDescriptor functionDescriptor) {
