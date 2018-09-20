@@ -25,8 +25,8 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperti
 
 abstract class SerializableCodegen(
     protected val serializableDescriptor: ClassDescriptor,
-    private val bindingContext: BindingContext
-) {
+    bindingContext: BindingContext
+) : AbstractSerialGenerator(bindingContext, serializableDescriptor) {
     protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
 
     fun generate() {

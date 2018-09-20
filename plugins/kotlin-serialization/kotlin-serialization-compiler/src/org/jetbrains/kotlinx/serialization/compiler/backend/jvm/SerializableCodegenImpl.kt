@@ -100,7 +100,7 @@ class SerializableCodegenImpl(
             load(outputI, kOutputType)
             load(serialDescI, descType)
             iconst(i)
-            genKOutputMethodCall(property, classCodegen, exprCodegen, thisAsmType, thisI, offsetI)
+            genKOutputMethodCall(property, classCodegen, exprCodegen, thisAsmType, thisI, offsetI, generator = this@SerializableCodegenImpl)
         }
 
         areturn(Type.VOID_TYPE)

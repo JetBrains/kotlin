@@ -18,12 +18,13 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 class SerializableCompanionCodegenImpl(private val codegen: ImplementationBodyCodegen) :
-        SerializableCompanionCodegen(codegen.descriptor) {
+        SerializableCompanionCodegen(codegen.descriptor, codegen.bindingContext) {
 
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {
