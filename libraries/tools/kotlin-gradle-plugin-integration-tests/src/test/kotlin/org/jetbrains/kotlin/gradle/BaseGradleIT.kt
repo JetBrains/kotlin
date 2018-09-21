@@ -189,12 +189,15 @@ abstract class BaseGradleIT {
         directoryPrefix: String? = null,
         val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
+        internal val testCase = this@BaseGradleIT
+
         val resourceDirName = if (directoryPrefix != null) "$directoryPrefix/$projectName" else projectName
         open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
         val projectDir = File(workingDir.canonicalFile, projectName)
 
         open fun setupWorkingDir() {
-            copyRecursively(this.resourcesRoot, workingDir)
+            if (!projectDir.isDirectory || projectDir.listFiles().isEmpty())
+                copyRecursively(this.resourcesRoot, workingDir)
         }
 
         fun relativize(files: Iterable<File>): List<String> =
