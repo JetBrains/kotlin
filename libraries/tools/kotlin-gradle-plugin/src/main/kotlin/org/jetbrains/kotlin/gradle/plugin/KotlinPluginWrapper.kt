@@ -78,11 +78,7 @@ abstract class KotlinBasePluginWrapper(
     }
 
     private fun setupAttributeMatchingStrategy(project: Project) = with(project.dependencies.attributesSchema) {
-        attribute(KotlinPlatformType.attribute).run {
-            if (isGradleVersionAtLeast(4, 0)) {
-                compatibilityRules.add(KotlinPlatformType.CompatibilityRule::class.java)
-            }
-        }
+        KotlinPlatformType.setupAttributesMatchingStrategy(this)
     }
 
     internal abstract fun getPlugin(
