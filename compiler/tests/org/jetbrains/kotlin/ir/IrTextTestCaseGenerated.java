@@ -229,6 +229,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/classLevelProperties.kt");
         }
 
+        @TestMetadata("constValInitializers.kt")
+        public void testConstValInitializers() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/constValInitializers.kt");
+        }
+
         @TestMetadata("defaultArguments.kt")
         public void testDefaultArguments() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/defaultArguments.kt");
