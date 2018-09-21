@@ -8,6 +8,11 @@ pluginManagement {
         }
         gradlePluginPortal()
     }
+
+    if (cacheRedirectorEnabled == 'true') {
+        println("cache-redirector is enabled for pluginManagement")
+        JbCacheRedirectorKt.redirect(repositories)
+    }
 }
 
 // modules

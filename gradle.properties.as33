@@ -3,6 +3,8 @@ org.gradle.parallel=false
 org.gradle.configureondemand=false
 org.gradle.jvmargs=-Duser.country=US -Dkotlin.daemon.jvm.options=-Xmx1600m
 
+cacheRedirectorEnabled=true
+
 kotlin.compiler.effectSystemEnabled=true
 kotlin.compiler.newInferenceEnabled=true
 #maven.repository.mirror=http://repository.jetbrains.com/remote-repos/

@@ -5,8 +5,8 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    maven("https://dl.bintray.com/jetbrains/markdown")
+repositories.withRedirector(project) {
+    maven("https://jetbrains.bintray.com/markdown")
 }
 
 dependencies {

@@ -7,9 +7,9 @@ import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import java.io.File
 import org.gradle.internal.os.OperatingSystem
 
+val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
 val intellijUltimateEnabled: Boolean by rootProject.extra
-val intellijRepo: String by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 val androidStudioRelease = rootProject.findProperty("versions.androidStudioRelease") as String?
@@ -56,8 +56,14 @@ repositories {
             }
         }
     }
-    maven { setUrl("$intellijRepo/$intellijReleaseType") }
-    maven { setUrl("https://plugins.jetbrains.com/maven") }
+
+    if (cacheRedirectorEnabled) {
+        maven("https://cache-redirector.jetbrains.com/www.jetbrains.com/intellij-repository/$intellijReleaseType")
+        maven("https://cache-redirector.jetbrains.com/plugins.jetbrains.com/maven")
+    }
+
+    maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
+    maven("https://plugins.jetbrains.com/maven")
 }
 
 val intellij by configurations.creating

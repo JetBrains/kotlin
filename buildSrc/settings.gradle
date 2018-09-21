@@ -1,3 +1,15 @@
 
+pluginManagement {
+    repositories {
+        if (cacheRedirectorEnabled == 'true') {
+            maven {
+                url "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2"
+            }
+        }
+
+        gradlePluginPortal()
+    }
+}
+
 include "prepare-deps:android-dx",
         "prepare-deps:intellij-sdk"

@@ -15,10 +15,10 @@ buildscript {
 
     kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.20-dev-564", onlySuccessBootstrap = false))
 
-    repositories {
+    repositories.withRedirector(project) {
         bootstrapKotlinRepo?.let(::maven)
         maven("https://plugins.gradle.org/m2")
-        }
+    }
 
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
     // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
@@ -261,13 +261,13 @@ allprojects {
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
-    repositories {
+    repositories.withRedirector(project) {
         intellijSdkRepo(project)
         androidDxJarRepo(project)
         mirrorRepo?.let(::maven)
         bootstrapKotlinRepo?.let(::maven)
         jcenter()
-        }
+    }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
 

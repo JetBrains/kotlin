@@ -1,11 +1,17 @@
 
 buildscript {
+    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
     extra["versions.shadow"] = "2.0.2"
     extra["versions.native-platform"] = "0.14"
 
     repositories {
+        if (cacheRedirectorEnabled) {
+            maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+        }
+
         buildSrcKotlinRepo?.let {
             maven(url = it)
         }
@@ -16,6 +22,8 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$buildSrcKotlinVersion")
     }
 }
+
+val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
 logger.info("buildSrcKotlinVersion: " + extra["buildSrcKotlinVersion"])
 logger.info("buildSrc kotlin compiler version: " + org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION)
@@ -58,8 +66,6 @@ val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY
 val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimateEnabled") ?: isTeamcityBuild)
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 
-extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
-
 extra["intellijReleaseType"] = if (extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true)
     "snapshots"
 else
@@ -70,9 +76,14 @@ extra["versions.androidDxSources"] = "5.0.0_r2"
 extra["customDepsOrg"] = "kotlin.build.custom.deps"
 
 repositories {
+    if (cacheRedirectorEnabled) {
+        maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+    }
+
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
     }
+
     jcenter()
 }
 
@@ -81,9 +92,7 @@ dependencies {
     compile("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
     compile("com.jakewharton.dex:dex-method-list:3.0.0")
-    // TODO: adding the dep to the plugin breaks the build unexpectedly, resolve and uncomment
-//    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
-    // Shadow plugin is used in many projects of the main build. Once it's no longer used in buildSrc, please move this dependency to the root project
+
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
     compile("org.ow2.asm:asm-all:6.0_BETA")
 }
