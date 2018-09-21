@@ -203,20 +203,16 @@ object SourceNavigationHelper {
         navigationKind: NavigationKind
     ): Collection<KtNamedDeclaration> {
         val scopes = targetScopes(declaration, navigationKind)
-        val index = getIndexForTopLevelPropertyOrFunction(declaration)
-        for (scope in scopes) {
-            val candidates = index.get(declaration.fqName!!.asString(), declaration.project, scope)
-            if (candidates.isNotEmpty()) return candidates
-        }
-        return emptyList()
-    }
 
-    private fun getIndexForTopLevelPropertyOrFunction(
-        decompiledDeclaration: KtNamedDeclaration
-    ): StringStubIndexExtension<out KtNamedDeclaration> = when (decompiledDeclaration) {
-        is KtNamedFunction -> KotlinTopLevelFunctionFqnNameIndex.getInstance()
-        is KtProperty -> KotlinTopLevelPropertyFqnNameIndex.getInstance()
-        else -> throw IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration::class.java.name)
+        val index: StringStubIndexExtension<out KtNamedDeclaration> = when (declaration) {
+            is KtNamedFunction -> KotlinTopLevelFunctionFqnNameIndex.getInstance()
+            is KtProperty -> KotlinTopLevelPropertyFqnNameIndex.getInstance()
+            else -> throw IllegalArgumentException("Neither function nor declaration: " + declaration::class.java.name)
+        }
+
+        return scopes.flatMap { scope ->
+            index.get(declaration.fqName!!.asString(), declaration.project, scope)
+        }
     }
 
     private fun getInitialMemberCandidates(
