@@ -866,11 +866,6 @@ object Elements : TemplateGroupBase() {
                 """
             }
         }
-        specialFor(Maps) {
-            body {
-                """return entries.random(random)"""
-            }
-        }
         specialFor(RangesOfPrimitives) {
             body {
                 val expr = when (primitive) {
