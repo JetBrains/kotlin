@@ -12039,6 +12039,67 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InterfaceMethodCalls extends AbstractBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInterfaceMethodCalls() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("defaultInterfaceExtensionFunCall.kt")
+            public void testDefaultInterfaceExtensionFunCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCall.kt");
+            }
+
+            @TestMetadata("defaultInterfaceMethodCall.kt")
+            public void testDefaultInterfaceMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCall.kt");
+            }
+
+            @TestMetadata("genericDefaultInterfaceExtensionFunCall.kt")
+            public void testGenericDefaultInterfaceExtensionFunCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCall.kt");
+            }
+
+            @TestMetadata("genericDefaultInterfaceMethodCall.kt")
+            public void testGenericDefaultInterfaceMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCall.kt");
+            }
+
+            @TestMetadata("genericInterfaceMethodCall.kt")
+            public void testGenericInterfaceMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCall.kt");
+            }
+
+            @TestMetadata("overriddenDefaultInterfaceMethodCall.kt")
+            public void testOverriddenDefaultInterfaceMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/membersAccess")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MembersAccess extends AbstractBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInMembersAccess() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/membersAccess"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("toPrivateCompanionVal.kt")
+            public void testToPrivateCompanionVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/membersAccess/toPrivateCompanionVal.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/innerNested")
