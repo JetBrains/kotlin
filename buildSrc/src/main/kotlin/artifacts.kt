@@ -56,11 +56,10 @@ fun Project.noDefaultJar() {
         defaultJarTask.enabled = false
         defaultJarTask.actions = emptyList()
         configurations.forEach { cfg ->
-            cfg.artifacts.removeAll {
-                (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false
+            cfg.artifacts.removeAll { artifact ->
+                artifact.file in defaultJarTask.outputs.files
             }
         }
-
     }
 }
 

@@ -98,4 +98,3 @@ sourcesJar()
 javadocJar()
 
 publish()
-
