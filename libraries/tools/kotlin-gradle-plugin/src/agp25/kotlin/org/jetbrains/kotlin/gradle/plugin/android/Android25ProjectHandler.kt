@@ -92,9 +92,9 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         @Suppress("DEPRECATION") // There is always a Java compile task -- the deprecation was for Jack
         return variantData::class.java.methods.firstOrNull { it.name == "getJavaCompileProvider" }
             ?.invoke(variantData)
-            .let { taskProvider ->
+            ?.let { taskProvider ->
                 // org.gradle.api.tasks.TaskProvider is added in Gradle 4.8
-                taskProvider!!::class.java.methods.firstOrNull { it.name == "get" }?.invoke(taskProvider) as AbstractCompile?
+                taskProvider::class.java.methods.firstOrNull { it.name == "get" }?.invoke(taskProvider) as AbstractCompile?
             } ?: variantData.javaCompile
     }
 
