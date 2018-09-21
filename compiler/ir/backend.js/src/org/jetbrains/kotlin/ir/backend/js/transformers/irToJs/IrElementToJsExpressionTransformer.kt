@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -70,13 +69,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.owner.kind) {
         ClassKind.OBJECT -> {
-            // TODO: return unit instance instead of null
-            if (expression.type.isUnit()) JsNullLiteral()
-            else {
-                val className = context.getNameForSymbol(expression.symbol)
-                val getInstanceName = className.ident + "_getInstance"
-                JsInvocation(JsNameRef(getInstanceName))
-            }
+            val className = context.getNameForSymbol(expression.symbol)
+            val getInstanceName = className.ident + "_getInstance"
+            JsInvocation(JsNameRef(getInstanceName))
         }
         else -> TODO()
     }

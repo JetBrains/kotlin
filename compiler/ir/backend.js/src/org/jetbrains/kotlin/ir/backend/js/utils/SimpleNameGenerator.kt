@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
 // TODO: this class has to be reimplemented soon
 class SimpleNameGenerator : NameGenerator {
@@ -147,7 +148,10 @@ class SimpleNameGenerator : NameGenerator {
 
 
                     if (declaration.kind == ClassKind.OBJECT || declaration.name.isSpecial || declaration.visibility == Visibilities.LOCAL) {
-                        nameDeclarator = context.staticContext.rootScope::declareFreshName
+                        if (declaration.descriptor !is DeserializedClassDescriptor) {
+                            // TODO: temporary workaround for Unit instance
+                            nameDeclarator = context.staticContext.rootScope::declareFreshName
+                        }
                         val parent = declaration.parent
                         when (parent) {
                             is IrDeclaration -> nameBuilder.append(getNameForDeclaration(parent, context))

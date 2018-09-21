@@ -103,6 +103,8 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         }
     }
 
+    private val unitValue = JsIrBuilder.buildGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
+
     // Ported from from jvm.lower.BridgeLowering
     private fun createBridge(
         function: IrSimpleFunction,
@@ -146,7 +148,19 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             irFunction.valueParameters.subList(0, toTake).mapIndexed { i, valueParameter ->
                 call.putValueArgument(i, irCastIfNeeded(irGet(valueParameter), delegateTo.valueParameters[i].type))
             }
-            +irReturn(call)
+
+            // This is required for Unit materialization
+            // TODO: generalize for boxed types and inline classes
+            // TODO: use return type in signature too
+            val returnValue = if (delegateTo.returnType.isUnit() && !function.returnType.isUnit()) {
+                irComposite(resultType = irFunction.returnType) {
+                    +call
+                    +unitValue
+                }
+            } else {
+                call
+            }
+            +irReturn(returnValue)
         }.apply {
             irFunction.body = this
         }
@@ -156,7 +170,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
     // TODO: get rid of Unit check
     private fun IrBlockBodyBuilder.irCastIfNeeded(argument: IrExpression, type: IrType): IrExpression =
-        if (argument.type.classifierOrNull == type.classifierOrNull || type.isUnit()) argument else irAs(argument, type)
+        if (argument.type.classifierOrNull == type.classifierOrNull) argument else irAs(argument, type)
 }
 
 // Handle for common.bridges

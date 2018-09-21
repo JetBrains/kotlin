@@ -528,7 +528,7 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
 
-            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, emptyList()) }
+            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue)) }
 
             val newStatements = mutableListOf<IrStatement>()
 

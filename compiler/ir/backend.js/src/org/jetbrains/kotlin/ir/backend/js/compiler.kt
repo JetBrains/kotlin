@@ -22,15 +22,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWith
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ReturnableBlockLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.replaceUnboundSymbols
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -84,7 +75,6 @@ fun compile(
 
     MoveExternalDeclarationsToSeparatePlace().lower(moduleFragment.files)
 
-
     moduleFragment.files.forEach(CoroutineIntrinsicLowering(context)::lower)
     moduleFragment.files.forEach { ArrayInlineConstructorLowering(context).lower(it) }
 
@@ -111,6 +101,7 @@ private fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment)
 }
 
 private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependencies: List<IrModuleFragment>) {
+    moduleFragment.files.forEach(UnitMaterializationLowering(this)::lower)
     moduleFragment.files.forEach(VarargLowering(this)::lower)
     moduleFragment.files.forEach(LateinitLowering(this, true)::lower)
     moduleFragment.files.forEach(DefaultArgumentStubGenerator(this)::runOnFilePostfix)
