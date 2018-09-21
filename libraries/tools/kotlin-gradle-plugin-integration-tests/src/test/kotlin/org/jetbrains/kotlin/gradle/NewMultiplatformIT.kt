@@ -585,6 +585,25 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testConsumeMppLibraryFromNonKotlinProject() {
+        val libRepo = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+            build("publish") { assertSuccessful() }
+            projectDir.resolve("repo")
+        }
+
+        with(Project("sample-app-without-kotlin", gradleVersion, "new-mpp-lib-and-app")) {
+            setupWorkingDir()
+            gradleBuildScript().appendText("\nrepositories { maven { url '${libRepo.toURI()}' } }")
+
+            build("assemble") {
+                assertSuccessful()
+                assertTasksExecuted(":compileJava")
+                assertFileExists("build/classes/java/main/A.class")
+            }
+        }
+    }
+
+    @Test
     fun testNativeTests() = with(Project("new-mpp-native-tests", gradleVersion)) {
         val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test")
         val hostTestTask = ":${nativeHostTargetName}Test"

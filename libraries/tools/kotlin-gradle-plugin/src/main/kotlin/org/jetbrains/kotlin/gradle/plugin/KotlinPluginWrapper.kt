@@ -26,11 +26,11 @@ import org.gradle.internal.reflect.Instantiator
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -79,6 +79,7 @@ abstract class KotlinBasePluginWrapper(
 
     private fun setupAttributeMatchingStrategy(project: Project) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
+        KotlinUsages.setupAttributesMatchingStrategy(this)
     }
 
     internal abstract fun getPlugin(

@@ -12,6 +12,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.Usage.JAVA_API
+import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.publish.maven.MavenPublication
@@ -53,20 +55,24 @@ abstract class AbstractKotlinTarget (
             KotlinVariant(this)
     }
 
-    override fun createUsageContexts(): Set<UsageContext> =
-        setOf(
+    override fun createUsageContexts(): Set<UsageContext> {
+        // Here, `JAVA_API` and `JAVA_RUNTIME_JARS` are used intentionally as Gradle needs this for
+        // ordering of the usage contexts (prioritizing the dependencies);
+        // These Java usages should not be replaced with the custom Kotlin usages.
+
+        return listOfNotNull(
             KotlinPlatformUsageContext(
-                project, this, KotlinSoftwareComponent.kotlinApiUsage(project), apiElementsConfigurationName
-            )
-        ) + if (compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME) is KotlinCompilationToRunnableFiles)
-            setOf(
+                project, this, project.usageByName(JAVA_API),
+                apiElementsConfigurationName
+            ),
+            if (compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME) is KotlinCompilationToRunnableFiles)
                 KotlinPlatformUsageContext(
-                    project,
-                    this,
-                    KotlinSoftwareComponent.kotlinRuntimeUsage(project),
+                    project, this, project.usageByName(JAVA_RUNTIME_JARS),
                     runtimeElementsConfigurationName
                 )
-            ) else emptyList()
+            else null
+        ).toSet()
+    }
 
     @Suppress("UNCHECKED_CAST")
     internal val publicationConfigureActions =
