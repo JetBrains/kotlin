@@ -3251,6 +3251,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/redundantInline")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantInline extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantInline() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantInline"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/redundantLateinit")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

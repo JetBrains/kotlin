@@ -574,5 +574,7 @@ class QuickFixRegistrar : QuickFixContributor {
         ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS.registerFactory(RemoveDefaultParameterValueFix)
 
         RESOLUTION_TO_CLASSIFIER.registerFactory(ConvertToAnonymousObjectFix)
+
+        NOTHING_TO_INLINE.registerFactory(RemoveModifierFix.createRemoveModifierFactory(isRedundant = false))
     }
 }
