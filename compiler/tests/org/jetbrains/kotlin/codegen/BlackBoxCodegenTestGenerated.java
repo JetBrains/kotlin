@@ -11886,6 +11886,31 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("extLambdaInInlineClassFun.kt")
+            public void testExtLambdaInInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/extLambdaInInlineClassFun.kt");
+            }
+
+            @TestMetadata("extLambdaInInlineClassFun2.kt")
+            public void testExtLambdaInInlineClassFun2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/extLambdaInInlineClassFun2.kt");
+            }
+
+            @TestMetadata("inlineExtLambdaInInlineClassFun.kt")
+            public void testInlineExtLambdaInInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineExtLambdaInInlineClassFun.kt");
+            }
+
+            @TestMetadata("inlineExtLambdaInInlineClassFun2.kt")
+            public void testInlineExtLambdaInInlineClassFun2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineExtLambdaInInlineClassFun2.kt");
+            }
+
+            @TestMetadata("inlineLambdaInInlineClassFun.kt")
+            public void testInlineLambdaInInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineLambdaInInlineClassFun.kt");
+            }
+
             @TestMetadata("lambdaInInlineClassFun.kt")
             public void testLambdaInInlineClassFun() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFun.kt");
