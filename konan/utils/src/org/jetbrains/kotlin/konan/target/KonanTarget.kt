@@ -173,33 +173,33 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
     }
 
     val enabled: List<KonanTarget> by lazy {
-        when (host) {
-            KonanTarget.LINUX_X64 -> listOf(
-                KonanTarget.LINUX_X64,
-                KonanTarget.LINUX_ARM32_HFP,
-                KonanTarget.LINUX_MIPS32,
-                KonanTarget.LINUX_MIPSEL32,
-                KonanTarget.ANDROID_ARM32,
-                KonanTarget.ANDROID_ARM64,
-                KonanTarget.WASM32
-            ) + zephyrSubtargets
-            KonanTarget.MINGW_X64 -> listOf(
-                KonanTarget.MINGW_X64,
-                KonanTarget.WASM32
-            ) + zephyrSubtargets
-            KonanTarget.MACOS_X64 -> listOf(
-                KonanTarget.MACOS_X64,
-                KonanTarget.IOS_ARM32,
-                KonanTarget.IOS_ARM64,
-                KonanTarget.IOS_X64,
-                KonanTarget.ANDROID_ARM32,
-                KonanTarget.ANDROID_ARM64,
-                KonanTarget.WASM32
-            ) + zephyrSubtargets
-            else ->
-                throw TargetSupportException("Unknown host platform: $host")
-        }
+        enabledTargetsByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
     }
+
+    val enabledTargetsByHost = mapOf(
+        KonanTarget.LINUX_X64 to setOf(
+            KonanTarget.LINUX_X64,
+            KonanTarget.LINUX_ARM32_HFP,
+            KonanTarget.LINUX_MIPS32,
+            KonanTarget.LINUX_MIPSEL32,
+            KonanTarget.ANDROID_ARM32,
+            KonanTarget.ANDROID_ARM64,
+            KonanTarget.WASM32
+        ) + zephyrSubtargets,
+        KonanTarget.MINGW_X64 to setOf(
+            KonanTarget.MINGW_X64,
+            KonanTarget.WASM32
+        ) + zephyrSubtargets,
+        KonanTarget.MACOS_X64 to setOf(
+            KonanTarget.MACOS_X64,
+            KonanTarget.IOS_ARM32,
+            KonanTarget.IOS_ARM64,
+            KonanTarget.IOS_X64,
+            KonanTarget.ANDROID_ARM32,
+            KonanTarget.ANDROID_ARM64,
+            KonanTarget.WASM32
+        ) + zephyrSubtargets
+    )
 
     fun isEnabled(target: KonanTarget) = enabled.contains(target)
 

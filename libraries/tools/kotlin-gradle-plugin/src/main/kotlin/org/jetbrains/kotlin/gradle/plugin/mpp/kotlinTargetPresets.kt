@@ -324,6 +324,20 @@ class KotlinNativeTargetPreset(
             }
         }
 
+        if (!konanTarget.enabledOnCurrentHost) {
+            with(HostManager()) {
+                val supportedHosts = enabledTargetsByHost.filterValues { konanTarget in it }.keys
+                val supportedHostsString =
+                    if (supportedHosts.size == 1)
+                        "a ${supportedHosts.single()} host" else
+                        "one of the host platforms: ${supportedHosts.joinToString(", ")}"
+                project.logger.warn(
+                    "Target '$name' for platform ${konanTarget} is ignored during build on this ${HostManager.host} machine. " +
+                            "You can build it with $supportedHostsString."
+                )
+            }
+        }
+
         return result
     }
 
