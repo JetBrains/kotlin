@@ -3,6 +3,8 @@
 -dontobfuscate
 # -dontshrink
 
+-keepdirectories META-INF/**
+
 -dontnote **
 -dontwarn org.sonatype.aether.**
 -dontwarn org.jetbrains.kotlin.**
