@@ -26,6 +26,7 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -55,6 +56,7 @@ class KotlinMultiplatformPlugin(
 
     override fun apply(project: Project) {
         project.plugins.apply(JavaBasePlugin::class.java)
+        SingleWarningPerBuild.show(project, "Kotlin Multiplatform Projects are an experimental feature.")
 
         val targetsContainer = project.container(KotlinTarget::class.java)
         val targetsFromPreset = TargetFromPresetExtension(targetsContainer)
@@ -70,6 +72,7 @@ class KotlinMultiplatformPlugin(
 
             isGradleMetadataAvailable =
                     featurePreviews.activeFeatures.find { it.name == "GRADLE_METADATA" }?.let { metadataFeature ->
+                        isGradleMetadataExperimental = true
                         featurePreviews.isFeatureEnabled(metadataFeature)
                     } ?: true // the feature entry will be gone once the feature is stable
         }
@@ -102,6 +105,14 @@ class KotlinMultiplatformPlugin(
     }
 
     private fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") { _ ->
+
+        if (project.multiplatformExtension!!.run { isGradleMetadataAvailable && isGradleMetadataExperimental }) {
+            SingleWarningPerBuild.show(
+                project,
+                GRADLE_METADATA_WARNING
+            )
+        }
+
         val targets = project.multiplatformExtension!!.targets
         val kotlinSoftwareComponent = KotlinSoftwareComponent(project, "kotlin", targets)
 
@@ -233,6 +244,13 @@ class KotlinMultiplatformPlugin(
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
+
+        const val GRADLE_METADATA_WARNING =
+            // TODO point the user to some MPP docs explaining this in more detail
+            "This build is set up to publish Kotlin multiplatform libraries with experimental Gradle metadata. " +
+                    "Future Gradle versions may fail to resolve dependencies on these publications. " +
+                    "You can disable Gradle metadata usage during publishing and dependencies resolution by removing " +
+                    "`enableFeaturePreview('GRADLE_METADATA')` from the settings.gradle file."
     }
 }
 

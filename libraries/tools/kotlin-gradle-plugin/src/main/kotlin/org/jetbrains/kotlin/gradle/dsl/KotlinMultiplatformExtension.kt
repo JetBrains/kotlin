@@ -18,4 +18,5 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
         internal set
 
     internal var isGradleMetadataAvailable: Boolean = false
+    internal var isGradleMetadataExperimental: Boolean = false
 }
