@@ -96,10 +96,8 @@ task installTestLibrary(type: KlibInstall) {
 // Gets tests from the same Kotlin compiler build
 def update_external_tests() {
     // Copy only used tests into the test directory.
+    delete(externalTestsDir)
     externalTestsDir.mkdirs()
-    delete("${externalTestsDir.canonicalPath}/codegen")
-    delete("${externalTestsDir.canonicalPath}/compileKotlinAgainstKotlin")
-
     copy {
         configurations.update_tests.asFileTree.each {
             from(zipTree(it))
@@ -110,9 +108,8 @@ def update_external_tests() {
         }
     }
 
+    delete(externalStdlibTestsDir)
     externalStdlibTestsDir.mkdirs()
-    delete("${externalStdlibTestsDir.canonicalPath}/common")
-    delete("${externalStdlibTestsDir.canonicalPath}/test")
     copy {
         configurations.update_tests.asFileTree.each {
             from(zipTree(it))
