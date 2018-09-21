@@ -55,6 +55,9 @@ abstract class KotlinBasePluginWrapper(
             // todo: Consider removing if org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser stops using parent last classloader
             isTransitive = false
         }
+        project.configurations.maybeCreate(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+            isTransitive = false
+        }
 
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")

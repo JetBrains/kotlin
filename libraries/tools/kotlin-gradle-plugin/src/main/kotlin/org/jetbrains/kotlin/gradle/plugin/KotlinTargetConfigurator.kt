@@ -435,7 +435,7 @@ open class KotlinNativeTargetConfigurator(
         SubpluginEnvironment
             .loadSubplugins(project, kotlinPluginVersion)
             .addSubpluginOptions<CommonCompilerArguments>(project, this, compilerPluginOptions)
-        compilerPluginClasspath = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+        compilerPluginClasspath = project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME)
     }
 
     private fun KotlinNativeCompile.registerOutputFiles(outputDirectory: File) {

@@ -42,14 +42,8 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
         const val SERIALIZATION_ARTIFACT_UNSHADED_NAME = "kotlin-serialization-unshaded"
     }
 
-    private var useUnshaded = false
-
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
-        if (!SerializationGradleSubplugin.isEnabled(project)) return false
-        // Kotlin/Native task is not an AbstractKotlinCompile and uses unshaded compiler
-        if (task !is AbstractKotlinCompile<*>) useUnshaded = true
-        return true
-    }
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean =
+        SerializationGradleSubplugin.isEnabled(project)
 
     override fun apply(
         project: Project,
@@ -62,11 +56,11 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
         return emptyList()
     }
 
+    override fun getPluginArtifact(): SubpluginArtifact =
+        SubpluginArtifact(SERIALIZATION_GROUP_NAME, SERIALIZATION_ARTIFACT_NAME)
 
-    override fun getPluginArtifact(): SubpluginArtifact {
-        val artifact = if (useUnshaded) SERIALIZATION_ARTIFACT_UNSHADED_NAME else SERIALIZATION_ARTIFACT_NAME
-        return SubpluginArtifact(SERIALIZATION_GROUP_NAME, artifact)
-    }
+    override fun getNativeCompilerPluginArtifact(): SubpluginArtifact? =
+        SubpluginArtifact(SERIALIZATION_GROUP_NAME, SERIALIZATION_ARTIFACT_UNSHADED_NAME)
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlinx.serialization"
 }
