@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+// A copy-paste from kotlin/core/builtins/src/kotlin/Progressions.kt
+
 package kotlin.ranges
 
 import kotlin.internal.getProgressionLastElement
@@ -10,11 +12,16 @@ import kotlin.internal.getProgressionLastElement
 /**
  * A progression of values of type `Char`.
  */
-public open class CharProgression internal constructor(
-        start: Char, endInclusive: Char, step: Int) : Iterable<Char> {
-
+public open class CharProgression
+internal constructor
+(
+        start: Char,
+        endInclusive: Char,
+        step: Int
+) : Iterable<Char> {
     init {
-        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")
     }
 
     /**
@@ -52,6 +59,8 @@ public open class CharProgression internal constructor(
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `Int.MIN_VALUE` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: Char, rangeEnd: Char, step: Int): CharProgression = CharProgression(rangeStart, rangeEnd, step)
     }
@@ -60,11 +69,16 @@ public open class CharProgression internal constructor(
 /**
  * A progression of values of type `Int`.
  */
-public open class IntProgression internal constructor(
-        start: Int, endInclusive: Int, step: Int) : Iterable<Int> {
-
+public open class IntProgression
+internal constructor
+(
+        start: Int,
+        endInclusive: Int,
+        step: Int
+) : Iterable<Int> {
     init {
-        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")
     }
 
     /**
@@ -102,20 +116,26 @@ public open class IntProgression internal constructor(
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `Int.MIN_VALUE` and not equal to zero.
          */
-        public fun fromClosedRange(rangeStart: Int, rangeEnd: Int, step: Int): IntProgression =
-                IntProgression(rangeStart, rangeEnd, step)
+        public fun fromClosedRange(rangeStart: Int, rangeEnd: Int, step: Int): IntProgression = IntProgression(rangeStart, rangeEnd, step)
     }
 }
 
 /**
  * A progression of values of type `Long`.
  */
-public open class LongProgression internal constructor(
-        start: Long, endInclusive: Long, step: Long) : Iterable<Long> {
-
+public open class LongProgression
+internal constructor
+(
+        start: Long,
+        endInclusive: Long,
+        step: Long
+) : Iterable<Long> {
     init {
-        if (step == 0L) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0L) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == Long.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Long.MIN_VALUE to avoid overflow on negation.")
     }
 
     /**
@@ -153,6 +173,8 @@ public open class LongProgression internal constructor(
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `Long.MIN_VALUE` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: Long, rangeEnd: Long, step: Long): LongProgression = LongProgression(rangeStart, rangeEnd, step)
     }
