@@ -35,21 +35,26 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackage
 
 
 fun isKSerializer(type: KotlinType?): Boolean =
-        type != null && KotlinBuiltIns.isConstructedFromGivenClass(type, SerialEntityNames.KSERIALIZER_NAME_FQ)
+    type != null && KotlinBuiltIns.isConstructedFromGivenClass(type, SerialEntityNames.KSERIALIZER_NAME_FQ)
+
+fun isGeneratedKSerializer(type: KotlinType?): Boolean =
+    type != null && KotlinBuiltIns.isConstructedFromGivenClass(type, SerialEntityNames.GENERATED_SERIALIZER_FQ)
 
 fun ClassDescriptor.getKSerializerDescriptor(): ClassDescriptor =
-        module.findClassAcrossModuleDependencies(ClassId(packageFqName, SerialEntityNames.KSERIALIZER_NAME))!!
+    module.getClassFromInternalSerializationPackage(SerialEntityNames.GENERATED_SERIALIZER_CLASS.identifier)
 
 
-fun ClassDescriptor.getKSerializerType(argument: SimpleType): SimpleType {
+fun ClassDescriptor.createGeneratedSerializerTypeFor(argument: SimpleType): SimpleType {
     val projectionType = Variance.INVARIANT
     val types = listOf(TypeProjectionImpl(projectionType, argument))
     return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, getKSerializerDescriptor(), types)
 }
 
 internal fun extractKSerializerArgumentFromImplementation(implementationClass: ClassDescriptor): KotlinType? {
-    val kSerializerSupertype = implementationClass.typeConstructor.supertypes
-        .find { isKSerializer(it) } ?: return null
+    val supertypes = implementationClass.typeConstructor.supertypes
+    val kSerializerSupertype = supertypes.find { isGeneratedKSerializer(it) }
+        ?: supertypes.find { isKSerializer(it) }
+        ?: return null
     return kSerializerSupertype.arguments.first().type
 }
 
@@ -140,7 +145,11 @@ fun getSerializableClassDescriptorByCompanion(thisDescriptor: ClassDescriptor): 
 fun getSerializableClassDescriptorBySerializer(serializerDescriptor: ClassDescriptor): ClassDescriptor? {
     val serializerForClass = serializerDescriptor.annotations.serializerForClass
     if (serializerForClass != null) return serializerForClass.toClassDescriptor
-    if (serializerDescriptor.name != SerialEntityNames.SERIALIZER_CLASS_NAME) return null
+    if (serializerDescriptor.name !in setOf(
+            SerialEntityNames.SERIALIZER_CLASS_NAME,
+            SerialEntityNames.GENERATED_SERIALIZER_CLASS
+        )
+    ) return null
     val classDescriptor = (serializerDescriptor.containingDeclaration as? ClassDescriptor) ?: return null
     if (!classDescriptor.isInternalSerializable) return null
     return classDescriptor
@@ -187,7 +196,7 @@ private fun ModuleDescriptor.getFromPackage(packageFqName: FqName, classSimpleNa
             Name.identifier(classSimpleName)
         )
     )
-) { "Can't locate class $classSimpleName" }
+) { "Can't locate class $classSimpleName from package $packageFqName" }
 
 fun ClassDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
         requireNotNull(module.findClassAcrossModuleDependencies(ClassId(packageFqName, Name.identifier(classSimpleName)))) {"Can't locate class $classSimpleName"}

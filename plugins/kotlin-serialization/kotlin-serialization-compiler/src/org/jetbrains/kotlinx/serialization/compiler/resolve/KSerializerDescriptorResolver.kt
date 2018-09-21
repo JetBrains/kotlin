@@ -57,7 +57,7 @@ object KSerializerDescriptorResolver {
     fun addSerializerSupertypes(classDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
         val serializableClassDescriptor = getSerializableClassDescriptorBySerializer(classDescriptor) ?: return
         if (supertypes.none(::isKSerializer)) {
-            supertypes.add(classDescriptor.getKSerializerType(serializableClassDescriptor.defaultType))
+            supertypes.add(classDescriptor.createGeneratedSerializerTypeFor(serializableClassDescriptor.defaultType))
         }
     }
 
@@ -157,16 +157,15 @@ object KSerializerDescriptorResolver {
                     fromSupertypes.none { checkParameters(it) && it.modality == Modality.FINAL }
         }
 
-        if (name == SerialEntityNames.SAVE_NAME &&
-            shouldAddSerializerFunction { classDescriptor.checkSaveMethodParameters(it.valueParameters) }
-        ) {
-            result.add(createSaveFunctionDescriptor(thisDescriptor))
-        }
+        val isSave = name == SerialEntityNames.SAVE_NAME &&
+                shouldAddSerializerFunction { classDescriptor.checkSaveMethodParameters(it.valueParameters) }
+        val isLoad = name == SerialEntityNames.LOAD_NAME &&
+                shouldAddSerializerFunction { classDescriptor.checkLoadMethodParameters(it.valueParameters) }
+        val isDescriptorGetter = name == SerialEntityNames.GENERATED_DESCRIPTOR_GETTER &&
+                shouldAddSerializerFunction { true /* TODO? */ }
 
-        if (name == SerialEntityNames.LOAD_NAME &&
-            shouldAddSerializerFunction { classDescriptor.checkLoadMethodParameters(it.valueParameters) }
-        ) {
-            result.add(createLoadFunctionDescriptor(thisDescriptor))
+        if (isSave || isLoad || isDescriptorGetter) {
+            result.add(doCreateSerializerFunction(thisDescriptor, name))
         }
     }
 
@@ -175,12 +174,6 @@ object KSerializerDescriptorResolver {
         classDescriptor: ClassDescriptor
     ): PropertyDescriptor =
         doCreateSerializerProperty(companionDescriptor, classDescriptor, SerialEntityNames.SERIAL_DESC_FIELD_NAME)
-
-    fun createSaveFunctionDescriptor(companionDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
-        doCreateSerializerFunction(companionDescriptor, SerialEntityNames.SAVE_NAME)
-
-    fun createLoadFunctionDescriptor(companionDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
-        doCreateSerializerFunction(companionDescriptor, SerialEntityNames.LOAD_NAME)
 
     private fun doCreateSerializerProperty(
         companionDescriptor: ClassDescriptor,

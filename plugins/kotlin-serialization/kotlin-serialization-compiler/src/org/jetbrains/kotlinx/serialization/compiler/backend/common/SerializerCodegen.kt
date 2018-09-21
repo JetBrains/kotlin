@@ -42,11 +42,25 @@ abstract class SerializerCodegen(
         val prop = generateSerializableClassPropertyIfNeeded()
         val save = generateSaveIfNeeded()
         val load = generateLoadIfNeeded()
+        generateDescriptorGetterIfNeeded()
 //        if (save || load || prop)
 //            generateSerialDesc()
         if (serializableDescriptor.declaredTypeParameters.isNotEmpty() && typedSerializerConstructorNotDeclared()) {
             generateGenericFieldsAndConstructor(createTypedSerializerConstructorDescriptor(serializerDescriptor, serializableDescriptor))
         }
+    }
+
+    private fun generateDescriptorGetterIfNeeded(): Boolean {
+        val function = getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.GENERATED_DESCRIPTOR_GETTER.identifier,
+            { true }, { true }
+        ) ?: return false
+        generateChildSerializersGetter(function)
+        return true
+    }
+
+    protected open fun generateChildSerializersGetter(function: FunctionDescriptor) {
+        // TODO()
     }
 
     // checks if user didn't declared constructor (KSerializer<T0>, KSerializer<T1>...) on a KSerializer<T<T0, T1...>>

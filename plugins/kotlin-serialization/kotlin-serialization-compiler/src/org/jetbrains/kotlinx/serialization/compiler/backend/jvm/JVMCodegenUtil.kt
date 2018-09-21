@@ -55,6 +55,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 // todo: extract packages constants too?
 internal val descType = Type.getObjectType("kotlinx/serialization/$SERIAL_DESCRIPTOR_CLASS")
 internal val descImplType = Type.getObjectType("kotlinx/serialization/internal/$SERIAL_DESCRIPTOR_CLASS_IMPL")
+internal val generatedSerializerType = Type.getObjectType("kotlinx/serialization/internal/${SerialEntityNames.GENERATED_SERIALIZER_CLASS}")
 internal val kOutputType = Type.getObjectType("kotlinx/serialization/$STRUCTURE_ENCODER_CLASS")
 internal val encoderType = Type.getObjectType("kotlinx/serialization/$ENCODER_CLASS")
 internal val decoderType = Type.getObjectType("kotlinx/serialization/$DECODER_CLASS")
@@ -168,6 +169,32 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromClass(
     }
 }
 
+internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithoutSti(
+    codegen: ClassBodyCodegen,
+    property: SerializableProperty,
+    serializerCodegen: AbstractSerialGenerator
+): Boolean {
+    val serializer =
+        property.serializableWith?.toClassDescriptor
+            ?: if (!property.type.isTypeParameter()) serializerCodegen.findTypeSerializerOrContext(
+                property.module,
+                property.type,
+                property.descriptor.annotations,
+                property.descriptor.findPsi()
+            ) else null
+    return serializerCodegen.stackValueSerializerInstance(
+        codegen,
+        property.module,
+        property.type,
+        serializer,
+        this,
+        property.genericIndex
+    ) { idx ->
+        load(0, kSerializerType)
+        getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$idx", kSerializerType.descriptor)
+    }.also { if (it && property.type.isMarkedNullable) wrapStackValueIntoNullableSerializer() }
+}
+
 internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codegen: ClassBodyCodegen, sti: JVMSerialTypeInfo, serializerCodegen: AbstractSerialGenerator): Boolean {
     return serializerCodegen.stackValueSerializerInstance(
         codegen, sti.property.module, sti.property.type,
@@ -240,13 +267,19 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
         }
         // all serializers get arguments with serializers of their generic types
         argSerializers.forEach { (argType, argSerializer) ->
-            assert(stackValueSerializerInstance(codegen, module, argType, argSerializer, this, argType.genericIndex, genericSerializerFieldGetter))
+            assert(
+                stackValueSerializerInstance(
+                    codegen,
+                    module,
+                    argType,
+                    argSerializer,
+                    this,
+                    argType.genericIndex,
+                    genericSerializerFieldGetter
+                )
+            )
             // wrap into nullable serializer if argType is nullable
-            if (argType.isMarkedNullable) {
-                invokestatic("kotlinx/serialization/internal/NullableSerializerKt", "makeNullable", // todo: extract?
-                             "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false)
-
-            }
+            if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
             signature.append(kSerializerType.descriptor)
         }
         signature.append(")V")
@@ -255,6 +288,12 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
     }
     return true
 }
+
+fun InstructionAdapter.wrapStackValueIntoNullableSerializer() =
+    invokestatic(
+        "kotlinx/serialization/internal/NullableSerializerKt", "makeNullable",
+        "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false
+    )
 
 //
 // ======= Serializers Resolving =======
@@ -291,11 +330,13 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                         // reference elements
                         serializer = property.module.findClassAcrossModuleDependencies(referenceArraySerializerId)
                     }
-                // primitive elements are not supported yet
+                    // primitive elements are not supported yet
                 }
             }
-            return JVMSerialTypeInfo(property, Type.getType("Ljava/lang/Object;"),
-                                     if (property.type.isMarkedNullable) "Nullable" else "", serializer)
+            return JVMSerialTypeInfo(
+                property, Type.getType("Ljava/lang/Object;"),
+                if (property.type.isMarkedNullable) "Nullable" else "", serializer
+            )
         }
         OBJECT -> {
             // no explicit serializer for this property. Check other built in types
@@ -312,8 +353,10 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                     property.descriptor.annotations,
                     property.descriptor.findPsi()
                 )
-            return JVMSerialTypeInfo(property, Type.getType("Ljava/lang/Object;"),
-                                     if (property.type.isMarkedNullable) "Nullable" else "", serializer)
+            return JVMSerialTypeInfo(
+                property, Type.getType("Ljava/lang/Object;"),
+                if (property.type.isMarkedNullable) "Nullable" else "", serializer
+            )
         }
         else -> throw AssertionError("Unexpected sort  for $type") // should not happen
     }
