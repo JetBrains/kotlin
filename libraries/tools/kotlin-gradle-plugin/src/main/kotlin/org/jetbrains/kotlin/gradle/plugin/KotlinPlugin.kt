@@ -6,6 +6,7 @@ import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
@@ -436,8 +437,15 @@ internal abstract class AbstractKotlinPlugin(
             // Don't set the attributes for common module; otherwise their 'common' platform won't be compatible with the one in
             // platform-specific modules
             if (kotlinTarget.platformType != KotlinPlatformType.common) {
-                project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).usesPlatformOf(kotlinTarget)
-                project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).usesPlatformOf(kotlinTarget)
+                project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).run {
+                    attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(kotlinTarget))
+                    usesPlatformOf(kotlinTarget)
+                }
+
+                project.configurations.getByName(kotlinTarget.runtimeElementsConfigurationName).run {
+                    attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(kotlinTarget))
+                    usesPlatformOf(kotlinTarget)
+                }
             }
         }
 
