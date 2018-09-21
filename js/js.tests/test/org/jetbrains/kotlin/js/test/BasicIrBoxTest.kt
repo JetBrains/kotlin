@@ -33,6 +33,8 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
     "core/builtins/native/kotlin/Iterator.kt",
     "core/builtins/native/kotlin/CharSequence.kt",
 
+    "core/builtins/src/kotlin/Unit.kt",
+
     BasicBoxTest.COMMON_FILES_DIR_PATH
 ) - listOfKtFilesFrom(
     "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
