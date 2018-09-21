@@ -6,7 +6,6 @@ description = "Kotlin \"main\" script definition"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 // You can run Gradle with "-Pkotlin.build.proguard=true" to enable ProGuard run on the jar (on TeamCity, ProGuard always runs)

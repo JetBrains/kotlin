@@ -3,7 +3,6 @@ description = "Kotlin \"main\" script definition tests"
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 dependencies {
