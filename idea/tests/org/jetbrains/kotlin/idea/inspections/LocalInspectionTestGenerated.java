@@ -2587,6 +2587,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/leakingThis"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("inClassLiteral.kt")
+        public void testInClassLiteral() throws Exception {
+            runTest("idea/testData/inspectionsLocal/leakingThis/inClassLiteral.kt");
+        }
+
         @TestMetadata("noOpenForInterface.kt")
         public void testNoOpenForInterface() throws Exception {
             runTest("idea/testData/inspectionsLocal/leakingThis/noOpenForInterface.kt");
