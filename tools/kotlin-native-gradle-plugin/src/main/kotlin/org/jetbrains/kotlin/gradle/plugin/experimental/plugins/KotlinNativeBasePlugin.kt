@@ -20,6 +20,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.attributes.AttributeCompatibilityRule
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.project.ProjectInternal
@@ -28,6 +30,7 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.HelpTasksPlugin
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.language.cpp.CppBinary
 import org.gradle.language.plugins.NativeBasePlugin
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.gradle.util.GradleVersion
@@ -279,6 +282,21 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         return result
     }
 
+    private fun Project.setUpMatchingStrategy(): Unit = with(dependencies.attributesSchema) {
+        attribute(CppBinary.DEBUGGABLE_ATTRIBUTE).apply {
+            compatibilityRules.add(Compatible::class.java)
+            disambiguationRules.add(DebuggableDisambiguation::class.java)
+        }
+        attribute(CppBinary.OPTIMIZED_ATTRIBUTE).apply {
+            compatibilityRules.add(Compatible::class.java)
+            disambiguationRules.add(OptimizedDisambiguation::class.java)
+        }
+        attribute(Usage.USAGE_ATTRIBUTE).apply {
+            compatibilityRules.add(UsageCompatibility::class.java)
+            disambiguationRules.add(UsageDisambiguation::class.java)
+        }
+    }
+
     override fun apply(project: ProjectInternal): Unit = with(project) {
         // TODO: Deal with compiler downloading.
         // Apply base plugins
@@ -289,6 +307,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         checkGradleVersion()
         addCompilerDownloadingTask()
 
+        setUpMatchingStrategy()
         addCompilationTasks()
         addInteropTasks()
         addTargetInfoTask()
