@@ -253,10 +253,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!(myClass instanceof KtClass)) return;
         if (!descriptor.isInline()) return;
 
-        CodegenContext parentContext = context.getParentContext();
-        assert parentContext != null : "Parent context of inline class declaration should not be null";
-
-        ClassContext erasedInlineClassContext = parentContext.intoWrapperForErasedInlineClass(descriptor, state);
+        ClassContext erasedInlineClassContext = context.intoWrapperForErasedInlineClass(descriptor, state);
         new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, v, state, this).generate();
     }
 
@@ -270,7 +267,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (inlinedValue == null) return;
 
         Type valueType = typeMapper.mapType(inlinedValue.getType());
-        SimpleFunctionDescriptor functionDescriptor = InlineClassDescriptorResolver.INSTANCE.createUnboxFunctionDescriptor(this.descriptor);
+        SimpleFunctionDescriptor functionDescriptor = InlineClassDescriptorResolver.createUnboxFunctionDescriptor(this.descriptor);
         assert functionDescriptor != null : "FunctionDescriptor for unbox method should be not null during codegen";
 
         functionCodegen.generateMethod(
