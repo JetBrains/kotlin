@@ -6,9 +6,9 @@
 @file:JvmName("IdePlatformKindUtil")
 package org.jetbrains.kotlin.platform
 
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.isJps
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
@@ -35,7 +35,8 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
 
     companion object {
         // We can't use the ApplicationExtensionDescriptor class directly because it's missing in the JPS process
-        private val extension = ApplicationManager.getApplication()?.let {
+        private val extension = run {
+            if (isJps) return@run null
             ApplicationExtensionDescriptor("org.jetbrains.kotlin.idePlatformKind", IdePlatformKind::class.java)
         }
 
