@@ -13,7 +13,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.0-dev-496", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.0-rc-74", projectExtId = "Kotlin_130_Compiler", onlySuccessBootstrap = false))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
@@ -511,7 +511,8 @@ tasks {
                   ":kotlin-noarg-compiler-plugin:test",
                   ":kotlin-sam-with-receiver-compiler-plugin:test",
                   ":plugins:uast-kotlin:test",
-                  ":kotlin-annotation-processing-gradle:test")
+                  ":kotlin-annotation-processing-gradle:test",
+                  ":kotlinx-serialization-ide-plugin:test")
     }
 
 
