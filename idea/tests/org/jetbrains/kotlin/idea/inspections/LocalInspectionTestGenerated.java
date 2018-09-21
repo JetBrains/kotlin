@@ -3595,24 +3595,29 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/propertyVar"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("withGetter.kt")
-        public void testWithGetter() throws Exception {
-            runTest("idea/testData/inspectionsLocal/propertyVar/withGetter.kt");
+        @TestMetadata("getterHasBackingFieldRef.kt")
+        public void testGetterHasBackingFieldRef() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/getterHasBackingFieldRef.kt");
         }
 
-        @TestMetadata("withGetter2.kt")
-        public void testWithGetter2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/propertyVar/withGetter2.kt");
+        @TestMetadata("getterHasBackingFieldRef2.kt")
+        public void testGetterHasBackingFieldRef2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/getterHasBackingFieldRef2.kt");
         }
 
-        @TestMetadata("withGetter3.kt")
-        public void testWithGetter3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/propertyVar/withGetter3.kt");
+        @TestMetadata("getterHasNoBackingFieldAndSetter.kt")
+        public void testGetterHasNoBackingFieldAndSetter() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/getterHasNoBackingFieldAndSetter.kt");
         }
 
-        @TestMetadata("withGetterAndSetter3.kt")
-        public void testWithGetterAndSetter3() throws Exception {
-            runTest("idea/testData/inspectionsLocal/propertyVar/withGetterAndSetter3.kt");
+        @TestMetadata("getterHasNoBackingFieldRef.kt")
+        public void testGetterHasNoBackingFieldRef() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/getterHasNoBackingFieldRef.kt");
+        }
+
+        @TestMetadata("getterHasNoBackingFieldRef2.kt")
+        public void testGetterHasNoBackingFieldRef2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/propertyVar/getterHasNoBackingFieldRef2.kt");
         }
     }
 

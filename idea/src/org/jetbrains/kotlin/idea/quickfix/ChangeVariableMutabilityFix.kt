@@ -38,7 +38,7 @@ class ChangeVariableMutabilityFix(
 ) : KotlinQuickFixAction<KtValVarKeywordOwner>(element) {
 
     override fun getText() = actionText
-        ?: (if (makeVar) "Change to var" else "Change to val")+(if (deleteInitializer) " and delete initializer" else "")
+        ?: (if (makeVar) "Change to var" else "Change to val") + (if (deleteInitializer) " and delete initializer" else "")
 
     override fun getFamilyName(): String = text
 
@@ -53,7 +53,9 @@ class ChangeVariableMutabilityFix(
         val factory = KtPsiFactory(project)
         val newKeyword = if (makeVar) factory.createVarKeyword() else factory.createValKeyword()
         element.valOrVarKeyword!!.replace(newKeyword)
-        if (deleteInitializer) (element as? KtProperty)?.initializer = null
+        if (deleteInitializer) {
+            (element as? KtProperty)?.initializer = null
+        }
     }
 
     companion object {

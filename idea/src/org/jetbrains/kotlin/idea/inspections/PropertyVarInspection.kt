@@ -8,25 +8,20 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
 import org.jetbrains.kotlin.idea.quickfix.ChangeVariableMutabilityFix
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtReturnExpression
-import org.jetbrains.kotlin.psi.propertyVisitor
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 
 class PropertyVarInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         propertyVisitor(fun(property: KtProperty) {
-            if (property.isLocal || !property.isVar || property.setter != null) return
-            val initializer = property.initializer ?: return
+            if (property.isLocal || !property.isVar || property.initializer == null || property.setter != null) return
             val getter = property.getter ?: return
-            val getterExpression = getter.initializer?.unwrapBlockOrParenthesis()
-                ?: (getter.bodyExpression?.unwrapBlockOrParenthesis() as? KtReturnExpression)?.returnedExpression
-                ?: return
-            if (initializer.text != getterExpression.text) return
+            if (getter.hasBackingFieldReference()) return
             holder.registerProblem(
                 property.valOrVarKeyword,
-                "This 'var' has no meaning",
+                "Property setter does not influence its getter result",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 IntentionWrapper(
                     ChangeVariableMutabilityFix(property, makeVar = false, deleteInitializer = true),
@@ -34,4 +29,15 @@ class PropertyVarInspection : AbstractKotlinInspection() {
                 )
             )
         })
+
+    private fun KtPropertyAccessor.hasBackingFieldReference(): Boolean {
+        val bodyExpression = this.bodyExpression ?: return false
+        val p = this.property
+        return bodyExpression.isBackingField(p) || bodyExpression.anyDescendantOfType<KtNameReferenceExpression> { it.isBackingField(p) }
+    }
+
+    private fun KtExpression.isBackingField(property: KtProperty): Boolean {
+        val ref = this as? KtNameReferenceExpression ?: return false
+        return ref.text == "field" && ref.mainReference.resolve() == property
+    }
 }
