@@ -10451,6 +10451,16 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS_IR, true);
             }
 
+            @TestMetadata("lambdaInInlineClassFun.kt")
+            public void testLambdaInInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/lambdaInInlineClassFun.kt");
+            }
+
+            @TestMetadata("objectInInlineClassFun.kt")
+            public void testObjectInInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFun.kt");
+            }
+
             @TestMetadata("toPrivateCompanionFun.kt")
             public void testToPrivateCompanionFun() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFun.kt");
