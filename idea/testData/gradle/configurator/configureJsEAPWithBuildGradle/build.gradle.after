@@ -6,9 +6,7 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven {
-        url 'http://dl.bintray.com/kotlin/kotlin-eap'
-    }
+    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
 }
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-js"
