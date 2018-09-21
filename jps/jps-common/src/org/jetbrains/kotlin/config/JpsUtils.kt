@@ -5,13 +5,9 @@
 
 package org.jetbrains.kotlin.config
 
-import com.intellij.openapi.application.ApplicationManager
-
-private const val JPS_STANDALONE_CLASS_NAME = "org.jetbrains.jps.build.Standalone"
+private const val IDE_EVENT_QUEUE_CLASS_NAME = "com.intellij.ide.IdeEventQueue"
 
 val isJps: Boolean by lazy {
-    val jpsStandaloneClassName = JPS_STANDALONE_CLASS_NAME.replace('.', '/') + ".class"
-
-    (object {}.javaClass.classLoader.getResource(jpsStandaloneClassName) != null)
-            || ApplicationManager.getApplication() == null
+    val ideEventQueueClassPath = IDE_EVENT_QUEUE_CLASS_NAME.replace('.', '/') + ".class"
+    {}.javaClass.classLoader.getResource(ideEventQueueClassPath) == null
 }
