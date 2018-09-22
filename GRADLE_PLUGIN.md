@@ -28,7 +28,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
-            url = 'http://dl.bintray.com/kotlin/kotlin-eap'
+            url = 'https://dl.bintray.com/kotlin/kotlin-eap'
         }
     }
 }
@@ -50,7 +50,7 @@ buildscript {
            url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
        }
        maven {
-           url "http://dl.bintray.com/kotlin/kotlin-eap"
+           url "https://dl.bintray.com/kotlin/kotlin-eap"
        }
    }
 
