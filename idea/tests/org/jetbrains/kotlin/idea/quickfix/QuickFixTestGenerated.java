@@ -821,6 +821,34 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addPropertyToSupertype")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddPropertyToSupertype extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("abstractClass.kt")
+        public void testAbstractClass() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyToSupertype/abstractClass.kt");
+        }
+
+        public void testAllFilesPresentInAddPropertyToSupertype() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addPropertyToSupertype"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("interface.kt")
+        public void testInterface() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyToSupertype/interface.kt");
+        }
+
+        @TestMetadata("openClass.kt")
+        public void testOpenClass() throws Exception {
+            runTest("idea/testData/quickfix/addPropertyToSupertype/openClass.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

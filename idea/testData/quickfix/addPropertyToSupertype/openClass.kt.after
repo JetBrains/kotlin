@@ -1,0 +1,8 @@
+// "Add 'open val hoge: Int' to 'Foo'" "true"
+open class Foo {
+    open val hoge: Int = 3
+}
+
+class Bar: Foo() {
+    override val hoge = 3
+}
