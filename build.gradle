@@ -278,6 +278,7 @@ task listDist(type: Exec) {
 task distRuntime(type: Copy) {
     dependsOn "${hostName}CrossDistRuntime"
     dependsOn('commonDistRuntime')
+    dependsOn(':backend.native:teamcityPublishStdLibSources')
 }
 
 def stdlib = 'klib/common/stdlib'

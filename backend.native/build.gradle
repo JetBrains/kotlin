@@ -176,6 +176,13 @@ task zipStdLibSources(type: Zip, dependsOn: unzipStdlibSources) {
     destinationDir buildDir
 }
 
+task teamcityPublishStdLibSources {
+  dependsOn zipStdLibSources
+  doLast {
+    println " ##teamcity[publishArtifacts '${tasks.zipStdLibSources.archivePath}'] "
+  }
+}
+
 // These files are built before the 'dist' is complete,
 // so we provide custom values for
 // konan.home, --runtime, -Djava.library.path etc
