@@ -98,7 +98,8 @@ class QuickFixRegistrar : QuickFixContributor {
         NOTHING_TO_OVERRIDE.registerFactory(
             RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD),
             ChangeMemberFunctionSignatureFix,
-            AddFunctionToSupertypeFix
+            AddFunctionToSupertypeFix,
+            AddPropertyToSupertypeFix
         )
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
