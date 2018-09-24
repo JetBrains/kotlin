@@ -10,13 +10,14 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import java.util.concurrent.Callable
 
 interface KotlinCompilationFactory<T: KotlinCompilation> : NamedDomainObjectFactory<T> {
     val itemClass: Class<T>
 }
 
 private fun KotlinTarget.createCompilationOutput(name: String) =
-    KotlinCompilationOutput(project, project.buildDir.resolve("processedResources/$name"))
+    KotlinCompilationOutput(project, Callable { project.buildDir.resolve("processedResources/$targetName/$name") })
 
 class KotlinCommonCompilationFactory(
     val target: KotlinOnlyTarget<KotlinCommonCompilation>
