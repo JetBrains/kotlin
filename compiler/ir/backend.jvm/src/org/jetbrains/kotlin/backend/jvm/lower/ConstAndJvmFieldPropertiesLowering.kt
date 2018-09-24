@@ -18,9 +18,13 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetterCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetterCallImpl
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
@@ -45,40 +49,38 @@ class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrEle
             (irProperty.backingField?.initializer?.expression as? IrConst<*>)?.let { return it }
         }
 
-        val descriptor = expression.descriptor as? PropertyAccessorDescriptor ?: return super.visitCall(expression)
-
-        val property = descriptor.correspondingProperty
-        if (JvmCodegenUtil.isConstOrHasJvmFieldAnnotation(property)) {
-            return if (descriptor is PropertyGetterDescriptor) {
-                substituteGetter(descriptor, expression)
+        if (irProperty.backingField?.hasAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME) == true) {
+            return if (expression is IrGetterCallImpl) {
+                substituteGetter(irProperty, expression)
             } else {
-                substituteSetter(descriptor, expression)
+                assert(expression is IrSetterCallImpl)
+                substituteSetter(irProperty, expression)
             }
-        } else if (property is SyntheticJavaPropertyDescriptor) {
+        } else if (irProperty.descriptor is SyntheticJavaPropertyDescriptor) {
             expression.dispatchReceiver = expression.extensionReceiver
             expression.extensionReceiver = null
         }
         return super.visitCall(expression)
     }
 
-    private fun substituteSetter(descriptor: PropertyAccessorDescriptor, expression: IrCall): IrSetFieldImpl {
+    private fun substituteSetter(irProperty: IrProperty, expression: IrCall): IrSetFieldImpl {
         return IrSetFieldImpl(
             expression.startOffset,
             expression.endOffset,
-            context.ir.symbols.externalSymbolTable.referenceField(descriptor.correspondingProperty),
+            irProperty.backingField!!.symbol,
             expression.dispatchReceiver,
-            expression.getValueArgument(descriptor.valueParameters.lastIndex)!!,
+            expression.getValueArgument(expression.symbol.owner.valueParameters.lastIndex)!!,
             expression.type,
             expression.origin,
             expression.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
         )
     }
 
-    private fun substituteGetter(descriptor: PropertyGetterDescriptor, expression: IrCall): IrExpression {
+    private fun substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
         return IrGetFieldImpl(
             expression.startOffset,
             expression.endOffset,
-            context.ir.symbols.externalSymbolTable.referenceField(descriptor.correspondingProperty),
+            irProperty.backingField!!.symbol,
             expression.type,
             expression.dispatchReceiver,
             expression.origin,
