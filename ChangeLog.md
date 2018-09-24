@@ -292,6 +292,33 @@
 
 - [`KT-25541`](https://youtrack.jetbrains.com/issue/KT-25541) Incorrect parameter names in reflection for inner class constructor from Java class compiled with "-parameters"
 
+## 1.2.71
+
+### Compiler
+
+- [`KT-26806`](https://youtrack.jetbrains.com/issue/KT-26806) Defining constants using kotlin.math is broken in 1.2.70
+
+### IDE
+
+- [`KT-26399`](https://youtrack.jetbrains.com/issue/KT-26399) Kotlin Migration: NPE at KotlinMigrationProjectComponent$onImportFinished$1.run()
+- [`KT-26794`](https://youtrack.jetbrains.com/issue/KT-26794) Bad version detection during migration in Android Studio 3.2
+- [`KT-26823`](https://youtrack.jetbrains.com/issue/KT-26823) Fix deadlock in databinding with AndroidX which led to Android Studio hanging
+- [`KT-26889`](https://youtrack.jetbrains.com/issue/KT-26889) Don't show migration dialog if no actual migrations are available
+- [`KT-25177`](https://youtrack.jetbrains.com/issue/KT-25177) Report asDynamic on dynamic type as a warning
+- [`KT-25454`](https://youtrack.jetbrains.com/issue/KT-25454) Extract function: make default visibility private
+
+### JavaScript
+
+- [`KT-26466`](https://youtrack.jetbrains.com/issue/KT-26466) Uncaught ReferenceError: println is not defined
+
+### Tools. Gradle
+
+- [`KT-26208`](https://youtrack.jetbrains.com/issue/KT-26208) inspectClassesForKotlinIC slows down continuous mode in Gradle
+
+### Libraries
+
+- [`KT-26929`](https://youtrack.jetbrains.com/issue/KT-26929) Kotlin Reflect and Proguard: can’t find referenced class kotlin.annotations.jvm.ReadOnly/Mutable
+
 ## 1.2.70
 
 ### Compiler
