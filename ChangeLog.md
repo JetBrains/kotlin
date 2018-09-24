@@ -17,6 +17,10 @@
 
 - [`KT-26208`](https://youtrack.jetbrains.com/issue/KT-26208) inspectClassesForKotlinIC slows down continuous mode in Gradle
 
+### Libraries
+
+- [`KT-26929`](https://youtrack.jetbrains.com/issue/KT-26929) Kotlin Reflect and Proguard: can’t find referenced class kotlin.annotations.jvm.ReadOnly/Mutable
+
 ## 1.2.70
 
 ### Compiler
