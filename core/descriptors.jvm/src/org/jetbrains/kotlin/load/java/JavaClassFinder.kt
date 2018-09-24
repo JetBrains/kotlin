@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java;
+package org.jetbrains.kotlin.load.java
 
-import kotlin.annotations.jvm.ReadOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.load.java.structure.JavaClass;
-import org.jetbrains.kotlin.load.java.structure.JavaPackage;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
-import java.util.Set;
+interface JavaClassFinder {
+    fun findClass(classId: ClassId): JavaClass?
 
-public interface JavaClassFinder {
-    @Nullable
-    JavaClass findClass(@NotNull ClassId classId);
+    fun findPackage(fqName: FqName): JavaPackage?
 
-    @Nullable
-    JavaPackage findPackage(@NotNull FqName fqName);
-
-    @ReadOnly
-    @Nullable
-    Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName);
+    fun knownClassNamesInPackage(packageFqName: FqName): Set<String>?
 }
