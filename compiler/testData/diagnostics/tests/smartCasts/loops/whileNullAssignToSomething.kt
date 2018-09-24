@@ -5,5 +5,5 @@ fun main(args: Array<String>) {
         if (i == 10) result = "non null"
         else i++
     }
-    result<!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_SMARTCAST!>result<!>.length
 }
