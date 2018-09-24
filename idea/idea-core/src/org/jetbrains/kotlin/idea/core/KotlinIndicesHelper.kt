@@ -44,10 +44,12 @@ import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticStaticFunctions
@@ -183,7 +185,7 @@ class KotlinIndicesHelper(
         val typeConstructor = type.constructor
 
         val index = KotlinTypeAliasByExpansionShortNameIndex.INSTANCE
-        val out = mutableSetOf<TypeAliasDescriptor>()
+        val out = LinkedHashMap<FqName, TypeAliasDescriptor>()
 
         fun searchRecursively(typeName: String) {
             ProgressManager.checkCanceled()
@@ -191,14 +193,13 @@ class KotlinIndicesHelper(
                     .map { it.resolveToDescriptorIfAny() as? TypeAliasDescriptor }
                     .filterNotNull()
                     .filter { it.expandedType.constructor == typeConstructor }
-                    .filter { it !in out }
-                    .onEach { out.add(it) }
+                    .filter { out.putIfAbsent(it.fqNameSafe, it) == null }
                     .map { it.name.asString() }
                     .forEach(::searchRecursively)
         }
 
         searchRecursively(originalTypeName)
-        return out
+        return out.values.toSet()
     }
 
     private fun MutableCollection<String>.addTypeNames(type: KotlinType) {
