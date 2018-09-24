@@ -6,7 +6,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, common
+ CATEGORIES: declarations, contractBuilder, common
  NUMBER: 12
  DESCRIPTION: Functions with contracts and external effect builder.
  ISSUES: KT-26186

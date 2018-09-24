@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, common
+ CATEGORIES: declarations, contractBuilder, common
  NUMBER: 2
  DESCRIPTION: Contract is first statement in control flow terms, but not in tokens order terms.
  UNEXPECTED BEHAVIOUR

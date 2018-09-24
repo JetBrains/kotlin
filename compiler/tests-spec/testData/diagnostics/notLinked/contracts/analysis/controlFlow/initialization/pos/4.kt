@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, controlFlow, initialization
+ CATEGORIES: analysis, controlFlow, initialization
  NUMBER: 4
  DESCRIPTION: CallsInPlace contract functions with name shadowing
  */

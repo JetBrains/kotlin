@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: analysis, smartcasts
+ CATEGORIES: analysis, smartcasts
  NUMBER: 11
  DESCRIPTION: Check smartcasts using double negation (returnsFalse/invert type checking/not operator).
  UNEXPECTED BEHAVIOUR

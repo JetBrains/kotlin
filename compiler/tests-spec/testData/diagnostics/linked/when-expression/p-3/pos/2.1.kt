@@ -5,7 +5,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 3
  SENTENCE: [2] Each entry consists of a boolean condition (or a special else condition), each of which is checked and evaluated in order of appearance.
  NUMBER: 1
@@ -13,14 +13,14 @@
  */
 
 // CASE DESCRIPTION: 'When' with boolean expressions and else branch.
-fun case_1(value1: Boolean, value2: Long): Int {
+fun case_1(value_1: Boolean, value_2: Long): Int {
     return when {
-        value1 -> 1
-        getBoolean() && value1 -> 2
+        value_1 -> 1
+        getBoolean() && value_1 -> 2
         getChar(10) != 'a' -> 3
         getList() === getAny() -> 4
-        value2 <= 11 -> 5
-        !value1 -> 6
+        value_2 <= 11 -> 5
+        !value_1 -> 6
         else -> 7
     }
 }
@@ -29,12 +29,12 @@ fun case_1(value1: Boolean, value2: Long): Int {
  CASE DESCRIPTION: 'When' with boolean expressions.
  NOTE: for potential analysys on exhaustive by enum of when without bound value.
  */
-fun case_2(value: _EnumClass) {
+fun case_2(value_1: _EnumClass) {
     when {
-        value == _EnumClass.NORTH -> {}
-        value == _EnumClass.SOUTH -> {}
-        value == _EnumClass.WEST -> {}
-        value == _EnumClass.EAST -> {}
+        value_1 == _EnumClass.NORTH -> {}
+        value_1 == _EnumClass.SOUTH -> {}
+        value_1 == _EnumClass.WEST -> {}
+        value_1 == _EnumClass.EAST -> {}
     }
 }
 
@@ -42,10 +42,10 @@ fun case_2(value: _EnumClass) {
  CASE DESCRIPTION: 'When' with boolean expressions.
  NOTE: for potential analysys on exhaustive by boolean of when without bound value.
  */
-fun case_3(value: Boolean) {
+fun case_3(value_1: Boolean) {
     when {
-        value == true -> return
-        value == false -> return
+        value_1 == true -> return
+        value_1 == false -> return
     }
 }
 
@@ -53,11 +53,11 @@ fun case_3(value: Boolean) {
  CASE DESCRIPTION: 'When' with boolean literals.
  NOTE: for potential mark code after true branch as unreacable.
  */
-fun case_4(value1: Boolean) {
+fun case_4(value_1: Boolean) {
     when {
         false -> return
         true -> return
-        value1 -> return
+        value_1 -> return
     }
 }
 
@@ -65,60 +65,60 @@ fun case_4(value1: Boolean) {
  CASE DESCRIPTION: 'When' with boolean constants.
  NOTE: for potential const propagation use in this case.
  */
-fun case_5(value1: Boolean) {
-    val value2 = false
-    val value3 = false || !!!false || false
+fun case_5(value_1: Boolean) {
+    val value_2 = false
+    val value_3 = false || !!!false || false
 
     when {
-        value3 -> return
-        value2 -> return
-        value1 -> return
+        value_3 -> return
+        value_2 -> return
+        value_1 -> return
     }
 }
 
 // CASE DESCRIPTION: 'When' with type checking operator.
-fun case_6(value: Any) {
+fun case_6(value_1: Any) {
     when {
-        value is Nothing -> {}
-        value is Int -> {}
-        value is Boolean -> {}
-        value is String -> {}
-        value is Number -> {}
-        value is Float -> {}
-        <!USELESS_IS_CHECK!>value is Any<!> -> {}
+        value_1 is Nothing -> {}
+        value_1 is Int -> {}
+        value_1 is Boolean -> {}
+        value_1 is String -> {}
+        value_1 is Number -> {}
+        value_1 is Float -> {}
+        <!USELESS_IS_CHECK!>value_1 is Any<!> -> {}
     }
 }
 
 /*
  CASE DESCRIPTION: 'When' with invert type checking operator.
- NOTE: for potential analysys on exhaustive of when without bound value.
+ NOTE: for potential analysys on exhaustive of when without bound value_1.
  */
-fun case_7(value: Any) {
+fun case_7(value_1: Any) {
     when {
-        value !is Number -> {}
-        value is Float -> {}
-        <!USELESS_IS_CHECK!>value is Number<!> -> {}
-        <!USELESS_IS_CHECK!>value is Any<!> -> {}
+        value_1 !is Number -> {}
+        value_1 is Float -> {}
+        <!USELESS_IS_CHECK!>value_1 is Number<!> -> {}
+        <!USELESS_IS_CHECK!>value_1 is Any<!> -> {}
     }
 }
 
 /*
  CASE DESCRIPTION: 'When' with type checking operator by sealed class.
- NOTE: for potential analysys on exhaustive by sealed class of when without bound value.
+ NOTE: for potential analysys on exhaustive by sealed class of when without bound value_1.
  */
-fun case_8(value: _SealedClass) {
+fun case_8(value_1: _SealedClass) {
     when {
-        value is _SealedChild1 -> {}
-        value is _SealedChild2 -> {}
-        value is _SealedChild3 -> {}
+        value_1 is _SealedChild1 -> {}
+        value_1 is _SealedChild2 -> {}
+        value_1 is _SealedChild3 -> {}
     }
 }
 
 // CASE DESCRIPTION: 'When' with containment operator.
-fun case_9(value: Int, value1: IntRange) {
+fun case_9(value_1: Int, value_2: IntRange) {
     when {
-        value in -10..100L -> {}
-        value in value1 -> {}
-        value !in listOf(0, 1, 2) -> {}
+        value_1 in -10..100L -> {}
+        value_1 in value_2 -> {}
+        value_1 !in listOf(0, 1, 2) -> {}
     }
 }

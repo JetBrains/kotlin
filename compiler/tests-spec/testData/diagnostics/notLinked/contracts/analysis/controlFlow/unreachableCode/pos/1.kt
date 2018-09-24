@@ -8,7 +8,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, controlFlow, unreachableCode
+ CATEGORIES: analysis, controlFlow, unreachableCode
  NUMBER: 1
  DESCRIPTION: Unreachable code detection using contract function with CallsInPlace effect
  */

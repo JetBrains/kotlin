@@ -6,7 +6,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, effects, returns
+ CATEGORIES: declarations, contractBuilder, effects, returns
  NUMBER: 5
  DESCRIPTION: Contract on the extension function with Boolean upper bound (Boolean or Nothing) or smartcast to Boolean.
  DISCUSSION

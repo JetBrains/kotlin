@@ -1,7 +1,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 3
  SENTENCE: [1] When expression without bound value (the form where the expression enclosed in parantheses is absent) evaluates one of the many different expressions based on corresponding conditions present in the same when entry.
  NUMBER: 1
@@ -9,10 +9,10 @@
  */
 
 // CASE DESCRIPTION: 'When' with break expression (without label).
-fun case_1(value: Int): String {
+fun case_1(value_1: Int): String {
     while (true) {
         when {
-            value == 1 -> <!BREAK_OR_CONTINUE_IN_WHEN!>break<!>
+            value_1 == 1 -> <!BREAK_OR_CONTINUE_IN_WHEN!>break<!>
         }
     }
 
@@ -20,10 +20,10 @@ fun case_1(value: Int): String {
 }
 
 // CASE DESCRIPTION: 'When' with continue expression (without label).
-fun case_2(value: Int): String {
+fun case_2(value_1: Int): String {
     while (true) {
         when {
-            value == 1 -> <!BREAK_OR_CONTINUE_IN_WHEN!>continue<!>
+            value_1 == 1 -> <!BREAK_OR_CONTINUE_IN_WHEN!>continue<!>
         }
     }
 

@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: analysis, controlFlow, unreachableCode
+ CATEGORIES: analysis, controlFlow, unreachableCode
  NUMBER: 1
  DESCRIPTION: Using not allowed break and continue inside lambda of contract function
  */

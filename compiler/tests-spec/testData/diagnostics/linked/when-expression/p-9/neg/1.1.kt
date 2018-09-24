@@ -4,7 +4,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 9
  SENTENCE: [1] The type of the resulting expression is the least upper bound of the types of all the entries.
  NUMBER: 1
@@ -12,11 +12,11 @@
  */
 
 // CASE DESCRIPTION: Checking all types except the correct one (custom types) in 'when' without bound value.
-fun case_1(value: Int): String {
+fun case_1(value_1: Int): String {
     val whenValue = when {
-        value == 0 -> _ClassLevel2()
-        value > 0 && value <= 10 -> _ClassLevel3()
-        value > 10 && value <= 100 -> _ClassLevel4()
+        value_1 == 0 -> _ClassLevel2()
+        value_1 > 0 && value_1 <= 10 -> _ClassLevel3()
+        value_1 > 10 && value_1 <= 100 -> _ClassLevel4()
         else -> _ClassLevel5()
     }
 
@@ -32,8 +32,8 @@ fun case_1(value: Int): String {
 }
 
 // CASE DESCRIPTION: Checking all types except the correct one (custom types) in 'when' with bound value.
-fun case_2(value: Int): String {
-    val whenValue = when (value) {
+fun case_2(value_1: Int): String {
+    val whenValue = when (value_1) {
         0 -> _ClassLevel2()
         1 -> _ClassLevel3()
         2 -> _ClassLevel4()
@@ -55,14 +55,14 @@ fun case_2(value: Int): String {
  CASE DESCRIPTION: Checking all types except the correct one (numbers) in 'when' without bound value.
  UNEXPECTED BEHAVIOUR
  ISSUES: KT-25268
- */
-fun case_3(value: Int): String {
+*/
+fun case_3(value_1: Int): String {
     val whenValue = when {
-        value == 0 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1<!>
-        value == 1 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1L<!>
-        value == 2 -> <!IMPLICIT_CAST_TO_ANY!>1 + -.122<!>
-        value == 3 -> <!IMPLICIT_CAST_TO_ANY!>1 + -.000f<!>
-        value == 4 -> <!IMPLICIT_CAST_TO_ANY!>1 + 10.toShort()<!>
+        value_1 == 0 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1<!>
+        value_1 == 1 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1L<!>
+        value_1 == 2 -> <!IMPLICIT_CAST_TO_ANY!>1 + -.122<!>
+        value_1 == 3 -> <!IMPLICIT_CAST_TO_ANY!>1 + -.000f<!>
+        value_1 == 4 -> <!IMPLICIT_CAST_TO_ANY!>1 + 10.toShort()<!>
         else -> <!IMPLICIT_CAST_TO_ANY!>1 + 10.toByte()<!>
     }
 
@@ -89,8 +89,8 @@ fun case_3(value: Int): String {
  UNEXPECTED BEHAVIOUR
  ISSUES: KT-25268
  */
-fun case_4(value: Int): String {
-    val whenValue = when (value) {
+fun case_4(value_1: Int): String {
+    val whenValue = when (value_1) {
         0 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1<!>
         1 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1L<!>
         2 -> <!IMPLICIT_CAST_TO_ANY!>1 + -.122<!>
@@ -118,11 +118,11 @@ fun case_4(value: Int): String {
 }
 
 // CASE DESCRIPTION: Checking all types except the Any (implicit cast to any) in 'when' without bound value.
-fun case_5(value: Int): String {
+fun case_5(value_1: Int): String {
     val whenValue = when {
-        value == 0 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
-        value > 0 && value <= 10 -> <!IMPLICIT_CAST_TO_ANY!>""<!>
-        value > 10 && value <= 100 -> {<!IMPLICIT_CAST_TO_ANY!>{}<!>}
+        value_1 == 0 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
+        value_1 > 0 && value_1 <= 10 -> <!IMPLICIT_CAST_TO_ANY!>""<!>
+        value_1 > 10 && value_1 <= 100 -> {<!IMPLICIT_CAST_TO_ANY!>{}<!>}
         else -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
     }
 
@@ -137,8 +137,8 @@ fun case_5(value: Int): String {
 }
 
 // CASE DESCRIPTION: Checking all types except the Any (implicit cast to any) in 'when' with bound value.
-fun case_6(value: Int): String {
-    val whenValue = when (value) {
+fun case_6(value_1: Int): String {
+    val whenValue = when (value_1) {
         0 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
         1 -> <!IMPLICIT_CAST_TO_ANY!>""<!>
         2 -> {<!IMPLICIT_CAST_TO_ANY!>{}<!>}

@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: analysis, controlFlow, initialization
+ CATEGORIES: analysis, controlFlow, initialization
  NUMBER: 5
  DESCRIPTION: CallsInPlace contract functions with invalid lambda passing to function parameter.
  */

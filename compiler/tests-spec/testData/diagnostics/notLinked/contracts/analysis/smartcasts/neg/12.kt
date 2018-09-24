@@ -6,7 +6,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: analysis, smartcasts
+ CATEGORIES: analysis, smartcasts
  NUMBER: 12
  DESCRIPTION: Check smartcast to upper bound of the types in disjunction.
  UNEXPECTED BEHAVIOUR

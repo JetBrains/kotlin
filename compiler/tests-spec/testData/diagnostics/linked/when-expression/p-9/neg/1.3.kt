@@ -4,7 +4,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 9
  SENTENCE: [1] The type of the resulting expression is the least upper bound of the types of all the entries.
  NUMBER: 3
@@ -12,8 +12,8 @@
  */
 
 // CASE DESCRIPTION: Checking all types except the correct one in 'when'.
-fun case_1(value: Boolean): String {
-    val whenValue = when (value) {
+fun case_1(value_1: Boolean): String {
+    val whenValue = when (value_1) {
         true -> _ClassLevel2()
         false -> _ClassLevel3()
     }
@@ -28,8 +28,8 @@ fun case_1(value: Boolean): String {
 }
 
 // CASE DESCRIPTION: Checking all types except the correct one in 'when' with null-check branch.
-fun case_2(value: Boolean?): String {
-    val whenValue = when (value) {
+fun case_2(value_1: Boolean?): String {
+    val whenValue = when (value_1) {
         true -> _ClassLevel2()
         false -> _ClassLevel3()
         null -> _ClassLevel4()
@@ -45,8 +45,8 @@ fun case_2(value: Boolean?): String {
 }
 
 // CASE DESCRIPTION: Checking all types except the Any (implicit cast to any) in 'when'.
-fun case_3(value: Boolean): String {
-    val whenValue = when (value) {
+fun case_3(value_1: Boolean): String {
+    val whenValue = when (value_1) {
         true -> <!IMPLICIT_CAST_TO_ANY!>10<!>
         false -> <!IMPLICIT_CAST_TO_ANY!>""<!>
     }
@@ -60,8 +60,8 @@ fun case_3(value: Boolean): String {
 }
 
 // CASE DESCRIPTION: Checking all types except the Any (implicit cast to any) in 'when' with null-check branch.
-fun case_4(value: Boolean?): String {
-    val whenValue = when (value) {
+fun case_4(value_1: Boolean?): String {
+    val whenValue = when (value_1) {
         true -> <!IMPLICIT_CAST_TO_ANY!>10<!>
         false -> {<!IMPLICIT_CAST_TO_ANY!>{}<!>}
         null -> <!IMPLICIT_CAST_TO_ANY!>""<!>

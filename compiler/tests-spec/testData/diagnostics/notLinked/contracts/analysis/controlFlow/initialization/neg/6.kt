@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: analysis, controlFlow, initialization
+ CATEGORIES: analysis, controlFlow, initialization
  NUMBER: 6
  DESCRIPTION: Check the lack of CallsInPlace effect on the lambda in the parentheses.
  UNEXPECTED BEHAVIOUR

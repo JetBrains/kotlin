@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractFunction
+ CATEGORIES: declarations, contractFunction
  NUMBER: 2
  DESCRIPTION: Check report about use contracts in literal functions, lambdas or not top-level functions.
  ISSUES: KT-26149

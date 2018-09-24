@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: analysis, controlFlow, initialization
+ CATEGORIES: analysis, controlFlow, initialization
  NUMBER: 1
  DESCRIPTION: val/var reassignment and/or uninitialized variable usages based on CallsInPlace effect with wrong invocation kind
  */

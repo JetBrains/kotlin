@@ -1,7 +1,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 11
  SENTENCE: [3] The bound expression is of type kotlin.Boolean and the conditions contain both:
  NUMBER: 1
@@ -9,13 +9,13 @@
  */
 
 // CASE DESCRIPTION: Checking for exhaustive 'when' (both boolean value covered).
-fun case_1(value: Boolean): String = when (value) {
+fun case_1(value_1: Boolean): String = when (value_1) {
     true -> ""
     false -> ""
 }
 
 // CASE DESCRIPTION: Checking for exhaustive 'when' (both boolean value as complex expression covered).
-fun case_2(value: Boolean): String = when (value) {
+fun case_2(value_1: Boolean): String = when (value_1) {
     true && false && ((true || false)) || true && !!!false && !!!true -> ""
     true && false && ((true || false)) || true && !!!false -> ""
 }

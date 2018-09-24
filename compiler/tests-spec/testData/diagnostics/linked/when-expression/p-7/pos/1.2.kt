@@ -5,7 +5,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 7
  SENTENCE: [1] Type test condition: type checking operator followed by type.
  NUMBER: 2
@@ -13,7 +13,7 @@
  */
 
 // CASE DESCRIPTION: 'When' in which all branches includes invert type checking operators.
-fun case_1(value: _SealedClass) = when (value) {
+fun case_1(value_1: _SealedClass) = when (value_1) {
     !is _SealedChild1 -> {}
     !is _SealedChild2 -> {}
     !is _SealedChild3 -> {}
@@ -24,14 +24,14 @@ fun case_1(value: _SealedClass) = when (value) {
  UNEXPECTED BEHAVIOUR
  ISSUES: KT-22996
  */
-fun case_2(value: _SealedClass?): String = when (value) {
+fun case_2(value_1: _SealedClass?): String = when (value_1) {
     !is _SealedChild2 -> "" // including null
     <!USELESS_IS_CHECK!>is _SealedChild2<!> -> ""
     null -> "" // redundant
 }
 
 // CASE DESCRIPTION: 'When' with direct and invert type checking operators on the same types and null-check.
-fun case_3(value: _SealedClass?): String = when (value) {
+fun case_3(value_1: _SealedClass?): String = when (value_1) {
     !is _SealedChild2? -> "" // null isn't included
     is _SealedChild2 -> ""
     null -> ""
@@ -42,16 +42,16 @@ fun case_3(value: _SealedClass?): String = when (value) {
  UNEXPECTED BEHAVIOUR
  ISSUES: KT-22996
  */
-fun case_4(value: _SealedClass?) {
-    when (value) {
+fun case_4(value_1: _SealedClass?) {
+    when (value_1) {
         !is _SealedChild2 -> {} // including null
         <!USELESS_IS_CHECK!>is _SealedChild2?<!> -> {} // redundant nullable type check
     }
 }
 
 // CASE DESCRIPTION: 'When' with direct and invert type checking operator on the objects.
-fun case_5(value: Any): String {
-    when (value) {
+fun case_5(value_1: Any): String {
+    when (value_1) {
         is _EmptyObject -> return ""
         !is _ClassWithCompanionObject.Companion -> return ""
     }

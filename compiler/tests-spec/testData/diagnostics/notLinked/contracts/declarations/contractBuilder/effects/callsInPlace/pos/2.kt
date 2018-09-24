@@ -6,7 +6,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, effects, callsInPlace
+ CATEGORIES: declarations, contractBuilder, effects, callsInPlace
  NUMBER: 2
  DESCRIPTION: functions with contract and duplicate CallsInPlace.
  UNEXPECTED BEHAVIOUR

@@ -6,7 +6,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractFunction
+ CATEGORIES: declarations, contractFunction
  NUMBER: 1
  DESCRIPTION: Check that fun with contract and CallsInPlace effect is an inline function.
  UNEXPECTED BEHAVIOUR

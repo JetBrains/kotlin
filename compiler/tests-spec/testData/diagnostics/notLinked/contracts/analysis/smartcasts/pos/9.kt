@@ -8,7 +8,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, smartcasts
+ CATEGORIES: analysis, smartcasts
  NUMBER: 9
  DESCRIPTION: Smartcast using complex condition with some contract functions (Returns effect).
  */

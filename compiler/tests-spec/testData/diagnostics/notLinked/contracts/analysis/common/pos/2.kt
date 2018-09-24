@@ -7,7 +7,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, common
+ CATEGORIES: analysis, common
  NUMBER: 2
  DESCRIPTION: Recursion in the lambda of contract function.
  */
