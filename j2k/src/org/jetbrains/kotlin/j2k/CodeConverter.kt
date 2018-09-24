@@ -114,9 +114,14 @@ class CodeConverter(
         if (actualType.needTypeConversion(expectedType)) {
             val expectedTypeStr = expectedType.canonicalText
             if (expression is PsiLiteralExpression) {
-                if (actualType.canonicalText == "char" && expression.parent !is PsiExpressionList) {
-                    expression.getTypeConversionMethod(expectedType)?.also {
-                        convertedExpression = MethodCallExpression.buildNonNull(convertedExpression, it)
+                if (actualType.canonicalText == "char") {
+                    if (expression.parent !is PsiExpressionList) {
+                        expression.getTypeConversionMethod(expectedType)?.also {
+                            convertedExpression = MethodCallExpression.buildNonNull(convertedExpression, it)
+                        }
+                    }
+                    else if (expectedTypeStr == "int") {
+                        convertedExpression = MethodCallExpression.buildNonNull(convertedExpression, "toInt")
                     }
                 }
                 else if (expectedTypeStr == "float" || expectedTypeStr == "double") {

@@ -3164,6 +3164,11 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             runTest("j2k/testData/fileOrElement/methodCallExpression/callWithKeywords.java");
         }
 
+        @TestMetadata("charAsInt.java")
+        public void testCharAsInt() throws Exception {
+            runTest("j2k/testData/fileOrElement/methodCallExpression/charAsInt.java");
+        }
+
         @TestMetadata("collectionsMethods.java")
         public void testCollectionsMethods() throws Exception {
             runTest("j2k/testData/fileOrElement/methodCallExpression/collectionsMethods.java");
