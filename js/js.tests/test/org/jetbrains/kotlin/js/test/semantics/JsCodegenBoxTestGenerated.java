@@ -11264,6 +11264,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClass.kt");
         }
 
+        @TestMetadata("extLambdaInInlineClassFun.kt")
+        public void testExtLambdaInInlineClassFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun.kt");
+        }
+
+        @TestMetadata("extLambdaInInlineClassFun2.kt")
+        public void testExtLambdaInInlineClassFun2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2.kt");
+        }
+
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt");
@@ -11327,6 +11337,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("inlineClassesRefTypesInInlineLambdaParameters.kt")
         public void testInlineClassesRefTypesInInlineLambdaParameters() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParameters.kt");
+        }
+
+        @TestMetadata("inlineExtLambdaInInlineClassFun.kt")
+        public void testInlineExtLambdaInInlineClassFun() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun.kt");
+        }
+
+        @TestMetadata("inlineExtLambdaInInlineClassFun2.kt")
+        public void testInlineExtLambdaInInlineClassFun2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2.kt");
         }
 
         @TestMetadata("inlineFunctionInsideInlineClass.kt")
@@ -11434,6 +11454,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt");
         }
 
+        @TestMetadata("smartCastOnThisOfInlineClassType.kt")
+        public void testSmartCastOnThisOfInlineClassType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassType.kt");
+        }
+
         @TestMetadata("toStringCallingPrivateFun.kt")
         public void testToStringCallingPrivateFun() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt");
@@ -11499,26 +11524,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
             public void testAllFilesPresentInContextsAndAccessors() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-            }
-
-            @TestMetadata("extLambdaInInlineClassFun.kt")
-            public void testExtLambdaInInlineClassFun() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/extLambdaInInlineClassFun.kt");
-            }
-
-            @TestMetadata("extLambdaInInlineClassFun2.kt")
-            public void testExtLambdaInInlineClassFun2() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/extLambdaInInlineClassFun2.kt");
-            }
-
-            @TestMetadata("inlineExtLambdaInInlineClassFun.kt")
-            public void testInlineExtLambdaInInlineClassFun() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineExtLambdaInInlineClassFun.kt");
-            }
-
-            @TestMetadata("inlineExtLambdaInInlineClassFun2.kt")
-            public void testInlineExtLambdaInInlineClassFun2() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/inlineExtLambdaInInlineClassFun2.kt");
             }
 
             @TestMetadata("inlineLambdaInInlineClassFun.kt")
