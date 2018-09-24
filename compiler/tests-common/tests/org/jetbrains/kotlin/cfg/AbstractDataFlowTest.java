@@ -23,6 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
+import org.jetbrains.kotlin.cfg.variable.PseudocodeVariablesData;
+import org.jetbrains.kotlin.cfg.variable.ReadOnlyInitControlFlowInfo;
+import org.jetbrains.kotlin.cfg.variable.VariableUseState;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
