@@ -38,8 +38,8 @@ public interface ContractBuilder {
      *
      * Use [SimpleEffect.implies] function to describe a conditional effect that happens in such case.
      *
-     * @sample samples.contracts.returnsContract
      */
+    // @sample samples.contracts.returnsContract
     @ContractsDsl public fun returns(): Returns
 
     /**
@@ -49,10 +49,10 @@ public interface ContractBuilder {
      *
      * Use [SimpleEffect.implies] function to describe a conditional effect that happens in such case.
      *
-     * @sample samples.contracts.returnsTrueContract
-     * @sample samples.contracts.returnsFalseContract
-     * @sample samples.contracts.returnsNullContract
      */
+    // @sample samples.contracts.returnsTrueContract
+    // @sample samples.contracts.returnsFalseContract
+    // @sample samples.contracts.returnsNullContract
     @ContractsDsl public fun returns(value: Any?): Returns
 
     /**
@@ -60,8 +60,8 @@ public interface ContractBuilder {
      *
      * Use [SimpleEffect.implies] function to describe a conditional effect that happens in such case.
      *
-     * @sample samples.contracts.returnsNotNullContract
      */
+    // @sample samples.contracts.returnsNotNullContract
     @ContractsDsl public fun returnsNotNull(): ReturnsNotNull
 
     /**
@@ -75,11 +75,12 @@ public interface ContractBuilder {
      *
      * A function declaring the `callsInPlace` effect must be _inline_.
      *
-     * @sample samples.contracts.callsInPlaceAtMostOnceContract
-     * @sample samples.contracts.callsInPlaceAtLeastOnceContract
-     * @sample samples.contracts.callsInPlaceExactlyOnceContract
-     * @sample samples.contracts.callsInPlaceUnknownContract
      */
+    /* @sample samples.contracts.callsInPlaceAtMostOnceContract
+    * @sample samples.contracts.callsInPlaceAtLeastOnceContract
+    * @sample samples.contracts.callsInPlaceExactlyOnceContract
+    * @sample samples.contracts.callsInPlaceUnknownContract
+    */
     @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
 }
 
@@ -94,30 +95,29 @@ public interface ContractBuilder {
 public enum class InvocationKind {
     /**
      * A function parameter will be invoked one time or not invoked at all.
-     *
-     * @sample samples.contracts.callsInPlaceAtMostOnceContract
      */
+    // @sample samples.contracts.callsInPlaceAtMostOnceContract
     @ContractsDsl AT_MOST_ONCE,
 
     /**
      * A function parameter will be invoked one or more times.
      *
-     * @sample samples.contracts.callsInPlaceAtLeastOnceContract
      */
+    // @sample samples.contracts.callsInPlaceAtLeastOnceContract
     @ContractsDsl AT_LEAST_ONCE,
 
     /**
      * A function parameter will be invoked exactly one time.
      *
-     * @sample samples.contracts.callsInPlaceExactlyOnceContract
      */
+    // @sample samples.contracts.callsInPlaceExactlyOnceContract
     @ContractsDsl EXACTLY_ONCE,
 
     /**
      * A function parameter is called in place, but it's unknown how many times it can be called.
      *
-     * @sample samples.contracts.callsInPlaceUnknownContract
      */
+    // @sample samples.contracts.callsInPlaceUnknownContract
     @ContractsDsl UNKNOWN
 }
 
@@ -130,16 +130,17 @@ public enum class InvocationKind {
  *
  * @param builder the lambda where the contract of a function is described with the help of the [ContractBuilder] members.
  *
- * @sample samples.contracts.returnsContract
- * @sample samples.contracts.returnsTrueContract
- * @sample samples.contracts.returnsFalseContract
- * @sample samples.contracts.returnsNullContract
- * @sample samples.contracts.returnsNotNullContract
- * @sample samples.contracts.callsInPlaceAtMostOnceContract
- * @sample samples.contracts.callsInPlaceAtLeastOnceContract
- * @sample samples.contracts.callsInPlaceExactlyOnceContract
- * @sample samples.contracts.callsInPlaceUnknownContract
  */
+/* @sample samples.contracts.returnsContract
+* @sample samples.contracts.returnsTrueContract
+* @sample samples.contracts.returnsFalseContract
+* @sample samples.contracts.returnsNullContract
+* @sample samples.contracts.returnsNotNullContract
+* @sample samples.contracts.callsInPlaceAtMostOnceContract
+* @sample samples.contracts.callsInPlaceAtLeastOnceContract
+* @sample samples.contracts.callsInPlaceExactlyOnceContract
+* @sample samples.contracts.callsInPlaceUnknownContract
+*/
 @ContractsDsl
 @ExperimentalContracts
 @InlineOnly
