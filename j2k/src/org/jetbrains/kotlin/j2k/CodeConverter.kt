@@ -111,6 +111,11 @@ class CodeConverter(
             convertedExpression = BangBangExpression.surroundIfNullable(convertedExpression)
         }
 
+        if (convertedExpression is ArrayAccessExpression && (expression as PsiArrayAccessExpression).indexExpression?.type?.canonicalText == "char") {
+            val newIndex = MethodCallExpression.buildNonNull(convertedExpression.index, "toInt").assignNoPrototype()
+            convertedExpression = ArrayAccessExpression(convertedExpression.expression, newIndex, convertedExpression.lvalue)
+        }
+
         if (actualType.needTypeConversion(expectedType)) {
             val expectedTypeStr = expectedType.canonicalText
             if (expression is PsiLiteralExpression) {
